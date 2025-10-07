@@ -291,12 +291,21 @@ function saveGenToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 function makeAtomBondLines(prefix, idstr, ids, map) {
   if (!ids) return [];
   const lines = [];
-  for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
-    const rem = Math.min(ids.length - 15 * i, 15); // eslint-disable-line no-mixed-operators
+  const chunkSize = 15;
+  const idChunks = ids.reduce((chunks, id, index) => {
+    if (index % chunkSize === 0) {
+      chunks.push([]);
+    }
+    chunks[chunks.length - 1].push(id);
+    return chunks;
+  }, []);
+
+  for (const chunk of idChunks) {
+    const rem = Math.min(chunk.length, chunkSize); // eslint-disable-line no-mixed-operators
     let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2);
-    for (let j = 0; j < rem; ++j) {
-      salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3);
-    } // eslint-disable-line no-mixed-operators
+    for (const id of chunk) {
+      salLine += ' ' + utils.paddedNum(map[id], 3);
+    }
     lines.push(salLine);
   }
   return lines;
@@ -319,14 +328,13 @@ function bracketsToMolfile(mol, sg, idstr) {
     n,
   );
   const lines = [];
-  for (let i = 0; i < brackets.length; ++i) {
-    const bracket = brackets[i];
+  for (const bracket of brackets) {
     const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
     const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
     let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3);
     const coord = [a0.x, a0.y, a1.x, a1.y];
-    for (let j = 0; j < coord.length; ++j) {
-      line += utils.paddedNum(coord[j], 10, 4);
+    for (const value of coord) {
+      line += utils.paddedNum(value, 10, 4);
     }
     lines.push(line);
   }
@@ -348,10 +356,11 @@ function partitionLine(
 ) {
   /* reader */
   const res = [];
-  for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
+  let shift = 0;
+  for (const part of parts) {
+    res.push(str.slice(shift, shift + part));
     if (withspace) shift++;
-    shift += parts[i];
+    shift += part;
   }
   return res;
 }

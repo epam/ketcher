@@ -29,12 +29,16 @@ function readKeyValuePairs(str, valueString) {
   const partition = utils.partitionLineFixed(str, 3, true);
   const count = utils.parseDecimalInt(partition[0]);
 
-  for (let i = 0; i < count; ++i) {
-    const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
-    const value = valueString
-      ? partition[2 * i + 2].trim()
-      : utils.parseDecimalInt(partition[2 * i + 2]);
+  const entries = Array.from({ length: count }, (_, index) => {
+    const keyIndex = 2 * index + 1;
+    const valueIndex = keyIndex + 1;
+    const key = utils.parseDecimalInt(partition[keyIndex]) - 1;
+    const rawValue = partition[valueIndex];
+    const value = valueString ? rawValue.trim() : utils.parseDecimalInt(rawValue);
+    return [key, value];
+  });
 
+  for (const [key, value] of entries) {
     ret.set(key, value);
   }
 
@@ -51,15 +55,18 @@ function readKeyMultiValuePairs(str, valueString) {
   const ret = [];
   const partition = utils.partitionLineFixed(str, 3, true);
   const count = utils.parseDecimalInt(partition[0]);
-  for (let i = 0; i < count; ++i) {
-    ret.push([
-      /* eslint-disable no-mixed-operators */
-      utils.parseDecimalInt(partition[2 * i + 1]) - 1,
+  const entries = Array.from({ length: count }, (_, index) => {
+    const keyIndex = 2 * index + 1;
+    const valueIndex = keyIndex + 1;
+    return [
+      utils.parseDecimalInt(partition[keyIndex]) - 1,
       valueString
-        ? partition[2 * i + 2].trim()
-        : utils.parseDecimalInt(partition[2 * i + 2]),
-      /* eslint-enable no-mixed-operators */
-    ]);
+        ? partition[valueIndex].trim()
+        : utils.parseDecimalInt(partition[valueIndex]),
+    ];
+  });
+  for (const entry of entries) {
+    ret.push(entry);
   }
   return ret;
 }
@@ -73,12 +80,18 @@ function postLoadMul(sgroup, mol, atomMap) {
   sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
 
   // mark repetitions for removal
-  for (let k = 1; k < sgroup.data.mul; ++k) {
-    for (let m = 0; m < sgroup.patoms.length; ++m) {
-      const raid = sgroup.atoms[k * sgroup.patoms.length + m]; // eslint-disable-line no-mixed-operators
+  const repetitions = Array.from(
+    { length: Math.max(sgroup.data.mul - 1, 0) },
+    (_, index) => index + 1,
+  );
+
+  for (const repetitionIndex of repetitions) {
+    for (const [atomIndex, patom] of sgroup.patoms.entries()) {
+      const raid =
+        sgroup.atoms[repetitionIndex * sgroup.patoms.length + atomIndex]; // eslint-disable-line no-mixed-operators
       if (raid < 0) continue; // eslint-disable-line no-continue
-      if (sgroup.patoms[m] < 0) throw new Error('parent atom missing');
-      atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
+      if (patom < 0) throw new Error('parent atom missing');
+      atomReductionMap[raid] = patom; // "merge" atom in parent
     }
   }
   sgroup.patoms = SGroup.removeNegative(sgroup.patoms);
@@ -105,8 +118,8 @@ function postLoadMul(sgroup, mol, atomMap) {
   }, sgroup);
 
   // apply removal lists
-  for (let b = 0; b < bondsToRemove.length; ++b) {
-    mol.bonds.delete(bondsToRemove[b]);
+  for (const bondId of bondsToRemove) {
+    mol.bonds.delete(bondId);
   }
   for (const a in atomReductionMap) {
     mol.atoms.delete(+a);
@@ -202,8 +215,8 @@ function loadSGroup(mol, sg, atomMap) {
   // apply type-specific post-processing
   postLoadMap[sg.type](sg, mol, atomMap);
   // mark atoms in the group as belonging to it
-  for (let s = 0; s < sg.atoms.length; ++s) {
-    if (mol.atoms.has(sg.atoms[s])) mol.atoms.get(sg.atoms[s]).sgs.add(sg.id);
+  for (const atomId of sg.atoms) {
+    if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);
   }
 
   if (sg.type === 'DAT') mol.sGroupForest.insert(sg, -1, []);
@@ -347,11 +360,7 @@ function applyDataSGroupDataLine(sGroups, propData, finalize) {
 // Utilities functions
 function toIntArray(strArray) {
   /* reader */
-  const ret = [];
-  for (let j = 0; j < strArray.length; ++j) {
-    ret[j] = utils.parseDecimalInt(strArray[j]);
-  }
-  return ret;
+  return strArray.map((value) => utils.parseDecimalInt(value));
 }
 
 function trimRight(str) {
@@ -360,7 +369,7 @@ function trimRight(str) {
 
 function identityMap(array) {
   const map = {};
-  for (let i = 0; i < array.length; ++i) map[array[i]] = array[i];
+  for (const value of array) map[value] = value;
   return map;
 }
 
@@ -384,10 +393,14 @@ function parseSGroupSAPLineV2000(ctabString) {
   const sGroupId = utils.parseDecimalInt(sss) - 1;
   const attachmentPointsStr = ctabString.slice(7);
   const attachmentPoints = [];
-  for (let i = 0; i < chunksNumberInLine; i++) {
+  const chunkIndices = Array.from(
+    { length: chunksNumberInLine },
+    (_, index) => index,
+  );
+  for (const index of chunkIndices) {
     // length of ' iii ooo cc'
     const CHUNK_SIZE = 11;
-    const stringForParse = attachmentPointsStr.slice(i * CHUNK_SIZE);
+    const stringForParse = attachmentPointsStr.slice(index * CHUNK_SIZE);
     const CHUNK_PARTS_LENGTHS = [1, 3, 1, 3, 1, 2];
     const [, iii, , ooo, , cc] = utils.partitionLine(
       stringForParse,

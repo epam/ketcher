@@ -50,10 +50,11 @@ function partitionLine(
 ) {
   /* reader */
   const res = [];
-  for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
+  let shift = 0;
+  for (const part of parts) {
+    res.push(str.slice(shift, shift + part));
     if (withspace) shift++;
-    shift += parts[i];
+    shift += part;
   }
   return res;
 }
@@ -65,10 +66,13 @@ function partitionLineFixed(
 ) {
   /* reader */
   const res = [];
-  for (let shift = 0; shift < str.length; shift += itemLength) {
+  const slicesCount = Math.ceil(str.length / itemLength);
+  let shift = 0;
+  Array.from({ length: slicesCount }).forEach(() => {
     res.push(str.slice(shift, shift + itemLength));
     if (withspace) shift++;
-  }
+    shift += itemLength;
+  });
   return res;
 }
 
@@ -330,8 +334,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   Object.keys(rgroups).forEach((id) => {
     const rgid = parseInt(id, 10);
 
-    for (let j = 0; j < rgroups[rgid].length; ++j) {
-      const ctab = rgroups[rgid][j];
+    for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);

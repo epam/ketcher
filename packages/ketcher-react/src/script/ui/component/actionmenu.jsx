@@ -81,15 +81,7 @@ function ActionButton({
 }
 
 function findActiveMenuItem(menuItems, status) {
-  let activeMenuItem = null;
-  for (let index = 0; index < menuItems.length; index++) {
-    const current = menuItems[index];
-    if (status[current]?.selected) {
-      activeMenuItem = current;
-      break;
-    }
-  }
-  return activeMenuItem;
+  return menuItems.find((item) => status[item]?.selected) ?? null;
 }
 
 function isLeaf(menu) {

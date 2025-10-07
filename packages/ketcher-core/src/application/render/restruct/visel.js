@@ -63,11 +63,11 @@ class Visel {
       const x = args[0];
       const y = args[1];
       const delta = new Vec2(x, y);
-      for (let i = 0; i < this.paths.length; ++i) {
-        this.paths[i].translateAbs(x, y);
+      for (const path of this.paths) {
+        path.translateAbs(x, y);
       }
-      for (let j = 0; j < this.boxes.length; ++j) {
-        this.boxes[j] = this.boxes[j].translate(delta);
+      for (const [index, box] of this.boxes.entries()) {
+        this.boxes[index] = box.translate(delta);
       }
       if (this.boundingBox !== null) {
         this.boundingBox = this.boundingBox.translate(delta);
@@ -80,12 +80,12 @@ class Visel {
    * @param {Vec2} center
    */
   rotate(degree, center) {
-    for (let i = 0; i < this.paths.length; ++i) {
-      this.paths[i].rotate(degree, center.x, center.y);
+    for (const path of this.paths) {
+      path.rotate(degree, center.x, center.y);
     }
 
-    for (let j = 0; j < this.boxes.length; ++j) {
-      this.boxes[j] = this.boxes[j].transform((point) =>
+    for (const [index, box] of this.boxes.entries()) {
+      this.boxes[index] = box.transform((point) =>
         point.rotateAroundOrigin(degree, center),
       );
     }

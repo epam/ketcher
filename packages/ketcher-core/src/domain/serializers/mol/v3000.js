@@ -30,7 +30,7 @@ import utils from './utils';
 
 function parseAtomLineV3000(line) {
   /* reader */
-  let subsplit, key, value, i;
+  let subsplit, key, value;
   const split = spacebarsplit(line);
   const params = {
     pp: new Vec2(
@@ -66,8 +66,8 @@ function parseAtomLineV3000(line) {
     params.label = label;
   }
   split.splice(0, 6);
-  for (i = 0; i < split.length; ++i) {
-    subsplit = splitonce(split[i], '=');
+  for (const part of split) {
+    subsplit = splitonce(part, '=');
     key = subsplit[0];
     value = subsplit[1];
     if (key in utils.fmtInfo.v30atomPropMap) {
@@ -81,8 +81,8 @@ function parseAtomLineV3000(line) {
       value = value.trim().substr(1, value.length - 2);
       const rgrsplit = value.split(' ').slice(1);
       params.rglabel = 0;
-      for (let j = 0; j < rgrsplit.length; ++j) {
-        params.rglabel |= 1 << (rgrsplit[j] - 1);
+      for (const rgr of rgrsplit) {
+        params.rglabel |= 1 << (rgr - 1);
       }
     } else if (key === 'ATTCHPT') {
       params.attpnt = value.trim() - 0;
@@ -94,7 +94,7 @@ function parseAtomLineV3000(line) {
 
 function parseBondLineV3000(line) {
   /* reader */
-  let subsplit, key, value, i;
+  let subsplit, key, value;
   const split = spacebarsplit(line);
   const params = {
     begin: utils.parseDecimalInt(split[2]) - 1,
@@ -102,8 +102,8 @@ function parseBondLineV3000(line) {
     type: utils.fmtInfo.bondTypeMap[utils.parseDecimalInt(split[1])],
   };
   split.splice(0, 4);
-  for (i = 0; i < split.length; ++i) {
-    subsplit = splitonce(split[i], '=');
+  for (const part of split) {
+    subsplit = splitonce(part, '=');
     key = subsplit[0];
     value = subsplit[1];
     if (key === 'CFG') {
@@ -156,12 +156,12 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     sg.label = split[2] - 0;
     sgroups[sg.number] = sg;
     const props = {};
-    for (let i = 3; i < split.length; ++i) {
-      const subsplit = splitonce(split[i], '=');
+    for (const part of split.slice(3)) {
+      const subsplit = splitonce(part, '=');
       if (subsplit.length !== 2) {
         throw new Error(
           "A record of form AAA=BBB or AAA=(...) expected, got '" +
-            split[i] +
+            part +
             "'",
         );
       }
@@ -177,8 +177,8 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     const brkxyzStrs = props.BRKXYZ;
     sg.brkxyz = [];
     if (brkxyzStrs) {
-      for (let j = 0; j < brkxyzStrs.length; ++j) {
-        sg.brkxyz.push(parseBracedNumberList(brkxyzStrs[j]));
+      for (const brkxyz of brkxyzStrs) {
+        sg.brkxyz.push(parseBracedNumberList(brkxyz));
       }
     }
     if (props.MULT) sg.data.subscript = props.MULT[0] - 0;
@@ -345,16 +345,24 @@ function parseRxn3000(
   const nAgents = countsSplit.length > 2 ? countsSplit[2] - 0 : 0;
 
   function findCtabEnd(i) {
-    for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() === 'M  V30 END CTAB') return j;
+    const rest = ctabLines.slice(i);
+    const foundIndex = rest.findIndex(
+      (line) => line.trim() === 'M  V30 END CTAB',
+    );
+    if (foundIndex !== -1) {
+      return i + foundIndex;
     }
 
     return console.error('CTab format invalid');
   }
 
   function findRGroupEnd(i) {
-    for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() === 'M  V30 END RGROUP') return j;
+    const rest = ctabLines.slice(i);
+    const foundIndex = rest.findIndex(
+      (line) => line.trim() === 'M  V30 END RGROUP',
+    );
+    if (foundIndex !== -1) {
+      return i + foundIndex;
     }
     return console.error('CTab format invalid');
   }
@@ -364,9 +372,11 @@ function parseRxn3000(
   const molLinesAgents = [];
   let current = null;
   const rGroups = [];
-  for (let i = 0; i < ctabLines.length; ++i) {
+  let i = 0;
+  while (i < ctabLines.length) {
     const line = ctabLines[i].trim();
-    var j;
+    let increment = 1;
+    let j;
 
     if (line.startsWith('M  V30 COUNTS')) {
       // do nothing
@@ -387,21 +397,22 @@ function parseRxn3000(
     } else if (line.startsWith('M  V30 BEGIN RGROUP')) {
       j = findRGroupEnd(i);
       rGroups.push(ctabLines.slice(i, j + 1));
-      i = j;
+      increment = j - i + 1;
     } else if (line === 'M  V30 BEGIN CTAB') {
       j = findCtabEnd(i);
       current.push(ctabLines.slice(i, j + 1));
-      i = j;
+      increment = j - i + 1;
     } else {
       throw new Error('line unrecognized: ' + line);
     }
+    i += increment;
   }
   const mols = [];
   const molLines = molLinesReactants
     .concat(molLinesProducts)
     .concat(molLinesAgents);
-  for (j = 0; j < molLines.length; ++j) {
-    const mol = parseCTabV3000(molLines[j], countsSplit);
+  for (const molLine of molLines) {
+    const mol = parseCTabV3000(molLine, countsSplit);
     mols.push(mol);
   }
   const ctab = utils.rxnMerge(
@@ -412,14 +423,7 @@ function parseRxn3000(
     shouldReactionRelayout,
   );
 
-  readRGroups3000(
-    ctab,
-    (function (array) {
-      let res = [];
-      for (let k = 0; k < array.length; ++k) res = res.concat(array[k]);
-      return res;
-    })(rGroups),
-  );
+  readRGroups3000(ctab, rGroups.reduce((acc, group) => acc.concat(group), []));
 
   return ctab;
 }
@@ -434,13 +438,14 @@ function spacebarsplit(line) {
   let firstSliceIndex = -1;
   let quoted = false;
 
-  for (currentIndex; currentIndex < line.length; currentIndex += 1) {
+  while (currentIndex < line.length) {
     const currentSymbol = line[currentIndex];
     if (line.substr(currentIndex, 3) === 'NOT') {
       const closingBracketIndex = line.indexOf(']');
       split.push(line.slice(currentIndex, closingBracketIndex + 1));
       currentIndex = closingBracketIndex + 1;
       firstSliceIndex = currentIndex;
+      continue;
     } else if (currentSymbol === '(') bracketEquality += 1;
     else if (currentSymbol === ')') bracketEquality -= 1;
     else if (currentSymbol === '"') quoted = !quoted;
@@ -450,6 +455,7 @@ function spacebarsplit(line) {
       }
       firstSliceIndex = currentIndex;
     }
+    currentIndex += 1;
   }
   if (currentIndex > firstSliceIndex + 1) {
     split.push(line.slice(firstSliceIndex + 1, currentIndex));
@@ -477,7 +483,8 @@ function splitSGroupDef(line) {
   const split = [];
   let braceBalance = 0;
   let quoted = false;
-  for (let i = 0; i < line.length; ++i) {
+  let i = 0;
+  while (i < line.length) {
     const c = line.charAt(i);
     if (c === '"') {
       quoted = !quoted;
@@ -490,8 +497,10 @@ function splitSGroupDef(line) {
         split.push(line.slice(0, i));
         line = line.slice(i + 1).trim();
         i = 0;
+        continue;
       }
     }
+    i += 1;
   }
   if (braceBalance !== 0) {
     throw new Error('Brace balance broken. S-group properies invalid!');
@@ -509,8 +518,8 @@ function parseBracedNumberList(line, shift) {
   const split = line.split(' ');
   shift = shift || 0;
 
-  for (let i = 1; i < split.length; ++i) {
-    const value = parseInt(split[i]);
+  for (const valueStr of split.slice(1)) {
+    const value = parseInt(valueStr);
     if (!isNaN(value)) {
       // eslint-disable-line
       list.push(value + shift);
@@ -529,8 +538,8 @@ function stripV30(line) {
 function labelsListToIds(labels) {
   /* reader */
   const ids = [];
-  for (let i = 0; i < labels.length; ++i) {
-    const element = Elements.get(labels[i].trim());
+  for (const label of labels) {
+    const element = Elements.get(label.trim());
     if (element) {
       ids.push(element.number);
     }

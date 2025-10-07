@@ -106,23 +106,24 @@ export class ViewModel {
 
   private sortAtomsHalfEdges() {
     this.atomsToHalfEdges.forEach((atomHalfEdges, atom) => {
-      atomHalfEdges
-        .sort((halfEdge1, halfEdge2) => halfEdge1.angle - halfEdge2.angle)
-        .forEach((halfEdge, halfEdgeIndex) => {
-          const nextHalfEdge =
-            atomHalfEdges[(halfEdgeIndex + 1) % atomHalfEdges.length];
+      atomHalfEdges.sort(
+        (halfEdge1, halfEdge2) => halfEdge1.angle - halfEdge2.angle,
+      );
+      atomHalfEdges.forEach((halfEdge, halfEdgeIndex) => {
+        const nextHalfEdge =
+          atomHalfEdges[(halfEdgeIndex + 1) % atomHalfEdges.length];
 
-          if (!halfEdge.oppositeHalfEdge) {
-            KetcherLogger.warn(
-              `Failed to sort HalfEdges for atom ${atom.id}. HalfEdge ${halfEdge.id} has no opposite halfEdge`,
-            );
+        if (!halfEdge.oppositeHalfEdge) {
+          KetcherLogger.warn(
+            `Failed to sort HalfEdges for atom ${atom.id}. HalfEdge ${halfEdge.id} has no opposite halfEdge`,
+          );
 
-            return;
-          }
+          return;
+        }
 
-          halfEdge.oppositeHalfEdge.nextHalfEdge = nextHalfEdge;
-          this.setHalfEdgesAngle(halfEdge, nextHalfEdge);
-        });
+        halfEdge.oppositeHalfEdge.nextHalfEdge = nextHalfEdge;
+        this.setHalfEdgesAngle(halfEdge, nextHalfEdge);
+      });
     });
   }
 

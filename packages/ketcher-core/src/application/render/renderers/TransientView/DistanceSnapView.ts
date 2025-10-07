@@ -23,7 +23,8 @@ export class DistanceSnapView extends TransientView {
       return;
     }
 
-    const sortedMonomers = alignedMonomers.sort((a, b) => {
+    const sortedMonomers = [...alignedMonomers];
+    sortedMonomers.sort((a, b) => {
       return alignment === 'horizontal'
         ? a.center.x - b.center.x
         : a.center.y - b.center.y;

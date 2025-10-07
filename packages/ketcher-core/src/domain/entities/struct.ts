@@ -560,13 +560,14 @@ export class Struct {
     const atom = this.atoms.get(aid)!;
     const halfBonds = this.halfBonds;
 
-    atom.neighbors
-      .sort((nei, nei2) => halfBonds.get(nei)!.ang - halfBonds.get(nei2)!.ang)
-      .forEach((nei, i) => {
-        const nextNei = atom.neighbors[(i + 1) % atom.neighbors.length];
-        this.halfBonds.get(this.halfBonds.get(nei)!.contra)!.next = nextNei;
-        this.halfBondSetAngle(nextNei, nei);
-      });
+    atom.neighbors.sort(
+      (nei, nei2) => halfBonds.get(nei)!.ang - halfBonds.get(nei2)!.ang,
+    );
+    atom.neighbors.forEach((nei, i) => {
+      const nextNei = atom.neighbors[(i + 1) % atom.neighbors.length];
+      this.halfBonds.get(this.halfBonds.get(nei)!.contra)!.next = nextNei;
+      this.halfBondSetAngle(nextNei, nei);
+    });
   }
 
   sortNeighbors(list) {

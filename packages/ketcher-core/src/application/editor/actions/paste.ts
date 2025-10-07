@@ -176,7 +176,8 @@ export function fromPaste(
       sg.data.name,
       sg,
     );
-    sgAction.operations.reverse().forEach((oper) => {
+    sgAction.operations.reverse();
+    sgAction.operations.forEach((oper) => {
       action.addOp(oper);
     });
   });

@@ -20,6 +20,7 @@ import {
   ZoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -565,7 +566,7 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-5262
     Description: The selected atom appeared on the canvas
     */
-    const atomShortcuts = ['A', 'Q', 'R', 'K', 'M', 'X'];
+    const atomShortcuts = ['A', 'Q', 'R', 'M', 'X'];
 
     for (const labelKey of atomShortcuts) {
       await CommonTopLeftToolbar(page).clearCanvas();

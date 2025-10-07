@@ -63,6 +63,7 @@
     "ketcher-core": "*",
     "lodash": "^4.17.21",
     "miew-react": "0.11.0",
+    "prop-types": "^15.8.1",
     "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",
     "react-device-detect": "^2.2.2",

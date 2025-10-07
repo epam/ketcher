@@ -160,11 +160,9 @@ export class Atom extends DrawingEntity {
         }
       }
     } else if (elementGroupNumber === 5) {
-      if (label === AtomLabel.N || label === AtomLabel.P) {
-        if (charge === 1 || charge === 2) {
-          return radicalAmount + connectionAmount;
-        }
-      } else if (
+      if (
+        label === AtomLabel.N ||
+        label === AtomLabel.P ||
         label === AtomLabel.Sb ||
         label === AtomLabel.Bi ||
         label === AtomLabel.As

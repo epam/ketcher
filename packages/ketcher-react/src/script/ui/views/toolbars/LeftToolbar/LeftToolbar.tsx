@@ -96,9 +96,10 @@ const LeftToolbar = (props: Props) => {
     if (items) {
       items.forEach((item) => {
         let visible = true;
-        if (status[item.id]?.hidden) {
-          visible = false;
-        } else if (item.options?.every((option) => status[option.id]?.hidden)) {
+        if (
+          status[item.id]?.hidden ||
+          item.options?.every((option) => status[option.id]?.hidden)
+        ) {
           visible = false;
         }
         if (visible) visibleItems.push(item);

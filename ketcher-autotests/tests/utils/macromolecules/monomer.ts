@@ -213,9 +213,7 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
-  ) {
+  if (Object.hasOwn(options, 'hydrogenConnectionNumber')) {
     attributes['data-hydrogen-connection-number'] = String(
       hydrogenConnectionNumber,
     );
@@ -301,33 +299,31 @@ export function getSymbolLocator(
     nodeIndexOverall,
     isAntisense,
   } = options;
-  if (Object.prototype.hasOwnProperty.call(options, 'symbolId')) {
+  if (Object.hasOwn(options, 'symbolId')) {
     attributes['data-symbol-id'] = String(symbolId);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'chainId')) {
+  if (Object.hasOwn(options, 'chainId')) {
     attributes['data-chain-id'] = String(chainId);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'sideConnectionNumber')) {
+  if (Object.hasOwn(options, 'sideConnectionNumber')) {
     attributes['data-side-connection-number'] = String(sideConnectionNumber);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'hasLeftConnection')) {
+  if (Object.hasOwn(options, 'hasLeftConnection')) {
     attributes['data-has-left-connection'] = String(hasLeftConnection);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'hasRightConnection')) {
+  if (Object.hasOwn(options, 'hasRightConnection')) {
     attributes['data-has-right-connection'] = String(hasRightConnection);
   }
-  if (
-    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
-  ) {
+  if (Object.hasOwn(options, 'hydrogenConnectionNumber')) {
     attributes['data-hydrogen-connection-number'] = String(
       hydrogenConnectionNumber,
     );
   }
   if (dataSymbolType) attributes['data-symbol-type'] = dataSymbolType;
-  if (Object.prototype.hasOwnProperty.call(options, 'nodeIndexOverall')) {
+  if (Object.hasOwn(options, 'nodeIndexOverall')) {
     attributes['data-nodeIndexOverall'] = String(nodeIndexOverall);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'isAntisense')) {
+  if (Object.hasOwn(options, 'isAntisense')) {
     attributes['data-isAntisense'] = String(isAntisense);
   }
 

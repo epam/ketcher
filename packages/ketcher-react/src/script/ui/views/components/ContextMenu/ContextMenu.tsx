@@ -17,7 +17,6 @@ import React, { useCallback } from 'react';
 import { Menu, MenuProps } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
 import styles from './ContextMenu.module.less';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import AtomMenuItems from './menuItems/AtomMenuItems';
@@ -133,16 +132,14 @@ const ContextMenu: React.FC = () => {
 
   const trackVisibility = useCallback(
     (id: string, visible: boolean) => {
-      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor;
       if (visible) {
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector(
           '.contexify:last-of-type',
-        ) as HTMLDivElement | null;
-        const submenuElements = document.querySelectorAll(
-          '.contexify_submenu',
-        ) as NodeListOf<HTMLElement>;
-        if (contextMenuElement) {
+        );
+        const submenuElements = document.querySelectorAll('.contexify_submenu');
+        if (contextMenuElement instanceof HTMLDivElement) {
           // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
           // Without timeout library overrides the position of the context menu which we set.
           setTimeout(() => resetMenuPosition(contextMenuElement), 0);
@@ -150,7 +147,9 @@ const ContextMenu: React.FC = () => {
 
         if (submenuElements.length) {
           submenuElements.forEach((submenuElement) => {
-            adjustSubmenuPosition(submenuElement);
+            if (submenuElement instanceof HTMLElement) {
+              adjustSubmenuPosition(submenuElement);
+            }
           });
         }
       }

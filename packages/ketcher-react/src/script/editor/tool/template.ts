@@ -192,7 +192,10 @@ class TemplateTool implements Tool {
     const targetId = this.findKeyOfRelatedGroupId(
       this.closestItem?.id as number,
     );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    if (targetId === undefined) {
+      return false;
+    }
+    const functionalGroup = this.functionalGroups.get(targetId);
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -291,7 +294,10 @@ class TemplateTool implements Tool {
 
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
-      const bond = this.struct.bonds.get(ci.id)!;
+      const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return;
+      }
 
       // calculate default template flip
       dragCtx.sign1 = getBondFlipSign(this.struct, bond);
@@ -324,6 +330,9 @@ class TemplateTool implements Tool {
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
+      if (!bond) {
+        return true;
+      }
       let sign = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {
@@ -494,7 +503,10 @@ class TemplateTool implements Tool {
       this.targetGroupsIds.length
     ) {
       const restruct = this.editor.render.ctab;
-      const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!;
+      const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
+      if (!functionalGroupToReplace) {
+        return true;
+      }
 
       if (
         this.isSaltOrSolvent &&

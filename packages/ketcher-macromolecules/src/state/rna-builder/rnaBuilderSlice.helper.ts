@@ -1,4 +1,3 @@
-import omit from 'lodash/omit';
 import {
   IRnaLabeledPreset,
   IRnaPreset,
@@ -8,15 +7,16 @@ import {
 
 // transform preset from IRnaPreset to IRnaLabeledPreset
 export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
-  const fieldsToLabel = ['sugar', 'base', 'phosphate'];
-  const rnaLabeledPreset = omit(
-    rnaPreset,
-    fieldsToLabel,
-  ) as Partial<IRnaLabeledPreset>;
+  const fieldsToLabel = ['sugar', 'base', 'phosphate'] as const;
+  const { sugar, base, phosphate, ...rest } = rnaPreset;
+  const monomerEntries = { sugar, base, phosphate };
+  const rnaLabeledPreset: IRnaLabeledPreset = {
+    ...rest,
+    templates: [],
+  };
 
-  rnaLabeledPreset.templates = [];
   for (const monomerName of fieldsToLabel) {
-    const monomerLibraryItem = rnaPreset[monomerName];
+    const monomerLibraryItem = monomerEntries[monomerName];
     const templateId = monomerLibraryItem?.props?.id || monomerLibraryItem?.id;
 
     if (!templateId) continue;
@@ -28,5 +28,5 @@ export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
     });
   }
 
-  return rnaLabeledPreset as IRnaLabeledPreset;
+  return rnaLabeledPreset;
 };

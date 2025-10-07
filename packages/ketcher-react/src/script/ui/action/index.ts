@@ -40,7 +40,7 @@ const updateConfigItem = (item: UiAction): UiAction => {
   if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
     return item;
   } else if (typeof item.disabled === 'function') {
-    const originalDisabled = item.disabled as GetActionState;
+    const originalDisabled = item.disabled;
     return {
       ...item,
       disabled: (...props) =>
@@ -139,10 +139,11 @@ const config: Record<string, UiAction> = {
   },
   // This is some dirty trick for `ClipboardControls.tsx` component
   copies: {
+    action: () => undefined,
     enabledInViewOnly: true,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  } as UiAction,
+  },
   copy: {
     shortcut: 'Mod+c',
     enabledInViewOnly: true,
@@ -307,7 +308,7 @@ const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
 }).reduce(
   (acc, [key, item]) => ({
     ...acc,
-    [key]: updateConfigItem(item as UiAction),
+    [key]: updateConfigItem(item),
   }),
   {},
 ) as Tools;

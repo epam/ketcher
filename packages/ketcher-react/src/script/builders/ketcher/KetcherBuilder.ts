@@ -46,12 +46,13 @@ class KetcherBuilder {
   }
 
   appendApiAsync(structServiceProvider: StructServiceProvider) {
-    this.structService = createApi(
+    const structService = createApi(
       structServiceProvider,
       DefaultStructServiceOptions,
     );
-    this.formatterFactory = new FormatterFactory(this.structService!);
-    return this.structService;
+    this.structService = structService;
+    this.formatterFactory = new FormatterFactory(structService);
+    return structService;
   }
 
   reinitializeApi(
@@ -114,6 +115,10 @@ class KetcherBuilder {
       editor: Editor;
       setServer: (structService: StructService) => void;
     }>((resolve) => {
+      if (!structService) {
+        throw new Error('Structure service is not initialized');
+      }
+
       cleanup = initApp(
         prevKetcherId,
         ketcherId,
@@ -128,7 +133,7 @@ class KetcherBuilder {
           buildNumber: process.env.BUILD_NUMBER || '',
           customButtons: customButtons || [],
         },
-        structService!,
+        structService,
         resolve,
         togglerComponent,
       );

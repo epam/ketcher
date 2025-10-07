@@ -199,7 +199,10 @@ export class SGroup {
 
       this.atoms.forEach((aid) => {
         const atom = struct.atoms.get(aid);
-        const pos = new Vec2(atom!.pp);
+        if (!atom) {
+          return;
+        }
+        const pos = new Vec2(atom.pp);
 
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         const bba = new Box2Abs(pos, pos).extend(ext, ext);
@@ -211,13 +214,22 @@ export class SGroup {
         [bba.p0.x, bba.p1.x].forEach((x) => {
           [bba.p0.y, bba.p1.y].forEach((y) => {
             const v = new Vec2(x, y);
-            bbb = !bbb ? new Box2Abs(v, v) : bbb!.include(v);
+            if (!bbb) {
+              bbb = new Box2Abs(v, v);
+            } else {
+              bbb = bbb.include(v);
+            }
           });
         });
-        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!);
+        if (bbb) {
+          contentBB = contentBB ? Box2Abs.union(contentBB, bbb) : bbb;
+        }
       });
 
-      topLeftPoint = isBondContent ? contentBB!.centre() : contentBB!.p0;
+      if (!contentBB) {
+        return;
+      }
+      topLeftPoint = isBondContent ? contentBB.centre() : contentBB.p0;
     } else {
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }

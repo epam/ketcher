@@ -26,6 +26,7 @@ import {
   Struct,
   Vec2,
   vectorUtils,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
@@ -70,12 +71,16 @@ class PasteTool implements Tool {
 
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
+    const clientAreaRect = rnd.clientArea.getBoundingClientRect();
     const point = this.editor.lastEvent
-      ? rnd.page2obj(this.editor.lastEvent)
-      : rnd.page2obj({
-          pageX: clientWidth / 2,
-          pageY: clientHeight / 2,
-        } as MouseEvent);
+      ? CoordinateTransformation.pageToModel(this.editor.lastEvent, rnd)
+      : CoordinateTransformation.pageToModel(
+          {
+            clientX: clientAreaRect.left + clientWidth / 2,
+            clientY: clientAreaRect.top + clientHeight / 2,
+          },
+          rnd,
+        );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
@@ -119,7 +124,7 @@ class PasteTool implements Tool {
       const [action] = fromPaste(
         this.restruct,
         this.struct,
-        this.editor.render.page2obj(event),
+        CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
       return;
@@ -129,7 +134,7 @@ class PasteTool implements Tool {
     this.action = null;
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: closestGroupItem,
     };
   }
@@ -148,7 +153,10 @@ class PasteTool implements Tool {
     if (this.dragCtx) {
       // template-like logic for group-on-group actions
       let pos0: Vec2 | null | undefined = null;
-      const pos1 = this.editor.render.page2obj(event);
+      const pos1 = CoordinateTransformation.pageToModel(
+        event,
+        this.editor.render,
+      );
 
       const extraBond = true;
 
@@ -205,7 +213,7 @@ class PasteTool implements Tool {
       const [action, pasteItems] = fromPaste(
         this.restruct,
         this.struct,
-        this.editor.render.page2obj(event),
+        CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
       this.editor.update(this.action, true);

@@ -23,6 +23,7 @@ import {
   fromTextDeletion,
   fromTextUpdating,
   KetcherLogger,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
@@ -50,7 +51,7 @@ class TextTool implements Tool {
       this.editor.hover(null);
       this.editor.selection({ texts: [closestItem.id] });
       this.dragCtx = {
-        xy0: render.page2obj(event),
+        xy0: CoordinateTransformation.pageToModel(event, render),
         action: new Action(),
       };
     }
@@ -67,7 +68,9 @@ class TextTool implements Tool {
       this.dragCtx.action = fromMultipleMove(
         render.ctab,
         this.editor.selection() || {},
-        render.page2obj(event).sub(this.dragCtx.xy0),
+        CoordinateTransformation.pageToModel(event, render).sub(
+          this.dragCtx.xy0,
+        ),
       );
       this.editor.update(this.dragCtx.action, true);
     } else {
@@ -96,7 +99,12 @@ class TextTool implements Tool {
     this.editor.hover(null);
 
     if (!closestItem) {
-      propsDialog(this.editor, null, render.page2obj(event), []);
+      propsDialog(
+        this.editor,
+        null,
+        CoordinateTransformation.pageToModel(event, render),
+        [],
+      );
     }
 
     return true;

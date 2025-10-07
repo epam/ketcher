@@ -26,6 +26,7 @@ import {
   SGroup,
   vectorUtils,
   removeInfoLabelFromAtoms,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
@@ -118,7 +119,7 @@ class ChainTool implements Tool {
 
     this.editor.hover(null);
     this.dragCtx = {
-      xy0: rnd.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
       item: ci,
     };
 
@@ -176,7 +177,7 @@ class ChainTool implements Tool {
 
       const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id)?.pp : dragCtx.xy0;
 
-      const pos1 = editor.render.page2obj(event);
+      const pos1 = CoordinateTransformation.pageToModel(event, editor.render);
       const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
       const angle = event.ctrlKey

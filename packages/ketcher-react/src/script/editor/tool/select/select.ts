@@ -258,7 +258,7 @@ class SelectTool implements Tool {
         !selection.bonds;
       if (shouldDisplayDegree) {
         // moving selected objects
-        const pos = rnd.page2obj(event);
+        const pos = CoordinateTransformation.pageToModel(event, rnd);
         const angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
         const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
@@ -304,7 +304,9 @@ class SelectTool implements Tool {
       dragCtx.action = fromMultipleMove(
         restruct,
         expSel,
-        editor.render.page2obj(event).sub(dragCtx.xy0),
+        CoordinateTransformation.pageToModel(event, editor.render).sub(
+          dragCtx.xy0,
+        ),
       );
 
       const visibleSelectedItems = filterNotInContractedSGroup(
@@ -712,7 +714,7 @@ function getResizingProps(
   dragCtx,
   event,
 ): [ReStruct, number, Vec2, Vec2, any] {
-  const current = editor.render.page2obj(event);
+  const current = CoordinateTransformation.pageToModel(event, editor.render);
   const diff = current.sub(dragCtx.xy0);
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }

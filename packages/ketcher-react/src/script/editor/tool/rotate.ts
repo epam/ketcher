@@ -31,6 +31,7 @@ import {
   getRelSGroupsBySelection,
   MonomerMicromolecule,
   RotateMonomerOperation,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import assert from 'assert';
 import { intersection, throttle } from 'lodash';
@@ -196,7 +197,10 @@ class RotateTool implements Tool {
 
     const dragCtx = this.dragCtx;
 
-    const mousePos = this.editor.render.page2obj(event);
+    const mousePos = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
     const mouseMoveAngle =
       vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
 

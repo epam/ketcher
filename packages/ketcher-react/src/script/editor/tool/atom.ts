@@ -28,6 +28,7 @@ import {
   ElementColor,
   vectorUtils,
   KetcherLogger,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -206,13 +207,16 @@ class AtomTool implements Tool {
     if (atomId !== undefined) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const atom = molecule.atoms.get(atomId)!;
-      let angle = vectorUtils.calcAngle(atom.pp, rnd.page2obj(event));
+      let angle = vectorUtils.calcAngle(
+        atom.pp,
+        CoordinateTransformation.pageToModel(event, rnd),
+      );
       if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
       const degrees = vectorUtils.degrees(angle);
       editor.event.message.dispatch({ info: degrees + 'º' });
       const newAtomPos = vectorUtils.calcNewAtomPos(
         atom.pp,
-        rnd.page2obj(event),
+        CoordinateTransformation.pageToModel(event, rnd),
         event.ctrlKey,
       );
 
@@ -260,7 +264,11 @@ class AtomTool implements Tool {
 
     if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
       action.mergeWith(
-        fromAtomAddition(reStruct, rnd.page2obj(event), atomProps),
+        fromAtomAddition(
+          reStruct,
+          CoordinateTransformation.pageToModel(event, rnd),
+          atomProps,
+        ),
       );
     } else if (dragCtx.item && ci) {
       if (dragCtx.item.id === ci.id) {

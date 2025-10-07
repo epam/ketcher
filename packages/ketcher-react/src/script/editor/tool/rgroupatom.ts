@@ -126,7 +126,7 @@ function propsDialog(editor, id, pos) {
   Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = Object.assign({}, Atom.attrlist, elem);
+      elem = { ...Atom.attrlist, ...(elem || {}) };
 
       if (!id && id !== 0 && elem.rglabel) {
         editor.update(fromAtomAddition(editor.render.ctab, pos, elem));

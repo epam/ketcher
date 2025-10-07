@@ -378,8 +378,7 @@ export const selectFilteredMonomers = createSelector(
           const textBetweenSlashes = parts[1];
 
           const matchesIdtBase =
-            idtBase &&
-            idtBase.length === textBetweenSlashes.length &&
+            idtBase?.length === textBetweenSlashes.length &&
             Array.from(idtBase).every(
               (char, index) => char === textBetweenSlashes[index],
             );
@@ -405,7 +404,7 @@ export const selectFilteredMonomers = createSelector(
         if (searchFilter.startsWith('/') && searchFilter.length > 1) {
           const aliasRest = searchFilter.slice(1);
           return (
-            (idtBase && idtBase.startsWith(aliasRest)) ||
+            idtBase?.startsWith(aliasRest) ||
             (idtModifications &&
               idtModifications
                 .split(' ')
@@ -418,8 +417,7 @@ export const selectFilteredMonomers = createSelector(
           const aliasLastSymbol = searchFilter[searchFilter.length - 2];
 
           return (
-            (idtBase &&
-              idtBase.endsWith(aliasRest) &&
+            (idtBase?.endsWith(aliasRest) &&
               idtBase[idtBase.length - 1] === aliasLastSymbol) ||
             (idtModifications &&
               idtModifications
@@ -433,9 +431,8 @@ export const selectFilteredMonomers = createSelector(
         }
 
         const matchesIdtBase =
-          idtBase &&
-          idtBase.startsWith(searchAfterSlash) &&
-          idtBase.endsWith(searchBeforeSlash);
+          idtBase?.startsWith(searchAfterSlash) &&
+          idtBase?.endsWith(searchBeforeSlash);
         const matchesIdtModifications = idtModifications
           ? idtModifications
               .split(' ')

@@ -72,7 +72,7 @@ export function fromSeveralSgroupAddition(
   }
 
   return descriptors.reduce((acc, fValue) => {
-    const localAttrs = Object.assign({}, attrs);
+    const localAttrs = { ...(attrs || {}) };
     localAttrs.fieldValue = fValue;
 
     return acc.mergeWith(

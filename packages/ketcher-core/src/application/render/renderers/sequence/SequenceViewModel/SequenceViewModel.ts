@@ -376,11 +376,10 @@ export class SequenceViewModel {
 
     this.nodes.forEach((node, nodeIndex) => {
       if (
-        previousTwoStrandedNode &&
-        previousTwoStrandedNode.antisenseNode &&
+        previousTwoStrandedNode?.antisenseNode &&
         node.antisenseNode &&
-        previousTwoStrandedNode.chain === node.chain &&
-        previousTwoStrandedNode.antisenseChain !== node.antisenseChain
+        previousTwoStrandedNode?.chain === node.chain &&
+        previousTwoStrandedNode?.antisenseChain !== node.antisenseChain
       ) {
         const nextConnectedSenseNode = getNextConnectedNode(
           previousHandledSenseNode as SubChainNode,

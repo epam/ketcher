@@ -224,7 +224,7 @@ class AtomTool implements Tool {
         rnd.ctab,
         this.#bondProps,
         atomId,
-        Object.assign({}, atomProps),
+        { ...(atomProps || {}) },
         undefined,
         newAtomPos,
       )[0];

@@ -54,13 +54,18 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         true,
       );
 
-      functionalGroup !== null &&
-        functionalGroup.relatedSGroup &&
-        !functionalGroup.relatedSGroup.isSuperatomWithoutLabel &&
+      const relatedSGroup = functionalGroup?.relatedSGroup;
+
+      if (
+        functionalGroup !== null &&
+        relatedSGroup &&
+        !relatedSGroup.isSuperatomWithoutLabel
+      ) {
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
           functionalGroup,
         );
+      }
 
       const sGroupId = struct.sgroups.find(
         (_, sGroup) =>

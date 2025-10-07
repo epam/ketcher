@@ -260,7 +260,7 @@ export class ReMultitailArrow extends ReObject {
         fill: 'none',
         stroke: 'none',
       });
-      if (element.node && element.node.setAttribute) {
+      if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
       }
       selectionPointSet.push(element);

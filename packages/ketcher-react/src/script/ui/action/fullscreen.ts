@@ -18,17 +18,17 @@ import isHidden from './isHidden';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const requestFullscreen = (element: HTMLElement) => {
-  (element.requestFullscreen && element.requestFullscreen()) ||
-    (element.msRequestFullscreen && element.msRequestFullscreen()) ||
-    (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
-    (element.webkitRequestFullscreen && element.webkitRequestFullscreen());
+  element.requestFullscreen?.() ||
+    element.msRequestFullscreen?.() ||
+    element.mozRequestFullScreen?.() ||
+    element.webkitRequestFullscreen?.();
 };
 
 const exitFullscreen = () => {
-  (document.exitFullscreen && document.exitFullscreen()) ||
-    (document.msExitFullscreen && document.msExitFullscreen()) ||
-    (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-    (document.webkitExitFullscreen && document.webkitExitFullscreen());
+  document.exitFullscreen?.() ||
+    document.msExitFullscreen?.() ||
+    document.mozCancelFullScreen?.() ||
+    document.webkitExitFullscreen?.();
 };
 
 const getIfFullScreen = () => {

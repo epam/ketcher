@@ -47,7 +47,7 @@ import assert from 'assert';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 export function fromAtomAddition(restruct, pos, atom) {
-  atom = Object.assign({}, atom);
+  atom = { ...(atom || {}) };
   const action = new Action();
   atom.fragment = (
     action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd

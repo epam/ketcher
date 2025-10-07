@@ -15,9 +15,50 @@
  ***************************************************************************/
 
 import compiledSchema from './compiledSchema';
-import { validateMultitailArrows } from './multitailArrowsValidator';
+import {
+  validateMultitailArrows,
+  MultitailArrowsValidationResult,
+} from './multitailArrowsValidator';
+
+type AjvValidationError = {
+  instancePath?: string;
+  schemaPath?: string;
+  keyword?: string;
+  params?: Record<string, unknown>;
+  message?: string;
+};
+
+type AjvValidateFunction = {
+  (data: unknown): boolean;
+  errors: AjvValidationError[] | null;
+};
+
+const schemaValidator = compiledSchema as unknown as AjvValidateFunction;
 
 export function validate(ket: any): boolean {
-  const result = compiledSchema(ket);
-  return result ? validateMultitailArrows(ket) : result;
+  const schemaIsValid = schemaValidator(ket);
+
+  if (!schemaIsValid) {
+    return false;
+  }
+
+  const { isValid, error }: MultitailArrowsValidationResult =
+    validateMultitailArrows(ket);
+
+  if (!isValid) {
+    const message = error ?? 'UNKNOWN_ERROR';
+    const errors = schemaValidator.errors ?? [];
+
+    errors.push({
+      instancePath: '/root/nodes',
+      schemaPath: '#/definitions/multitailArrow',
+      keyword: 'multitailArrow',
+      params: { error: message },
+      message: `Invalid multitail arrow: ${message}`,
+    });
+
+    schemaValidator.errors = errors;
+  }
+
+  return isValid;
 }

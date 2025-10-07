@@ -25,9 +25,9 @@ const mockValue = {
 };
 
 const mockMenuItems = [
-  <Menu.Item itemId="help" />,
-  <Menu.Item itemId="settings" />,
-  <Menu.Item itemId="undo" />,
+  <Menu.Item key="help" itemId="help" />,
+  <Menu.Item key="settings" itemId="settings" />,
+  <Menu.Item key="undo" itemId="undo" />,
 ];
 
 const mockSubMenu = () => {

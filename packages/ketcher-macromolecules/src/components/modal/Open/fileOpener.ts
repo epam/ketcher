@@ -39,7 +39,7 @@ function throughFileReader(file: File) {
     };
 
     rd.onerror = (event) => {
-      reject(event);
+      reject(new Error(`File reading error: ${event.type}`));
     };
 
     rd.readAsText(file, 'UTF-8');

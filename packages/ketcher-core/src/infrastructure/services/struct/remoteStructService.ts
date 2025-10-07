@@ -98,7 +98,9 @@ function request(
     response = response.then((response) =>
       response
         .json()
-        .then((res) => (response.ok ? res : Promise.reject(res.error))),
+        .then((res) =>
+          response.ok ? res : Promise.reject(new Error(res.error)),
+        ),
     );
   }
 

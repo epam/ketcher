@@ -26,9 +26,7 @@ import {
 function paddedNum(number, width, precision) {
   const parsedNumber = parseFloat(number);
 
-  const numStr = parsedNumber
-    .toFixed(precision || 0)
-    .replace(',', '.'); // Really need to replace?
+  const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
 
   return numStr.padStart(width);

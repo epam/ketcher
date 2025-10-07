@@ -189,7 +189,8 @@ export function fromTemplateOnAtom(
       sg.type === 'SUP' ? sg.isExpanded() : null,
       sg.data.name,
     );
-    sgAction.operations.reverse().forEach((oper) => {
+    sgAction.operations.reverse();
+    sgAction.operations.forEach((oper) => {
       action.addOp(oper);
     });
   });

@@ -446,9 +446,10 @@ export async function setSettingsOptions(
 
   let openedSection = SettingsSection.General;
 
-  for (const { option, value } of options.sort((a, b) =>
-    a.option.localeCompare(b.option),
-  )) {
+  const sortedOptions = [...options];
+  sortedOptions.sort((a, b) => a.option.localeCompare(b.option));
+
+  for (const { option, value } of sortedOptions) {
     const section = optionsToSectionMap.get(option) ?? SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);

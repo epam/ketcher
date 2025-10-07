@@ -176,7 +176,8 @@ export function fromPaste(
       sg.data.name,
       sg,
     );
-    sgAction.operations.reverse().forEach((oper) => {
+    sgAction.operations.reverse();
+    sgAction.operations.forEach((oper) => {
       action.addOp(oper);
     });
   });
@@ -258,10 +259,13 @@ export function fromPaste(
 function getStructCenter(struct: Struct): Vec2 {
   const isOnlyOneSGroup = struct.sgroups.size === 1;
   if (isOnlyOneSGroup) {
-    const onlyOneStructsSgroupId = struct.sgroups.keys().next().value;
-    const sgroup = struct.sgroups.get(onlyOneStructsSgroupId) as SGroup;
-    if (sgroup.isContracted()) {
-      return sgroup.getContractedPosition(struct).position;
+    const sgroupIterator = struct.sgroups.keys().next();
+    if (!sgroupIterator.done) {
+      const onlyOneStructsSgroupId = sgroupIterator.value;
+      const sgroup = struct.sgroups.get(onlyOneStructsSgroupId);
+      if (sgroup?.isContracted()) {
+        return sgroup.getContractedPosition(struct).position;
+      }
     }
   }
   if (struct.atoms.size > 0) {

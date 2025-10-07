@@ -53,7 +53,8 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   }, [fallback, monomers, presetMonomers, options]);
 
   const preparedPreviewData = useMemo(() => {
-    const sortedData = previewData.sort((a, b) => {
+    const sortedData = [...previewData];
+    sortedData.sort((a, b) => {
       if (isAlternatives) {
         return a.monomerName.localeCompare(b.monomerName);
       } else {

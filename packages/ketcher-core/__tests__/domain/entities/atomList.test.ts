@@ -35,9 +35,13 @@ describe('label', () => {
 describe('equals', () => {
   it.each([false, true])('should return true', (notList) => {
     const atomList = new AtomList(createParams({ notList }));
+    const sortedIds = [...ids];
+    sortedIds.sort((a, b) => a - b);
+    sortedIds.reverse();
+
     const dataWithReverseIds = {
       notList,
-      ids: [...ids].sort((a, b) => a - b).reverse(),
+      ids: sortedIds,
     };
     const atomList2 = new AtomList(dataWithReverseIds);
 
@@ -46,9 +50,13 @@ describe('equals', () => {
 
   it('should return false', () => {
     const atomList = new AtomList(createParams());
+    const sortedIds = [...ids];
+    sortedIds.sort((a, b) => a - b);
+    sortedIds.reverse();
+
     const dataWithReverseIds = {
       notList: true,
-      ids: [...ids].sort((a, b) => a - b).reverse(),
+      ids: sortedIds,
     };
     const atomList2 = new AtomList(dataWithReverseIds);
 

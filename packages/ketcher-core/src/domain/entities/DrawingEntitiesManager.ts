@@ -1555,22 +1555,21 @@ export class DrawingEntitiesManager {
       monomersGroupedByX?.set(x, monomer);
     });
 
-    const sortedGroupedMonomers = [...monomersGroupedByY.entries()]
-      .map(([y, groupedByX]) => {
+    const sortedGroupedMonomers = [...monomersGroupedByY.entries()].map(
+      ([y, groupedByX]) => {
         const groupedByYArray: [number, [number, BaseMonomer][]] = [
           y,
           [...groupedByX.entries()],
         ];
 
         return groupedByYArray;
-      })
-      .sort((a, b) => a[0] - b[0]);
+      },
+    );
+    sortedGroupedMonomers.sort((a, b) => a[0] - b[0]);
 
     sortedGroupedMonomers.forEach(([y, groupedByY], index) => {
-      sortedGroupedMonomers[index] = [
-        y,
-        groupedByY.sort((a, b) => Number(a[0]) - Number(b[0])),
-      ];
+      groupedByY.sort((a, b) => Number(a[0]) - Number(b[0]));
+      sortedGroupedMonomers[index] = [y, groupedByY];
     });
 
     const monomerXToIndexInMatrix = {};

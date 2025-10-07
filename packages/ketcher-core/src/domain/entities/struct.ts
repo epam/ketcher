@@ -240,28 +240,32 @@ export class Struct {
     multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
-    atomSet = atomSet ?? new Pile<number>(this.atoms.keys());
-    bondSet = bondSet ?? new Pile<number>(this.bonds.keys());
-    simpleObjectsSet =
+    const atomSetToUse = atomSet ?? new Pile<number>(this.atoms.keys());
+    const initialBondSet = bondSet ?? new Pile<number>(this.bonds.keys());
+    const simpleObjectsToCopy =
       simpleObjectsSet ?? new Pile<number>(this.simpleObjects.keys());
-    textsSet = textsSet ?? new Pile<number>(this.texts.keys());
-    imagesSet = imagesSet ?? new Pile<number>(this.images.keys());
-    multitailArrowsSet =
+    const textsToCopy = textsSet ?? new Pile<number>(this.texts.keys());
+    const imagesToCopy = imagesSet ?? new Pile<number>(this.images.keys());
+    const multitailArrowsToCopy =
       multitailArrowsSet ?? new Pile<number>(this.multitailArrows.keys());
-    rgroupAttachmentPointSet =
+    const rgroupAttachmentPointsToCopy =
       rgroupAttachmentPointSet ??
       new Pile<number>(this.rgroupAttachmentPoints.keys());
-    aidMap = aidMap ?? new Map();
-    const bidMap = bidMapEntity ?? new Map();
+    const atomIdMap = aidMap ?? new Map<number, number>();
+    const bidMap = bidMapEntity ?? new Map<number, number>();
 
-    bondSet = bondSet.filter((bid) => {
-      const bond = this.bonds.get(bid)!;
-      return atomSet!.has(bond.begin) && atomSet!.has(bond.end);
+    const bondSetToUse = initialBondSet.filter((bid) => {
+      const bond = this.bonds.get(bid);
+      return (
+        bond != null &&
+        atomSetToUse.has(bond.begin) &&
+        atomSetToUse.has(bond.end)
+      );
     });
 
     const fidMask = new Pile();
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid)) fidMask.add(atom.fragment);
+      if (atomSetToUse.has(aid)) fidMask.add(atom.fragment);
     });
 
     const fidMap = new Map();
@@ -293,14 +297,14 @@ export class Struct {
     });
     // atoms in not RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
-        aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)));
+      if (atomSetToUse.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
+        atomIdMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });
     // atoms in RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
-        aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)));
+      if (atomSetToUse.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
+        atomIdMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });
 
@@ -309,23 +313,25 @@ export class Struct {
 
       // TODO: delete type check
       if (fragment && fragment instanceof Fragment) {
-        cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aidMap!)); // clone Fragments
+        cp.frags.set(newfid, fragment.clone(atomIdMap)); // clone Fragments
       }
     });
 
     this.bonds.forEach((bond, bid) => {
-      if (bondSet!.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aidMap!)));
+      if (bondSetToUse.has(bid)) {
+        bidMap.set(bid, cp.bonds.add(bond.clone(atomIdMap)));
+      }
     });
 
     const sgroupIdMap = {};
     this.sgroups.forEach((sg, sgroupId) => {
-      if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
+      if (sg.atoms.some((aid) => !atomSetToUse.has(aid))) return;
       const oldSgroup = sg;
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup, aidMap!)
-          : SGroup.clone(sg, aidMap!);
+          ? MonomerMicromolecule.clone(oldSgroup, atomIdMap)
+          : SGroup.clone(sg, atomIdMap);
 
       const id = cp.sgroups.add(sg);
       sg.id = id;
@@ -344,7 +350,7 @@ export class Struct {
     });
 
     this.functionalGroups.forEach((fg) => {
-      if (fg.relatedSGroup.atoms.some((aid) => !atomSet!.has(aid))) return;
+      if (fg.relatedSGroup.atoms.some((aid) => !atomSetToUse.has(aid))) return;
       const sgroup = cp.sgroups.get(sgroupIdMap[fg.relatedSGroupId]);
       // It is possible that there is no sgroup in case of templates library rendering
       // Sgroup is deleteing before render to show templates without brackets (see RenderStruct.prepareStruct method)
@@ -352,26 +358,38 @@ export class Struct {
       cp.functionalGroups.add(fg);
     });
 
-    simpleObjectsSet.forEach((soid) => {
-      cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone());
+    simpleObjectsToCopy.forEach((soid) => {
+      const simpleObject = this.simpleObjects.get(soid);
+      if (simpleObject) {
+        cp.simpleObjects.add(simpleObject.clone());
+      }
     });
 
-    textsSet.forEach((id) => {
-      cp.texts.add(this.texts.get(id)!.clone());
+    textsToCopy.forEach((id) => {
+      const text = this.texts.get(id);
+      if (text) {
+        cp.texts.add(text.clone());
+      }
     });
 
-    imagesSet.forEach((id) => {
-      cp.images.add(this.images.get(id)!.clone());
+    imagesToCopy.forEach((id) => {
+      const image = this.images.get(id);
+      if (image) {
+        cp.images.add(image.clone());
+      }
     });
 
-    multitailArrowsSet.forEach((id) => {
-      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
+    multitailArrowsToCopy.forEach((id) => {
+      const arrow = this.multitailArrows.get(id);
+      if (arrow) {
+        cp.multitailArrows.add(arrow.clone());
+      }
     });
 
-    rgroupAttachmentPointSet.forEach((id) => {
+    rgroupAttachmentPointsToCopy.forEach((id) => {
       const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
       assert(rgroupAttachmentPoint != null);
-      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aidMap));
+      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(atomIdMap));
     });
 
     if (!dropRxnSymbols) {
@@ -690,7 +708,7 @@ export class Struct {
     const global = !atomSet || atomSet.size === 0;
 
     this.atoms.forEach((atom, aid) => {
-      if (global || atomSet!.has(aid)) extend(atom.pp);
+      if (global || atomSet?.has(aid)) extend(atom.pp);
     });
     if (global) {
       this.rxnPluses.forEach((item) => {

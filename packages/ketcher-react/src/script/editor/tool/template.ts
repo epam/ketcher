@@ -44,14 +44,21 @@ import TemplatePreview from './templatePreview';
 
 export function getBondFlipSign(struct: Struct, bond: Bond): number {
   const xy0 = new Vec2();
-  const frid = struct.atoms.get(bond?.begin as number)?.fragment;
-  const frIds = struct.getFragmentIds(frid as number);
+  const beginAtom = struct.atoms.get(bond.begin);
+  if (!beginAtom) {
+    return 1;
+  }
+  const frIds = struct.getFragmentIds(beginAtom.fragment);
   let count = 0;
 
-  let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop;
+  const firstHalfBond =
+    bond.hb1 !== undefined ? struct.halfBonds.get(bond.hb1) : undefined;
+  let loop = firstHalfBond?.loop;
 
   if (loop && loop < 0) {
-    loop = struct.halfBonds.get(bond?.hb2 as number)?.loop;
+    const secondHalfBond =
+      bond.hb2 !== undefined ? struct.halfBonds.get(bond.hb2) : undefined;
+    loop = secondHalfBond?.loop;
   }
 
   if (loop && loop >= 0) {
@@ -190,10 +197,13 @@ class TemplateTool implements Tool {
   }
 
   private get isNeedToShowRemoveAbbreviationPopup(): boolean {
-    const targetId = this.findKeyOfRelatedGroupId(
-      this.closestItem?.id as number,
-    );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    const closestItemId = this.closestItem?.id;
+    if (closestItemId === undefined) {
+      return false;
+    }
+    const targetId = this.findKeyOfRelatedGroupId(closestItemId);
+    const functionalGroup =
+      targetId !== undefined ? this.functionalGroups.get(targetId) : undefined;
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -206,7 +216,9 @@ class TemplateTool implements Tool {
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
 
-  private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
+  private findKeyOfRelatedGroupId(
+    clickedClosestItemId: number,
+  ): number | undefined {
     let targetId;
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -340,20 +352,31 @@ class TemplateTool implements Tool {
         } // undo previous action
 
         dragCtx.sign2 = sign;
-        const [action, pasteItems] = fromTemplateOnBondAction(
+        const actionResult = fromTemplateOnBondAction(
           this.editor.render.ctab,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
-        ) as Array<any>;
+        );
 
-        dragCtx.action = action;
-        this.editor.update(dragCtx.action, true);
+        if (Array.isArray(actionResult)) {
+          const [action, pasteItems] = actionResult;
 
-        dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
-        this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
+          dragCtx.action = action;
+          this.editor.update(dragCtx.action, true);
+
+          dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
+          this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
+        } else {
+          actionResult.then(([action, pasteItems]) => {
+            dragCtx.action = action;
+            this.editor.update(dragCtx.action, true);
+            dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
+            this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
+          });
+        }
       }
       return true;
     }
@@ -468,14 +491,18 @@ class TemplateTool implements Tool {
     ) {
       dragCtx.action.perform(restruct); // revert drag action
 
-      const promise = fromTemplateOnBondAction(
+      const actionResult = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
-      ) as Promise<any>;
+      );
+
+      const promise = Array.isArray(actionResult)
+        ? Promise.resolve(actionResult)
+        : actionResult;
 
       promise.then(([action, pasteItems]) => {
         const mergeItems = getItemsToFuse(this.editor, pasteItems);
@@ -570,14 +597,18 @@ class TemplateTool implements Tool {
         }
         dragCtx.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-        const promise = fromTemplateOnBondAction(
+        const actionResult = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
-        ) as Promise<any>;
+        );
+
+        const promise = Array.isArray(actionResult)
+          ? Promise.resolve(actionResult)
+          : actionResult;
 
         promise.then(([action, pasteItems]) => {
           if (!this.isModeFunctionalGroup) {

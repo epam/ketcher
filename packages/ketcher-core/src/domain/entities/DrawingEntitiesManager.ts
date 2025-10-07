@@ -248,17 +248,26 @@ export class DrawingEntitiesManager {
     return connectedMonomers;
   }
 
-  public get allEntities() {
-    return [
-      ...(this.monomers as Map<number, DrawingEntity>),
-      ...(this.polymerBonds as Map<number, DrawingEntity>),
-      ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
-      ...(this.atoms as Map<number, DrawingEntity>),
-      ...(this.bonds as Map<number, DrawingEntity>),
-      ...(this.rxnArrows as Map<number, DrawingEntity>),
-      ...(this.multitailArrows as Map<number, DrawingEntity>),
-      ...(this.rxnPluses as Map<number, DrawingEntity>),
-    ];
+  public get allEntities(): Array<[number, DrawingEntity]> {
+    const entities: Array<[number, DrawingEntity]> = [];
+    const appendEntries = <T extends DrawingEntity>(
+      collection: Map<number, T>,
+    ) => {
+      collection.forEach((value, key) => {
+        entities.push([key, value]);
+      });
+    };
+
+    appendEntries(this.monomers);
+    appendEntries(this.polymerBonds);
+    appendEntries(this.monomerToAtomBonds);
+    appendEntries(this.atoms);
+    appendEntries(this.bonds);
+    appendEntries(this.rxnArrows);
+    appendEntries(this.multitailArrows);
+    appendEntries(this.rxnPluses);
+
+    return entities;
   }
 
   public get allEntitiesArray() {
@@ -922,22 +931,26 @@ export class DrawingEntitiesManager {
 
   public deletePolymerBond(polymerBond: PolymerBond | HydrogenBond) {
     const command = new Command();
-    const firstAttachmentPoint =
-      polymerBond.firstMonomer.getAttachmentPointByBond(
-        polymerBond,
-      ) as AttachmentPointName;
-    const secondAttachmentPoint =
-      polymerBond.secondMonomer?.getAttachmentPointByBond(
-        polymerBond,
-      ) as AttachmentPointName;
+    const firstMonomer = polymerBond.firstMonomer;
+    const secondMonomer = polymerBond.secondMonomer;
+    const firstAttachmentPoint = firstMonomer.getAttachmentPointByBond(
+      polymerBond,
+    );
+    const secondAttachmentPoint = secondMonomer?.getAttachmentPointByBond(
+      polymerBond,
+    );
+
+    if (!secondMonomer || !firstAttachmentPoint || !secondAttachmentPoint) {
+      throw new Error('Polymer bond attachment points are not defined');
+    }
 
     const operation = new PolymerBondDeleteOperation(
       polymerBond,
       this.deletePolymerBondChangeModel.bind(this, polymerBond),
       (_polymerBond?: PolymerBond | HydrogenBond) =>
         this.finishPolymerBondCreationModelChange(
-          polymerBond.firstMonomer,
-          polymerBond.secondMonomer as BaseMonomer,
+          firstMonomer,
+          secondMonomer,
           firstAttachmentPoint,
           secondAttachmentPoint,
           MACROMOLECULES_BOND_TYPES.SINGLE,

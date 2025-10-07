@@ -73,4 +73,4 @@ export const LIBRARY_TAB_INDEX = {
   CHEM: 3,
 } as const;
 
-export const FavoriteStarSymbol = '★' as const;
+export const FavoriteStarSymbol = '★';

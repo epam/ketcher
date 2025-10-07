@@ -141,13 +141,13 @@ class ReText extends ReObject {
   show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render;
     const paper = render.paper;
-    const paperScale = Scale.modelToCanvas(this.item.position!, options);
+    const paperScale = Scale.modelToCanvas(this.item.position, options);
 
     let shiftY = 0;
     this.paths = [];
     // TODO: create parser in ketcher-core package
     const rawContentState: RawDraftContentState | null = this.item.content
-      ? (JSON.parse(this.item.content) as RawDraftContentState)
+      ? JSON.parse(this.item.content)
       : null;
     if (!rawContentState) {
       return;

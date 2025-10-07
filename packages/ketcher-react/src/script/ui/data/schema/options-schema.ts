@@ -459,10 +459,16 @@ export default optionsSchema;
 export function getDefaultOptions(): Record<string, any> {
   if (!optionsSchema.properties) return {};
 
-  return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = (optionsSchema.properties[prop] as ExtendedSchema).default;
-    return res;
-  }, {});
+  return Object.keys(optionsSchema.properties).reduce<Record<string, any>>(
+    (res, prop) => {
+      const propertySchema = optionsSchema.properties?.[prop];
+      if (propertySchema && typeof propertySchema !== 'boolean') {
+        res[prop] = propertySchema.default;
+      }
+      return res;
+    },
+    {},
+  );
 }
 
 export function validation(settings): Record<string, string> | null {

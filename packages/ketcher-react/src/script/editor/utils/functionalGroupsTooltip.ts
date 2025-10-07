@@ -1,11 +1,5 @@
 import assert from 'assert';
-import {
-  Bond,
-  MonomerMicromolecule,
-  SGroup,
-  Struct,
-  UnresolvedMonomer,
-} from 'ketcher-core';
+import { MonomerMicromolecule, SGroup, Struct, UnresolvedMonomer } from 'ketcher-core';
 import Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -66,8 +60,7 @@ function makeBonds(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  Array.from(existingStruct.bonds).forEach((value) => {
-    const [_, bond] = value as [number, Bond];
+  existingStruct.bonds.forEach((bond) => {
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =
       sGroup.atoms.includes(bond.begin) || sGroup.atoms.includes(bond.end);

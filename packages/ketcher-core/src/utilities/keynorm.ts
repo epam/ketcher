@@ -16,8 +16,27 @@
 
 import * as KN from 'w3c-keyname';
 
-const mac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
+type NavigatorWithUAData = Navigator & {
+  userAgentData?: {
+    platform?: string;
+  };
+};
+
+const isMacPlatform = () => {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+
+  const navigatorWithUAData = navigator as NavigatorWithUAData;
+  const platform =
+    navigatorWithUAData.userAgentData?.platform ??
+    navigatorWithUAData.userAgent ??
+    '';
+
+  return /mac/i.test(platform);
+};
+
+const mac = isMacPlatform();
 
 function normalizeKeyName(name) {
   const parts = name.split(/\+(?!$)/);

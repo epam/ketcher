@@ -17,35 +17,56 @@
 import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
-export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
+type SimpleObjectPoint = {
+  x: number;
+  y: number;
+  z?: number;
+};
+
+type CircleSimpleObjectData = {
+  mode: 'circle';
+  pos: [SimpleObjectPoint, SimpleObjectPoint];
+};
+
+type SimpleObjectData = CircleSimpleObjectData | {
+  mode: SimpleObjectMode;
+  pos: SimpleObjectPoint[];
+};
+
+export function simpleObjectToStruct(
+  ketItem: { data: SimpleObjectData; selected: boolean },
+  struct: Struct,
+): Struct {
   const object =
-    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
+    ketItem.data.mode === 'circle'
+      ? convertCircleSimpleObjectToEllipse(ketItem.data)
+      : ketItem.data;
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);
   struct.simpleObjects.add(simpleObject);
   return struct;
 }
 
-/**
- * @deprecated TODO to remove after release 2.3
- * As circle has been migrated to ellipses here is function for converting old files data with circles to ellipse type
- * @param ketItem
- */
-function circleToEllipse(ketItem) {
-  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
-  const pos0 = ketItem.data.pos[0];
+function convertCircleSimpleObjectToEllipse(
+  data: CircleSimpleObjectData,
+): { mode: SimpleObjectMode; pos: SimpleObjectPoint[] } {
+  const [center, perimeterPoint] = data.pos;
+  const radius = Vec2.dist(new Vec2(perimeterPoint), new Vec2(center));
+  const normalizedRadius = Math.abs(radius);
+  const centerZ = center.z ?? 0;
+
   return {
     mode: SimpleObjectMode.ellipse,
     pos: [
       {
-        x: pos0.x - Math.abs(radius),
-        y: pos0.y - Math.abs(radius),
-        z: pos0.z - Math.abs(radius),
+        x: center.x - normalizedRadius,
+        y: center.y - normalizedRadius,
+        z: centerZ - normalizedRadius,
       },
       {
-        x: pos0.x + Math.abs(radius),
-        y: pos0.y + Math.abs(radius),
-        z: pos0.z + Math.abs(radius),
+        x: center.x + normalizedRadius,
+        y: center.y + normalizedRadius,
+        z: centerZ + normalizedRadius,
       },
     ],
   };

@@ -512,8 +512,35 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = async (event: KeyboardEvent) => {
+      let isPropagationStopped = false;
+
+      const originalStopPropagation = event.stopPropagation.bind(event);
+      const originalStopImmediatePropagation =
+        event.stopImmediatePropagation?.bind(event);
+
+      event.stopPropagation = () => {
+        isPropagationStopped = true;
+        originalStopPropagation();
+      };
+
+      if (originalStopImmediatePropagation) {
+        event.stopImmediatePropagation = () => {
+          isPropagationStopped = true;
+          originalStopImmediatePropagation();
+        };
+      }
+
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) await this.mode.onKeyDown(event);
+
+      event.stopPropagation = originalStopPropagation;
+
+      if (originalStopImmediatePropagation) {
+        event.stopImmediatePropagation = originalStopImmediatePropagation;
+      }
+
+      if (!isPropagationStopped) {
+        await this.mode.onKeyDown(event);
+      }
     };
 
     document.addEventListener('keydown', this.keydownEventHandler);

@@ -23,6 +23,7 @@ import {
   Action,
   fromTemplateOnCanvas,
   fromMultipleMove,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { MODES } from 'src/constants';
@@ -96,7 +97,10 @@ class TemplatePreview {
   }
 
   movePreview(event: PointerEvent) {
-    this.position = this.editor.render.page2obj(event);
+    this.position = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
 
     const struct = this.editor.struct();
     const previewTarget = this.getPreviewTarget();

@@ -26,6 +26,7 @@ import {
   Struct,
   vectorUtils,
   Atom,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -127,7 +128,7 @@ class BondTool implements Tool {
     this.editor.hover(null);
     this.editor.selection(null);
     this.dragCtx = {
-      xy0: rnd.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
       item:
         attachmentAtomId === undefined
           ? ci
@@ -156,7 +157,7 @@ class BondTool implements Tool {
       const dragCtx = this.dragCtx;
       const hasItem = 'item' in dragCtx;
 
-      const pos = rnd.page2obj(event);
+      const pos = CoordinateTransformation.pageToModel(event, rnd);
       let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
       if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
 
@@ -251,7 +252,7 @@ class BondTool implements Tool {
           endAtom = endAtom.id;
         } else {
           endAtom = this.atomProps;
-          const xy1 = rnd.page2obj(event);
+          const xy1 = CoordinateTransformation.pageToModel(event, rnd);
           dist = Vec2.dist(dragCtx.xy0, xy1);
           if (beginPos) {
             // rotation only, leght of bond = 1;
@@ -318,10 +319,14 @@ class BondTool implements Tool {
         const editorOptions = this.editor.options();
         const QUARTER_OF_BOND_WIDTH = 20;
         const QUARTER_OF_BOND_HEIGHT = 5;
-        const xy = render.page2obj({
-          clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
-          clientY: event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
-        });
+        const xy = CoordinateTransformation.pageToModel(
+          {
+            clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
+            clientY:
+              event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
+          },
+          render,
+        );
         const v = new Vec2(1.0 / 2, 0).rotate(
           this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );

@@ -63,6 +63,7 @@ import {
   Struct,
   Vec2,
   OperationType,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1923,7 +1924,7 @@ class Editor implements KetcherEditor {
   }
 
   findItem(event: any, maps: Array<string> | null, skip: any = null) {
-    const pos = new Vec2(this.render.page2obj(event));
+    const pos = CoordinateTransformation.pageToModel(event, this.render);
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }

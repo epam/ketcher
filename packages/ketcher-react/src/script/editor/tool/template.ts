@@ -34,6 +34,7 @@ import {
   BondAttr,
   AtomAttr,
   MonomerMicromolecule,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -276,7 +277,7 @@ class TemplateTool implements Tool {
     this.editor.hover(null);
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: this.editor.findItem(this.event, this.findItems),
     };
 
@@ -317,7 +318,10 @@ class TemplateTool implements Tool {
       return true;
     }
 
-    const eventPosition = this.editor.render.page2obj(event);
+    const eventPosition = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;

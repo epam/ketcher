@@ -133,7 +133,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private addNewArrowWithClicking(event) {
     const ci = this.editor.findItem(event, ['rxnArrows']);
-    const p0 = this.render.page2obj(event);
+    const p0 = CoordinateTransformation.pageToModel(event, this.render);
 
     if (!ci) {
       const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];

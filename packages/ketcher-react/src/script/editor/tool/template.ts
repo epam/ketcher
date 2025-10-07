@@ -193,7 +193,10 @@ class TemplateTool implements Tool {
     const targetId = this.findKeyOfRelatedGroupId(
       this.closestItem?.id as number,
     );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    if (targetId === undefined) {
+      return false;
+    }
+    const functionalGroup = this.functionalGroups.get(targetId);
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -206,7 +209,12 @@ class TemplateTool implements Tool {
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
 
-  private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
+  private findKeyOfRelatedGroupId(
+    clickedClosestItemId?: number,
+  ): number | undefined {
+    if (clickedClosestItemId === undefined) {
+      return undefined;
+    }
     let targetId;
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(

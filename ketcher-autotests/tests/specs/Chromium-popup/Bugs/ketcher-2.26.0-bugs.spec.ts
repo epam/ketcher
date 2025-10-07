@@ -51,6 +51,8 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -180,12 +182,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       { option: BondsSetting.BondThickness, value: '2.6' },
     ]);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -541,12 +538,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
     await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 18: Single up bond is being painted over correctly', async () => {
@@ -1355,12 +1347,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 47: "Unordered_map::at: key not found" error is not displayed after adding of specific reactions from the RDF file', async () => {
@@ -1814,12 +1801,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifyPNGExport(page);
   });
 
   test.fail(

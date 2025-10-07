@@ -43,6 +43,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -54,7 +55,6 @@ import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
 } from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -543,11 +543,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Case 19: Unipositive ions default value is shown in mM for double-stranded sequence selection', async () => {
@@ -1102,11 +1098,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Case 42: System not ignores carrige return in text blocks in loaded CDX', async () => {

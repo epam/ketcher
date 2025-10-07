@@ -32,13 +32,12 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   getMonomerLocator,
@@ -1108,14 +1107,7 @@ test.describe('Arrow button on Library cards', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifySVGExport(page);
   });
 
   test('Case 29: Check Undo/Redo after addition monomers by arrow button', async () => {

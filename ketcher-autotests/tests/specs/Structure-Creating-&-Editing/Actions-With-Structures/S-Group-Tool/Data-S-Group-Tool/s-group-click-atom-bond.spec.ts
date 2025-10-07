@@ -13,7 +13,6 @@ import {
   ZoomOutByKeyboard,
   BondType,
   MolFileFormat,
-  takeElementScreenshot,
   moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -28,13 +27,13 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { removeAbbreviation } from '@utils/sgroup/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -399,18 +398,12 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7408
      */
-    const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/S-Groups/Nucleotides and Superatoms.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeElementScreenshot(page, saveStructureArea);
-    await SaveStructureDialog(page).cancel();
+    await verifyPNGExport(page);
   });
 
   test('Checking export to SVG of Sugar, Base and Phosphate type S-Group ', async () => {
@@ -425,18 +418,12 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      * Works wrong becaus if bug: https://github.com/epam/ketcher/issues/7408
      */
-    const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/S-Groups/Nucleotides and Superatoms.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeElementScreenshot(page, saveStructureArea);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Checking export to CDXML of Sugar, Base and Phosphate type S-Group ', async () => {

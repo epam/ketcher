@@ -215,12 +215,10 @@ class Editor implements KetcherEditor {
   constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
       clientArea,
-      Object.assign(
-        {
-          microModeScale: SCALE,
-        },
-        options,
-      ),
+      {
+        microModeScale: SCALE,
+        ...(options || {}),
+      },
       prevEditor?.render,
       options.reuseRestructIfExist !== false,
     );
@@ -417,10 +415,10 @@ class Editor implements KetcherEditor {
     this.render.clientArea.innerHTML = '';
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
-    this.render = new Render(
-      this.render.clientArea,
-      Object.assign({ microModeScale: SCALE }, value),
-    );
+    this.render = new Render(this.render.clientArea, {
+      microModeScale: SCALE,
+      ...(value || {}),
+    });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
     this.struct(struct.clone());
@@ -1069,7 +1067,7 @@ class Editor implements KetcherEditor {
     );
 
     // Create new object to trigger Redux state update in UI layer
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 
     this.render.update(true);
   }
@@ -1134,7 +1132,7 @@ class Editor implements KetcherEditor {
     );
     this.monomerCreationState.potentialAttachmentPoints.delete(atomId);
 
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 
     this.render.update(true);
   }
@@ -1348,7 +1346,7 @@ class Editor implements KetcherEditor {
 
     this.monomerCreationState.assignedAttachmentPoints.set(name, newAtomPair);
 
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 
     this.render.update(true);
   }
@@ -1381,7 +1379,7 @@ class Editor implements KetcherEditor {
       this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
     }
 
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 
     this.render.update(true);
   }
@@ -1419,7 +1417,7 @@ class Editor implements KetcherEditor {
     this.preservedConnectionPointData.delete(attachmentAtomId);
     this.monomerCreationState.assignedAttachmentPoints.delete(name);
 
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 
     this.render.update(true);
   }
@@ -1435,7 +1433,7 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
     this.render.update(true);
   }
 
@@ -1672,7 +1670,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.monomerCreationState = Object.assign({}, this.monomerCreationState);
+    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
   }
 
   selection(ci?: any) {

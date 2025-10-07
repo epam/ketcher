@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Input from './Input/Input';
 
 function SelectCheckbox({ schema, ...props }) {
@@ -29,5 +30,13 @@ function SelectCheckbox({ schema, ...props }) {
 
   return <Input schema={currentSchema} {...props} />;
 }
+
+SelectCheckbox.propTypes = {
+  schema: PropTypes.shape({
+    type: PropTypes.string,
+    title: PropTypes.string,
+    default: PropTypes.bool,
+  }).isRequired,
+};
 
 export default SelectCheckbox;

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -149,6 +150,19 @@ const MeasureInput = ({
       </div>
     </div>
   );
+};
+
+MeasureInput.propTypes = {
+  schema: PropTypes.shape({
+    properties: PropTypes.object,
+  }).isRequired,
+  extraSchema: PropTypes.object,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  extraValue: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onExtraChange: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };
 
 export default MeasureInput;

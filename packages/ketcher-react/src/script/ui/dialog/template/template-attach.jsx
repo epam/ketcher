@@ -16,6 +16,7 @@
 
 import { Dialog, StructEditor } from '../../views/components';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import {
   initAttach,
@@ -346,6 +347,36 @@ class Attach extends Component {
     );
   }
 }
+
+Attach.propTypes = {
+  onInit: PropTypes.func.isRequired,
+  tmpl: PropTypes.shape({
+    props: PropTypes.object,
+    struct: PropTypes.object.isRequired,
+  }).isRequired,
+  ketcherId: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  atomid: PropTypes.number.isRequired,
+  bondid: PropTypes.number.isRequired,
+  templateLib: PropTypes.arrayOf(
+    PropTypes.shape({
+      struct: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      props: PropTypes.shape({
+        group: PropTypes.string,
+      }),
+    }),
+  ).isRequired,
+  onNameEdit: PropTypes.func.isRequired,
+  onAttachEdit: PropTypes.func.isRequired,
+  globalSettings: PropTypes.object.isRequired,
+  formState: PropTypes.shape({
+    valid: PropTypes.bool,
+  }).isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onOk: PropTypes.func.isRequired,
+};
 
 export default connect(
   (store) => ({

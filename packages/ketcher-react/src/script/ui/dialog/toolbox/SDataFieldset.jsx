@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { Field } from '../../component/form/form/form';
 import { getSelectOptionsFromSchema } from '../../utils';
 import Select from '../../component/form/Select';
@@ -77,5 +78,16 @@ function SDataFieldset({ formState }) {
     </fieldset>
   );
 }
+
+SDataFieldset.propTypes = {
+  formState: PropTypes.shape({
+    result: PropTypes.shape({
+      context: PropTypes.string,
+      fieldName: PropTypes.string,
+      fieldValue: PropTypes.string,
+      radiobuttons: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+};
 
 export default SDataFieldset;

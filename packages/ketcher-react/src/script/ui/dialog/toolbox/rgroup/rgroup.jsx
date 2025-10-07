@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Form, { Field } from '../../../component/form/form/form';
 
 import ButtonList from '../../../component/form/buttonlist';
@@ -47,5 +48,14 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
     </Dialog>
   );
 }
+
+RGroup.propTypes = {
+  values: PropTypes.arrayOf(PropTypes.any).isRequired,
+  type: PropTypes.string.isRequired,
+  formState: PropTypes.shape({
+    result: PropTypes.object.isRequired,
+  }).isRequired,
+  disabledIds: PropTypes.arrayOf(PropTypes.any).isRequired,
+};
 
 export default connect((store) => ({ formState: store.modal.form }))(RGroup);

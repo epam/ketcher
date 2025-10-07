@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import { fileOpener } from '../../utils';
@@ -73,5 +74,14 @@ class OpenButton extends Component {
     );
   }
 }
+
+OpenButton.propTypes = {
+  server: PropTypes.object,
+  onLoad: PropTypes.func,
+  onError: PropTypes.func,
+  children: PropTypes.node,
+  type: PropTypes.string,
+  className: PropTypes.string,
+};
 
 export default OpenButton;

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component, createRef } from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
 import {
@@ -300,6 +301,17 @@ async function pasteByKeydown(clipboardData) {
   }
   return data;
 }
+
+ClipArea.propTypes = {
+  target: PropTypes.object,
+  focused: PropTypes.func.isRequired,
+  onCopy: PropTypes.func.isRequired,
+  onCut: PropTypes.func.isRequired,
+  onLegacyCut: PropTypes.func.isRequired,
+  onPaste: PropTypes.func.isRequired,
+  formats: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onLegacyPaste: PropTypes.func.isRequired,
+};
 
 export const actions = ['cut', 'copy', 'paste'];
 

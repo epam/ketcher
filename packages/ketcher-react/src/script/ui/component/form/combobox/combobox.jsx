@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import classes from './combobox.module.less';
 
@@ -77,5 +78,14 @@ class ComboBox extends Component {
     );
   }
 }
+
+ComboBox.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  schema: PropTypes.shape({
+    enumNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+  value: PropTypes.string.isRequired,
+  type: PropTypes.string,
+};
 
 export default ComboBox;

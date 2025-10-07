@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Form, { SelectOneOf } from '../../component/form/form/form';
 import { connect } from 'react-redux';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
@@ -76,5 +77,17 @@ function Sgroup({ formState, ...props }) {
     </Dialog>
   );
 }
+
+Sgroup.propTypes = {
+  formState: PropTypes.shape({
+    valid: PropTypes.bool.isRequired,
+    result: PropTypes.shape({
+      type: PropTypes.string.isRequired,
+      fieldValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      context: PropTypes.string,
+      fieldName: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+};
 
 export default connect((store) => ({ formState: store.modal.form }))(Sgroup);

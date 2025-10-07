@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import classes from './Tabs.module.less';
 import clsx from 'clsx';
 
@@ -70,5 +71,19 @@ class Tabs extends Component {
     );
   }
 }
+
+Tabs.propTypes = {
+  tabIndex: PropTypes.number,
+  changeTab: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      caption: PropTypes.string.isRequired,
+      component: PropTypes.elementType,
+      props: PropTypes.object,
+    }),
+  ).isRequired,
+  contentClassName: PropTypes.string,
+};
 
 export default Tabs;

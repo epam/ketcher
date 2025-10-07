@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component, createRef } from 'react';
+import PropTypes from 'prop-types';
 
 import Editor from '../../../../editor';
 import { LoadingCircles } from '../Spinner/LoadingCircles';
@@ -362,5 +363,48 @@ class StructEditor extends Component {
     );
   }
 }
+
+StructEditor.propTypes = {
+  onZoomIn: PropTypes.func.isRequired,
+  onZoomOut: PropTypes.func.isRequired,
+  indigoVerification: PropTypes.bool,
+  prevKetcherId: PropTypes.string,
+  ketcherId: PropTypes.string.isRequired,
+  options: PropTypes.object.isRequired,
+  serverSettings: PropTypes.object.isRequired,
+  onShowMacromoleculesErrorMessage: PropTypes.func,
+  onInit: PropTypes.func.isRequired,
+  showAttachmentPoints: PropTypes.bool,
+  toolOpts: PropTypes.object,
+  Tag: PropTypes.string,
+  className: PropTypes.string,
+  struct: PropTypes.object,
+  tool: PropTypes.string,
+  onSelectionChange: PropTypes.func,
+  onElementEdit: PropTypes.func,
+  onEnhancedStereoEdit: PropTypes.func,
+  onQuickEdit: PropTypes.func,
+  onBondEdit: PropTypes.func,
+  onZoomChanged: PropTypes.func,
+  onRgroupEdit: PropTypes.func,
+  onSgroupEdit: PropTypes.func,
+  onRemoveFG: PropTypes.func,
+  onMessage: PropTypes.func,
+  onAromatizeStruct: PropTypes.func,
+  onDearomatizeStruct: PropTypes.func,
+  onAttachEdit: PropTypes.func,
+  onCipChange: PropTypes.func,
+  onConfirm: PropTypes.func,
+  onShowInfo: PropTypes.func,
+  onApiSettings: PropTypes.func,
+  onUpdateFloatingTools: PropTypes.func,
+  render: PropTypes.object,
+  groupStruct: PropTypes.object,
+  sGroup: PropTypes.object,
+};
+
+StructEditor.defaultProps = {
+  Tag: 'div',
+};
 
 export default StructEditor;

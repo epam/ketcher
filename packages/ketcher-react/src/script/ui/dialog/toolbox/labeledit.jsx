@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Form, { Field } from '../../component/form/form/form';
 
 import { Dialog } from '../../views/components';
@@ -102,5 +103,15 @@ function LabelEdit(props) {
     </Dialog>
   );
 }
+
+LabelEdit.propTypes = {
+  letter: PropTypes.string,
+  formState: PropTypes.shape({
+    result: PropTypes.shape({
+      label: PropTypes.string,
+    }).isRequired,
+    valid: PropTypes.bool.isRequired,
+  }).isRequired,
+};
 
 export default connect((store) => ({ formState: store.modal.form }))(LabelEdit);

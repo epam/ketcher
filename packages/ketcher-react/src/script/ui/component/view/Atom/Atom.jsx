@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import classes from './Atom.module.less';
 import clsx from 'clsx';
 
@@ -32,5 +33,15 @@ function Atom({ el, shortcut, selected, ...props }) {
     </button>
   );
 }
+
+Atom.propTypes = {
+  shortcut: PropTypes.string,
+  selected: PropTypes.bool,
+  el: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    number: PropTypes.number.isRequired,
+    label: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default Atom;

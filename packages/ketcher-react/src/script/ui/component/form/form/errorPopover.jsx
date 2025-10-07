@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { Popover } from '@mui/material';
 import styled from '@emotion/styled';
 
@@ -51,3 +52,9 @@ export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
     </>
   </ErrorMessage>
 );
+
+ErrorPopover.propTypes = {
+  error: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  anchorEl: PropTypes.object,
+};

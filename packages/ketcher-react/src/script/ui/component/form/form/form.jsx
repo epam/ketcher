@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component, useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import Ajv from 'ajv';
 import { ErrorPopover } from './errorPopover';
@@ -105,6 +106,20 @@ class Form extends Component {
   }
 }
 
+Form.propTypes = {
+  schema: PropTypes.shape({
+    key: PropTypes.string,
+    title: PropTypes.string,
+    properties: PropTypes.object,
+  }).isRequired,
+  init: PropTypes.object,
+  onUpdate: PropTypes.func.isRequired,
+  result: PropTypes.object.isRequired,
+  customValid: PropTypes.object,
+  errors: PropTypes.object,
+  children: PropTypes.node.isRequired,
+};
+
 export default connect(null, (dispatch) => ({
   onUpdate: (result, valid, errors) => {
     dispatch(updateFormState({ result, valid, errors }));
@@ -159,6 +174,13 @@ function Label({ labelPos, title, children, ...props }) {
     </label>
   );
 }
+
+Label.propTypes = {
+  labelPos: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  title: PropTypes.string,
+  children: PropTypes.node,
+  tooltip: PropTypes.string,
+};
 
 function Field(props) {
   const {
@@ -241,6 +263,21 @@ function Field(props) {
   );
 }
 
+Field.propTypes = {
+  name: PropTypes.string.isRequired,
+  extraName: PropTypes.string,
+  onChange: PropTypes.func,
+  component: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  labelPos: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  className: PropTypes.string,
+  extraLabel: PropTypes.string,
+  title: PropTypes.string,
+  tooltip: PropTypes.string,
+  schema: PropTypes.object,
+  'data-testid': PropTypes.string,
+  extraSchema: PropTypes.object,
+};
+
 function FieldWithModal(props) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -293,6 +330,17 @@ function FieldWithModal(props) {
     </Label>
   );
 }
+
+FieldWithModal.propTypes = {
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  labelPos: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  className: PropTypes.string,
+  onEdit: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  tooltip: PropTypes.string,
+  schema: PropTypes.object,
+};
 
 function CustomQueryField(props) {
   const {
@@ -363,6 +411,16 @@ function CustomQueryField(props) {
   );
 }
 
+CustomQueryField.propTypes = {
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  labelPos: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  className: PropTypes.string,
+  onCheckboxChange: PropTypes.func.isRequired,
+  checkboxValue: PropTypes.bool.isRequired,
+  schema: PropTypes.object,
+};
+
 const SelectOneOf = (props) => {
   const { title, name, schema, ...prop } = props;
 
@@ -387,6 +445,17 @@ const SelectOneOf = (props) => {
       data-testid={props['data-testid']}
     />
   );
+};
+
+SelectOneOf.propTypes = {
+  title: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  schema: PropTypes.objectOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+    }),
+  ).isRequired,
+  'data-testid': PropTypes.string,
 };
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {

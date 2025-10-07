@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import FontFaceObserver from 'font-face-observer';
 import Select from './Select';
@@ -95,5 +96,10 @@ function SystemFonts(props) {
     />
   );
 }
+
+SystemFonts.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
 export default SystemFonts;

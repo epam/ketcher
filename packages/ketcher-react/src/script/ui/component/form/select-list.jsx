@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 // import classes from './select.module.less'
 
 function SelectList({
@@ -49,5 +50,21 @@ function SelectList({
 function isSplitIndex(index, splitIndexes) {
   return index > 0 && splitIndexes && splitIndexes.includes(index);
 }
+
+SelectList.propTypes = {
+  schema: PropTypes.shape({
+    enum: PropTypes.arrayOf(PropTypes.any).isRequired,
+    enumNames: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+  value: PropTypes.any,
+  onSelect: PropTypes.func.isRequired,
+  splitIndexes: PropTypes.arrayOf(PropTypes.number),
+  selected: PropTypes.any,
+  component: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  classes: PropTypes.shape({
+    selected: PropTypes.string,
+    split: PropTypes.string,
+  }).isRequired,
+};
 
 export default SelectList;

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { Field } from '../../component/form/form/form';
 import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
@@ -58,5 +59,13 @@ function SGroupFieldset({ formState }) {
     </fieldset>
   );
 }
+
+SGroupFieldset.propTypes = {
+  formState: PropTypes.shape({
+    result: PropTypes.shape({
+      type: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+};
 
 export default SGroupFieldset;

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { xor } from 'lodash/fp';
 
 function oneOrMore(multipl, values, item) {
@@ -55,5 +56,22 @@ function ButtonList({
     </ul>
   );
 }
+
+ButtonList.propTypes = {
+  value: PropTypes.arrayOf(PropTypes.any).isRequired,
+  onChange: PropTypes.func.isRequired,
+  schema: PropTypes.shape({
+    items: PropTypes.shape({
+      enum: PropTypes.arrayOf(PropTypes.any).isRequired,
+      enumNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }).isRequired,
+  }).isRequired,
+  disabledIds: PropTypes.arrayOf(PropTypes.any).isRequired,
+  multiple: PropTypes.bool,
+  classes: PropTypes.shape({
+    selected: PropTypes.string,
+  }).isRequired,
+  testId: PropTypes.string,
+};
 
 export default ButtonList;

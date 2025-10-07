@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useRef } from 'react';
+import PropTypes from 'prop-types';
 
 import action from '../action';
 import clsx from 'clsx';
@@ -79,6 +80,19 @@ function ActionButton({
     </button>
   );
 }
+
+ActionButton.propTypes = {
+  name: PropTypes.string.isRequired,
+  action: PropTypes.shape({
+    shortcut: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+    action: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  }).isRequired,
+  status: PropTypes.object,
+  onAction: PropTypes.func.isRequired,
+  disableableButtons: PropTypes.arrayOf(PropTypes.string).isRequired,
+  indigoVerification: PropTypes.bool,
+};
 
 function findActiveMenuItem(menuItems, status) {
   let activeMenuItem = null;
@@ -175,6 +189,25 @@ function ActionMenu({ name, menu, className, role, ...props }) {
     </menu>
   );
 }
+
+ActionMenu.propTypes = {
+  name: PropTypes.string.isRequired,
+  menu: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        id: PropTypes.string,
+        menu: PropTypes.array,
+      }),
+    ]),
+  ).isRequired,
+  className: PropTypes.string,
+  role: PropTypes.string,
+  status: PropTypes.object.isRequired,
+  visibleTools: PropTypes.object.isRequired,
+  opened: PropTypes.string,
+  onOpen: PropTypes.func.isRequired,
+};
 
 function toolMargin(menuName, menu, visibleTools) {
   if (!visibleTools[menuName]) return {};

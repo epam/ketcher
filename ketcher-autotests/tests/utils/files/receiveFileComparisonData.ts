@@ -44,9 +44,14 @@ export enum FileType {
   FASTA = 'fasta',
 }
 
-type FileTypeHandler =
-  | ((page: Page) => Promise<string>)
-  | ((page: Page, fileFormat?: FileFormat) => Promise<string>);
+type HandlerWithOptionalFormat = (
+  page: Page,
+  fileFormat?: FileFormat,
+) => Promise<string>;
+
+type HandlerWithoutFormat = (page: Page) => Promise<string>;
+
+type FileTypeHandler = HandlerWithoutFormat | HandlerWithOptionalFormat;
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
@@ -77,13 +82,11 @@ async function getFileContent(
     throw new Error(`Unsupported file type: ${fileType}`);
   }
 
-  // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
-  return fileFormat
-    ? (handler as (page: Page, fileFormat: FileFormat) => Promise<string>)(
-        page,
-        fileFormat,
-      )
-    : (handler as (page: Page) => Promise<string>)(page);
+  if (fileFormat !== undefined && isHandlerWithFormat(handler)) {
+    return handler(page, fileFormat);
+  }
+
+  return handler(page);
 }
 
 export async function verifyFileExport(
@@ -152,6 +155,18 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
 
 type KetcherApiFunction = (format?: string) => Promise<string>;
 
+function isSupportedFileExtension(
+  extension: string,
+): extension is keyof typeof GetFileMethod {
+  return extension in GetFileMethod;
+}
+
+function isHandlerWithFormat(
+  handler: FileTypeHandler,
+): handler is HandlerWithOptionalFormat {
+  return handler.length > 1;
+}
+
 function filterByIndexes(file: string[], indexes?: number[]): string[] {
   if (!indexes) {
     return file;
@@ -172,8 +187,8 @@ async function receiveFile({
   const fileExtension = fileName.split('.').pop();
 
   const methodName =
-    fileExtension && fileExtension in GetFileMethod
-      ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
+    fileExtension && isSupportedFileExtension(fileExtension)
+      ? GetFileMethod[fileExtension]
       : GetFileMethod.ket;
 
   const pageData = fileFormat
@@ -183,9 +198,16 @@ async function receiveFile({
   await page.waitForFunction(() => window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format
-      ? (window.ketcher[method] as KetcherApiFunction)(format)
-      : (window.ketcher[method] as KetcherApiFunction)();
+    const apiMethod = window.ketcher[method];
+    const isKetcherApiFunction = (
+      value: unknown,
+    ): value is KetcherApiFunction => typeof value === 'function';
+
+    if (!isKetcherApiFunction(apiMethod)) {
+      throw new Error(`Method ${String(method)} is not available on ketcher`);
+    }
+
+    return format ? apiMethod(format) : apiMethod();
   }, pageData);
 
   return file.split('\n');

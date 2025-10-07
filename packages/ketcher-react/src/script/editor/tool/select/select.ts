@@ -1,3 +1,4 @@
+packages / ketcher - react / src / script / editor / tool / atom.ts;
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *

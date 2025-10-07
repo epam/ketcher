@@ -321,7 +321,8 @@ class BondTool implements Tool {
         const xy = CoordinateTransformation.pageToModel(
           {
             clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
-            clientY: event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
+            clientY:
+              event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
           },
           render,
         );

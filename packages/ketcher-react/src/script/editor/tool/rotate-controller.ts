@@ -806,7 +806,10 @@ class RotateController {
     event.stopPropagation();
 
     this.isMovingCenter = false;
-    this.originalCenter = CoordinateTransformation.pageToModel(event, this.render);
+    this.originalCenter = CoordinateTransformation.pageToModel(
+      event,
+      this.render,
+    );
   };
 
   private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {

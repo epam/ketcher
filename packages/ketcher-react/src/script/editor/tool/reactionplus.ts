@@ -55,9 +55,7 @@ class ReactionPlusTool implements Tool {
       this.dragCtx.action = fromMultipleMove(
         rnd.ctab,
         this.editor.selection() || {},
-        CoordinateTransformation.pageToModel(event, rnd).sub(
-          this.dragCtx.xy0,
-        ),
+        CoordinateTransformation.pageToModel(event, rnd).sub(this.dragCtx.xy0),
       );
       editor.update(this.dragCtx.action, true);
     } else {

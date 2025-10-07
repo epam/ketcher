@@ -28,10 +28,12 @@ type CircleSimpleObjectData = {
   pos: [SimpleObjectPoint, SimpleObjectPoint];
 };
 
-type SimpleObjectData = CircleSimpleObjectData | {
-  mode: SimpleObjectMode;
-  pos: SimpleObjectPoint[];
-};
+type SimpleObjectData =
+  | CircleSimpleObjectData
+  | {
+      mode: SimpleObjectMode;
+      pos: SimpleObjectPoint[];
+    };
 
 export function simpleObjectToStruct(
   ketItem: { data: SimpleObjectData; selected: boolean },
@@ -47,9 +49,10 @@ export function simpleObjectToStruct(
   return struct;
 }
 
-function convertCircleSimpleObjectToEllipse(
-  data: CircleSimpleObjectData,
-): { mode: SimpleObjectMode; pos: SimpleObjectPoint[] } {
+function convertCircleSimpleObjectToEllipse(data: CircleSimpleObjectData): {
+  mode: SimpleObjectMode;
+  pos: SimpleObjectPoint[];
+} {
   const [center, perimeterPoint] = data.pos;
   const radius = Vec2.dist(new Vec2(perimeterPoint), new Vec2(center));
   const normalizedRadius = Math.abs(radius);

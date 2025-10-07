@@ -305,7 +305,8 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
         continue; // eslint-disable-line no-continue
       }
       if (line !== 'M  V30 BEGIN CTAB') throw Error('CTAB V3000 invalid');
-      for (var i = 0; i < ctabLines.length; ++i) {
+      let i;
+      for (i = 0; i < ctabLines.length; ++i) {
         if (ctabLines[shift + i].trim() === 'M  V30 END CTAB') break;
       }
       const lines = ctabLines.slice(shift, shift + i + 1);
@@ -366,7 +367,7 @@ function parseRxn3000(
   const rGroups = [];
   for (let i = 0; i < ctabLines.length; ++i) {
     const line = ctabLines[i].trim();
-    var j;
+    let j;
 
     if (line.startsWith('M  V30 COUNTS')) {
       // do nothing
@@ -400,7 +401,7 @@ function parseRxn3000(
   const molLines = molLinesReactants
     .concat(molLinesProducts)
     .concat(molLinesAgents);
-  for (j = 0; j < molLines.length; ++j) {
+  for (let j = 0; j < molLines.length; ++j) {
     const mol = parseCTabV3000(molLines[j], countsSplit);
     mols.push(mol);
   }

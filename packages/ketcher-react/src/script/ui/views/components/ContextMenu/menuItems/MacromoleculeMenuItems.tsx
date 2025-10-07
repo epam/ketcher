@@ -11,16 +11,12 @@ const MacromoleculeMenuItems = (
   props: MenuItemsProps<MacromoleculeContextMenuProps>,
 ) => {
   const [action, hidden] = useMonomerExpansionHandlers();
+  const functionalGroups = props.propsFromTrigger?.functionalGroups;
 
-  const multipleMonomersSelected =
-    props?.propsFromTrigger?.functionalGroups !== undefined &&
-    props.propsFromTrigger.functionalGroups.length > 1;
+  const multipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
 
   const expandingDisabled =
-    props.propsFromTrigger?.functionalGroups !== undefined &&
-    props.propsFromTrigger.functionalGroups.every(
-      (fg) => !canExpandMonomer(fg),
-    );
+    functionalGroups?.every((fg) => !canExpandMonomer(fg)) ?? false;
 
   const expandText = multipleMonomersSelected
     ? 'Expand monomers'

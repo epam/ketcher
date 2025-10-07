@@ -14,7 +14,7 @@ export type ModifyAminoAcidsViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class ModifyAminoAcidsView extends TransientView {
-  public static viewName = 'ModifyAminoAcidsView';
+  public static readonly viewName = 'ModifyAminoAcidsView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

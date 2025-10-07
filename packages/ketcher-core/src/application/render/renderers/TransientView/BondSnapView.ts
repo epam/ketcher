@@ -6,7 +6,7 @@ import { TransientView } from './TransientView';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class BondSnapView extends TransientView {
-  public static viewName = 'BondSnapView';
+  public static readonly viewName = 'BondSnapView';
 
   public static show<P extends PolymerBond>(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

@@ -54,11 +54,14 @@ const MonomerItem = ({
 
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
-  const colorCode = isAmbiguousMonomerLibraryItem(item)
-    ? ''
-    : item.props.MonomerType === MONOMER_TYPES.CHEM
-    ? item.props.MonomerType
-    : item.props.MonomerNaturalAnalogCode;
+  let colorCode = '';
+
+  if (!isAmbiguousMonomerLibraryItem(item)) {
+    colorCode =
+      item.props.MonomerType === MONOMER_TYPES.CHEM
+        ? item.props.MonomerType
+        : item.props.MonomerNaturalAnalogCode;
+  }
 
   const monomerKey: string = getMonomerUniqueKey(item);
   const monomerItem = isAmbiguousMonomerLibraryItem(item)

@@ -21,7 +21,7 @@ export type AutochainPreviewViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class AutochainPreviewView extends TransientView {
-  public static viewName = 'AutochainPreviewView';
+  public static readonly viewName = 'AutochainPreviewView';
 
   private static showSingleMonomerPreview(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
@@ -40,10 +40,10 @@ export class AutochainPreviewView extends TransientView {
       );
     const monomerAutochainPreviewSize = {
       width: Number(
-        monomerAutochainSymbolElement?.getAttribute('data-actual-width') || 0,
+        monomerAutochainSymbolElement?.getAttribute('data-actual-width') ?? 0,
       ),
       height: Number(
-        monomerAutochainSymbolElement?.getAttribute('data-actual-height') || 0,
+        monomerAutochainSymbolElement?.getAttribute('data-actual-height') ?? 0,
       ),
     };
 

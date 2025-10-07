@@ -137,10 +137,9 @@ function handleAtomPropsDialog({
   dispatch,
 }: HandlersProps) {
   const selection = editor.selection();
-  const atomsSelected = selection?.atoms;
   const restruct = editor.render.ctab;
 
-  if (atomsSelected && atomsSelected.includes(hoveredItemId)) {
+  if (selection && selection.atoms?.includes(hoveredItemId)) {
     const atoms = getSelectedAtoms(selection, restruct.molecule);
     const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
 
@@ -348,7 +347,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = Object.assign({}, Atom.attrlist, element);
+    element = { ...Atom.attrlist, ...(element || {}) };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));

@@ -26,7 +26,7 @@ const minimalAngleDifference = (a: number, b: number) => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class AngleSnapView extends TransientView {
-  public static viewName = 'AngleSnapView';
+  public static readonly viewName = 'AngleSnapView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

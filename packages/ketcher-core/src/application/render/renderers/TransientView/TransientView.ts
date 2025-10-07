@@ -1,7 +1,7 @@
 import { D3SvgElementSelection } from 'application/render/types';
 
 export abstract class TransientView {
-  public static viewName: string;
+  public static readonly viewName: string;
 
   public static show<P>(
     _transientLayer: D3SvgElementSelection<SVGGElement, void>,

@@ -29,8 +29,8 @@ interface DragContextInProgress extends BaseDragContext {
 type ReactionArrowDragContext = InitialDragContext | DragContextInProgress;
 
 export class ReactionArrowAddTool implements ArrowAddTool {
-  static MIN_LENGTH = 0.5;
-  static DEFAULT_LENGTH = 1;
+  static readonly MIN_LENGTH = 0.5;
+  static readonly DEFAULT_LENGTH = 1;
 
   private dragCtx: ReactionArrowDragContext | null = null;
 

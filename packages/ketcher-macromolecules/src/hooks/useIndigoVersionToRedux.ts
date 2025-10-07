@@ -10,7 +10,7 @@ export function useIndigoVersionToRedux() {
   useEffect(() => {
     async function fetchIndigoInfo() {
       const indigo = IndigoProvider.getIndigo();
-      if (indigo && indigo.info) {
+      if (indigo?.info) {
         try {
           const info = await indigo.info();
           dispatch(

@@ -2476,12 +2476,14 @@ export class DrawingEntitiesManager {
     let isValid = true;
 
     this.monomers.forEach((monomer) => {
-      const monomerType =
-        monomer instanceof AmbiguousMonomer
-          ? monomer.monomerClass === KetMonomerClass.CHEM
+      let monomerType = monomer.monomerItem.props.MonomerType;
+
+      if (monomer instanceof AmbiguousMonomer) {
+        monomerType =
+          monomer.monomerClass === KetMonomerClass.CHEM
             ? MONOMER_CONST.CHEM
-            : monomer.monomers[0].monomerItem.props.MonomerType
-          : monomer.monomerItem.props.MonomerType;
+            : monomer.monomers[0].monomerItem.props.MonomerType;
+      }
       monomerTypes.add(monomerType);
       if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
         isValid = false;
@@ -3147,12 +3149,19 @@ export class DrawingEntitiesManager {
     rnaBaseMonomerOrLabel: RNABase | AmbiguousMonomer | string,
     isDnaAntisense: boolean,
   ) {
+    let baseLabelKey: string;
+
+    if (typeof rnaBaseMonomerOrLabel === 'string') {
+      baseLabelKey = rnaBaseMonomerOrLabel;
+    } else if (rnaBaseMonomerOrLabel instanceof AmbiguousMonomer) {
+      baseLabelKey = rnaBaseMonomerOrLabel.monomerItem.label;
+    } else {
+      baseLabelKey =
+        rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode;
+    }
+
     return DrawingEntitiesManager.antisenseChainBasesMap(isDnaAntisense)[
-      typeof rnaBaseMonomerOrLabel === 'string'
-        ? rnaBaseMonomerOrLabel
-        : rnaBaseMonomerOrLabel instanceof AmbiguousMonomer
-        ? rnaBaseMonomerOrLabel.monomerItem.label
-        : rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode
+      baseLabelKey
     ];
   }
 

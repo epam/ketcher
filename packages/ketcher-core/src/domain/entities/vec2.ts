@@ -23,8 +23,8 @@ export interface Point {
   z?: number;
 }
 export class Vec2 {
-  static ZERO = new Vec2(0, 0);
-  static UNIT = new Vec2(1, 1);
+  static readonly ZERO = new Vec2(0, 0);
+  static readonly UNIT = new Vec2(1, 1);
 
   x: number;
   y: number;

@@ -139,7 +139,7 @@ function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
 function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   let closestAtom: null | number = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'atoms' ? skip.id : null;
+  const skipId = skip?.map === 'atoms' ? skip.id : null;
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
 
@@ -191,7 +191,7 @@ function findClosestBond(
   let closestBond: number | null = null;
   let closestBondCenter: number | null = null;
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'bonds' ? skip.id : null;
+  const skipId = skip?.map === 'bonds' ? skip.id : null;
 
   minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
@@ -367,11 +367,7 @@ function findClosestRGroup(restruct: ReStruct, pos: Vec2, skip, minDist) {
   let ret: ClosestReturnType = null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
-    if (
-      rgid !== skip &&
-      rgroup.labelBox &&
-      rgroup.labelBox.contains(pos, 0.5)
-    ) {
+    if (rgid !== skip && rgroup.labelBox?.contains(pos, 0.5)) {
       const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
       if (!ret || dist < minDist) {
@@ -515,7 +511,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
 
 function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
   const sGroups = restruct.sgroups;
-  const skipId = skip && skip.map === 'functionalGroups' ? skip.id : null;
+  const skipId = skip?.map === 'functionalGroups' ? skip.id : null;
   for (const [reSGroupId, reSGroup] of sGroups.entries()) {
     if (reSGroupId === skipId) continue;
 
@@ -597,8 +593,10 @@ function findCloseMerge(
   const struct = restruct.molecule;
 
   selected.atoms.forEach((aid) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pos.atoms.set(aid, struct.atoms.get(aid)!.pp);
+    const atom = struct.atoms.get(aid);
+    if (!atom) return;
+
+    pos.atoms.set(aid, atom.pp);
   });
 
   selected.bonds.forEach((bid) => {

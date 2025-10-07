@@ -45,7 +45,7 @@ export interface BondAttributes {
 }
 
 export class Bond extends BaseMicromoleculeEntity {
-  static PATTERN = {
+  static readonly PATTERN = {
     TYPE: {
       SINGLE: 1,
       DOUBLE: 2,
@@ -84,7 +84,7 @@ export class Bond extends BaseMicromoleculeEntity {
     },
   };
 
-  static attrlist = {
+  static readonly attrlist = {
     type: Bond.PATTERN.TYPE.SINGLE,
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,

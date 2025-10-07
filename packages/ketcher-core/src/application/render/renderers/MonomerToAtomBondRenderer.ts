@@ -125,7 +125,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
     // TODO refactor this with a more proper solution without checking atom renderer here
     const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
-    if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
+    if (!atomRenderer?.rootBoundingClientRect) {
       setTimeout(() => {
         // Check if this renderer is still the active renderer for this bond
         if (this.monomerToAtomBond.renderer === this) {
@@ -149,7 +149,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
           'data-fromconnectionpoint',
           this.monomerToAtomBond.monomer.getAttachmentPointByBond(
             this.monomerToAtomBond,
-          ) || '',
+          ) ?? '',
         )
         .attr(
           'transform',

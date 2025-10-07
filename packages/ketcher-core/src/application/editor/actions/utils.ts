@@ -115,7 +115,12 @@ export function atomForNewBond(restruct, id, bond?) {
     atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
   );
   const prevBond = restruct.molecule.bonds.get(prevBondId);
-  const prevBondType = prevBond ? prevBond.type : bond ? bond.type : 1;
+  let prevBondType = 1;
+  if (prevBond) {
+    prevBondType = prevBond.type;
+  } else if (bond) {
+    prevBondType = bond.type;
+  }
 
   restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid);

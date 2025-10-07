@@ -4,9 +4,10 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  verifyPNGExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,11 +51,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Save PNG with reagent NH3 above arrow', async ({ page }) => {
@@ -66,11 +63,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
   test('Detection text as reagent and render reagent information in PNG format in "Preview" tab', async ({
@@ -84,11 +77,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
       'KET/text-reagents-below-and-above-arrow.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
   test('Detection text as reagent and render reagent information in SVG format in "Preview" tab', async ({
@@ -102,11 +91,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
       'KET/text-reagents-below-and-above-arrow.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Check that text nodes do not loses after save to SVG', async ({
@@ -117,10 +102,6 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with correct text nodes.
     */
     await openFileAndAddToCanvas(page, 'KET/text-nodes-on-reaction.ket');
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 });

@@ -15,6 +15,7 @@ import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -314,11 +315,7 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
   test('Saving structure with QUERY in Smiles format', async ({ page }) => {

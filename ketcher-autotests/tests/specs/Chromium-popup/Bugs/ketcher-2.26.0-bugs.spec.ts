@@ -51,6 +51,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -1800,12 +1801,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifyPNGExport(page);
   });
 
   test.fail(

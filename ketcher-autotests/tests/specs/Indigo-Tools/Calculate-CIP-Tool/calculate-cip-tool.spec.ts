@@ -28,6 +28,7 @@ import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
@@ -48,8 +49,6 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -671,11 +670,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
   test('Erase and Undo atoms with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {

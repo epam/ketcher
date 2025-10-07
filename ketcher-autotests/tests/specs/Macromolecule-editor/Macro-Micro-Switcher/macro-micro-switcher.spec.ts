@@ -39,6 +39,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { waitForMonomerPreview } from '@utils/macromolecules';
@@ -63,10 +64,8 @@ import {
   resetZoomLevelToDefault,
 } from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -1816,11 +1815,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-      await takeEditorScreenshot(page);
+      await verifyPNGExport(page);
     },
   );
 

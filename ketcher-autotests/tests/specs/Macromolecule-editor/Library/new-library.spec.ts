@@ -4,7 +4,6 @@ import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
   takeEditorScreenshot,
-  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
 } from '@utils/canvas';
@@ -42,14 +41,13 @@ import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerType } from '@utils/types';
 import { MolFileFormat } from '@utils/formats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { pageReload } from '@utils/common/helpers';
@@ -1320,16 +1318,7 @@ for (const monomer of monomerToDrag) {
       FileType.MOL,
       MolFileFormat.v3000,
     );
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
@@ -1387,16 +1376,7 @@ for (const monomer of monomerToDrag) {
       FileType.MOL,
       MolFileFormat.v3000,
     );
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,

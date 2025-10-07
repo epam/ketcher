@@ -25,6 +25,7 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
@@ -40,8 +41,6 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -878,11 +877,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Elliptical arrows can be saved to the png.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
   test('Case 28: Image not missing stereochemistry information when using abbreviations', async () => {

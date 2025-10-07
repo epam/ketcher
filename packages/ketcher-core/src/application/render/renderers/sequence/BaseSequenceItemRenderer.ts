@@ -844,7 +844,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private isSubChainNode(
     node: SubChainNode | BackBoneSequenceNode,
   ): node is SubChainNode {
-    return node && node.monomers !== undefined;
+    return node?.monomers !== undefined;
   }
 
   public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {

@@ -119,8 +119,8 @@ export class ImageTool implements Tool {
   onFileUpload(clickPosition: Vec2): void {
     const errorHandler = this.editor.errorHandler;
     this.element.onchange = null;
-    if (this.element.files && this.element.files[0]) {
-      const file = this.element.files[0];
+    const file = this.element.files?.[0];
+    if (file) {
       const image = new Image();
       const reader = new FileReader();
 
@@ -186,7 +186,7 @@ export class ImageTool implements Tool {
         }
       };
 
-      reader.readAsDataURL(this.element.files[0]);
+      reader.readAsDataURL(file);
     }
   }
 

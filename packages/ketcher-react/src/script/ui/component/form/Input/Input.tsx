@@ -76,8 +76,8 @@ export function GenericInput({
 
 GenericInput.val = function (ev, schema) {
   const input = ev.target;
-  const isInteger = schema && schema.type === 'integer';
-  const isFloat = schema && schema.type === 'number';
+  const isInteger = schema?.type === 'integer';
+  const isFloat = schema?.type === 'number';
 
   const isNumber =
     input.type === 'number' || input.type === 'range' || isInteger || isFloat;
@@ -274,12 +274,10 @@ function enumSchema(schema, cbOrIndex) {
 
   if (typeof cbOrIndex === 'function') {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
-      const title = isTypeValue
-        ? item.title
-        : schema.enumNames && schema.enumNames[i];
+      const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
         title !== undefined ? title : item,
-        item && item.value !== undefined ? item.value : item,
+        item?.value !== undefined ? item.value : item,
       );
     });
   }
@@ -320,7 +318,7 @@ function singleSelectCtrl(component, schema, onChange) {
 function multipleSelectCtrl(component, schema, onChange) {
   return {
     multiple: true,
-    selected: (testVal, values) => values && values.indexOf(testVal) >= 0,
+    selected: (testVal, values) => values?.indexOf(testVal) >= 0,
     onSelect: (ev, values) => {
       if (component.val) {
         const val = component.val(ev, schema);
@@ -357,7 +355,7 @@ function componentMap(props: Props) {
   }
 
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
-    if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
+    if (type === 'checkbox' || schema?.type === 'boolean') {
       return CheckBox;
     }
 

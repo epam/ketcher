@@ -122,7 +122,7 @@ class ChainTool implements Tool {
       item: ci,
     };
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.selection({ atoms: [ci.id] }); // for change atom
       // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
       atomLongtapEvent(this, rnd);
@@ -161,7 +161,7 @@ class ChainTool implements Tool {
       return true;
     }
 
-    if (dragCtx && dragCtx.stopTapping) {
+    if (dragCtx?.stopTapping) {
       dragCtx.stopTapping();
     }
 
@@ -218,7 +218,7 @@ class ChainTool implements Tool {
     removeInfoLabelFromAtoms(struct);
     this.editor.render.update(true, null);
 
-    if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
+    if (this.dragCtx?.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;
     }
     if (atom) {
@@ -260,7 +260,7 @@ class ChainTool implements Tool {
       dragCtx.stopTapping();
     }
 
-    if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
+    if (!dragCtx.action && dragCtx.item?.map === 'bonds') {
       const bond = molecule.bonds.get(dragCtx.item.id) as Bond;
 
       dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {

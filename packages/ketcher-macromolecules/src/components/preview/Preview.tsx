@@ -42,7 +42,7 @@ export const Preview = () => {
       return;
     }
 
-    if (preview && preview.type) {
+    if (preview?.type) {
       previewRef.current.setAttribute('style', '');
       setIsPreviewVisible(true);
 

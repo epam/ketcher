@@ -141,7 +141,7 @@ class SGroupTool implements Tool {
         atomsResult = [];
       }
 
-      if (atomsResult && atomsResult.length > 0) {
+      if (atomsResult?.length > 0) {
         for (const id of atomsResult) {
           const fgId = FunctionalGroup.findFunctionalGroupByAtom(
             functionalGroups,
@@ -175,7 +175,7 @@ class SGroupTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci?.map === 'atoms' && functionalGroups.size) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -196,7 +196,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'bonds') {
+    if (ci?.map === 'bonds' && functionalGroups.size) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -218,7 +218,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'functionalGroups') {
+    if (ci?.map === 'functionalGroups' && functionalGroups.size) {
       const sgroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
@@ -294,8 +294,7 @@ class SGroupTool implements Tool {
     let extraBonds;
     const result: Array<number> = [];
     if (
-      ci &&
-      ci.map === 'functionalGroups' &&
+      ci?.map === 'functionalGroups' &&
       functionalGroups.size &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     )
@@ -547,12 +546,10 @@ class SGroupTool implements Tool {
             return;
           }
 
-          const isDataSg =
-            sg &&
-            sg.getAttrs().context === newSg.attrs.context &&
-            !isQuerySGroup;
+          const canReplaceExistingDataSg =
+            sg?.getAttrs().context === newSg.attrs.context && !isQuerySGroup;
 
-          if (isDataSg) {
+          if (sg && canReplaceExistingDataSg) {
             const action = fromSeveralSgroupAddition(
               restruct,
               newSg.type,
@@ -660,7 +657,7 @@ function getContextBySelection(restruct, selection) {
 function fromContextType(id, editor, newSg, currSelection) {
   const restruct = editor.render.ctab;
   const sg = restruct.molecule.sgroups.get(id);
-  const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
+  const sourceAtoms = sg?.atoms || currSelection.atoms || [];
   const context = newSg.attrs.context;
 
   if (

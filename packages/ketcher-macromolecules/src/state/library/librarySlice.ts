@@ -561,24 +561,24 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   sortedGroupCodes.sort((a, b) => a.localeCompare(b));
 
   return sortedGroupCodes.reduce((result, code) => {
-      const group: Group = {
-        groupTitle:
-          code === NoNaturalAnalogueGroupCode
-            ? NoNaturalAnalogueGroupTitle
-            : code,
-        groupItems: [],
-      };
-      sortedPreparedData[code].forEach((item: MonomerItemType) => {
-        group.groupItems.push({
-          ...item,
-          props: { ...item.props },
-        });
+    const group: Group = {
+      groupTitle:
+        code === NoNaturalAnalogueGroupCode
+          ? NoNaturalAnalogueGroupTitle
+          : code,
+      groupItems: [],
+    };
+    sortedPreparedData[code].forEach((item: MonomerItemType) => {
+      group.groupItems.push({
+        ...item,
+        props: { ...item.props },
       });
-      if (group.groupItems.length) {
-        result.push(group);
-      }
-      return result;
-    }, preparedGroups);
+    });
+    if (group.groupItems.length) {
+      result.push(group);
+    }
+    return result;
+  }, preparedGroups);
 };
 
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;

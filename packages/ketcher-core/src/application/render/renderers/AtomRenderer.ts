@@ -321,16 +321,24 @@ export class AtomRenderer extends BaseRenderer {
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
+    let hydrogenLabelAnchor = 'middle';
+
+    if (shouldHydrogenBeOnLeft) {
+      hydrogenLabelAnchor = 'end';
+    } else if (hydrogenAmount > 0) {
+      hydrogenLabelAnchor = 'start';
+    }
+
+    let hydrogenLabelXOffset = 0;
+    if (shouldHydrogenBeOnLeft) {
+      hydrogenLabelXOffset = 5;
+    } else if (hydrogenAmount > 0) {
+      hydrogenLabelXOffset = -5;
+    }
+
     textElement
-      ?.attr(
-        'text-anchor',
-        shouldHydrogenBeOnLeft
-          ? 'end'
-          : hydrogenAmount > 0
-          ? 'start'
-          : 'middle',
-      )
-      .attr('x', shouldHydrogenBeOnLeft ? 5 : hydrogenAmount > 0 ? -5 : 0);
+      ?.attr('text-anchor', hydrogenLabelAnchor)
+      .attr('x', hydrogenLabelXOffset);
 
     return textElement;
   }

@@ -227,8 +227,8 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
-  for (let i = 0; i < rr.length; ++i) {
-    r[i] = new Vec2(rr[i].x, rr[i].y);
+  for (const point of rr) {
+    r.push(new Vec2(point.x, point.y));
   }
 
   restruct.bonds.forEach((bond, bid) => {
@@ -402,8 +402,8 @@ function isPointInPolygon(r, p) {
   let flag1 = false;
   let flag0 = false;
 
-  for (let i = 0; i < r.length; ++i) {
-    const v1 = Vec2.diff(r[i], p);
+  for (const point of r) {
+    const v1 = Vec2.diff(point, p);
     const w1 = Vec2.diff(v1, v0);
     const n1 = Vec2.dot(n, v1);
     const d1 = Vec2.dot(d, v1);

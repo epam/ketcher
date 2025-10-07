@@ -65,8 +65,7 @@ export class Atom extends DrawingEntity {
   private calculateConnections() {
     let connectionsAmount = 0;
 
-    for (let i = 0; i < this.bonds.length; i++) {
-      const bond = this.bonds[i];
+    for (const bond of this.bonds) {
       if (bond instanceof MonomerToAtomBond) {
         connectionsAmount += 1;
       } else {

@@ -415,10 +415,10 @@ class Editor implements KetcherEditor {
     this.render.clientArea.innerHTML = '';
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
-    this.render = new Render(
-      this.render.clientArea,
-      { microModeScale: SCALE, ...(value || {}) },
-    );
+    this.render = new Render(this.render.clientArea, {
+      microModeScale: SCALE,
+      ...(value || {}),
+    });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
     this.struct(struct.clone());

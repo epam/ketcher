@@ -37,6 +37,7 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
+import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
@@ -424,6 +425,25 @@ const MonomerCreationWizard = () => {
         notifications: structureNotifications,
       });
       return;
+    }
+
+    if (type) {
+      const leavingGroupNotifications = validateMonomerLeavingGroups(
+        editor,
+        type,
+        assignedAttachmentPoints,
+      );
+      if (leavingGroupNotifications.size > 0) {
+        const convertedNotifications = new Map();
+        leavingGroupNotifications.forEach((notification, key) => {
+          convertedNotifications.set(key, notification);
+        });
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: convertedNotifications,
+        });
+        return;
+      }
     }
 
     editor.saveNewMonomer({

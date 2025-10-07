@@ -17,7 +17,7 @@ export type WizardValues = {
   [key in StringWizardFormFieldId]: string;
 };
 
-export type WizardNotificationType = 'info' | 'error';
+export type WizardNotificationType = 'info' | 'error' | 'warning';
 
 export type WizardNotificationId =
   | 'defaultAttachmentPoints'

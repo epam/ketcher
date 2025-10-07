@@ -84,12 +84,10 @@ function request(
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
   let response: any = fetch(requestUrl, {
     method,
-    headers: Object.assign(
-      {
-        Accept: 'application/json',
-      },
-      headers,
-    ),
+    headers: {
+      Accept: 'application/json',
+      ...(headers || {}),
+    },
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
   });
@@ -119,8 +117,12 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = Object.assign({}, data);
-    body.options = Object.assign(body.options || {}, defaultOptions, options);
+    const body = { ...(data || {}) };
+    body.options = {
+      ...(body.options || {}),
+      ...(defaultOptions || {}),
+      ...(options || {}),
+    };
     return request(
       method,
       baseUrl + url,

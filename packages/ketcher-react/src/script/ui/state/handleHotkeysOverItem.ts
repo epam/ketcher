@@ -348,7 +348,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = Object.assign({}, Atom.attrlist, element);
+    element = { ...Atom.attrlist, ...(element || {}) };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));

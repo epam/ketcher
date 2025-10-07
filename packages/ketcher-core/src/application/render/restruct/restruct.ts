@@ -923,7 +923,10 @@ function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
 function scaleRPath(path, scaleFactor: number): void {
   if (path.type === 'set') {
     // TODO: rework scaling
-    for (let i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor);
+    const pathItems = Array.from({ length: path.length }, (_, index) => path[index]);
+    for (const pathItem of pathItems) {
+      scaleRPath(pathItem, scaleFactor);
+    }
   } else {
     if (!(typeof path.attrs === 'undefined')) {
       if ('font-size' in path.attrs) {
@@ -937,7 +940,7 @@ function scaleRPath(path, scaleFactor: number): void {
 }
 
 function scaleVisel(visel, s) {
-  for (let i = 0; i < visel.paths.length; ++i) scaleRPath(visel.paths[i], s);
+  for (const viselPath of visel.paths) scaleRPath(viselPath, s);
 }
 
 /**

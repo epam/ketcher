@@ -1053,8 +1053,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     [410, 270],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1089,8 +1088,7 @@ test('Check that magnetic areas (radial rays) exist only for monomers connected 
     [410, 270],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1126,8 +1124,7 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
     [410, 280],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y);
     await takeEditorScreenshot(page);
   }
@@ -1157,8 +1154,7 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     [100, 150],
     [300, 100],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1194,8 +1190,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     [410, 280],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

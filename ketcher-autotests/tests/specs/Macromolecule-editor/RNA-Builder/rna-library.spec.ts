@@ -1386,7 +1386,7 @@ test.describe('RNA Library', () => {
     await rnaNameEditBox.fill(rnaName);
     await takeRNABuilderScreenshot(page);
 
-    for (let i = 0; i < rnaName.length; i++) {
+    for (const _ of rnaName) {
       await rnaNameEditBox.press('Backspace');
     }
     await takeRNABuilderScreenshot(page);

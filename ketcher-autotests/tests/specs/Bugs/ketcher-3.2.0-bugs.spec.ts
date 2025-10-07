@@ -512,8 +512,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       [300, 550],
       [750, 600],
     ];
-    for (let i = 0; i < coords.length; i++) {
-      const [x, y] = coords[i];
+    for (const [x, y] of coords) {
       await page.mouse.move(x, y, { steps: 10 });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,

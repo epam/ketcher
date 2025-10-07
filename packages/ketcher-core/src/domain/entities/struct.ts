@@ -57,8 +57,8 @@ export type StructProperty = {
 };
 
 function arrayAddIfMissing(array, item) {
-  for (let i = 0; i < array.length; ++i) {
-    if (array[i] === item) return false;
+  for (const arrayItem of array) {
+    if (arrayItem === item) return false;
   }
   array.push(item);
   return true;
@@ -407,8 +407,8 @@ export class Struct {
 
   calcConn(atom, includeAtomsInCollapsedSgroups = false) {
     let conn = 0;
-    for (let i = 0; i < atom.neighbors.length; ++i) {
-      const hb = this.halfBonds.get(atom.neighbors[i])!;
+    for (const neighborId of atom.neighbors) {
+      const hb = this.halfBonds.get(neighborId)!;
       const bond = this.bonds.get(hb.bid)!;
 
       if (
@@ -916,14 +916,14 @@ export class Struct {
   }
 
   loopHasSelfIntersections(hbs: Array<number>) {
-    for (let i = 0; i < hbs.length; ++i) {
-      const hbi = this.halfBonds.get(hbs[i])!;
+    for (const [i, halfBondId] of hbs.entries()) {
+      const hbi = this.halfBonds.get(halfBondId)!;
       const ai = this.atoms.get(hbi.begin)!.pp;
       const bi = this.atoms.get(hbi.end)!.pp;
       const set = new Pile([hbi.begin, hbi.end]);
 
-      for (let j = i + 2; j < hbs.length; ++j) {
-        const hbj = this.halfBonds.get(hbs[j])!;
+      for (const hbjId of hbs.slice(i + 2)) {
+        const hbj = this.halfBonds.get(hbjId)!;
         if (set.has(hbj.begin) || set.has(hbj.end)) continue; // skip edges sharing an atom
 
         const aj = this.atoms.get(hbj.begin)!.pp;
@@ -946,23 +946,22 @@ export class Struct {
       const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
       continueFlag = false;
 
-      for (let l = 0; l < loop.length; ++l) {
-        const hbid = loop[l];
+      for (const [index, hbid] of loop.entries()) {
         const aid1 = this.halfBonds.get(hbid)!.begin;
         const aid2 = this.halfBonds.get(hbid)!.end;
         if (aid2 in atomToHalfBond) {
           // subloop found
           const s = atomToHalfBond[aid2]; // where the subloop begins
-          const subloop = loop.slice(s, l + 1);
+          const subloop = loop.slice(s, index + 1);
           subloops.push(subloop);
-          if (l < loop.length) {
+          if (index < loop.length) {
             // remove half-bonds corresponding to the subloop
-            loop.splice(s, l - s + 1);
+            loop.splice(s, index - s + 1);
           }
           continueFlag = true;
           break;
         }
-        atomToHalfBond[aid1] = l;
+        atomToHalfBond[aid1] = index;
       }
       if (!continueFlag) subloops.push(loop); // we're done, no more subloops found
     }

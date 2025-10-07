@@ -177,8 +177,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         const subLabels = props.get('substitutionCount');
         const arrs = sGroup.readKeyMultiValuePairs(propertyData);
 
-        for (let arri = 0; arri < arrs.length; arri++) {
-          const a2r = arrs[arri];
+        for (const a2r of arrs) {
           subLabels.set(a2r[0], a2r[1]);
         }
       } else if (type === 'UNS') {
@@ -191,8 +190,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         if (!props.get('rglabel')) props.set('rglabel', new Pool());
         const rglabels = props.get('rglabel');
         const a2rs = sGroup.readKeyMultiValuePairs(propertyData);
-        for (let a2ri = 0; a2ri < a2rs.length; a2ri++) {
-          const a2r = a2rs[a2ri];
+        for (const a2r of a2rs) {
           rglabels.set(
             a2r[0],
             (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1)),
@@ -434,8 +432,8 @@ function parseRg2000(
     for (const strId in fragmentLines) {
       const id = parseInt(strId, 10);
       frag[id] = [];
-      for (let j = 0; j < fragmentLines[id].length; ++j) {
-        frag[id].push(parseCTab(fragmentLines[id][j], ignoreChiralFlag));
+      for (const fragmentLine of fragmentLines[id]) {
+        frag[id].push(parseCTab(fragmentLine, ignoreChiralFlag));
       }
     }
   }
@@ -500,8 +498,8 @@ function parseCTab(
 function labelsListToIds(labels) {
   /* reader */
   const ids = [];
-  for (let i = 0; i < labels.length; ++i) {
-    const element = Elements.get(labels[i].trim());
+  for (const label of labels) {
+    const element = Elements.get(label.trim());
     if (element) {
       ids.push(element.number);
     }

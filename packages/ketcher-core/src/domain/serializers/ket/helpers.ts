@@ -134,10 +134,8 @@ export const populateStructWithSelection = (
           value.setInitiallySelected(
             selectedEntities.includes(key) || undefined,
           );
-        } else {
-          if (selectedEntities.includes(key)) {
-            value.setInitiallySelected(true);
-          }
+        } else if (selectedEntities.includes(key)) {
+          value.setInitiallySelected(true);
         }
       }
     });

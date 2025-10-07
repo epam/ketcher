@@ -42,12 +42,10 @@ export function customOnChangeHandler(action, handler) {
   const data: ChangeEventData[] = [];
   if (action === undefined) {
     return handler();
+  } else if (window.isPolymerEditorTurnedOn) {
+    return handleMacroChanges(handler);
   } else {
-    if (window.isPolymerEditorTurnedOn) {
-      return handleMacroChanges(handler);
-    } else {
-      return handleMicroChanges(action, handler);
-    }
+    return handleMicroChanges(action, handler);
   }
 
   function handleMacroChanges(handler) {

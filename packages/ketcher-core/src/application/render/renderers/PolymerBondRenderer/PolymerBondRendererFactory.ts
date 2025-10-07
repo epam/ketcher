@@ -30,10 +30,7 @@ export class PolymerBondRendererFactory {
     const mode = checkIfIsSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
     return polymerBond instanceof HydrogenBond
       ? new SnakeModePolymerBondRenderer(polymerBond)
-      : (PolymerBondRendererFactory.createInstanceByMode(
-          mode,
-          polymerBond,
-        ) as PolymerBondRendererClass);
+      : PolymerBondRendererFactory.createInstanceByMode(mode, polymerBond);
   }
 
   public static createInstanceByMode(

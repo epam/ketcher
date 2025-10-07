@@ -51,10 +51,13 @@ class RxnArrowAdd extends Base {
       const index = struct.rxnArrows.add(item);
       this.data.id = index;
     } else {
-      struct.rxnArrows.set(this.data.id!, item);
+      struct.rxnArrows.set(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      throw new Error('rxnArrow id is not defined');
+    }
 
     restruct.rxnArrows.set(itemId, new ReRxnArrow(item));
 
@@ -69,7 +72,11 @@ class RxnArrowAdd extends Base {
   }
 
   invert(): Base {
-    return new RxnArrowDelete(this.data.id!);
+    const { id } = this.data;
+    if (id == null) {
+      throw new Error('rxnArrow id is not defined');
+    }
+    return new RxnArrowDelete(id);
   }
 }
 

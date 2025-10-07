@@ -102,13 +102,14 @@ export class SequenceViewModel {
           return;
         }
 
-        const senseMonomersConnectedByHydrogenBond = node.monomers.reduce(
-          (foundMonomersInNode, monomer) => {
-            return [
-              ...foundMonomersInNode,
-              ...monomer.hydrogenBonds.reduce(
-                (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
-                  const monomerConnectedByHydrogenBond =
+        const senseMonomersConnectedByHydrogenBond =
+          node.monomers.reduce<BaseMonomer[]>(
+            (foundMonomersInNode, monomer) => {
+              return [
+                ...foundMonomersInNode,
+                ...monomer.hydrogenBonds.reduce<BaseMonomer[]>(
+                  (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
+                    const monomerConnectedByHydrogenBond =
                     hydrogenBond.getAnotherMonomer(monomer);
                   return monomerConnectedByHydrogenBond &&
                     ((isRnaBaseApplicableForAntisense(
@@ -126,12 +127,12 @@ export class SequenceViewModel {
                       ]
                     : foundMonomersConnectedHydrogenBonds;
                 },
-                [] as BaseMonomer[],
+                [],
               ),
             ];
-          },
-          [] as BaseMonomer[],
-        );
+            },
+            [],
+          );
         const firstSenseMonomerConnectedByHydrogenBond =
           senseMonomersConnectedByHydrogenBond[0];
         const twoStrandedSnakeLayoutNode =
@@ -360,10 +361,16 @@ export class SequenceViewModel {
         antisenseNodeIndex++;
       }
 
-      lastHandledSenseNode = (senseNode ||
-        lastHandledSenseNode) as SubChainNode;
-      lastHandledAntisenseNode = (antisenseNode ||
-        lastHandledAntisenseNode) as SubChainNode;
+      if (node.senseNode instanceof BackBoneSequenceNode) {
+        lastHandledSenseNode = node.senseNode.firstConnectedNode;
+      } else if (node.senseNode) {
+        lastHandledSenseNode = node.senseNode;
+      }
+      if (node.antisenseNode instanceof BackBoneSequenceNode) {
+        lastHandledAntisenseNode = node.antisenseNode.firstConnectedNode;
+      } else if (node.antisenseNode) {
+        lastHandledAntisenseNode = node.antisenseNode;
+      }
       lastHandledAntisenseChain =
         node.antisenseChain || lastHandledAntisenseChain;
     }
@@ -382,27 +389,32 @@ export class SequenceViewModel {
         previousTwoStrandedNode.chain === node.chain &&
         previousTwoStrandedNode.antisenseChain !== node.antisenseChain
       ) {
-        const nextConnectedSenseNode = getNextConnectedNode(
-          previousHandledSenseNode as SubChainNode,
-          monomerToNode,
-        );
+        if (previousHandledSenseNode) {
+          const nextConnectedSenseNode = getNextConnectedNode(
+            previousHandledSenseNode,
+            monomerToNode,
+          );
 
-        if (nextConnectedSenseNode) {
-          this.nodes.splice(nodeIndex, 0, {
-            senseNode: new BackBoneSequenceNode(
-              previousHandledSenseNode as SubChainNode,
-              nextConnectedSenseNode as SubChainNode,
-            ),
-            senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
-            antisenseNode: new EmptySequenceNode(),
-            chain: node.chain,
-          });
+          if (nextConnectedSenseNode) {
+            this.nodes.splice(nodeIndex, 0, {
+              senseNode: new BackBoneSequenceNode(
+                previousHandledSenseNode,
+                nextConnectedSenseNode,
+              ),
+              senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
+              antisenseNode: new EmptySequenceNode(),
+              chain: node.chain,
+            });
+          }
         }
       }
 
       previousTwoStrandedNode = node;
-      previousHandledSenseNode =
-        (node.senseNode as SubChainNode) || previousHandledSenseNode;
+      if (node.senseNode instanceof BackBoneSequenceNode) {
+        previousHandledSenseNode = node.senseNode.firstConnectedNode;
+      } else if (node.senseNode) {
+        previousHandledSenseNode = node.senseNode;
+      }
     });
   }
 

@@ -43,10 +43,13 @@ export class TextCreate extends BaseOperation {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
-      restruct.molecule.texts.set(this.data.id!, item);
+      restruct.molecule.texts.set(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      throw new Error('text id is not defined');
+    }
 
     restruct.texts.set(itemId, new ReText(item));
 
@@ -55,7 +58,11 @@ export class TextCreate extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextDelete(this.data.id!);
+    const { id } = this.data;
+    if (id == null) {
+      throw new Error('text id is not defined');
+    }
+    return new TextDelete(id);
   }
 }
 
@@ -76,25 +83,32 @@ export class TextDelete extends BaseOperation {
 
   execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
-    const item = struct.texts.get(this.data.id)!;
+    const item = struct.texts.get(this.data.id);
     if (!item) return;
 
-    this.data.content = item.content!;
+    this.data.content = item.content;
     this.data.position = item.position;
+    this.data.pos = item.pos;
 
     restruct.markItemRemoved();
 
-    restruct.clearVisel(restruct.texts.get(this.data.id)!.visel);
+    const text = restruct.texts.get(this.data.id);
+    if (text) {
+      restruct.clearVisel(text.visel);
+    }
     restruct.texts.delete(this.data.id);
 
     struct.texts.delete(this.data.id);
   }
 
   invert(): BaseOperation {
+    if (!this.data.content || !this.data.position || !this.data.pos) {
+      throw new Error('text data is incomplete');
+    }
     return new TextCreate(
-      this.data.content!,
-      this.data.position!,
-      this.data.pos!,
+      this.data.content,
+      this.data.position,
+      this.data.pos,
       this.data.id,
     );
   }

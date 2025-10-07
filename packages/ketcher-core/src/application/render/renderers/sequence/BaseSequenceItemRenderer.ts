@@ -155,7 +155,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             monomer.covalentBonds.filter(
               (bond) =>
                 bond instanceof PolymerBond &&
-                (bond as PolymerBond).isSideChainConnection,
+                bond.isSideChainConnection,
             ).length,
           0,
         ),
@@ -255,23 +255,22 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       if (nodeIndexInSubChain === -1) return false;
 
       // Split subchain into arrays of non-linker nodes
-      const nonLinkerNodeGroups = subChain.nodes.reduce(
-        (groups, node) => {
-          if (
-            node instanceof LinkerSequenceNode ||
-            node.monomer instanceof Phosphate ||
-            this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
-          ) {
-            if (groups[groups.length - 1].length > 0) {
-              groups.push([]);
-            }
-          } else {
-            groups[groups.length - 1].push(node);
+      const nonLinkerNodeGroups = subChain.nodes.reduce<
+        Array<Array<SubChainNode | BackBoneSequenceNode>>
+      >((groups, node) => {
+        if (
+          node instanceof LinkerSequenceNode ||
+          node.monomer instanceof Phosphate ||
+          this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
+        ) {
+          if (groups[groups.length - 1].length > 0) {
+            groups.push([]);
           }
-          return groups;
-        },
-        [[]] as (SubChainNode | BackBoneSequenceNode)[][],
-      );
+        } else {
+          groups[groups.length - 1].push(node);
+        }
+        return groups;
+      }, [[]]);
 
       // Find the group containing the current node
       const currentGroup = nonLinkerNodeGroups.find((group) =>

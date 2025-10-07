@@ -33,7 +33,6 @@ import {
   getAttachmentPointNumberFromLabel,
 } from 'domain/helpers/attachmentPointCalculations';
 import { invert, isNumber } from 'lodash';
-import { IKetAttachmentPoint } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { CoreEditor } from 'application/editor/Editor';
 import { Atom } from 'domain/entities/CoreAtom';
@@ -115,12 +114,17 @@ export class MacromoleculesConverter {
     const attachmentPointAtomId =
       monomer instanceof AmbiguousMonomer ? 0 : attachmentPoint?.attachmentAtom;
 
+    let globalAttachmentAtomId: number | undefined;
+    let attachmentAtomId: number | undefined;
+
+    if (isNumber(attachmentPointAtomId)) {
+      attachmentAtomId = attachmentPointAtomId;
+      globalAttachmentAtomId = atomIdMap?.get(attachmentPointAtomId);
+    }
+
     return {
-      globalAttachmentAtomId:
-        isNumber(attachmentPointAtomId) &&
-        atomIdMap?.get(attachmentPointAtomId as number),
-      attachmentAtomId:
-        isNumber(attachmentPointAtomId) && attachmentPointAtomId,
+      globalAttachmentAtomId,
+      attachmentAtomId,
       attachmentPointNumber,
     };
   }
@@ -135,11 +139,22 @@ export class MacromoleculesConverter {
           getAttachmentPointNumberFromLabel(attachmentPointName);
         const attachmentPoint = monomer.monomerItem.attachmentPoints?.[
           attachmentPointIndex
-        ] as IKetAttachmentPoint;
+        ];
+
+        if (!attachmentPoint) {
+          throw new Error('Attachment point is not defined');
+        }
+
+        const atomId = atomIdsMap.get(attachmentPoint.attachmentAtom);
+        if (atomId == null) {
+          throw new Error('Attachment atom id is not defined');
+        }
 
         return new SGroupAttachmentPoint(
-          atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
-          atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
+          atomId,
+          attachmentPoint.leavingGroup
+            ? atomIdsMap.get(attachmentPoint.leavingGroup.atoms[0])
+            : undefined,
           undefined,
           attachmentPointNumber,
         );
@@ -216,8 +231,13 @@ export class MacromoleculesConverter {
         struct.sGroupForest.insert(monomerMicromolecule);
         monomerBonds.forEach((bond) => {
           const bondClone = bond.clone();
-          bondClone.begin = atomIdsMap.get(bondClone.begin) as number;
-          bondClone.end = atomIdsMap.get(bondClone.end) as number;
+          const beginAtomId = atomIdsMap.get(bondClone.begin);
+          const endAtomId = atomIdsMap.get(bondClone.end);
+          if (beginAtomId == null || endAtomId == null) {
+            throw new Error('Bond atom id is not defined');
+          }
+          bondClone.begin = beginAtomId;
+          bondClone.end = endAtomId;
           const bondId = struct.bonds.add(bondClone);
           reStruct?.bonds.set(bondId, new ReBond(bondClone));
         });
@@ -365,6 +385,10 @@ export class MacromoleculesConverter {
     sgroupToMonomer: Map<SGroup, BaseMonomer>,
   ) {
     const command = new Command();
+    if (!monomerMicromolecule.pp) {
+      throw new Error('Monomer position is not defined');
+    }
+
     const monomerAdditionCommand =
       monomerMicromolecule.monomer instanceof AmbiguousMonomer
         ? drawingEntitiesManager.addAmbiguousMonomer(
@@ -373,12 +397,16 @@ export class MacromoleculesConverter {
           )
         : drawingEntitiesManager.addMonomer(
             monomerMicromolecule.monomer.monomerItem,
-            monomerMicromolecule.pp as Vec2,
+            monomerMicromolecule.pp,
           );
     command.merge(monomerAdditionCommand);
+    const monomerAdditionOperation = monomerAdditionCommand.operations[0];
+    if (!monomerAdditionOperation.monomer) {
+      throw new Error('Monomer is not defined');
+    }
     sgroupToMonomer.set(
       monomerMicromolecule,
-      monomerAdditionCommand.operations[0].monomer as BaseMonomer,
+      monomerAdditionOperation.monomer,
     );
 
     return command;
@@ -508,13 +536,17 @@ export class MacromoleculesConverter {
         fragmentStruct,
         drawingEntitiesManager,
       );
-      const monomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      const monomerOperation = monomerAddCommand.operations[0];
+      if (!monomerOperation.monomer) {
+        throw new Error('Fragment monomer is not defined');
+      }
+      const monomer = monomerOperation.monomer;
       const atomIdMapObject = Object.fromEntries(atomIdMap.entries());
       const localAtomIdToGlobalAtomId = invert(atomIdMapObject);
       const atomsMap = new Map<number, Atom>();
 
       _fragment.forEach((fragmentId) => {
-        fragmentIdToMonomer.set(fragmentId as number, monomer);
+        fragmentIdToMonomer.set(fragmentId, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
       });
       command.merge(monomerAddCommand);
@@ -524,11 +556,15 @@ export class MacromoleculesConverter {
         !isMonomerSgroupWithAttachmentPoints(monomer)
       ) {
         monomer.monomerItem.struct.atoms.forEach((atom, atomId) => {
+          const atomLabel = atom.label;
+          if (!atomLabel || !isAtomLabel(atomLabel)) {
+            throw new Error('Atom label is not defined');
+          }
           const atomAddCommand = drawingEntitiesManager.addAtom(
             atom.pp,
             monomer,
             atomId,
-            atom.label as AtomLabel,
+            atomLabel,
             {
               charge: atom.charge,
               explicitValence: atom.explicitValence,
@@ -540,7 +576,11 @@ export class MacromoleculesConverter {
           );
 
           command.merge(atomAddCommand);
-          atomsMap.set(atomId, atomAddCommand.operations[0].atom as Atom);
+          const atomOperation = atomAddCommand.operations[0];
+          if (!atomOperation.atom) {
+            throw new Error('Atom is not defined');
+          }
+          atomsMap.set(atomId, atomOperation.atom);
           globalAtomIdToMonomerMap.set(
             Number(localAtomIdToGlobalAtomId[atomId]),
             monomer,
@@ -732,9 +772,13 @@ export class MacromoleculesConverter {
 
     // Arrows and pluses
     struct.rxnArrows.forEach((rxnArrow) => {
+      const [startPosition, endPosition] = rxnArrow.pos;
+      if (!startPosition || !endPosition) {
+        throw new Error('Reaction arrow positions are not defined');
+      }
       const arrowAddCommand = drawingEntitiesManager.addRxnArrow(
         rxnArrow.mode,
-        rxnArrow.pos as [Vec2, Vec2],
+        [startPosition, endPosition],
         rxnArrow.height,
         rxnArrow.initiallySelected,
       );
@@ -773,3 +817,6 @@ export class MacromoleculesConverter {
     };
   }
 }
+const atomLabelValues = new Set<string>(Object.values(AtomLabel));
+const isAtomLabel = (label: string): label is AtomLabel =>
+  atomLabelValues.has(label);

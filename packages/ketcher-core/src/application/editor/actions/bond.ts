@@ -159,8 +159,8 @@ export function fromBondAddition(
     [beginAtomId, endAtomId] = mouseDownNothingAndUpAtom(begin, end);
   } else if (startsOnAtom && !endsOnAtom) {
     [beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end);
-  } else {
-    [beginAtomId, endAtomId] = [begin as number, end as number];
+  } else if (typeof begin === 'number' && typeof end === 'number') {
+    [beginAtomId, endAtomId] = [begin, end];
 
     if (reStruct.sgroups && reStruct.sgroups.size > 0) {
       reStruct.sgroups.forEach((sgroup) => {
@@ -169,6 +169,8 @@ export function fromBondAddition(
         }
       });
     }
+  } else {
+    throw new Error('Begin or end atom is not defined');
   }
 
   const newBondId = (

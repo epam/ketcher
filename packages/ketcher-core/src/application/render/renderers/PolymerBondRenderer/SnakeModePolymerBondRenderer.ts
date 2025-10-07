@@ -12,9 +12,7 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,
   type ConnectionDirectionInDegrees,
-  type ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
@@ -46,6 +44,21 @@ const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 // TODO?: Can it be moved to `SideChainConnectionBondRendererUtility`?
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
+const normalizeDirectionInDegrees = (
+  direction: Connection['direction'],
+): ConnectionDirectionInDegrees => {
+  if (typeof direction === 'number') {
+    return direction;
+  }
+
+  const normalizedDirection = direction.y;
+  if (![0, 90, 180, 270].includes(normalizedDirection)) {
+    throw new Error('Unsupported connection direction');
+  }
+
+  return normalizedDirection as ConnectionDirectionInDegrees;
+};
+
 // TODO: Need to split the class by three:
 //  - `SnakeModeBackboneBondRenderer` (black “snake” line)
 //  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
@@ -61,7 +74,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
-    super(polymerBond as DrawingEntity);
+    super(polymerBond);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
     this.calculateIsSnakeBond();
@@ -232,7 +245,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (connection: Connection): boolean => {
         return connection.polymerBond === this.polymerBond;
       },
-    ) as Connection;
+    );
+    if (!firstCellConnection) {
+      throw new Error('Connection for polymer bond not found');
+    }
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
       (cells.length === 2 ||
@@ -258,7 +274,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
-    const xDirection =
+    const xDirection: ConnectionDirectionInDegrees =
       startPosition.x >= (this.sideConnectionBondTurnPoint ?? endPosition.x)
         ? 180
         : 0;
@@ -344,7 +360,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         (connection: Connection): boolean => {
           return connection.polymerBond === this.polymerBond;
         },
-      ) as Connection;
+      );
+      if (!cellConnection) {
+        throw new Error('Connection for polymer bond not found');
+      }
       const isLastCell = cellIndex === cells.length - 1;
       let _xDirection = xDirection;
       if (this.sideConnectionBondTurnPoint) {
@@ -368,9 +387,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           return;
         }
 
-        const directionObject =
-          cellConnection.direction as ConnectionDirectionOfLastCell;
-        const yDirection = isVerticalConnection ? 90 : directionObject.y;
+        const { direction } = cellConnection;
+        if (typeof direction === 'number') {
+          throw new Error('Expected last cell direction to have coordinates');
+        }
+        const yDirection = isVerticalConnection ? 90 : direction.y;
         const sin = Math.sin((yDirection * Math.PI) / 180);
         const cos = Math.cos((_xDirection * Math.PI) / 180);
 
@@ -420,13 +441,15 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         previousConnection.direction !== cellConnection.direction
       ) {
         // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-        const horizontal = new Set([0, 180]).has(
-          previousConnection.direction as ConnectionDirectionInDegrees,
+        const previousDirection = normalizeDirectionInDegrees(
+          previousConnection.direction,
         );
-        const direction = horizontal
+        const horizontal = new Set<ConnectionDirectionInDegrees>([0, 180]).has(
+          previousDirection,
+        );
+        const direction: ConnectionDirectionInDegrees = horizontal
           ? xDirection
-          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-            (previousConnection.direction as ConnectionDirectionInDegrees);
+          : previousDirection;
         const result =
           SideChainConnectionBondRendererUtility.calculatePathPartAndTurnPoint({
             cell: previousCell,

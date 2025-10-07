@@ -50,10 +50,13 @@ export class SimpleObjectAdd extends Base {
       const index = struct.simpleObjects.add(item);
       this.data.id = index;
     } else {
-      struct.simpleObjects.set(this.data.id!, item);
+      struct.simpleObjects.set(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
+    if (itemId == null) {
+      throw new Error('simpleObject id is not defined');
+    }
 
     restruct.simpleObjects.set(itemId, new ReSimpleObject(item));
 
@@ -70,7 +73,11 @@ export class SimpleObjectAdd extends Base {
   }
 
   invert(): Base {
-    return new SimpleObjectDelete(this.data.id!);
+    const { id } = this.data;
+    if (id == null) {
+      throw new Error('simpleObject id is not defined');
+    }
+    return new SimpleObjectDelete(id);
   }
 }
 

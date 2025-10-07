@@ -6,7 +6,6 @@ import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import {
@@ -30,7 +29,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
-    super(polymerBond as DrawingEntity);
+    super(polymerBond);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
   }

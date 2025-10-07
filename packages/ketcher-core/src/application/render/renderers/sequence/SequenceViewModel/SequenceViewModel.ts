@@ -201,26 +201,24 @@ export class SequenceViewModel {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
                 currentNodeBeforeHydrogenConnectionToBase;
               currentTwoStrandedSnakeLayoutNode.antisenseChain = chain;
+            } else if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
+              this.nodes.unshift({
+                antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                antisenseChain: chain,
+                senseNodeIndex: lastSenseNodeIndex,
+                chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+              });
             } else {
-              if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
-                this.nodes.unshift({
+              this.nodes.splice(
+                currentTwoStrandedSnakeLayoutNodeIndex + 1,
+                0,
+                {
                   antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                   antisenseChain: chain,
                   senseNodeIndex: lastSenseNodeIndex,
                   chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                });
-              } else {
-                this.nodes.splice(
-                  currentTwoStrandedSnakeLayoutNodeIndex + 1,
-                  0,
-                  {
-                    antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
-                    antisenseChain: chain,
-                    senseNodeIndex: lastSenseNodeIndex,
-                    chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                  },
-                );
-              }
+                },
+              );
             }
           }
 
@@ -347,15 +345,15 @@ export class SequenceViewModel {
             nextConnectedAntisenseNode,
           );
         }
+      } else if (
+        !lastHandledAntisenseChain ||
+        (node.antisenseChain &&
+          node.antisenseChain !== lastHandledAntisenseChain)
+      ) {
+        antisenseNodeIndex = 0;
+        node.antisenseNodeIndex = antisenseNodeIndex;
+        antisenseNodeIndex++;
       } else {
-        if (
-          !lastHandledAntisenseChain ||
-          (node.antisenseChain &&
-            node.antisenseChain !== lastHandledAntisenseChain)
-        ) {
-          antisenseNodeIndex = 0;
-        }
-
         node.antisenseNodeIndex = antisenseNodeIndex;
         antisenseNodeIndex++;
       }

@@ -232,22 +232,20 @@ export class SnakeLayoutModel {
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
+              } else if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
+                this.nodes.unshift({
+                  antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                  chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+                });
               } else {
-                if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
-                  this.nodes.unshift({
+                this.nodes.splice(
+                  currentTwoStrandedSnakeLayoutNodeIndex + 1,
+                  0,
+                  {
                     antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                     chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                  });
-                } else {
-                  this.nodes.splice(
-                    currentTwoStrandedSnakeLayoutNodeIndex + 1,
-                    0,
-                    {
-                      antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
-                      chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                    },
-                  );
-                }
+                  },
+                );
               }
             }
 

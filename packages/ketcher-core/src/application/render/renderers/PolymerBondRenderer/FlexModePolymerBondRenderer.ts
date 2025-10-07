@@ -179,12 +179,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         } else {
           this.path = this.path.concat(generateCornerFromLeftToTop());
         }
+      } else if (cornerPoint.y < nextPoint.y) {
+        this.path = this.path.concat(generateCornerFromRightToBottom());
       } else {
-        if (cornerPoint.y < nextPoint.y) {
-          this.path = this.path.concat(generateCornerFromRightToBottom());
-        } else {
-          this.path = this.path.concat(generateCornerFromRightToTop());
-        }
+        this.path = this.path.concat(generateCornerFromRightToTop());
       }
     } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
       if (prevPoint.y < cornerPoint.y) {
@@ -193,12 +191,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         } else {
           this.path = this.path.concat(generateCornerFromTopToLeft());
         }
+      } else if (cornerPoint.x < nextPoint.x) {
+        this.path = this.path.concat(generateCornerFromBottomToRight());
       } else {
-        if (cornerPoint.x < nextPoint.x) {
-          this.path = this.path.concat(generateCornerFromBottomToRight());
-        } else {
-          this.path = this.path.concat(generateCornerFromBottomToLeft());
-        }
+        this.path = this.path.concat(generateCornerFromBottomToLeft());
       }
     }
   }

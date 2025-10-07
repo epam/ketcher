@@ -90,15 +90,13 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
       ) {
         atomList.push(aid);
       }
-    } else {
-      if (
-        atom.a.pp.x > x0 &&
-        atom.a.pp.x < x1 &&
-        atom.a.pp.y > y0 &&
-        atom.a.pp.y < y1
-      ) {
-        atomList.push(aid);
-      }
+    } else if (
+      atom.a.pp.x > x0 &&
+      atom.a.pp.x < x1 &&
+      atom.a.pp.y > y0 &&
+      atom.a.pp.y < y1
+    ) {
+      atomList.push(aid);
     }
   });
 
@@ -274,18 +272,16 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
       if (sGroup && sGroup.pp && isPointInPolygon(r, sGroup.pp)) {
         atomList.push(aid);
       }
-    } else {
-      if (
-        isPointInPolygon(r, atom.a.pp) &&
-        (!FunctionalGroup.isAtomInContractedFunctionalGroup(
-          atom.a,
-          sGroups,
-          functionalGroups,
-        ) ||
-          aid === sGroup?.atoms[0])
-      ) {
-        atomList.push(aid);
-      }
+    } else if (
+      isPointInPolygon(r, atom.a.pp) &&
+      (!FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom.a,
+        sGroups,
+        functionalGroups,
+      ) ||
+        aid === sGroup?.atoms[0])
+    ) {
+      atomList.push(aid);
     }
   });
 

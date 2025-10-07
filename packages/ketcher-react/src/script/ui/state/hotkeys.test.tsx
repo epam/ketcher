@@ -3,7 +3,7 @@ import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 
 jest.mock('react-intersection-observer', () => {
   return {

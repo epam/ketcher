@@ -209,16 +209,12 @@ export class SequenceViewModel {
                 chain: lastTwoStrandedNodeWithHydrogenBond.chain,
               });
             } else {
-              this.nodes.splice(
-                currentTwoStrandedSnakeLayoutNodeIndex + 1,
-                0,
-                {
-                  antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
-                  antisenseChain: chain,
-                  senseNodeIndex: lastSenseNodeIndex,
-                  chain: lastTwoStrandedNodeWithHydrogenBond.chain,
-                },
-              );
+              this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex + 1, 0, {
+                antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                antisenseChain: chain,
+                senseNodeIndex: lastSenseNodeIndex,
+                chain: lastTwoStrandedNodeWithHydrogenBond.chain,
+              });
             }
           }
 

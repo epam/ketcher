@@ -145,6 +145,7 @@ interface IAutochainMonomerAddResult {
 
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
+const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
@@ -1380,6 +1381,29 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  public getAllAminoAcidsModificationTypes() {
+    const modificationTypes = new Set<string>();
+
+    this.monomersLibrary.forEach((monomerItem) => {
+      if (monomerItem.props?.modificationTypes) {
+        monomerItem.props.modificationTypes.forEach((modificationType) => {
+          modificationTypes.add(modificationType);
+        });
+      }
+    });
+
+    return Array.from(modificationTypes).sort((a, b) => {
+      const aTitle = a.toLowerCase();
+      const bTitle = b.toLowerCase();
+      const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
+
+      if (aTitle === naturalType) return -1;
+      if (bTitle === naturalType) return 1;
+
+      return aTitle.localeCompare(bTitle);
+    });
   }
 
   private onModifyAminoAcids(

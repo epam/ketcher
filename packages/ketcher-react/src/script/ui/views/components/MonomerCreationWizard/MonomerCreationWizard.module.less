@@ -154,7 +154,41 @@
   }
 
   :global(.MuiAccordionDetails-root) {
+    padding: 4px !important;
     background: none !important;
     box-shadow: none !important;
   }
+}
+
+
+.modificationTypeRow {
+  display: flex;
+  align-items: center;
+  padding-bottom: 6px;
+}
+
+.deleteModificationTypeButton {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  padding: 0;
+  margin-left: 8px;
+  color: @error-color;
+  cursor: pointer;
+
+  &:hover {
+    background: none;
+    opacity: 0.8;
+  }
+}
+
+.addModificationTypeButton {
+  width: 100%;
+  padding: 2px 0;
+  background: none;
+  border: 1px solid @color-grey-6;
+  color: @color-grey-6;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
 }

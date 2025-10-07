@@ -46,6 +46,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
+import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 
 const initialWizardState: WizardState = {
   values: {
@@ -257,6 +258,31 @@ const validateStructure = (editor: Editor) => {
   return notifications;
 };
 
+const validateModificationTypes = (modificationTypes: string[]) => {
+  const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const hasEmptyType = modificationTypes.some(
+    (modificationType) => !modificationType.trim(),
+  );
+  const trimmedTypes = modificationTypes.map((type) => type.trim());
+  const hasDuplicates = trimmedTypes.length !== new Set(trimmedTypes).size;
+
+  if (hasEmptyType) {
+    notifications.set('emptyMandatoryFields', {
+      type: 'error',
+      message: NotificationMessages.emptyMandatoryFields,
+    });
+  }
+
+  if (hasDuplicates) {
+    notifications.set('symbolExists', {
+      type: 'error',
+      message: NotificationMessages.notUniqueModificationTypes,
+    });
+  }
+
+  return { notifications };
+};
+
 const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -272,6 +298,7 @@ const MonomerCreationWizard = () => {
 
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
+  const [modificationTypes, setModificationTypes] = useState<string[]>([]);
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -336,6 +363,25 @@ const MonomerCreationWizard = () => {
         value,
       });
     }
+  };
+
+  const handleModificationTypeChange = (
+    indexToChange: number,
+    value: string,
+  ) => {
+    setModificationTypes((types) =>
+      types.map((t, i) => (i === indexToChange ? value : t)),
+    );
+  };
+
+  const handleAddModificationType = () => {
+    setModificationTypes((types) => [...types, '']);
+  };
+
+  const deleteModificationType = (indexToDelete: number) => {
+    setModificationTypes((types) =>
+      types.filter((_, i) => i !== indexToDelete),
+    );
   };
 
   const monomerTypeSelectOptions = useMemo(
@@ -421,6 +467,16 @@ const MonomerCreationWizard = () => {
       return;
     }
 
+    const { notifications: modificationTypesNotifications } =
+      validateModificationTypes(modificationTypes);
+    if (modificationTypesNotifications.size > 0) {
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: modificationTypesNotifications,
+      });
+      return;
+    }
+
     const structureNotifications = validateStructure(editor);
     if (structureNotifications.size > 0) {
       wizardStateDispatch({
@@ -435,6 +491,7 @@ const MonomerCreationWizard = () => {
       symbol,
       name,
       naturalAnalogue,
+      modificationTypes,
     });
 
     resetWizard();
@@ -487,7 +544,10 @@ const MonomerCreationWizard = () => {
                   placeholder="Select monomer type"
                   data-testid="type-select"
                   value={type}
-                  onChange={(value) => handleFieldChange('type', value)}
+                  onChange={(value) => {
+                    handleFieldChange('type', value);
+                    setModificationTypes([]);
+                  }}
                   error={errors.type}
                 />
               }
@@ -577,27 +637,56 @@ const MonomerCreationWizard = () => {
             )}
           </div>
 
-          <div className={styles.divider} />
+          {wizardState.values.type === KetMonomerClass.AminoAcid && (
+            <>
+              <div className={styles.divider} />
 
-          <div>
-            <Accordion
-              className={clsx(accordionClasses.accordion, styles.accordion)}
-              square={true}
-            >
-              <AccordionSummary
-                className={styles.accordionSummary}
-                expandIcon={
-                  <Icon
-                    className={accordionClasses.expandIcon}
-                    name="chevron"
-                  />
-                }
-              >
-                Modification
-              </AccordionSummary>
-              <AccordionDetails>Hi</AccordionDetails>
-            </Accordion>
-          </div>
+              <div>
+                <Accordion
+                  className={clsx(accordionClasses.accordion, styles.accordion)}
+                  square={true}
+                >
+                  <AccordionSummary
+                    className={styles.accordionSummary}
+                    expandIcon={
+                      <Icon
+                        className={accordionClasses.expandIcon}
+                        name="chevron"
+                      />
+                    }
+                  >
+                    Modification
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {modificationTypes.map((type, idx) => (
+                      <div className={styles.modificationTypeRow} key={idx}>
+                        <ModificationTypeDropdown
+                          value={type}
+                          onChange={(value) =>
+                            handleModificationTypeChange(idx, value)
+                          }
+                        />
+
+                        <Icon
+                          name="delete"
+                          className={styles.deleteModificationTypeButton}
+                          title="Delete modification type"
+                          onClick={() => deleteModificationType(idx)}
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className={styles.addModificationTypeButton}
+                      onClick={handleAddModificationType}
+                    >
+                      Add modification type
+                    </button>
+                  </AccordionDetails>
+                </Accordion>
+              </div>
+            </>
+          )}
         </div>
 
         {displayEditDialog &&

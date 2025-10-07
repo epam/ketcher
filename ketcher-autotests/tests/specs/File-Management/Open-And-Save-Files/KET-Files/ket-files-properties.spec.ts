@@ -31,7 +31,7 @@ test('Open KET file with properties and check properties are saved in struct', a
   await openFileAndAddToCanvas(page, 'KET/ket-with-properties.ket');
 
   const fragments = await page.evaluate<
-    { properties?: Record<string, string>[] }[]
+    ({ properties?: Record<string, string>[] } | null)[]
   >(() => {
     const editor = window.ketcher?.editor;
     const struct =
@@ -41,7 +41,12 @@ test('Open KET file with properties and check properties are saved in struct', a
     return fragsIterator ? [...fragsIterator] : [];
   });
 
-  const [firstFragment, secondFragment] = fragments;
+  const filteredFragments = fragments.filter(
+    (fragment): fragment is { properties?: Record<string, string>[] } =>
+      fragment !== null,
+  );
+
+  const [firstFragment, secondFragment] = filteredFragments;
 
   if (!firstFragment?.properties || !secondFragment?.properties) {
     test.fail();

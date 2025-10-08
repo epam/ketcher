@@ -102,7 +102,8 @@ const assembleMenuItems = (
         >
           {icon && (
             <span className="context_menu-icon">
-              <>{icon}</>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {icon as any}
             </span>
           )}
           <span

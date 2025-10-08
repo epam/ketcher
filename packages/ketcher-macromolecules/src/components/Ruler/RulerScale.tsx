@@ -161,7 +161,8 @@ const RulerScale = ({
 
   return (
     <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale">
-      <>{svgChildren}</>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {svgChildren as any}
     </svg>
   );
 };

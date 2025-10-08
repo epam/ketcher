@@ -168,16 +168,12 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
         ref={btnRef}
       >
         <Icon name={modeIcon} />
-        <>
-          <ModeLabel>{modeLabel}</ModeLabel>
-          <StyledIconForMacromoleculesToggler
-            name="chevron"
-            expanded={isExpanded}
-          />
-        </>
-        <>
-          <CornerIcon name="dropdown" />
-        </>
+        <ModeLabel>{modeLabel}</ModeLabel>
+        <StyledIconForMacromoleculesToggler
+          name="chevron"
+          expanded={isExpanded}
+        />
+        <CornerIcon name="dropdown" />
       </DropDownButton>
       <Dropdown
         title=""

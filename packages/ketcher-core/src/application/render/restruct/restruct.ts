@@ -99,10 +99,12 @@ class ReStruct {
   private readonly atomsChanged: Map<number, 1> = new Map();
   private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
     new Map();
+
   private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
   private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
   private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
     new Map();
+
   private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private readonly textsChanged: Map<number, ReText> = new Map();
   private readonly imagesChanged = new Map<number, ReImage>();

@@ -37,7 +37,7 @@ const isUserEditing = () => {
   }
 
   // If focused on ClipArea's textarea, treat as not editing a user field
-  if (el.hasAttribute && el.hasAttribute('data-cliparea')) {
+  if (el.hasAttribute?.('data-cliparea')) {
     return false;
   }
   // Check for input, textarea, or contenteditable

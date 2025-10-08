@@ -34,7 +34,7 @@ interface ScrollBar {
   offsetEnd: number;
   maxWidth: number;
   maxHeight: number;
-  bar?: D3SvgElementSelection<SVGRectElement, void> | undefined;
+  bar?: D3SvgElementSelection<SVGRectElement, void>;
 }
 
 // in percents

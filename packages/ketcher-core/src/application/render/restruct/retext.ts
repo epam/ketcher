@@ -164,7 +164,7 @@ class ReText extends ReObject {
           .text(
             paperScale.x,
             paperScale.y,
-            block.text.substring(start, end + 1) || '\u00a0',
+            block.text.substring(start, end + 1) ?? '\u00a0',
           )
           .attr({
             font: options.font,
@@ -178,7 +178,7 @@ class ReText extends ReObject {
           'data-text-id',
           restruct.molecule.texts.keyOf(this.item),
         );
-        path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
+        path.translateAbs(shiftX, shiftY + (styles.shiftY ?? 0));
         row.push(path);
         shiftX += path.getBBox().width;
       });
@@ -250,8 +250,8 @@ class ReText extends ReObject {
 
     return ranges.reduce(
       (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize || options.fontszInPx;
-        const fontszsub = (customFontSize || options.fontszsubInPx) * 0.5;
+        const fontsz = customFontSize ?? options.fontszInPx;
+        const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold';

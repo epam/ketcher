@@ -127,7 +127,7 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
+      aid: parseInt(tmpl.aid) || (sGroup?.getAttachmentAtomId() ?? 0),
       bid: parseInt(tmpl.bid) || 0,
     };
 

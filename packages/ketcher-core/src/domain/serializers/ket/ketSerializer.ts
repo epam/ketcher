@@ -429,7 +429,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     const { attachmentPointsList } =
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
-        template.attachmentPoints || [],
+        template.attachmentPoints ?? [],
       );
 
     template.attachmentPoints?.forEach(
@@ -764,7 +764,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     variantMonomer.monomers.forEach((monomer) => {
       const monomerTemplateId =
-        monomer.monomerItem.props.id ||
+        monomer.monomerItem.props.id ??
         getMonomerUniqueKey(monomer.monomerItem);
 
       this.serializeMonomerTemplate(monomerTemplateId, monomer, fileContent);
@@ -838,7 +838,7 @@ export class KetSerializer implements Serializer<Struct> {
                 '_' +
                 option.templateId +
                 '_' +
-                (option.probability || option.ratio || ''),
+                (option.probability ?? option.ratio ?? ''),
               '',
             );
         } else {
@@ -870,7 +870,7 @@ export class KetSerializer implements Serializer<Struct> {
           ...(isTransformationDefined && {
             transformation: modifyTransformation(transformation),
           }),
-          selected: (needSetSelection && monomer.selected) || undefined,
+          selected: (needSetSelection && monomer.selected) ?? undefined,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 
@@ -921,7 +921,7 @@ export class KetSerializer implements Serializer<Struct> {
               polymerBond,
               monomerIdMap,
             ) as IKetConnectionEndPoint),
-        selected: (needSetSelection && polymerBond.selected) || undefined,
+        selected: (needSetSelection && polymerBond.selected) ?? undefined,
       });
     });
 
@@ -950,7 +950,7 @@ export class KetSerializer implements Serializer<Struct> {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
           atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
-        selected: (needSetSelection && monomerToAtomBond.selected) || undefined,
+        selected: (needSetSelection && monomerToAtomBond.selected) ?? undefined,
       });
     });
 
@@ -1161,7 +1161,7 @@ export class KetSerializer implements Serializer<Struct> {
             template as IKetAmbiguousMonomerTemplate;
           const variantMonomerLibraryItem: AmbiguousMonomerType = {
             id: variantMonomerTemplate.id,
-            label: variantMonomerTemplate.alias || '%',
+            label: variantMonomerTemplate.alias ?? '%',
             idtAliases: variantMonomerTemplate.idtAliases,
             isAmbiguous: true,
             monomers: createMonomersForVariantMonomer(

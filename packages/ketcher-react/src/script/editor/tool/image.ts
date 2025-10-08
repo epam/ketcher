@@ -124,7 +124,7 @@ export class ImageTool implements Tool {
       const image = new Image();
       const reader = new FileReader();
 
-      if (!file.type || !file.type.match(allowList)) {
+      if (!file.type || !allowList.exec(file.type)) {
         const errorMessage = `Unsupported image type`;
         KetcherLogger.error(`${TAG}:onFileUpload`, errorMessage);
         if (errorHandler) {

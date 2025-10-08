@@ -57,7 +57,7 @@ export function identifyStructFormat(
     return SupportedFormat.molV3000;
   }
 
-  const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m);
+  const match = /^(M {2}END|\$END MOL)$/m.exec(sanitizedString);
 
   if (match) {
     const end = (match.index ?? 0) + match[0].length;

@@ -154,11 +154,7 @@ export default function initEditor(dispatch, getState) {
         const rgroupLabels = Array.from(struct.rgroups.keys());
         if (!rgroup.range) rgroup.range = '>0';
 
-        return openDialog(
-          dispatch,
-          'rgroupLogic',
-          Object.assign({ rgroupLabels }, rgroup),
-        );
+        return openDialog(dispatch, 'rgroupLogic', { rgroupLabels, ...rgroup });
       }
 
       const disabledIds = Array.from(struct.atoms.values()).reduce(

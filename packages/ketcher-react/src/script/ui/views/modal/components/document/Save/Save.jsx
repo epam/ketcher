@@ -71,6 +71,56 @@ const saveSchema = {
   },
 };
 
+const LoadingState = () => (
+  <div className={classes.loadingCirclesContainer}>
+    <LoadingCircles />
+  </div>
+);
+
+const ImageContent = ({ format, imageSrc, isCleanStruct }) => (
+  <div className={classes.imageContainer}>
+    {!isCleanStruct && (
+      <img
+        src={`data:image/${format}+xml;base64,${imageSrc}`}
+        alt={`${format} preview`}
+        data-testid="preview-area"
+      />
+    )}
+  </div>
+);
+
+const BinaryContent = ({ textAreaRef }) => (
+  <div className={classes.previewBackground}>
+    <textarea
+      value="Can not display binary content"
+      className={classes.previewArea}
+      readOnly
+      ref={textAreaRef}
+      data-testid="preview-area"
+    />
+  </div>
+);
+
+const PreviewContent = ({ structStr, textAreaRef, handleCopy }) => {
+  return (
+    <div className={classes.previewBackground}>
+      <textarea
+        value={structStr}
+        className={classes.previewArea}
+        readOnly
+        ref={textAreaRef}
+        data-testid="preview-area"
+      />
+      <IconButton
+        onClick={handleCopy}
+        iconName="copy"
+        title="Copy to clipboard"
+        testId="copy-to-clipboard"
+      />
+    </div>
+  );
+};
+
 class SaveDialog extends Component {
   static contextType = ErrorsContext;
   constructor(props) {
@@ -362,64 +412,26 @@ class SaveDialog extends Component {
     const { structStr, imageSrc, isLoading } = this.state;
     const isCleanStruct = this.props.struct.isBlank();
 
-    const LoadingState = () => (
-      <div className={classes.loadingCirclesContainer}>
-        <LoadingCircles />
-      </div>
-    );
-
-    const ImageContent = () => (
-      <div className={classes.imageContainer}>
-        {!isCleanStruct && (
-          <img
-            src={`data:image/${format}+xml;base64,${imageSrc}`}
-            alt={`${format} preview`}
-            data-testid="preview-area"
-          />
-        )}
-      </div>
-    );
-
-    const BinaryContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value="Can not display binary content"
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-          data-testid="preview-area"
-        />
-      </div>
-    );
-
-    const PreviewContent = () => {
-      return (
-        <div className={classes.previewBackground}>
-          <textarea
-            value={structStr}
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-            data-testid="preview-area"
-          />
-          <IconButton
-            onClick={this.handleCopy}
-            iconName="copy"
-            title="Copy to clipboard"
-            testId="copy-to-clipboard"
-          />
-        </div>
-      );
-    };
-
     if (isLoading) {
       return <LoadingState />;
     } else if (this.isImageFormat(format)) {
-      return <ImageContent />;
+      return (
+        <ImageContent
+          format={format}
+          imageSrc={imageSrc}
+          isCleanStruct={isCleanStruct}
+        />
+      );
     } else if (this.isBinaryCdxFormat(format)) {
-      return <BinaryContent />;
+      return <BinaryContent textAreaRef={this.textAreaRef} />;
     } else {
-      return <PreviewContent format={format} />;
+      return (
+        <PreviewContent
+          structStr={structStr}
+          textAreaRef={this.textAreaRef}
+          handleCopy={this.handleCopy}
+        />
+      );
     }
   };
 

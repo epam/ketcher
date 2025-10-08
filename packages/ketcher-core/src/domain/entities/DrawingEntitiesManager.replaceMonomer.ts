@@ -52,8 +52,9 @@ export function replaceMonomer(
     .map(([id, bond]) => {
       const attachmentPointEntry = Object.entries(
         monomer.attachmentPointsToBonds,
-      ).find((entry): entry is [AttachmentPointName, MonomerToAtomBond | null] =>
-        entry[1] === bond,
+      ).find(
+        (entry): entry is [AttachmentPointName, MonomerToAtomBond | null] =>
+          entry[1] === bond,
       );
       if (!attachmentPointEntry) {
         throw new Error(

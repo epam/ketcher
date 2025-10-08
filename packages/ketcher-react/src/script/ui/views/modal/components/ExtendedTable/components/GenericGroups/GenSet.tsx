@@ -40,15 +40,15 @@ function GenSet({
 }: Readonly<GenSetProps>) {
   return (
     <>
-      {labels.map((item, index) => {
+      {labels.map((item) => {
         const buttons = item.items;
         const caption = item.displayName;
         return (
-          <fieldset className={className} key={index}>
+          <fieldset className={className} key={caption || item.items[0]?.label}>
             <div className={classes[getGroupClassName(group)]}>
-              {buttons.map((button, index) => (
+              {buttons.map((button) => (
                 <ButtonGenSet
-                  key={index}
+                  key={button.label}
                   button={button}
                   onAtomSelect={onAtomSelect}
                   selected={selected}

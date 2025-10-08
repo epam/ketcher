@@ -63,7 +63,7 @@ const PresetPreview = ({ className }: Props) => {
       {monomers.map(
         (monomer, index) =>
           monomer && (
-            <PresetMonomerRow key={index}>
+            <PresetMonomerRow key={icons[index]}>
               <PresetIcon name={icons[index]} />
               <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
               <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>

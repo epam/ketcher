@@ -414,11 +414,14 @@ export function fromSgroup(ssgroup) {
   const sDataInitValue =
     type === 'DAT'
       ? {
-          context: context || getSdataDefault('context', undefined, sdataCustomSchema),
+          context:
+            context || getSdataDefault('context', undefined, sdataCustomSchema),
           fieldName:
-            fieldName || getSdataDefault('fieldName', undefined, sdataCustomSchema),
+            fieldName ||
+            getSdataDefault('fieldName', undefined, sdataCustomSchema),
           fieldValue:
-            fieldValue || getSdataDefault('fieldValue', undefined, sdataCustomSchema),
+            fieldValue ||
+            getSdataDefault('fieldValue', undefined, sdataCustomSchema),
         }
       : {};
 

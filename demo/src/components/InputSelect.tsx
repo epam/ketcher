@@ -1,6 +1,6 @@
-import { Button, TextField, FormControl } from '@mui/material'
-import styled from '@emotion/styled'
-import { useState } from 'react'
+import { Button, TextField, FormControl } from '@mui/material';
+import styled from '@emotion/styled';
+import { useState } from 'react';
 
 const FormBox = styled(FormControl)`
   flex-direction: row;
@@ -13,30 +13,30 @@ const FormBox = styled(FormControl)`
     font-size: 13px;
     text-transform: none;
   }
-`
+`;
 
 const ButtonBox = styled('div')`
   display: flex;
   flex-direction: column;
   justify-content: center;
-`
+`;
 
 const selectHandler = (input) => {
-  const arr = input.split(',')
-  const numberArr = arr.map((item) => parseInt(item))
-  KetcherFunctions.selectAtomsById(numberArr)
-}
+  const arr = input.split(',');
+  const numberArr = arr.map((item) => parseInt(item));
+  KetcherFunctions.selectAtomsById(numberArr);
+};
 
 export const InputSelect = () => {
-  const [input, setInput] = useState('')
-  const [isError, setError] = useState(false)
-  const regex = /^[0-9]+(,[0-9]+)*$/
+  const [input, setInput] = useState('');
+  const [isError, setError] = useState(false);
+  const regex = /^\d+(,\d+)*$/;
 
   const onChangeHandler = (event) => {
-    setInput(event.target.value)
-    const isInputValid = regex.test(event.target.value)
-    setError(!isInputValid)
-  }
+    setInput(event.target.value);
+    const isInputValid = regex.test(event.target.value);
+    setError(!isInputValid);
+  };
 
   return (
     <FormBox>
@@ -64,5 +64,5 @@ export const InputSelect = () => {
         </Button>
       </ButtonBox>
     </FormBox>
-  )
-}
+  );
+};

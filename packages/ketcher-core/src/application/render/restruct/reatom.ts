@@ -1900,7 +1900,7 @@ export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {
     aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
     charge: (value) => {
       if (value === '') return value;
-      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
       const charge = regExpResult
         ? parseInt(
             regExpResult[1] + regExpResult[3] + regExpResult[2],

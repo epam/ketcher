@@ -418,14 +418,14 @@ export const selectFilteredMonomers = createSelector(
 
           return (
             (idtBase?.endsWith(aliasRest) &&
-              idtBase[idtBase.length - 1] === aliasLastSymbol) ||
+              idtBase.endsWith(aliasLastSymbol)) ||
             (idtModifications &&
               idtModifications
                 .split(' ')
                 .some(
                   (mod) =>
                     mod.endsWith(aliasRest) &&
-                    mod[mod.length - 1] === aliasLastSymbol,
+                    mod.endsWith(aliasLastSymbol),
                 ))
           );
         }

@@ -70,8 +70,8 @@ export function identifyStructFormat(
   }
 
   if (
-    sanitizedString[0] === '<' &&
-    sanitizedString.indexOf('<molecule') !== -1
+    sanitizedString.startsWith('<') &&
+    sanitizedString.includes('<molecule')
   ) {
     return SupportedFormat.cml;
   }
@@ -90,7 +90,7 @@ export function identifyStructFormat(
     return SupportedFormat.cdx;
   }
 
-  if (sanitizedString.slice(0, 5) === 'InChI') {
+  if (sanitizedString.startsWith('InChI')) {
     return SupportedFormat.inChI;
   }
 
@@ -103,7 +103,7 @@ export function identifyStructFormat(
     return SupportedFormat.cdxml;
   }
 
-  if (sanitizedString[0] === '>') {
+  if (sanitizedString.startsWith('>')) {
     return SupportedFormat.fasta;
   }
 

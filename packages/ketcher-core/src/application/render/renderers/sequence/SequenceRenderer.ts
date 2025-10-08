@@ -198,8 +198,8 @@ export class SequenceRenderer {
               chainItem.antisenseChain ?? chainItem.chain,
               currentMonomerIndexOverall,
               SequenceRenderer.caretPosition,
-              previousRowsWithAntisense,
               chainItem,
+              previousRowsWithAntisense,
               chainItem.antisenseNode?.monomer?.renderer,
             );
 
@@ -235,8 +235,8 @@ export class SequenceRenderer {
             chainItem.chain,
             currentMonomerIndexOverall,
             SequenceRenderer.caretPosition,
-            previousRowsWithAntisense,
             chainItem,
+            previousRowsWithAntisense,
             node.monomer.renderer,
           );
 

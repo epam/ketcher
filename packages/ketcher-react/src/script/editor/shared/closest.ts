@@ -516,7 +516,7 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
     if (reSGroupId === skipId) continue;
 
     const { startX, startY, width, height } =
-      reSGroup.getTextHighlightDimensions(0, restruct.render);
+      reSGroup.getTextHighlightDimensions(restruct.render, 0);
     const { x, y } = Scale.modelToCanvas(pos, restruct.render.options);
     if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;

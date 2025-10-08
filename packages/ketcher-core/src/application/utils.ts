@@ -50,11 +50,11 @@ export { ketcherProvider };
 
 export function getStructure(
   ketcherId: string,
-  structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
   struct: Struct,
   drawingEntitiesManager?: DrawingEntitiesManager,
   selection?: EditorSelection,
+  structureFormat = SupportedFormat.rxn,
 ): Promise<string> {
   const serverSettings =
     ketcherProvider.getKetcher(ketcherId).editor.serverSettings;

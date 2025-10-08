@@ -24,14 +24,14 @@ export const initSdata = (schema) => {
   const isCustomShema = schema.key === 'Custom';
 
   const context = isCustomShema
-    ? getSdataDefault(sdataCustomSchema, 'context')
-    : getSdataDefault(sdataSchema);
+    ? getSdataDefault('context', undefined, sdataCustomSchema)
+    : getSdataDefault(undefined, undefined, sdataSchema);
   const fieldName = isCustomShema
-    ? getSdataDefault(sdataCustomSchema, 'fieldName')
-    : getSdataDefault(sdataSchema, context);
+    ? getSdataDefault('fieldName', undefined, sdataCustomSchema)
+    : getSdataDefault(context, undefined, sdataSchema);
   const fieldValue = isCustomShema
-    ? getSdataDefault(sdataCustomSchema, 'fieldValue')
-    : getSdataDefault(sdataSchema, context, fieldName);
+    ? getSdataDefault('fieldValue', undefined, sdataCustomSchema)
+    : getSdataDefault(context, fieldName, sdataSchema);
   const radiobuttons = 'Absolute';
 
   return {
@@ -61,11 +61,11 @@ const correctErrors = (state, payload) => {
 const onContextChange = (state, payload) => {
   const { context, fieldValue } = payload;
 
-  const fieldName = getSdataDefault(sdataCustomSchema, 'fieldName');
+  const fieldName = getSdataDefault('fieldName', undefined, sdataCustomSchema);
 
   let fValue = fieldValue;
   if (fValue === state.result.fieldValue)
-    fValue = getSdataDefault(sdataCustomSchema, 'fieldValue');
+    fValue = getSdataDefault('fieldValue', undefined, sdataCustomSchema);
 
   return {
     result: {
@@ -85,7 +85,7 @@ const onFieldNameChange = (state, payload) => {
   let fieldValue = payload.fieldValue;
 
   if (sdataSchema[context][fieldName])
-    fieldValue = getSdataDefault(sdataSchema, context, fieldName);
+    fieldValue = getSdataDefault(context, fieldName, sdataSchema);
 
   if (
     fieldValue === state.result.fieldValue &&

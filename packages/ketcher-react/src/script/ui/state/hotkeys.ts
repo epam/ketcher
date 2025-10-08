@@ -400,9 +400,11 @@ async function clipData(editor: Editor) {
 
     const data = await getStructure(
       editor.ketcherId,
-      SupportedFormat.molAuto,
       ketcherInstance.formatterFactory,
       struct,
+      undefined,
+      undefined,
+      SupportedFormat.molAuto,
     );
 
     res[ChemicalMimeType.KET] = ket;

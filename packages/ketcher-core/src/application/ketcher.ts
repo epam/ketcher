@@ -178,9 +178,11 @@ export class Ketcher {
       : SupportedFormat.smiles;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      format,
     );
   }
 
@@ -203,10 +205,11 @@ export class Ketcher {
 
     const molfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      undefined,
+      format,
     );
 
     return molfile;
@@ -215,20 +218,22 @@ export class Ketcher {
   getIdt(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.idt,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      undefined,
+      SupportedFormat.idt,
     );
   }
 
   getAxoLabs(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.axoLabs,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      undefined,
+      SupportedFormat.axoLabs,
     );
   }
 
@@ -247,9 +252,11 @@ export class Ketcher {
         : SupportedFormat.rxn;
     const rxnfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      format,
     );
 
     return rxnfile;
@@ -258,7 +265,6 @@ export class Ketcher {
   getKet(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
@@ -269,16 +275,18 @@ export class Ketcher {
         ? undefined
         : CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
       this.editor.selection() as EditorSelection,
+      SupportedFormat.ket,
     );
   }
 
   getFasta(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.fasta,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      undefined,
+      SupportedFormat.fasta,
     );
   }
 
@@ -316,12 +324,13 @@ export class Ketcher {
 
     return getStructure(
       this.id,
-      format === '3-letter'
-        ? SupportedFormat.sequence3Letter
-        : SupportedFormat.sequence,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      undefined,
+      format === '3-letter'
+        ? SupportedFormat.sequence3Letter
+        : SupportedFormat.sequence,
     );
   }
 
@@ -331,9 +340,11 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.smarts,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      SupportedFormat.smarts,
     );
   }
 
@@ -343,9 +354,11 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cml,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      SupportedFormat.cml,
     );
   }
 
@@ -359,9 +372,11 @@ export class Ketcher {
         : SupportedFormat.sdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      format,
     );
   }
 
@@ -375,9 +390,11 @@ export class Ketcher {
         : SupportedFormat.rdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      format,
     );
   }
 
@@ -387,9 +404,11 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdxml,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      SupportedFormat.cdxml,
     );
   }
 
@@ -399,18 +418,22 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdx,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      SupportedFormat.cdx,
     );
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
       this.id,
-      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
     );
   }
 

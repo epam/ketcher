@@ -43,8 +43,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private readonly editingNodeIndexOverall: number,
     public readonly monomerSize: { width: number; height: number },
     public readonly scaledMonomerPosition: Vec2,
-    private readonly previousRowsWithAntisense = 0,
     public readonly twoStrandedNode: ITwoStrandedChainItem,
+    private readonly previousRowsWithAntisense = 0,
   ) {
     super(node.monomer);
     this.editorEvents = editorEvents;

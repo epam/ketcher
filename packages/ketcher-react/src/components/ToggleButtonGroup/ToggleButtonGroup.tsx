@@ -84,15 +84,20 @@ export default function ButtonGroup<T>({
       const isMultipleTextButtons =
         hasNumeric && !isTwoTextButtons && !isSingleTextButton;
 
+      // Calculate width based on button layout
+      let width: string | number | undefined;
+      if (hasNumeric && isSingleTextButton) {
+        width = SINGLE_BUTTON_WIDTH;
+      } else if (isGridLayout) {
+        width = undefined;
+      } else {
+        width = '100%';
+      }
+
       return {
         display: 'flex' as const,
         flex: isMultipleTextButtons ? ('1 0 45%' as const) : undefined,
-        width:
-          hasNumeric && isSingleTextButton
-            ? SINGLE_BUTTON_WIDTH
-            : isGridLayout
-            ? undefined
-            : '100%',
+        width,
         height: BUTTON_HEIGHT,
         margin: isGridLayout ? '0 0 0 0' : 0,
         gap: isGridLayout ? 0 : undefined,

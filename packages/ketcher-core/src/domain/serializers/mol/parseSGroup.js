@@ -105,8 +105,8 @@ function postLoadMul(sgroup, mol, atomMap) {
   }, sgroup);
 
   // apply removal lists
-  for (let b = 0; b < bondsToRemove.length; ++b) {
-    mol.bonds.delete(bondsToRemove[b]);
+  for (const bondId of bondsToRemove) {
+    mol.bonds.delete(bondId);
   }
   for (const a in atomReductionMap) {
     mol.atoms.delete(+a);
@@ -202,8 +202,8 @@ function loadSGroup(mol, sg, atomMap) {
   // apply type-specific post-processing
   postLoadMap[sg.type](sg, mol, atomMap);
   // mark atoms in the group as belonging to it
-  for (let s = 0; s < sg.atoms.length; ++s) {
-    if (mol.atoms.has(sg.atoms[s])) mol.atoms.get(sg.atoms[s]).sgs.add(sg.id);
+  for (const atomId of sg.atoms) {
+    if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);
   }
 
   if (sg.type === 'DAT') mol.sGroupForest.insert(sg, -1, []);

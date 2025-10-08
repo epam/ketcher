@@ -35,8 +35,8 @@ export const waitForCustomEvent = async (
   eventName: string,
   timeout = 1000,
 ): Promise<boolean> => {
-  return page.evaluate(
-    ({ eventName, timeout }: { eventName: string; timeout: number }) => {
+  return await page.evaluate(
+    async ({ eventName, timeout }: { eventName: string; timeout: number }) => {
       return new Promise<boolean>((resolve) => {
         let resolved = false;
 

@@ -18,7 +18,7 @@ import {
 const getMonomersCode = (monomers: BaseMonomer[]) => {
   return monomers
     .map((monomer) => monomer.monomerItem.props.MonomerNaturalAnalogCode)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .join('');
 };
 

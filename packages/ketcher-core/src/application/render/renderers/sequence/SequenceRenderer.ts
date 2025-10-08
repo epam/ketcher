@@ -40,9 +40,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 
-export type SequencePointer = number;
-export type SequenceLastCaretPosition = number;
-
 type BaseNodeSelection = {
   nodeIndexOverall: number;
   isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
@@ -62,28 +59,26 @@ export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
-  private static caretPositionValue: SequencePointer = -1;
-  private static lastUserDefinedCaretPositionValue: SequenceLastCaretPosition = 0;
+  private static caretPositionValue = -1;
+  private static lastUserDefinedCaretPositionValue = 0;
   private static chainsCollectionValue: ChainsCollection;
   private static lastChainStartPositionValue: Vec2;
   private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
 
-  public static get caretPosition(): SequencePointer {
+  public static get caretPosition(): number {
     return this.caretPositionValue;
   }
 
-  private static set caretPosition(value: SequencePointer) {
+  private static set caretPosition(value: number) {
     this.caretPositionValue = value;
   }
 
-  public static get lastUserDefinedCaretPosition(): SequenceLastCaretPosition {
+  public static get lastUserDefinedCaretPosition(): number {
     return this.lastUserDefinedCaretPositionValue;
   }
 
-  private static set lastUserDefinedCaretPosition(
-    value: SequenceLastCaretPosition,
-  ) {
+  private static set lastUserDefinedCaretPosition(value: number) {
     this.lastUserDefinedCaretPositionValue = value;
   }
 
@@ -441,7 +436,7 @@ export class SequenceRenderer {
     });
   }
 
-  public static setCaretPosition(caretPosition: SequencePointer) {
+  public static setCaretPosition(caretPosition: number) {
     const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -564,7 +559,7 @@ export class SequenceRenderer {
   }
 
   public static getMonomersByCaretPositionRange(
-    startCaretPosition: SequencePointer,
+    startCaretPosition: number,
     endCaretPosition,
   ) {
     const monomers: BaseMonomer[] = [];
@@ -753,7 +748,7 @@ export class SequenceRenderer {
     return currentChainIndex;
   }
 
-  public static get lastNodeCaretPosition(): SequencePointer | undefined {
+  public static get lastNodeCaretPosition(): number | undefined {
     if (SequenceRenderer.chainsCollection.chains.length === 0) {
       return undefined;
     }
@@ -767,7 +762,7 @@ export class SequenceRenderer {
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
 
-  public static getNodeByPointer(sequencePointer?: SequencePointer) {
+  public static getNodeByPointer(sequencePointer?: number) {
     if (sequencePointer === undefined) return;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
@@ -857,7 +852,7 @@ export class SequenceRenderer {
     return SequenceRenderer.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
-  private static get nextCaretPosition(): SequencePointer | undefined {
+  private static get nextCaretPosition(): number | undefined {
     const nodeOnNextPosition = SequenceRenderer.getNodeByPointer(
       this.caretPosition + 1,
     );

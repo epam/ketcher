@@ -440,9 +440,11 @@ export class Ketcher {
   async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       this.editor.struct(),
+      undefined,
+      undefined,
+      SupportedFormat.ket,
     );
 
     return this.structService.getInChIKey(struct);

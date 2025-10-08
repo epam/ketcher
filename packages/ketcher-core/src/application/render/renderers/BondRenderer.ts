@@ -489,7 +489,7 @@ export class BondRenderer extends BaseRenderer {
     const secondHalfEdge = halfEdges?.[1];
 
     if (!firstHalfEdge || !secondHalfEdge) {
-      return;
+      return undefined;
     }
 
     let startPosition = new Vec2(0, 0);

@@ -59,12 +59,21 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
           key={fontSize}
           className={classes.fontSizeOption}
           onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setFontSize(e, `${fontSize}px`);
+            }
+          }}
+          role="option"
+          tabIndex={0}
+          aria-selected={currentFontSize === `${fontSize}px`}
           data-testid={`${fontSize}-option`}
         >
           {fontSize}
         </div>
       )),
-    [isShowingFontSizeMenu],
+    [isShowingFontSizeMenu, currentFontSize],
   );
 
   return (

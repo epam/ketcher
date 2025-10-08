@@ -253,8 +253,18 @@ const Atom: FC<Props> = (props: Props) => {
               <div key={groupName} data-testid={`${groupName}-section`}>
                 <div
                   onClick={handleAccordionChange(groupName)}
-                  className={classes.accordionSummaryWrapper}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleAccordionChange(groupName)();
+                    }
+                  }}
+                  role="button"
+                  tabIndex={isCustomQuery || isDisabled ? -1 : 0}
                   aria-disabled={isCustomQuery || isDisabled}
+                  aria-expanded={shouldGroupBeRended}
+                  aria-label={`${groupName} section`}
+                  className={classes.accordionSummaryWrapper}
                 >
                   <div className={classes.accordionSummary}>
                     <span>{groupName}</span>

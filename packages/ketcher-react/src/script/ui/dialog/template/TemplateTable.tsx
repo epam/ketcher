@@ -96,6 +96,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelect(tmpl);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Select template ${greekify(tmplName(tmpl, i))}`}
           >
             <StructRender
               testId={tmpl.struct.name}

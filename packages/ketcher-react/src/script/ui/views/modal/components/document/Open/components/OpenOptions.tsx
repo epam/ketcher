@@ -45,6 +45,15 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
     <div className={styles.optionsContainer}>
       <div
         onClick={selectClipboard}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectClipboard();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Paste from clipboard"
         className={styles.dropContainer}
         data-testid="paste-from-clipboard-button"
       >

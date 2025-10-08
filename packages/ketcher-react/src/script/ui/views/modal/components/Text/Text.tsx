@@ -175,7 +175,19 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div className={classes.controlPanel} onClick={setFocusInEditor}>
+      <div
+        className={classes.controlPanel}
+        onClick={setFocusInEditor}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setFocusInEditor();
+          }
+        }}
+        role="toolbar"
+        tabIndex={0}
+        aria-label="Text formatting toolbar"
+      >
         {buttons.map((button) => {
           return (
             <TextButton

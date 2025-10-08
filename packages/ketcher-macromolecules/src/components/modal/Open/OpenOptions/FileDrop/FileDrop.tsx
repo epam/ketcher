@@ -86,8 +86,22 @@ const FileDrop = ({
     [isDragActive],
   ) as React.CSSProperties;
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      open();
+    }
+  };
+
   return (
-    <div {...getRootProps({ style })} onClick={open}>
+    <div
+      {...getRootProps({ style })}
+      onClick={open}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+    >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
       {disabled ? (

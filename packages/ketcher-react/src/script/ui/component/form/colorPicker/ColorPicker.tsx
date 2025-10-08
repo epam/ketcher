@@ -89,18 +89,32 @@ const ColorPicker = (props: Props) => {
     }
   };
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleClick(e as unknown as React.MouseEvent);
+      }
+    },
+    [handleClick],
+  );
+
   return (
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      aria-expanded={isOpen}
+      aria-label="Color picker"
     >
       <div
         className={clsx({
           [classes.colorPickerInput]: true,
           [classes.selectedInput]: isOpen,
         })}
-        onClick={handleClick}
       >
         <div
           className={classes.colorPickerPreview}

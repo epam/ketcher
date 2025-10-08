@@ -47,7 +47,7 @@ class SGroupCreate extends BaseOperation {
     expanded?: boolean,
     name?: string,
     oldSgroup?: SGroup,
-    private monomer?: BaseMonomer,
+    private readonly monomer?: BaseMonomer,
   ) {
     super(OperationType.S_GROUP_CREATE);
     this.data = {

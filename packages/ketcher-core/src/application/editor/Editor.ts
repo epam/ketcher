@@ -285,7 +285,7 @@ export class CoreEditor {
     this.cancelActiveDrag();
   };
 
-  private handleWindowResize = () => {
+  private readonly handleWindowResize = () => {
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
   };

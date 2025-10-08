@@ -154,7 +154,7 @@ class ReRGroupAttachmentPoint extends ReObject {
     return Vec2.dist(destination, this.middlePoint);
   }
 
-  private makeHighlightePlate = (
+  private readonly makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
   ) => {

@@ -142,7 +142,7 @@ function EditorContainer({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
-}: EditorContainerProps) {
+}: Readonly<EditorContainerProps>) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -186,7 +186,7 @@ function Editor({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   onInit,
-}: EditorProps) {
+}: Readonly<EditorProps>) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);

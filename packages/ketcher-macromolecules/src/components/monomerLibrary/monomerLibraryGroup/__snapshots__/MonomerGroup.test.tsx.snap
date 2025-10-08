@@ -36,7 +36,10 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
     </svg>
   </div>
   <div
+    aria-label="Add to favorites"
     class="star "
+    role="button"
+    tabindex="0"
   >
     ★
   </div>
@@ -94,7 +97,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -134,7 +140,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -174,7 +183,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -214,7 +226,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -254,7 +269,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -310,7 +328,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -350,7 +371,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -390,7 +414,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -430,7 +457,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -470,7 +500,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -578,7 +611,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -618,7 +654,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -658,7 +697,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -698,7 +740,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -738,7 +783,10 @@ Object {
               </svg>
             </div>
             <div
+              aria-label="Add to favorites"
               class="star "
+              role="button"
+              tabindex="0"
             >
               ★
             </div>
@@ -789,7 +837,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -829,7 +880,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -869,7 +923,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -909,7 +966,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>
@@ -949,7 +1009,10 @@ Object {
             </svg>
           </div>
           <div
+            aria-label="Add to favorites"
             class="star "
+            role="button"
+            tabindex="0"
           >
             ★
           </div>

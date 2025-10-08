@@ -3,8 +3,12 @@
 exports[`should be rendered correctly should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
+    aria-expanded="false"
+    aria-label="Color picker"
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="button"
+    tabindex="0"
   >
     <div
       class="colorPickerInput"

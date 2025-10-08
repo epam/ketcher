@@ -103,7 +103,7 @@ const ColorPicker = (props: Props) => {
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
-      onClick={(e) => e.preventDefault()}
+      onClick={handleClick}
       role="button"
       tabIndex={0}
       onKeyDown={handleKeyDown}

@@ -590,7 +590,7 @@ class Editor implements KetcherEditor {
 
     const selection = this.selection();
 
-    if (!selection || !selection.atoms?.length || !selection.bonds?.length) {
+    if (!selection?.atoms?.length || !selection?.bonds?.length) {
       return false;
     }
 

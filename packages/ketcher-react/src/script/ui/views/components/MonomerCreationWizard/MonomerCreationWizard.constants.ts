@@ -38,6 +38,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   creationSuccessful: 'The monomer was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
   notUniqueModificationTypes: 'Modification types must be unique.',
+  modificationTypeExists:
+    'Only one amino acid within a natural analogue can have the same modification type.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -51,6 +53,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   creationSuccessful: 'info',
   incontinuousStructure: 'error',
   notUniqueModificationTypes: 'error',
+  modificationTypeExists: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

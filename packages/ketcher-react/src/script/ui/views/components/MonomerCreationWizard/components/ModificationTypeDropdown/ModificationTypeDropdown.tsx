@@ -9,19 +9,43 @@ interface IOptionType {
 
 const filter = createFilterOptions<IOptionType>();
 
-export default function ModificationTypeDropdown(props) {
-  // const [value, setValue] = useState<IOptionType | null>(props.value || null);
+interface IModificationTypeDropdownProps {
+  naturalAnalogue: string;
+  value: string | null;
+  error?: string | null;
+  onChange: (value: string) => void;
+}
+
+export default function ModificationTypeDropdown(
+  props: IModificationTypeDropdownProps,
+) {
   const editor = CoreEditor.provideEditorInstance();
-  const modificationTypes = editor.getAllAminoAcidsModificationTypes();
-  const options = modificationTypes.map((modificationType) => {
-    return { title: modificationType };
-  });
+  const modificationTypesGroupedByNaturalAnalogue =
+    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
+  const modificationTypesOthersFromCurrentNaturalAnalogue = [
+    ...new Set(
+      Object.entries(modificationTypesGroupedByNaturalAnalogue)
+        .filter(([key]) => key !== props.naturalAnalogue)
+        .flatMap(([, types]) => types)
+        .filter(
+          (type) =>
+            !modificationTypesGroupedByNaturalAnalogue[
+              props.naturalAnalogue
+            ]?.includes(type),
+        ),
+    ),
+  ];
+
+  const options = modificationTypesOthersFromCurrentNaturalAnalogue.map(
+    (modificationType) => {
+      return { title: modificationType };
+    },
+  );
   const value = props.value || '';
 
   const onValueChange = (newValue) => {
-    // setValue(newValue);
     if (props.onChange) {
-      props.onChange(newValue ? newValue.title : null);
+      props.onChange(newValue ? newValue.title : '');
     }
   };
 
@@ -98,7 +122,8 @@ export default function ModificationTypeDropdown(props) {
         <TextField
           {...params}
           variant="standard"
-          className={styles.inputField}
+          error={Boolean(props.error)}
+          className={clsx(styles.inputField, props.error && styles.error)}
           placeholder="..."
         />
       )}

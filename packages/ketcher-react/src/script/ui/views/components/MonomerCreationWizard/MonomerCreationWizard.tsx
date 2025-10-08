@@ -258,29 +258,59 @@ const validateStructure = (editor: Editor) => {
   return notifications;
 };
 
-const validateModificationTypes = (modificationTypes: string[]) => {
+const validateModificationTypes = (
+  modificationTypes: string[],
+  naturalAnalogue: string,
+) => {
+  const editor = CoreEditor.provideEditorInstance();
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const errors: Record<string, boolean> = {};
+  const modificationTypesGroupedByNaturalAnalogue =
+    editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
   const hasEmptyType = modificationTypes.some(
     (modificationType) => !modificationType.trim(),
   );
-  const trimmedTypes = modificationTypes.map((type) => type.trim());
-  const hasDuplicates = trimmedTypes.length !== new Set(trimmedTypes).size;
 
+  // Check for empty modification types
   if (hasEmptyType) {
+    errors.emptyModificationType = true;
     notifications.set('emptyMandatoryFields', {
       type: 'error',
       message: NotificationMessages.emptyMandatoryFields,
     });
   }
 
-  if (hasDuplicates) {
-    notifications.set('symbolExists', {
-      type: 'error',
-      message: NotificationMessages.notUniqueModificationTypes,
-    });
-  }
+  // Check for duplicate modification types
+  modificationTypes.forEach((modificationType) => {
+    const occurrences = modificationTypes.filter(
+      (type) => type === modificationType,
+    ).length;
 
-  return { notifications };
+    if (occurrences > 1) {
+      errors[modificationType] = true;
+      notifications.set('symbolExists', {
+        type: 'error',
+        message: NotificationMessages.notUniqueModificationTypes,
+      });
+    }
+  });
+
+  // Check if same modification types exist for same natural analogues
+  modificationTypesGroupedByNaturalAnalogue[naturalAnalogue].forEach(
+    (modificationTypeInsideSameNaturalAnalogue) => {
+      if (
+        modificationTypes.includes(modificationTypeInsideSameNaturalAnalogue)
+      ) {
+        errors[modificationTypeInsideSameNaturalAnalogue] = true;
+        notifications.set('modificationTypeExists', {
+          type: 'error',
+          message: NotificationMessages.modificationTypeExists,
+        });
+      }
+    },
+  );
+
+  return { notifications, errors };
 };
 
 const MonomerCreationWizard = () => {
@@ -467,9 +497,15 @@ const MonomerCreationWizard = () => {
       return;
     }
 
-    const { notifications: modificationTypesNotifications } =
-      validateModificationTypes(modificationTypes);
-    if (modificationTypesNotifications.size > 0) {
+    const {
+      errors: modificationTypesErrors,
+      notifications: modificationTypesNotifications,
+    } = validateModificationTypes(modificationTypes, naturalAnalogue);
+    if (Object.keys(modificationTypesErrors).length > 0) {
+      wizardStateDispatch({
+        type: 'SetErrors',
+        errors: modificationTypesErrors,
+      });
       wizardStateDispatch({
         type: 'SetNotifications',
         notifications: modificationTypesNotifications,
@@ -591,9 +627,10 @@ const MonomerCreationWizard = () => {
                 <NaturalAnaloguePicker
                   monomerType={type}
                   value={naturalAnalogue}
-                  onChange={(value) =>
-                    handleFieldChange('naturalAnalogue', value)
-                  }
+                  onChange={(value) => {
+                    handleFieldChange('naturalAnalogue', value);
+                    setModificationTypes([]);
+                  }}
                   error={errors.naturalAnalogue}
                 />
               }
@@ -637,56 +674,66 @@ const MonomerCreationWizard = () => {
             )}
           </div>
 
-          {wizardState.values.type === KetMonomerClass.AminoAcid && (
-            <>
-              <div className={styles.divider} />
+          {wizardState.values.type === KetMonomerClass.AminoAcid &&
+            naturalAnalogue && (
+              <>
+                <div className={styles.divider} />
 
-              <div>
-                <Accordion
-                  className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
-                >
-                  <AccordionSummary
-                    className={styles.accordionSummary}
-                    expandIcon={
-                      <Icon
-                        className={accordionClasses.expandIcon}
-                        name="chevron"
-                      />
-                    }
+                <div>
+                  <Accordion
+                    className={clsx(
+                      accordionClasses.accordion,
+                      styles.accordion,
+                    )}
+                    square={true}
                   >
-                    Modification
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {modificationTypes.map((type, idx) => (
-                      <div className={styles.modificationTypeRow} key={idx}>
-                        <ModificationTypeDropdown
-                          value={type}
-                          onChange={(value) =>
-                            handleModificationTypeChange(idx, value)
-                          }
-                        />
-
+                    <AccordionSummary
+                      className={styles.accordionSummary}
+                      expandIcon={
                         <Icon
-                          name="delete"
-                          className={styles.deleteModificationTypeButton}
-                          title="Delete modification type"
-                          onClick={() => deleteModificationType(idx)}
+                          className={accordionClasses.expandIcon}
+                          name="chevron"
                         />
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      className={styles.addModificationTypeButton}
-                      onClick={handleAddModificationType}
+                      }
                     >
-                      Add modification type
-                    </button>
-                  </AccordionDetails>
-                </Accordion>
-              </div>
-            </>
-          )}
+                      Modification
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {modificationTypes.map((modificationType, idx) => (
+                        <div className={styles.modificationTypeRow} key={idx}>
+                          <ModificationTypeDropdown
+                            value={modificationType}
+                            naturalAnalogue={naturalAnalogue}
+                            error={
+                              errors[modificationType] ||
+                              (errors.emptyModificationType &&
+                                !modificationType.trim())
+                            }
+                            onChange={(value) =>
+                              handleModificationTypeChange(idx, value)
+                            }
+                          />
+
+                          <Icon
+                            name="delete"
+                            className={styles.deleteModificationTypeButton}
+                            title="Delete modification type"
+                            onClick={() => deleteModificationType(idx)}
+                          />
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className={styles.addModificationTypeButton}
+                        onClick={handleAddModificationType}
+                      >
+                        Add modification type
+                      </button>
+                    </AccordionDetails>
+                  </Accordion>
+                </div>
+              </>
+            )}
         </div>
 
         {displayEditDialog &&

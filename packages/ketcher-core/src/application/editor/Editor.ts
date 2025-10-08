@@ -1383,27 +1383,40 @@ export class CoreEditor {
     this.mode = mode;
   }
 
-  public getAllAminoAcidsModificationTypes() {
-    const modificationTypes = new Set<string>();
+  public getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() {
+    const grouped: Record<string, Set<string>> = {};
 
     this.monomersLibrary.forEach((monomerItem) => {
+      const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
+
       if (monomerItem.props?.modificationTypes) {
+        if (!grouped[naturalAnalogue]) {
+          grouped[naturalAnalogue] = new Set<string>();
+        }
+
         monomerItem.props.modificationTypes.forEach((modificationType) => {
-          modificationTypes.add(modificationType);
+          grouped[naturalAnalogue].add(modificationType);
         });
       }
     });
 
-    return Array.from(modificationTypes).sort((a, b) => {
-      const aTitle = a.toLowerCase();
-      const bTitle = b.toLowerCase();
-      const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
+    // Convert sets to sorted arrays, with 'Natural amino acid' first if present
+    const result: Record<string, string[]> = {};
+    Object.entries(grouped).forEach(([analogue, typesSet]) => {
+      const types = Array.from(typesSet).sort((a, b) => {
+        const aTitle = a.toLowerCase();
+        const bTitle = b.toLowerCase();
+        const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
 
-      if (aTitle === naturalType) return -1;
-      if (bTitle === naturalType) return 1;
+        if (aTitle === naturalType) return -1;
+        if (bTitle === naturalType) return 1;
 
-      return aTitle.localeCompare(bTitle);
+        return aTitle.localeCompare(bTitle);
+      });
+      result[analogue] = types;
     });
+
+    return result;
   }
 
   private onModifyAminoAcids(

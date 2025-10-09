@@ -753,14 +753,13 @@ export class DrawingEntitiesManager {
 
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
-      if (
-        editor.mode instanceof SequenceMode &&
-        drawingEntity instanceof PolymerBond
-      ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(
-          drawingEntity,
-          isValueChanged,
-        );
+        if (
+          editor.mode instanceof SequenceMode &&
+          drawingEntity instanceof PolymerBond
+        ) {
+          isValueChanged = this.checkBondSelectionForSequenceMode(
+            drawingEntity,
+          );
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInRectangle(
           rectangleTopLeftPoint,
@@ -806,7 +805,6 @@ export class DrawingEntitiesManager {
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(
           drawingEntity,
-          isValueChanged,
         );
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInPolygon(
@@ -825,18 +823,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private checkBondSelectionForSequenceMode(
-    bond: PolymerBond,
-    isValueChanged: boolean,
-  ) {
+  private checkBondSelectionForSequenceMode(bond: PolymerBond) {
     const prevSelectedValue = bond.selected;
     if (bond.firstMonomer.selected && bond.secondMonomer?.selected) {
       bond.turnOnSelection();
     } else {
       bond.turnOffSelection();
     }
-    isValueChanged = prevSelectedValue !== bond.selected;
-    return isValueChanged;
+    return prevSelectedValue !== bond.selected;
   }
 
   public startPolymerBondCreationChangeModel(

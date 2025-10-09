@@ -48,7 +48,8 @@ class Tabs extends Component {
         <ul className={className} tabIndex={tabIndex}>
           <li className={classes.tabs}>
             {tabs.map((tabPanel, index) => (
-              <a // eslint-disable-line
+              <button
+                type="button"
                 key={index}
                 className={clsx({
                   [classes.active]: this.state.tabIndex === index,
@@ -57,7 +58,7 @@ class Tabs extends Component {
                 data-testid={tabPanel.caption + '-tab'}
               >
                 {tabPanel.caption}
-              </a>
+              </button>
             ))}
           </li>
         </ul>

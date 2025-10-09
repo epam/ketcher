@@ -331,8 +331,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   Object.keys(rgroups).forEach((id) => {
     const rgid = parseInt(id, 10);
 
-    for (let j = 0; j < rgroups[rgid].length; ++j) {
-      const ctab = rgroups[rgid][j];
+    for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);

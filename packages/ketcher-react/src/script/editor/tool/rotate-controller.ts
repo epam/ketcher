@@ -415,15 +415,7 @@ class RotateController {
         break;
       }
 
-      case 'moveCenter': {
-        this.link?.attr({
-          path:
-            `M${this.center.x},${this.center.y}` +
-            `L${this.handleCenter.x},${this.handleCenter.y}`,
-        });
-        break;
-      }
-
+      case 'moveCenter':
       case 'moveHandle': {
         this.link?.attr({
           path:

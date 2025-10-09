@@ -44,7 +44,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
         const struct = molSerializer.deserialize(chunk.substring(0, end + 6));
         const props = propChunks.reduce(
           (acc: StructAssociatedData, pc: string) => {
-            const m = pc.match(/^> [ \d]*<(\S+)>/);
+            const m = /^> [ \d]*<(\S+)>/.exec(pc);
             if (m) {
               const field = m[1];
               const valueArr = pc.split('\n').slice(1, -1);

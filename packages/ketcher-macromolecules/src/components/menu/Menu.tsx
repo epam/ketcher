@@ -34,9 +34,7 @@ const Group = ({
 
   return (
     <>
-      <StyledGroup isHorizontal={isHorizontal}>
-        {subComponents.map((component) => component)}
-      </StyledGroup>
+      <StyledGroup isHorizontal={isHorizontal}>{subComponents}</StyledGroup>
       {divider && (isHorizontal ? <VerticalDivider /> : <Divider />)}
     </>
   );
@@ -70,7 +68,7 @@ const Menu = ({
   return (
     <MenuContext.Provider value={context}>
       <MenuLayout data-testid={testId} isHorizontal={isHorizontal}>
-        {subComponents.map((component) => component)}
+        {subComponents}
       </MenuLayout>
     </MenuContext.Provider>
   );

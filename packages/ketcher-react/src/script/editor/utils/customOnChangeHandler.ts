@@ -148,6 +148,7 @@ export function customOnChangeHandler(action, handler) {
           break;
 
         case OperationType.RXN_ARROW_RESIZE:
+        case OperationType.SIMPLE_OBJECT_RESIZE:
           data.push({
             operation: op.type,
             id: op.data.id,
@@ -178,13 +179,6 @@ export function customOnChangeHandler(action, handler) {
             operation: op.type,
             id: op.data.id,
             mode: op.data.mode,
-          });
-          break;
-
-        case OperationType.SIMPLE_OBJECT_RESIZE:
-          data.push({
-            operation: op.type,
-            id: op.data.id,
           });
           break;
 

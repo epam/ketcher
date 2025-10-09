@@ -27,7 +27,7 @@ export default function ButtonGroup<T>({
   onClick,
   defaultValue,
   title,
-}: ToggleButtonGroupProps<T>) {
+}: Readonly<ToggleButtonGroupProps<T>>) {
   const [value, setValue] = useState(defaultValue);
 
   const handleChange = useCallback(

@@ -140,6 +140,12 @@
     padding-left: 14px;
   }
 
+  :global(.MuiPaper-root) {
+    &:not(:last-child)::after {
+      width: 424px;
+    }
+  }
+
   :global(.MuiButtonBase-root.MuiTab-root),
   :global(.MuiTabs-root) {
     min-height: 32px;

@@ -78,7 +78,7 @@ const formatProperties: FormatProperties = {
     {},
   ),
   'axo-labs': new SupportedFormatProperties(
-    'AXO-LABS',
+    'AxoLabs',
     ChemicalMimeType.AxoLabs,
     ['.axolabs'],
     false,

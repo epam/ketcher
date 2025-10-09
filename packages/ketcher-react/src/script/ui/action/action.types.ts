@@ -108,26 +108,26 @@ type ToolVariant =
   | 'undo';
 
 // todo: find out types
-type Editor = any;
-type Server = any;
-type Options = any;
-type ReduxState = any;
-
 type ActionObj = {
   tool?: string;
   opts?: any;
   dialog?: string;
-  thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  thunk?: (dispatch: Dispatch, getState: () => any) => void;
 };
-type ActionFn = (editor: Editor) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ActionFn = (editor: any) => void;
 // todo: come up with better name
 type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
 export type GetActionState = (
-  editor: Editor,
-  server?: Server,
-  options?: Options,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  editor: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  server?: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: any,
 ) => boolean;
 
 type IsActionState = boolean | GetActionState;

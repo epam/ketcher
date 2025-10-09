@@ -296,7 +296,7 @@ const validateModificationTypes = (
   });
 
   // Check if same modification types exist for same natural analogues
-  modificationTypesGroupedByNaturalAnalogue[naturalAnalogue].forEach(
+  modificationTypesGroupedByNaturalAnalogue[naturalAnalogue]?.forEach(
     (modificationTypeInsideSameNaturalAnalogue) => {
       if (
         modificationTypes.includes(modificationTypeInsideSameNaturalAnalogue)

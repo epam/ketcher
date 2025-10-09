@@ -1061,7 +1061,7 @@ export const MacromoleculePropertiesWindow = () => {
             return (
               <GrossFormulaPart
                 part={atomNameWithAmount}
-                key={i}
+                key={`${atomNameWithAmount}-${i}`}
               ></GrossFormulaPart>
             );
           })}

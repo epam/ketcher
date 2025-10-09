@@ -44,11 +44,11 @@ function GenSet({
         const buttons = item.items;
         const caption = item.displayName;
         return (
-          <fieldset className={className} key={index}>
+          <fieldset className={className} key={caption || `item-${index}`}>
             <div className={classes[getGroupClassName(group)]}>
-              {buttons.map((button, index) => (
+              {buttons.map((button) => (
                 <ButtonGenSet
-                  key={index}
+                  key={button.label}
                   button={button}
                   onAtomSelect={onAtomSelect}
                   selected={selected}

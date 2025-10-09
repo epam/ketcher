@@ -71,7 +71,7 @@ const assembleMenuItems = (
         onMouseOver,
         onMouseOut,
       },
-      index,
+      _index,
     ) => {
       const item = subMenuItems?.length ? (
         <Submenu label={title} data-testid={name} key={name}>
@@ -118,7 +118,7 @@ const assembleMenuItems = (
       );
       items.push(item);
       if (separator) {
-        items.push(<Separator key={index} />);
+        items.push(<Separator key={`separator-${name}`} />);
       }
     },
   );

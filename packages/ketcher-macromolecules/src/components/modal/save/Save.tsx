@@ -61,7 +61,7 @@ const options: Array<Option> = [
   { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
-  { id: 'axo-labs', label: 'AXO-LABS' },
+  { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
 ];

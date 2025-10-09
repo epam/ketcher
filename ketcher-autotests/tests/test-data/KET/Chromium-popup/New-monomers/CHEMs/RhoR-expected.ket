@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "RhoR",
-        "templateId": "RhoR___Rhodamine Red"
+        "templateId": "RhoR___Rhodamine Red",
+        "selected": false
     },
     "monomerTemplate-RhoR___Rhodamine Red": {
         "type": "monomerTemplate",

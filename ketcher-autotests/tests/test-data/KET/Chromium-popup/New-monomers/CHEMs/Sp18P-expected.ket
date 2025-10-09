@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Sp18P",
-        "templateId": "Sp18P___Spacer 18"
+        "templateId": "Sp18P___Spacer 18",
+        "selected": false
     },
     "monomerTemplate-Sp18P___Spacer 18": {
         "type": "monomerTemplate",

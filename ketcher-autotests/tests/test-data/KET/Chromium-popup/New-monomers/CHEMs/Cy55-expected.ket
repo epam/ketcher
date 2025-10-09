@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Cy55",
-        "templateId": "Cy55___Cy55 dye"
+        "templateId": "Cy55___Cy55 dye",
+        "selected": false
     },
     "monomerTemplate-Cy55___Cy55 dye": {
         "type": "monomerTemplate",

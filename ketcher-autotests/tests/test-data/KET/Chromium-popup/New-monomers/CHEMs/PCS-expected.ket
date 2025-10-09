@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "PCS",
-        "templateId": "PCS___PC Spacer"
+        "templateId": "PCS___PC Spacer",
+        "selected": false
     },
     "monomerTemplate-PCS___PC Spacer": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "3SpC3",
-        "templateId": "3SpC3___3' C3 Spacer"
+        "templateId": "3SpC3___3' C3 Spacer",
+        "selected": false
     },
     "monomerTemplate-3SpC3___3' C3 Spacer": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Acryd",
-        "templateId": "Acryd___Acrydite"
+        "templateId": "Acryd___Acrydite",
+        "selected": false
     },
     "monomerTemplate-Acryd___Acrydite": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "AmC12",
-        "templateId": "AmC12___12-aminododecyl dihydrogen phosphate"
+        "templateId": "AmC12___12-aminododecyl dihydrogen phosphate",
+        "selected": false
     },
     "monomerTemplate-AmC12___12-aminododecyl dihydrogen phosphate": {
         "type": "monomerTemplate",

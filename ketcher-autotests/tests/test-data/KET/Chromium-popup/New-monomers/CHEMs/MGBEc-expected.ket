@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "MGBEc",
-        "templateId": "MGBEc___MGBEc"
+        "templateId": "MGBEc___MGBEc",
+        "selected": false
     },
     "monomerTemplate-MGBEc___MGBEc": {
         "type": "monomerTemplate",

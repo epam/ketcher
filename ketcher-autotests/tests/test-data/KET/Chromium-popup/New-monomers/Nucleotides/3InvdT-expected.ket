@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "3InvdT",
-        "templateId": "3InvdT___3' Inverted dT"
+        "templateId": "3InvdT___3' Inverted dT",
+        "selected": false
     },
     "monomerTemplate-3InvdT___3' Inverted dT": {
         "type": "monomerTemplate",

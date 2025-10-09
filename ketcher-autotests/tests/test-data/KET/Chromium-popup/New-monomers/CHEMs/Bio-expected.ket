@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Bio",
-        "templateId": "Bio___3' Biotin"
+        "templateId": "Bio___3' Biotin",
+        "selected": false
     },
     "monomerTemplate-Bio___3' Biotin": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Dy750",
-        "templateId": "Dy750___Dy 750"
+        "templateId": "Dy750___Dy 750",
+        "selected": false
     },
     "monomerTemplate-Dy750___Dy 750": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "BiAzdT",
-        "templateId": "BiAzdT___dT Biotin Azide"
+        "templateId": "BiAzdT___dT Biotin Azide",
+        "selected": false
     },
     "monomerTemplate-BiAzdT___dT Biotin Azide": {
         "type": "monomerTemplate",

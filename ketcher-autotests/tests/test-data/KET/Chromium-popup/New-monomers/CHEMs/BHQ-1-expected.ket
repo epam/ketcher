@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "BHQ-1",
-        "templateId": "BHQ-1___Black Hole Quencher 1"
+        "templateId": "BHQ-1___Black Hole Quencher 1",
+        "selected": false
     },
     "monomerTemplate-BHQ-1___Black Hole Quencher 1": {
         "type": "monomerTemplate",

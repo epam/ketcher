@@ -18,7 +18,8 @@
                 "endpoint2": {
                     "monomerId": "monomer1",
                     "attachmentPointId": "R1"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -38,7 +39,8 @@
             "y": -8.200000000000001
         },
         "alias": "12ddR",
-        "templateId": "12ddR___1',2'-dideoxyribose"
+        "templateId": "12ddR___1',2'-dideoxyribose",
+        "selected": false
     },
     "monomerTemplate-12ddR___1',2'-dideoxyribose": {
         "type": "monomerTemplate",
@@ -236,7 +238,8 @@
             "y": -8.200000000000001
         },
         "alias": "P",
-        "templateId": "P___Phosphate"
+        "templateId": "P___Phosphate",
+        "selected": false
     },
     "monomerTemplate-P___Phosphate": {
         "type": "monomerTemplate",

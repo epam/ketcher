@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "IRD800C",
-        "templateId": "IRD800C___IRDye 800CW"
+        "templateId": "IRD800C___IRDye 800CW",
+        "selected": false
     },
     "monomerTemplate-IRD800C___IRDye 800CW": {
         "type": "monomerTemplate",

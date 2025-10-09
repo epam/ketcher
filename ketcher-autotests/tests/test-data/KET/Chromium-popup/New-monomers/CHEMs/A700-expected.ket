@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A700",
-        "templateId": "A700___ATTO 700"
+        "templateId": "A700___ATTO 700",
+        "selected": false
     },
     "monomerTemplate-A700___ATTO 700": {
         "type": "monomerTemplate",

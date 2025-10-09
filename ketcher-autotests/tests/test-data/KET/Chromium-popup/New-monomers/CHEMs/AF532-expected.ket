@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AF532",
-        "templateId": "AF532___Alexa Fluor 532 dye"
+        "templateId": "AF532___Alexa Fluor 532 dye",
+        "selected": false
     },
     "monomerTemplate-AF532___Alexa Fluor 532 dye": {
         "type": "monomerTemplate",

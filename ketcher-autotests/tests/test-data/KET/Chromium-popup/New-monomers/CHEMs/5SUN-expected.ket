@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "5SUN",
-        "templateId": "5SUN___5' SUN"
+        "templateId": "5SUN___5' SUN",
+        "selected": false
     },
     "monomerTemplate-5SUN___5' SUN": {
         "type": "monomerTemplate",

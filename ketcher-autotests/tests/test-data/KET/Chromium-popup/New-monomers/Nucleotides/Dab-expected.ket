@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "Dab",
-        "templateId": "Dab___d5meC Dabcyl"
+        "templateId": "Dab___d5meC Dabcyl",
+        "selected": false
     },
     "monomerTemplate-Dab___d5meC Dabcyl": {
         "type": "monomerTemplate",

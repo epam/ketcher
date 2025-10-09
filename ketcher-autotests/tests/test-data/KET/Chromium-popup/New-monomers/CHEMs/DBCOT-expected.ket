@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "DBCOT",
-        "templateId": "DBCOT___DBCO-TEG"
+        "templateId": "DBCOT___DBCO-TEG",
+        "selected": false
     },
     "monomerTemplate-DBCOT___DBCO-TEG": {
         "type": "monomerTemplate",

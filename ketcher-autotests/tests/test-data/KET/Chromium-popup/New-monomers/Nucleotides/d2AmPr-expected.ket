@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "d2AmPr",
-        "templateId": "d2AmPr___2-Aminopurine-2'-deoxyriboside"
+        "templateId": "d2AmPr___2-Aminopurine-2'-deoxyriboside",
+        "selected": false
     },
     "monomerTemplate-d2AmPr___2-Aminopurine-2'-deoxyriboside": {
         "type": "monomerTemplate",

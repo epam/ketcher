@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "TexRd",
-        "templateId": "TexRd___Texas Red"
+        "templateId": "TexRd___Texas Red",
+        "selected": false
     },
     "monomerTemplate-TexRd___Texas Red": {
         "type": "monomerTemplate",

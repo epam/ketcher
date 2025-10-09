@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "ddC",
-        "templateId": "ddC___Dideoxycytidine"
+        "templateId": "ddC___Dideoxycytidine",
+        "selected": false
     },
     "monomerTemplate-ddC___Dideoxycytidine": {
         "type": "monomerTemplate",

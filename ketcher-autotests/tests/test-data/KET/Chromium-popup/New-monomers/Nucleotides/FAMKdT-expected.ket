@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "FAMKdT",
-        "templateId": "FAMKdT___dT 6-FAM Azide"
+        "templateId": "FAMKdT___dT 6-FAM Azide",
+        "selected": false
     },
     "monomerTemplate-FAMKdT___dT 6-FAM Azide": {
         "type": "monomerTemplate",

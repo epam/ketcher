@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AF405",
-        "templateId": "AF405___Alexa Fluor 405 dye"
+        "templateId": "AF405___Alexa Fluor 405 dye",
+        "selected": false
     },
     "monomerTemplate-AF405___Alexa Fluor 405 dye": {
         "type": "monomerTemplate",

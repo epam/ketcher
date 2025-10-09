@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "JOE",
-        "templateId": "JOE___6-carboxy-4',5'-dichloro-2',7'-dimethoxyfluorescein"
+        "templateId": "JOE___6-carboxy-4',5'-dichloro-2',7'-dimethoxyfluorescein",
+        "selected": false
     },
     "monomerTemplate-JOE___6-carboxy-4',5'-dichloro-2',7'-dimethoxyfluorescein": {
         "type": "monomerTemplate",

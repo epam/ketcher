@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "PCBio",
-        "templateId": "PCBio___Photocleavable Biotin"
+        "templateId": "PCBio___Photocleavable Biotin",
+        "selected": false
     },
     "monomerTemplate-PCBio___Photocleavable Biotin": {
         "type": "monomerTemplate",

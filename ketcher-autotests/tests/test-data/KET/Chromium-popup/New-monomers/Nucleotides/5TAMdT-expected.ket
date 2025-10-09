@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "5TAMdT",
-        "templateId": "5TAMdT___5-Carboxytetramethylrhodamine dT"
+        "templateId": "5TAMdT___5-Carboxytetramethylrhodamine dT",
+        "selected": false
     },
     "monomerTemplate-5TAMdT___5-Carboxytetramethylrhodamine dT": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A590",
-        "templateId": "A590___ATTO 590"
+        "templateId": "A590___ATTO 590",
+        "selected": false
     },
     "monomerTemplate-A590___ATTO 590": {
         "type": "monomerTemplate",

@@ -125,7 +125,8 @@
             "y": -5.662440268512122
         },
         "alias": "A",
-        "templateId": "A___Alanine"
+        "templateId": "A___Alanine",
+        "selected": false
     },
     "monomerTemplate-A___Alanine": {
         "type": "monomerTemplate",

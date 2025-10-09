@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "biodT",
-        "templateId": "biodT___Biotin dT"
+        "templateId": "biodT___Biotin dT",
+        "selected": false
     },
     "monomerTemplate-biodT___Biotin dT": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "RhoG",
-        "templateId": "RhoG___Rhodamine Green"
+        "templateId": "RhoG___Rhodamine Green",
+        "selected": false
     },
     "monomerTemplate-RhoG___Rhodamine Green": {
         "type": "monomerTemplate",

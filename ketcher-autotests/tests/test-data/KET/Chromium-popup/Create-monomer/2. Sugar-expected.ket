@@ -18,7 +18,8 @@
                 "endpoint2": {
                     "moleculeId": "mol0",
                     "atomId": "0"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -49,7 +50,8 @@
         },
         "alias": "Sugar26",
         "templateId": "Sugar26___Sugar Test monomer for test 26",
-        "expanded": true
+        "expanded": true,
+        "selected": false
     },
     "monomerTemplate-Sugar26___Sugar Test monomer for test 26": {
         "type": "monomerTemplate",

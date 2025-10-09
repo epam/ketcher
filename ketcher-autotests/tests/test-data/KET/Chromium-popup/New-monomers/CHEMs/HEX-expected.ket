@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "HEX",
-        "templateId": "HEX___Hexachlorofluorescein"
+        "templateId": "HEX___Hexachlorofluorescein",
+        "selected": false
     },
     "monomerTemplate-HEX___Hexachlorofluorescein": {
         "type": "monomerTemplate",

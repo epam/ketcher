@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "dTp",
-        "templateId": "dTp___Dithiol modifier"
+        "templateId": "dTp___Dithiol modifier",
+        "selected": false
     },
     "monomerTemplate-dTp___Dithiol modifier": {
         "type": "monomerTemplate",

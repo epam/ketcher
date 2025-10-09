@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "56FAM",
-        "templateId": "56FAM___Fluorescein (5' 6-FAM)"
+        "templateId": "56FAM___Fluorescein (5' 6-FAM)",
+        "selected": false
     },
     "monomerTemplate-56FAM___Fluorescein (5' 6-FAM)": {
         "type": "monomerTemplate",

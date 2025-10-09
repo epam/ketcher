@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "AmC6",
-        "templateId": "AmC6___6-aminohexyl dihydrogen phosphate"
+        "templateId": "AmC6___6-aminohexyl dihydrogen phosphate",
+        "selected": false
     },
     "monomerTemplate-AmC6___6-aminohexyl dihydrogen phosphate": {
         "type": "monomerTemplate",

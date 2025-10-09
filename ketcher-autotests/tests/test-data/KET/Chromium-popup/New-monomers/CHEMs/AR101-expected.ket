@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AR101",
-        "templateId": "AR101___ATTO Rho101"
+        "templateId": "AR101___ATTO Rho101",
+        "selected": false
     },
     "monomerTemplate-AR101___ATTO Rho101": {
         "type": "monomerTemplate",

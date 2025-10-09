@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "TET",
-        "templateId": "TET___Tetrachlorofluorescein"
+        "templateId": "TET___Tetrachlorofluorescein",
+        "selected": false
     },
     "monomerTemplate-TET___Tetrachlorofluorescein": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "5ROX",
-        "templateId": "5ROX___5-carboxy-X-rhodamine"
+        "templateId": "5ROX___5-carboxy-X-rhodamine",
+        "selected": false
     },
     "monomerTemplate-5ROX___5-carboxy-X-rhodamine": {
         "type": "monomerTemplate",

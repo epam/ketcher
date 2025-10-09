@@ -18,7 +18,8 @@
                 "endpoint2": {
                     "moleculeId": "mol0",
                     "atomId": "0"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -49,7 +50,8 @@
         },
         "alias": "AminoAcid26",
         "templateId": "AminoAcid26___Amino Acid Test monomer for test 26",
-        "expanded": true
+        "expanded": true,
+        "selected": false
     },
     "monomerTemplate-AminoAcid26___Amino Acid Test monomer for test 26": {
         "type": "monomerTemplate",

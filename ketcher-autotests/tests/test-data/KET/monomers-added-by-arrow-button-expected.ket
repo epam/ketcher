@@ -39,7 +39,8 @@
                 "endpoint2": {
                     "monomerId": "monomer1",
                     "attachmentPointId": "R3"
-                }
+                },
+                "selected": false
             },
             {
                 "connectionType": "single",
@@ -50,7 +51,8 @@
                 "endpoint2": {
                     "monomerId": "monomer2",
                     "attachmentPointId": "R1"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -91,7 +93,8 @@
             "y": -2.75
         },
         "alias": "A",
-        "templateId": "A___Adenine"
+        "templateId": "A___Adenine",
+        "selected": false
     },
     "monomerTemplate-A___Adenine": {
         "type": "monomerTemplate",
@@ -298,7 +301,8 @@
             "y": -1.25
         },
         "alias": "MOE",
-        "templateId": "MOE___2'-O-Methoxyethyl ribose"
+        "templateId": "MOE___2'-O-Methoxyethyl ribose",
+        "selected": false
     },
     "monomerTemplate-MOE___2'-O-Methoxyethyl ribose": {
         "type": "monomerTemplate",
@@ -599,7 +603,8 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Phosphate"
+        "templateId": "P___Phosphate",
+        "selected": false
     },
     "monomerTemplate-P___Phosphate": {
         "type": "monomerTemplate",
@@ -718,7 +723,8 @@
             "y": -1.25
         },
         "alias": "1Nal",
-        "templateId": "1Nal___3-(1-naphthyl)-alanine"
+        "templateId": "1Nal___3-(1-naphthyl)-alanine",
+        "selected": false
     },
     "monomerTemplate-1Nal___3-(1-naphthyl)-alanine": {
         "type": "monomerTemplate",
@@ -1026,7 +1032,8 @@
             "y": -1.25
         },
         "alias": "25R",
-        "templateId": "25R___Ribose (2,5 connectivity)"
+        "templateId": "25R___Ribose (2,5 connectivity)",
+        "selected": false
     },
     "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
@@ -1267,7 +1274,8 @@
             "y": -1.25
         },
         "alias": "baA",
-        "templateId": "baA___N6-benzyladenine"
+        "templateId": "baA___N6-benzyladenine",
+        "selected": false
     },
     "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
@@ -1586,7 +1594,8 @@
             "y": -1.25
         },
         "alias": "bP",
-        "templateId": "bP___Boranophosphate"
+        "templateId": "bP___Boranophosphate",
+        "selected": false
     },
     "monomerTemplate-bP___Boranophosphate": {
         "type": "monomerTemplate",
@@ -1698,7 +1707,8 @@
             "y": -1.25
         },
         "alias": "Super-G",
-        "templateId": "Super-dG___Super-G"
+        "templateId": "Super-dG___Super-G",
+        "selected": false
     },
     "monomerTemplate-Super-dG___Super-G": {
         "type": "monomerTemplate",
@@ -2124,7 +2134,8 @@
             "y": -1.25
         },
         "alias": "4FB",
-        "templateId": "4FB___4-Formylbenzamide"
+        "templateId": "4FB___4-Formylbenzamide",
+        "selected": false
     },
     "monomerTemplate-4FB___4-Formylbenzamide": {
         "type": "monomerTemplate",

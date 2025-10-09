@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AmMO",
-        "templateId": "AmMO___3-(3-aminopropoxy)propane-1,2-diol"
+        "templateId": "AmMO___3-(3-aminopropoxy)propane-1,2-diol",
+        "selected": false
     },
     "monomerTemplate-AmMO___3-(3-aminopropoxy)propane-1,2-diol": {
         "type": "monomerTemplate",

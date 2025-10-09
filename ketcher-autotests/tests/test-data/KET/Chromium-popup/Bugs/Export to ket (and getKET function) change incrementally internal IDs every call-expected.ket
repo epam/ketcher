@@ -20,7 +20,8 @@
             "y": -7.6000000000000005
         },
         "alias": "D",
-        "templateId": "D___Aspartic acid"
+        "templateId": "D___Aspartic acid",
+        "selected": false
     },
     "monomerTemplate-D___Aspartic acid": {
         "type": "monomerTemplate",

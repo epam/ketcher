@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A565",
-        "templateId": "A565___ATTO 565"
+        "templateId": "A565___ATTO 565",
+        "selected": false
     },
     "monomerTemplate-A565___ATTO 565": {
         "type": "monomerTemplate",

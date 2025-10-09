@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A647",
-        "templateId": "A647___ATTO 647N"
+        "templateId": "A647___ATTO 647N",
+        "selected": false
     },
     "monomerTemplate-A647___ATTO 647N": {
         "type": "monomerTemplate",

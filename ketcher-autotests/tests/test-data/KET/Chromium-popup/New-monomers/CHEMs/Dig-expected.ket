@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Dig",
-        "templateId": "Dig___Digoxigenin NHS ester"
+        "templateId": "Dig___Digoxigenin NHS ester",
+        "selected": false
     },
     "monomerTemplate-Dig___Digoxigenin NHS ester": {
         "type": "monomerTemplate",

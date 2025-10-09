@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "ChTEG",
-        "templateId": "ChTEG___Cholesterol-TEG"
+        "templateId": "ChTEG___Cholesterol-TEG",
+        "selected": false
     },
     "monomerTemplate-ChTEG___Cholesterol-TEG": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A425",
-        "templateId": "A425___ATTO 425"
+        "templateId": "A425___ATTO 425",
+        "selected": false
     },
     "monomerTemplate-A425___ATTO 425": {
         "type": "monomerTemplate",

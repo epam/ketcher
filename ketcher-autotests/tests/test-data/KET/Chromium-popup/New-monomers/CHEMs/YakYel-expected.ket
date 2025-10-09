@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "YakYel",
-        "templateId": "YakYel___Yakima Yellow"
+        "templateId": "YakYel___Yakima Yellow",
+        "selected": false
     },
     "monomerTemplate-YakYel___Yakima Yellow": {
         "type": "monomerTemplate",

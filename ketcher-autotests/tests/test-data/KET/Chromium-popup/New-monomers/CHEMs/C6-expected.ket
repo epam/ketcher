@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "C6",
-        "templateId": "C6___1,6-Hexanediol"
+        "templateId": "C6___1,6-Hexanediol",
+        "selected": false
     },
     "monomerTemplate-C6___1,6-Hexanediol": {
         "type": "monomerTemplate",

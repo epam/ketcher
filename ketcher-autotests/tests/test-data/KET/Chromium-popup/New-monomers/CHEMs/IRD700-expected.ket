@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "IRD700",
-        "templateId": "IRD700___IRDye 700"
+        "templateId": "IRD700___IRDye 700",
+        "selected": false
     },
     "monomerTemplate-IRD700___IRDye 700": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "5BioT",
-        "templateId": "5BioT___5' Biotin TEG"
+        "templateId": "5BioT___5' Biotin TEG",
+        "selected": false
     },
     "monomerTemplate-5BioT___5' Biotin TEG": {
         "type": "monomerTemplate",

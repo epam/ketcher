@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "5OctdU",
-        "templateId": "5OctdU___5-Octadiynyl dU"
+        "templateId": "5OctdU___5-Octadiynyl dU",
+        "selected": false
     },
     "monomerTemplate-5OctdU___5-Octadiynyl dU": {
         "type": "monomerTemplate",

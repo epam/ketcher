@@ -18,7 +18,8 @@
                 "endpoint2": {
                     "monomerId": "monomer1",
                     "attachmentPointId": "R3"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -38,7 +39,8 @@
             "y": -9.700000000000001
         },
         "alias": "G",
-        "templateId": "G___Guanine"
+        "templateId": "G___Guanine",
+        "selected": false
     },
     "monomerTemplate-G___Guanine": {
         "type": "monomerTemplate",
@@ -260,7 +262,8 @@
             "y": -8.200000000000001
         },
         "alias": "R",
-        "templateId": "R___Ribose"
+        "templateId": "R___Ribose",
+        "selected": false
     },
     "monomerTemplate-R___Ribose": {
         "type": "monomerTemplate",

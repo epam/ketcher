@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A532",
-        "templateId": "A532___ATTO 532"
+        "templateId": "A532___ATTO 532",
+        "selected": false
     },
     "monomerTemplate-A532___ATTO 532": {
         "type": "monomerTemplate",

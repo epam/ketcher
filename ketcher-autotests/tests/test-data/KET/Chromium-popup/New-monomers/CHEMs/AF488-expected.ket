@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AF488",
-        "templateId": "AF488___Alexa Fluor 488 dye"
+        "templateId": "AF488___Alexa Fluor 488 dye",
+        "selected": false
     },
     "monomerTemplate-AF488___Alexa Fluor 488 dye": {
         "type": "monomerTemplate",

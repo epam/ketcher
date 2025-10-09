@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "5MidC",
-        "templateId": "5MidC___5-methylisocytosine-2'-deoxyriboside"
+        "templateId": "5MidC___5-methylisocytosine-2'-deoxyriboside",
+        "selected": false
     },
     "monomerTemplate-5MidC___5-methylisocytosine-2'-deoxyriboside": {
         "type": "monomerTemplate",

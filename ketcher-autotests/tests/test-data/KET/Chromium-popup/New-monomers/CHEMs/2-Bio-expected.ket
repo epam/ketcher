@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "2-Bio",
-        "templateId": "2-Bio___Dual Biotin"
+        "templateId": "2-Bio___Dual Biotin",
+        "selected": false
     },
     "monomerTemplate-2-Bio___Dual Biotin": {
         "type": "monomerTemplate",

@@ -18,7 +18,8 @@
                 "endpoint2": {
                     "moleculeId": "mol0",
                     "atomId": "0"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -49,7 +50,8 @@
         },
         "alias": "CHEM26",
         "templateId": "CHEM26___CHEM Test monomer for test 26",
-        "expanded": true
+        "expanded": true,
+        "selected": false
     },
     "monomerTemplate-CHEM26___CHEM Test monomer for test 26": {
         "type": "monomerTemplate",

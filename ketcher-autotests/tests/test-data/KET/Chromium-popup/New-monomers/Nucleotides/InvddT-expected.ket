@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "InvddT",
-        "templateId": "InvddT___Inverted Dideoxy-T"
+        "templateId": "InvddT___Inverted Dideoxy-T",
+        "selected": false
     },
     "monomerTemplate-InvddT___Inverted Dideoxy-T": {
         "type": "monomerTemplate",

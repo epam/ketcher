@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "5Ade",
-        "templateId": "5Ade___5' Adenylation"
+        "templateId": "5Ade___5' Adenylation",
+        "selected": false
     },
     "monomerTemplate-5Ade___5' Adenylation": {
         "type": "monomerTemplate",

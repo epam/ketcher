@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "BioP",
-        "templateId": "BioP___5' Biotin"
+        "templateId": "BioP___5' Biotin",
+        "selected": false
     },
     "monomerTemplate-BioP___5' Biotin": {
         "type": "monomerTemplate",

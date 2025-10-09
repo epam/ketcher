@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "dSBioT",
-        "templateId": "dSBioT___Desthiobiotin-TEG"
+        "templateId": "dSBioT___Desthiobiotin-TEG",
+        "selected": false
     },
     "monomerTemplate-dSBioT___Desthiobiotin-TEG": {
         "type": "monomerTemplate",

@@ -21,7 +21,8 @@
                 "endpoint2": {
                     "monomerId": "monomer1",
                     "attachmentPointId": "R3"
-                }
+                },
+                "selected": false
             },
             {
                 "connectionType": "single",
@@ -32,7 +33,8 @@
                 "endpoint2": {
                     "monomerId": "monomer2",
                     "attachmentPointId": "R1"
-                }
+                },
+                "selected": false
             }
         ],
         "templates": [
@@ -55,7 +57,8 @@
             "y": -9.700000000000001
         },
         "alias": "isoG",
-        "templateId": "isoG___Isoguanine"
+        "templateId": "isoG___Isoguanine",
+        "selected": false
     },
     "monomerTemplate-isoG___Isoguanine": {
         "type": "monomerTemplate",
@@ -277,7 +280,8 @@
             "y": -8.200000000000001
         },
         "alias": "dR",
-        "templateId": "dR___Deoxy-Ribose"
+        "templateId": "dR___Deoxy-Ribose",
+        "selected": false
     },
     "monomerTemplate-dR___Deoxy-Ribose": {
         "type": "monomerTemplate",
@@ -501,7 +505,8 @@
             "y": -8.200000000000001
         },
         "alias": "P",
-        "templateId": "P___Phosphate"
+        "templateId": "P___Phosphate",
+        "selected": false
     },
     "monomerTemplate-P___Phosphate": {
         "type": "monomerTemplate",

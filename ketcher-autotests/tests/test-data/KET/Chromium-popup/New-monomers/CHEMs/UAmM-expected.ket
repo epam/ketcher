@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "UAmM",
-        "templateId": "UAmM___Uni-Link Amino Modifier"
+        "templateId": "UAmM___Uni-Link Amino Modifier",
+        "selected": false
     },
     "monomerTemplate-UAmM___Uni-Link Amino Modifier": {
         "type": "monomerTemplate",

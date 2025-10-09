@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "3BioT",
-        "templateId": "3BioT___3' Biotin TEG"
+        "templateId": "3BioT___3' Biotin TEG",
+        "selected": false
     },
     "monomerTemplate-3BioT___3' Biotin TEG": {
         "type": "monomerTemplate",

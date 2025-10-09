@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AF594",
-        "templateId": "AF594___Alexa Fluor 594 dye"
+        "templateId": "AF594___Alexa Fluor 594 dye",
+        "selected": false
     },
     "monomerTemplate-AF594___Alexa Fluor 594 dye": {
         "type": "monomerTemplate",

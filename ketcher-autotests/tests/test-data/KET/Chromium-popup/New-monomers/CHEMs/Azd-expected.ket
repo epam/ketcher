@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Azd",
-        "templateId": "Azd___6-azidohexanoic acid"
+        "templateId": "Azd___6-azidohexanoic acid",
+        "selected": false
     },
     "monomerTemplate-Azd___6-azidohexanoic acid": {
         "type": "monomerTemplate",

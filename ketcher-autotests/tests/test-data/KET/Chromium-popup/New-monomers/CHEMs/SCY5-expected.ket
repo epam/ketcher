@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "SCY5",
-        "templateId": "SCY5___Sulfo-Cyanine 5"
+        "templateId": "SCY5___Sulfo-Cyanine 5",
+        "selected": false
     },
     "monomerTemplate-SCY5___Sulfo-Cyanine 5": {
         "type": "monomerTemplate",

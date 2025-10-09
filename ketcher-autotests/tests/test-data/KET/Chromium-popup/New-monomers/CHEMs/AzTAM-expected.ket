@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AzTAM",
-        "templateId": "AzTAM___5-TAMRA Azide"
+        "templateId": "AzTAM___5-TAMRA Azide",
+        "selected": false
     },
     "monomerTemplate-AzTAM___5-TAMRA Azide": {
         "type": "monomerTemplate",

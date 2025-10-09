@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "FldT",
-        "templateId": "FldT___Fluorescein dT"
+        "templateId": "FldT___Fluorescein dT",
+        "selected": false
     },
     "monomerTemplate-FldT___Fluorescein dT": {
         "type": "monomerTemplate",

@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Cy3",
-        "templateId": "Cy3___Cy3 dye"
+        "templateId": "Cy3___Cy3 dye",
+        "selected": false
     },
     "monomerTemplate-Cy3___Cy3 dye": {
         "type": "monomerTemplate",

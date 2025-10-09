@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "Sp9",
-        "templateId": "Sp9___Spacer 9"
+        "templateId": "Sp9___Spacer 9",
+        "selected": false
     },
     "monomerTemplate-Sp9___Spacer 9": {
         "type": "monomerTemplate",

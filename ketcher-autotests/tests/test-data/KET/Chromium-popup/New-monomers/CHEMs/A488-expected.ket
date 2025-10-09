@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "A488",
-        "templateId": "A488___ATTO 488"
+        "templateId": "A488___ATTO 488",
+        "selected": false
     },
     "monomerTemplate-A488___ATTO 488": {
         "type": "monomerTemplate",

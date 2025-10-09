@@ -20,7 +20,8 @@
             "y": -1.25
         },
         "alias": "AF647",
-        "templateId": "AF647___Alexa Fluor 647 dye"
+        "templateId": "AF647___Alexa Fluor 647 dye",
+        "selected": false
     },
     "monomerTemplate-AF647___Alexa Fluor 647 dye": {
         "type": "monomerTemplate",

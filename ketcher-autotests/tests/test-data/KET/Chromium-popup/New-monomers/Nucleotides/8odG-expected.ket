@@ -20,7 +20,8 @@
             "y": -8.200000000000001
         },
         "alias": "8odG",
-        "templateId": "8odG___8-Oxo-2'-deoxyguanosine"
+        "templateId": "8odG___8-Oxo-2'-deoxyguanosine",
+        "selected": false
     },
     "monomerTemplate-8odG___8-Oxo-2'-deoxyguanosine": {
         "type": "monomerTemplate",

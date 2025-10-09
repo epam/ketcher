@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon } from 'components';
+import { Icon, IconButton } from 'components';
 import {
   AttachmentPointClickData,
   AttachmentPointName,
@@ -380,6 +380,9 @@ const MonomerCreationWizard = () => {
     fieldId: WizardFormFieldId,
     value: KetMonomerClass | string,
   ) => {
+    if (['type', 'naturalAnalogue'].includes(fieldId)) {
+      setModificationTypes([]);
+    }
     if (fieldId === 'type') {
       wizardStateDispatch({
         type: 'SetFieldValue',
@@ -539,6 +542,9 @@ const MonomerCreationWizard = () => {
   const displayEditDialog =
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
 
+  const displayModificationTypes =
+    wizardState.values.type === KetMonomerClass.AminoAcid && naturalAnalogue;
+
   return (
     <div className={styles.monomerCreationWizard}>
       <div className={styles.leftColumn}>
@@ -582,7 +588,6 @@ const MonomerCreationWizard = () => {
                   value={type}
                   onChange={(value) => {
                     handleFieldChange('type', value);
-                    setModificationTypes([]);
                   }}
                   error={errors.type}
                 />
@@ -629,7 +634,6 @@ const MonomerCreationWizard = () => {
                   value={naturalAnalogue}
                   onChange={(value) => {
                     handleFieldChange('naturalAnalogue', value);
-                    setModificationTypes([]);
                   }}
                   error={errors.naturalAnalogue}
                 />
@@ -674,66 +678,62 @@ const MonomerCreationWizard = () => {
             )}
           </div>
 
-          {wizardState.values.type === KetMonomerClass.AminoAcid &&
-            naturalAnalogue && (
-              <>
-                <div className={styles.divider} />
+          {displayModificationTypes && (
+            <>
+              <div className={styles.divider} />
 
-                <div>
-                  <Accordion
-                    className={clsx(
-                      accordionClasses.accordion,
-                      styles.accordion,
-                    )}
-                    square={true}
+              <div>
+                <Accordion
+                  className={clsx(accordionClasses.accordion, styles.accordion)}
+                  square={true}
+                >
+                  <AccordionSummary
+                    className={styles.accordionSummary}
+                    expandIcon={
+                      <Icon
+                        className={accordionClasses.expandIcon}
+                        name="chevron"
+                      />
+                    }
                   >
-                    <AccordionSummary
-                      className={styles.accordionSummary}
-                      expandIcon={
-                        <Icon
-                          className={accordionClasses.expandIcon}
-                          name="chevron"
+                    Modification
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {modificationTypes.map((modificationType, idx) => (
+                      <div className={styles.modificationTypeRow} key={idx}>
+                        <ModificationTypeDropdown
+                          value={modificationType}
+                          naturalAnalogue={naturalAnalogue}
+                          error={
+                            errors[modificationType] ||
+                            (errors.emptyModificationType &&
+                              !modificationType.trim())
+                          }
+                          onChange={(value) =>
+                            handleModificationTypeChange(idx, value)
+                          }
                         />
-                      }
-                    >
-                      Modification
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      {modificationTypes.map((modificationType, idx) => (
-                        <div className={styles.modificationTypeRow} key={idx}>
-                          <ModificationTypeDropdown
-                            value={modificationType}
-                            naturalAnalogue={naturalAnalogue}
-                            error={
-                              errors[modificationType] ||
-                              (errors.emptyModificationType &&
-                                !modificationType.trim())
-                            }
-                            onChange={(value) =>
-                              handleModificationTypeChange(idx, value)
-                            }
-                          />
 
-                          <Icon
-                            name="delete"
-                            className={styles.deleteModificationTypeButton}
-                            title="Delete modification type"
-                            onClick={() => deleteModificationType(idx)}
-                          />
-                        </div>
-                      ))}
-                      <button
-                        type="button"
-                        className={styles.addModificationTypeButton}
-                        onClick={handleAddModificationType}
-                      >
-                        Add modification type
-                      </button>
-                    </AccordionDetails>
-                  </Accordion>
-                </div>
-              </>
-            )}
+                        <IconButton
+                          iconName="delete"
+                          className={styles.deleteModificationTypeButton}
+                          title="Delete modification type"
+                          onClick={() => deleteModificationType(idx)}
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className={styles.addModificationTypeButton}
+                      onClick={handleAddModificationType}
+                    >
+                      Add modification type
+                    </button>
+                  </AccordionDetails>
+                </Accordion>
+              </div>
+            </>
+          )}
         </div>
 
         {displayEditDialog &&

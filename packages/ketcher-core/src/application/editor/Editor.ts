@@ -145,7 +145,7 @@ interface IAutochainMonomerAddResult {
 
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
-const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
+export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =

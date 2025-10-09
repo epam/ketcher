@@ -14,7 +14,6 @@ import {
   MacroFileType,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -26,6 +25,7 @@ import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('Sequence mode selection for view mode', () => {
       nodeIndexOverall: 21,
     }).click();
     await page.keyboard.up('Shift');
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -77,7 +77,7 @@ test.describe('Sequence mode selection for view mode', () => {
       .first()
       .click();
     await page.keyboard.up('Control');
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 });
@@ -202,7 +202,7 @@ test.describe('Sequence mode selection for view mode', () => {
         .locator('g', { has: page.locator('text="G"') })
         .first()
         .click();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });
   }

@@ -20,10 +20,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  waitForMonomerPreview,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   markResetToDefaultState,
@@ -39,6 +36,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -163,7 +161,7 @@ test.describe('Import-Saving .ket Files', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Peptide.bAla).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -389,7 +387,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -416,7 +414,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -443,7 +441,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -470,7 +468,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -497,7 +495,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(

@@ -14,7 +14,7 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   bondTwoMonomers,
   getBondLocator,
@@ -39,6 +39,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -100,7 +101,7 @@ test.describe('Erase Tool', () => {
     await peptide3.click();
 
     // Get rid of flakiness because of preview
-    await hideMonomerPreview(page);
+    await MonomerPreviewTooltip(page).hide();
 
     await takeEditorScreenshot(page);
   });

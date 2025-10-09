@@ -1,16 +1,13 @@
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Locator, test, expect } from '@fixtures';
-import {
-  addSingleMonomerToCanvas,
-  hideMonomerPreview,
-  waitForPageInit,
-} from '@utils';
+import { addSingleMonomerToCanvas, waitForPageInit } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
@@ -39,7 +36,7 @@ test.describe('Modal window', () => {
     await page.mouse.down();
     await chem2.hover({ force: true });
     await page.mouse.up();
-    await hideMonomerPreview(page);
+    await MonomerPreviewTooltip(page).hide();
     expect(
       await AttachmentPointsDialog(page).connectButton.isDisabled(),
     ).toBeTruthy();
@@ -57,7 +54,7 @@ test.describe('Modal window', () => {
     await page.mouse.down();
     await chem2.hover({ force: true });
     await page.mouse.up();
-    await hideMonomerPreview(page);
+    await MonomerPreviewTooltip(page).hide();
     await AttachmentPointsDialog(page).selectAttachmentPoints({
       leftMonomer: AttachmentPoint.R1,
       rightMonomer: AttachmentPoint.R2,

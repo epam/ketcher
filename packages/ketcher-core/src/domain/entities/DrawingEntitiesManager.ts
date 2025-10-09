@@ -753,11 +753,13 @@ export class DrawingEntitiesManager {
 
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
-      if (
-        editor.mode instanceof SequenceMode &&
-        drawingEntity instanceof PolymerBond
-      ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
+        if (
+          editor.mode instanceof SequenceMode &&
+          drawingEntity instanceof PolymerBond
+        ) {
+          isValueChanged = this.checkBondSelectionForSequenceMode(
+            drawingEntity,
+          );
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInRectangle(
           rectangleTopLeftPoint,
@@ -801,7 +803,9 @@ export class DrawingEntitiesManager {
         editor.mode instanceof SequenceMode &&
         drawingEntity instanceof PolymerBond
       ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
+        isValueChanged = this.checkBondSelectionForSequenceMode(
+          drawingEntity,
+        );
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInPolygon(
           polygonPoints,

@@ -52,4 +52,67 @@ test.describe('Snap Functionality', () => {
     });
     await page.mouse.up();
   });
+
+  test('Case 2: Magnetic area for horizontal snap between monomers', async () => {
+    /*
+     * Version 3.8
+     * Test case: https://github.com/epam/ketcher/issues/6287
+     * Description: A magnetic area appears at the midpoint between the connected monomers with a height
+     * equal to y and a 15 px magnetic zone, showing where the group will snap.
+     * Scenario:
+     * 1. Arrange a chain of monomers horizontally with connections on both sides of a selected group.
+     * 2. Select the central group and start dragging it horizontally between its two connected monomers.
+     * 3. Observe the area at the midpoint between the connected monomers.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/six-peptides.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (const peptide of [Peptide.D, Peptide.E, Peptide.F]) {
+      await getMonomerLocator(page, peptide).click();
+    }
+    await page.keyboard.up('Shift');
+    await getMonomerLocator(page, Peptide.F);
+    await page.mouse.down();
+    await page.mouse.move(600, 322, { steps: 10 });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+
+  test('Case 3: Condition for horizontal snap', async () => {
+    /*
+     * Version 3.8
+     * Test case: https://github.com/epam/ketcher/issues/6287
+     * Description: When the geometric mean enters the magnetic area, the group snaps horizontally into place between the connected monomers.
+     * Scenario:
+     * 1. Arrange a chain of monomers horizontally with connections on both sides of a selected group.
+     * 2. Determine the geometric mean (center of mass) of the selected group.
+     * 3. Drag the group so that its geometric mean enters the magnetic area around midpoint M.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/six-peptides.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (const peptide of [Peptide.D, Peptide.E, Peptide.F]) {
+      await getMonomerLocator(page, peptide).click();
+    }
+    await page.keyboard.up('Shift');
+    await getMonomerLocator(page, Peptide.F);
+    await page.mouse.down();
+    await page.mouse.move(550, 322, { steps: 10 });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
 });

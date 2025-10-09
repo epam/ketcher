@@ -251,28 +251,47 @@ export class ZoomTool implements BaseTool {
     const canvasWrapperWidth =
       this.canvasWrapper.node()?.width.baseVal.value || 0;
 
+    // Calculate X offset
+    let xOffsetValue: number;
+    if (isNumber(xOffset) && !isOffsetInPercents) {
+      xOffsetValue = xOffset;
+    } else {
+      const xOffsetOrDefault = isNumber(xOffset)
+        ? xOffset
+        : AUTO_SCROLL_OFFSET_X;
+      xOffsetValue = (canvasWrapperWidth * xOffsetOrDefault) / 100;
+    }
+
+    // Calculate Y offset
+    let yOffsetValue: number;
+    if (isNumber(yOffset) && !isOffsetInPercents) {
+      yOffsetValue = yOffset;
+    } else {
+      const yOffsetOrDefault = isNumber(yOffset)
+        ? yOffset
+        : AUTO_SCROLL_OFFSET_Y;
+      yOffsetValue = (canvasWrapperHeight * yOffsetOrDefault) / 100;
+    }
+
     const offset = new Vec2(
-      canvasWrapperWidth / 2 -
-        (isNumber(xOffset) && !isOffsetInPercents
-          ? xOffset
-          : (canvasWrapperWidth *
-              (isNumber(xOffset) ? xOffset : AUTO_SCROLL_OFFSET_X)) /
-            100),
-      canvasWrapperHeight / 2 -
-        (isNumber(yOffset) && !isOffsetInPercents
-          ? yOffset
-          : (canvasWrapperHeight *
-              (isNumber(yOffset) ? yOffset : AUTO_SCROLL_OFFSET_Y)) /
-            100),
+      canvasWrapperWidth / 2 - xOffsetValue,
+      canvasWrapperHeight / 2 - yOffsetValue,
     );
     const currentY = this._zoomTransform?.y || 0;
+
+    // Calculate Y position for translateTo
+    let yPosition: number;
+    if (needScrollVertical) {
+      const multiplier = stickToBottom ? -1 : 1;
+      yPosition = position.y + this.unzoomValue(offset.y * multiplier);
+    } else {
+      yPosition = this.unzoomValue(canvasWrapperHeight / 2 - currentY);
+    }
 
     this.zoom?.translateTo(
       this.canvasWrapper,
       position.x + this.unzoomValue(offset.x),
-      needScrollVertical
-        ? position.y + this.unzoomValue(offset.y * (stickToBottom ? -1 : 1))
-        : this.unzoomValue(canvasWrapperHeight / 2 - currentY),
+      yPosition,
     );
   }
 

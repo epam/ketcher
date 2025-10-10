@@ -118,11 +118,11 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       ref={dialogRef}
       role="dialog"
       data-testid={'info-modal-window'}
-      onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params.className)}

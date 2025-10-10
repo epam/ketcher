@@ -49,8 +49,14 @@ class ComboBox extends Component {
     const suggestList = schema.enumNames
       .filter((item) => item !== value)
       .map((item) => (
-        <li key={item} onMouseDown={this.updateInput}>
-          {item}
+        <li key={item}>
+          <button
+            type="button"
+            onMouseDown={this.updateInput}
+            className={classes.suggestButton}
+          >
+            {item}
+          </button>
         </li>
       ));
     const suggestListStyles = {

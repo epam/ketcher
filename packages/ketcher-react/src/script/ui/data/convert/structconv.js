@@ -407,10 +407,7 @@ export function fromSgroup(ssgroup) {
     ssgroup.attrs.radiobuttons = 'Relative';
   else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
 
-  if (
-    sdataSchema[context][fieldName] &&
-    sdataSchema[context][fieldName].properties.fieldValue.items
-  )
+  if (sdataSchema[context][fieldName]?.properties.fieldValue.items)
     ssgroup.attrs.fieldValue = fieldValue.split('\n');
 
   const sDataInitValue =

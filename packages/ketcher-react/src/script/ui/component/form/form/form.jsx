@@ -84,7 +84,7 @@ class Form extends Component {
     };
 
     return {
-      dataError: errors && errors[name],
+      dataError: errors?.[name],
       value,
       extraValue,
       onChange: (val) => handleOnChange(name, val),

@@ -47,7 +47,7 @@ function SelectList({
 }
 
 function isSplitIndex(index, splitIndexes) {
-  return index > 0 && splitIndexes && splitIndexes.includes(index);
+  return index > 0 && splitIndexes?.includes(index);
 }
 
 export default SelectList;

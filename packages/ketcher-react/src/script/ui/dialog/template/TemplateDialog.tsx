@@ -124,12 +124,16 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
-  const filename =
-    tab === TemplateTabs.TemplateLibrary
-      ? 'ketcher-tmpls.sdf'
-      : tab === TemplateTabs.FunctionalGroupLibrary
-      ? 'ketcher-fg-tmpls.sdf'
-      : 'ketcher-salts-solvents.sdf';
+
+  // Determine filename based on tab
+  let filename: string;
+  if (tab === TemplateTabs.TemplateLibrary) {
+    filename = 'ketcher-tmpls.sdf';
+  } else if (tab === TemplateTabs.FunctionalGroupLibrary) {
+    filename = 'ketcher-fg-tmpls.sdf';
+  } else {
+    filename = 'ketcher-salts-solvents.sdf';
+  }
 
   return (
     <div

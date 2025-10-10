@@ -20,7 +20,6 @@ import {
   RingSize,
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 async function drawStructureAndDoubleClickOnAtom(

@@ -28,7 +28,6 @@ import {
 const ieCb = typeof window !== 'undefined' ? window.clipboardData : {};
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
-let needSkipCopyEvent = false;
 
 const isUserEditing = () => {
   const el = document.activeElement;
@@ -89,28 +88,12 @@ class ClipArea extends Component {
             });
           });
         } else {
-          if (needSkipCopyEvent) {
-            needSkipCopyEvent = false;
-            return;
+          // Fallback for browsers without full Clipboard API support
+          // Use synchronous copy with event.clipboardData
+          const data = this.props.onLegacyCopy();
+          if (data) {
+            legacyCopy(event.clipboardData, data);
           }
-          needSkipCopyEvent = true;
-
-          this.props.onCopy().then((data) => {
-            // It is possible to have access to clipboard data through evt.clipboardData
-            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-            // It will not work with long operations which time > 5 sec, because browser will close access
-            // to clipboard data if user did not interact with application.
-            addEventListener(
-              'copy',
-              (evt) => {
-                legacyCopy(evt.clipboardData, data);
-                evt.preventDefault();
-              },
-              { once: true },
-            );
-            document.execCommand('copy');
-          });
-
           event.preventDefault();
         }
       },
@@ -304,17 +287,15 @@ async function pasteByKeydown(clipboardData) {
 export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action) {
-  let enabled = document.queryCommandSupported(action);
-  if (enabled) {
-    try {
-      enabled = document.execCommand(action) || window.ClipboardEvent || ieCb;
-    } catch (e) {
-      // FF < 41
-      KetcherLogger.error('cliparea.jsx::exec', e);
-      enabled = false;
-    }
+  // Check if Clipboard API is available for the requested action
+  if (action === 'paste') {
+    return typeof navigator?.clipboard?.read === 'function';
   }
-  return enabled;
+  // For cut and copy, check if writeText or write is available
+  return (
+    typeof navigator?.clipboard?.writeText === 'function' ||
+    typeof navigator?.clipboard?.write === 'function'
+  );
 }
 
 export default ClipArea;

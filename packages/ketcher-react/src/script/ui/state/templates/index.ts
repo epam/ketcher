@@ -45,13 +45,6 @@ export function changeFilter(filter) {
   };
 }
 
-export function changeTab(tab) {
-  return {
-    type: 'TMPL_CHANGE_TAB',
-    data: { tab },
-  };
-}
-
 /* TEMPLATE-ATTACH-EDIT */
 export function initAttach(name, attach) {
   return {
@@ -162,7 +155,6 @@ export const initTmplsState = {
   group: null,
   attach: {},
   mode: 'classic',
-  tab: 0,
 };
 
 const tmplActions = [
@@ -170,7 +162,6 @@ const tmplActions = [
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
   'TMPL_CHANGE_FILTER',
-  'TMPL_CHANGE_TAB',
 ];
 
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];

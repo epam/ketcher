@@ -242,6 +242,14 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
 
 const validateStructure = (editor: Editor) => {
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const isStructureImpure = Editor.isStructureImpure(editor.struct());
+  if (isStructureImpure) {
+    notifications.set('impureStructure', {
+      type: 'error',
+      message: NotificationMessages.impureStructure,
+    });
+  }
+
   const isMinimalViableStructure = editor.isMinimalViableStructure();
   if (!isMinimalViableStructure) {
     notifications.set('notMinimalViableStructure', {

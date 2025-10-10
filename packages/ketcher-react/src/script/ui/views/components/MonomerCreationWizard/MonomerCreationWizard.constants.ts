@@ -39,6 +39,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   incontinuousStructure: 'All monomers must have a continuous structure.',
   notMinimalViableStructure:
     'Minimal monomer structure is two atoms connected via a single bond.',
+  impureStructure:
+    'Monomer structure cannot contain S-groups, R-groups, special atoms, or any other query properties.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -52,6 +54,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   creationSuccessful: 'info',
   incontinuousStructure: 'error',
   notMinimalViableStructure: 'error',
+  impureStructure: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

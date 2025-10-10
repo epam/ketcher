@@ -33,7 +33,6 @@
 
   &.rulerInputDragging {
     user-select: none;
-    user-focus: none;
     opacity: 100%;
   }
 }
@@ -58,7 +57,8 @@
   }
 }
 
-.rulerInput, .rulerHandle {
+.rulerInput,
+.rulerHandle {
   &::before {
     content: '';
     display: block;

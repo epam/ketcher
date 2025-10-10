@@ -11,7 +11,7 @@ const HOVER_ICON_OPACITY = 0.7;
 
 export class HoverIcon {
   element: any;
-  _fill: AtomColor | '';
+  _fill: AtomColor;
   _label: ElementLabel | '';
   isShown: boolean;
   /**
@@ -41,7 +41,7 @@ export class HoverIcon {
     clientArea.addEventListener('mouseleave', this.onMouseLeave);
   }
 
-  set fill(fillColor: AtomColor | '') {
+  set fill(fillColor: AtomColor) {
     this._fill = fillColor;
     this.element.attr('fill', fillColor);
   }
@@ -111,7 +111,7 @@ export class HoverIcon {
 
   initialize(): {
     element: any;
-    fill: AtomColor | '';
+    fill: AtomColor;
     label: ElementLabel | '';
   } {
     const render = this.editor.render;

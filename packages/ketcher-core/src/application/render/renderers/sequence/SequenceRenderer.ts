@@ -732,9 +732,7 @@ export class SequenceRenderer {
   public static moveCaretBack() {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
-      this.previousCaretPosition === undefined
-        ? this.caretPosition
-        : this.previousCaretPosition,
+      this.previousCaretPosition ?? this.caretPosition,
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 

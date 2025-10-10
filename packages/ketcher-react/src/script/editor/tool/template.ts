@@ -127,7 +127,7 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
+      aid: (parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: parseInt(tmpl.bid) || 0,
     };
 
@@ -369,7 +369,7 @@ class TemplateTool implements Tool {
 
       if (atomId !== undefined) {
         const atom = this.struct.atoms.get(atomId);
-        targetPos = atom?.pp;
+        targetPos = atom?.pp ?? null;
 
         if (targetPos) {
           extraBond = this.isModeFunctionalGroup

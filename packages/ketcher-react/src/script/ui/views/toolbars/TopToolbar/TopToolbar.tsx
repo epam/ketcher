@@ -244,9 +244,6 @@ export const TopToolbar = ({
         {togglerComponent && <Divider />}
 
         <SystemControls
-          onHistoryClick={() => {
-            console.log('History button clicked'); // @TODO Implement handler when History log is ready
-          }}
           onSettingsOpen={onSettingsOpen}
           onFullscreen={onFullscreen}
           onHelp={onHelp}

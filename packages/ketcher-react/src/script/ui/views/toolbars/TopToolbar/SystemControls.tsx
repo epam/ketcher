@@ -24,7 +24,6 @@ interface SystemControlsProps {
   className?: string;
   onSettingsOpen: () => void;
   onAboutOpen: () => void;
-  onHistoryClick: () => void;
   onFullscreen: () => void;
   onHelp: () => void;
 }

@@ -11,7 +11,10 @@ import {
 
 export class SelectViewOnlyTool implements Tool {
   private readonly lassoHelper: LassoHelper;
-  constructor(private readonly editor: Editor, private mode: SelectMode) {
+  constructor(
+    private readonly editor: Editor,
+    private readonly mode: SelectMode,
+  ) {
     this.lassoHelper = new LassoHelper(
       this.mode === 'lasso' ? 0 : 1,
       editor,

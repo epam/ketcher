@@ -800,7 +800,7 @@ class Editor implements KetcherEditor {
 
   private originalStruct: Struct = new Struct();
   private originalSelection: Selection = {};
-  private selectedToOriginalAtomsIdMap = new Map<number, number>();
+  private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
   private selectionBBox;
 
   private changeEventSubscriber: any = null;
@@ -1074,7 +1074,7 @@ class Editor implements KetcherEditor {
   }
 
   // Maps attachment atom id to either set of leaving group atom ids or created leaving group atom id and bond id to properly revert changes when removing AP
-  private preservedConnectionPointData = new Map<
+  private readonly preservedConnectionPointData = new Map<
     number,
     Set<number> | [number, number]
   >();

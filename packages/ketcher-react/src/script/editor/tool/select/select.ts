@@ -87,8 +87,8 @@ class SelectTool implements Tool {
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
-  private multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
-  private reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
+  private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
+  private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;

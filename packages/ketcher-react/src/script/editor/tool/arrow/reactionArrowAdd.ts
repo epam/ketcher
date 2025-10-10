@@ -35,7 +35,10 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   private dragCtx: ReactionArrowDragContext | null = null;
 
   // eslint-disable-next-line no-useless-constructor
-  constructor(private editor: Editor, private mode: RxnArrowMode) {}
+  constructor(
+    private readonly editor: Editor,
+    private readonly mode: RxnArrowMode,
+  ) {}
 
   private get render() {
     return this.editor.render;

@@ -11,15 +11,15 @@ interface MatrixConfig {
 }
 
 export class CanvasMatrix {
-  private matrix: Matrix<Cell>;
-  private initialMatrixWidth: number;
-  private monomerToCell: Map<BaseMonomer, Cell> = new Map();
+  private readonly matrix: Matrix<Cell>;
+  private readonly initialMatrixWidth: number;
+  private readonly monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
 
   constructor(
     public chainsCollection: ChainsCollection,
-    private matrixConfig: MatrixConfig = {
+    private readonly matrixConfig: MatrixConfig = {
       initialMatrix: new Matrix<Cell>(),
     },
   ) {

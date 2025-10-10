@@ -356,6 +356,26 @@ const sgroup = {
       required: ['subscript', 'connectivity'],
     },
     {
+      key: 'COP',
+      title: 'Copolymer',
+      type: 'object',
+      properties: {
+        type: { enum: ['COP'] },
+        subtype: {
+          title: 'Subtype',
+          enum: ['', 'RAN', 'BLO', 'ALT'],
+          enumNames: ['Not Specified', 'Random', 'Block', 'Alternating'],
+        },
+        connectivity: {
+          title: 'Repeat Pattern',
+          enum: ['ht', 'hh', 'eu'],
+          enumNames: ['Head-to-tail', 'Head-to-head', 'Either unknown'],
+          default: 'ht',
+        },
+      },
+      required: ['connectivity'],
+    },
+    {
       key: 'SUP',
       title: 'Superatom',
       type: 'object',

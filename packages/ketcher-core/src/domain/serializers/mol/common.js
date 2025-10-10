@@ -87,10 +87,37 @@ const prepareForSaving = {
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
+  COP: prepareCopForSaving,
   queryComponent: prepareQueryComponentForSaving,
 };
 
 function prepareSruForSaving(sgroup, mol) {
+  const xBonds = [];
+  mol.bonds.forEach((bond, bid) => {
+    const a1 = mol.atoms.get(bond.begin);
+    const a2 = mol.atoms.get(bond.end);
+    /* eslint-disable no-mixed-operators */
+    if (
+      (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
+      (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
+    ) {
+      /* eslint-enable no-mixed-operators */
+      xBonds.push(bid);
+    }
+  }, sgroup);
+  if (xBonds.length !== 0 && xBonds.length !== 2) {
+    // TODO fix this eslint error
+    // eslint-disable-next-line no-throw-literal
+    throw {
+      id: sgroup.id,
+      'error-type': 'cross-bond-number',
+      message: 'Unsupported cross-bonds number',
+    };
+  }
+  sgroup.bonds = xBonds;
+}
+
+function prepareCopForSaving(sgroup, mol) {
   const xBonds = [];
   mol.bonds.forEach((bond, bid) => {
     const a1 = mol.atoms.get(bond.begin);
@@ -151,6 +178,7 @@ function prepareDatForSaving(sgroup, mol) {
 const saveToMolfile = {
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
+  COP: saveCopToMolfile,
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
@@ -185,6 +213,17 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 }
 
 function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveCopToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   // eslint-disable-line max-params
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 

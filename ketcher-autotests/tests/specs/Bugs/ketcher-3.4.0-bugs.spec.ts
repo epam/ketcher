@@ -17,7 +17,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takePageScreenshot,
   clickOnAtom,
-  waitForMonomerPreview,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -79,6 +78,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -495,7 +495,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     const point = getAbbreviationLocator(page, { name: 'X' });
     await ContextMenu(page, point).open();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -726,7 +726,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

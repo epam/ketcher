@@ -28,16 +28,27 @@ function SelectList({
   classes,
   ...props
 }) {
+  const handleKeyDown = (opt, index) => (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onSelect(opt, index);
+    }
+  };
+
   return (
     <ul {...props}>
       {schema.enum.map((opt, index) => (
         <li
           key={opt}
           onClick={() => onSelect(opt, index)}
+          onKeyDown={handleKeyDown(opt, index)}
           className={
             (opt === value ? `${classes.selected} ` : '') +
             (isSplitIndex(index, splitIndexes) ? ` ${classes.split}` : '')
           }
+          role="option"
+          tabIndex={0}
+          aria-selected={opt === value}
         >
           {schema.enumNames ? schema.enumNames[index] : opt}
         </li>

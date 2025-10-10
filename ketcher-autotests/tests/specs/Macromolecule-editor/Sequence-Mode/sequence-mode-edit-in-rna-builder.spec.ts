@@ -11,7 +11,6 @@ import {
   takePresetsScreenshot,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -29,6 +28,7 @@ import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -169,7 +169,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await symbolT.click();
     await page.keyboard.up('Control');
     // should see the whole chain selected
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await ContextMenu(page, symbolT).open();
     // should see correct context menu title and enabled 'modify_in_rna_builder' button

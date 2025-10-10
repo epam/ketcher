@@ -14,7 +14,6 @@ import {
   moveMouseAway,
   keyboardTypeOnCanvas,
   keyboardPressOnCanvas,
-  waitForMonomerPreview,
   takeElementScreenshot,
   openFile,
   readFileContent,
@@ -51,6 +50,7 @@ import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPane
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -363,10 +363,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
     await Library(page).switchToCHEMTab();
     await Library(page).hoverMonomer(Chem.SS3);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(
       page,
-      page.getByTestId('polymer-library-preview'),
+      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
     );
   });
 
@@ -580,7 +580,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       y: 388,
     });
     await getMonomerLocator(page, Peptide.Cys_Bn).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -593,7 +593,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'Molfiles-V3000/Bugs/monomer-with-unique-structure-expected.mol',
     );
     await getMonomerLocator(page, Peptide.Cys_Bn).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

@@ -22,7 +22,6 @@ import {
   MacroFileType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   AttachmentPoint,
@@ -36,6 +35,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -774,7 +774,7 @@ test.describe('Snake Bond Tool', () => {
       await page.mouse.wheel(-400, 0);
 
       if (testCase.waitForMonomerPreview) {
-        await waitForMonomerPreview(page);
+        await MonomerPreviewTooltip(page).waitForBecomeVisible();
       }
       await takeEditorScreenshot(page);
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

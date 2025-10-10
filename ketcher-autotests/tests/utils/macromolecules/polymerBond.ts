@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { MonomerType, moveMouseAway } from '..';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { AttachmentPoint } from './monomer';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 export enum BondType {
   None = 0,
@@ -45,7 +45,7 @@ export async function bondTwoMonomers(
   await page.mouse.down();
   await secondMonomer.hover({ force: true });
   await page.mouse.up();
-  await hideMonomerPreview(page);
+  await MonomerPreviewTooltip(page).hide();
   const attachmentPointsDialog = AttachmentPointsDialog(page);
   if (
     (attachmentPoint1 || attachmentPoint2) &&

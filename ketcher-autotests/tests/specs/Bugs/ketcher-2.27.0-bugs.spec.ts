@@ -16,7 +16,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  waitForMonomerPreview,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit } from '@utils/common';
@@ -49,6 +48,7 @@ import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedS
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -465,7 +465,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
     await getAbbreviationLocator(page, { name: 'X' }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

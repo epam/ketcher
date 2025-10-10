@@ -27,10 +27,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  waitForMonomerPreview,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -63,6 +60,7 @@ import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constan
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -203,7 +201,7 @@ test.describe('Import-Saving .idt Files', () => {
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
     await Library(page).hoverMonomer(Phosphate.P);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePolymerEditorScreenshot(page);
   });
 
@@ -228,7 +226,7 @@ test.describe('Import-Saving .idt Files', () => {
       await Library(page).switchToRNATab();
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).hoverMonomer(monomer);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takePolymerEditorScreenshot(page);
     });
   }
@@ -251,7 +249,7 @@ test.describe('Import-Saving .idt Files', () => {
 
       await Library(page).switchToRNATab();
       await Library(page).hoverMonomer(monomer);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takePolymerEditorScreenshot(page);
     });
   }
@@ -550,7 +548,7 @@ test.describe('Import-Saving .idt Files', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await bondLine.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -794,13 +792,13 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
     await getSymbolLocator(page, { symbolAlias: '?' }).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -816,7 +814,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -848,7 +846,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -881,7 +879,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

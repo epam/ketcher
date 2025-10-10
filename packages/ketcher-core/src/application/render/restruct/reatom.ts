@@ -1598,7 +1598,7 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
-  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
+  isotope.text = atom.a.isotope?.toString() ?? '';
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,

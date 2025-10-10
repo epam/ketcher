@@ -414,19 +414,13 @@ export const selectFilteredMonomers = createSelector(
 
         if (searchFilter.endsWith('/') && searchFilter.length > 1) {
           const aliasRest = searchFilter.slice(0, -1);
-          const aliasLastSymbol = searchFilter[searchFilter.length - 2];
 
           return (
-            (idtBase?.endsWith(aliasRest) &&
-              idtBase[idtBase.length - 1] === aliasLastSymbol) ||
+            idtBase?.endsWith(aliasRest) ||
             (idtModifications &&
               idtModifications
                 .split(' ')
-                .some(
-                  (mod) =>
-                    mod.endsWith(aliasRest) &&
-                    mod[mod.length - 1] === aliasLastSymbol,
-                ))
+                .some((mod) => mod.endsWith(aliasRest)))
           );
         }
 

@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import {
   AttachmentPoint,
   AttachmentPointID,
@@ -11,7 +10,7 @@ type Props = {
   preparedAttachmentPointsData: PreparedAttachmentPointData[];
 };
 
-const AttachmentPoints = memo(({ preparedAttachmentPointsData }: Props) => {
+const AttachmentPoints = ({ preparedAttachmentPointsData }: Props) => {
   if (!preparedAttachmentPointsData.length) {
     return null;
   }
@@ -29,6 +28,6 @@ const AttachmentPoints = memo(({ preparedAttachmentPointsData }: Props) => {
       ))}
     </AttachmentPointsList>
   );
-});
+};
 
 export default AttachmentPoints;

@@ -26,8 +26,8 @@ import { useAppSelector } from 'hooks';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
 import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
-import IDTAliases from '../IDTAliases/IDTAliases';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
 import { preview } from 'ketcher-react';
@@ -42,6 +42,9 @@ const MonomerPreview = ({ className }: Props) => {
   const { monomer, attachmentPointsToBonds } = preview;
 
   const idtAliases = monomer?.props.idtAliases;
+  const axoLabsAlias = monomer?.props.aliasAxoLabs;
+  const aliasHelm = monomer?.props.aliasHELM;
+  const modificationTypes = monomer?.props.modificationTypes;
 
   const { preparedAttachmentPointsData, connectedAttachmentPoints } =
     useAttachmentPoints({
@@ -87,7 +90,16 @@ const MonomerPreview = ({ className }: Props) => {
           <AttachmentPoints
             preparedAttachmentPointsData={preparedAttachmentPointsData}
           />
-          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+          <MonomerPreviewProperties
+            idtAliasesText={idtAliasesText ?? undefined}
+            axoLabsText={axoLabsAlias ?? undefined}
+            helmText={aliasHelm ?? undefined}
+            modificationTypeText={
+              Array.isArray(modificationTypes)
+                ? modificationTypes.join(', ')
+                : modificationTypes
+            }
+          />
         </InfoBlock>
       </Container>
     )

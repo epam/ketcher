@@ -30,7 +30,7 @@ const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
   return (
     <RnaEditorCollapsedContainer>
       <TextContainer>
-        <MonomerName>{name || fullName}</MonomerName>
+        <MonomerName>{name ?? fullName}</MonomerName>
       </TextContainer>
     </RnaEditorCollapsedContainer>
   );

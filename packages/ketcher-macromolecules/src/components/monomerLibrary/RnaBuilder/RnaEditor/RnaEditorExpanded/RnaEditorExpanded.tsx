@@ -342,10 +342,10 @@ export const RnaEditorExpanded = ({
     ) {
       return activePresetMonomerGroup.groupItem.label;
     }
-    return (
-      selectCurrentMonomerGroup(newPreset, groupName)?.label ||
-      selectCurrentMonomerGroup(newPreset, groupName)?.props.MonomerName
-    );
+    const result =
+      selectCurrentMonomerGroup(newPreset, groupName)?.label ??
+      selectCurrentMonomerGroup(newPreset, groupName)?.props.MonomerName;
+    return result || undefined;
   };
 
   const getMonomersName = (groupName: string) => {

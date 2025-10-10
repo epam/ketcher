@@ -41,7 +41,7 @@ export default function ModificationTypeDropdown(
       return { title: modificationType };
     },
   );
-  const value = props.value || '';
+  const value = props.value ?? '';
 
   const onValueChange = (newValue) => {
     if (props.onChange) {

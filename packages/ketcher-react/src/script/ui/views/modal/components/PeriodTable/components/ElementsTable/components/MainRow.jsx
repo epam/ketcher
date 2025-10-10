@@ -17,6 +17,41 @@
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 
+function renderCell(
+  element,
+  index,
+  onAtomSelect,
+  onDoubleClick,
+  currentEvents,
+  atomClassNames,
+  refer,
+  className,
+) {
+  if (typeof element !== 'number') {
+    return (
+      <td key={index}>
+        <Atom
+          el={element}
+          className={clsx(...atomClassNames(element))}
+          onClick={() => onAtomSelect(element.label)}
+          onDoubleClick={() => onDoubleClick()}
+          {...currentEvents(element)}
+        />
+      </td>
+    );
+  }
+
+  if (refer(element)) {
+    return (
+      <td key={index} className={className}>
+        {refer(element)}
+      </td>
+    );
+  }
+
+  return <td key={index} colSpan={element} />;
+}
+
 function MainRow({
   row,
   caption,
@@ -32,22 +67,15 @@ function MainRow({
       <tr>
         <th>{caption}</th>
         {row.map((element, index) =>
-          typeof element !== 'number' ? ( // eslint-disable-line
-            <td key={index}>
-              <Atom
-                el={element}
-                className={clsx(...atomClassNames(element))}
-                onClick={() => onAtomSelect(element.label)}
-                onDoubleClick={() => onDoubleClick()}
-                {...currentEvents(element)}
-              />
-            </td>
-          ) : refer(element) ? (
-            <td key={index} className={className}>
-              {refer(element)}
-            </td>
-          ) : (
-            <td key={index} colSpan={element} />
+          renderCell(
+            element,
+            index,
+            onAtomSelect,
+            onDoubleClick,
+            currentEvents,
+            atomClassNames,
+            refer,
+            className,
           ),
         )}
       </tr>

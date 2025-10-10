@@ -187,15 +187,8 @@ function FieldSet({
   innerRef,
   ...rest
 }) {
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (onSelect) onSelect(event);
-    }
-  };
-
   return (
-    <fieldset onClick={onSelect} onKeyDown={handleKeyDown}>
+    <fieldset>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
@@ -214,6 +207,7 @@ function FieldSet({
                   ? rest['data-testid'] + '-' + val
                   : undefined
               }
+              onClick={onSelect}
             />
             {type === 'checkbox' && <span className={classes.checkbox} />}
             {type === 'radio' && <span className={classes.radioButton} />}

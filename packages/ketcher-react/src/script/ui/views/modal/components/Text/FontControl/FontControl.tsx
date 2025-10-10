@@ -55,14 +55,15 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   const fontSizeOptions = useMemo(
     () =>
       fontSizes.map((fontSize) => (
-        <div
+        <button
           key={fontSize}
+          type="button"
           className={classes.fontSizeOption}
           onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
           data-testid={`${fontSize}-option`}
         >
           {fontSize}
-        </div>
+        </button>
       )),
     [isShowingFontSizeMenu],
   );

@@ -41,7 +41,7 @@ interface CustomRawDraftInlineStyleRange
 const SCALE = 40; // from ketcher-core
 
 class ReText extends ReObject {
-  private item: Text;
+  private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
   constructor(text: Text) {

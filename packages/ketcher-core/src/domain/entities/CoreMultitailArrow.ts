@@ -17,11 +17,11 @@ export class MultitailArrow extends DrawingEntity {
   constructor(
     private spineTopX: FixedPrecisionCoordinates,
     private spineTopY: FixedPrecisionCoordinates,
-    private height: FixedPrecisionCoordinates,
-    private headOffsetX: FixedPrecisionCoordinates,
-    private headOffsetY: FixedPrecisionCoordinates,
-    private tailLength: FixedPrecisionCoordinates,
-    private tailsYOffset: Pool<FixedPrecisionCoordinates>,
+    private readonly height: FixedPrecisionCoordinates,
+    private readonly headOffsetX: FixedPrecisionCoordinates,
+    private readonly headOffsetY: FixedPrecisionCoordinates,
+    private readonly tailLength: FixedPrecisionCoordinates,
+    private readonly tailsYOffset: Pool<FixedPrecisionCoordinates>,
   ) {
     super();
   }

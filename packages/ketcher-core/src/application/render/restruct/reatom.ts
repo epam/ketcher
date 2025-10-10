@@ -317,7 +317,7 @@ class ReAtom extends ReObject {
       : this.getUnlabeledSelectionContour(render, highlightPadding);
   }
 
-  private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
+  private readonly isPlateShouldBeHidden = (atom: Atom, render: Render) => {
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
     const struct = render.ctab.molecule;
@@ -332,7 +332,7 @@ class ReAtom extends ReObject {
     );
   };
 
-  private makeHighlightePlate = (
+  private readonly makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
     highlightPadding = -2,

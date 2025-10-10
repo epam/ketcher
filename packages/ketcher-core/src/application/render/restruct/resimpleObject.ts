@@ -34,7 +34,7 @@ interface StyledPath {
   stylesApplied: boolean;
 }
 class ReSimpleObject extends ReObject {
-  private item: any;
+  private readonly item: any;
   private selectionSet: any;
   private selectionPointsSet: any;
 

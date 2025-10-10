@@ -81,7 +81,7 @@ abstract class SelectBase implements BaseTool {
   protected selectionStartPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   protected mode: 'moving' | 'selecting' | 'standby' = 'standby';
-  private canvasResizeObserver?: ResizeObserver;
+  private readonly canvasResizeObserver?: ResizeObserver;
   private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
 

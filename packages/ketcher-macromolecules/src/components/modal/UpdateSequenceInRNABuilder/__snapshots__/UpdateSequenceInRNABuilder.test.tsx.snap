@@ -86,7 +86,6 @@ Object {
           >
             <button
               class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
-              role="button"
               tabindex="0"
               title="Cancel"
               type="button"
@@ -98,7 +97,6 @@ Object {
             </button>
             <button
               class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
-              role="button"
               tabindex="0"
               title="Yes"
               type="button"

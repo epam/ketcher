@@ -24,7 +24,7 @@ import { Struct } from './struct';
 import { HalfBond } from './halfBond';
 
 export class FunctionalGroup {
-  #sgroup: SGroup;
+  readonly #sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
     assert(sgroup != null);

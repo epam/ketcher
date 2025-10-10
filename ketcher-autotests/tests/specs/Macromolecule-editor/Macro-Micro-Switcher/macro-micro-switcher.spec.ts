@@ -439,7 +439,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      await FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -455,7 +455,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      await FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -793,7 +793,7 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToCanvas(
         page,
-        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+        await FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
         from: 'pageTopLeft',
@@ -821,7 +821,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.MOLv3000,
-        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        await FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
         from: 'pageTopLeft',

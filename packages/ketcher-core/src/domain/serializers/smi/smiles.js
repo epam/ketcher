@@ -400,10 +400,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
   this.comma = false;
 
-  // this._writeStereogroups(mol, atoms);
   this.writeRadicals(struct);
-  // this._writePseudoAtoms(mol);
-  // this._writeHighlighting();
 
   if (this.comma) this.smiles += '|';
 

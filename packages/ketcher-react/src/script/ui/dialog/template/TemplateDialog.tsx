@@ -34,6 +34,7 @@ import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
 import { SdfSerializer } from 'ketcher-core';
 import classes from './template-lib.module.less';
+import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
@@ -293,6 +294,7 @@ const TemplateDialog: FC<Props> = (props) => {
                   expandedAccordions.includes(groupName);
                 return (
                   <Accordion
+                    className={accordionClasses.accordion}
                     square={true}
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
@@ -302,7 +304,10 @@ const TemplateDialog: FC<Props> = (props) => {
                       className={classes.accordionSummary}
                       data-testid={`${groupName}-accordion-item`}
                       expandIcon={
-                        <Icon className={classes.expandIcon} name="chevron" />
+                        <Icon
+                          className={accordionClasses.expandIcon}
+                          name="chevron"
+                        />
                       }
                     >
                       <Icon

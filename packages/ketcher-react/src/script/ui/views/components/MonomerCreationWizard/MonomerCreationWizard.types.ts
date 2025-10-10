@@ -28,7 +28,9 @@ export type WizardNotificationId =
   | 'noAttachmentPoints'
   | 'incorrectAttachmentPointsOrder'
   | 'creationSuccessful'
-  | 'incontinuousStructure';
+  | 'incontinuousStructure'
+  | 'notUniqueModificationTypes'
+  | 'modificationTypeExists';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -42,7 +44,9 @@ export type WizardNotification = {
   message: string;
 };
 
-export type WizardErrors = Partial<Record<WizardFormFieldId, boolean>>;
+export type WizardErrors = Partial<
+  Record<WizardFormFieldId | 'emptyModificationType', boolean>
+>;
 
 export type WizardNotifications = Map<WizardNotificationId, WizardNotification>;
 

@@ -75,7 +75,7 @@ const RulerScale = ({
       if (layoutMode === 'sequence-layout-mode') {
         children.push(
           <line
-            key={`ruler-mark-${i}`}
+            key={`ruler-mark-${position}`}
             x1={transform.applyX(position)}
             y1={14}
             x2={transform.applyX(position)}
@@ -90,7 +90,7 @@ const RulerScale = ({
           if (isMultipleOfFive) {
             children.push(
               <text
-                key={`ruler-label-${i}`}
+                key={`ruler-label-${position}`}
                 x={transform.applyX(position)}
                 y={18}
                 fontSize={10}
@@ -105,7 +105,7 @@ const RulerScale = ({
           } else {
             children.push(
               <line
-                key={`ruler-mark-${i}`}
+                key={`ruler-mark-${position}`}
                 x1={transform.applyX(position)}
                 y1={14}
                 x2={transform.applyX(position)}
@@ -118,7 +118,7 @@ const RulerScale = ({
         } else {
           children.push(
             <text
-              key={`ruler-label-${i}`}
+              key={`ruler-label-${position}`}
               x={transform.applyX(position)}
               y={18}
               fontSize={10}
@@ -144,7 +144,7 @@ const RulerScale = ({
 
       children.push(
         <line
-          key={`ruler-fill-${i}`}
+          key={`ruler-fill-${position}-${positions[i + 1]}`}
           x1={transform.applyX(position + 10)}
           y1={18}
           x2={transform.applyX(positions[i + 1] - 10)}

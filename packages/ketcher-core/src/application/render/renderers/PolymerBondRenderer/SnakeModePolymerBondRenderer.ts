@@ -78,7 +78,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return;
+    if (!rootNode) return undefined;
 
     return rootNode.getBBox();
   }

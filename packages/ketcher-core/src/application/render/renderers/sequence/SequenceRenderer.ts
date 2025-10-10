@@ -768,7 +768,7 @@ export class SequenceRenderer {
   }
 
   public static getNodeByPointer(sequencePointer?: SequencePointer) {
-    if (sequencePointer === undefined) return;
+    if (sequencePointer === undefined) return undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {

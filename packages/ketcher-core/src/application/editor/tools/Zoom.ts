@@ -113,7 +113,7 @@ export class ZoomTool implements BaseTool {
     });
   }
 
-  setZoom(zoomLevel: number) {
+  setZoomLevel(zoomLevel: number) {
     this.zoomLevel = zoomLevel;
   }
 

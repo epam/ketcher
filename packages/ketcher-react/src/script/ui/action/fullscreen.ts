@@ -18,17 +18,43 @@ import isHidden from './isHidden';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const requestFullscreen = (element: HTMLElement) => {
-  element.requestFullscreen?.() ||
-    element.msRequestFullscreen?.() ||
-    element.mozRequestFullScreen?.() ||
-    element.webkitRequestFullscreen?.();
+  if (element.requestFullscreen) {
+    element.requestFullscreen().catch(() => {
+      // Ignore errors - fullscreen request may be denied
+    });
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen().catch(() => {
+      // Ignore errors - fullscreen request may be denied
+    });
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen().catch(() => {
+      // Ignore errors - fullscreen request may be denied
+    });
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen().catch(() => {
+      // Ignore errors - fullscreen request may be denied
+    });
+  }
 };
 
 const exitFullscreen = () => {
-  document.exitFullscreen?.() ||
-    document.msExitFullscreen?.() ||
-    document.mozCancelFullScreen?.() ||
-    document.webkitExitFullscreen?.();
+  if (document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {
+      // Ignore errors - exit fullscreen may fail
+    });
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen().catch(() => {
+      // Ignore errors - exit fullscreen may fail
+    });
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen().catch(() => {
+      // Ignore errors - exit fullscreen may fail
+    });
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen().catch(() => {
+      // Ignore errors - exit fullscreen may fail
+    });
+  }
 };
 
 const getIfFullScreen = () => {

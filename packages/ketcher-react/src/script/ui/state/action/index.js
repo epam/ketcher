@@ -74,7 +74,7 @@ export default function (state = null, { type, action, ...params }) {
         ...params,
         action,
       });
-      if (activeTool.tool === 'select') {
+      if (activeTool?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
     }
@@ -86,7 +86,7 @@ export default function (state = null, { type, action, ...params }) {
           if (!isEmpty(value)) res[actionName] = value;
           return res;
         },
-        { activeTool: activeTool || state.activeTool },
+        { activeTool: activeTool || state?.activeTool },
       );
 
     default:

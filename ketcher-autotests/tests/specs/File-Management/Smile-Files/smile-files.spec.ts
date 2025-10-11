@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, expect, test } from '@fixtures';
 import {
@@ -58,9 +59,12 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe('CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
     await takeEditorScreenshot(page);
@@ -79,9 +83,12 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe('CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|');
 
     await clearCanvasAndPasteSmiles(
       page,
@@ -114,9 +121,14 @@ test.describe('SMILES files', () => {
       'SMILES/sgroups-diff-symyx-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe(
+      'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
+    );
 
     await clearCanvasAndPasteSmiles(
       page,
@@ -140,10 +152,12 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-heteroatoms-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe('NOSPFClBrI[H]');
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
     await takeEditorScreenshot(page);
   });
@@ -186,10 +200,14 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-v2000-abs-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe(
+      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
+    );
     await clearCanvasAndPasteSmiles(
       page,
       // eslint-disable-next-line max-len
@@ -213,14 +231,19 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-different-features-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
 
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    const previewValue = await SaveStructureDialog(page).getTextAreaValue();
+    expect(previewValue).toBe(
+      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
+    );
     await clearCanvasAndPasteSmiles(
       page,
       // eslint-disable-next-line max-len
-      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
+      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
     );
     await takeEditorScreenshot(page);
   });
@@ -262,7 +285,6 @@ test.describe('SMILES files', () => {
     );
     await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
     await takeEditorScreenshot(page);

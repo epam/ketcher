@@ -31,7 +31,6 @@ export function fileOpener(server) {
       resolve(
         server.then(() => {
           throw Error("Server doesn't still support echo method");
-          // return resolve(throughForm2IframePosting);
         }),
       );
     } else {

@@ -465,7 +465,8 @@ class RotateController {
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
       -30,
     ];
-    predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
+    let previousDegree = 0;
+    predefinedDegrees.forEach((currentDegree, currentIndex) => {
       const isDrawingDegree0 = currentIndex === 0;
       const gap = currentDegree - previousDegree;
       const diff = getDifference(currentDegree, structRotateDegree);
@@ -482,7 +483,8 @@ class RotateController {
       this.protractor?.push(degreeLine);
 
       if (radius < 65) {
-        return currentDegree;
+        previousDegree = currentDegree;
+        return;
       }
 
       textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
@@ -502,9 +504,8 @@ class RotateController {
         });
 
       this.protractor?.push(degreeText);
-
-      return currentDegree;
-    }, 0);
+      previousDegree = currentDegree;
+    });
 
     this.protractor.toBack();
   }

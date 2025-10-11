@@ -105,13 +105,10 @@ function prepareSruForSaving(sgroup, mol) {
     }
   }, sgroup);
   if (xBonds.length !== 0 && xBonds.length !== 2) {
-    // TODO fix this eslint error
-    // eslint-disable-next-line no-throw-literal
-    throw {
-      id: sgroup.id,
-      'error-type': 'cross-bond-number',
-      message: 'Unsupported cross-bonds number',
-    };
+    const error = new Error('Unsupported cross-bonds number');
+    error.id = sgroup.id;
+    error['error-type'] = 'cross-bond-number';
+    throw error;
   }
   sgroup.bonds = xBonds;
 }

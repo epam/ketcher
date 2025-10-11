@@ -123,14 +123,14 @@ Object {
                 <li
                   class="tabs"
                 >
-                  <a
+                  <button
                     class="active"
                     data-testid="Preview-tab"
-                    role="button"
                     tabindex="0"
+                    type="button"
                   >
                     Preview
-                  </a>
+                  </button>
                 </li>
               </ul>
               <div>
@@ -534,14 +534,14 @@ Object {
               <li
                 class="tabs"
               >
-                <a
+                <button
                   class="active"
                   data-testid="Preview-tab"
-                  role="button"
                   tabindex="0"
+                  type="button"
                 >
                   Preview
-                </a>
+                </button>
               </li>
             </ul>
             <div>

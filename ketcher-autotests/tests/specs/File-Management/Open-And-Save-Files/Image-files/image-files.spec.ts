@@ -2052,18 +2052,23 @@ test.describe('Image files', () => {
       if (testCase.action === 'open') {
         await CommonTopLeftToolbar(page).openFile();
         await openFile(page, testCase.file);
+        await moveMouseAway(page);
+        await takeElementScreenshot(
+          page,
+          PasteFromClipboardDialog(page).openStructureTextarea,
+        );
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
           testCase.dropdownOption ?? MoleculesFileFormatType.MDLMolfileV2000,
         );
+        await moveMouseAway(page);
+        await takeElementScreenshot(
+          page,
+          SaveStructureDialog(page).saveStructureTextarea,
+        );
       }
-      await moveMouseAway(page);
-      await takeElementScreenshot(
-        page,
-        SaveStructureDialog(page).saveStructureTextarea,
-      );
     });
   }
 

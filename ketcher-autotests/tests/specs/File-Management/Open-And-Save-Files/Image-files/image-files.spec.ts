@@ -2656,7 +2656,11 @@ test.describe('Image files', () => {
       MoleculesFileFormatType.SVGDocument,
     );
     await expect(saveButton).toBeEnabled();
-    await takeEditorScreenshot(page);
+    await moveMouseAway(page);
+    await takeElementScreenshot(
+      page,
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {

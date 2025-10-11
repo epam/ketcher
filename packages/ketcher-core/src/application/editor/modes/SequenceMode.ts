@@ -42,7 +42,10 @@ import {
   rnaDnaNaturalAnalogues,
   RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {
   ChainsCollection,
@@ -599,8 +602,8 @@ export class SequenceMode extends BaseMode {
   private handlePeptideNodeAddition(
     enteredSymbol: string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
-    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SequenceNode | null,
+    previousNodeToConnect?: SequenceNode,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
       return undefined;
@@ -640,8 +643,8 @@ export class SequenceMode extends BaseMode {
   private handleRnaDnaNodeAddition(
     enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
-    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SequenceNode | null,
+    previousNodeToConnect?: SequenceNode,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
       return undefined;
@@ -684,8 +687,8 @@ export class SequenceMode extends BaseMode {
   }
 
   private connectNodes(
-    firstNodeToConnect: SubChainNode | BackBoneSequenceNode | undefined,
-    secondNodeToConnect: SubChainNode | BackBoneSequenceNode | undefined,
+    firstNodeToConnect: SequenceNode | undefined,
+    secondNodeToConnect: SequenceNode | undefined,
     modelChanges: Command,
     newNodePosition: Vec2,
     addPhosphateIfNeeded = true,
@@ -740,7 +743,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private deleteBondToNextNodeInChain(
-    node: SubChainNode | BackBoneSequenceNode | undefined,
+    node: SequenceNode | undefined,
     modelChanges: Command,
   ) {
     const editor = CoreEditor.provideEditorInstance();
@@ -1660,9 +1663,7 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
-  private isR1Free(
-    entity?: SubChainNode | BackBoneSequenceNode | BaseMonomer,
-  ): boolean {
+  private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
       return entity.attachmentPointsToBonds.R1 === null;
     }
@@ -1670,9 +1671,7 @@ export class SequenceMode extends BaseMode {
     return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
   }
 
-  private isR2Free(
-    entity?: SubChainNode | BackBoneSequenceNode | BaseMonomer,
-  ): boolean {
+  private isR2Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
       return entity.attachmentPointsToBonds.R2 === null;
     }
@@ -1779,9 +1778,7 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private preserveSideChainConnections(
-    selectedNode: SubChainNode | BackBoneSequenceNode,
-  ) {
+  private preserveSideChainConnections(selectedNode: SequenceNode) {
     if (selectedNode.monomer.sideConnections.length === 0) {
       return null;
     }
@@ -1831,10 +1828,10 @@ export class SequenceMode extends BaseMode {
 
   private replaceSelectionWithMonomer(
     monomerItem: MonomerItemType,
-    selectedNode: SubChainNode | BackBoneSequenceNode,
+    selectedNode: SequenceNode,
     selectedTwoStrandedNode: ITwoStrandedChainItem,
     modelChanges: Command,
-    previousSelectionNode?: SubChainNode | BackBoneSequenceNode,
+    previousSelectionNode?: SequenceNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
@@ -1969,7 +1966,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private checkIfNewMonomerCouldEstablishConnections(
-    selectedNode: SubChainNode | BackBoneSequenceNode,
+    selectedNode: SequenceNode,
     monomerItem: MonomerItemType | undefined,
     sideChainConnections?: boolean,
   ) {
@@ -2286,10 +2283,10 @@ export class SequenceMode extends BaseMode {
 
   private replaceSelectionWithPreset(
     preset: IRnaPreset,
-    selectedNode: SubChainNode | BackBoneSequenceNode,
+    selectedNode: SequenceNode,
     selectedTwoStrandedNode: ITwoStrandedChainItem,
     modelChanges: Command,
-    previousSelectionNode?: SubChainNode | BackBoneSequenceNode,
+    previousSelectionNode?: SequenceNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
@@ -2537,8 +2534,8 @@ export class SequenceMode extends BaseMode {
   private insertNewSequenceItem(
     editor: CoreEditor,
     enteredSymbol: string,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
-    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SequenceNode | null,
+    previousNodeToConnect?: SequenceNode,
   ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
@@ -2639,8 +2636,8 @@ export class SequenceMode extends BaseMode {
 
   private insertNewSequenceFragment(
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
-    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SequenceNode | null,
+    previousNodeToConnect?: SequenceNode,
     needConnectWithPreviousNodeInChain = true,
     needConnectWithNextNodeInChain = true,
     addPhosphateIfNeeded = true,
@@ -2725,9 +2722,9 @@ export class SequenceMode extends BaseMode {
   }
 
   private getNewSequenceItemPosition(
-    previousNode?: SubChainNode | BackBoneSequenceNode,
-    nodeBeforePreviousNode?: SubChainNode | BackBoneSequenceNode,
-    currentNode?: SubChainNode | BackBoneSequenceNode,
+    previousNode?: SequenceNode,
+    nodeBeforePreviousNode?: SequenceNode,
+    currentNode?: SequenceNode,
   ) {
     const offsetFromPrevious = new Vec2(1, 1);
 
@@ -2812,9 +2809,7 @@ export class SequenceMode extends BaseMode {
     return command;
   }
 
-  private deleteHydrogenBondsForNode(
-    node: SubChainNode | BackBoneSequenceNode | undefined,
-  ) {
+  private deleteHydrogenBondsForNode(node: SequenceNode | undefined) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 

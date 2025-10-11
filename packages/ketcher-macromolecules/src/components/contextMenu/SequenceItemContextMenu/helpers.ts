@@ -7,8 +7,7 @@ import {
   NodesSelection,
   Phosphate,
   Entities,
-  SubChainNode,
-  BackBoneSequenceNode,
+  SequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,
 } from 'ketcher-core';
@@ -183,8 +182,6 @@ export function isEstablishHydrogenBondDisabled(
   });
 }
 
-export function isNodeContainHydrogenBonds(
-  node: SubChainNode | BackBoneSequenceNode | undefined,
-) {
+export function isNodeContainHydrogenBonds(node: SequenceNode | undefined) {
   return node?.monomers.some((monomer) => monomer.hydrogenBonds.length !== 0);
 }

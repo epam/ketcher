@@ -5,7 +5,7 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType, takeEditorScreenshot } from '..';
 import { selectButtonById } from '../canvas/tools/helpers';
-import { AtomLabelType } from './types';
+import { AtomLabelType, MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
   waitForRender,
@@ -49,7 +49,7 @@ export async function clickAfterItemsToMergeInitialization(
   page: Page,
   x: number,
   y: number,
-  button: 'left' | 'right' = 'left',
+  button: MouseButton = 'left',
 ) {
   await page.mouse.move(x, y);
   await waitForItemsToMergeInitialization(page);
@@ -63,7 +63,7 @@ export async function clickAfterItemsToMergeInitialization(
 
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
-  button: 'left' | 'right' = 'left',
+  button: MouseButton = 'left',
   options: { waitForMergeInitialization: boolean } = {
     waitForMergeInitialization: false,
   },
@@ -89,7 +89,7 @@ export async function clickOnCanvas(
     /**
      * Defaults to `left`.
      */
-    button?: 'left' | 'right' | 'middle';
+    button?: MouseButton;
 
     /**
      * defaults to 1. See [UIEvent.detail].
@@ -258,7 +258,7 @@ export async function clickOnBond(
   page: Page,
   bondType: BondType,
   bondNumber: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await clickOnCanvas(page, point.x, point.y, {
@@ -271,7 +271,7 @@ export async function clickOnAtom(
   page: Page,
   atomLabel: AtomLabelType,
   atomNumber: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await clickOnCanvas(page, point.x, point.y, {
@@ -283,7 +283,7 @@ export async function clickOnAtom(
 export async function clickOnAtomById(
   page: Page,
   atomId: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getAtomById(page, atomId);
   await clickOnCanvas(page, point.x, point.y, {

@@ -1,6 +1,9 @@
 import { D3SvgElementSelection } from 'application/render/types';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
@@ -34,7 +37,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public antisenseNodeRenderer?: this;
 
   constructor(
-    public readonly node: SubChainNode | BackBoneSequenceNode,
+    public readonly node: SequenceNode,
     private readonly firstNodeInChainPosition: Vec2,
     private readonly monomerIndexInChain: number,
     private readonly isLastMonomerInChain: boolean,
@@ -270,7 +273,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           }
           return groups;
         },
-        [[]] as (SubChainNode | BackBoneSequenceNode)[][],
+        [[]] as SequenceNode[][],
       );
 
       // Find the group containing the current node
@@ -447,7 +450,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  private inIgnoreList(node: SubChainNode | BackBoneSequenceNode): boolean {
+  private inIgnoreList(node: SequenceNode): boolean {
     return (
       // @ LinkerSequenceNode (ex. CHEM)
       // for example, subChain:
@@ -491,8 +494,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // returns non-breaking sequence of ignored nodes before first node in subchain
-  private get ignoredNodesBeforeFirstNodeInSubChain():
-    | (SubChainNode | BackBoneSequenceNode)[] {
+  private get ignoredNodesBeforeFirstNodeInSubChain(): SequenceNode[] {
     if (!this.isSubChainNode(this.node)) return [];
 
     if (!this.subChainWithNode) return [];
@@ -513,8 +515,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
-  private get ignoredNodesAfterLastNodeInSubChain():
-    | (SubChainNode | BackBoneSequenceNode)[] {
+  private get ignoredNodesAfterLastNodeInSubChain(): SequenceNode[] {
     if (!this.isSubChainNode(this.node)) return [];
 
     if (!this.subChainWithNode) return [];
@@ -841,9 +842,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  private isSubChainNode(
-    node: SubChainNode | BackBoneSequenceNode,
-  ): node is SubChainNode {
+  private isSubChainNode(node: SequenceNode): node is SubChainNode {
     return node?.monomers !== undefined;
   }
 

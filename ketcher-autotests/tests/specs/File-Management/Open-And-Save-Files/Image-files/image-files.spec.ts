@@ -23,6 +23,8 @@ import {
   readFileContent,
   copyContentToClipboard,
   deleteByKeyboard,
+  moveMouseAway,
+  takeElementScreenshot,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {
@@ -2057,7 +2059,11 @@ test.describe('Image files', () => {
           testCase.dropdownOption ?? MoleculesFileFormatType.MDLMolfileV2000,
         );
       }
-      await takeEditorScreenshot(page);
+      await moveMouseAway(page);
+      await takeElementScreenshot(
+        page,
+        SaveStructureDialog(page).saveStructureTextarea,
+      );
     });
   }
 

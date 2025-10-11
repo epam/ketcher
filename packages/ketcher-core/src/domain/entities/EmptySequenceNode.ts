@@ -6,7 +6,6 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 export class EmptySequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;
   public monomer = new EmptyMonomer();
-  constructor() {}
 
   public get SubChainConstructor() {
     return EmptySubChain;

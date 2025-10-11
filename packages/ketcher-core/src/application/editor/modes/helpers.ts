@@ -3,7 +3,6 @@ import {
   EmptySequenceNode,
   HydrogenBond,
   LinkerSequenceNode,
-  SubChainNode,
 } from 'domain/entities';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNode } from 'domain/entities/monomer-chains/types';

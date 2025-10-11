@@ -7,7 +7,6 @@ import {
   NodesSelection,
   Phosphate,
   Entities,
-  SubChainNode,
   SequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   AmbiguousMonomer,

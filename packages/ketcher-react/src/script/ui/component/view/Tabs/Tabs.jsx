@@ -63,7 +63,6 @@ class Tabs extends Component {
                 })}
                 onClick={(ev) => this.changeTab(ev, index)}
                 onKeyDown={(ev) => this.handleKeyDown(ev, index)}
-                role="button"
                 tabIndex={0}
                 data-testid={tabPanel.caption + '-tab'}
               >

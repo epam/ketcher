@@ -16,8 +16,6 @@
 import { IKetMacromoleculesContent } from 'ketcher-core';
 
 // TODO add typings for Indigo standalone object
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type IndigoStandalone = any;
 
 export const enum Command {
   Info,

@@ -86,13 +86,11 @@ const LeftToolbar = (props: Props) => {
 
   const status = rest.status;
 
-  type GroupItem = ItemProps;
-
-  const Group: FC<{ items?: GroupItem[]; className?: string }> = ({
+  const Group: FC<{ items?: ItemProps[]; className?: string }> = ({
     items,
     className,
   }) => {
-    const visibleItems: GroupItem[] = [];
+    const visibleItems: ItemProps[] = [];
     if (items) {
       items.forEach((item) => {
         let visible = true;

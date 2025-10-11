@@ -13,8 +13,6 @@ export enum CONTEXT_MENU_ID {
   FOR_ATTACHMENT_POINT_LABEL = 'context-menu-for-attachment-point-label',
 }
 
-export type ItemData = unknown;
-
 interface BaseContextMenuProps {
   id: string;
 }
@@ -92,7 +90,7 @@ export interface MenuItemsProps<T extends ContextMenuProps> {
 }
 
 export type ItemEventParams<T extends ContextMenuProps = ContextMenuProps> =
-  PredicateParams<T, ItemData>;
+  PredicateParams<T, unknown>;
 
 export type ContextMenuInfo = {
   [id in CONTEXT_MENU_ID]?: boolean;

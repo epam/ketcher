@@ -37,7 +37,6 @@ import {
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils/keyboard';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   FileType,
   verifyFileExport,
@@ -51,6 +50,7 @@ import { MolFileFormat } from '@utils/formats';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { pageReload } from '@utils/common/helpers';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 // import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
@@ -1043,7 +1043,7 @@ for (const monomer of monomerToDrag) {
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
       await monomerOnCanvas.hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
     }
     await takeEditorScreenshot(page);
 
@@ -1082,7 +1082,7 @@ for (const monomer of monomerToDrag) {
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
     ) {
       await monomerOnCanvas.hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
     }
     await takeEditorScreenshot(page);
 

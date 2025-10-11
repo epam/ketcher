@@ -38,8 +38,8 @@ function usePortalStyle([
     }
 
     const editorRect = document
-      .querySelector(rootElementSelector || KETCHER_ROOT_NODE_CSS_SELECTOR)
-      ?.getBoundingClientRect() || { top: 0, left: 0 };
+      .querySelector(rootElementSelector ?? KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.getBoundingClientRect() ?? { top: 0, left: 0 };
     const menuItemRect = ref.current.getBoundingClientRect();
 
     const spaceBetween = 4;

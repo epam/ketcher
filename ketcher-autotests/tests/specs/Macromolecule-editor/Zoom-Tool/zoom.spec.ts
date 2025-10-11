@@ -17,7 +17,6 @@ import {
   ZoomInByKeyboard,
   MacroFileType,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -30,6 +29,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -141,7 +141,7 @@ test.describe('Zoom Tool', () => {
     );
 
     await getMonomerLocator(page, Peptide.DTrp2M).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await zoomWithMouseScrollAndTakeScreenshot(page);
   });
 
@@ -220,7 +220,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
     await page.mouse.wheel(0, wheelYDelta);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -335,7 +335,7 @@ test.describe('Zoom Tool', () => {
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

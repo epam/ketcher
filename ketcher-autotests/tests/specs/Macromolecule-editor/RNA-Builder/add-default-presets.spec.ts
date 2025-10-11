@@ -1,4 +1,3 @@
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test } from '@fixtures';
 import {
   moveMouseAway,
@@ -9,6 +8,7 @@ import {
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,7 +25,7 @@ test.describe('Macromolecules default presets', () => {
     */
     await Library(page).selectMonomer(Preset.G);
     await Library(page).hoverMonomer(Preset.G);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 

@@ -32,6 +32,13 @@ class Tabs extends Component {
     if (this.props.changeTab) this.props.changeTab(index);
   }
 
+  handleKeyDown(ev, index) {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      this.changeTab(ev, index);
+    }
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.tabIndex !== prevProps.tabIndex) {
       this.setState({ tabIndex: this.props.tabIndex });
@@ -55,6 +62,9 @@ class Tabs extends Component {
                   [classes.active]: this.state.tabIndex === index,
                 })}
                 onClick={(ev) => this.changeTab(ev, index)}
+                onKeyDown={(ev) => this.handleKeyDown(ev, index)}
+                role="button"
+                tabIndex={0}
                 data-testid={tabPanel.caption + '-tab'}
               >
                 {tabPanel.caption}

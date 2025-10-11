@@ -25,7 +25,7 @@ export class PolymerBond extends BaseBond {
   // Move to renderer
   public hasAntisenseInRow?: boolean = false;
   // Move to renderer
-  public nextRowPositionX?: number | undefined = undefined;
+  public nextRowPositionX?: number;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();

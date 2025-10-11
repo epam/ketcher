@@ -41,7 +41,7 @@ interface CustomRawDraftInlineStyleRange
 const SCALE = 40; // from ketcher-core
 
 class ReText extends ReObject {
-  private item: Text;
+  private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
   constructor(text: Text) {
@@ -141,7 +141,7 @@ class ReText extends ReObject {
   show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render;
     const paper = render.paper;
-    const paperScale = Scale.modelToCanvas(this.item.position!, options);
+    const paperScale = Scale.modelToCanvas(this.item.position, options);
 
     let shiftY = 0;
     this.paths = [];
@@ -250,8 +250,8 @@ class ReText extends ReObject {
 
     return ranges.reduce(
       (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize || options.fontszInPx;
-        const fontszsub = (customFontSize || options.fontszsubInPx) * 0.5;
+        const fontsz = customFontSize ?? options.fontszInPx;
+        const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold';

@@ -35,7 +35,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -46,6 +45,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -1591,7 +1591,7 @@ test.describe('Verify "Select/Edit Attachment Points" dialogues for ambiguous mo
       await moveMouseAway(page);
       const bondLine = getBondLocator(page, {});
       await bondLine.hover({ force: true });
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
       await ContextMenu(page, bondLine).click(
         MacroBondOption.EditAttachmentPoints,

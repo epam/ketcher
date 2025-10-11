@@ -133,8 +133,8 @@ export class PolymerBondFinishCreationOperation implements Operation {
 }
 
 export class SelectLayoutModeOperation implements Operation {
-  private onExecute;
-  private onInvert;
+  private readonly onExecute;
+  private readonly onInvert;
 
   constructor(
     public _onExecute: () => void,

@@ -50,9 +50,18 @@ export function replaceMonomer(
       return bond.monomer === monomer;
     })
     .map(([id, bond]) => {
-      const attachmentPoint = Object.entries(
+      const attachmentPointEntry = Object.entries(
         monomer.attachmentPointsToBonds,
-      ).find(([_ap, apBond]) => apBond === bond)?.[0] as AttachmentPointName;
+      ).find(
+        (entry): entry is [AttachmentPointName, MonomerToAtomBond | null] =>
+          entry[1] === bond,
+      );
+      if (!attachmentPointEntry) {
+        throw new Error(
+          'Monomer to atom bond requires an attachment point reference',
+        );
+      }
+      const [attachmentPoint] = attachmentPointEntry;
       return {
         id,
         monomer: bond.monomer,

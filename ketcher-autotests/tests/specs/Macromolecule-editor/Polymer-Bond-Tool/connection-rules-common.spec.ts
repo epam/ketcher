@@ -20,7 +20,6 @@ import {
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   AttachmentPoint,
@@ -41,6 +40,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -462,7 +462,7 @@ test.describe('Common connection rules: ', () => {
     );
 
     await hoverMouseOverMonomer(page, Peptide.C);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -491,7 +491,7 @@ test.describe('Common connection rules: ', () => {
 
     await takeElementScreenshot(
       page,
-      page.getByTestId('monomer-preview-micro'),
+      MonomerPreviewTooltip(page).monomerPreviewTooltipPicture,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });

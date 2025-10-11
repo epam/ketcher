@@ -13,7 +13,6 @@ import {
   takeTopToolbarScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -28,6 +27,7 @@ import {
   AntisenseStrandType,
   LayoutMode,
 } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -353,7 +353,7 @@ test.describe('Sequence Mode', () => {
         .first()
         .hover();
 
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });
   }
@@ -1108,7 +1108,7 @@ test.describe('Sequence Mode', () => {
         .first()
         .hover();
 
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });
   }

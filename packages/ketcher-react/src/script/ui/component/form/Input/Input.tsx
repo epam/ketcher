@@ -187,8 +187,15 @@ function FieldSet({
   innerRef,
   ...rest
 }) {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (onSelect) onSelect(event);
+    }
+  };
+
   return (
-    <fieldset onClick={onSelect}>
+    <fieldset onClick={onSelect} onKeyDown={handleKeyDown}>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>

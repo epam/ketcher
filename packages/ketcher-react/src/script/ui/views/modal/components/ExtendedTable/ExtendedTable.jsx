@@ -29,7 +29,7 @@ const Table = (props) => {
   const selected = (label) => value === label;
 
   const result = () => {
-    if (!value || !value.length) {
+    if (!value?.length) {
       return null;
     }
     return { type: 'gen', label: value, pseudo: value };

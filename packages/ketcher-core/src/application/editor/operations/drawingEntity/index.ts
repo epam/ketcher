@@ -18,7 +18,7 @@ export class DrawingEntityHoverOperation implements Operation {
 export class DrawingEntitySelectOperation implements Operation {
   constructor(
     private readonly drawingEntity: DrawingEntity,
-    private selectDrawingEntitiesModelChange?: () => void,
+    private readonly selectDrawingEntitiesModelChange?: () => void,
   ) {}
 
   public execute() {

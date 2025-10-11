@@ -1,16 +1,13 @@
 import { test } from '@fixtures';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
-import {
-  hideMonomerPreview,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -28,7 +25,7 @@ test.describe('Peptide', () => {
       y: -10,
       fromCenter: true,
     });
-    await hideMonomerPreview(page);
+    await MonomerPreviewTooltip(page).hide();
     await takeEditorScreenshot(page);
   });
 
@@ -44,7 +41,7 @@ test.describe('Peptide', () => {
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptide.A).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 });

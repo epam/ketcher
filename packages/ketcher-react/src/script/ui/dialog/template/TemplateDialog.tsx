@@ -34,6 +34,7 @@ import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
 import { SdfSerializer } from 'ketcher-core';
 import classes from './template-lib.module.less';
+import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import { omit } from 'lodash/fp';
@@ -123,12 +124,16 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   const clickToAddToCanvas = (
     <span data-testid="add-to-canvas-button">Click to add to canvas</span>
   );
-  const filename =
-    tab === TemplateTabs.TemplateLibrary
-      ? 'ketcher-tmpls.sdf'
-      : tab === TemplateTabs.FunctionalGroupLibrary
-      ? 'ketcher-fg-tmpls.sdf'
-      : 'ketcher-salts-solvents.sdf';
+
+  // Determine filename based on tab
+  let filename: string;
+  if (tab === TemplateTabs.TemplateLibrary) {
+    filename = 'ketcher-tmpls.sdf';
+  } else if (tab === TemplateTabs.FunctionalGroupLibrary) {
+    filename = 'ketcher-fg-tmpls.sdf';
+  } else {
+    filename = 'ketcher-salts-solvents.sdf';
+  }
 
   return (
     <div
@@ -293,6 +298,7 @@ const TemplateDialog: FC<Props> = (props) => {
                   expandedAccordions.includes(groupName);
                 return (
                   <Accordion
+                    className={accordionClasses.accordion}
                     square={true}
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
@@ -302,7 +308,10 @@ const TemplateDialog: FC<Props> = (props) => {
                       className={classes.accordionSummary}
                       data-testid={`${groupName}-accordion-item`}
                       expandIcon={
-                        <Icon className={classes.expandIcon} name="chevron" />
+                        <Icon
+                          className={accordionClasses.expandIcon}
+                          name="chevron"
+                        />
                       }
                     >
                       <Icon

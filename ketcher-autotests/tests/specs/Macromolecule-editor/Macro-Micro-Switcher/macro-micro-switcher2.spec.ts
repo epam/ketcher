@@ -4,7 +4,6 @@
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
@@ -73,6 +72,7 @@ import {
 } from '@utils/canvas/arrow-signes/getArrow';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -280,7 +280,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

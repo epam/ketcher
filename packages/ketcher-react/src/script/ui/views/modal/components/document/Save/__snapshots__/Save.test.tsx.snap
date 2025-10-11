@@ -126,7 +126,8 @@ Object {
                   <button
                     class="active"
                     data-testid="Preview-tab"
-                    type="button"
+                    role="button"
+                    tabindex="0"
                   >
                     Preview
                   </button>
@@ -536,7 +537,8 @@ Object {
                 <button
                   class="active"
                   data-testid="Preview-tab"
-                  type="button"
+                  role="button"
+                  tabindex="0"
                 >
                   Preview
                 </button>

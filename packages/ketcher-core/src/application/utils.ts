@@ -13,7 +13,7 @@ import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
 
 class KetcherProvider {
-  private ketcherInstances = new Map<string, Ketcher>();
+  private readonly ketcherInstances = new Map<string, Ketcher>();
 
   addKetcherInstance(instance: Ketcher) {
     this.ketcherInstances.set(instance.id, instance);

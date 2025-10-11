@@ -76,6 +76,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -701,9 +702,9 @@ for (const [index, eligableName] of eligableNames.entries()) {
     await monomer.hover({ force: true });
     // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
     await delay(1);
-    // await waitForMonomerPreview(page);
+    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await expect(page.getByTestId('preview-tooltip')).toBeVisible();
-    await expect(page.getByTestId('preview-tooltip-title')).toContainText(
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
     );
   });
@@ -1255,7 +1256,7 @@ for (const monomerToCreate of monomersToCreate) {
       await monomer.hover({ force: true });
       // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
       await delay(1);
-      // await waitForMonomerPreview(page);
+      // await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await expect(page.getByTestId('preview-tooltip')).toBeVisible();
       await expect(page.getByTestId('preview-tooltip-title')).toContainText(
         monomerToCreate.name,

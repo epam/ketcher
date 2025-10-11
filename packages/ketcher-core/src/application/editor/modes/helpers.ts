@@ -6,9 +6,10 @@ import {
   SubChainNode,
 } from 'domain/entities';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { SequenceNode } from 'domain/entities/monomer-chains/types';
 
 export function isNodeRestrictedForHydrogenBondCreation(
-  node: SubChainNode | BackBoneSequenceNode | undefined,
+  node: SequenceNode | undefined,
 ) {
   return (
     !node ||

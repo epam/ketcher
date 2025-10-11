@@ -4,6 +4,7 @@ import {
   AttachmentPointName,
   AttachmentPointsToBonds,
   MonomerItemType,
+  MonomerizerBond,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -123,7 +124,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public getAttachmentPointByBond(
-    bond: PolymerBond | MonomerToAtomBond | HydrogenBond,
+    bond: MonomerizerBond,
   ): AttachmentPointName | undefined {
     if (bond instanceof HydrogenBond) {
       return this.hydrogenBonds.find((hydrogenBond) => hydrogenBond === bond)
@@ -219,7 +220,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public forEachBond(
     callback: (
-      polymerBond: PolymerBond | MonomerToAtomBond | HydrogenBond,
+      polymerBond: MonomerizerBond,
       attachmentPointName: AttachmentPointName,
     ) => void,
   ) {
@@ -239,7 +240,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public setBond(
     attachmentPointName: AttachmentPointName,
-    bond: PolymerBond | MonomerToAtomBond | HydrogenBond,
+    bond: MonomerizerBond,
   ) {
     if (!(bond instanceof HydrogenBond)) {
       this.attachmentPointsToBonds[attachmentPointName] = bond;

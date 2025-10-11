@@ -12,6 +12,7 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
+import { SequenceNode } from 'domain/entities/monomer-chains/types';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -39,10 +40,10 @@ export type GrouppedChain = {
 };
 
 export interface ITwoStrandedChainItem {
-  senseNode?: SubChainNode | BackBoneSequenceNode;
+  senseNode?: SequenceNode;
   senseNodeIndex: number;
   chain: Chain;
-  antisenseNode?: SubChainNode | BackBoneSequenceNode;
+  antisenseNode?: SequenceNode;
   antisenseNodeIndex?: number;
   antisenseChain?: Chain;
 }

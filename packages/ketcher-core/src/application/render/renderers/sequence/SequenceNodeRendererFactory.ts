@@ -22,7 +22,10 @@ import {
   UnresolvedMonomerSequenceItemRenderer,
   UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -32,7 +35,7 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 
 export class SequenceNodeRendererFactory {
   static fromNode(
-    node: SubChainNode | BackBoneSequenceNode,
+    node: SequenceNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,

@@ -69,5 +69,5 @@ export class SelectionView extends TransientView {
     }
   }
 
-  public static viewName = 'SelectionView';
+  public static readonly viewName = 'SelectionView';
 }

@@ -24,7 +24,6 @@ import {
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
-import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;

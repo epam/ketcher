@@ -81,7 +81,7 @@ test.describe('Import/export sequence:', () => {
       .locator('span')
       .first()
       .innerText();
-    expect(defaultValue).toBe('Ket');
+    expect(defaultValue).toBe('Ket Format');
 
     await contentTypeSelector.click();
 

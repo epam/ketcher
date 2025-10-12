@@ -166,8 +166,12 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   // Should not convert to Sequence type in case of there is any CHEM
@@ -177,8 +181,12 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test(

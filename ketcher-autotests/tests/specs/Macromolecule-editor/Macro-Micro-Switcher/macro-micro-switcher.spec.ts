@@ -109,6 +109,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -595,6 +596,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await CommonTopLeftToolbar(page).saveFile();
+    expect(SaveStructureDialog(page).saveStructureDialog).toBeVisible();
     await takeEditorScreenshot(page);
   });
 });

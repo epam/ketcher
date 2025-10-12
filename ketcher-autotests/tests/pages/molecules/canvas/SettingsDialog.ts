@@ -295,7 +295,6 @@ export const SettingsDialog = (page: Page) => {
 
     async close() {
       await locators.closeWindowButton.click();
-      await locators.generalSection.resetToSelectToolCombobox.click();
     },
 
     async apply() {

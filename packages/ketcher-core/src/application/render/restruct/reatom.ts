@@ -1738,9 +1738,7 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
-        data.rightMargin +
-          0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
-          delta,
+        data.rightMargin + 0.15 * hydroIndex.rbb.width + delta,
         0.2 * atom.label!.rbb.height,
       );
       data.rightMargin += hydroIndex.rbb.width + delta;

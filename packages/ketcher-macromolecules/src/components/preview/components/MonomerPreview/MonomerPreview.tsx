@@ -64,6 +64,8 @@ const MonomerPreview = ({ className }: Props) => {
 
   const isUnresolved = monomer.props.unresolved;
   const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
+  const isMonomerPreviewPropertiesVisible =
+    idtAliasesText || axoLabsAlias || aliasHelm || modificationTypes;
 
   return (
     (monomer.struct || isUnresolved) && (
@@ -90,16 +92,18 @@ const MonomerPreview = ({ className }: Props) => {
           <AttachmentPoints
             preparedAttachmentPointsData={preparedAttachmentPointsData}
           />
-          <MonomerPreviewProperties
-            idtAliasesText={idtAliasesText ?? undefined}
-            axoLabsText={axoLabsAlias ?? undefined}
-            helmText={aliasHelm ?? undefined}
-            modificationTypeText={
-              Array.isArray(modificationTypes)
-                ? modificationTypes.join(', ')
-                : modificationTypes
-            }
-          />
+          {isMonomerPreviewPropertiesVisible && (
+            <MonomerPreviewProperties
+              idtAliasesText={idtAliasesText ?? undefined}
+              axoLabsText={axoLabsAlias ?? undefined}
+              helmText={aliasHelm ?? undefined}
+              modificationTypeText={
+                Array.isArray(modificationTypes)
+                  ? modificationTypes.join(', ')
+                  : modificationTypes
+              }
+            />
+          )}
         </InfoBlock>
       </Container>
     )

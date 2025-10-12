@@ -54,6 +54,8 @@ const PresetPreview = ({ className }: Props) => {
     idtAliases,
   });
 
+  const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
+
   return (
     <PresetContainer
       className={className}
@@ -71,7 +73,7 @@ const PresetPreview = ({ className }: Props) => {
             </PresetMonomerRow>
           ),
       )}
-      {(idtAliasesText || axoLabsText) && (
+      {isMonomerPreviewPropertiesVisible && (
         <MonomerPreviewProperties
           preset
           idtAliasesText={idtAliasesText ?? undefined}

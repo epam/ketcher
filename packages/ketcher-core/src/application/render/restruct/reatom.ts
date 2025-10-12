@@ -1448,10 +1448,8 @@ function buildLabel(
 
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);
-  let rightMargin =
-    (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom); //
-  let leftMargin =
-    (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  let rightMargin = label.rbb.width / 2;
+  let leftMargin = -label.rbb.width / 2;
 
   if (atom.a.atomList !== null) {
     const xShift =

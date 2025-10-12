@@ -42,7 +42,12 @@ export const useAttachmentPointSelectsData = (
     length: attachmentPointNameOptionsLength,
   }).map((_, i) => ({
     value: `R${i + 1}`,
-    label: `R${i + 1}`,
+    label: '',
+    children: (
+      <>
+        R<sub>{i + 1}</sub>
+      </>
+    ),
   }));
 
   let leavingAtomOptions: Option[] = editor

@@ -25,6 +25,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -882,6 +883,42 @@ test(`17. Check that hovering over an already set AP on the canvas (over the bon
   const leavingGroupAtom = getAtomLocator(page, { atomId: 9 });
   await leavingGroupAtom.hover();
   await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup);
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`18. Check that Symbol and Name fields are disabled when Type is not selected`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8045
+   * Description: System should not allow to fill Symbol and Name fields if Type is not selected
+   *              on Monomer creation wizard
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Verify that Symbol and Name fields are disabled when Type is not selected
+   *      6. Select a Type
+   *      7. Verify that Symbol and Name fields are enabled
+   *
+   * Version 3.9
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+
+  // Verify that Symbol and Name fields are disabled when Type is not selected
+  await expect(CreateMonomerDialog(page).symbolEditbox).toBeDisabled();
+  await expect(CreateMonomerDialog(page).nameEditbox).toBeDisabled();
+
+  // Select a Type
+  await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
+
+  // Verify that Symbol and Name fields are enabled after Type is selected
+  await expect(CreateMonomerDialog(page).symbolEditbox).toBeEnabled();
+  await expect(CreateMonomerDialog(page).nameEditbox).toBeEnabled();
 
   await CreateMonomerDialog(page).discard();
 });

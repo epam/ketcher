@@ -68,4 +68,89 @@ describe('Modal component', () => {
 
     expect(screen.queryByTitle('Close window')).not.toBeInTheDocument();
   });
+
+  it('should show "expand window" tooltip when not expanded', () => {
+    const mockSetExpanded = jest.fn();
+    render(
+      withThemeProvider(
+        <Modal
+          title="title"
+          isOpen={true}
+          showExpandButton={true}
+          expanded={false}
+          setExpanded={mockSetExpanded}
+          onClose={mockOnCloseHandler}
+        >
+          <Modal.Content>Content</Modal.Content>
+        </Modal>,
+      ),
+    );
+
+    expect(screen.getByTitle('expand window')).toBeInTheDocument();
+  });
+
+  it('should show "minimize window" tooltip when expanded', () => {
+    const mockSetExpanded = jest.fn();
+    render(
+      withThemeProvider(
+        <Modal
+          title="title"
+          isOpen={true}
+          showExpandButton={true}
+          expanded={true}
+          setExpanded={mockSetExpanded}
+          onClose={mockOnCloseHandler}
+        >
+          <Modal.Content>Content</Modal.Content>
+        </Modal>,
+      ),
+    );
+
+    expect(screen.getByTitle('minimize window')).toBeInTheDocument();
+  });
+
+  it('should toggle tooltip when expand button is clicked', () => {
+    let expanded = false;
+    const mockSetExpanded = jest.fn((newValue) => {
+      expanded = newValue;
+    });
+
+    const { rerender } = render(
+      withThemeProvider(
+        <Modal
+          title="title"
+          isOpen={true}
+          showExpandButton={true}
+          expanded={expanded}
+          setExpanded={mockSetExpanded}
+          onClose={mockOnCloseHandler}
+        >
+          <Modal.Content>Content</Modal.Content>
+        </Modal>,
+      ),
+    );
+
+    const expandButton = screen.getByTitle('expand window');
+    fireEvent.click(expandButton);
+
+    expect(mockSetExpanded).toHaveBeenCalledWith(true);
+
+    // Re-render with expanded state
+    rerender(
+      withThemeProvider(
+        <Modal
+          title="title"
+          isOpen={true}
+          showExpandButton={true}
+          expanded={true}
+          setExpanded={mockSetExpanded}
+          onClose={mockOnCloseHandler}
+        >
+          <Modal.Content>Content</Modal.Content>
+        </Modal>,
+      ),
+    );
+
+    expect(screen.getByTitle('minimize window')).toBeInTheDocument();
+  });
 });

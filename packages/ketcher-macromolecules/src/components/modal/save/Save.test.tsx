@@ -59,7 +59,7 @@ describe('Save modal', () => {
     const filenameInput = screen.getByRole('textbox', {
       name: 'File name:',
     });
-    const fileFormatInput = screen.getByText('Ket');
+    const fileFormatInput = screen.getByText('Ket Format');
 
     expect(view).toMatchSnapshot();
     expect(filenameInput).toBeVisible();

@@ -34,6 +34,36 @@ function roundOff(value, round) {
 
 const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
 
+function renderInputComponent(item, values, loading, round) {
+  if (item.key === 'gross') {
+    return (
+      <FormulaInput
+        value={values && !loading ? values[item.key] : ''}
+        contentEditable={false}
+      />
+    );
+  }
+  if (item.key === 'mass-composition') {
+    return (
+      <textarea
+        readOnly
+        value={
+          values && !loading ? roundOff(values[item.key], round[item.round]) : 0
+        }
+        data-testid={item.name + '-input'}
+      />
+    );
+  }
+  return (
+    <FrozenInput
+      data-testid={item.name + '-input'}
+      value={
+        values && !loading ? roundOff(values[item.key], round[item.round]) : 0
+      }
+    />
+  );
+}
+
 class AnalyseDialog extends Component {
   static contextType = ErrorsContext;
 
@@ -96,31 +126,7 @@ class AnalyseDialog extends Component {
             >
               <div className={classes.inputWrapper}>
                 <label>{item.name}:</label>
-                {item.key === 'gross' ? (
-                  <FormulaInput
-                    value={values && !loading ? values[item.key] : ''}
-                    contentEditable={false}
-                  />
-                ) : item.key === 'mass-composition' ? (
-                  <textarea
-                    readOnly
-                    value={
-                      values && !loading
-                        ? roundOff(values[item.key], round[item.round])
-                        : 0
-                    }
-                    data-testid={item.name + '-input'}
-                  />
-                ) : (
-                  <FrozenInput
-                    data-testid={item.name + '-input'}
-                    value={
-                      values && !loading
-                        ? roundOff(values[item.key], round[item.round])
-                        : 0
-                    }
-                  />
-                )}
+                {renderInputComponent(item, values, loading, round)}
               </div>
               {item.withSelector ? (
                 <div className={classes.selectWrapper}>

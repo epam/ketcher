@@ -316,4 +316,54 @@ describe('serialize (ToKet)', () => {
       spy.mock.results[0].value.filter((item) => item.type === 'text').length,
     ).toBeTruthy();
   });
+  it('moleculeToKet should handle INVALID initiallySelected without throwing error', () => {
+    // This test verifies the fix for the issue where getKet() throws an exception
+    // when called on custom monomers in Macromolecules mode
+    const { Struct, Atom, Bond } = require('domain/entities');
+    const INVALID = require('domain/entities/BaseMicromoleculeEntity').INVALID;
+
+    const struct = new Struct();
+
+    // Create atoms with INVALID initiallySelected
+    const atom1 = new Atom({
+      label: 'C',
+      pp: new Vec2(0, 0),
+      initiallySelected: INVALID,
+    });
+    const atom2 = new Atom({
+      label: 'C',
+      pp: new Vec2(1, 0),
+      initiallySelected: INVALID,
+    });
+
+    struct.atoms.add(atom1);
+    const atom2Id = struct.atoms.add(atom2);
+
+    // Create a bond with INVALID initiallySelected
+    const bond = new Bond({
+      type: 1,
+      begin: 0,
+      end: atom2Id,
+      initiallySelected: INVALID,
+    });
+    struct.bonds.add(bond);
+
+    // This should not throw an error
+    expect(() => {
+      moleculeToKet.moleculeToKet(struct);
+    }).not.toThrow();
+
+    // Verify the result is valid JSON
+    const result = moleculeToKet.moleculeToKet(struct);
+    expect(result).toBeDefined();
+    expect(result.atoms).toBeDefined();
+    expect(result.bonds).toBeDefined();
+    expect(result.atoms.length).toBe(2);
+    expect(result.bonds.length).toBe(1);
+
+    // Verify that selected is not set in the output
+    expect(result.atoms[0].selected).toBeUndefined();
+    expect(result.atoms[1].selected).toBeUndefined();
+    expect(result.bonds[0].selected).toBeUndefined();
+  });
 });

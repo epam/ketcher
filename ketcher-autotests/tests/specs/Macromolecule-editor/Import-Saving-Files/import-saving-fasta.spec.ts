@@ -136,8 +136,12 @@ test.describe('Import-Saving .fasta Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   // Should not convert to Fasta type in case of there is any CHEM
@@ -147,8 +151,12 @@ test.describe('Import-Saving .fasta Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   // const testData = [
@@ -312,7 +320,12 @@ test.describe('Import-Saving .fasta Files', () => {
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
-      await takeEditorScreenshot(page);
+      const convertErrorMessage = await ErrorMessageDialog(
+        page,
+      ).getErrorMessage();
+      const expectedErrorMessage =
+        'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+      expect(convertErrorMessage).toEqual(expectedErrorMessage);
     },
   );
 

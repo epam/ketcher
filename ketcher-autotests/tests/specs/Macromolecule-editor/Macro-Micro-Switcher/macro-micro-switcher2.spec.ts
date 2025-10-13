@@ -4,7 +4,7 @@
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import { test, Page } from '@fixtures';
+import { test, Page, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -381,7 +381,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       MacromoleculesFileFormatType.Ket,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+    expect(SaveStructureDialog(page).copyToClipboardButton).toBeVisible();
   });
 
   test('Verify that the "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again', async ({

@@ -122,7 +122,7 @@ const ONE_LETTER = 'one-letter';
 const THREE_LETTER = 'three-letter';
 
 const options: Array<Option> = [
-  { id: 'ket', label: 'Ket' },
+  { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },

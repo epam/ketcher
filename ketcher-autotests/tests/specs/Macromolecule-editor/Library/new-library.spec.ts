@@ -1323,7 +1323,7 @@ for (const monomer of monomerToDrag) {
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
-      MacroFileType.Ket,
+      MacroFileType.KetFormat,
     );
 
     await takeEditorScreenshot(page);
@@ -1381,7 +1381,7 @@ for (const monomer of monomerToDrag) {
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       `KET/Library/${monomer.alias}-on-canvas-validation.ket`,
-      MacroFileType.Ket,
+      MacroFileType.KetFormat,
     );
 
     await takeEditorScreenshot(page);

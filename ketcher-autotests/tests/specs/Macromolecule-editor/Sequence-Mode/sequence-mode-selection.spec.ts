@@ -184,7 +184,7 @@ test.describe('Sequence mode selection for view mode', () => {
       description:
         'Click on a single Peptide symbol using Select tool and verify that corresponding nucleotide is selected.',
       file: 'KET/peptides-connected-with-bonds.ket',
-      fileType: MacroFileType.Ket,
+      fileType: MacroFileType.KetFormat,
     },
   ];
 

@@ -26,7 +26,6 @@ export const ChemAvatar = () => (
         x="0.5"
         y="0.5"
         rx="0.75"
-        fill="#F5F6F7"
       />
     </symbol>
     <symbol id="chem-selection" viewBox="0 0 59 59" width="59" height="59">

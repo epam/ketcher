@@ -29,6 +29,7 @@ export class ChemRenderer extends BaseMonomerRenderer {
       .append('use')
       .data([this])
       .attr('href', CHEM_SYMBOL_ELEMENT_ID)
+      .attr('fill', '#F5F6F7')
       .attr('stroke', theme.monomer.color.CHEM.regular);
   }
 

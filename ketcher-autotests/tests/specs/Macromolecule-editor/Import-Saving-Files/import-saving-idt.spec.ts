@@ -168,7 +168,12 @@ test.describe('Import-Saving .idt Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer 1Nal.';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test('Check import of .ket file and save in .idt format', async () => {
@@ -609,9 +614,12 @@ test.describe('Import-Saving .idt Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Sequence saver: IDT alias for group sugar:5formD base:form5C phosphate:cm not found.';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test('Verify that if * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P)', async () => {
@@ -1075,9 +1083,12 @@ test.describe('Import-Saving .idt Files', () => {
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(format.testId);
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      const convertErrorMessage = await ErrorMessageDialog(
+        page,
+      ).getErrorMessage();
+      const expectedErrorMessage =
+        'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+      expect(convertErrorMessage).toEqual(expectedErrorMessage);
     });
   }
 

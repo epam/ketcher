@@ -55,7 +55,7 @@ import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
 // TODO: Make it type safe by using `SupportedFormats` as id
 const options: Array<Option> = [
-  { id: 'ket', label: 'Ket' },
+  { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence (1-letter code)' },
   { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },

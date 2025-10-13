@@ -405,10 +405,9 @@ export const selectFilteredMonomers = createSelector(
           const aliasRest = searchFilter.slice(1);
           return (
             idtBase?.startsWith(aliasRest) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.startsWith(aliasRest)))
+            idtModifications
+              ?.split(' ')
+              .some((mod) => mod.startsWith(aliasRest))
           );
         }
 
@@ -419,14 +418,13 @@ export const selectFilteredMonomers = createSelector(
           return (
             (idtBase?.endsWith(aliasRest) &&
               idtBase[idtBase.length - 1] === aliasLastSymbol) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some(
-                  (mod) =>
-                    mod.endsWith(aliasRest) &&
-                    mod[mod.length - 1] === aliasLastSymbol,
-                ))
+            idtModifications
+              ?.split(' ')
+              .some(
+                (mod) =>
+                  mod.endsWith(aliasRest) &&
+                  mod[mod.length - 1] === aliasLastSymbol,
+              )
           );
         }
 

@@ -169,7 +169,7 @@ export const Modal = ({
           <span>
             {showExpandButton && (
               <IconButton
-                title={expanded ? 'minimize window' : 'expand window'}
+                title={expanded ? 'Minimize window' : 'Expand window'}
                 data-testid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {

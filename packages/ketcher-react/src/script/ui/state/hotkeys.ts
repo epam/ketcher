@@ -192,14 +192,18 @@ function keyHandle(dispatch, getState, hotKeys, event) {
         ? actions[actName].action()
         : actions[actName].action;
       const hoveredItem = getHoveredItem(render.ctab);
+      const selection = editor.selection();
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (
+      // Exception: for eraser tool, prioritize selection over hovered item
+      const shouldHandleHoveredItem =
         hoveredItem &&
         newAction.tool !== 'select' &&
-        newAction.dialog !== 'templates'
-      ) {
+        newAction.dialog !== 'templates' &&
+        !(newAction.tool === 'eraser' && selection);
+
+      if (shouldHandleHoveredItem) {
         newAction = getCurrentAction(group[index]) || newAction;
         handleHotkeyOverItem({
           hoveredItem,

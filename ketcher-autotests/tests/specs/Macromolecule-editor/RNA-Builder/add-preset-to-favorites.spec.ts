@@ -2,11 +2,8 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import {
-  takeMonomerLibraryScreenshot,
-  waitForKetcherInit,
-  waitForMonomerPreview,
-} from '@utils';
+import { takeMonomerLibraryScreenshot, waitForKetcherInit } from '@utils';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Macromolecules add RNA presets to Favorites', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,7 +15,7 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
 
   test('Should have star when hover over RNA presets', async ({ page }) => {
     await Library(page).hoverMonomer(Preset.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 

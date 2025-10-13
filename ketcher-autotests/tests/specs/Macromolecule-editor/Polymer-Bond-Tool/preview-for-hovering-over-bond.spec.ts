@@ -6,11 +6,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -98,7 +98,7 @@ test(
       let bondNumber = 0;
       for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
         await hoverOverBond(page, bondNumber);
-        await waitForMonomerPreview(page);
+        await MonomerPreviewTooltip(page).waitForBecomeVisible();
         await takeEditorScreenshot(page);
       }
       await CommonTopLeftToolbar(page).clearCanvas();
@@ -144,7 +144,7 @@ test(
     let bondNumber = 0;
     for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
       await hoverOverBond(page, bondNumber);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     }
   },

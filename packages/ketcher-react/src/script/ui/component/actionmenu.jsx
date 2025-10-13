@@ -24,7 +24,7 @@ import { Icon } from 'components';
 
 function isMenuOpened(currentNode) {
   const parentNode = hiddenAncestor(currentNode);
-  return parentNode && parentNode.classList.contains('opened');
+  return parentNode?.classList.contains('opened');
 }
 
 export function showMenuOrButton(action, item, status, props) {
@@ -134,7 +134,7 @@ function renderActiveMenuItem(item, props) {
 function ActionMenu({ name, menu, className, role, ...props }) {
   const visibleMenu = menu.reduce((items, item) => {
     const status = props.status[item];
-    if (!status || !status.hidden) {
+    if (!status?.hidden) {
       items.push(item);
     }
 
@@ -199,7 +199,7 @@ function openHandle(event, onOpen) {
   const hiddenEl = hiddenAncestor(event.currentTarget);
   const isSelected = event.currentTarget?.classList.contains('selected');
 
-  onOpen(hiddenEl && hiddenEl.id, isSelected);
+  onOpen(hiddenEl?.id, isSelected);
   event.stopPropagation();
 }
 

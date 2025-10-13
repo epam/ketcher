@@ -70,7 +70,7 @@ function rangeConv(range) {
 
   return res
     .split(',')
-    .every((s) => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g));
+    .every((s) => s.match(/^[>,<=]?\d+$/g) || s.match(/^\d+-\d+$/g));
 }
 
 export type { RgroupLogicProps };

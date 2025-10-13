@@ -27,11 +27,9 @@ function resolver(source, importer, options) {
   const packageName = importer.match(/packages[\\/](.*?)[\\/]/)[1];
   const updatedId = source.replace('%packageName%', packageName);
 
-  return this.resolve(
-    updatedId,
-    importer,
-    Object.assign({ skipSelf: true }, options),
-  ).then((resolved) => resolved || { id: updatedId });
+  return this.resolve(updatedId, importer, { skipSelf: true, ...options }).then(
+    (resolved) => resolved || { id: updatedId },
+  );
 }
 
 const getTSConfigByPackage = (packageName) => {

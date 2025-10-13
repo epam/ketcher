@@ -15,10 +15,7 @@ import {
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
-import {
-  zoomWithMouseWheel,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -27,6 +24,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -135,20 +133,20 @@ test.describe('Zoom Tool', () => {
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -157,17 +155,17 @@ test.describe('Zoom Tool', () => {
     await page.mouse.wheel(deltas.x, deltas.y);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

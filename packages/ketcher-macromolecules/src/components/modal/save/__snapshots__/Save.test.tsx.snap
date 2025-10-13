@@ -205,7 +205,6 @@ Object {
             <button
               class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
               data-testid="cancel-button"
-              role="button"
               tabindex="0"
               title="Cancel"
               type="button"
@@ -218,7 +217,6 @@ Object {
             <button
               class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
               data-testid="save-button"
-              role="button"
               tabindex="0"
               title="Save"
               type="button"

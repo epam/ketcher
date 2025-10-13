@@ -11,13 +11,13 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,7 +33,7 @@ test.describe('Peptide library testing', () => {
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
     await Library(page).hoverMonomer(Peptide.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -47,7 +47,7 @@ test.describe('Peptide library testing', () => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
     await Library(page).addMonomerToFavorites(Peptide.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -85,7 +85,7 @@ test.describe('Peptide library testing', () => {
     ]);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -122,7 +122,7 @@ test.describe('Peptide library testing', () => {
     await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Peptide.dA).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -140,7 +140,7 @@ test.describe('Peptide library testing', () => {
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptide.Edc).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -160,7 +160,7 @@ test.describe('Peptide library testing', () => {
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, Peptide.Edc).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -180,7 +180,7 @@ test.describe('Peptide library testing', () => {
     await clickOnCanvas(page, 100, 100);
     await CommonLeftToolbar(page).erase();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -198,7 +198,7 @@ test.describe('Peptide library testing', () => {
     });
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.MCC).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -218,7 +218,7 @@ test.describe('Peptide library testing', () => {
       SelectionToolType.Fragment,
     );
     await getMonomerLocator(page, Chem.SMPEG2).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

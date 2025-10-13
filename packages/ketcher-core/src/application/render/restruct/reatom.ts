@@ -317,7 +317,7 @@ class ReAtom extends ReObject {
       : this.getUnlabeledSelectionContour(render, highlightPadding);
   }
 
-  private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
+  private readonly isPlateShouldBeHidden = (atom: Atom, render: Render) => {
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
     const struct = render.ctab.molecule;
@@ -332,7 +332,7 @@ class ReAtom extends ReObject {
     );
   };
 
-  private makeHighlightePlate = (
+  private readonly makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
     highlightPadding = -2,
@@ -1598,7 +1598,7 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
-  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
+  isotope.text = atom.a.isotope?.toString() ?? '';
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
@@ -1900,7 +1900,7 @@ export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {
     aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
     charge: (value) => {
       if (value === '') return value;
-      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
       const charge = regExpResult
         ? parseInt(
             regExpResult[1] + regExpResult[3] + regExpResult[2],

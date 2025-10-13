@@ -10,10 +10,7 @@ import {
   takeEditorScreenshot,
   MacroFileType,
 } from '@utils';
-import {
-  waitForMonomerPreview,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import {
   FileType,
@@ -28,6 +25,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -275,7 +273,7 @@ test.describe('Import-Saving .fasta Files', () => {
       symbolAlias: 'U',
       nodeIndexOverall: 4,
     }).click();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

@@ -83,7 +83,7 @@ class Table extends Component {
 
   result = () => {
     const { type, value } = this.state;
-    if (!value || !value.length) {
+    if (!value?.length) {
       return null;
     }
     if (type === 'atom') {

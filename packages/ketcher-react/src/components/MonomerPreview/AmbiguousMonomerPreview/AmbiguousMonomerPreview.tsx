@@ -21,7 +21,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   const header = isAlternatives ? 'Alternatives' : 'Mixed';
   const aminoAcidFallback = monomer.label === 'X' ? 'Any amino acid' : null;
   const baseFallback = monomer.label === 'N' ? 'Any base' : null;
-  const fallback = aminoAcidFallback || baseFallback;
+  const fallback = aminoAcidFallback ?? baseFallback;
 
   const { monomers, options } = monomer;
 

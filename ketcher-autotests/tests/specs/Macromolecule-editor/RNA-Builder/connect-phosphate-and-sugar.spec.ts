@@ -1,11 +1,11 @@
 import { test } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
 import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Macromolecules connect phosphate and sugar', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
 
     bondLine.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 });

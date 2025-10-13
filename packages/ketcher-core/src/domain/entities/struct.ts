@@ -467,7 +467,7 @@ export class Struct {
   }
 
   bondInitHalfBonds(bid, bond?: Bond) {
-    bond = bond || this.bonds.get(bid)!;
+    bond = bond ?? this.bonds.get(bid)!;
     bond.hb1 = 2 * bid;
     bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
@@ -885,7 +885,7 @@ export class Struct {
       if (item instanceof MonomerMicromolecule) {
         return;
       }
-      item.pp = item.pp ? item.pp.scaled(scale) : null;
+      item.pp = item.pp?.scaled(scale) ?? null;
     });
 
     this.texts.forEach((item) => {

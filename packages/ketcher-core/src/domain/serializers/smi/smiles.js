@@ -503,7 +503,7 @@ Smiles.prototype.writeAtom = function (
   if (atom.atomList && !atom.atomList.notList) {
     label = atom.atomList.label();
     needBrackets = false; // atom list label already has brackets
-  } else if (atom.isPseudo() || (atom.atomList && atom.atomList.notList)) {
+  } else if (atom.isPseudo() || atom.atomList?.notList) {
     label = '*';
     needBrackets = false;
   } else if (

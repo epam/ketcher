@@ -30,7 +30,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -50,6 +49,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -322,12 +322,12 @@ test.describe('Sequence edit mode', () => {
     await getSymbolLocator(page, {
       symbolAlias: 'A',
     }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await getSymbolLocator(page, {
       symbolAlias: 'K',
     }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -341,10 +341,10 @@ test.describe('Sequence edit mode', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getMonomerLocator(page, Peptide.A).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptide.Aad).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -362,12 +362,12 @@ test.describe('Sequence edit mode', () => {
 
     for (const symbol of sequenceSymbols) {
       await getMonomerLocator(page, { monomerAlias: symbol }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
     }
     await getMonomerLocator(page, { monomerAlias: '5HydMe-dC' }).click();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -379,7 +379,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Peptide.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -391,7 +391,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Sugar._25d3r);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -403,7 +403,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Base.c7A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -415,7 +415,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Phosphate.ibun);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -427,7 +427,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Nucleotide.Super_T);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -439,7 +439,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
     await Library(page).selectMonomer(Chem.DOTA);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -464,7 +464,7 @@ test.describe('Sequence edit mode', () => {
       })
         .first()
         .hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takePageScreenshot(page);
       await moveMouseAway(page);
     }
@@ -478,7 +478,7 @@ test.describe('Sequence edit mode', () => {
     Description: System show full set of IDT aliases at preview tooltip.
     */
     await Library(page).hoverMonomer(Preset.dR_U_P);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
   test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
@@ -555,7 +555,7 @@ test.describe('Sequence edit mode', () => {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
     }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 
@@ -571,7 +571,7 @@ test.describe('Sequence edit mode', () => {
       symbolAlias: 'G',
       nodeIndexOverall: 4,
     }).click();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -588,7 +588,7 @@ test.describe('Sequence edit mode', () => {
       symbolAlias: 'G',
       nodeIndexOverall: 4,
     }).dblclick();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

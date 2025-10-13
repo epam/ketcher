@@ -31,7 +31,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | D3SvgElementSelection<SVGGElement, void>;
 
-  public antisenseNodeRenderer?: this | undefined;
+  public antisenseNodeRenderer?: this;
 
   constructor(
     public readonly node: SubChainNode | BackBoneSequenceNode,

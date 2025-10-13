@@ -300,7 +300,7 @@ class ReBond extends ReObject {
     return rect.attr(options.selectionStyle);
   }
 
-  private isPlateShouldBeHidden = (
+  private readonly isPlateShouldBeHidden = (
     restruct: ReStruct,
     options: RenderOptions,
   ) => {

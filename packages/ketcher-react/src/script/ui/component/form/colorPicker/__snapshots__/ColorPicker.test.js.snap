@@ -5,9 +5,13 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="button"
+    tabindex="0"
   >
     <div
       class="colorPickerInput"
+      role="button"
+      tabindex="0"
     >
       <div
         class="colorPickerPreview"

@@ -14,7 +14,6 @@ import {
   copyContentToClipboard,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import {
   keyboardPressOnCanvas,
@@ -27,6 +26,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -66,7 +66,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
       .first()
       .click();
     await page.keyboard.up('Control');
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

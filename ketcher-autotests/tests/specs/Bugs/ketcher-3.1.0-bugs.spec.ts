@@ -15,7 +15,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
-  waitForMonomerPreview,
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -49,6 +48,7 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -346,10 +346,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.D_OAla);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(
       page,
-      page.getByTestId('polymer-library-preview'),
+      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
     );
   });
 
@@ -372,10 +372,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
     await Library(page).hoverMonomer(Peptide.U);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
 

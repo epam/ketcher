@@ -1,16 +1,12 @@
 import { test } from '@fixtures';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import {
-  moveMouseAway,
-  takeEditorScreenshot,
-  waitForMonomerPreview,
-  waitForPageInit,
-} from '@utils';
+import { moveMouseAway, takeEditorScreenshot, waitForPageInit } from '@utils';
 import { Monomer } from '@utils/types';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -129,7 +125,7 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
 
       await moveMouseAway(page);
       await getMonomerLocator(page, AmbiguousMonomer.AmbiguousMonomer).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists

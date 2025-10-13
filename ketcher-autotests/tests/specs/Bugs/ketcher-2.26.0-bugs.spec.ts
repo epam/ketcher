@@ -18,7 +18,6 @@ import {
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
-  waitForMonomerPreview,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
@@ -103,6 +102,7 @@ import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Const
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -689,13 +689,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Sugar._25mo3r).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Phosphate.msp).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

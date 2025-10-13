@@ -34,8 +34,7 @@ function execute(activeTool, { action, editor, server, options }) {
 function selected(actObj, activeTool, { editor, server }) {
   if (typeof actObj.selected === 'function')
     return actObj.selected(editor, server);
-  else if (actObj.action && actObj.action.tool)
-    return isEqual(activeTool, actObj.action);
+  else if (actObj.action?.tool) return isEqual(activeTool, actObj.action);
   return false;
 }
 
@@ -71,7 +70,7 @@ export default function (state = null, { type, action, ...params }) {
     }
 
     case 'ACTION': {
-      activeTool = execute(state && state.activeTool, {
+      activeTool = execute(state?.activeTool, {
         ...params,
         action,
       });

@@ -41,12 +41,22 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
   isRecognizeDisabled,
   errorHandler,
 }) => {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectClipboard();
+    }
+  };
+
   return (
     <div className={styles.optionsContainer}>
       <div
         onClick={selectClipboard}
+        onKeyDown={handleKeyDown}
         className={styles.dropContainer}
         data-testid="paste-from-clipboard-button"
+        role="button"
+        tabIndex={0}
       >
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />

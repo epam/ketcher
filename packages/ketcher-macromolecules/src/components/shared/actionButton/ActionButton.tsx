@@ -98,18 +98,12 @@ export const ActionButton = ({
     <SecondaryButton
       onClick={clickHandler}
       title={rest.title || label}
-      role="button"
       {...rest}
     >
       {children || label}
     </SecondaryButton>
   ) : (
-    <PrimaryButton
-      onClick={clickHandler}
-      title={rest.title || label}
-      role="button"
-      {...rest}
-    >
+    <PrimaryButton onClick={clickHandler} title={rest.title || label} {...rest}>
       {children || label}
     </PrimaryButton>
   );

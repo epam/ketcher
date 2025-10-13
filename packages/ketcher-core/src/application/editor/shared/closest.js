@@ -217,8 +217,7 @@ function findClosestEnhancedFlag(restruct, pos, skip, _minDist, options) {
   let ret = null;
   restruct.enhancedFlags.forEach((item, id) => {
     const fragment = restruct.molecule.frags.get(id);
-    if (!fragment || !fragment.enhancedStereoFlag || !options.showStereoFlags)
-      return;
+    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) return;
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
@@ -303,11 +302,7 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
   let ret = null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
-    if (
-      rgid !== skip &&
-      rgroup.labelBox &&
-      rgroup.labelBox.contains(pos, 0.5)
-    ) {
+    if (rgid !== skip && rgroup.labelBox?.contains(pos, 0.5)) {
       const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
       if (!ret || dist < minDist) {

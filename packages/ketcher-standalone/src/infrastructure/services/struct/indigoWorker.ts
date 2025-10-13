@@ -32,7 +32,6 @@ import {
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  IndigoStandalone,
   ExplicitHydrogensCommandData,
   CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
@@ -46,7 +45,8 @@ interface IndigoOptions {
 }
 
 type HandlerType = (
-  indigo: IndigoStandalone,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  indigo: any,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -58,7 +58,8 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  module.then((indigo: IndigoStandalone) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  module.then((indigo: any) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options || {});
     let msg: OutputMessage<string>;

@@ -130,7 +130,7 @@ describe('Modal component', () => {
       ),
     );
 
-    const expandButton = screen.getByTitle('expand window');
+    const expandButton = screen.getByTitle('Expand window');
     fireEvent.click(expandButton);
 
     expect(mockSetExpanded).toHaveBeenCalledWith(true);
@@ -151,6 +151,6 @@ describe('Modal component', () => {
       ),
     );
 
-    expect(screen.getByTitle('minimize window')).toBeInTheDocument();
+    expect(screen.getByTitle('Minimize window')).toBeInTheDocument();
   });
 });

@@ -65,7 +65,7 @@ const checkSchema = {
 };
 
 const getFormattedDateString = (date) => {
-  const getFixedString = (num) => (num + '').padStart(2, 0);
+  const getFixedString = (num) => (num + '').padStart(2, '0');
   return `${getFixedString(date.getHours())}:${getFixedString(
     date.getMinutes(),
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
@@ -170,7 +170,7 @@ function CheckDialog(props) {
       >
         <div className={style.wrapper}>
           <div className={style.settings}>
-            <label>Settings</label>
+            <span className={style.sectionTitle}>Settings</span>
             <div
               className={!isStuctureChecking ? style.checkBoxesDisabled : ''}
             >

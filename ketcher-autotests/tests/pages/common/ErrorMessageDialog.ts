@@ -18,7 +18,7 @@ export const ErrorMessageDialog = (page: Page) => {
   return {
     ...locators,
     async isVisible() {
-      return await locators.errorMessageWindow.isVisible();
+      return await locators.errorMessageBody.isVisible();
     },
 
     async close() {

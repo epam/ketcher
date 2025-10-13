@@ -69,7 +69,7 @@ describe('Modal component', () => {
     expect(screen.queryByTitle('Close window')).not.toBeInTheDocument();
   });
 
-  it('should show "expand window" tooltip when not expanded', () => {
+  it('should show "Expand window" tooltip when not expanded', () => {
     const mockSetExpanded = jest.fn();
     render(
       withThemeProvider(
@@ -86,10 +86,10 @@ describe('Modal component', () => {
       ),
     );
 
-    expect(screen.getByTitle('expand window')).toBeInTheDocument();
+    expect(screen.getByTitle('Expand window')).toBeInTheDocument();
   });
 
-  it('should show "minimize window" tooltip when expanded', () => {
+  it('should show "Minimize window" tooltip when expanded', () => {
     const mockSetExpanded = jest.fn();
     render(
       withThemeProvider(
@@ -106,7 +106,7 @@ describe('Modal component', () => {
       ),
     );
 
-    expect(screen.getByTitle('minimize window')).toBeInTheDocument();
+    expect(screen.getByTitle('Minimize window')).toBeInTheDocument();
   });
 
   it('should toggle tooltip when expand button is clicked', () => {

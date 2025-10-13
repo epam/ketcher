@@ -15,6 +15,17 @@
  ***************************************************************************/
 import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
 import { KetFileNode } from '../../serializers.types';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
+
+function safelyGetInitiallySelected(entity: any): boolean | undefined {
+  // Check if initiallySelected is INVALID to avoid throwing error
+  if (entity.initiallySelected === INVALID) {
+    return undefined;
+  }
+  return typeof entity.getInitiallySelected === 'function'
+    ? entity.getInitiallySelected()
+    : undefined;
+}
 
 export function prepareStructForKet(struct: Struct) {
   const ketNodes: KetFileNode[] = [];
@@ -51,7 +62,7 @@ export function prepareStructForKet(struct: Struct) {
         pos: item.pos,
         height: item.height,
       },
-      selected: item.getInitiallySelected(),
+      selected: safelyGetInitiallySelected(item),
     });
   });
 
@@ -60,7 +71,7 @@ export function prepareStructForKet(struct: Struct) {
       type: 'plus',
       center: item.pp,
       data: {},
-      selected: item.getInitiallySelected(),
+      selected: safelyGetInitiallySelected(item),
     });
   });
 
@@ -72,7 +83,7 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
+      selected: safelyGetInitiallySelected(item),
     });
   });
 
@@ -85,7 +96,7 @@ export function prepareStructForKet(struct: Struct) {
         position: item.position,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
+      selected: safelyGetInitiallySelected(item),
     });
   });
 

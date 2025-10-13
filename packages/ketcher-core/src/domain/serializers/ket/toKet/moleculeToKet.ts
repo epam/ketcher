@@ -23,6 +23,7 @@ import {
   Vec2,
 } from 'domain/entities';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 
 import { ifDef } from 'utilities';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
@@ -39,6 +40,16 @@ function fromRlabel(rg) {
     }
   }
   return res;
+}
+
+function safelyGetInitiallySelected(entity: any): boolean | undefined {
+  // Check if initiallySelected is INVALID to avoid throwing error
+  if (entity.initiallySelected === INVALID) {
+    return undefined;
+  }
+  return typeof entity.getInitiallySelected === 'function'
+    ? entity.getInitiallySelected()
+    : undefined;
 }
 
 export interface MoleculesSelection {
@@ -111,7 +122,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', safelyGetInitiallySelected(source));
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
   ifDef(result, 'stereoParity', source.stereoCare, 0);
@@ -150,7 +161,7 @@ function rglabelToKet(source) {
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', safelyGetInitiallySelected(source));
 
   return result;
 }
@@ -168,7 +179,7 @@ function bondToKet(source) {
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
   }
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', safelyGetInitiallySelected(source));
   return result;
 }
 

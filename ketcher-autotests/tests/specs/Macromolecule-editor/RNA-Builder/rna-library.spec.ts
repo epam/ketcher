@@ -382,10 +382,10 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3SS6)', async () => {
+  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3A6)', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas https://github.com/epam/ketcher/issues/3615
-    Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3SS6).
+    Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3A6).
     Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
     // Reload the page to reset the state, as previous tests affects the RNA-bulder state
@@ -395,7 +395,7 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.selectSugarSlot();
-    await Library(page).selectMonomer(Sugar._3SS6);
+    await Library(page).selectMonomer(Sugar._3A6);
     await Library(page).rnaBuilder.selectSugarSlot();
     await takeRNABuilderScreenshot(page);
   });

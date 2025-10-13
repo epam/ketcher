@@ -26,6 +26,10 @@ export const Phosphate = createMonomerGroup(MonomerType.Phosphate, {
   mn: { alias: 'mn', testId: 'mn___Methylamino' },
   msp: { alias: 'msp', testId: 'msp___Methylphosphonothioic acid' },
   ibun: { alias: 'ibun', testId: 'ibun___Isobutylamino' },
+  _3SS6: {
+    alias: '3SS6',
+    testId: "3SS6___Thiol Modifier 6 S-S (3' end)",
+  },
 });
 
 export type PhosphatesType = typeof Phosphate;

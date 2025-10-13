@@ -115,4 +115,107 @@ test.describe('Snap Functionality', () => {
     });
     await page.mouse.up();
   });
+
+  test('Case 4: Adjustment of bond lengths connecting the group to the rest of the structure', async () => {
+    /*
+     * Version 3.8
+     * Test case: https://github.com/epam/ketcher/issues/6287
+     * Description: Bond lengths between the selected group and the rest shift consistently to match the new position after snapping without distortion.
+     * Scenario:
+     * 1. Use a structure where the selected group is connected to the rest via bonds.
+     * 2. Move the group until it snaps to the adjacent monomers.
+     * 3. Compare the lengths of the connecting bonds before and after snapping.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/six-peptides-vertical.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (const peptide of [Peptide.D, Peptide.E, Peptide.F]) {
+      await getMonomerLocator(page, peptide).click();
+    }
+    await page.keyboard.up('Shift');
+    await getMonomerLocator(page, Peptide.F);
+    await page.mouse.down();
+    await page.mouse.move(480, 410, { steps: 10 });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+
+  test('Case 5: Magnetic area for vertical snap between monomers', async () => {
+    /*
+     * Version 3.8
+     * Test case: https://github.com/epam/ketcher/issues/6287
+     * Description: A magnetic area appears at the midpoint between the connected monomers with a height
+     * equal to y and a 15 px magnetic zone, showing where the group will snap.
+     * Scenario:
+     * 1. Arrange a chain of monomers vertically with connections on both sides of a selected group.
+     * 2. Select the central group and start dragging it vertically between its two connected monomers.
+     * 3. Observe the area at the midpoint between the connected monomers.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/six-peptides-vertical.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (const peptide of [Peptide.D, Peptide.E, Peptide.F]) {
+      await getMonomerLocator(page, peptide).click();
+    }
+    await page.keyboard.up('Shift');
+    await getMonomerLocator(page, Peptide.F);
+    await page.mouse.down();
+    await page.mouse.move(460, 420, { steps: 10 });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
+
+  test('Case 6: Condition for vertical snap', async () => {
+    /*
+     * Version 3.8
+     * Test case: https://github.com/epam/ketcher/issues/6287
+     * Description: When the geometric mean enters the magnetic area, the group snaps vertically into place between the connected monomers.
+     * Scenario:
+     * 1. Arrange a chain of monomers vertically with connections on both sides of a selected group.
+     * 2. Determine the geometric mean (center of mass) of the selected group.
+     * 3. Drag the group so that its geometric mean enters the magnetic area around midpoint M.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/six-peptides-vertical.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('80');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (const peptide of [Peptide.D, Peptide.E, Peptide.F]) {
+      await getMonomerLocator(page, peptide).click();
+    }
+    await page.keyboard.up('Shift');
+    await getMonomerLocator(page, Peptide.F);
+    await page.mouse.down();
+    await page.mouse.move(480, 360, { steps: 10 });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
+  });
 });

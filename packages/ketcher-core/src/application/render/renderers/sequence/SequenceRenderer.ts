@@ -167,6 +167,15 @@ export class SequenceRenderer {
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SubChainNode | BackBoneSequenceNode>();
 
+    // Show button before first chain if not in RNA builder mode
+    if (!isEditInRnaBuilderMode && sequenceViewModel.chains.length > 0) {
+      const firstChain = sequenceViewModel.chains[0];
+      this.showNewSequenceButton(
+        -1,
+        firstChain.firstRow.sequenceViewModelItems.length,
+      );
+    }
+
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
       chain.forEachRow((row) => {

@@ -24,13 +24,38 @@ export class NewSequenceButton {
 
   public show() {
     const editor = CoreEditor.provideEditorInstance();
-    const chain =
-      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
-    const lastNodeRendererInChain =
-      chain.lastNode?.antisenseNode?.renderer ||
-      chain.lastNode?.senseNode?.renderer;
 
-    if (!(lastNodeRendererInChain instanceof BaseSequenceItemRenderer)) {
+    // Handle button before first chain (indexOfRowBefore = -1)
+    const isBeforeFirstChain = this.indexOfRowBefore === -1;
+    const chainIndex = isBeforeFirstChain ? 0 : this.indexOfRowBefore;
+    const chain = SequenceRenderer.sequenceViewModel.chains[chainIndex];
+
+    if (!chain) {
+      return;
+    }
+
+    let nodeRenderer;
+    let yOffset: number;
+
+    if (isBeforeFirstChain) {
+      // For button before first chain, use first node and position above it
+      nodeRenderer =
+        chain.firstNode?.antisenseNode?.renderer ||
+        chain.firstNode?.senseNode?.renderer;
+      yOffset = chain.hasAntisense
+        ? -BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
+        : -BUTTON_Y_OFFSET_FROM_SENSE_ROW;
+    } else {
+      // For button after a chain, use last node and position below it
+      nodeRenderer =
+        chain.lastNode?.antisenseNode?.renderer ||
+        chain.lastNode?.senseNode?.renderer;
+      yOffset = chain.hasAntisense
+        ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
+        : BUTTON_Y_OFFSET_FROM_SENSE_ROW;
+    }
+
+    if (!(nodeRenderer instanceof BaseSequenceItemRenderer)) {
       return;
     }
 
@@ -41,10 +66,7 @@ export class NewSequenceButton {
       .attr(
         'transform',
         `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${
-          lastNodeRendererInChain.scaledMonomerPositionForSequence.y +
-          (chain.hasAntisense
-            ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
-            : BUTTON_Y_OFFSET_FROM_SENSE_ROW)
+          nodeRenderer.scaledMonomerPositionForSequence.y + yOffset
         })`,
       )
       .attr('cursor', 'pointer') as never as D3SvgElementSelection<

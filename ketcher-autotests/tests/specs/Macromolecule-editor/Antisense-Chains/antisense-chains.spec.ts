@@ -75,7 +75,7 @@ test.afterAll(async ({ browser }) => {
 
 interface IMonomer {
   monomerDescription: string;
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   eligibleForAntisense: boolean;
@@ -188,7 +188,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '8. Base A (from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -197,7 +197,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '9. Ambiguous DNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
@@ -207,7 +207,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '10. Ambiguous RNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/10. Ambiguous RNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
@@ -217,7 +217,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '11. Ambiguous Base M (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/11. Ambiguous Base M (alternatives, from library).ket',
     eligibleForAntisense: false,
@@ -227,7 +227,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '12. Ambiguous DNA Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/12. Ambiguous DNA Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -239,7 +239,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '13. Ambiguous RNA Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/13. Ambiguous RNA Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -251,7 +251,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '14. Ambiguous Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/14. Ambiguous Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -272,7 +272,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '16. Ambiguous phosphate % (alternatives)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/16. Ambiguous phosphate % (alternatives).ket',
     eligibleForAntisense: false,
@@ -285,7 +285,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '17. Ambiguous phosphate % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/17. Ambiguous phosphate % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -308,7 +308,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '19. Unknown monomer',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -2716,7 +2716,7 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription: '4. Base A (from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -2725,7 +2725,7 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription: '5. Ambiguous DNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
@@ -2757,7 +2757,7 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription: '8. Unknown monomer',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -2933,7 +2933,7 @@ for (const monomer1 of shortMonomerList) {
 const chainWithAllTypeOfConnections: IMonomer = {
   monomerDescription:
     'All type of monomers connected to R1, R2, R3, R4 attachment points',
-  contentType: MacroFileType.Ket,
+  contentType: MacroFileType.KetFormat,
   KETFile:
     'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
   eligibleForAntisense: true,
@@ -3131,7 +3131,7 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
 
 const chainOfAllTypesModifiedMonomers: IMonomer = {
   monomerDescription: 'All types of modified monomers in one chain',
-  contentType: MacroFileType.Ket,
+  contentType: MacroFileType.KetFormat,
   KETFile:
     'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
   eligibleForAntisense: true,

@@ -2965,7 +2965,7 @@ for (const monomerToCreate of monomersToCreate46) {
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `KET/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.ket`,
-        MacroFileType.Ket,
+        MacroFileType.KetFormat,
       );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

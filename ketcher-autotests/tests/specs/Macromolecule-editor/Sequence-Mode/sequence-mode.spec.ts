@@ -337,7 +337,7 @@ test.describe('Sequence Mode', () => {
       description:
         'System displays structure preview of Peptide (preset) while hovering over letters on canvas.',
       file: 'KET/peptides-connected-with-bonds.ket',
-      fileType: MacroFileType.Ket,
+      fileType: MacroFileType.KetFormat,
     },
   ];
 

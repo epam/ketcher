@@ -85,7 +85,7 @@ test.describe('Import-Saving .mol Files', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      MacroFileType.Ket,
+      MacroFileType.KetFormat,
       randomText,
       // error expected
       true,

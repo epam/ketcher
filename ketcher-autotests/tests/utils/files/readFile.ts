@@ -107,7 +107,7 @@ export async function openFileAndAddToCanvas(
 export async function openFileAndAddToCanvasMacro(
   page: Page,
   filename: string,
-  structureFormat: StructureFormat = MacroFileType.Ket,
+  structureFormat: StructureFormat = MacroFileType.KetFormat,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
@@ -121,7 +121,7 @@ export async function openFileAndAddToCanvasMacro(
 export async function openFileAndAddToCanvasAsNewProjectMacro(
   page: Page,
   filename: string,
-  structureFormat: StructureFormat = MacroFileType.Ket,
+  structureFormat: StructureFormat = MacroFileType.KetFormat,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
@@ -253,7 +253,7 @@ async function setupStructureFormatComboboxes(
  *  Usage examples:
  *  1. pasteFromClipboardAndAddToMacromoleculesCanvas(
  *    page,
- *    MacroFileType.Ket,
+ *    MacroFileType.KetFormat,
  *    'Some KET content',
  *  );
  *

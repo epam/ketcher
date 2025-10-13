@@ -2878,7 +2878,7 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
-    MacroFileType.Ket,
+    MacroFileType.KetFormat,
     // error is expected
     true,
   );

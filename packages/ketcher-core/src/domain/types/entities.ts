@@ -8,4 +8,4 @@ export enum Entities {
   Phosphate = 'Phosphate',
 }
 
-export type MonomerizerBond = PolymerBond | MonomerToAtomBond | HydrogenBond;
+export type MonomerBond = PolymerBond | MonomerToAtomBond | HydrogenBond;

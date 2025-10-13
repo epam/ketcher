@@ -91,20 +91,24 @@ class ReStruct {
   private initialized = false;
   private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
   public connectedComponents: Pool = new Pool();
-  private ccFragmentType: Pool = new Pool();
+  private readonly ccFragmentType: Pool = new Pool();
   private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
 
   // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
-  private atomsChanged: Map<number, 1> = new Map();
-  private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map();
-  private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
-  private rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
-  private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private textsChanged: Map<number, ReText> = new Map();
-  private imagesChanged = new Map<number, ReImage>();
-  private multitailArrowsChanged = new Map<number, ReMultitailArrow>();
+  private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
+    new Map();
+
+  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
+  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
+  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
+    new Map();
+
+  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
+  private readonly textsChanged: Map<number, ReText> = new Map();
+  private readonly imagesChanged = new Map<number, ReImage>();
+  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
 
   constructor(
@@ -923,7 +927,13 @@ function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
 function scaleRPath(path, scaleFactor: number): void {
   if (path.type === 'set') {
     // TODO: rework scaling
-    for (let i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor);
+    const pathItems = Array.from(
+      { length: path.length },
+      (_, index) => path[index],
+    );
+    for (const pathItem of pathItems) {
+      scaleRPath(pathItem, scaleFactor);
+    }
   } else {
     if (!(typeof path.attrs === 'undefined')) {
       if ('font-size' in path.attrs) {
@@ -937,7 +947,7 @@ function scaleRPath(path, scaleFactor: number): void {
 }
 
 function scaleVisel(visel, s) {
-  for (let i = 0; i < visel.paths.length; ++i) scaleRPath(visel.paths[i], s);
+  for (const viselPath of visel.paths) scaleRPath(viselPath, s);
 }
 
 /**

@@ -14,20 +14,19 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -965,7 +964,7 @@ test.describe('Side chain connections', () => {
 
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -1084,13 +1083,7 @@ test.describe('Side chain connections', () => {
       page,
       `KET/Side-Chain-Connections/16.ket`,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    // Closing Save dialog
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {

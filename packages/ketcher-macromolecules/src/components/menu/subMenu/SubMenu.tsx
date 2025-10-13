@@ -161,7 +161,11 @@ const SubMenu = ({
                   islayoutModeButton={layoutModeButton}
                   data-testid="multi-tool-dropdown"
                 >
-                  {subComponents.map((component) => component)}
+                  {subComponents.map((component) =>
+                    React.cloneElement(component, {
+                      key: component.props.itemId,
+                    }),
+                  )}
                 </OptionsContainer>
               </ClickAwayListener>
             </OptionsItemsCollapse>,

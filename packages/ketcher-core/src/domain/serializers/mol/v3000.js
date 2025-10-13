@@ -81,8 +81,8 @@ function parseAtomLineV3000(line) {
       value = value.trim().substr(1, value.length - 2);
       const rgrsplit = value.split(' ').slice(1);
       params.rglabel = 0;
-      for (let j = 0; j < rgrsplit.length; ++j) {
-        params.rglabel |= 1 << (rgrsplit[j] - 1);
+      for (const rgrValue of rgrsplit) {
+        params.rglabel |= 1 << (rgrValue - 1);
       }
     } else if (key === 'ATTCHPT') {
       params.attpnt = value.trim() - 0;
@@ -156,12 +156,12 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     sg.label = split[2] - 0;
     sgroups[sg.number] = sg;
     const props = {};
-    for (let i = 3; i < split.length; ++i) {
-      const subsplit = splitonce(split[i], '=');
+    for (const splitItem of split.slice(3)) {
+      const subsplit = splitonce(splitItem, '=');
       if (subsplit.length !== 2) {
         throw new Error(
           "A record of form AAA=BBB or AAA=(...) expected, got '" +
-            split[i] +
+            splitItem +
             "'",
         );
       }
@@ -177,8 +177,8 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     const brkxyzStrs = props.BRKXYZ;
     sg.brkxyz = [];
     if (brkxyzStrs) {
-      for (let j = 0; j < brkxyzStrs.length; ++j) {
-        sg.brkxyz.push(parseBracedNumberList(brkxyzStrs[j]));
+      for (const brkxyzStr of brkxyzStrs) {
+        sg.brkxyz.push(parseBracedNumberList(brkxyzStr));
       }
     }
     if (props.MULT) sg.data.subscript = props.MULT[0] - 0;
@@ -305,7 +305,8 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
         continue; // eslint-disable-line no-continue
       }
       if (line !== 'M  V30 BEGIN CTAB') throw Error('CTAB V3000 invalid');
-      for (var i = 0; i < ctabLines.length; ++i) {
+      let i;
+      for (i = 0; i < ctabLines.length; ++i) {
         if (ctabLines[shift + i].trim() === 'M  V30 END CTAB') break;
       }
       const lines = ctabLines.slice(shift, shift + i + 1);
@@ -366,7 +367,7 @@ function parseRxn3000(
   const rGroups = [];
   for (let i = 0; i < ctabLines.length; ++i) {
     const line = ctabLines[i].trim();
-    var j;
+    let j;
 
     if (line.startsWith('M  V30 COUNTS')) {
       // do nothing
@@ -400,8 +401,8 @@ function parseRxn3000(
   const molLines = molLinesReactants
     .concat(molLinesProducts)
     .concat(molLinesAgents);
-  for (j = 0; j < molLines.length; ++j) {
-    const mol = parseCTabV3000(molLines[j], countsSplit);
+  for (const molLine of molLines) {
+    const mol = parseCTabV3000(molLine, countsSplit);
     mols.push(mol);
   }
   const ctab = utils.rxnMerge(
@@ -416,7 +417,7 @@ function parseRxn3000(
     ctab,
     (function (array) {
       let res = [];
-      for (let k = 0; k < array.length; ++k) res = res.concat(array[k]);
+      for (const item of array) res = res.concat(item);
       return res;
     })(rGroups),
   );
@@ -509,8 +510,8 @@ function parseBracedNumberList(line, shift) {
   const split = line.split(' ');
   shift = shift || 0;
 
-  for (let i = 1; i < split.length; ++i) {
-    const value = parseInt(split[i]);
+  for (const splitItem of split.slice(1)) {
+    const value = parseInt(splitItem);
     if (!isNaN(value)) {
       // eslint-disable-line
       list.push(value + shift);
@@ -529,8 +530,8 @@ function stripV30(line) {
 function labelsListToIds(labels) {
   /* reader */
   const ids = [];
-  for (let i = 0; i < labels.length; ++i) {
-    const element = Elements.get(labels[i].trim());
+  for (const label of labels) {
+    const element = Elements.get(label.trim());
     if (element) {
       ids.push(element.number);
     }

@@ -71,6 +71,55 @@ const saveSchema = {
   },
 };
 
+// Extracted components for better performance and React best practices
+const LoadingState = ({ classes }) => (
+  <div className={classes.loadingCirclesContainer}>
+    <LoadingCircles />
+  </div>
+);
+
+const ImageContent = ({ classes, format, imageSrc, isCleanStruct }) => (
+  <div className={classes.imageContainer}>
+    {!isCleanStruct && (
+      <img
+        src={`data:image/${format}+xml;base64,${imageSrc}`}
+        alt={`${format} preview`}
+        data-testid="preview-area"
+      />
+    )}
+  </div>
+);
+
+const BinaryContent = ({ classes, textAreaRef }) => (
+  <div className={classes.previewBackground}>
+    <textarea
+      value="Can not display binary content"
+      className={classes.previewArea}
+      readOnly
+      ref={textAreaRef}
+      data-testid="preview-area"
+    />
+  </div>
+);
+
+const PreviewContent = ({ classes, structStr, textAreaRef, handleCopy }) => (
+  <div className={classes.previewBackground}>
+    <textarea
+      value={structStr}
+      className={classes.previewArea}
+      readOnly
+      ref={textAreaRef}
+      data-testid="preview-area"
+    />
+    <IconButton
+      onClick={handleCopy}
+      iconName="copy"
+      title="Copy to clipboard"
+      testId="copy-to-clipboard"
+    />
+  </div>
+);
+
 class SaveDialog extends Component {
   static contextType = ErrorsContext;
   constructor(props) {
@@ -277,7 +326,7 @@ class SaveDialog extends Component {
   };
 
   renderForm = () => {
-    const formState = Object.assign({}, this.props.formState);
+    const formState = { ...this.props.formState };
     const { filename, format } = formState.result;
     const warnings = this.getWarnings(format);
     const tabs =
@@ -356,75 +405,39 @@ class SaveDialog extends Component {
   };
 
   renderSaveFile = () => {
-    const formState = Object.assign({}, this.props.formState);
+    const formState = { ...this.props.formState };
     delete formState.moleculeErrors;
     const { format } = formState.result;
     const { structStr, imageSrc, isLoading } = this.state;
     const isCleanStruct = this.props.struct.isBlank();
 
-    const LoadingState = () => (
-      <div className={classes.loadingCirclesContainer}>
-        <LoadingCircles />
-      </div>
-    );
-
-    const ImageContent = () => (
-      <div className={classes.imageContainer}>
-        {!isCleanStruct && (
-          <img
-            src={`data:image/${format}+xml;base64,${imageSrc}`}
-            alt={`${format} preview`}
-            data-testid="preview-area"
-          />
-        )}
-      </div>
-    );
-
-    const BinaryContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value="Can not display binary content"
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-          data-testid="preview-area"
-        />
-      </div>
-    );
-
-    const PreviewContent = () => {
-      return (
-        <div className={classes.previewBackground}>
-          <textarea
-            value={structStr}
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-            data-testid="preview-area"
-          />
-          <IconButton
-            onClick={this.handleCopy}
-            iconName="copy"
-            title="Copy to clipboard"
-            testId="copy-to-clipboard"
-          />
-        </div>
-      );
-    };
-
     if (isLoading) {
-      return <LoadingState />;
+      return <LoadingState classes={classes} />;
     } else if (this.isImageFormat(format)) {
-      return <ImageContent />;
+      return (
+        <ImageContent
+          classes={classes}
+          format={format}
+          imageSrc={imageSrc}
+          isCleanStruct={isCleanStruct}
+        />
+      );
     } else if (this.isBinaryCdxFormat(format)) {
-      return <BinaryContent />;
+      return <BinaryContent classes={classes} textAreaRef={this.textAreaRef} />;
     } else {
-      return <PreviewContent format={format} />;
+      return (
+        <PreviewContent
+          classes={classes}
+          structStr={structStr}
+          textAreaRef={this.textAreaRef}
+          handleCopy={this.handleCopy}
+        />
+      );
     }
   };
 
   renderWarnings = () => {
-    const formState = Object.assign({}, this.props.formState);
+    const formState = { ...this.props.formState };
     const { format } = formState.result;
     const warnings = this.getWarnings(format);
 

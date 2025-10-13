@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -19,6 +18,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -474,7 +474,7 @@ test.describe('Preview tooltips checks: ', () => {
         page,
         ambiguousMonomer.monomerLocatorOptions,
       ).hover({ force: true });
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
       await takeEditorScreenshot(page);
 
@@ -515,7 +515,7 @@ test.describe('Preview tooltips checks: ', () => {
         page,
         ambiguousMonomer.monomerLocatorIndexOnMicro,
       );
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -550,7 +550,7 @@ test.describe('Preview tooltips checks: ', () => {
         ambiguousMonomer.HELMString,
       );
       await hoverMouseOverSequenceModeMonomer(page);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists

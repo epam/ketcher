@@ -6,12 +6,12 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -28,7 +28,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
     fromCenter: true,
   });
   // Click on <svg> #polymer-editor-canvas
-  await hideMonomerPreview(page);
+  await MonomerPreviewTooltip(page).hide();
 
   await takeEditorScreenshot(page);
 });

@@ -54,10 +54,10 @@ export class AttachmentPoint {
     | undefined;
 
   protected initialAngle = 0;
-  private isUsed: boolean;
-  private isSnake;
-  private editorEvents: typeof editorEvents;
-  private applyZoomForPositionCalculation: boolean;
+  private readonly isUsed: boolean;
+  private readonly isSnake;
+  private readonly editorEvents: typeof editorEvents;
+  private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
     constructorParams: AttachmentPointConstructorParams,

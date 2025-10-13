@@ -24,8 +24,6 @@ import { Icon } from 'components';
 interface ColorPickerProps {
   value: string;
   name: string;
-  schema: any;
-  type?: string;
 }
 
 interface ColorPickerCallProps {
@@ -89,11 +87,28 @@ const ColorPicker = (props: Props) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick(e);
+    }
+  };
+
+  const handleWrapperKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
+      onKeyDown={handleWrapperKeyDown}
+      role="button"
+      tabIndex={0}
     >
       <div
         className={clsx({
@@ -101,6 +116,9 @@ const ColorPicker = (props: Props) => {
           [classes.selectedInput]: isOpen,
         })}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
       >
         <div
           className={classes.colorPickerPreview}

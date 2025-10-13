@@ -35,7 +35,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -46,6 +45,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -1053,8 +1053,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     [410, 270],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1089,8 +1088,7 @@ test('Check that magnetic areas (radial rays) exist only for monomers connected 
     [410, 270],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 10 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1126,8 +1124,7 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
     [410, 280],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y);
     await takeEditorScreenshot(page);
   }
@@ -1157,8 +1154,7 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     [100, 150],
     [300, 100],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1194,8 +1190,7 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     [410, 280],
     [410, 380],
   ];
-  for (let i = 0; i < coords.length; i++) {
-    const [x, y] = coords[i];
+  for (const [x, y] of coords) {
     await page.mouse.move(x, y, { steps: 20 });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1596,7 +1591,7 @@ test.describe('Verify "Select/Edit Attachment Points" dialogues for ambiguous mo
       await moveMouseAway(page);
       const bondLine = getBondLocator(page, {});
       await bondLine.hover({ force: true });
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
       await ContextMenu(page, bondLine).click(
         MacroBondOption.EditAttachmentPoints,

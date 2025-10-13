@@ -143,15 +143,15 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
   // fill up neighbor lists for the stereocenters calculation
   for (i = 0; i < walk.v_seq.length; i++) {
-    var seqEl = walk.v_seq[i];
-    var vIdx = seqEl.idx;
-    var eIdx = seqEl.parent_edge;
-    var vPrevIdx = seqEl.parent_vertex;
+    const seqEl = walk.v_seq[i];
+    const vIdx = seqEl.idx;
+    const eIdx = seqEl.parent_edge;
+    const vPrevIdx = seqEl.parent_vertex;
 
     if (eIdx >= 0) {
       const atom = this.atoms[vIdx];
 
-      var openingCycles = walk.numOpeningCycles(eIdx);
+      const openingCycles = walk.numOpeningCycles(eIdx);
 
       for (j = 0; j < openingCycles; j++) {
         this.atoms[vPrevIdx].neighbours.push({ aid: -1, bid: -1 });
@@ -264,10 +264,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   let firstComponent = true;
 
   for (i = 0; i < walk.v_seq.length; i++) {
-    seqEl = walk.v_seq[i];
-    vIdx = seqEl.idx;
-    eIdx = seqEl.parent_edge;
-    vPrevIdx = seqEl.parent_vertex;
+    const seqEl = walk.v_seq[i];
+    const vIdx = seqEl.idx;
+    const eIdx = seqEl.parent_edge;
+    const vPrevIdx = seqEl.parent_vertex;
     let writeAtom = true;
 
     if (vPrevIdx >= 0) {
@@ -280,7 +280,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         }
       }
 
-      openingCycles = walk.numOpeningCycles(eIdx);
+      const openingCycles = walk.numOpeningCycles(eIdx);
 
       for (j = 0; j < openingCycles; j++) {
         for (k = 1; k < cycleNumbers.length; k++) {
@@ -503,7 +503,7 @@ Smiles.prototype.writeAtom = function (
   if (atom.atomList && !atom.atomList.notList) {
     label = atom.atomList.label();
     needBrackets = false; // atom list label already has brackets
-  } else if (atom.isPseudo() || (atom.atomList && atom.atomList.notList)) {
+  } else if (atom.isPseudo() || atom.atomList?.notList) {
     label = '*';
     needBrackets = false;
   } else if (

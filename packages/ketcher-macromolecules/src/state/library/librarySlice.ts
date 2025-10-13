@@ -537,9 +537,8 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 
   const sortedPreparedData = Object.entries(preparedData).reduce(
     (result, [code, monomers]) => {
-      const sortedMonomers = monomers.sort((a, b) =>
-        a.label.localeCompare(b.label),
-      );
+      const sortedMonomers = [...monomers];
+      sortedMonomers.sort((a, b) => a.label.localeCompare(b.label));
       const baseIndex = sortedMonomers.findIndex(
         (monomer) => monomer.label === code,
       );
@@ -555,27 +554,28 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 
   // generate list of monomer groups
   const preparedGroups: Group[] = [];
-  return Object.keys(sortedPreparedData)
-    .sort((a, b) => a.localeCompare(b))
-    .reduce((result, code) => {
-      const group: Group = {
-        groupTitle:
-          code === NoNaturalAnalogueGroupCode
-            ? NoNaturalAnalogueGroupTitle
-            : code,
-        groupItems: [],
-      };
-      sortedPreparedData[code].forEach((item: MonomerItemType) => {
-        group.groupItems.push({
-          ...item,
-          props: { ...item.props },
-        });
+  const sortedGroupCodes = Object.keys(sortedPreparedData);
+  sortedGroupCodes.sort((a, b) => a.localeCompare(b));
+
+  return sortedGroupCodes.reduce((result, code) => {
+    const group: Group = {
+      groupTitle:
+        code === NoNaturalAnalogueGroupCode
+          ? NoNaturalAnalogueGroupTitle
+          : code,
+      groupItems: [],
+    };
+    sortedPreparedData[code].forEach((item: MonomerItemType) => {
+      group.groupItems.push({
+        ...item,
+        props: { ...item.props },
       });
-      if (group.groupItems.length) {
-        result.push(group);
-      }
-      return result;
-    }, preparedGroups);
+    });
+    if (group.groupItems.length) {
+      result.push(group);
+    }
+    return result;
+  }, preparedGroups);
 };
 
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;

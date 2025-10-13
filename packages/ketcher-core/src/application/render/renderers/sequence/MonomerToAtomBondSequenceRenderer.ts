@@ -7,7 +7,7 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
   constructor(
     public monomerToAtomBond: MonomerToAtomBond,
-    private monomerNode: SubChainNode,
+    private readonly monomerNode: SubChainNode,
   ) {
     super(monomerToAtomBond);
   }

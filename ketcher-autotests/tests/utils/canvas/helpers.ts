@@ -16,7 +16,6 @@ import { getControlModifier } from '@utils/keyboard';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
-import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
 import {
@@ -30,6 +29,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
   const atomToolbar = RightToolbar(page);
@@ -129,7 +129,7 @@ export async function takeElementScreenshot(
     await page.evaluate(() => {
       window.dispatchEvent(new Event('hidePreview'));
     });
-    await page.getByTestId('polymer-library-preview').isHidden();
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
   }
   let element = elementLocator;
 
@@ -319,7 +319,7 @@ export async function addSingleMonomerToCanvas(
     x: positionX,
     y: positionY,
   });
-  await hideMonomerPreview(page);
+  await MonomerPreviewTooltip(page).hide();
   return getMonomerLocator(page, monomer).nth(index);
 }
 
@@ -391,7 +391,7 @@ export async function addRnaPresetOnCanvas(
     x: positionX,
     y: positionY,
   });
-  await hideMonomerPreview(page);
+  await MonomerPreviewTooltip(page).hide();
   const sugar = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
     .nth(sugarIndex);

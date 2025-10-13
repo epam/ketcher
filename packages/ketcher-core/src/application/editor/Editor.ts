@@ -145,6 +145,7 @@ interface IAutochainMonomerAddResult {
 
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
+export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
@@ -185,7 +186,7 @@ export class CoreEditor {
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
-  private tool?: Tool | BaseTool | undefined;
+  private tool?: Tool | BaseTool;
 
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;
@@ -285,7 +286,7 @@ export class CoreEditor {
     this.cancelActiveDrag();
   };
 
-  private handleWindowResize = () => {
+  private readonly handleWindowResize = () => {
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
   };
@@ -1389,6 +1390,42 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  public getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() {
+    const grouped: Record<string, Set<string>> = {};
+
+    this.monomersLibrary.forEach((monomerItem) => {
+      const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
+
+      if (monomerItem.props?.modificationTypes) {
+        if (!grouped[naturalAnalogue]) {
+          grouped[naturalAnalogue] = new Set<string>();
+        }
+
+        monomerItem.props.modificationTypes.forEach((modificationType) => {
+          grouped[naturalAnalogue].add(modificationType);
+        });
+      }
+    });
+
+    // Convert sets to sorted arrays, with 'Natural amino acid' first if present
+    const result: Record<string, string[]> = {};
+    Object.entries(grouped).forEach(([analogue, typesSet]) => {
+      const types = Array.from(typesSet).sort((a, b) => {
+        const aTitle = a.toLowerCase();
+        const bTitle = b.toLowerCase();
+        const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
+
+        if (aTitle === naturalType) return -1;
+        if (bTitle === naturalType) return 1;
+
+        return aTitle.localeCompare(bTitle);
+      });
+      result[analogue] = types;
+    });
+
+    return result;
   }
 
   private onModifyAminoAcids(

@@ -24,9 +24,9 @@ import {
 } from 'domain/entities';
 
 function paddedNum(number, width, precision) {
-  number = parseFloat(number);
+  const parsedNumber = parseFloat(number);
 
-  const numStr = number.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
+  const numStr = parsedNumber.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
   if (numStr.length > width) throw new Error('number does not fit');
 
   return numStr.padStart(width);
@@ -151,10 +151,11 @@ function rxnMerge(
   const molReact = [];
   const molAgent = [];
   const molProd = [];
+  let mol;
   let j;
   const bondLengthData = { cnt: 0, totalLength: 0 };
   for (j = 0; j < mols.length; ++j) {
-    var mol = mols[j];
+    mol = mols[j];
     const bondLengthDataMol = mol.getBondLengthData();
     bondLengthData.cnt += bondLengthDataMol.cnt;
     bondLengthData.totalLength += bondLengthDataMol.totalLength;
@@ -176,7 +177,7 @@ function rxnMerge(
     const bb = mol.getCoordBoundingBoxObj();
     if (!bb) continue; // eslint-disable-line no-continue
 
-    var fragmentType =
+    const fragmentType =
       j < nReactants
         ? FRAGMENT.REACTANT // eslint-disable-line no-nested-ternary
         : j < nReactants + nProducts
@@ -330,8 +331,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
   Object.keys(rgroups).forEach((id) => {
     const rgid = parseInt(id, 10);
 
-    for (let j = 0; j < rgroups[rgid].length; ++j) {
-      const ctab = rgroups[rgid][j];
+    for (const ctab of rgroups[rgid]) {
       ctab.rgroups.set(rgid, new RGroup());
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);

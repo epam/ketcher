@@ -10,9 +10,8 @@ import {
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -670,15 +669,5 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
     'KET/Snake-mode/SnakeModeBypassExport-expected.mol',
     FileType.MOL,
   );
-
-  await CommonTopLeftToolbar(page).saveFile();
-  await SaveStructureDialog(page).chooseFileFormat(
-    MacromoleculesFileFormatType.SVGDocument,
-  );
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
-
-  await SaveStructureDialog(page).cancel();
+  await verifySVGExport(page);
 });

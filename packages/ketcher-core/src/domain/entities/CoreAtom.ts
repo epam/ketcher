@@ -65,8 +65,7 @@ export class Atom extends DrawingEntity {
   private calculateConnections() {
     let connectionsAmount = 0;
 
-    for (let i = 0; i < this.bonds.length; i++) {
-      const bond = this.bonds[i];
+    for (const bond of this.bonds) {
       if (bond instanceof MonomerToAtomBond) {
         connectionsAmount += 1;
       } else {
@@ -161,11 +160,9 @@ export class Atom extends DrawingEntity {
         }
       }
     } else if (elementGroupNumber === 5) {
-      if (label === AtomLabel.N || label === AtomLabel.P) {
-        if (charge === 1 || charge === 2) {
-          return radicalAmount + connectionAmount;
-        }
-      } else if (
+      if (
+        label === AtomLabel.N ||
+        label === AtomLabel.P ||
         label === AtomLabel.Sb ||
         label === AtomLabel.Bi ||
         label === AtomLabel.As

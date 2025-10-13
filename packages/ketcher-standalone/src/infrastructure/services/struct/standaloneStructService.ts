@@ -178,18 +178,10 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  let mappedProperty: CalculateProps | undefined;
-  switch (property) {
-    case 'gross-formula': {
-      mappedProperty = 'gross';
-      break;
-    }
-    default:
-      mappedProperty = property;
-      break;
+  if (property === 'gross-formula') {
+    return 'gross';
   }
-
-  return mappedProperty;
+  return property;
 }
 
 function mapWarningGroup(property: string) {

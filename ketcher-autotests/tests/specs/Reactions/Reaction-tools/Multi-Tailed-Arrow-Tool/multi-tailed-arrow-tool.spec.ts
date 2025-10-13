@@ -36,6 +36,8 @@ import {
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -3166,17 +3168,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-to-compare.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
+    await verifyPNGExport(page);
   });
 
   test('Verify that added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers', async () => {
@@ -3187,17 +3180,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
+    await verifyPNGExport(page);
   });
 
   test('Verify added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements', async () => {
@@ -3210,18 +3194,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
+    await verifyPNGExport(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
       page,

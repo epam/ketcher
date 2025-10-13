@@ -317,7 +317,7 @@ class ReAtom extends ReObject {
       : this.getUnlabeledSelectionContour(render, highlightPadding);
   }
 
-  private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
+  private readonly isPlateShouldBeHidden = (atom: Atom, render: Render) => {
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
     const struct = render.ctab.molecule;
@@ -332,7 +332,7 @@ class ReAtom extends ReObject {
     );
   };
 
-  private makeHighlightePlate = (
+  private readonly makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
     highlightPadding = -2,
@@ -414,8 +414,8 @@ class ReAtom extends ReObject {
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
     const ratio = this.getRatio(renderOptions, bondLen);
-    for (let k = 0; k < exts.length; ++k) {
-      const box = exts[k].translate(atomPosition);
+    for (const ext of exts) {
+      const box = ext.translate(atomPosition);
       const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
       atomSymbolShift = Math.max(atomSymbolShift, shift);
@@ -939,8 +939,8 @@ class ReAtom extends ReObject {
       let t = 3;
       let dir = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
-      for (let i = 0; i < visel.exts.length; ++i) {
-        t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+      for (const ext of visel.exts) {
+        t = Math.max(t, util.shiftRayBox(ps, dir, ext.translate(ps)));
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
@@ -1002,10 +1002,10 @@ class ReAtom extends ReObject {
 
       let baseDistance = 3;
       const direction = this.bisectLargestSector(render.ctab.molecule);
-      for (let i = 0; i < this.visel.exts.length; ++i) {
+      for (const ext of this.visel.exts) {
         baseDistance = Math.max(
           baseDistance,
-          util.shiftRayBox(ps, direction, this.visel.exts[i].translate(ps)),
+          util.shiftRayBox(ps, direction, ext.translate(ps)),
         );
       }
       const shiftDistance =
@@ -1147,16 +1147,18 @@ class ReAtom extends ReObject {
     });
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];
-    for (let i = 0; i < angles.length - 1; ++i) {
-      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
+    for (const [index, angle] of angles.entries()) {
+      if (index < angles.length - 1) {
+        largeAngles.push(angles[(index + 1) % angles.length] - angle);
+      }
     }
     largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
-    for (let i = 0; i < angles.length; ++i) {
-      if (largeAngles[i] > largestAngle) {
-        largestAngle = largeAngles[i];
-        neighborAngle = angles[i];
+    for (const [index, angle] of angles.entries()) {
+      if (largeAngles[index] > largestAngle) {
+        largestAngle = largeAngles[index];
+        neighborAngle = angle;
       }
     }
 
@@ -1596,7 +1598,7 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
-  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
+  isotope.text = atom.a.isotope?.toString() ?? '';
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
@@ -1898,7 +1900,7 @@ export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {
     aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
     charge: (value) => {
       if (value === '') return value;
-      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const regExpResult = /^([+-]?)(\d{1,3}|1000)([+-]?)$/.exec(value);
       const charge = regExpResult
         ? parseInt(
             regExpResult[1] + regExpResult[3] + regExpResult[2],

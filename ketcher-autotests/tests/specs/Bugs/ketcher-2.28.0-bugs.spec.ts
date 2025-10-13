@@ -26,6 +26,7 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -40,8 +41,6 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -250,15 +249,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
   );
 
-  await CommonTopLeftToolbar(page).saveFile();
-  await SaveStructureDialog(page).chooseFileFormat(
-    MacromoleculesFileFormatType.SVGDocument,
-  );
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
-  await SaveStructureDialog(page).cancel();
+  await verifySVGExport(page);
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {

@@ -546,7 +546,7 @@ function findClosestItem(
   let priorityItem = null;
 
   const closestItem = maps.reduce((res, mp) => {
-    const minDist = res ? res.dist : null;
+    const minDist = res?.dist ?? null;
     const item = findMaps[mp](restruct, pos, skip, minDist, options);
 
     if (item !== null) {

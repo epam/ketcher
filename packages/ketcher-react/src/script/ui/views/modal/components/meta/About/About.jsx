@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import { Fragment } from 'react';
 
 function AboutDialog(props) {
-  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r'); // Indigo version and build info
+  const indigoInfo = props.indigoVersion?.split('.r'); // Indigo version and build info
 
   return (
     <Dialog

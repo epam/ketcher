@@ -19,7 +19,6 @@ import {
   dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
 import {
   createRNAAntisenseChain,
@@ -48,6 +47,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { SaltsAndSolventsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -114,7 +114,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Sugar.fR).first().hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takeEditorScreenshot(page);
   });
@@ -133,7 +133,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await Library(page).openRNASection(RNASection.Sugars);
     await Library(page).selectMonomer(Sugar._5R6Sm5);
     await Library(page).hoverMonomer(Sugar.ALmecl);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takeMonomerLibraryScreenshot(page);
   });
@@ -230,12 +230,12 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Select h456UR and e6A monomers
      */
     await Library(page).selectMonomer(Base.h456UR);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takePageScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await Library(page).selectMonomer(Base.e6A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
     await takePageScreenshot(page);
   });

@@ -415,15 +415,7 @@ class RotateController {
         break;
       }
 
-      case 'moveCenter': {
-        this.link?.attr({
-          path:
-            `M${this.center.x},${this.center.y}` +
-            `L${this.handleCenter.x},${this.handleCenter.y}`,
-        });
-        break;
-      }
-
+      case 'moveCenter':
       case 'moveHandle': {
         this.link?.attr({
           path:
@@ -697,8 +689,10 @@ class RotateController {
           return;
         }
 
-        this.handleCenter = this.render
-          .page2obj(event)
+        this.handleCenter = CoordinateTransformation.pageToModel(
+          event,
+          this.render,
+        )
           .scaled(this.render.options.microModeScale)
           .add(this.render.options.offset);
 
@@ -789,7 +783,10 @@ class RotateController {
         return;
       }
 
-      this.originalCenter = this.render.page2obj(event);
+      this.originalCenter = CoordinateTransformation.pageToModel(
+        event,
+        this.render,
+      );
 
       this.drawCross('move');
       this.drawLink('moveCenter');
@@ -801,7 +798,10 @@ class RotateController {
     event.stopPropagation();
 
     this.isMovingCenter = false;
-    this.originalCenter = this.render.page2obj(event);
+    this.originalCenter = CoordinateTransformation.pageToModel(
+      event,
+      this.render,
+    );
   };
 
   private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {

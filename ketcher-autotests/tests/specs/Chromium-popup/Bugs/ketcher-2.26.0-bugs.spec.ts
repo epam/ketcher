@@ -18,7 +18,6 @@ import {
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
-  waitForMonomerPreview,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
@@ -51,6 +50,8 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -101,6 +102,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -180,12 +182,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       { option: BondsSetting.BondThickness, value: '2.6' },
     ]);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -541,12 +538,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
     await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 18: Single up bond is being painted over correctly', async () => {
@@ -712,13 +704,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('75');
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
 
     const _25mo3rSugar = getMonomerLocator(page, Sugar._25mo3r);
     await _25mo3rSugar.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await moveMouseAway(page);
   });
@@ -1355,12 +1347,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 47: "Unordered_map::at: key not found" error is not displayed after adding of specific reactions from the RDF file', async () => {
@@ -1814,12 +1801,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifyPNGExport(page);
   });
 
   test.fail(

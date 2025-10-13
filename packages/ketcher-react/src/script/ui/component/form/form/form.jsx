@@ -78,13 +78,13 @@ class Form extends Component {
     const extraValue = extraName ? result[extraName] : null;
 
     const handleOnChange = (name, value) => {
-      const newState = Object.assign({}, this.props.result, { [name]: value });
+      const newState = { ...this.props.result, [name]: value };
       this.updateState(newState);
       if (onChange) onChange(value);
     };
 
     return {
-      dataError: errors && errors[name],
+      dataError: errors?.[name],
       value,
       extraValue,
       onChange: (val) => handleOnChange(name, val),

@@ -3,7 +3,7 @@ import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';
-import { hideMonomerPreview } from '@utils/macromolecules';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({
   page,
@@ -21,6 +21,6 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
     },
     true,
   );
-  await hideMonomerPreview(page);
+  await MonomerPreviewTooltip(page).hide();
   await takeEditorScreenshot(page);
 });

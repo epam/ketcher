@@ -79,10 +79,6 @@ export function fromAtomsAttrs(
 
       switch (key) {
         case 'stereoLabel':
-          if (key in attrs && value) {
-            action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
-          }
-          break;
         case 'stereoParity':
           if (key in attrs && value) {
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
@@ -240,8 +236,8 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   const sgroups = atomGetSGroups(restruct, srcId);
   sgroups.forEach((sgroupId: number) => {
     const sgroup = restruct.sgroups.get(sgroupId).item;
-    for (let i = 0; i < sgroup.attachmentPoints.length; ++i) {
-      if (sgroup.attachmentPoints[i].atomId === srcId) {
+    for (const attachmentPoint of sgroup.attachmentPoints) {
+      if (attachmentPoint.atomId === srcId) {
         action.addOp(
           new SGroupAttachmentPointRemove(
             sgroupId,

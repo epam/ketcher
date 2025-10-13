@@ -223,7 +223,7 @@ export class SGroup {
     }
 
     const sgroups = Array.from(struct.sgroups.values());
-    for (let i = 0; i < struct.sgroups.size; ++i) {
+    for (const _ of sgroups) {
       if (!descriptorIntersects(sgroups as [], topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
@@ -422,8 +422,7 @@ export class SGroup {
 
   static filterAtoms(atoms: any, map: any) {
     const newAtoms: Array<any> = [];
-    for (let i = 0; i < atoms.length; ++i) {
-      const aid = atoms[i];
+    for (const aid of atoms) {
       if (typeof map[aid] !== 'number') newAtoms.push(aid);
       else if (map[aid] >= 0) newAtoms.push(map[aid]);
       else newAtoms.push(-1);
@@ -433,8 +432,8 @@ export class SGroup {
 
   static removeNegative(atoms: any) {
     const newAtoms: Array<any> = [];
-    for (let j = 0; j < atoms.length; ++j) {
-      if (atoms[j] >= 0) newAtoms.push(atoms[j]);
+    for (const atom of atoms) {
+      if (atom >= 0) newAtoms.push(atom);
     }
     return newAtoms;
   }
@@ -473,11 +472,9 @@ export class SGroup {
       return;
     }
 
-    for (let i = 0; i < sgroup.atoms.length; ++i) {
-      if (sgroup.atoms[i] === aid) {
-        sgroup.atoms.splice(i, 1);
-        return;
-      }
+    const index = sgroup.atoms.indexOf(aid);
+    if (index !== -1) {
+      sgroup.atoms.splice(index, 1);
     }
   }
 
@@ -606,8 +603,8 @@ export class SGroup {
       })();
     } else {
       (function () {
-        for (let i = 0; i < crossBonds.length; ++i) {
-          const b = mol.bonds.get(crossBonds[i]);
+        for (const crossBondId of crossBonds) {
+          const b = mol.bonds.get(crossBondId);
           const c = b.getCenter(mol);
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
@@ -622,8 +619,7 @@ export class SGroup {
   static getObjBBox(atoms, mol, useCollapsedSgroupsPosition = false): Box2Abs {
     const a0 = mol.atoms.get(atoms[0]).pp;
     let bb = new Box2Abs(a0, a0);
-    for (let i = 1; i < atoms.length; ++i) {
-      const aid = atoms[i];
+    for (const aid of atoms.slice(1)) {
       const atom = mol.atoms.get(aid);
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
@@ -739,8 +735,8 @@ export class SGroup {
 
   static getMassCentre(mol, atoms): Vec2 {
     let c = new Vec2(); // mass centre
-    for (let i = 0; i < atoms.length; ++i) {
-      c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
+    for (const atomId of atoms) {
+      c = c.addScaled(mol.atoms.get(atomId).pp, 1.0 / atoms.length);
     }
     return c;
   }

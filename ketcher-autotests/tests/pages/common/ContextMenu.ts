@@ -35,8 +35,8 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
 
       const options = Array.isArray(optionPath) ? optionPath : [optionPath];
 
-      for (let i = 0; i < options.length; i++) {
-        const option = getOption(options[i]).first();
+      for (const optionId of options) {
+        const option = getOption(optionId).first();
         await option.waitFor({ state: 'visible' });
         await option.click();
       }
@@ -62,11 +62,11 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
 
       const options = Array.isArray(optionPath) ? optionPath : [optionPath];
 
-      for (let i = 0; i < options.length; i++) {
-        const option = getOption(options[i]).first();
+      for (const [index, optionId] of options.entries()) {
+        const option = getOption(optionId).first();
         await option.waitFor({ state: 'visible' });
 
-        if (i < options.length - 1) {
+        if (index < options.length - 1) {
           await option.click();
         } else {
           await option.hover();

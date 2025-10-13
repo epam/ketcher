@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale } from 'ketcher-core';
+import { CoordinateTransformation, Scale } from 'ketcher-core';
 import locate from './locate';
 import Editor from '../../Editor';
 
@@ -47,7 +47,7 @@ class LassoHelper {
 
   begin(event) {
     const rnd = this.editor.render;
-    this.points = [rnd.page2obj(event)];
+    this.points = [CoordinateTransformation.pageToModel(event, rnd)];
     if (this.mode === 1) {
       this.points.push(this.points[0]);
     }
@@ -65,9 +65,12 @@ class LassoHelper {
     const rnd = this.editor.render;
 
     if (this.mode === 0) {
-      this.points.push(rnd.page2obj(event));
+      this.points.push(CoordinateTransformation.pageToModel(event, rnd));
     } else if (this.mode === 1) {
-      this.points = [this.points[0], rnd.page2obj(event)];
+      this.points = [
+        this.points[0],
+        CoordinateTransformation.pageToModel(event, rnd),
+      ];
     }
 
     this.update();

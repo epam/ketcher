@@ -34,6 +34,7 @@ import {
   BondAttr,
   AtomAttr,
   MonomerMicromolecule,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -126,7 +127,7 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
+      aid: (parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: parseInt(tmpl.bid) || 0,
     };
 
@@ -192,7 +193,10 @@ class TemplateTool implements Tool {
     const targetId = this.findKeyOfRelatedGroupId(
       this.closestItem?.id as number,
     );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    if (targetId === undefined) {
+      return false;
+    }
+    const functionalGroup = this.functionalGroups.get(targetId);
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -205,7 +209,12 @@ class TemplateTool implements Tool {
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
 
-  private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
+  private findKeyOfRelatedGroupId(
+    clickedClosestItemId?: number,
+  ): number | undefined {
+    if (clickedClosestItemId === undefined) {
+      return undefined;
+    }
     let targetId;
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -276,7 +285,7 @@ class TemplateTool implements Tool {
     this.editor.hover(null);
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: this.editor.findItem(this.event, this.findItems),
     };
 
@@ -317,7 +326,10 @@ class TemplateTool implements Tool {
       return true;
     }
 
-    const eventPosition = this.editor.render.page2obj(event);
+    const eventPosition = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
@@ -365,7 +377,7 @@ class TemplateTool implements Tool {
 
       if (atomId !== undefined) {
         const atom = this.struct.atoms.get(atomId);
-        targetPos = atom?.pp;
+        targetPos = atom?.pp ?? null;
 
         if (targetPos) {
           extraBond = this.isModeFunctionalGroup

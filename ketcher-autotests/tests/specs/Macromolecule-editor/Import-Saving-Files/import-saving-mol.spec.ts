@@ -15,7 +15,6 @@ import {
   MonomerType,
   MolFileFormat,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -31,6 +30,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -135,7 +135,7 @@ test.describe('Import-Saving .mol Files', () => {
       MacroFileType.MOLv3000,
     );
     await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -159,7 +159,7 @@ test.describe('Import-Saving .mol Files', () => {
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, { monomerAlias: `cdaC` }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -617,7 +617,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -672,7 +672,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
       );
       await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(

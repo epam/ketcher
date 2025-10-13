@@ -1,4 +1,3 @@
-import { waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test, expect } from '@fixtures';
 import {
   addMonomerToCenterOfCanvas,
@@ -42,16 +41,14 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import {
-  RNASection,
-  RNASectionArea,
-} from '@tests/pages/constants/library/Constants';
+import { RNASection } from '@tests/pages/constants/library/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -261,7 +258,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Sugar._12ddR);
     await getMonomerLocator(page, Sugar._12ddR).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -274,7 +271,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Base.clA);
     await getMonomerLocator(page, Base.clA).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -287,7 +284,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Phosphate.Test_6_Ph);
     await getMonomerLocator(page, Phosphate.Test_6_Ph).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -763,7 +760,7 @@ test.describe('RNA Library', () => {
     const bondLine = await bondTwoMonomers(page, sugar, base);
 
     await bondLine.hover({ force: true });
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -787,7 +784,7 @@ test.describe('RNA Library', () => {
     const bondLine = await bondTwoMonomers(page, sugar, phosphate);
 
     await bondLine.hover({ force: true });
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -816,7 +813,7 @@ test.describe('RNA Library', () => {
       AttachmentPoint.R2,
     );
     await bondLine.hover({ force: true });
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -828,7 +825,7 @@ test.describe('RNA Library', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await bondLine.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -1189,7 +1186,7 @@ test.describe('RNA Library', () => {
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await moveMouseAway(page);
       await getMonomerLocator(page, monomer).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       // Reset to default state
@@ -1272,7 +1269,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -1386,7 +1383,7 @@ test.describe('RNA Library', () => {
     await rnaNameEditBox.fill(rnaName);
     await takeRNABuilderScreenshot(page);
 
-    for (let i = 0; i < rnaName.length; i++) {
+    for (const _ of rnaName) {
       await rnaNameEditBox.press('Backspace');
     }
     await takeRNABuilderScreenshot(page);
@@ -1394,15 +1391,6 @@ test.describe('RNA Library', () => {
     // Reset to default state
     await Library(page).rnaBuilder.collapse();
   });
-
-  async function scrollAccordionContentToTheTop(
-    page: Page,
-    contentLocator: string,
-  ) {
-    // Dirty hack
-    await page.getByTestId(contentLocator).click();
-    await page.keyboard.press('Home');
-  }
 
   test('Check that preview window disappears when a cursor moves off from RNA in library', async () => {
     /*
@@ -1412,26 +1400,23 @@ test.describe('RNA Library', () => {
      *    Check that preview window disappears when a cursor moves off from RNA in library
      *    (phosphates, sugars, bases)
      */
-    await Library(page).openRNASection(RNASection.Sugars);
-    await scrollAccordionContentToTheTop(page, RNASectionArea.Sugars);
     await Library(page).hoverMonomer(Sugar._12ddR);
-    await waitForMonomerPreview(page);
-    await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
+    await moveMouseAway(page);
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
 
-    await Library(page).openRNASection(RNASection.Bases);
-    await scrollAccordionContentToTheTop(page, RNASectionArea.Bases);
     await Library(page).hoverMonomer(Base._2imen2);
-    await waitForMonomerPreview(page);
-    await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
+    await moveMouseAway(page);
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
 
-    // await Library(page).openRNASection(RNASection.Phosphates);
-    // await scrollAccordionContentToTheTop(
-    //   page,
-    //   'rna-accordion-details-Phosphates',
-    // );
-    // await page.getByTestId('P___Phosphate').hover();
-    // await waitForMonomerPreview(page);
-    // await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
+    await Library(page).hoverMonomer(Phosphate.P);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
+    await moveMouseAway(page);
+    expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
   });
 
   test('CHEM tab check at Library', async () => {
@@ -1462,7 +1447,7 @@ test.describe('RNA Library', () => {
 
     // Case 24
     await Library(page).hoverMonomer(Chem.SMPEG2);
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);
 
@@ -1623,7 +1608,7 @@ test.describe('RNA Library', () => {
       // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
       // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
       await Library(page).selectMonomer(Peptide.X);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeMonomerLibraryScreenshot(page);
 
       // Test should be skipped if related bug exists
@@ -1669,15 +1654,15 @@ test.describe('RNA Library', () => {
       // 6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and
       //    "Ambiguous RNA Bases" subsection are classified as "Alternatives"
       await Library(page).selectMonomer(Base.DNA_N);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeMonomerLibraryScreenshot(page);
 
       await Library(page).selectMonomer(Base.RNA_N);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeMonomerLibraryScreenshot(page);
 
       await Library(page).selectMonomer(Base.M);
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeMonomerLibraryScreenshot(page);
 
       // Test should be skipped if related bug exists

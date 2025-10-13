@@ -139,7 +139,7 @@ const formatProperties: FormatPropertiesMap = {
     false,
   ),
   axoLabs: new SupportedFormatProperties(
-    'AXOLABS',
+    'AxoLabs',
     ChemicalMimeType.AXOLABS,
     ['.axolabs'],
     true,

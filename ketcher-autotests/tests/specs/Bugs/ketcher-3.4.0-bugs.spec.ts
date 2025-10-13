@@ -17,7 +17,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takePageScreenshot,
   clickOnAtom,
-  waitForMonomerPreview,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -43,6 +42,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -54,7 +54,6 @@ import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
 } from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -79,6 +78,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -495,7 +495,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     const point = getAbbreviationLocator(page, { name: 'X' });
     await ContextMenu(page, point).open();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -543,11 +543,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Case 19: Unipositive ions default value is shown in mM for double-stranded sequence selection', async () => {
@@ -730,7 +726,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -1102,11 +1098,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Case 42: System not ignores carrige return in text blocks in loaded CDX', async () => {

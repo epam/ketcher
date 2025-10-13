@@ -8,7 +8,6 @@ import {
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasAsNewProjectMacro,
-  takeElementScreenshot,
   openFileAndAddToCanvasAsNewProject,
   MolFileFormat,
   resetZoomLevelToDefault,
@@ -25,9 +24,8 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -2364,17 +2362,7 @@ for (const aminoAcidForPhosphorylation of aminoAcidsForPhosphorylation) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.Phosphorylation,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2416,17 +2404,7 @@ for (const aminoAcidForSideChainAcetylation of aminoAcidsForSideChainAcetylation
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.SideChainAcetylation,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2468,17 +2446,7 @@ for (const aminoAcidForCitrullination of aminoAcidsForCitrullination) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.Citrullination,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2520,17 +2488,7 @@ for (const aminoAcidForHydroxylation of aminoAcidsForHydroxylation) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.Hydroxylation,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2572,17 +2530,7 @@ for (const aminoAcidForNMethylation of aminoAcidsForNMethylation) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.NMethylation,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2624,17 +2572,7 @@ for (const aminoAcidForInversion of aminoAcidsForInversion) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.Inversion,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(
@@ -2676,17 +2614,7 @@ for (const aminoAcidForNaturalAminoAcid of aminoAcidsForNaturalAminoAcid) {
       MonomerOption.ModifyAminoAcids,
       ModifyAminoAcidsOption.NaturalAminoAcid,
     ]);
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-
-    await takeElementScreenshot(
-      page,
-      SaveStructureDialog(page).saveStructureTextarea,
-    );
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
 
     // Test should be skipped if related bug exists
     test.fixme(

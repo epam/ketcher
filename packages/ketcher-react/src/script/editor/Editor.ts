@@ -63,6 +63,7 @@ import {
   Struct,
   Vec2,
   OperationType,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1180,7 +1181,7 @@ class Editor implements KetcherEditor {
       ketSerializer.serialize(this.render.ctab.molecule),
     );
 
-    const { symbol, name, type, naturalAnalogue } = data;
+    const { symbol, name, type, naturalAnalogue, modificationTypes } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
     this.monomerCreationState.assignedAttachmentPoints.forEach(
@@ -1219,6 +1220,7 @@ class Editor implements KetcherEditor {
       alias: symbol,
       fullName: name,
       naturalAnalogShort: naturalAnalogueToUse,
+      modificationTypes,
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
@@ -1923,7 +1925,7 @@ class Editor implements KetcherEditor {
   }
 
   findItem(event: any, maps: Array<string> | null, skip: any = null) {
-    const pos = new Vec2(this.render.page2obj(event));
+    const pos = CoordinateTransformation.pageToModel(event, this.render);
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }

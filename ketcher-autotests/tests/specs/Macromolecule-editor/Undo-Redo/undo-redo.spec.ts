@@ -8,7 +8,6 @@ import { Locator, test } from '@fixtures';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,
-  hideMonomerPreview,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -38,6 +37,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -65,7 +65,7 @@ test.describe('Undo Redo', () => {
     await bondTwoMonomers(page, peptide1, peptide2);
     await bondTwoMonomers(page, peptide3, peptide2);
 
-    await hideMonomerPreview(page);
+    await MonomerPreviewTooltip(page).hide();
   });
 
   test('Undo redo for monomers and bonds addition', async ({ page }) => {

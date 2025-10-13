@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
-  moveMouseAway,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -21,6 +20,7 @@ import {
   RingSize,
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 async function drawStructureAndDoubleClickOnAtom(
   page: Page,
@@ -167,8 +167,8 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     });
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    const isErrorMessageVisible = await ErrorMessageDialog(page).isVisible();
+    expect(isErrorMessageVisible).toBeFalsy();
   });
 
   test.describe('Checking converting attributes to custom query', () => {

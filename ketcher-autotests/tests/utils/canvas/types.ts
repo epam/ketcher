@@ -124,7 +124,7 @@ export enum SequenceType {
 // }
 
 export enum MacroFileType {
-  Ket = 'Ket',
+  KetFormat = 'Ket Format',
   MOLv3000 = 'MDL Molfile V3000',
   Sequence = 'Sequence',
   FASTA = 'FASTA',

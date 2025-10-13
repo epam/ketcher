@@ -15,10 +15,12 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 
-export const IDTAliasesContainer = styled.span<{ preset?: boolean }>`
-  max-width: ${({ preset }) => (preset ? '100%' : '50%')};
+export const MonomerPreviewContainer = styled.span<{ preset?: boolean }>`
+  width: max-content;
+  max-width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 500;
   line-height: normal;
@@ -27,15 +29,16 @@ export const IDTAliasesContainer = styled.span<{ preset?: boolean }>`
   border-left: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
 `;
 
-export const IDTAliasesText = styled.p`
+export const MonomerPreviewText = styled.p`
   margin: 0;
 `;
 
-export const IDTTitle = styled.span`
+export const MonomerPreviewTitle = styled.span`
   color: #7c7c7c;
+  margin-right: 4px;
 `;
 
-export const IDTAliasesList = styled.span`
+export const MonomerPreviewList = styled.span`
   color: #585858;
-  text-wrap: wrap;
+  white-space: nowrap;
 `;

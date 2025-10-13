@@ -512,9 +512,13 @@ export class CoreEditor {
   }
 
   private setupKeyboardEvents() {
-    this.keydownEventHandler = async (event: KeyboardEvent) => {
+    this.keydownEventHandler = (event: KeyboardEvent) => {
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) await this.mode.onKeyDown(event);
+      if (!event.cancelBubble) {
+        this.mode.onKeyDown(event).catch((error) => {
+          KetcherLogger.error('Editor.ts::keydownEventHandler', error);
+        });
+      }
     };
 
     document.addEventListener('keydown', this.keydownEventHandler);

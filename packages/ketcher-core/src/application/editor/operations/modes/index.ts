@@ -19,14 +19,10 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { CoreEditor } from 'application/editor/internal';
-import {
-  SequencePointer,
-  SequenceRenderer,
-} from 'application/render/renderers/sequence/SequenceRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
-  constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
@@ -43,8 +39,8 @@ export class ReinitializeModeOperation implements Operation {
 
 export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
-    private readonly previousPosition: SequencePointer,
-    private readonly nextPosition: SequencePointer,
+    private readonly previousPosition: number,
+    private readonly nextPosition: number,
   ) {
     this.execute();
   }

@@ -81,7 +81,7 @@ test.describe('Import/export sequence:', () => {
       .locator('span')
       .first()
       .innerText();
-    expect(defaultValue).toBe('Ket');
+    expect(defaultValue).toBe('Ket Format');
 
     await contentTypeSelector.click();
 
@@ -89,7 +89,7 @@ test.describe('Import/export sequence:', () => {
     const values = await options.allTextContents();
 
     const expectedValues = [
-      MacroFileType.Ket,
+      MacroFileType.KetFormat,
       MacroFileType.MOLv3000,
       MacroFileType.Sequence,
       MacroFileType.FASTA,

@@ -1817,10 +1817,10 @@ async function setupSenseAndAntiSenseSequences(
       antisenseSequence.AntiSenseForm,
     );
   }
-  if (senseSequence.ContentType === MacroFileType.Ket) {
+  if (senseSequence.ContentType === MacroFileType.KetFormat) {
     await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
-  if (antisenseSequence.ContentType === MacroFileType.Ket) {
+  if (antisenseSequence.ContentType === MacroFileType.KetFormat) {
     await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 

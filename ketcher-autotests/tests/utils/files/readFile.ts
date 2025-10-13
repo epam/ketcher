@@ -210,7 +210,7 @@ async function setupStructureFormatComboboxes(
   page: Page,
   structureFormat: StructureFormat,
 ) {
-  let structureType: MacroFileType = MacroFileType.Ket;
+  let structureType: MacroFileType = MacroFileType.KetFormat;
   let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
   let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
 
@@ -228,7 +228,7 @@ async function setupStructureFormatComboboxes(
   } else {
     structureType = structureFormat;
   }
-  if (structureFormat !== MacroFileType.Ket) {
+  if (structureFormat !== MacroFileType.KetFormat) {
     await PasteFromClipboardDialog(page).selectContentType(structureType);
   }
 

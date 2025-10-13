@@ -160,7 +160,7 @@ interface MonomerConnectedToSelection {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
-  private bondsMonomersOverlaps: Map<number, BaseMonomer> = new Map();
+  private readonly bondsMonomersOverlaps: Map<number, BaseMonomer> = new Map();
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
@@ -757,10 +757,7 @@ export class DrawingEntitiesManager {
         editor.mode instanceof SequenceMode &&
         drawingEntity instanceof PolymerBond
       ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(
-          drawingEntity,
-          isValueChanged,
-        );
+        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInRectangle(
           rectangleTopLeftPoint,
@@ -804,10 +801,7 @@ export class DrawingEntitiesManager {
         editor.mode instanceof SequenceMode &&
         drawingEntity instanceof PolymerBond
       ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(
-          drawingEntity,
-          isValueChanged,
-        );
+        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
       } else {
         isValueChanged = drawingEntity.selectIfLocatedInPolygon(
           polygonPoints,
@@ -825,18 +819,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private checkBondSelectionForSequenceMode(
-    bond: PolymerBond,
-    isValueChanged: boolean,
-  ) {
+  private checkBondSelectionForSequenceMode(bond: PolymerBond) {
     const prevSelectedValue = bond.selected;
     if (bond.firstMonomer.selected && bond.secondMonomer?.selected) {
       bond.turnOnSelection();
     } else {
       bond.turnOffSelection();
     }
-    isValueChanged = prevSelectedValue !== bond.selected;
-    return isValueChanged;
+    return prevSelectedValue !== bond.selected;
   }
 
   public startPolymerBondCreationChangeModel(

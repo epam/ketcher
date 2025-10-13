@@ -35,7 +35,7 @@ interface DragContext {
 
 export class ImageTool implements Tool {
   static readonly INPUT_ID = 'image-upload';
-  private element: HTMLInputElement;
+  private readonly element: HTMLInputElement;
   private dragCtx: DragContext | null = null;
 
   constructor(private readonly editor: Editor) {

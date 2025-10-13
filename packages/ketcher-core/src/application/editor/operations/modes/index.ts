@@ -26,7 +26,6 @@ import {
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
-  constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();

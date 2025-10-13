@@ -2,7 +2,7 @@ import { Tool } from './Tool';
 import Editor from '../Editor';
 
 class CreateMonomerTool implements Tool {
-  constructor(private editor: Editor) {
+  constructor(private readonly editor: Editor) {
     this.editor.openMonomerCreationWizard();
     setTimeout(() => {
       this.editor.tool('select');

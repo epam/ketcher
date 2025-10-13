@@ -1906,7 +1906,7 @@ export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;
-      return charge[0] !== '-' ? `+${charge}` : charge;
+      return !charge.startsWith('-') ? `+${charge}` : charge;
     },
     unsaturatedAtom: (value) => (Number(value) === 1 ? 'u' : ''),
     explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),

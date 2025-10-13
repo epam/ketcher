@@ -139,6 +139,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }
 
+  private get isInEditMode() {
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isEditMode;
+  }
+
   protected appendRootElement() {
     const rootElement = this.canvas
       .append('g')
@@ -702,8 +708,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (
       (this.isSequenceEditInRnaBuilderModeTurnedOn &&
         !this.node.monomer.selected) ||
-      (!this.isSyncEditMode &&
-        this.isSequenceEditModeTurnedOn &&
+      (this.isInEditMode &&
+        !this.isSyncEditMode &&
         this.hasAntisenseInChain &&
         ((this.isAntisenseNode && !this.isAntisenseEditMode) ||
           (!this.isAntisenseNode && this.isAntisenseEditMode)))

@@ -70,8 +70,23 @@ export const monomerFactory = (
     ketMonomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
   } else if (monomer.props.unresolved) {
     Monomer = UnresolvedMonomer;
-    MonomerRenderer = UnresolvedMonomerRenderer;
-    ketMonomerClass = KetMonomerClass.CHEM;
+    // For unresolved monomers, use the renderer based on the original MonomerType
+    if (
+      monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
+      monomer.props.MonomerType === MONOMER_CONST.PEPTIDE
+    ) {
+      MonomerRenderer = PeptideRenderer;
+      ketMonomerClass = KetMonomerClass.AminoAcid;
+    } else if (
+      monomer.props.MonomerClass === KetMonomerClass.RNA ||
+      monomer.props.MonomerClass === KetMonomerClass.DNA
+    ) {
+      MonomerRenderer = UnsplitNucleotideRenderer;
+      ketMonomerClass = KetMonomerClass.RNA;
+    } else {
+      MonomerRenderer = UnresolvedMonomerRenderer;
+      ketMonomerClass = KetMonomerClass.CHEM;
+    }
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA

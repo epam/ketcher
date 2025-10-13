@@ -44,6 +44,10 @@ const useBondSGroupEdit = () => {
     if (sgroup?.isSuperatomWithoutLabel) {
       return true;
     }
+    // Hide Edit S-Group for molecules with connection points (attachment points)
+    if (sgroup?.isGroupAttached(struct.molecule)) {
+      return true;
+    }
     return sGroupsRef.current.size === 0;
   }, [ketcherId]);
 

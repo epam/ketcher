@@ -59,7 +59,12 @@ export class SequenceNodeRendererFactory {
         RendererClass = BackBoneSequenceItemRenderer;
         break;
       case LinkerSequenceNode:
-        RendererClass = ChemSequenceItemRenderer;
+        // Check if the linker node contains a Phosphate monomer
+        if (node.monomer instanceof Phosphate) {
+          RendererClass = PhosphateSequenceItemRenderer;
+        } else {
+          RendererClass = ChemSequenceItemRenderer;
+        }
         break;
       case AmbiguousMonomerSequenceNode:
         RendererClass = AmbiguousSequenceItemRenderer;

@@ -1,3 +1,1 @@
-export class EmptySnakeLayoutNode {
-  constructor() {}
-}
+export class EmptySnakeLayoutNode {}

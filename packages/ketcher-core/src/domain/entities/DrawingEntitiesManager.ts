@@ -3174,6 +3174,7 @@ export class DrawingEntitiesManager {
       antisenseBaseLabel,
       node.monomer.position.add(new Vec2(0, 3)),
       sugarName,
+      true,
     );
   }
 

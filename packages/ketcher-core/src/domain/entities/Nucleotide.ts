@@ -18,6 +18,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
 import { KetMonomerClass } from 'application/formatters';
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { MonomerItemType } from 'domain/types';
 
 export class Nucleotide {
   constructor(
@@ -59,6 +60,7 @@ export class Nucleotide {
     rnaBaseName: string,
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
+    isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
@@ -89,13 +91,23 @@ export class Nucleotide {
       ),
     );
 
+    const buildMonomerItem = (monomerItem?: MonomerItemType) => {
+      if (!monomerItem) {
+        return monomerItem;
+      }
+
+      return isAntisense
+        ? { ...monomerItem, isAntisense: true, isSense: false }
+        : monomerItem;
+    };
+
     const { command: modelChanges, monomers } =
       editor.drawingEntitiesManager.addRnaPreset({
-        sugar: sugarLibraryItem,
+        sugar: buildMonomerItem(sugarLibraryItem),
         sugarPosition: topLeftItemPosition,
-        rnaBase: rnaBaseLibraryItem,
+        rnaBase: buildMonomerItem(rnaBaseLibraryItem),
         rnaBasePosition: bottomItemPosition,
-        phosphate: phosphateLibraryItem,
+        phosphate: buildMonomerItem(phosphateLibraryItem),
         phosphatePosition: topLeftItemPosition.add(
           Coordinates.canvasToModel(new Vec2(SnakeLayoutCellWidth, 0)),
         ),

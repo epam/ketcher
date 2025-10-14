@@ -71,15 +71,24 @@ export class Nucleoside {
     );
     const modelChanges = new Command();
 
+    const sugarMonomerItem =
+      isAntisense
+        ? { ...sugarLibraryItem, isAntisense: true, isSense: false }
+        : sugarLibraryItem;
+    const rnaBaseMonomerItem =
+      isAntisense
+        ? { ...rnaBaseLibraryItem, isAntisense: true, isSense: false }
+        : rnaBaseLibraryItem;
+
     modelChanges.merge(
       editor.drawingEntitiesManager.addMonomer(
-        { ...sugarLibraryItem, isAntisense },
+        sugarMonomerItem,
         isAntisense ? bottomItemPosition : topLeftItemPosition,
       ),
     );
     modelChanges.merge(
       editor.drawingEntitiesManager.addMonomer(
-        { ...rnaBaseLibraryItem, isAntisense },
+        rnaBaseMonomerItem,
         isAntisense ? topLeftItemPosition : bottomItemPosition,
       ),
     );

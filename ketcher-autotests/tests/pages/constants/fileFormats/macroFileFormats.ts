@@ -1,5 +1,5 @@
 export enum MacromoleculesFileFormatType {
-  Ket = 'Ket-option',
+  Ket = 'Ket Format-option',
   MDLMolfileV3000 = 'MDL Molfile V3000-option',
   Sequence1LetterCode = 'Sequence (1-letter code)-option',
   Sequence3LetterCode = 'Sequence (3-letter code)-option',
@@ -10,7 +10,7 @@ export enum MacromoleculesFileFormatType {
 }
 
 export enum MacromoleculesFileFormatName {
-  Ket = 'Ket',
+  Ket = 'Ket Format',
   MDLMolfileV3000 = 'MDL Molfile V3000',
   Sequence1LetterCode = 'Sequence (1-letter code)',
   Sequence3LetterCode = 'Sequence (3-letter code)',

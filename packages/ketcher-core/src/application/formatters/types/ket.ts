@@ -176,6 +176,7 @@ export interface IKetMonomerTemplate {
   name?: string;
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
+  aliasAxoLabs?: string;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];

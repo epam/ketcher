@@ -57,7 +57,7 @@ interface IMonomer {
   monomerDescription: string;
   alias?: string;
   type: MonomerType | 'Nucleotide' | 'Nucleoside';
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   eligibleForAntisense: boolean;
@@ -71,7 +71,7 @@ interface IMonomer {
 
 interface IPolymer {
   polymerDescription?: string;
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   checks: ('side chain' | '')[];
@@ -135,7 +135,7 @@ const shortMonomerList: IMonomer[] = [
     monomerDescription: '4. Base A (from library)',
     alias: 'A',
     type: MonomerType.Base,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -146,7 +146,7 @@ const shortMonomerList: IMonomer[] = [
     monomerDescription: '5. Ambiguous DNA Base N (alternatives, from library)',
     alias: 'N',
     type: MonomerType.Base,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
@@ -182,7 +182,7 @@ const shortMonomerList: IMonomer[] = [
     monomerDescription: '8. Unknown monomer',
     alias: 'Unknown',
     type: MonomerType.UnknownMonomer,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,

@@ -36,8 +36,8 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   isRotating!: boolean;
-  private editor: Editor;
-  private rotateTool: RotateTool;
+  private readonly editor: Editor;
+  private readonly rotateTool: RotateTool;
   private originalCenter!: Vec2;
   private normalizedCenterInitialHandleVec!: Vec2;
   private handleCenter!: Vec2;
@@ -465,7 +465,8 @@ class RotateController {
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
       -30,
     ];
-    predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
+    let previousDegree = 0;
+    predefinedDegrees.forEach((currentDegree, currentIndex) => {
       const isDrawingDegree0 = currentIndex === 0;
       const gap = currentDegree - previousDegree;
       const diff = getDifference(currentDegree, structRotateDegree);
@@ -482,7 +483,8 @@ class RotateController {
       this.protractor?.push(degreeLine);
 
       if (radius < 65) {
-        return currentDegree;
+        previousDegree = currentDegree;
+        return;
       }
 
       textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
@@ -502,9 +504,8 @@ class RotateController {
         });
 
       this.protractor?.push(degreeText);
-
-      return currentDegree;
-    }, 0);
+      previousDegree = currentDegree;
+    });
 
     this.protractor.toBack();
   }
@@ -556,7 +557,7 @@ class RotateController {
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
-  private hoverIn = (event: MouseEvent) => {
+  private readonly hoverIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -565,7 +566,7 @@ class RotateController {
     this.drawHandle('hoverIn');
   };
 
-  private hoverOut = (event: MouseEvent) => {
+  private readonly hoverOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -626,7 +627,7 @@ class RotateController {
     ] as const;
   }
 
-  private dragStart = (event: MouseEvent) => {
+  private readonly dragStart = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1;
@@ -675,7 +676,7 @@ class RotateController {
     this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter);
   };
 
-  private dragMove = () => {
+  private readonly dragMove = () => {
     let lastSnappingRadius: number | undefined;
     return throttle(
       (
@@ -739,14 +740,14 @@ class RotateController {
     );
   };
 
-  private dragEnd = (event: MouseEvent) => {
+  private readonly dragEnd = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mouseup
 
     this.rotateTool.mouseup();
     this.rerender();
   };
 
-  private hoverCrossIn = (event: MouseEvent) => {
+  private readonly hoverCrossIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -756,7 +757,7 @@ class RotateController {
     this.drawLink('long');
   };
 
-  private hoverCrossOut = (event: MouseEvent) => {
+  private readonly hoverCrossOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -766,12 +767,12 @@ class RotateController {
     this.drawLink('short');
   };
 
-  private dragCrossStart = (event: MouseEvent) => {
+  private readonly dragCrossStart = (event: MouseEvent) => {
     event.stopPropagation();
     this.isMovingCenter = true;
   };
 
-  private dragCrossMove = throttle(
+  private readonly dragCrossMove = throttle(
     (
       _dxFromStart: number,
       _dyFromStart: number,
@@ -794,7 +795,7 @@ class RotateController {
     40,
   );
 
-  private dragCrossEnd = (event: MouseEvent) => {
+  private readonly dragCrossEnd = (event: MouseEvent) => {
     event.stopPropagation();
 
     this.isMovingCenter = false;
@@ -804,7 +805,7 @@ class RotateController {
     );
   };
 
-  private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
+  private readonly dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
     this.isMovingCenter = false;
     this.rerender();
   };

@@ -172,22 +172,16 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
     else substituents[3] = nei.aid;
   }
 
-  if (
+  const hasSameSideAtBegin =
     substituents[1] !== -1 &&
     this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) !==
-      -1
-  ) {
-    return false;
-  }
-  if (
+      -1;
+  const hasSameSideAtEnd =
     substituents[3] !== -1 &&
     this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) !==
-      -1
-  ) {
-    return false;
-  }
+      -1;
 
-  return true;
+  return !(hasSameSideAtBegin || hasSameSideAtEnd);
 };
 
 CisTrans.prototype.build = function (excludeBonds) {

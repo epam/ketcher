@@ -169,8 +169,8 @@ export const Modal = ({
           <span>
             {showExpandButton && (
               <IconButton
-                title={'expand window'}
-                test-dataid={'expand-window-button'}
+                title={expanded ? 'Minimize window' : 'Expand window'}
+                data-testid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {
                   setExpanded(!expanded);

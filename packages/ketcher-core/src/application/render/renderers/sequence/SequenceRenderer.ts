@@ -27,7 +27,10 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
@@ -165,7 +168,7 @@ export class SequenceRenderer {
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
-    const handledNodes = new Set<SubChainNode | BackBoneSequenceNode>();
+    const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;

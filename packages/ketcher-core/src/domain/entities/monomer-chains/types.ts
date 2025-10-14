@@ -3,6 +3,7 @@ import { Nucleotide } from 'domain/entities/Nucleotide';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { LinkerSequenceNode } from 'domain/entities';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export type SubChainNode =
   | MonomerSequenceNode
@@ -10,6 +11,8 @@ export type SubChainNode =
   | Nucleotide
   | EmptySequenceNode
   | LinkerSequenceNode;
+
+export type SequenceNode = SubChainNode | BackBoneSequenceNode;
 
 export enum SequenceType {
   RNA = 'RNA',

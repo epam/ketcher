@@ -221,7 +221,7 @@ const messageTypeToEventMapping: {
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private worker: Worker;
+  private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
 

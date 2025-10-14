@@ -221,7 +221,7 @@ class ReSGroup extends ReObject {
     restruct: ReStruct,
     _paper: RaphaelPaper,
     options: any,
-  ): any | void {
+  ): any {
     const sgroup = this.item;
     const functionalGroups = restruct.molecule.functionalGroups;
     const render = restruct.render;

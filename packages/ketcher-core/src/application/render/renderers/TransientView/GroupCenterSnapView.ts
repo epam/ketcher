@@ -13,7 +13,7 @@ export type GroupCenterSnapViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class GroupCentersnapView extends TransientView {
-  public static viewName = 'GroupCentersnapView';
+  public static readonly viewName = 'GroupCentersnapView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

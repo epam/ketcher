@@ -22,6 +22,8 @@ import {
   readFileContent,
   copyContentToClipboard,
   deleteByKeyboard,
+  moveMouseAway,
+  takeElementScreenshot,
 } from '@utils';
 import { saveToTemplates, selectWithLasso } from '@utils/canvas/tools/helpers';
 import {
@@ -2071,14 +2073,23 @@ test.describe('Image files', () => {
       if (testCase.action === 'open') {
         await CommonTopLeftToolbar(page).openFile();
         await openFile(page, testCase.file);
+        await moveMouseAway(page);
+        await takeElementScreenshot(
+          page,
+          PasteFromClipboardDialog(page).openStructureTextarea,
+        );
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
           testCase.dropdownOption ?? MoleculesFileFormatType.MDLMolfileV2000,
         );
+        await moveMouseAway(page);
+        await takeElementScreenshot(
+          page,
+          SaveStructureDialog(page).saveStructureTextarea,
+        );
       }
-      await takeEditorScreenshot(page);
     });
   }
 
@@ -2671,7 +2682,11 @@ test.describe('Image files', () => {
       MoleculesFileFormatType.SVGDocument,
     );
     await expect(saveButton).toBeEnabled();
-    await takeEditorScreenshot(page);
+    await moveMouseAway(page);
+    await takeElementScreenshot(
+      page,
+      SaveStructureDialog(page).saveStructureTextarea,
+    );
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {

@@ -606,9 +606,11 @@ const MonomerCreationWizard = () => {
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('symbol', event.target.value)
                   }
+                  disabled={!type}
                 />
               }
               required
+              disabled={!type}
             />
             <AttributeField
               title="Name"
@@ -622,9 +624,11 @@ const MonomerCreationWizard = () => {
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('name', event.target.value)
                   }
+                  disabled={!type}
                 />
               }
               required
+              disabled={!type}
             />
             <AttributeField
               title="Natural analogue"

@@ -52,6 +52,7 @@ export const SequenceSyncEditModeButton = () => {
   const [isSequenceSyncEditMode, setIsSequenceSyncEditMode] = useState(true);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const [, forceUpdate] = useState({});
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
@@ -62,6 +63,23 @@ export const SequenceSyncEditModeButton = () => {
     );
     blurActiveElement();
   };
+
+  useEffect(() => {
+    const handleAntisenseUpdate = () => {
+      // Force re-render to check hasAntisenseChains again
+      forceUpdate({});
+    };
+
+    editor?.events.createAntisenseChain.add(handleAntisenseUpdate);
+    editor?.events.deleteSelectedStructure.add(handleAntisenseUpdate);
+    editor?.events.selectHistory.add(handleAntisenseUpdate);
+
+    return () => {
+      editor?.events.createAntisenseChain.remove(handleAntisenseUpdate);
+      editor?.events.deleteSelectedStructure.remove(handleAntisenseUpdate);
+      editor?.events.selectHistory.remove(handleAntisenseUpdate);
+    };
+  }, [editor]);
 
   useEffect(() => {
     if (isSequenceMode && hasAtLeastOneAntisense) {

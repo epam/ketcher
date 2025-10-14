@@ -66,7 +66,6 @@ export const SequenceSyncEditModeButton = () => {
 
   useEffect(() => {
     const handleAntisenseUpdate = () => {
-      // Force re-render to check hasAntisenseChains again
       forceUpdate({});
     };
 

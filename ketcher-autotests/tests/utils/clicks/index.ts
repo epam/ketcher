@@ -3,19 +3,15 @@
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType, takeEditorScreenshot } from '..';
-import { selectButtonById } from '../canvas/tools/helpers';
+import { BondType } from '..';
 import { AtomLabelType } from './types';
 import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type BoundingBox = {
   width: number;
@@ -330,21 +326,4 @@ export async function moveOnBond(
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);
-}
-
-export async function applyAutoMapMode(
-  page: Page,
-  mode: string,
-  withScreenshot = true,
-) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
-  await LeftToolbar(page).selectReactionMappingTool(
-    ReactionMappingType.ReactionAutoMapping,
-  );
-  await page.getByTestId('automap-mode-input-span').click();
-  await selectOption(page, mode);
-  await selectButtonById('OK', page);
-  if (withScreenshot) {
-    await takeEditorScreenshot(page);
-  }
 }

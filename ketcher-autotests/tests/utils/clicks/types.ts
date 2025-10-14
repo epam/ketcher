@@ -10,3 +10,5 @@ export type AtomLabelType =
   | 'Br'
   | 'P'
   | 'I';
+
+export type MouseButton = 'left' | 'right' | 'middle';

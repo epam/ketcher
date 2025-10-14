@@ -37,6 +37,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
   creationSuccessful: 'The monomer was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
+  notMinimalViableStructure:
+    'Minimal monomer structure is two atoms connected via a single bond.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -49,6 +51,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   incorrectAttachmentPointsOrder: 'error',
   creationSuccessful: 'info',
   incontinuousStructure: 'error',
+  notMinimalViableStructure: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

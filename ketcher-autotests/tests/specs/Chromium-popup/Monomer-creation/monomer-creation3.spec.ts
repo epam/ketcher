@@ -1192,10 +1192,10 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
   await takeEditorScreenshot(page);
 });
 
-test(`24. Check that if the user clicks on Summit, the new monomer gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
+test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check that if the user clicks on Summit, the new monomer gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected
+   * Description: Check that if the user clicks on Summit, the new monomer (CHEM) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected
    *
    * Case:
    *      1. Open Molecules canvas
@@ -1224,6 +1224,51 @@ test(`24. Check that if the user clicks on Summit, the new monomer gets saved to
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
   await CreateMonomerDialog(page).setSymbol('CHEM');
   await CreateMonomerDialog(page).setName('CHEM Test monomer');
+  await CreateMonomerDialog(page).submit();
+
+  await takeEditorScreenshot(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await Library(page).hoverMonomer(Chem.CHEM);
+  await MonomerPreviewTooltip(page).waitForBecomeVisible();
+  await takeElementScreenshot(
+    page,
+    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
+  );
+});
+
+test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7657
+   * Description: Check that if the user clicks on Summit, the new monomer (Peptide) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule
+   *      4. Press Create Monomer button
+   *      5. Set monomer properties and click Submit button
+   *      6. Validate that the previously selected structure becomes an expanded monomer, and the monomer is selected
+   *      7. Validate the new monomer gets saved to the library
+   *
+   * Version 3.8
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'CC%91%92.[*:2]%91.[*:3]%92 |$;;_R2;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(425, 200, page);
+
+  await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
+  await CreateMonomerDialog(page).setSymbol('Peptide');
+  await CreateMonomerDialog(page).setName('Peptide Test monomer');
+  await CreateMonomerDialog(page).selectNaturalAnalogue();
   await CreateMonomerDialog(page).submit();
 
   await takeEditorScreenshot(page);

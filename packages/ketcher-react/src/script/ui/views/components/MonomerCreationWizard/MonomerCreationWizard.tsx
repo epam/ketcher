@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconButton } from 'components';
+import { Icon, IconButton, Dialog } from 'components';
 import {
   AttachmentPointClickData,
   AttachmentPointName,
@@ -330,6 +330,9 @@ const MonomerCreationWizard = () => {
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [showLeavingGroupDialog, setShowLeavingGroupDialog] = useState(false);
+  const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
+    useState('');
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -473,7 +476,7 @@ const MonomerCreationWizard = () => {
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
-  const handleSubmit = () => {
+  const handleSubmit = (skipLeavingGroupWarning = false) => {
     wizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
@@ -533,15 +536,13 @@ const MonomerCreationWizard = () => {
         assignedAttachmentPoints,
       );
       if (leavingGroupNotifications.size > 0) {
-        const convertedNotifications = new Map();
-        leavingGroupNotifications.forEach((notification, key) => {
-          convertedNotifications.set(key, notification);
-        });
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: convertedNotifications,
-        });
-        return;
+        if (!skipLeavingGroupWarning) {
+          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+            .message;
+          setLeavingGroupDialogMessage(firstMessage);
+          setShowLeavingGroupDialog(true);
+          return;
+        }
       }
     }
 
@@ -778,13 +779,46 @@ const MonomerCreationWizard = () => {
           </button>
           <button
             className={styles.buttonSubmit}
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             data-testid="submit-button"
           >
             Submit
           </button>
         </div>
       </div>
+      {showLeavingGroupDialog &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Non-typical attachment points"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  setShowLeavingGroupDialog(false);
+                  editor.saveNewMonomer({
+                    type,
+                    symbol,
+                    name,
+                    naturalAnalogue,
+                    modificationTypes,
+                  });
+                  resetWizard();
+                },
+                onCancel: () => setShowLeavingGroupDialog(false),
+              }}
+              buttons={['Cancel', 'OK']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+            >
+              <div className={styles.DialogMessage}>
+                {leavingGroupDialogMessage}
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
     </div>
   );
 };

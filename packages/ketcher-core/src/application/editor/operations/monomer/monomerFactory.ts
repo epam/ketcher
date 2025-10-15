@@ -23,6 +23,7 @@ import {
   RNABaseRenderer,
   SugarRenderer,
   UnresolvedMonomerRenderer,
+  UnresolvedPeptideRenderer,
   UnsplitNucleotideRenderer,
 } from 'application/render/renderers';
 import { MonomerOrAmbiguousType } from 'domain/types';
@@ -68,6 +69,14 @@ export const monomerFactory = (
     Monomer = AmbiguousMonomer;
     MonomerRenderer = AmbiguousMonomerRenderer;
     ketMonomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
+  } else if (
+    monomer.props.unresolved &&
+    (monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
+      monomer.props.MonomerType === MONOMER_CONST.PEPTIDE)
+  ) {
+    Monomer = UnresolvedMonomer;
+    MonomerRenderer = UnresolvedPeptideRenderer;
+    ketMonomerClass = KetMonomerClass.AminoAcid;
   } else if (monomer.props.unresolved) {
     Monomer = UnresolvedMonomer;
     MonomerRenderer = UnresolvedMonomerRenderer;

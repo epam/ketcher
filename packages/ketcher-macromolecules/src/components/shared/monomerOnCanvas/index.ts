@@ -4,6 +4,7 @@ export { SugarAvatar } from './Sugar';
 export { PhosphateAvatar } from './Phosphate';
 export { RNABaseAvatar } from './RNABase';
 export { UnresolvedMonomerAvatar } from './UnresolvedMonomer';
+export { UnresolvedPeptideAvatar } from './UnresolvedPeptide';
 export { NucleotideAvatar } from './Nucleotide';
 export { ArrowMarker } from './ArrowMarker';
 export { SequenceStartArrow } from './SequenceStartArrow';

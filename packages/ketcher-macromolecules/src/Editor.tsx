@@ -81,6 +81,7 @@ import {
   RNABaseAvatar,
   SugarAvatar,
   UnresolvedMonomerAvatar,
+  UnresolvedPeptideAvatar,
   NucleotideAvatar,
   SequenceStartArrow,
   ArrowMarker,
@@ -382,6 +383,7 @@ function Editor({
               <PhosphateAvatar />
               <RNABaseAvatar />
               <UnresolvedMonomerAvatar />
+              <UnresolvedPeptideAvatar />
               <NucleotideAvatar />
               <SequenceStartArrow />
               <ArrowMarker />

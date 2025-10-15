@@ -332,6 +332,14 @@ export abstract class BaseMonomer extends DrawingEntity {
     );
   }
 
+  public hasSingleBondWithMonomer(monomer: BaseMonomer) {
+    return this.polymerBonds.find(
+      (bond) =>
+        (bond.firstMonomer === monomer && bond.secondMonomer === this) ||
+        (bond.firstMonomer === this && bond.secondMonomer === monomer),
+    );
+  }
+
   public hasPotentialBonds() {
     return Object.values(this.potentialAttachmentPointsToBonds).some(
       (bond) => !!bond,

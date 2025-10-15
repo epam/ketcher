@@ -294,22 +294,20 @@ class PolymerBond implements BaseTool {
         return;
       }
 
-      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
-        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
-        if (!bond) {
-          continue;
-        }
-        const alreadyHasBond =
-          (bond.firstMonomer === firstMonomer &&
-            bond.secondMonomer === secondMonomer) ||
-          (bond.firstMonomer === secondMonomer &&
-            bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+      // Check if there's already a bond between the monomers
+      const hasSingleBond =
+        secondMonomer.hasSingleBondWithMonomer(firstMonomer);
+      if (hasSingleBond) {
+        if (this.isHydrogenBond) {
+          this.editor.events.error.dispatch(
+            'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+          );
+        } else {
           this.editor.events.error.dispatch(
             "There can't be more than 1 bond between the first and the second monomer",
           );
-          return;
         }
+        return;
       }
       secondMonomer.setChosenSecondAttachmentPoint(event.attachmentPointName);
       const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
@@ -417,22 +415,20 @@ class PolymerBond implements BaseTool {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer.monomer;
 
-      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
-        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
-        if (!bond) {
-          continue;
-        }
-        const alreadyHasBond =
-          (bond.firstMonomer === firstMonomer &&
-            bond.secondMonomer === secondMonomer) ||
-          (bond.firstMonomer === secondMonomer &&
-            bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+      // Check if there's already a bond between the monomers
+      const hasSingleBond =
+        secondMonomer.hasSingleBondWithMonomer(firstMonomer);
+      if (hasSingleBond) {
+        if (this.isHydrogenBond) {
+          this.editor.events.error.dispatch(
+            'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+          );
+        } else {
           this.editor.events.error.dispatch(
             "There can't be more than 1 bond between the first and the second monomer",
           );
-          return;
         }
+        return;
       }
       const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
       if (showModal) {

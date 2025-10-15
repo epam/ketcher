@@ -41,6 +41,7 @@ import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { BaseSequenceItemRenderer } from 'application/render';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
+import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -60,6 +61,8 @@ export class RenderersManager {
   public atoms = new Map<number, AtomRenderer>();
 
   public bonds = new Map<number, BondRenderer>();
+
+  public stereoFlags = new Map<string, any>();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -103,9 +106,29 @@ export class RenderersManager {
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();
+
+    // Render stereo flags for this monomer if it has a struct with fragments
+    if (!(monomer instanceof AmbiguousMonomer) && monomer.monomerItem?.struct) {
+      this.renderStereoFlagsForMonomer(monomer);
+    }
+
     if (callback) {
       callback();
     }
+  }
+
+  private renderStereoFlagsForMonomer(monomer: BaseMonomer) {
+    const struct = monomer.monomerItem.struct;
+    if (!struct?.frags) return;
+
+    struct.frags.forEach((fragment, fragmentId) => {
+      if (fragment?.enhancedStereoFlag) {
+        const key = `${monomer.id}-${fragmentId}`;
+        const renderer = new StereoFlagRenderer(monomer, fragmentId);
+        this.stereoFlags.set(key, renderer);
+        renderer.show();
+      }
+    });
   }
 
   public moveMonomer(monomer: BaseMonomer) {

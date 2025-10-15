@@ -16,3 +16,4 @@
 
 export * from './stateHooks';
 export * from './useIsCompactView';
+export * from './useClipboardMonitor';

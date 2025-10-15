@@ -6,7 +6,7 @@ import {
   Icon,
   IconName,
 } from 'ketcher-react';
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useClipboardMonitor } from 'hooks';
 import { selectEditor } from 'state/common';
 import { BaseMonomer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
@@ -31,6 +31,7 @@ export const SelectedMonomersContextMenu = ({
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
+  const hasClipboardContent = useClipboardMonitor();
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,
@@ -65,7 +66,8 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: ({ props = {} }) => !isCanvasContext(props),
+      disabled: ({ props = {} }) =>
+        !isCanvasContext(props) || !hasClipboardContent,
       separator: true,
     },
     {

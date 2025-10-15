@@ -6,7 +6,12 @@ import {
   Icon,
   IconName,
 } from 'ketcher-react';
-import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useLayoutMode,
+  useClipboardMonitor,
+} from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
@@ -73,6 +78,7 @@ export const SequenceItemContextMenu = ({
 }: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
+  const hasClipboardContent = useClipboardMonitor();
   const menuProps = generateSequenceContextMenuProps(selections);
   const selectedMonomers: BaseMonomer[] =
     selections?.flat()?.flatMap((nodeSelection) => {
@@ -127,7 +133,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: false,
+      disabled: !hasClipboardContent,
       separator: true,
     },
     {

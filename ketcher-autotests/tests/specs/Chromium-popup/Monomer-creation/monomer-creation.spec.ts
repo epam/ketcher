@@ -1256,11 +1256,13 @@ for (const monomerToCreate of monomersToCreate) {
       await monomer.hover({ force: true });
       // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
       await delay(1);
-      // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await expect(page.getByTestId('preview-tooltip')).toBeVisible();
-      await expect(page.getByTestId('preview-tooltip-title')).toContainText(
-        monomerToCreate.name,
-      );
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
+      ).toBeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,
+      ).toContainText(monomerToCreate.name);
     },
   );
 }

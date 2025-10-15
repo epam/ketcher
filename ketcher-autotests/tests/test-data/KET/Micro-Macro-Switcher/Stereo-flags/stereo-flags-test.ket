@@ -1,0 +1,47 @@
+{
+  "root": {
+    "nodes": [
+      {
+        "$ref": "mol0"
+      }
+    ]
+  },
+  "mol0": {
+    "type": "molecule",
+    "atoms": [
+      {
+        "label": "C",
+        "location": [10, -10, 0],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "C",
+        "location": [11, -10, 0]
+      },
+      {
+        "label": "H",
+        "location": [10, -11, 0]
+      },
+      {
+        "label": "Cl",
+        "location": [10, -9, 0]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [0, 1]
+      },
+      {
+        "type": 1,
+        "atoms": [0, 2],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [0, 3],
+        "stereo": 6
+      }
+    ]
+  }
+}

@@ -112,8 +112,12 @@ export class RenderStruct {
       if (window.isPolymerEditorTurnedOn) {
         extendedOptions.fontsz = 30;
         extendedOptions.fontszsub = 20;
-        extendedOptions.width = svgSize;
-        extendedOptions.height = svgSize;
+        // Only set explicit dimensions if svgSize is valid (not 0 or undefined)
+        // Otherwise, let the renderer use auto-scaling based on the wrapper element
+        if (svgSize && svgSize > 0) {
+          extendedOptions.width = svgSize;
+          extendedOptions.height = svgSize;
+        }
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);

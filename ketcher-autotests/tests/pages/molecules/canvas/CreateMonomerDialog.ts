@@ -19,7 +19,6 @@ import {
   AttachmentPointName,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
-import { isTypeQueryNode } from 'typescript';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;

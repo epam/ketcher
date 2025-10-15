@@ -3655,12 +3655,49 @@ export class DrawingEntitiesManager {
 
   public selectAllConnectedEntities(startEntity: DrawingEntity) {
     const command = new Command();
+    const fragmentIds = new Set<number>();
     const process = (entity: DrawingEntity) => {
       entity.selected = true;
       command.merge(this.createDrawingEntitySelectionCommand(entity));
+
+      // Collect fragment IDs from atoms for stereo flag selection
+      if (entity instanceof Atom && entity.monomer?.monomerItem?.struct) {
+        const microModeAtom = entity.monomer.monomerItem.struct.atoms.get(
+          entity.atomIdInMicroMode,
+        );
+        if (microModeAtom && microModeAtom.fragment !== undefined) {
+          fragmentIds.add(microModeAtom.fragment);
+        }
+      }
     };
 
     this.visitAllConnectedEntities(startEntity, process);
+
+    // Select enhanced stereo flags for the selected fragments
+    if (fragmentIds.size > 0) {
+      const editor = CoreEditor.provideEditorInstance();
+      const microEditor = editor.micromoleculesEditorInstance;
+      if (microEditor) {
+        const reStruct = microEditor.render.ctab;
+        fragmentIds.forEach((fragmentId) => {
+          const enhancedFlag = reStruct.enhancedFlags.get(fragmentId);
+          if (enhancedFlag) {
+            // The enhanced flag selection is handled by the micromolecules editor
+            // We need to add it to the selection
+            const currentSelection = microEditor.selection() || {};
+            const enhancedFlags = currentSelection.enhancedFlags || [];
+            if (!enhancedFlags.includes(fragmentId)) {
+              enhancedFlags.push(fragmentId);
+            }
+            microEditor.selection({
+              ...currentSelection,
+              enhancedFlags,
+            });
+          }
+        });
+      }
+    }
+
     return command;
   }
 

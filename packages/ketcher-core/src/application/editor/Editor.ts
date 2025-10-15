@@ -203,6 +203,10 @@ export class CoreEditor {
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
 
+  public get micromoleculesEditorInstance(): Editor | undefined {
+    return this.micromoleculesEditor;
+  }
+
   constructor({
     ketcherId,
     theme,

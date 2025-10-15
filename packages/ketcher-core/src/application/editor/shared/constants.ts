@@ -33,6 +33,7 @@ export const selectionKeys = [
   'rgroupAttachmentPoints',
   'rxnArrows',
   'rxnPluses',
+  'enhancedFlags',
   'simpleObjects',
   'texts',
   IMAGE_KEY,

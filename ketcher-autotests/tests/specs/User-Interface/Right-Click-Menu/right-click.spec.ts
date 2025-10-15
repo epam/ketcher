@@ -485,6 +485,27 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that removed Add attachment point functionality', async ({
+    page,
+  }) => {
+    /*
+    * Version 3.8
+    Test case: https://github.com/epam/ketcher/issues/7683
+    Description: "Add attachment point" functionality removed from right-click menu.
+    Case:
+      1. Add Benzene ring on canvas
+      2. Right-click on the atom
+      3. Observes that "Add attachment point" functionality removed from right-click menu.
+    */
+    await drawBenzeneRing(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).open();
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that the "Highlight" option appears below "Attach S-Group." for selected bond', async ({
     page,
   }) => {

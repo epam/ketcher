@@ -206,6 +206,15 @@ const TemplateDialog: FC<Props> = (props) => {
     }
   }, [initialTab, onTabChange]);
 
+  useEffect(() => {
+    if (
+      isMonomerCreationWizardActive &&
+      tab === TemplateTabs.FunctionalGroupLibrary
+    ) {
+      onTabChange(TemplateTabs.TemplateLibrary);
+    }
+  }, [isMonomerCreationWizardActive, tab, onTabChange]);
+
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
       isExpanded

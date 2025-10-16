@@ -29,7 +29,8 @@ export type WizardNotificationId =
   | 'incorrectAttachmentPointsOrder'
   | 'creationSuccessful'
   | 'incontinuousStructure'
-  | 'notMinimalViableStructure';
+  | 'notMinimalViableStructure'
+  | 'impureStructure';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

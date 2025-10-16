@@ -499,10 +499,8 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Hydrogen,
       );
 
-      // Error message is wrong because of a bug!
-      // it should be "Unable to establish a hydrogen bond between two monomers connected with a single bond"
       await expect(errorTooltip).toHaveText(
-        "There can't be more than 1 bond between the first and the second monomer",
+        'Unable to establish a hydrogen bond between two monomers connected with a single bond',
       );
 
       if (await errorTooltip.isVisible()) {

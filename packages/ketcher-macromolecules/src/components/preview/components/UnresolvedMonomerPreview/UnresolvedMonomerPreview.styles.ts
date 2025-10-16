@@ -10,7 +10,9 @@ export const StyledContent = styled.div`
   color: #7c7c7f;
   border: 1.5px solid ${(props) => props.theme.ketcher.outline.color};
   border-radius: 6px;
-  width: 150px;
-  height: 150px;
+  max-height: 100%;
   min-height: 150px;
+  height: 150px;
+  width: 150px;
+  align-self: stretch;
 `;

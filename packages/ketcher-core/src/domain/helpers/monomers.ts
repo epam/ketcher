@@ -171,26 +171,35 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
     : undefined;
 }
 
+export function getBaseConnectedToSugarViaR3R1(
+  monomer?: BaseMonomer,
+): BaseMonomer | undefined {
+  if (!monomer || !(monomer instanceof Sugar)) return undefined;
+
+  const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
+  if (!(r3PolymerBond instanceof PolymerBond)) return undefined;
+
+  const r3ConnectedMonomer = r3PolymerBond.getAnotherMonomer(monomer);
+  if (!r3ConnectedMonomer || !isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer)) {
+    return undefined;
+  }
+
+  // Check if the base's R1 is connected to this sugar
+  const baseAttachmentPoint =
+    r3ConnectedMonomer.getAttachmentPointByBond(r3PolymerBond);
+  if (baseAttachmentPoint === AttachmentPointName.R1) {
+    return r3ConnectedMonomer;
+  }
+
+  return undefined;
+}
+
 export function hasBaseConnectedToSugarViaR3R1(monomer?: BaseMonomer) {
   if (!monomer) return false;
 
   // Check if monomer is a sugar with R3 connected to a base's R1
   if (monomer instanceof Sugar) {
-    const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
-    if (!(r3PolymerBond instanceof PolymerBond)) return false;
-
-    const r3ConnectedMonomer = r3PolymerBond.getAnotherMonomer(monomer);
-    if (
-      !r3ConnectedMonomer ||
-      !isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer)
-    ) {
-      return false;
-    }
-
-    // Check if the base's R1 is connected to this sugar
-    const baseAttachmentPoint =
-      r3ConnectedMonomer.getAttachmentPointByBond(r3PolymerBond);
-    return baseAttachmentPoint === AttachmentPointName.R1;
+    return !!getBaseConnectedToSugarViaR3R1(monomer);
   }
 
   // Check if monomer is a base with R1 connected to a sugar's R3

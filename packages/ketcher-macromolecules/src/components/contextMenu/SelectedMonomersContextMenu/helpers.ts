@@ -3,6 +3,7 @@ import {
   BaseMonomer,
   BaseSequenceItemRenderer,
   CoreEditor,
+  getBaseConnectedToSugarViaR3R1,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   hasBaseConnectedToSugarViaR3R1,
@@ -95,6 +96,12 @@ export const isAntisenseCreationDisabled = (
     const rnaBaseForSugar =
       selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
 
+    // Also check for bases connected via R3-R1 (without bidirectional requirement)
+    const rnaBaseViaR3R1 =
+      selectedMonomer instanceof Sugar && !rnaBaseForSugar
+        ? getBaseConnectedToSugarViaR3R1(selectedMonomer)
+        : undefined;
+
     return (
       (selectedMonomer instanceof RNABase &&
         (selectedMonomer.hydrogenBonds.length > 0 ||
@@ -103,7 +110,10 @@ export const isAntisenseCreationDisabled = (
         !isSenseBase(selectedMonomer)) ||
       (rnaBaseForSugar &&
         (rnaBaseForSugar.hydrogenBonds.length > 0 ||
-          !isSenseBase(rnaBaseForSugar)))
+          !isSenseBase(rnaBaseForSugar))) ||
+      (rnaBaseViaR3R1 &&
+        (rnaBaseViaR3R1.hydrogenBonds.length > 0 ||
+          !isSenseBase(rnaBaseViaR3R1)))
     );
   });
 };

@@ -302,7 +302,9 @@ export const selectAmbiguousMonomersInCategory = (
     );
   });
 
-  return groupedAmbiguousMonomerLibraryItems;
+  return groupedAmbiguousMonomerLibraryItems.filter(
+    (group) => group.groupItems.length > 0,
+  );
 };
 
 export const selectUnsplitNucleotides = (items: MonomerOrAmbiguousType[]) =>

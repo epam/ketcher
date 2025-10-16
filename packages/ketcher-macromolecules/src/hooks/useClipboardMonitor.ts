@@ -1,8 +1,33 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
 import { useState, useEffect } from 'react';
 import { isClipboardAPIAvailable } from 'ketcher-core';
 
 /**
- * Hook to monitor clipboard state and determine if paste should be enabled
+ * Hook to monitor clipboard state and determine if paste should be enabled.
+ *
+ * This hook:
+ * 1. Checks clipboard content on component mount
+ * 2. Listens for copy/cut events to track when clipboard has content
+ * 3. Returns false when clipboard is empty, disabling paste operations
+ *
+ * Note: If clipboard API is unavailable or permissions are denied,
+ * defaults to true to avoid blocking paste functionality.
+ *
  * @returns boolean indicating if clipboard has content that can be pasted
  */
 export const useClipboardMonitor = (): boolean => {

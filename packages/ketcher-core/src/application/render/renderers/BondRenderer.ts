@@ -517,6 +517,35 @@ export class BondRenderer extends BaseRenderer {
     };
   }
 
+  private isInAromaticLoop(): boolean {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const halfEdges = this.halfEdges;
+    const firstHalfEdge = halfEdges?.[0];
+    const secondHalfEdge = halfEdges?.[1];
+
+    if (!firstHalfEdge || !secondHalfEdge) {
+      return false;
+    }
+
+    const loop1Id = firstHalfEdge.loopId;
+    const loop2Id = secondHalfEdge.loopId;
+
+    if (
+      loop1Id === undefined ||
+      loop1Id < 0 ||
+      loop2Id === undefined ||
+      loop2Id < 0
+    ) {
+      return false;
+    }
+
+    const loop1 = viewModel.loops.get(loop1Id);
+    const loop2 = viewModel.loops.get(loop2Id);
+
+    return Boolean(loop1?.aromatic || loop2?.aromatic);
+  }
+
   show() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
@@ -566,15 +595,20 @@ export class BondRenderer extends BaseRenderer {
       case BondType.Aromatic:
       case BondType.SingleAromatic:
       case BondType.DoubleAromatic:
-        bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-          bondVectors,
-          this.getDoubleBondShift(
-            viewModel,
-            bondVectors.firstHalfEdge,
-            bondVectors.secondHalfEdge,
-          ),
-          this.bond.type,
-        );
+        if (this.bond.type === BondType.Aromatic && this.isInAromaticLoop()) {
+          // Render aromatic bonds in aromatic loops as single solid lines
+          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+            bondVectors,
+            this.getDoubleBondShift(
+              viewModel,
+              bondVectors.firstHalfEdge,
+              bondVectors.secondHalfEdge,
+            ),
+            this.bond.type,
+          );
+        }
         break;
 
       case BondType.SingleDouble:

@@ -26,7 +26,6 @@ import {
   Pool,
   expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
-  MonomerMicromolecule,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -511,7 +510,7 @@ class SGroupTool implements Tool {
     // Prevent opening S-Group properties for expanded monomers
     // Editing S-Group properties of expanded monomers can cause data corruption
     // when switching between Molecules and Macromolecules canvas
-    if (sg && sg instanceof MonomerMicromolecule) {
+    if (sg?.isMonomer) {
       editor.event.message.dispatch({
         error: 'S-Group properties cannot be edited for monomers.',
       });

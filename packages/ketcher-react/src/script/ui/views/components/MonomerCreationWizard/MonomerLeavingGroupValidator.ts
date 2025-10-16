@@ -39,7 +39,7 @@ export const validateMonomerLeavingGroups = (
 
   for (const requirement of validationRule.requirements) {
     const attachmentPoint = assignedAttachmentPoints.get(
-      requirement.attachmentPoint as AttachmentPointName,
+      requirement.attachmentPoint,
     );
 
     if (attachmentPoint) {

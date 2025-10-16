@@ -330,7 +330,6 @@ const MonomerCreationWizard = () => {
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
-  const [showLeavingGroupDialog, setShowLeavingGroupDialog] = useState(false);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
 
@@ -476,7 +475,7 @@ const MonomerCreationWizard = () => {
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
-  const handleSubmit = (skipLeavingGroupWarning = false) => {
+  const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
@@ -536,13 +535,10 @@ const MonomerCreationWizard = () => {
         assignedAttachmentPoints,
       );
       if (leavingGroupNotifications.size > 0) {
-        if (!skipLeavingGroupWarning) {
-          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
-            .message;
-          setLeavingGroupDialogMessage(firstMessage);
-          setShowLeavingGroupDialog(true);
-          return;
-        }
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
+        setLeavingGroupDialogMessage(firstMessage);
+        return;
       }
     }
 
@@ -779,14 +775,14 @@ const MonomerCreationWizard = () => {
           </button>
           <button
             className={styles.buttonSubmit}
-            onClick={() => handleSubmit()}
+            onClick={handleSubmit}
             data-testid="submit-button"
           >
             Submit
           </button>
         </div>
       </div>
-      {showLeavingGroupDialog &&
+      {leavingGroupDialogMessage &&
         ketcherEditorRootElement &&
         createPortal(
           <div className={styles.dialogOverlay}>
@@ -797,7 +793,7 @@ const MonomerCreationWizard = () => {
               valid={() => true}
               params={{
                 onOk: () => {
-                  setShowLeavingGroupDialog(false);
+                  setLeavingGroupDialogMessage('');
                   editor.saveNewMonomer({
                     type,
                     symbol,
@@ -807,10 +803,10 @@ const MonomerCreationWizard = () => {
                   });
                   resetWizard();
                 },
-                onCancel: () => setShowLeavingGroupDialog(false),
+                onCancel: () => setLeavingGroupDialogMessage(''),
               }}
               buttons={['Cancel', 'OK']}
-              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              buttonsNameMap={{ OK: 'Cancel', Cancel: 'Yes' }}
             >
               <div className={styles.DialogMessage}>
                 {leavingGroupDialogMessage}

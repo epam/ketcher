@@ -660,8 +660,22 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       }
     } else if (groupno === 8) {
-      if (connectionCount + radicalCount + absCharge === 0) valence = 1;
-      else hydrogenCount = -1;
+      if (label === 'Pt') {
+        // Platinum has acceptable valences of 2 and 4
+        if (connectionCount + radicalCount + absCharge <= 2) {
+          valence = 2;
+          hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
+        } else if (connectionCount + radicalCount + absCharge <= 4) {
+          valence = 4;
+          hydrogenCount = 4 - radicalCount - connectionCount - absCharge;
+        } else {
+          hydrogenCount = -1;
+        }
+      } else if (connectionCount + radicalCount + absCharge === 0) {
+        valence = 1;
+      } else {
+        hydrogenCount = -1;
+      }
     }
     if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
       hydrogenCount = this.implicitHCount;

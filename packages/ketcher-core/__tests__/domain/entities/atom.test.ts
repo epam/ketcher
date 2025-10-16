@@ -415,6 +415,88 @@ describe('Atom', () => {
       expect(litium.valence).toBe(1);
     });
 
+    it('should set valence = 2 for Platinum with 2 connections', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: null,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(2)).toBe(true);
+      expect(platinum.valence).toBe(2);
+      expect(platinum.implicitH).toBe(0);
+      expect(platinum.badConn).toBe(false);
+    });
+
+    it('should set valence = 4 for Platinum with 4 connections', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: null,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(4)).toBe(true);
+      expect(platinum.valence).toBe(4);
+      expect(platinum.implicitH).toBe(0);
+      expect(platinum.badConn).toBe(false);
+    });
+
+    it('should set valence = 2 for Platinum with 1 connection', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: null,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(1)).toBe(true);
+      expect(platinum.valence).toBe(2);
+      expect(platinum.implicitH).toBe(1);
+      expect(platinum.badConn).toBe(false);
+    });
+
+    it('should set valence = 4 for Platinum with 3 connections', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: null,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(3)).toBe(true);
+      expect(platinum.valence).toBe(4);
+      expect(platinum.implicitH).toBe(1);
+      expect(platinum.badConn).toBe(false);
+    });
+
+    it('should reject Platinum with more than 4 connections', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: null,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(5)).toBe(false);
+      expect(platinum.badConn).toBe(true);
+    });
+
+    it('should accept Platinum with charge +2 and 2 connections (valence 4)', () => {
+      const PtParams = {
+        ...hydrogenParams,
+        label: 'Pt',
+        charge: 2,
+      };
+
+      const platinum = new Atom(PtParams);
+      expect(platinum.calcValence(2)).toBe(true);
+      expect(platinum.valence).toBe(4);
+      expect(platinum.implicitH).toBe(0);
+      expect(platinum.badConn).toBe(false);
+    });
+
     // TODO: Add other test cases for calcValence function
   });
 

@@ -27,29 +27,37 @@ function MainRow({
   atomClassNames,
   className,
 }) {
+  const renderCell = (element, index) => {
+    if (typeof element !== 'number') {
+      return (
+        <td key={index}>
+          <Atom
+            el={element}
+            className={clsx(...atomClassNames(element))}
+            onClick={() => onAtomSelect(element.label)}
+            onDoubleClick={() => onDoubleClick()}
+            {...currentEvents(element)}
+          />
+        </td>
+      );
+    }
+
+    if (refer(element)) {
+      return (
+        <td key={index} className={className}>
+          {refer(element)}
+        </td>
+      );
+    }
+
+    return <td key={index} colSpan={element} />;
+  };
+
   return (
     <tbody>
       <tr>
         <th>{caption}</th>
-        {row.map((element, index) =>
-          typeof element !== 'number' ? ( // eslint-disable-line
-            <td key={index}>
-              <Atom
-                el={element}
-                className={clsx(...atomClassNames(element))}
-                onClick={() => onAtomSelect(element.label)}
-                onDoubleClick={() => onDoubleClick()}
-                {...currentEvents(element)}
-              />
-            </td>
-          ) : refer(element) ? (
-            <td key={index} className={className}>
-              {refer(element)}
-            </td>
-          ) : (
-            <td key={index} colSpan={element} />
-          ),
-        )}
+        {row.map((element, index) => renderCell(element, index))}
       </tr>
     </tbody>
   );

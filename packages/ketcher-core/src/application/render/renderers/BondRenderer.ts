@@ -595,7 +595,7 @@ export class BondRenderer extends BaseRenderer {
       case BondType.Aromatic:
       case BondType.SingleAromatic:
       case BondType.DoubleAromatic:
-        if (this.bond.type === BondType.Aromatic && this.isInAromaticLoop()) {
+        if (this.isInAromaticLoop()) {
           // Render aromatic bonds in aromatic loops as single solid lines
           bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
         } else {

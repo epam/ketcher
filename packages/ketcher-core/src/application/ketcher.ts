@@ -675,7 +675,7 @@ export class Ketcher {
         ? JSON.stringify(rawMonomersData)
         : rawMonomersData;
     const format =
-      params?.format || identifyStructFormat(rawMonomersDataString);
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
 
     let dataInKetFormat: string | JSON;
 

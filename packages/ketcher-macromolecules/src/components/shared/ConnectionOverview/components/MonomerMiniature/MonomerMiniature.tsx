@@ -55,7 +55,7 @@ const MonomerMiniature = ({
       }
       // TODO: Use factory here for any other monomer if it will be required (e.g. unresolved monomers)?
     }
-  }, [selectedAttachmentPoint, connectedAttachmentPoints]);
+  }, [selectedAttachmentPoint, connectedAttachmentPoints, expanded]);
 
   return (
     <Container expanded={expanded} data-testid={testId}>

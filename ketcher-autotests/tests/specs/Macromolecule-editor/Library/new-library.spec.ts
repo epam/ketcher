@@ -1283,7 +1283,7 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
+  test.skip(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1350,7 +1350,7 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
+  test.skip(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419

@@ -601,11 +601,15 @@ class Editor implements KetcherEditor {
 
     const selection = this.selection();
 
-    if (!selection || !selection.atoms?.length || !selection.bonds?.length) {
-      return false;
+    if (!selection) {
+      return true;
     }
 
     const currentStruct = this.struct();
+
+    if (!selection.atoms || selection.atoms.length === 0) {
+      return false;
+    }
 
     const selectionInvalid = selection.atoms.some((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
@@ -637,14 +641,6 @@ class Editor implements KetcherEditor {
     });
 
     if (selectionInvalid) {
-      return false;
-    }
-
-    const isSelectionContinuous = Editor.isStructureContinuous(
-      currentStruct,
-      selection,
-    );
-    if (!isSelectionContinuous) {
       return false;
     }
 
@@ -744,18 +740,9 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment =
       potentialLeavingAtomForManualAssignment;
 
-    const isEnabled =
-      terminalRGroupAtoms.length > 0 ||
-      potentialLeavingAtomsForAutoAssignment.length > 0 ||
-      potentialLeavingAtomForManualAssignment.length > 0;
+    window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
 
-    if (isEnabled) {
-      window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
-
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   public isMinimalViableStructure() {
@@ -862,9 +849,10 @@ class Editor implements KetcherEditor {
 
   openMonomerCreationWizard() {
     const currentStruct = this.render.ctab.molecule;
-    const selection = this.selection();
-
-    assert(selection);
+    const selection = this.selection() ?? {
+      atoms: Array.from(this.struct().atoms.keys()),
+      bonds: Array.from(this.struct().bonds.keys()),
+    };
 
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);

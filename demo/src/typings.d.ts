@@ -13,8 +13,7 @@ type KetcherApiType = {
   clearHighlights: () => void;
 };
 
-declare global {
-  var KetcherFunctions: KetcherApiType;
+export declare global {
+  const KetcherAPI: (arg) => KetcherApiType;
+  const KetcherFunctions: KetcherApiType;
 }
-
-declare const KetcherAPI: (arg: any) => KetcherApiType;

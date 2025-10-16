@@ -17,17 +17,13 @@ import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { SequenceMode } from '../modes';
 
 class EraserTool implements BaseTool {
   private readonly history: EditorHistory;
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
-    if (
-      this.editor.drawingEntitiesManager.selectedEntities.length &&
-      !(this.editor.mode instanceof SequenceMode)
-    ) {
+    if (this.editor.drawingEntitiesManager.selectedEntities.length) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
       modelChanges.merge(

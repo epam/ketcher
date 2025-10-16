@@ -41,6 +41,7 @@ export class BondRenderer extends BaseRenderer {
 
   private getRenderOptions() {
     const savedOptions = SettingsManager.getOptions();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return getOptionsWithConvertedUnits(savedOptions as any);
   }
 

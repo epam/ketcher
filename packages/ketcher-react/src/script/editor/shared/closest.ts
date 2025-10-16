@@ -272,8 +272,7 @@ function findClosestEnhancedFlag(
   restruct.enhancedFlags.forEach((_item, id) => {
     const fragment = restruct.molecule.frags.get(id);
 
-    if (!fragment || !fragment.enhancedStereoFlag || !options.showStereoFlags)
-      return;
+    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) return;
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)

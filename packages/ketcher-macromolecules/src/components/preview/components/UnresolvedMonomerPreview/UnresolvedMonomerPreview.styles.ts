@@ -6,9 +6,11 @@ export const StyledContent = styled.div`
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 5px;
   color: #7c7c7f;
-  border: 1px solid #cad3dd;
-  width: 100%;
-  height: 100%;
+  border: 1.5px solid ${(props) => props.theme.ketcher.outline.color};
+  border-radius: 6px;
+  width: 150px;
+  height: 150px;
+  min-height: 150px;
 `;

@@ -81,11 +81,14 @@ export const initOptionsState = {
 };
 
 function getSerilizedServerOptions(options) {
-  const renderStereoStyle = !options.showStereoFlags
-    ? 'none'
-    : options.ignoreChiralFlag
-    ? 'ext'
-    : 'old';
+  let renderStereoStyle;
+  if (!options.showStereoFlags) {
+    renderStereoStyle = 'none';
+  } else if (options.ignoreChiralFlag) {
+    renderStereoStyle = 'ext';
+  } else {
+    renderStereoStyle = 'old';
+  }
 
   let newOptions = {
     'render-coloring': options.atomColoring,

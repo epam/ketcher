@@ -30,7 +30,9 @@ test('Open KET file with properties and check properties are saved in struct', a
 
   await openFileAndAddToCanvas(page, 'KET/ket-with-properties.ket');
 
-  const fragments = await page.evaluate(() => {
+  const fragments = await page.evaluate<
+    ({ properties?: Record<string, string>[] } | null)[]
+  >(() => {
     const editor = window.ketcher?.editor;
     const struct =
       typeof editor?.struct === 'function' ? editor.struct() : null;
@@ -39,17 +41,20 @@ test('Open KET file with properties and check properties are saved in struct', a
     return fragsIterator ? [...fragsIterator] : [];
   });
 
-  const [firstFragment, secondFragment] = fragments;
+  const filteredFragments = fragments.filter(
+    (fragment): fragment is { properties?: Record<string, string>[] } =>
+      fragment !== null,
+  );
+
+  const [firstFragment, secondFragment] = filteredFragments;
 
   if (!firstFragment?.properties || !secondFragment?.properties) {
     test.fail();
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
-  const [firstFragmentProperties] = firstFragment.properties! as any;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
-  const [secondFragmentProperties] = secondFragment.properties! as any;
+  const [firstFragmentProperties] = firstFragment.properties;
+  const [secondFragmentProperties] = secondFragment.properties;
 
   const [firstFragmentPropKey] = Object.keys(firstFragmentProperties);
   const [secondFragmentPropKey] = Object.keys(secondFragmentProperties);

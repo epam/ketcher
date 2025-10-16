@@ -1448,10 +1448,8 @@ function buildLabel(
 
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);
-  let rightMargin =
-    (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom); //
-  let leftMargin =
-    (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  let rightMargin = label.rbb.width / 2;
+  let leftMargin = -label.rbb.width / 2;
 
   if (atom.a.atomList !== null) {
     const xShift =
@@ -1740,9 +1738,7 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
-        data.rightMargin +
-          0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
-          delta,
+        data.rightMargin + 0.15 * hydroIndex.rbb.width + delta,
         0.2 * atom.label!.rbb.height,
       );
       data.rightMargin += hydroIndex.rbb.width + delta;

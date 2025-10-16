@@ -81,6 +81,12 @@ export const initOptionsState = {
 };
 
 function getSerilizedServerOptions(options) {
+  const renderStereoStyle = !options.showStereoFlags
+    ? 'none'
+    : options.ignoreChiralFlag
+    ? 'ext'
+    : 'old';
+
   let newOptions = {
     'render-coloring': options.atomColoring,
     'render-font-size': options.fontsz,
@@ -100,6 +106,7 @@ function getSerilizedServerOptions(options) {
     'reaction-component-margin-size': options.reactionComponentMarginSize,
     'reaction-component-margin-size-unit':
       options.reactionComponentMarginSizeUnit,
+    'render-stereo-style': renderStereoStyle,
   };
 
   if (options.imageResolution === '600') {

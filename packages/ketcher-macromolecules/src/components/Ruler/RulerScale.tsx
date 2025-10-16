@@ -168,4 +168,3 @@ const RulerScale = ({
 };
 
 export default memo(RulerScale);
- 

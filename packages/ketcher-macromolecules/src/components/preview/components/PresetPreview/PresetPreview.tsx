@@ -60,15 +60,14 @@ const PresetPreview = ({ className }: Props) => {
       data-testid="polymer-library-preview"
     >
       <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
-      {monomers.map(
-        (monomer, index) =>
-          monomer && (
-            <PresetMonomerRow key={`${icons[index]}-${monomer.label}`}>
-              <PresetIcon name={icons[index]} />
-              <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-              <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
-            </PresetMonomerRow>
-          ),
+      {monomers.map((monomer, index) =>
+        monomer ? (
+          <PresetMonomerRow key={monomer.props.id}>
+            <PresetIcon name={icons[index]} />
+            <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
+            <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+          </PresetMonomerRow>
+        ) : null,
       )}
       {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} preset />}
     </PresetContainer>

@@ -58,21 +58,18 @@ const assembleMenuItems = (
   const items: ReactElement[] = [];
 
   menuItems.forEach(
-    (
-      {
-        name,
-        title,
-        icon,
-        hidden,
-        disabled,
-        isMenuTitle,
-        separator,
-        subMenuItems,
-        onMouseOver,
-        onMouseOut,
-      },
-      _index,
-    ) => {
+    ({
+      name,
+      title,
+      icon,
+      hidden,
+      disabled,
+      isMenuTitle,
+      separator,
+      subMenuItems,
+      onMouseOver,
+      onMouseOut,
+    }) => {
       const item = subMenuItems?.length ? (
         <Submenu label={title} data-testid={name} key={name}>
           {assembleMenuItems(subMenuItems, handleMenuChange) as never}

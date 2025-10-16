@@ -55,7 +55,7 @@ const Tabs = (props: Props) => {
           <StyledTab
             label={tabPanel.caption}
             title={tabPanel.tooltip}
-            key={tabPanel.testId || tabPanel.caption}
+            key={tabPanel.caption || tabPanel.testId}
             isLayoutToRight={isLayoutToRight}
             data-testid={tabPanel.testId}
             data-tab={tabPanel.tooltip}

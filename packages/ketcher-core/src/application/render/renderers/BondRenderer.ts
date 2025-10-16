@@ -7,7 +7,8 @@ import { Box2Abs, Vec2 } from 'domain/entities';
 import { CoreEditor } from 'application/editor';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, SettingsManager } from 'utilities';
+import { getOptionsWithConvertedUnits } from 'application/render/options';
 import { D3SvgElementSelection } from 'application/render/types';
 import {
   SVGPathAttributes,
@@ -36,6 +37,11 @@ export class BondRenderer extends BaseRenderer {
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  private getRenderOptions() {
+    const savedOptions = SettingsManager.getOptions();
+    return getOptionsWithConvertedUnits(savedOptions as any);
   }
 
   private get scaledPosition() {
@@ -610,11 +616,15 @@ export class BondRenderer extends BaseRenderer {
       ?.append('g')
       ?.attr('id', this.cipElementId);
 
+    const options = this.getRenderOptions();
+    const fontSize = options.fontszInPx || 13;
+    const cipFontSize = Math.floor(fontSize * 0.8);
+
     const cipText = cipGroup
       ?.append('text')
       .text(`(${cipValue})`)
       .attr('font-family', 'Arial')
-      .attr('font-size', '13px')
+      .attr('font-size', `${cipFontSize}px`)
       .attr('pointer-events', 'none');
 
     const textNode = cipText?.node();

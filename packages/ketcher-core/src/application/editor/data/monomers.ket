@@ -231048,7 +231048,7 @@
     "naturalAnalogShort": "C",
     "class": "RNA",
     "classHELM": "RNA",
-    "aliasAxoLabs": "(InvdC)",
+    "aliasAxoLabs": "(invdC)",
     "atoms": [
         {
             "label": "C",
@@ -232585,7 +232585,7 @@
             9
           ]
         },
-        "type": "left"
+        "type": "right"
       }
     ]
   },

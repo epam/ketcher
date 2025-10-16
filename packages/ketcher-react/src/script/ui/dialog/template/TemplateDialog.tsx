@@ -22,6 +22,7 @@ import {
   deleteTmpl,
   editTmpl,
   selectTmpl,
+  changeTab,
 } from '../../state/templates';
 import { filterLib, filterFGLib, greekify } from '../../utils';
 import Accordion from '@mui/material/Accordion';
@@ -76,6 +77,7 @@ interface TemplateLibProps {
   lib: Array<Template>;
   selected: Template | null;
   mode: string;
+  tab: number;
   initialTab: number;
   saltsAndSolvents: Template[];
   renderOptions?: any;
@@ -90,6 +92,7 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void;
   onOk: (res: any) => void;
   onSelect: (res: any) => void;
+  onTabChange: (tab: number) => void;
   functionalGroups: Template[];
 }
 
@@ -158,11 +161,13 @@ const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
+    onTabChange,
     onChangeGroup,
     /* eslint-disable @typescript-eslint/no-unused-vars */
     mode,
     /* eslint-enable @typescript-eslint/no-unused-vars */
-    initialTab = TemplateTabs.TemplateLibrary,
+    tab,
+    initialTab = null,
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
@@ -173,9 +178,6 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const [currentTab, setCurrentTab] = useState(
-    initialTab ?? TemplateTabs.TemplateLibrary,
-  );
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group,
   ]);
@@ -196,16 +198,22 @@ const TemplateDialog: FC<Props> = (props) => {
   useEffect(() => {
     searchInputRef.current?.focus();
     onSelect(null);
-  }, [currentTab, onSelect]);
+  }, [tab, onSelect]);
+
+  useEffect(() => {
+    if (initialTab !== null) {
+      onTabChange(initialTab);
+    }
+  }, [initialTab, onTabChange]);
 
   useEffect(() => {
     if (
       isMonomerCreationWizardActive &&
-      currentTab === TemplateTabs.FunctionalGroupLibrary
+      tab === TemplateTabs.FunctionalGroupLibrary
     ) {
-      setCurrentTab(TemplateTabs.TemplateLibrary);
+      onTabChange(TemplateTabs.TemplateLibrary);
     }
-  }, [isMonomerCreationWizardActive, currentTab]);
+  }, [isMonomerCreationWizardActive, tab, onTabChange]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
@@ -218,7 +226,7 @@ const TemplateDialog: FC<Props> = (props) => {
   };
 
   const handleTabChange = (value) => {
-    setCurrentTab(value);
+    onTabChange(value);
   };
 
   const sdfSerializer = new SdfSerializer();
@@ -227,7 +235,7 @@ const TemplateDialog: FC<Props> = (props) => {
     [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
     [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
   };
-  const data = sdfSerializer.serialize(serializerMapper[currentTab]);
+  const data = sdfSerializer.serialize(serializerMapper[tab]);
 
   const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group);
@@ -239,7 +247,7 @@ const TemplateDialog: FC<Props> = (props) => {
       headerContent={<HeaderContent />}
       footerContent={
         <FooterContent
-          tab={currentTab}
+          tab={tab}
           data={data}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
         />
@@ -263,7 +271,7 @@ const TemplateDialog: FC<Props> = (props) => {
         <Icon name="search" className={classes.searchIcon} />
       </div>
       <Tabs
-        value={currentTab}
+        value={tab}
         onChange={(_, value) => handleTabChange(value)}
         className={classes.tabs}
       >
@@ -286,7 +294,7 @@ const TemplateDialog: FC<Props> = (props) => {
         />
       </Tabs>
       <div className={classes.tabsContent}>
-        <TabPanel value={currentTab} index={TemplateTabs.TemplateLibrary}>
+        <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
           <div>
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {
@@ -338,10 +346,7 @@ const TemplateDialog: FC<Props> = (props) => {
             )}
           </div>
         </TabPanel>
-        <TabPanel
-          value={currentTab}
-          index={TemplateTabs.FunctionalGroupLibrary}
-        >
+        <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
           {filteredFG?.length ? (
             <div className={classes.resultsContainer}>
               <TemplateTable
@@ -358,7 +363,7 @@ const TemplateDialog: FC<Props> = (props) => {
             </div>
           )}
         </TabPanel>
-        <TabPanel value={currentTab} index={TemplateTabs.SaltsAndSolvents}>
+        <TabPanel value={tab} index={TemplateTabs.SaltsAndSolvents}>
           {filteredSaltsAndSolvents?.length ? (
             <div className={classes.resultsContainer}>
               <TemplateTable
@@ -406,6 +411,7 @@ export default connect(
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
+    onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),

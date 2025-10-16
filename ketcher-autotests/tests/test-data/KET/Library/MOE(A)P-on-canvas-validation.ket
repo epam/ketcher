@@ -51,8 +51,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 2.875,
-            "y": -4.375
+            "x": 2.8125,
+            "y": -4.36875
         },
         "alias": "A",
         "templateId": "A___Adenine"
@@ -258,8 +258,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.875,
-            "y": -2.875
+            "x": 2.8125,
+            "y": -2.8687500000000004
         },
         "alias": "MOE",
         "templateId": "MOE___2'-O-Methoxyethyl ribose"
@@ -559,8 +559,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.375,
-            "y": -2.875
+            "x": 4.3125,
+            "y": -2.8687500000000004
         },
         "alias": "P",
         "templateId": "P___Phosphate"

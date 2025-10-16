@@ -8,6 +8,8 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
+import { SettingsManager } from 'utilities';
+import { getOptionsWithConvertedUnits } from 'application/render/options';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -21,6 +23,11 @@ export class AtomRenderer extends BaseRenderer {
   constructor(public atom: Atom) {
     super(atom);
     atom.setRenderer(this);
+  }
+
+  private getRenderOptions() {
+    const savedOptions = SettingsManager.getOptions();
+    return getOptionsWithConvertedUnits(savedOptions as any);
   }
 
   get scaledPosition() {
@@ -282,6 +289,10 @@ export class AtomRenderer extends BaseRenderer {
       hydrogenAmount = 0;
     }
 
+    const options = this.getRenderOptions();
+    const fontSize = options.fontszInPx || 13;
+    const subFontSize = options.fontszsubInPx || Math.ceil(0.5 * fontSize);
+
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
@@ -290,7 +301,7 @@ export class AtomRenderer extends BaseRenderer {
         'style',
         'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
       )
-      .attr('font-size', '13px')
+      .attr('font-size', `${fontSize}px`)
       .attr('pointer-events', 'none');
 
     if (!shouldHydrogenBeOnLeft) {
@@ -310,7 +321,11 @@ export class AtomRenderer extends BaseRenderer {
         .text('H');
 
       if (hydrogenAmount > 1) {
-        textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
+        textElement
+          ?.append('tspan')
+          .text(hydrogenAmount)
+          .attr('font-size', `${subFontSize}px`)
+          .attr('dy', 3);
       }
     }
 
@@ -408,6 +423,9 @@ export class AtomRenderer extends BaseRenderer {
   private appendCharge() {
     if (this.atom.hasCharge) {
       const charge = this.atom.properties.charge as number;
+      const options = this.getRenderOptions();
+      const fontSize = options.fontszInPx || 13;
+      const subFontSize = options.fontszsubInPx || Math.ceil(0.5 * fontSize);
 
       this.textElement
         ?.append('tspan')
@@ -416,6 +434,7 @@ export class AtomRenderer extends BaseRenderer {
             (charge > 0 ? '+' : '–'),
         )
         .attr('fill', this.labelColor)
+        .attr('font-size', `${subFontSize}px`)
         .attr('dy', -4);
     }
   }
@@ -466,11 +485,15 @@ export class AtomRenderer extends BaseRenderer {
   private appendExplicitValence() {
     if (this.atom.hasExplicitValence) {
       const explicitValence = this.atom.properties.explicitValence as number;
+      const options = this.getRenderOptions();
+      const fontSize = options.fontszInPx || 13;
+      const subFontSize = options.fontszsubInPx || Math.ceil(0.5 * fontSize);
 
       this.textElement
         ?.append('tspan')
         .text(`(${VALENCE_MAP[explicitValence]})`)
         .attr('fill', this.labelColor)
+        .attr('font-size', `${subFontSize}px`)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
     }
@@ -479,6 +502,9 @@ export class AtomRenderer extends BaseRenderer {
   private appendExplicitIsotope() {
     if (this.atom.hasExplicitIsotope) {
       const explicitIsotope = this.atom.properties.isotope as number;
+      const options = this.getRenderOptions();
+      const fontSize = options.fontszInPx || 13;
+      const subFontSize = options.fontszsubInPx || Math.ceil(0.5 * fontSize);
 
       this.textElement
         /*
@@ -490,6 +516,7 @@ export class AtomRenderer extends BaseRenderer {
         ?.insert('tspan', ':first-child')
         .text(explicitIsotope)
         .attr('fill', this.labelColor)
+        .attr('font-size', `${subFontSize}px`)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
     }
@@ -519,6 +546,10 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
+    const options = this.getRenderOptions();
+    const fontSize = options.fontszInPx || 13;
+    const cipFontSize = Math.floor(fontSize * 0.8);
+
     this.cipLabelElement = this.canvas
       ?.append('g')
       ?.attr('id', `cip-atom-${this.atom.id}`);
@@ -527,7 +558,7 @@ export class AtomRenderer extends BaseRenderer {
       ?.append('text')
       .text(`(${cipValue})`)
       .attr('font-family', 'Arial')
-      .attr('font-size', '10px')
+      .attr('font-size', `${cipFontSize}px`)
       .attr('pointer-events', 'none');
 
     this.cipTextElementBBox = cipTextElement?.node()?.getBBox();

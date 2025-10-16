@@ -1285,12 +1285,13 @@ class Editor implements KetcherEditor {
       });
     });
 
+    const sgroupId = this.render.ctab.molecule.sgroups.newId();
     const action = fromSgroupAddition(
       this.render.ctab,
       SGroup.TYPES.SUP,
       this.originalSelection.atoms,
       { expanded: true },
-      this.render.ctab.molecule.sgroups.newId(),
+      sgroupId,
       sGroupAttachmentPoints,
       monomer.position,
       true,
@@ -1303,6 +1304,9 @@ class Editor implements KetcherEditor {
     this.render.ctab.molecule.markFragments();
 
     this.update(action);
+
+    // Select the created monomer
+    this.selection({ sgroups: [sgroupId] });
 
     const { root: templateRoot, ...templateData } = monomerTemplate;
     const libraryItem = JSON.stringify({

@@ -662,6 +662,7 @@ export class Atom extends BaseMicromoleculeEntity {
     } else if (groupno === 8) {
       if (label === 'Pt') {
         // Platinum has acceptable valences of 2 and 4
+        // Note: Other group 8 transition metals may need similar handling in the future
         if (connectionCount + radicalCount + absCharge <= 2) {
           valence = 2;
           hydrogenCount = 2 - radicalCount - connectionCount - absCharge;

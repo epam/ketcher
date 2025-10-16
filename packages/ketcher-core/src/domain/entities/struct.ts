@@ -255,8 +255,7 @@ export class Struct {
     const bidMap = bidMapEntity ?? new Map();
 
     bondSet = bondSet.filter((bid) => {
-      const bond = this.bonds.get(bid);
-      if (!bond) return false;
+      const bond = this.bonds.get(bid)!;
       return atomSet!.has(bond.begin) && atomSet!.has(bond.end);
     });
 

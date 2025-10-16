@@ -9,7 +9,7 @@ export const Container = styled.div<{ expanded?: boolean }>(
     maxHeight: '100%',
     minHeight: '150px',
     height: expanded ? 'auto' : '150px',
-    width: expanded ? 'auto' : '150px',
+    width: expanded ? '100%' : '150px',
     alignSelf: 'stretch',
     '& svg': {
       maxWidth: 'fit-content',

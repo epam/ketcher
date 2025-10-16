@@ -15,7 +15,7 @@ export const StyledStructRender = styled(
   maxHeight: '100%',
   minHeight: '150px',
   height: isExpanded ? 'auto' : '150px',
-  width: isExpanded ? 'auto' : '150px',
+  width: isExpanded ? '100%' : '150px',
   alignSelf: 'stretch',
   '& svg': {
     maxWidth: 'fit-content',

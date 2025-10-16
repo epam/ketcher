@@ -177,12 +177,14 @@ function rxnMerge(
     const bb = mol.getCoordBoundingBoxObj();
     if (!bb) continue; // eslint-disable-line no-continue
 
-    const fragmentType =
-      j < nReactants
-        ? FRAGMENT.REACTANT // eslint-disable-line no-nested-ternary
-        : j < nReactants + nProducts
-        ? FRAGMENT.PRODUCT
-        : FRAGMENT.AGENT;
+    let fragmentType;
+    if (j < nReactants) {
+      fragmentType = FRAGMENT.REACTANT;
+    } else if (j < nReactants + nProducts) {
+      fragmentType = FRAGMENT.PRODUCT;
+    } else {
+      fragmentType = FRAGMENT.AGENT;
+    }
     if (fragmentType === FRAGMENT.REACTANT) {
       bbReact.push(bb);
       molReact.push(mol);

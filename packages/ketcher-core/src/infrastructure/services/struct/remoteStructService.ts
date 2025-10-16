@@ -439,6 +439,7 @@ export class RemoteStructService implements StructService {
         'render-stereo-bond-width': options?.['render-stereo-bond-width'],
         'render-stereo-bond-width-unit':
           options?.['render-stereo-bond-width-unit'],
+        'render-stereo-style': options?.['render-stereo-style'],
         'render-hash-spacing': options?.['render-hash-spacing'],
         'render-hash-spacing-unit': options?.['render-hash-spacing-unit'],
         'render-output-sheet-width': options?.['render-output-sheet-width'],

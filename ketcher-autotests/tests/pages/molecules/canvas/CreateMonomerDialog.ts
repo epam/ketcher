@@ -18,6 +18,7 @@ import {
   AttachmentPointAtom,
   AttachmentPointName,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
+import { WarningMessageDialog } from './createMonomer/WarningDialog';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
@@ -261,6 +262,9 @@ export async function createMonomer(
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
   await createMonomerDialog.submit();
+  if (await WarningMessageDialog(page).isVisible()) {
+    await WarningMessageDialog(page).ok();
+  }
 }
 
 export async function prepareMoleculeForMonomerCreation(

@@ -18,6 +18,7 @@ type Props = {
 const iconMap: Record<WizardNotificationType, IconName> = {
   info: 'checkFilled',
   error: 'warningFilled',
+  warning: 'warningFilled',
 };
 
 const Notification = ({ id, type, message, wizardStateDispatch }: Props) => {

@@ -7,8 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   moveOnAtom,
-  moveOnBond,
-  BondType,
   pressButton,
   dragMouseTo,
   takeLeftToolbarScreenshot,
@@ -34,6 +32,7 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Selection tools', () => {
   let page: Page;
@@ -101,10 +100,11 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Bond becomes lighter than the rest of the structure.
     */
+    const bondLocator = getBondLocator(page, { bondId: 7 });
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await moveOnBond(page, BondType.SINGLE, 0);
+    await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -478,13 +478,15 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-16944
     Description: When mouse hover on Benzene ring atom or bond, selection appears.
     */
+
+    const bondLocator = getBondLocator(page, { bondId: 7 });
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await moveOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
-    await moveOnBond(page, BondType.SINGLE, 0);
+    await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);
   });
 

@@ -318,12 +318,3 @@ export async function moveOnAtom(
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await page.mouse.move(point.x, point.y);
 }
-
-export async function moveOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.move(point.x, point.y);
-}

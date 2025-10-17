@@ -44,8 +44,7 @@ const config = {
     action: {
       thunk: serverTransform('aromatize'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'arom'),
   },
   dearom: {
@@ -54,8 +53,7 @@ const config = {
     action: {
       thunk: serverTransform('dearomatize'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'dearom'),
   },
   cip: {
@@ -64,8 +62,7 @@ const config = {
     action: {
       thunk: serverTransform('calculateCip'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'cip'),
   },
   check: {
@@ -105,8 +102,7 @@ const config = {
     action: {
       thunk: serverTransform('toggleExplicitHydrogens'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'explicit-hydrogens'),
   },
 };

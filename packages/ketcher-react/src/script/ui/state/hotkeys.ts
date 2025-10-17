@@ -24,6 +24,7 @@ import {
   ketcherProvider,
   SupportedFormat,
   Editor,
+  EditorSelection,
   getStructure,
   MolSerializer,
   runAsyncAction,
@@ -270,17 +271,20 @@ function checkGroupOnTool(group, actionTool) {
   return index;
 }
 
-function hasActiveSelection(selection) {
+function hasActiveSelection(
+  selection: EditorSelection | null,
+): selection is EditorSelection {
+  if (selection === null) {
+    return false;
+  }
   return (
-    selection &&
-    (selection.atoms?.length > 0 ||
-      selection.bonds?.length > 0 ||
-      selection.enhancedFlags?.length > 0 ||
-      selection.rgroupAttachmentPoints?.length > 0 ||
-      selection.rxnArrows?.length > 0 ||
-      selection.rxnPluses?.length > 0 ||
-      selection.simpleObjects?.length > 0 ||
-      selection.texts?.length > 0)
+    (selection.atoms?.length || 0) > 0 ||
+    (selection.bonds?.length || 0) > 0 ||
+    (selection.rgroupAttachmentPoints?.length || 0) > 0 ||
+    (selection.rxnArrows?.length || 0) > 0 ||
+    (selection.rxnPluses?.length || 0) > 0 ||
+    (selection.simpleObjects?.length || 0) > 0 ||
+    (selection.texts?.length || 0) > 0
   );
 }
 

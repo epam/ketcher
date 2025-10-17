@@ -41,6 +41,17 @@ const useFunctionalGroupEoc = () => {
   );
 
   const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
+    // If trying to contract (toExpand is false), hide the option if any functional group has no name
+    if (!toExpand) {
+      const hasEmptyName = props?.functionalGroups?.some(
+        (functionalGroup) =>
+          !functionalGroup.name || functionalGroup.name.trim() === '',
+      );
+      if (hasEmptyName) {
+        return true;
+      }
+    }
+
     return Boolean(
       props?.functionalGroups?.every((functionalGroup) =>
         toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,

@@ -105,12 +105,18 @@ export function setExpandSGroup(
 ) {
   const action = new Action();
 
+  const sgroup = restruct.molecule.sgroups.get(sgid);
+  assert(sgroup != null);
+
+  // Prevent collapsing superatom s-groups without a name
+  if (!attrs.expanded && sgroup.isSuperatomWithoutLabel) {
+    return action;
+  }
+
   Object.keys(attrs).forEach((key) => {
     action.addOp(new SGroupAttr(sgid, key, attrs[key]));
   });
 
-  const sgroup = restruct.molecule.sgroups.get(sgid);
-  assert(sgroup != null);
   const atoms = SGroup.getAtoms(restruct, sgroup);
 
   atoms.forEach((aid) => {
@@ -133,6 +139,11 @@ export function setExpandMonomerSGroup(
   assert(sGroup != null);
 
   if (attrs.expanded === sGroup.isExpanded()) {
+    return action;
+  }
+
+  // Prevent collapsing superatom s-groups without a name
+  if (!attrs.expanded && sGroup.isSuperatomWithoutLabel) {
     return action;
   }
 

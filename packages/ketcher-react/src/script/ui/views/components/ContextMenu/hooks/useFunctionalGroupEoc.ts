@@ -42,9 +42,18 @@ const useFunctionalGroupEoc = () => {
 
   const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
     return Boolean(
-      props?.functionalGroups?.every((functionalGroup) =>
-        toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
-      ),
+      props?.functionalGroups?.every((functionalGroup) => {
+        // Hide Contract option if functional group has no name (prevents collapsing without label)
+        if (
+          !toExpand &&
+          functionalGroup.relatedSGroup.isSuperatomWithoutLabel
+        ) {
+          return true;
+        }
+        return toExpand
+          ? functionalGroup.isExpanded
+          : !functionalGroup.isExpanded;
+      }),
     );
   }, []);
 

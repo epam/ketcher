@@ -19,6 +19,8 @@ import { cloneDeep, cloneDeepWith } from 'lodash';
 import { EditorSelection } from 'application/editor';
 import { KetMonomerClass, MonomerTransformation } from 'application/formatters';
 import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
+import { MonomerItemType } from 'domain/types';
+import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -43,6 +45,18 @@ export const setAmbiguousMonomerPrefix = (monomerId: number) =>
 
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
+};
+
+export const getMonomerTemplateRefFromMonomerItem = (
+  monomerItem: MonomerItemType,
+) => {
+  const { props } = monomerItem;
+
+  if (props.id) {
+    return setMonomerTemplatePrefix(props.id);
+  }
+
+  return setMonomerTemplatePrefix(getMonomerUniqueKey(monomerItem));
 };
 
 export const getHELMClassByKetMonomerClass = (

@@ -23,6 +23,7 @@ import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
+  generateCornerFromBottomToLeft,
   generateCornerFromBottomToRight,
   generateCornerFromLeftToBottom,
   generateCornerFromLeftToTop,
@@ -647,9 +648,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
         startPosition,
       );
-      this.path = this.path.concat(generateCornerFromLeftToBottom());
-      this.addLine(LineDirection.Vertical, this.getMonomerHeight());
-      this.path = this.path.concat(generateCornerFromTopToLeft());
+      this.path = this.path.concat(generateCornerFromLeftToTop());
+      this.addLine(LineDirection.Vertical, -this.getMonomerHeight());
+      this.path = this.path.concat(generateCornerFromBottomToLeft());
       this.addLine(
         LineDirection.Horizontal,
         -(
@@ -660,12 +661,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         ),
       );
 
-      this.path = this.path.concat(generateCornerFromRightToTop());
+      this.path = this.path.concat(generateCornerFromLeftToBottom());
       this.addLine(
         LineDirection.Vertical,
-        endPosition.y - startPosition.y - this.getMonomerHeight(),
+        endPosition.y - startPosition.y + this.getMonomerHeight(),
       );
-      this.path = this.path.concat(generateCornerFromBottomToRight());
+      this.path = this.path.concat(generateCornerFromTopToRight());
       this.addLine(
         LineDirection.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,

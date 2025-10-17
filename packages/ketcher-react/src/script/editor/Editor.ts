@@ -1399,20 +1399,29 @@ class Editor implements KetcherEditor {
 
     assert(atomPair);
 
-    if (this.monomerCreationState.assignedAttachmentPoints.has(newName)) {
-      const existingAtomPair =
-        this.monomerCreationState.assignedAttachmentPoints.get(newName);
-      assert(existingAtomPair);
+    // Check if newName already exists (and is different from currentName)
+    if (
+      newName !== currentName &&
+      this.monomerCreationState.assignedAttachmentPoints.has(newName)
+    ) {
+      // Mark both attachment points as problematic to highlight the conflict
+      this.monomerCreationState.problematicAttachmentPoints.add(currentName);
+      this.monomerCreationState.problematicAttachmentPoints.add(newName);
 
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.set(
-        currentName,
-        existingAtomPair,
+      // Dispatch event to show notification
+      window.dispatchEvent(
+        new CustomEvent('MonomerCreationExternalNotification', {
+          detail: 'duplicateAttachmentPoints',
+        }),
       );
-    } else {
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
+
+      this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+      this.render.update(true);
+      return;
     }
+
+    this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
+    this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 

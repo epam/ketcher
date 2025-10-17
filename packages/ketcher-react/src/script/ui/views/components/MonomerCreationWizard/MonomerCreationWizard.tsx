@@ -207,6 +207,34 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
     return { notifications, problematicAttachmentPoints };
   }
 
+  // Check for duplicate attachment point numbers
+  const attachmentPointNumbers = attachmentPoints.map(
+    getAttachmentPointNumberFromLabel,
+  );
+  const uniqueNumbers = new Set(attachmentPointNumbers);
+
+  if (attachmentPointNumbers.length !== uniqueNumbers.size) {
+    // Find duplicates
+    const numberCounts = new Map<number, number>();
+    attachmentPointNumbers.forEach((num) => {
+      numberCounts.set(num, (numberCounts.get(num) || 0) + 1);
+    });
+
+    numberCounts.forEach((count, num) => {
+      if (count > 1) {
+        const problematicPointName = getAttachmentPointLabel(num);
+        problematicAttachmentPoints.add(problematicPointName);
+      }
+    });
+
+    notifications.set('duplicateAttachmentPoints', {
+      type: 'error',
+      message: NotificationMessages.duplicateAttachmentPoints,
+    });
+
+    return { notifications, problematicAttachmentPoints };
+  }
+
   const sideAttachmentPoints = attachmentPoints.filter(
     (attachmentPointName) => {
       const pointNumber =

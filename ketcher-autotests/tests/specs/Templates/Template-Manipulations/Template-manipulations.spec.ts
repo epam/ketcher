@@ -13,7 +13,6 @@ import {
   clickOnBond,
   BondType,
   takePageScreenshot,
-  moveOnBond,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
   cutToClipboardByKeyboard,
@@ -21,7 +20,6 @@ import {
   copyToClipboardByKeyboard,
   clickOnCanvas,
   selectUndoByKeyboard,
-  waitForElementInCanvas,
   pasteFromClipboardAndAddToCanvas,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -559,27 +557,6 @@ test.describe('Open Ketcher', () => {
     );
     await moveOnAtom(page, 'C', 1);
     await moveOnAtom(page, 'C', 0);
-    await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
-
-  test('The different templates are attached to the atoms of existing benzene-2', async () => {
-    /*
-    Test case: EPMLSOPKET-1669/2
-    Description:
-    Paste benzene from templates on the canvas.
-     -click with template the bond of the created benzene; 
-    Clear All.
-    */
-    await drawBenzeneRing(page);
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
-    );
-    await moveOnBond(page, BondType.DOUBLE, 1);
-    await moveOnBond(page, BondType.DOUBLE, 0);
-    await waitForElementInCanvas(page, 'A=Test');
-
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   });

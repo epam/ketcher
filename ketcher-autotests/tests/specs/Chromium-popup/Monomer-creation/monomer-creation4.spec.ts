@@ -185,3 +185,201 @@ test(`4. Verify that both potential AAs and potential LGAs are marked on hover o
   }
   await CreateMonomerDialog(page).discard();
 });
+
+test(`5. Check that after the option "Mark as leaving group" is clicked`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that after the option "Mark as leaving group" is clicked, an attachment point
+   *              with the following attributes is made: The LGA is the atom that was r-clicked, The AA
+   *              is the atom that the LGA is connected to, The R-number is the lowest free R-number,
+   *              or R1 (if all R-numbers are already occupied)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential LGA on canvas
+   *      6. Take a screenshot to verify that the AA is the atom that the LGA is connected to, The R-number
+   *         is the lowest free R-number,
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 260, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'C' });
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsLeavingGroup,
+  );
+
+  await takeElementScreenshot(page, targetAtom, { padding: 100 });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`6. Check that right clicking on a potential AA on canvas, shows an option in the right-click menu: "Mark as connection point" (see mockups)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that right clicking on a potential AA on canvas, shows an option in the right-click menu: "Mark as connection point" (see mockups)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Verify that context menu contains option "Mark as connection point"
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCNCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
+
+  await ContextMenu(page, targetAtom).open();
+
+  await expect(
+    page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
+  ).toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`7. Check that right clicking on a non potential AA on canvas, not shows an option in the right-click menu: "Mark as connection point" (for non-potential-AAs the option is disabled) (see mockups)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that right clicking on a non potential AA on canvas, not shows an option in the right-click menu: "Mark as connection point" (for non-potential-AAs the option is disabled) (see mockups)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a non potential AA on canvas
+   *      6. Verify that context menu does not contain option "Mark as connection point"
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCBrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
+
+  await ContextMenu(page, targetAtom).open();
+
+  await expect(
+    page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
+  ).not.toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`8. Check that potential AA is every atom that is connected to a potential LGA and/or every atom that has implicit hydrogens`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that potential AA is every atom that is connected to a potential LGA and/or every atom that has implicit hydrogens
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Verify that context menu does contain option "Mark as connection point"
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'N(CC)([H])CN(C)CN(N)CN(O)CN(F)CN(CC)Cl',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
+  for (const targetAtom of await targetAtoms.all()) {
+    await ContextMenu(page, targetAtom).open();
+    await expect(
+      page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
+    ).toBeVisible();
+    await clickOnCanvas(page, 0, 0);
+  }
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`9. Check that after the option "Mark as connection point" is clicked, an attachment point with the following attributes is made: The attachment atom is the atom that was r-clicked.`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that potential AA is every atom that is connected to a potential LGA and/or every atom that has implicit hydrogens
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'N(CC)([H])CN(C)CN(Br)CN(O)CN(F)CN(CC)Cl',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 350, page);
+
+  const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
+  for (const targetAtom of await targetAtoms.all()) {
+    await ContextMenu(page, targetAtom).click(
+      ConnectionPointOption.MarkAsConnectionPoint,
+    );
+    await takeElementScreenshot(page, targetAtom, { padding: 50 });
+  }
+
+  await CreateMonomerDialog(page).discard();
+});

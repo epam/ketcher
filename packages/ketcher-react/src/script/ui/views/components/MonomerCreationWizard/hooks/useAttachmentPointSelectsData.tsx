@@ -23,11 +23,12 @@ export type AttachmentPointSelectData = {
  * @returns React node with properly formatted label with subscripted numbers
  */
 const formatAtomLabelWithSubscripts = (label: string): ReactNode => {
-  // Match pattern: one or more letters followed by one or more digits
+  // Match pattern: element symbols (uppercase followed by optional lowercase) followed by one or more digits
   // This handles cases like CH3, NH2, etc.
-  const regex = /([A-Za-z]+)(\d+)/g;
+  const regex = /([A-Z][a-z]*)(\d+)/g;
   const parts: ReactNode[] = [];
   let lastIndex = 0;
+  let keyCounter = 0;
   let match;
 
   while ((match = regex.exec(label)) !== null) {
@@ -39,8 +40,8 @@ const formatAtomLabelWithSubscripts = (label: string): ReactNode => {
     // Add the letters
     parts.push(match[1]);
 
-    // Add the subscripted numbers
-    parts.push(<sub key={`${match.index}-sub`}>{match[2]}</sub>);
+    // Add the subscripted numbers with unique key
+    parts.push(<sub key={`sub-${keyCounter++}`}>{match[2]}</sub>);
 
     lastIndex = regex.lastIndex;
   }

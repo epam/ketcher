@@ -7,12 +7,51 @@ import { Editor } from '../../../../../editor';
 import assert from 'assert';
 import { isNumber } from 'lodash';
 import { Option } from '../../../../component/form/Select';
+import { ReactNode } from 'react';
 
 export type AttachmentPointSelectData = {
   nameOptions: Array<Option>;
   leavingAtomOptions: Array<Option>;
   currentNameOption?: Option;
   currentLeavingAtomOption?: Option;
+};
+
+/**
+ * Formats an atom label with subscripted numbers for display in dropdowns.
+ * For example: "CH3" -> "CH₃", "NH2" -> "NH₂", "O" -> "O"
+ * @param label The atom label to format (e.g., "CH3", "NH2", "O")
+ * @returns React node with properly formatted label with subscripted numbers
+ */
+const formatAtomLabelWithSubscripts = (label: string): ReactNode => {
+  // Match pattern: one or more letters followed by one or more digits
+  // This handles cases like CH3, NH2, etc.
+  const regex = /([A-Za-z]+)(\d+)/g;
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(label)) !== null) {
+    // Add any text before the match
+    if (match.index > lastIndex) {
+      parts.push(label.substring(lastIndex, match.index));
+    }
+
+    // Add the letters
+    parts.push(match[1]);
+
+    // Add the subscripted numbers
+    parts.push(<sub key={`${match.index}-sub`}>{match[2]}</sub>);
+
+    lastIndex = regex.lastIndex;
+  }
+
+  // Add any remaining text after the last match
+  if (lastIndex < label.length) {
+    parts.push(label.substring(lastIndex));
+  }
+
+  // If no matches were found, return the original label
+  return parts.length > 0 ? <>{parts}</> : label;
 };
 
 export const useAttachmentPointSelectsData = (
@@ -55,7 +94,7 @@ export const useAttachmentPointSelectsData = (
 
       const children = (
         <>
-          {label}
+          {formatAtomLabelWithSubscripts(label)}
           {implicitH > 0 &&
             (implicitH > 1 ? (
               <>

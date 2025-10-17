@@ -45,7 +45,7 @@ const useFunctionalGroupEoc = () => {
     if (!toExpand) {
       const hasEmptyName = props?.functionalGroups?.some(
         (functionalGroup) =>
-          !functionalGroup.name || functionalGroup.name.trim() === '',
+          !functionalGroup.name || functionalGroup.name?.trim() === '',
       );
       if (hasEmptyName) {
         return true;

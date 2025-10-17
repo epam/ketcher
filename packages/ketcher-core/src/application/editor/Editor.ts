@@ -95,6 +95,7 @@ import { SelectLayoutModeOperation } from 'application/editor/operations/polymer
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import {
   getAminoAcidsToModify,
+  getMonomerUniqueKey,
   isAmbiguousMonomerLibraryItem,
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
@@ -106,6 +107,10 @@ import { debounce } from 'lodash';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
+import {
+  getKetRef,
+  getMonomerTemplateRefFromMonomerItem,
+} from 'domain/serializers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -343,6 +348,31 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const aliasCollisionExists = this._monomersLibrary.some(
+        (monomer) =>
+          (Boolean(newMonomer.props?.aliasHELM) &&
+            monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+          (Boolean(newMonomer.props?.idtAliases?.base) &&
+            monomer.props?.idtAliases?.base ===
+              newMonomer.props?.idtAliases?.base) ||
+          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
+            monomer.props?.idtAliases?.modifications?.endpoint3 ===
+              newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
+          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
+            monomer.props?.idtAliases?.modifications?.endpoint5 ===
+              newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
+          (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
+            monomer.props?.idtAliases?.modifications?.internal ===
+              newMonomer.props?.idtAliases?.modifications?.internal),
+      );
+
+      if (aliasCollisionExists) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Alias collision detected for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
+        );
+        return;
+      }
+
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
           return (
@@ -352,48 +382,48 @@ export class CoreEditor {
         },
       );
 
-      const newMonomerProps = newMonomer.props;
-      const monomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-${
-        newMonomerProps.id ?? newMonomerProps.MonomerName
-      }`;
+      const newMonomerTemplateRef =
+        getMonomerTemplateRefFromMonomerItem(newMonomer);
 
       if (existingMonomerIndex !== -1) {
-        this._monomersLibrary[existingMonomerIndex] = newMonomer;
+        const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
+          this._monomersLibrary[existingMonomerIndex],
+        );
 
-        const existingMonomerProps =
-          this._monomersLibrary[existingMonomerIndex].props;
-        const existingMonomerIdToUse = `${KetTemplateType.MONOMER_TEMPLATE}-
-          ${existingMonomerProps.id ?? existingMonomerProps.MonomerName}`;
         // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
           this._monomersLibraryParsedJson!.root.templates.findIndex(
-            (template) => template.$ref === existingMonomerIdToUse,
+            (template) => template.$ref === existingMonomerTemplateRef,
           );
-        if (existingMonomerRefIndex && existingMonomerRefIndex !== -1) {
+        if (existingMonomerRefIndex !== -1) {
+          const existingMonomer = this._monomersLibrary[existingMonomerIndex];
+          const { id } = existingMonomer.props;
+          const existingMonomerId = id ?? getMonomerUniqueKey(existingMonomer);
+          this._monomersLibrary[existingMonomerIndex] = newMonomer;
+          this._monomersLibrary[existingMonomerIndex].props.id =
+            existingMonomerId;
+
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          delete this._monomersLibraryParsedJson!.root.templates[
-            existingMonomerRefIndex
-          ];
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          delete this._monomersLibraryParsedJson![existingMonomerIdToUse];
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson!.root.templates.push({
-            $ref: monomerIdToUse,
-          });
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson![monomerIdToUse] =
-            newMonomersLibraryChunkParsedJson[monomerIdToUse];
+          this._monomersLibraryParsedJson![existingMonomerTemplateRef] =
+            newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+        } else {
+          // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
+          KetcherLogger.error(
+            'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
+            existingMonomerTemplateRef,
+          );
         }
       } else {
         this._monomersLibrary.push(newMonomer);
+
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push({
-          $ref: monomerIdToUse,
-        });
+        this._monomersLibraryParsedJson!.root.templates.push(
+          getKetRef(newMonomerTemplateRef),
+        );
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson![monomerIdToUse] =
-          newMonomersLibraryChunkParsedJson[monomerIdToUse];
+        this._monomersLibraryParsedJson![newMonomerTemplateRef] =
+          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
       }
     });
 

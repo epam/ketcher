@@ -3,7 +3,7 @@ import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 
 jest.mock('react-intersection-observer', () => {
   return {
@@ -21,12 +21,11 @@ describe('Hot keys', () => {
     act(() => {
       fireEvent.click(text);
       fireEvent.keyDown(text, {
-        keyCode: 27,
+        code: 'Escape',
       });
     });
-    expect(screen.getByTestId('select-rectangle').className).toContain(
-      'selected',
-    );
+    const className = screen.getByTestId('select-rectangle').className;
+    expect(className).toContain('selected');
   });
 
   it('Shift+Tab to switch selection tool', async () => {
@@ -34,7 +33,7 @@ describe('Hot keys', () => {
     // eslint-disable-next-line testing-library/no-unnecessary-act
     act(() => {
       fireEvent.keyDown(document, {
-        keyCode: 9,
+        code: 'Tab',
         shiftKey: true,
       });
     });

@@ -261,13 +261,13 @@ export const hotkeysConfiguration = {
     },
   },
   'zoom-plus': {
-    shortcut: 'Mod+=',
+    shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
     handler: () => {
       ZoomTool.instance.zoomIn();
     },
   },
   'zoom-minus': {
-    shortcut: 'Mod+-',
+    shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     handler: () => {
       ZoomTool.instance.zoomOut();
     },

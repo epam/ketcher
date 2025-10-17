@@ -14,92 +14,155 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
-const mac =
+const isMac =
   typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
 
-function normalizeKeyName(name) {
-  const parts = name.split(/\+(?!$)/);
-  let result = parts[parts.length - 1];
-  if (result === 'Space') result = ' ';
-  let alt;
-  let ctrl;
-  let shift;
-  let meta;
+export const KeyboardModifiers = {
+  Alt: 'Alt',
+  Control: 'Control',
+  Ctrl: 'Ctrl',
+  Meta: 'Meta',
+  Shift: 'Shift',
+} as const;
 
-  for (let i = 0; i < parts.length - 1; i++) {
-    const mod = parts[i];
-    if (/^(cmd|meta|m)$/i.test(mod)) meta = true;
-    else if (/^a(lt)?$/i.test(mod)) alt = true;
-    else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;
-    else if (/^s(hift)?$/i.test(mod)) shift = true;
-    else if (/^mod$/i.test(mod))
-      if (mac) meta = true;
-      else ctrl = true;
-    else throw new Error('Unrecognized modifier name: ' + mod);
+export const KeyCodePrefixes = {
+  Key: 'Key',
+  Digit: 'Digit',
+};
+
+export const CanonicalModifiersOrder = [
+  KeyboardModifiers.Ctrl,
+  KeyboardModifiers.Alt,
+  KeyboardModifiers.Shift,
+  KeyboardModifiers.Meta,
+];
+
+export const ModifiersRegex = {
+  Mod: /^mod$/i,
+  Meta: /^(meta|cmd|m)$/i,
+  Ctrl: /^(ctrl|control|c)$/i,
+  Alt: /^(alt|a)$/i,
+  Shift: /^(shift|s)$/i,
+};
+
+const normalizeCode = (code: string) => {
+  if (code.startsWith(KeyCodePrefixes.Key)) {
+    return code.slice(3);
+  }
+  if (code.startsWith(KeyCodePrefixes.Digit)) {
+    return code.slice(5);
   }
 
-  if (alt) result = 'Alt+' + result;
-  if (ctrl) result = 'Ctrl+' + result;
-  if (meta) result = 'Meta+' + result;
-  if (shift) result = 'Shift+' + result;
+  return code;
+};
 
-  return result;
-}
+const normalizeShortcut = (input: string | KeyboardEvent) => {
+  const activeModifiers = new Set<string>();
+  let key: string;
 
-function normalizeKeyMap(map) {
+  if (typeof input === 'string') {
+    const tokens = input.split(/\+(?!$)/).map((p) => p.trim());
+    key = tokens.pop() ?? '';
+    if (key.length === 1) {
+      key = key.toUpperCase();
+    }
+
+    if (tokens.some((mod) => ModifiersRegex.Mod.test(mod))) {
+      activeModifiers.add(
+        isMac ? KeyboardModifiers.Meta : KeyboardModifiers.Ctrl,
+      );
+    }
+    if (tokens.some((mod) => ModifiersRegex.Meta.test(mod))) {
+      activeModifiers.add(KeyboardModifiers.Meta);
+    }
+    if (tokens.some((mod) => ModifiersRegex.Ctrl.test(mod))) {
+      activeModifiers.add(KeyboardModifiers.Ctrl);
+    }
+    if (tokens.some((mod) => ModifiersRegex.Alt.test(mod))) {
+      activeModifiers.add(KeyboardModifiers.Alt);
+    }
+    if (tokens.some((mod) => ModifiersRegex.Shift.test(mod))) {
+      activeModifiers.add(KeyboardModifiers.Shift);
+    }
+  } else if (input instanceof KeyboardEvent) {
+    const e = input;
+
+    if (e.code.includes(KeyboardModifiers.Control)) {
+      return KeyboardModifiers.Ctrl;
+    }
+    if (e.code.includes(KeyboardModifiers.Alt)) {
+      return KeyboardModifiers.Alt;
+    }
+    if (e.code.includes(KeyboardModifiers.Meta)) {
+      return KeyboardModifiers.Meta;
+    }
+    if (e.code.includes(KeyboardModifiers.Shift)) {
+      return KeyboardModifiers.Shift;
+    }
+
+    if (e.ctrlKey) {
+      activeModifiers.add(KeyboardModifiers.Ctrl);
+    }
+    if (e.altKey) {
+      activeModifiers.add(KeyboardModifiers.Alt);
+    }
+    if (e.metaKey) {
+      activeModifiers.add(KeyboardModifiers.Meta);
+    }
+    if (e.shiftKey) {
+      activeModifiers.add(KeyboardModifiers.Shift);
+    }
+
+    key = normalizeCode(e.code);
+  } else {
+    throw new Error('normalizeShortcut expects string or KeyboardEvent');
+  }
+
+  const appliedModifiersInOrder = CanonicalModifiersOrder.filter((modifier) =>
+    activeModifiers.has(modifier),
+  );
+  return [...appliedModifiersInOrder, key].join('+');
+};
+
+const normalizeKeyMap = (map) => {
   const copy = Object.create(null);
 
   Object.keys(map).forEach((prop) => {
-    copy[normalizeKeyName(prop)] = map[prop];
+    copy[normalizeShortcut(prop)] = map[prop];
   });
 
   return copy;
-}
+};
 
-function modifiers(name, event, shift) {
-  if (event.altKey) name = 'Alt+' + name;
-  if (event.ctrlKey) name = 'Ctrl+' + name;
-  if (event.metaKey) name = 'Meta+' + name;
-  if (shift !== false && event.shiftKey) name = 'Shift+' + name;
-
-  return name;
-}
-
-function symbolByEvent(event) {
-  return event.shiftKey ? KN.shift[event.keyCode] : KN.base[event.keyCode];
-}
-
-function normalizeKeyEvent(event, base = false) {
-  const name = symbolByEvent(event);
-  const isChar = name.length === 1 && name !== ' ';
-
-  return isChar && !base
-    ? modifiers(name, event, !isChar)
-    : modifiers(KN.base[event.keyCode], event, true);
-}
-
-export function isControlKey(event) {
-  return mac ? event.metaKey : event.ctrlKey;
-}
+export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
+  return isMac ? event.metaKey : event.ctrlKey;
+};
 
 // TODO rename and unify after moving all hotkeys to core editor
 //  to handle all events in same way and to have same structure for all hotkey configs
-function keyNorm(obj) {
+const keyNorm = (obj) => {
   if (obj instanceof KeyboardEvent) {
-    return normalizeKeyEvent(obj);
+    return normalizeShortcut(obj);
   }
 
-  return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
-}
+  return typeof obj === 'object'
+    ? normalizeKeyMap(obj)
+    : normalizeShortcut(obj);
+};
 
-function setHotKey(key, actName, hotKeys) {
-  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName);
-  else hotKeys[key] = [actName];
-}
+const setHotKey = (
+  key: string,
+  actName: string,
+  hotKeys: Record<string, string | string[]>,
+) => {
+  if (Array.isArray(hotKeys[key])) {
+    (hotKeys[key] as string[]).push(actName);
+  } else {
+    hotKeys[key] = [actName];
+  }
+};
 
-export function initHotKeys(actions) {
+export const initHotKeys = (actions) => {
   const hotKeys = {};
   let act;
 
@@ -117,23 +180,11 @@ export function initHotKeys(actions) {
   });
 
   return keyNorm(hotKeys);
-}
+};
 
-function lookup(map, event) {
-  let name = symbolByEvent(event);
-  if (name === 'Add') name = '+'; // numpad '+' and '-'
-  if (name === 'Subtract') name = '-';
-  const isChar = name.length === 1 && name !== ' ';
-
-  let res = map[modifiers(name, event, !isChar)];
-  let baseName;
-
-  if (event.shiftKey && isChar && (baseName = KN.base[event.keyCode])) {
-    res = map[modifiers(baseName, event, true)] || res;
-  }
-
-  return res;
-}
+const lookup = (map: Record<string, string>, event: KeyboardEvent) => {
+  return map[normalizeShortcut(event)];
+};
 
 keyNorm.lookup = lookup;
 

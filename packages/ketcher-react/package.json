@@ -81,7 +81,6 @@
     "subscription": "^3.0.0",
     "url-search-params-polyfill": "^8.1.1",
     "use-resize-observer": "^7.0.0",
-    "w3c-keyname": "^2.2.4",
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {

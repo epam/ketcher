@@ -42,6 +42,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Only one amino acid within a natural analogue can have the same modification type.',
   notMinimalViableStructure:
     'Minimal monomer structure is two atoms connected via a single bond.',
+  duplicateAttachmentPoints:
+    'Only one attachment point can have the same number.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -57,6 +59,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   notUniqueModificationTypes: 'error',
   modificationTypeExists: 'error',
   notMinimalViableStructure: 'error',
+  duplicateAttachmentPoints: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

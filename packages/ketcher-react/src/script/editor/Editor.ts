@@ -1399,20 +1399,8 @@ class Editor implements KetcherEditor {
 
     assert(atomPair);
 
-    if (this.monomerCreationState.assignedAttachmentPoints.has(newName)) {
-      const existingAtomPair =
-        this.monomerCreationState.assignedAttachmentPoints.get(newName);
-      assert(existingAtomPair);
-
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.set(
-        currentName,
-        existingAtomPair,
-      );
-    } else {
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
-    }
+    this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
+    this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
 

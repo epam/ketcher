@@ -31,7 +31,8 @@ export type WizardNotificationId =
   | 'notUniqueModificationTypes'
   | 'modificationTypeExists'
   | 'incontinuousStructure'
-  | 'notMinimalViableStructure';
+  | 'notMinimalViableStructure'
+  | 'duplicateAttachmentPoints';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

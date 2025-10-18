@@ -671,7 +671,7 @@ export class Struct {
   getCoordBoundingBox(atomSet?: Pile<number>) {
     let bb: any = null;
     function extend(pp) {
-      if (pp instanceof Array) {
+      if (Array.isArray(pp)) {
         pp.forEach((vec) => {
           if (!bb) {
             bb = {

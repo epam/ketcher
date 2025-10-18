@@ -122,6 +122,7 @@ const AttachmentPoint = ({
           className={styles.removeButton}
           onClick={handleRemove}
           aria-label="Remove attachment point"
+          data-testid={`attachment-point-delete-button-${name}`}
         >
           <Icon name="deleteMenu" />
         </button>

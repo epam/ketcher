@@ -268,34 +268,15 @@ function getStructCenter(struct: Struct): Vec2 {
       }
     }
   }
-  if (struct.atoms.size > 0) {
-    let xmin = 1e50;
-    let ymin = xmin;
-    let xmax = -xmin;
-    let ymax = -ymin;
 
-    struct.atoms.forEach((atom) => {
-      xmin = Math.min(xmin, atom.pp.x);
-      ymin = Math.min(ymin, atom.pp.y);
-      xmax = Math.max(xmax, atom.pp.x);
-      ymax = Math.max(ymax, atom.pp.y);
-    });
-    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+  // Use bounding box for accurate center calculation when there are multiple items
+  const boundingBox = struct.getCoordBoundingBox();
+  if (boundingBox) {
+    return new Vec2(
+      (boundingBox.min.x + boundingBox.max.x) / 2,
+      (boundingBox.min.y + boundingBox.max.y) / 2,
+    );
   }
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp;
-  if (struct.simpleObjects.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.simpleObjects.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.texts.size > 0) return struct.texts.get(0)!.position;
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.images.size > 0) return struct.images.get(0)!.center();
-  if (struct.multitailArrows.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.multitailArrows.get(0)!.center();
 
   return new Vec2(0, 0);
 }

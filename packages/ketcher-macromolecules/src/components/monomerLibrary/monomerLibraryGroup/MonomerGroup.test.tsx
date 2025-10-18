@@ -126,4 +126,20 @@ describe('Monomer Group', () => {
     const item = screen.getByTestId(getMonomerUniqueKey(firstMonomer));
     expect(item).toMatchSnapshot();
   });
+  it('should not render when items array is empty', () => {
+    const { container } = render(
+      withThemeAndStoreProvider(
+        <MonomerGroup
+          items={[]}
+          title={mockGroupProps.groupTitle}
+          onItemClick={onItemClick}
+        />,
+      ),
+    );
+
+    expect(container.firstChild).toBeNull();
+    expect(
+      screen.queryByText(mockGroupProps.groupTitle),
+    ).not.toBeInTheDocument();
+  });
 });

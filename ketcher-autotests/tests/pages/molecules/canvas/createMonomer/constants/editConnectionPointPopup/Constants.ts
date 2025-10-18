@@ -11,9 +11,11 @@ export enum AttachmentPointName {
 
 export enum AttachmentPointAtom {
   H = 'H-option',
-  OH = 'OH-option',
-  NH2 = 'NH2-option',
+  OH = 'O-option',
+  NH2 = 'N-option',
   Cl = 'Cl-option',
   F = 'F-option',
-  CH3 = 'CH3-option',
+  CH3 = 'C-option',
+  Br = 'Br-option',
+  I = 'I-option',
 }

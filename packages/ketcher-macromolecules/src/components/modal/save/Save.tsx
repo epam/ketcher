@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -22,11 +22,7 @@ import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import {
-  IconButton,
-  IndigoProvider,
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-} from 'ketcher-react';
+import { IconButton, IndigoProvider } from 'ketcher-react';
 import {
   ChemicalMimeType,
   KetSerializer,
@@ -102,9 +98,6 @@ export const Save = ({
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = CoreEditor.provideEditorInstance();
-  const editorOffsetRef = useRef({ x: 0, y: 0 });
-  // cache the editor root element so we don't query the DOM repeatedly
-  const editorRootRef = useRef<Element | null>(null);
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -119,10 +112,7 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
-        horizontal: editorOffsetRef.current.x,
-        vertical: editorOffsetRef.current.y,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
       setSvgData(svgData);
       return;
     }
@@ -174,38 +164,10 @@ export const Save = ({
     setCurrentFileName(value);
   };
 
-  const calculateOffset = () => {
-    // cache the editor root element to avoid repeated document.querySelector calls
-    if (!editorRootRef.current) {
-      editorRootRef.current = document.querySelector(
-        KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-      );
-    }
-
-    const editorRootElement = editorRootRef.current;
-
-    if (!editorRootElement) {
-      if (editorOffsetRef.current.x !== 0 || editorOffsetRef.current.y !== 0) {
-        editorOffsetRef.current = { x: 0, y: 0 };
-      }
-      return;
-    }
-
-    const { x = 0, y = 0 } = editorRootElement.getBoundingClientRect();
-
-    if (editorOffsetRef.current.x === x && editorOffsetRef.current.y === y)
-      return;
-
-    editorOffsetRef.current = { x, y };
-  };
-
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
-        horizontal: editorOffsetRef.current.x,
-        vertical: editorOffsetRef.current.y,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
       if (!svgData) {
         onClose();
         return;
@@ -238,10 +200,6 @@ export const Save = ({
       dispatch(openErrorModal('This feature is not available in your browser'));
     }
   };
-
-  useLayoutEffect(() => {
-    calculateOffset();
-  }, []);
 
   useEffect(() => {
     if (currentFileFormat === 'ket') {

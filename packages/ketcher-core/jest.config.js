@@ -1,5 +1,5 @@
 module.exports = {
-  testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
+  testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|tsx|js)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   transform: {
     '\\.js?$': 'babel-jest',

@@ -92,7 +92,12 @@ export const GhostRnaPreset = ({ preset }: Props) => {
         )}
 
         <g transform={`translate(${sugarX}, ${sugarY})`}>
-          <use href={sugarRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+          <use
+            href={sugarRenderer.monomerSymbolElementId}
+            fill="white"
+            stroke="#CAD3DD"
+            strokeWidth="2"
+          />
           <text
             x={sugarSize.width / 2}
             y={sugarSize.height / 2}
@@ -111,7 +116,9 @@ export const GhostRnaPreset = ({ preset }: Props) => {
           <g transform={`translate(${phosphateX}, ${phosphateY})`}>
             <use
               href={phosphateRenderer.monomerSymbolElementId}
-              fill="#CAD3DD"
+              fill="white"
+              stroke="#CAD3DD"
+              strokeWidth="2"
             />
             <text
               x={phosphateSize.width / 2}
@@ -130,7 +137,12 @@ export const GhostRnaPreset = ({ preset }: Props) => {
 
         {baseSize && (
           <g transform={`translate(${baseX}, ${baseY})`}>
-            <use href={baseRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+            <use
+              href={baseRenderer.monomerSymbolElementId}
+              fill="white"
+              stroke="#CAD3DD"
+              strokeWidth="2"
+            />
             <text
               x={baseSize.width / 2}
               y={baseSize.height / 2}

@@ -237,6 +237,23 @@ export const selectAmbiguousMonomersInCategory = (
   if (libraryGroupName === MonomerGroups.BASES) {
     groupedAmbiguousMonomerLibraryItems = [
       {
+        groupTitle: 'Ambiguous Bases',
+        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
+          return (
+            isAmbiguousMonomerLibraryItem(libraryItem) &&
+            libraryItem.options.every(
+              (option) =>
+                !option.templateId
+                  .toLowerCase()
+                  .includes(DNA_TEMPLATE_NAME_PART) &&
+                !option.templateId
+                  .toLowerCase()
+                  .includes(RNA_TEMPLATE_NAME_PART),
+            )
+          );
+        }),
+      },
+      {
         groupTitle: 'Ambiguous DNA Bases',
         groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
           return (
@@ -254,23 +271,6 @@ export const selectAmbiguousMonomersInCategory = (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
             libraryItem.options.find((option) =>
               option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
-            )
-          );
-        }),
-      },
-      {
-        groupTitle: 'Ambiguous Bases',
-        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
-          return (
-            isAmbiguousMonomerLibraryItem(libraryItem) &&
-            libraryItem.options.every(
-              (option) =>
-                !option.templateId
-                  .toLowerCase()
-                  .includes(DNA_TEMPLATE_NAME_PART) &&
-                !option.templateId
-                  .toLowerCase()
-                  .includes(RNA_TEMPLATE_NAME_PART),
             )
           );
         }),

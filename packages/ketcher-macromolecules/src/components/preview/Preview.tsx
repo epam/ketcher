@@ -46,57 +46,66 @@ export const Preview = () => {
       previewRef.current.setAttribute('style', '');
       setIsPreviewVisible(true);
 
-      const PREVIEW_OFFSET = 5;
+      // Use requestAnimationFrame to ensure positioning happens after content is rendered
+      requestAnimationFrame(() => {
+        if (!previewRef.current) {
+          return;
+        }
 
-      const previewBoundingClientRect =
-        previewRef.current?.getBoundingClientRect();
-      const previewHeight = previewBoundingClientRect?.height || 0;
-      const previewWidth = previewBoundingClientRect?.width || 0;
+        const PREVIEW_OFFSET = 5;
 
-      const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
-        .node()
-        ?.getBoundingClientRect();
-      const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
-      const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
-      const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
+        const previewBoundingClientRect =
+          previewRef.current?.getBoundingClientRect();
+        const previewHeight = previewBoundingClientRect?.height || 0;
+        const previewWidth = previewBoundingClientRect?.width || 0;
 
-      const targetBoundingClientRect = preview.target?.getBoundingClientRect();
-      const targetTop = targetBoundingClientRect?.top || 0;
-      const targetBottom = targetBoundingClientRect?.bottom || 0;
-      const targetLeft = targetBoundingClientRect?.left || 0;
-      const targetWidth = targetBoundingClientRect?.width || 0;
-      const targetCenterX = targetLeft - targetWidth / 2;
+        const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
+          .node()
+          ?.getBoundingClientRect();
+        const canvasWrapperBottom =
+          canvasWrapperBoundingClientRect?.bottom || 0;
+        const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
+        const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
 
-      const topPreviewPosition = targetTop - previewHeight - PREVIEW_OFFSET;
-      const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
-      const leftPreviewPosition =
-        targetLeft + targetWidth / 2 - previewWidth / 2;
+        const targetBoundingClientRect =
+          preview.target?.getBoundingClientRect();
+        const targetTop = targetBoundingClientRect?.top || 0;
+        const targetBottom = targetBoundingClientRect?.bottom || 0;
+        const targetLeft = targetBoundingClientRect?.left || 0;
+        const targetWidth = targetBoundingClientRect?.width || 0;
+        const targetCenterX = targetLeft - targetWidth / 2;
 
-      if (targetTop > previewHeight + PREVIEW_OFFSET) {
-        previewRef.current.style.top = `${topPreviewPosition}px`;
-      } else if (
-        targetBottom + previewHeight > canvasWrapperBottom &&
-        targetBottom > canvasWrapperBottom / 2
-      ) {
-        previewRef.current.style.top = `${topPreviewPosition}px`;
-      } else {
-        previewRef.current.style.top = `${bottomPreviewPosition}px`;
-      }
+        const topPreviewPosition = targetTop - previewHeight - PREVIEW_OFFSET;
+        const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
+        const leftPreviewPosition =
+          targetLeft + targetWidth / 2 - previewWidth / 2;
 
-      if (
-        targetCenterX > previewWidth / 2 &&
-        targetCenterX + previewWidth / 2 < canvasWrapperRight
-      ) {
-        previewRef.current.style.left = `${leftPreviewPosition}px`;
-      } else if (targetCenterX < previewWidth / 2) {
-        previewRef.current.style.left = `${canvasWrapperLeft}px`;
-      } else {
-        const SCROLL_BAR_OFFSET = 10;
+        if (targetTop > previewHeight + PREVIEW_OFFSET) {
+          previewRef.current.style.top = `${topPreviewPosition}px`;
+        } else if (
+          targetBottom + previewHeight > canvasWrapperBottom &&
+          targetBottom > canvasWrapperBottom / 2
+        ) {
+          previewRef.current.style.top = `${topPreviewPosition}px`;
+        } else {
+          previewRef.current.style.top = `${bottomPreviewPosition}px`;
+        }
 
-        previewRef.current.style.left = `${
-          canvasWrapperRight - previewWidth - SCROLL_BAR_OFFSET
-        }px`;
-      }
+        if (
+          targetCenterX > previewWidth / 2 &&
+          targetCenterX + previewWidth / 2 < canvasWrapperRight
+        ) {
+          previewRef.current.style.left = `${leftPreviewPosition}px`;
+        } else if (targetCenterX < previewWidth / 2) {
+          previewRef.current.style.left = `${canvasWrapperLeft}px`;
+        } else {
+          const SCROLL_BAR_OFFSET = 10;
+
+          previewRef.current.style.left = `${
+            canvasWrapperRight - previewWidth - SCROLL_BAR_OFFSET
+          }px`;
+        }
+      });
     } else if (isPreviewVisible) {
       setIsPreviewVisible(false);
       previewRef.current.setAttribute('style', '');

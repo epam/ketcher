@@ -50,9 +50,10 @@ export const getSvgFromDrawnStructures = (
   // remove "cursor: pointer" style
   svgInnerHTML = svgInnerHTML?.replaceAll('cursor: pointer;', '');
 
-  const drawStructureClientRect = canvas
-    ?.getElementsByClassName('drawn-structures')[0]
-    .getBoundingClientRect();
+  const drawnStructuresElement =
+    canvas?.getElementsByClassName('drawn-structures')[0];
+  const drawStructureClientRect =
+    drawnStructuresElement?.getBoundingClientRect();
 
   if (!drawStructureClientRect || !svgInnerHTML) {
     const errorMessage = 'Cannot get drawn structures!';

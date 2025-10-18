@@ -671,19 +671,28 @@ export class Struct {
   getCoordBoundingBox(atomSet?: Pile<number>) {
     let bb: any = null;
     function extend(pp) {
-      if (!bb) {
-        bb = {
-          min: pp,
-          max: pp,
-        };
-      } else if (pp instanceof Array) {
+      if (pp instanceof Array) {
         pp.forEach((vec) => {
-          bb.min = Vec2.min(bb.min, vec);
-          bb.max = Vec2.max(bb.max, vec);
+          if (!bb) {
+            bb = {
+              min: vec,
+              max: vec,
+            };
+          } else {
+            bb.min = Vec2.min(bb.min, vec);
+            bb.max = Vec2.max(bb.max, vec);
+          }
         });
       } else {
-        bb.min = Vec2.min(bb.min, pp);
-        bb.max = Vec2.max(bb.max, pp);
+        if (!bb) {
+          bb = {
+            min: pp,
+            max: pp,
+          };
+        } else {
+          bb.min = Vec2.min(bb.min, pp);
+          bb.max = Vec2.max(bb.max, pp);
+        }
       }
     }
 

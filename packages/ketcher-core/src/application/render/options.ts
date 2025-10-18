@@ -32,6 +32,10 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
   const labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6));
   const subFontSize = Math.ceil(0.5 * labelFontSize);
 
+  // Use a unified scale for hover styles to ensure visibility in both micro and macro modes
+  // Using Math.max ensures hover is visible in both modes, with stroke-width scaled appropriately
+  const hoverScaleFactor = Math.max(scaleFactorMicro, scaleFactorMacro);
+
   const defaultOptions: Partial<RenderOptions> = {
     'dearomatize-on-load': false,
     ignoreChiralFlag: false,
@@ -99,12 +103,12 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     hoverStyle: {
       stroke: '#0097A8',
       fill: '#CCFFDD',
-      'stroke-width': (0.6 * scaleFactorMicro) / 20,
+      'stroke-width': (0.6 * hoverScaleFactor) / 20,
     },
     innerHoverStyle: {
       stroke: '#CCFFDD',
       fill: 'none',
-      'stroke-width': (4.6 * scaleFactorMicro) / 20,
+      'stroke-width': (4.6 * hoverScaleFactor) / 20,
     },
     sgroupBracketStyle: {
       stroke: 'darkgray',

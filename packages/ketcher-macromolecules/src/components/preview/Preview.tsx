@@ -36,6 +36,7 @@ export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
   const previewRef = useRef<HTMLDivElement>(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const animationFrameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!previewRef.current || preview.style) {
@@ -47,7 +48,7 @@ export const Preview = () => {
       setIsPreviewVisible(true);
 
       // Use requestAnimationFrame to ensure positioning happens after content is rendered
-      requestAnimationFrame(() => {
+      animationFrameIdRef.current = requestAnimationFrame(() => {
         if (!previewRef.current) {
           return;
         }
@@ -110,7 +111,15 @@ export const Preview = () => {
       setIsPreviewVisible(false);
       previewRef.current.setAttribute('style', '');
     }
-  }, [preview]);
+
+    // Cleanup function to cancel pending animation frame
+    return () => {
+      if (animationFrameIdRef.current !== null) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+        animationFrameIdRef.current = null;
+      }
+    };
+  }, [preview, isPreviewVisible]);
 
   if (!preview) {
     return null;

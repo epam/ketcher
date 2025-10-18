@@ -664,12 +664,15 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const potentialLeavingAtomsForAutoAssignment: number[] = [];
+    const potentialLeavingAtomsForAutoAssignmentSet = new Set<number>();
     bondsToOutside.forEach((bond) => {
-      potentialLeavingAtomsForAutoAssignment.push(
+      potentialLeavingAtomsForAutoAssignmentSet.add(
         selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
       );
     });
+    const potentialLeavingAtomsForAutoAssignment = Array.from(
+      potentialLeavingAtomsForAutoAssignmentSet,
+    );
 
     const potentialLeavingAtomForManualAssignment: number[] = [];
     selectionAtoms.forEach((selectionAtomId) => {

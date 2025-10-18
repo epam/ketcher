@@ -67,6 +67,10 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     testId: 'LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid',
   },
   O: { alias: 'O', testId: 'O___Pyrrolysine' },
+  Peptide: {
+    alias: 'Peptide',
+    testId: 'Peptide___Peptide Test monomer',
+  },
   Phe_ol: { alias: 'Phe-ol', testId: 'Phe-ol___L-phenylalaninol' },
   SertBu: {
     alias: 'SertBu',

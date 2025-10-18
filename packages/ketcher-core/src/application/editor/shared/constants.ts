@@ -45,7 +45,7 @@ export enum MonomerGroups {
   SUGARS = 'Sugars',
   BASES = 'Bases',
   PHOSPHATES = 'Phosphates',
-  PEPTIDES = 'Amino acids',
+  PEPTIDES = 'Amino Acids',
   NUCLEOTIDES = 'Nucleotides',
 }
 

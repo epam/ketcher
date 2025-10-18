@@ -817,7 +817,7 @@ const nonEligableSymbols = [
       'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   },
   {
-    description: '3. Non-unique for one HELM class (Peptides-Amino acids)',
+    description: '3. Non-unique for one HELM class (Peptides-Amino Acids)',
     symbol: '1Nal',
     type: MonomerType.AminoAcid,
     naturalAnalogue: AminoAcidNaturalAnalogue.C,

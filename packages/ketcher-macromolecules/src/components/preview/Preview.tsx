@@ -116,10 +116,9 @@ export const Preview = () => {
     return () => {
       if (animationFrameIdRef.current !== null) {
         cancelAnimationFrame(animationFrameIdRef.current);
-        animationFrameIdRef.current = null;
       }
     };
-  }, [preview, isPreviewVisible]);
+  }, [preview]);
 
   if (!preview) {
     return null;

@@ -79,6 +79,8 @@ import {
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -386,31 +388,29 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test.fail(
-    'Case 12: DNA/RNA sequences should NOT accept * symbols',
-    async () => {
-      // This test fails because of https://github.com/epam/Indigo/issues/3210
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7243
-       * Bug: https://github.com/epam/ketcher/issues/4358
-       * Description: DNA/RNA sequences should NOT accept * symbols.
-       * Error message should appear: "*" symbol is not allowed for DNA sequence.
-       * Scenario:
-       * 1. Open Macro mode
-       * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
-       */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.FASTA,
-        'AAAA*AAAA',
-        true,
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 12: DNA/RNA sequences should NOT accept * symbols', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/4358
+     * Description: DNA/RNA sequences should NOT accept * symbols.
+     * Error message should appear: "*" symbol is not allowed for DNA sequence.
+     * Scenario:
+     * 1. Open Macro mode
+     * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.FASTA,
+      'AAAA*AAAA',
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: *'",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
+  });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
     /*

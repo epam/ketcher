@@ -79,6 +79,8 @@ import {
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
@@ -409,7 +411,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: *'",
     );
     await ErrorMessageDialog(page).close();
-    await PasteFromClipboardDialog(page).closeWindow();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {

@@ -38,9 +38,15 @@ export const SelectedMonomersContextMenu = ({
   const isCanvasContext = (props?: {
     selectedMonomers?: BaseMonomer[];
     polymerBondRenderer?: unknown;
-  }) =>
-    !props?.polymerBondRenderer &&
-    (!props?.selectedMonomers || props?.selectedMonomers.length === 0);
+  }) => {
+    const hasSelectedEntities =
+      (editor?.drawingEntitiesManager?.selectedEntitiesArr?.length ?? 0) > 0;
+    return (
+      !props?.polymerBondRenderer &&
+      (!props?.selectedMonomers || props?.selectedMonomers.length === 0) &&
+      !hasSelectedEntities
+    );
+  };
 
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,

@@ -39,7 +39,7 @@ export const GhostMonomer = ({ monomerItem }: Props) => {
         href={monomerSymbolElementId}
         fill="white"
         stroke="#CAD3DD"
-        strokeWidth="2"
+        strokeWidth={2}
         style={{
           filter: 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.4))',
         }}

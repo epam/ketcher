@@ -16,11 +16,26 @@ export const useLibraryItemDrag = (
     }
 
     const itemElement = select(itemRef.current);
+    let isContextMenuListenerAdded = false;
 
     // Handler to prevent context menu during drag
     const preventContextMenu = (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
+    };
+
+    const addContextMenuPrevention = () => {
+      if (!isContextMenuListenerAdded) {
+        document.addEventListener('contextmenu', preventContextMenu, true);
+        isContextMenuListenerAdded = true;
+      }
+    };
+
+    const removeContextMenuPrevention = () => {
+      if (isContextMenuListenerAdded) {
+        document.removeEventListener('contextmenu', preventContextMenu, true);
+        isContextMenuListenerAdded = false;
+      }
     };
 
     const dragBehavior = drag<HTMLElement, unknown>()
@@ -31,7 +46,7 @@ export const useLibraryItemDrag = (
         if (!editor.isLibraryItemDragCancelled) {
           document.body.style.cursor = 'grabbing';
           // Prevent context menu during drag
-          document.addEventListener('contextmenu', preventContextMenu, true);
+          addContextMenuPrevention();
         }
       })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -39,12 +54,12 @@ export const useLibraryItemDrag = (
           return;
         }
 
-        // Cancel drag on right-click (button 2)
+        // Cancel drag on right-click (bitwise check for button 2)
         const mouseEvent = event.sourceEvent as MouseEvent;
-        if (mouseEvent.button === 2 || mouseEvent.buttons === 2) {
+        if (mouseEvent.buttons & 2) {
           editor.cancelLibraryItemDrag();
           document.body.style.cursor = '';
-          document.removeEventListener('contextmenu', preventContextMenu, true);
+          removeContextMenuPrevention();
           return;
         }
 
@@ -59,7 +74,7 @@ export const useLibraryItemDrag = (
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
         // Always remove context menu prevention
-        document.removeEventListener('contextmenu', preventContextMenu, true);
+        removeContextMenuPrevention();
 
         if (!editor.isLibraryItemDragCancelled) {
           const { clientX: x, clientY: y } = event.sourceEvent;
@@ -93,7 +108,7 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
       // Clean up context menu prevention in case component unmounts during drag
-      document.removeEventListener('contextmenu', preventContextMenu, true);
+      removeContextMenuPrevention();
     };
   }, [editor, item, itemRef]);
 };

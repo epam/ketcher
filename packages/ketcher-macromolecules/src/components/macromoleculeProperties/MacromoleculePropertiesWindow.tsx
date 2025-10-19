@@ -983,6 +983,7 @@ export const MacromoleculePropertiesWindow = () => {
   // Track previous unit values to detect unit-only changes
   const prevUnipositiveIonsUnitRef = useRef(unipositiveIonsMeasurementUnit);
   const prevOligonucleotidesUnitRef = useRef(oligonucleotidesMeasurementUnit);
+  const isInitialMountRef = useRef(true);
 
   useEffect(() => {
     recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
@@ -1011,6 +1012,14 @@ export const MacromoleculePropertiesWindow = () => {
 
   // Separate effect for unit changes (immediate recalculation, no debounce)
   useEffect(() => {
+    // Skip recalculation on initial mount
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      prevUnipositiveIonsUnitRef.current = unipositiveIonsMeasurementUnit;
+      prevOligonucleotidesUnitRef.current = oligonucleotidesMeasurementUnit;
+      return;
+    }
+
     const unitChanged =
       prevUnipositiveIonsUnitRef.current !== unipositiveIonsMeasurementUnit ||
       prevOligonucleotidesUnitRef.current !== oligonucleotidesMeasurementUnit;

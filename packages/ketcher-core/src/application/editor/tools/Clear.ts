@@ -38,7 +38,7 @@ class ClearTool implements BaseTool {
     this.history.update(modelChanges);
 
     // Reset scroll position and zoom to initial state
-    ZoomTool.instance.resetZoom();
+    ZoomTool.instance?.resetZoom();
   }
 
   destroy() {}

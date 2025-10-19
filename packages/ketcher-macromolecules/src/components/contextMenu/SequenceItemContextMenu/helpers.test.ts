@@ -22,6 +22,7 @@ import {
   Sugar,
   MonomerSequenceNode,
   Entities,
+  NodesSelection,
 } from 'ketcher-core';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 
@@ -615,8 +616,7 @@ describe('SequenceItemContextMenu helpers', () => {
     ];
 
     const result = generateSequenceContextMenuProps(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockedSelectionsWithAntisense as any,
+      mockedSelectionsWithAntisense as unknown as NodesSelection,
     );
 
     // When both sense and antisense are selected, we should get 4 nucleotides

@@ -615,6 +615,7 @@ describe('SequenceItemContextMenu helpers', () => {
     ];
 
     const result = generateSequenceContextMenuProps(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mockedSelectionsWithAntisense as any,
     );
 

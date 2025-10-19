@@ -38,13 +38,17 @@ export function greekify(str: string): string {
 export function filterLib(lib, filter: string) {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
+  const searchFunction = (item) => {
+    const fields = [
+      item.struct.name,
+      item.props.abbreviation,
+      item.props.name,
+      item.props.group,
+    ].filter(Boolean);
+    return fields.some((field) => re.test(greekify(field)));
+  };
   return flow(
-    _filter(
-      (item: any) =>
-        !trimmedFilter ||
-        re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group)),
-    ),
+    _filter((item: any) => !trimmedFilter || searchFunction(item)),
     reduce((res, item) => {
       if (!res[item.props.group]) res[item.props.group] = [item];
       else res[item.props.group].push(item);

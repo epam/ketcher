@@ -17,6 +17,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import ZoomTool from 'application/editor/tools/Zoom';
 
 class ClearTool implements BaseTool {
   private readonly history: EditorHistory;
@@ -35,6 +36,9 @@ class ClearTool implements BaseTool {
     this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);
     this.history.update(modelChanges);
+
+    // Reset scroll position and zoom to initial state
+    ZoomTool.instance.resetZoom();
   }
 
   destroy() {}

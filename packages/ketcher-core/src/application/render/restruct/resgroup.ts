@@ -481,10 +481,11 @@ function SGroupdrawBrackets({
     } else if (superatomClass === SUPERATOM_CLASS.BASE) {
       // Calculate rhombus corners relative to icon center
       const halfSize = iconSize / 2;
-      const rhombusPath = `M${iconCenterX},${iconCenterY - halfSize}
-                         L${iconCenterX + halfSize},${iconCenterY}
-                         L${iconCenterX},${iconCenterY + halfSize}
-                         L${iconCenterX - halfSize},${iconCenterY} Z`;
+      const rhombusPath =
+        `M${iconCenterX},${iconCenterY - halfSize} ` +
+        `L${iconCenterX + halfSize},${iconCenterY} ` +
+        `L${iconCenterX},${iconCenterY + halfSize} ` +
+        `L${iconCenterX - halfSize},${iconCenterY} Z`;
       icon = render.paper.path(rhombusPath);
     }
 

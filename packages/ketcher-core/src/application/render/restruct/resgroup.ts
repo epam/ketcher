@@ -460,34 +460,31 @@ function SGroupdrawBrackets({
     const textOffsetFromBracket = 2;
     let icon;
 
+    // Calculate icon center position based on bracket angle direction
+    const iconCenterOffset = bracketR.bracketAngleDirection.scaled(
+      iconOffsetFromBracket + iconSize / 2,
+    );
+    const iconCenterX = indexPos.x + iconCenterOffset.x;
+    const iconCenterY = indexPos.y + iconCenterOffset.y;
+
     // Draw icon for superatom classes
     if (superatomClass === SUPERATOM_CLASS.SUGAR) {
       icon = render.paper.rect(
-        indexPos.x + iconOffsetFromBracket,
-        indexPos.y - iconSize / 2,
+        iconCenterX - iconSize / 2,
+        iconCenterY - iconSize / 2,
         iconSize,
         iconSize,
         2,
       );
     } else if (superatomClass === SUPERATOM_CLASS.PHOSPHATE) {
-      icon = render.paper.circle(
-        indexPos.x + iconSize / 2 + iconOffsetFromBracket,
-        indexPos.y,
-        iconSize / 2,
-      );
+      icon = render.paper.circle(iconCenterX, iconCenterY, iconSize / 2);
     } else if (superatomClass === SUPERATOM_CLASS.BASE) {
-      const rhombusPath = `M${
-        indexPos.x + iconSize / 2 + iconOffsetFromBracket
-      },${indexPos.y - iconSize / 2}
-                         L${indexPos.x + iconSize + iconOffsetFromBracket},${
-        indexPos.y
-      }
-                         L${
-                           indexPos.x + iconSize / 2 + iconOffsetFromBracket
-                         },${indexPos.y + iconSize / 2}
-                         L${indexPos.x + iconOffsetFromBracket},${
-        indexPos.y
-      } Z`;
+      // Calculate rhombus corners relative to icon center
+      const halfSize = iconSize / 2;
+      const rhombusPath = `M${iconCenterX},${iconCenterY - halfSize}
+                         L${iconCenterX + halfSize},${iconCenterY}
+                         L${iconCenterX},${iconCenterY + halfSize}
+                         L${iconCenterX - halfSize},${iconCenterY} Z`;
       icon = render.paper.path(rhombusPath);
     }
 

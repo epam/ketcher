@@ -51,8 +51,11 @@ function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
     return template.props.name;
   }
+  // Use props.name if available (for long name/tooltip), otherwise use struct.name
   return (
-    template.struct.name || `${template.props.group} template ${index + 1}`
+    template.props.name ||
+    template.struct.name ||
+    `${template.props.group} template ${index + 1}`
   );
 }
 

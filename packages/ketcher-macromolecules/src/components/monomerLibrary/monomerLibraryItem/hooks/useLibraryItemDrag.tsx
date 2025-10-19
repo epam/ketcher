@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
 import { selectEditor } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
@@ -9,6 +9,7 @@ export const useLibraryItemDrag = (
   itemRef: RefObject<HTMLElement>,
 ) => {
   const editor = useSelector(selectEditor);
+  const isContextMenuListenerAddedRef = useRef(false);
 
   useEffect(() => {
     if (!editor || !itemRef.current) {
@@ -16,7 +17,6 @@ export const useLibraryItemDrag = (
     }
 
     const itemElement = select(itemRef.current);
-    let isContextMenuListenerAdded = false;
 
     // Handler to prevent context menu during drag
     const preventContextMenu = (event: MouseEvent) => {
@@ -25,16 +25,16 @@ export const useLibraryItemDrag = (
     };
 
     const addContextMenuPrevention = () => {
-      if (!isContextMenuListenerAdded) {
+      if (!isContextMenuListenerAddedRef.current) {
         document.addEventListener('contextmenu', preventContextMenu, true);
-        isContextMenuListenerAdded = true;
+        isContextMenuListenerAddedRef.current = true;
       }
     };
 
     const removeContextMenuPrevention = () => {
-      if (isContextMenuListenerAdded) {
+      if (isContextMenuListenerAddedRef.current) {
         document.removeEventListener('contextmenu', preventContextMenu, true);
-        isContextMenuListenerAdded = false;
+        isContextMenuListenerAddedRef.current = false;
       }
     };
 

@@ -17,6 +17,12 @@ export const useLibraryItemDrag = (
 
     const itemElement = select(itemRef.current);
 
+    // Handler to prevent context menu during drag
+    const preventContextMenu = (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
     const dragBehavior = drag<HTMLElement, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
@@ -24,10 +30,21 @@ export const useLibraryItemDrag = (
           editor.mode.modeName === 'sequence-layout-mode';
         if (!editor.isLibraryItemDragCancelled) {
           document.body.style.cursor = 'grabbing';
+          // Prevent context menu during drag
+          document.addEventListener('contextmenu', preventContextMenu, true);
         }
       })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
+          return;
+        }
+
+        // Cancel drag on right-click (button 2)
+        const mouseEvent = event.sourceEvent as MouseEvent;
+        if (mouseEvent.button === 2 || mouseEvent.buttons === 2) {
+          editor.cancelLibraryItemDrag();
+          document.body.style.cursor = '';
+          document.removeEventListener('contextmenu', preventContextMenu, true);
           return;
         }
 
@@ -41,6 +58,9 @@ export const useLibraryItemDrag = (
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+        // Always remove context menu prevention
+        document.removeEventListener('contextmenu', preventContextMenu, true);
+
         if (!editor.isLibraryItemDragCancelled) {
           const { clientX: x, clientY: y } = event.sourceEvent;
           const canvasWrapperBoundingClientRect =
@@ -72,6 +92,8 @@ export const useLibraryItemDrag = (
 
     return () => {
       itemElement.on('.drag', null);
+      // Clean up context menu prevention in case component unmounts during drag
+      document.removeEventListener('contextmenu', preventContextMenu, true);
     };
   }, [editor, item, itemRef]);
 };

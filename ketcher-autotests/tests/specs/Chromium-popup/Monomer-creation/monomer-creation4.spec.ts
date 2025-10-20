@@ -15,6 +15,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -380,6 +381,111 @@ test(`9. Check that after the option "Mark as connection point" is clicked, an a
     );
     await takeElementScreenshot(page, targetAtom, { padding: 50 });
   }
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`10. Check that after the option ""Mark as connection point"" is clicked, an attachment point with the following attributes is made: The R-number is the lowest free R-number`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that after the option ""Mark as connection point"" is clicked, an attachment point with the following attributes is
+   *              made: The R-number is the lowest free R-number, or R1 (if all R-numbers are already occupied)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. 
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'N(CN(CC%91CN(CC%92CN(Cl)CC)O)C)([H])CC.[*:3]%91.[*:5]%92 |$;;;;;;;;;;;;;;;;;;;_R3;_R5$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 350, page);
+
+  const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
+  await ContextMenu(page, targetAtoms.nth(0)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  expect(attachmentPointR1).toBeVisible();
+
+  await ContextMenu(page, targetAtoms.nth(1)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R3).first();
+  expect(attachmentPointR2).toBeVisible();
+
+  await ContextMenu(page, targetAtoms.nth(2)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR4 = page.getByTestId(AttachmentPoint.R4).first();
+  expect(attachmentPointR4).toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`11. Check that if the potential AA is not attached to any potential LGAs, a previously implicit hydrogen should be drawn and set as an LGA`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that if the potential AA is not attached to any potential LGAs, a previously implicit hydrogen 
+   *              should be drawn and set as an LGA
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'N(CN(CC%91CN(CC%92CN(Cl)CC)O)C)([H])CC.[*:3]%91.[*:5]%92 |$;;;;;;;;;;;;;;;;;;;_R3;_R5$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 350, page);
+
+  const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
+  await ContextMenu(page, targetAtoms.nth(0)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  expect(attachmentPointR1).toBeVisible();
+
+  await ContextMenu(page, targetAtoms.nth(1)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R3).first();
+  expect(attachmentPointR2).toBeVisible();
+
+  await ContextMenu(page, targetAtoms.nth(2)).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+  const attachmentPointR4 = page.getByTestId(AttachmentPoint.R4).first();
+  expect(attachmentPointR4).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
 });

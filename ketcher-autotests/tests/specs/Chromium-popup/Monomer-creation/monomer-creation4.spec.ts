@@ -65,6 +65,7 @@ test(`1. Verify that right clicking on a potential LGA on canvas, shows an optio
     page.getByTestId(ConnectionPointOption.MarkAsLeavingGroup),
   ).toBeVisible();
 
+  await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();
 });
 

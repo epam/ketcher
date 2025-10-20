@@ -17,6 +17,10 @@ import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Consta
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
+import {
+  AttachmentPointAtom,
+  AttachmentPointName,
+} from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -614,10 +618,12 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
   await CreateMonomerDialog(page).discard();
 });
 
-test(`14. Check that clicking on "Edit attachment point" gives the user the option to edit the LGA and to edit the R-number`, async () => {
+test(`15. Check that when editing the LGA, the user should see all possible LGAs that exist for the AA`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8268
-   * Description: Check that clicking on "Edit attachment point" gives the user the option to edit the LGA and to edit the R-number
+   * Description: Check that when editing the LGA, the user should see all possible LGAs that exist for the AA
+   *              (ordered like described in 2.2.3.), and one option for all explicit hydrogens (if they exist;
+   *              the last option in the drop-down). Clicking on a different LGA, changes the LGA of the AP
    *
    * Case:
    *      1. Open Molecules canvas
@@ -626,14 +632,14 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
    *      4. Press Create Monomer button
    *      5. r-click on a potential AA on canvas
    *      6. Click "Mark as connection point" option
-   *      7. r-click on the created attachment point label
-   *      8. Click "Edit attachment point" option
-   *      9. Validate that Edit Connection Point dialog is opened
+   *      7. Change the LGA by clicking combobox at Attributes panel
+   *      8. Select different LGAs from the dropdown
+   *      9. Take screenshots to validate that LGA is changed
    *
    * Version 3.9
    */
 
-  await pasteFromClipboardAndOpenAsNewProject(page, 'C(NCC)C');
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCP(N)(O)([H])C');
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
@@ -641,19 +647,186 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 250, page);
+  await dragMouseTo(450, 250, page);
 
-  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
+  const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  await takeElementScreenshot(page, targetAtom, { padding: 80 });
+
+  await CreateMonomerDialog(page)
+    .getAttachmentPointAtomCombobox(AttachmentPointName.R1)
+    .click();
+  await expect(page.getByTestId(AttachmentPointAtom.H)).toBeVisible();
+  await expect(page.getByTestId(AttachmentPointAtom.CH3)).toBeVisible();
+  await expect(page.getByTestId(AttachmentPointAtom.OH)).toBeVisible();
+  await expect(page.getByTestId(AttachmentPointAtom.NH2)).toBeVisible();
+
+  await page.getByTestId(AttachmentPointAtom.OH).click();
+
+  await takeElementScreenshot(page, targetAtom, { padding: 80 });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`16. Check that hovering over any element of the AP (AA, LGA, Rn) highlight the corresponding AP on the Attributes panel `, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that hovering over any element of the AP (AA, LGA, Rn) highlight the
+   *              corresponding AP on the Attributes panel (see mockups)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. Hover mouse over the created attachment point label
+   *      8. Take screenshot to validate that corresponding AP is highlighted on the Attributes panel
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCP(N)(O)([H])C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
   await ContextMenu(page, targetAtom).click(
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  await ContextMenu(page, attachmentPointR1).click(
-    ConnectionPointOption.EditConnectionPoint,
+  await attachmentPointR1.hover({ force: true });
+
+  await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup, {
+    padding: 10,
+  });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`17. Verify that in the attachment point section of the Attributes panel there an info card. Hovering it give: "New attachment points can be added by interacting with attachment atoms and leaving group atoms on the structure."`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Verify that in the attachment point section of the Attributes panel there an info card. Hovering it give:
+   *              "To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Validate that info button has correct tooltip
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCP(N)(O)([H])C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  await expect(CreateMonomerDialog(page).infoIcon).toHaveAttribute(
+    'title',
+    'To add new attachment points, right-click and mark atoms as leaving groups or connection points.',
   );
 
-  expect(await EditConnectionPointPopup(page).isVisible()).toBeTruthy();
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`18. Check that from the attributes panel, the user can delete an already set AP (see req. 3.2.1.)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that from the attributes panel, the user can delete an already set AP (see req. 3.2.1.)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. Validate that attachment point is created
+   *      8. Delete the created AP using the Attributes panel
+   *      9. Validate that attachment point is removed from canvas
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCP(N)(O)([H])C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await expect(attachmentPointR1).toBeVisible();
+
+  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R1);
+
+  await expect(attachmentPointR1).not.toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`19. Verify that hovering an AP on the attributes panel highlights the corresponding AP on canvas (see mockups)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Verify that hovering an AP on the attributes panel highlights the corresponding AP on canvas (see mockups)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. Hover mouse over the R1 attachment point control group
+   *      8. Take screenshot to validate that corresponding AP is highlighted on the canvas
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCP(N)(O)([H])C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await expect(attachmentPointR1).toBeVisible();
+
+  await CreateMonomerDialog(page).r1ControlGroup.hover();
+
+  await takeElementScreenshot(page, targetAtom, { padding: 60 });
 
   await CreateMonomerDialog(page).discard();
 });

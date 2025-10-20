@@ -613,3 +613,47 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
 
   await CreateMonomerDialog(page).discard();
 });
+
+test(`14. Check that clicking on "Edit attachment point" gives the user the option to edit the LGA and to edit the R-number`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that clicking on "Edit attachment point" gives the user the option to edit the LGA and to edit the R-number
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. r-click on the created attachment point label
+   *      8. Click "Edit attachment point" option
+   *      9. Validate that Edit Connection Point dialog is opened
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C(NCC)C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await ContextMenu(page, attachmentPointR1).click(
+    ConnectionPointOption.EditConnectionPoint,
+  );
+
+  expect(await EditConnectionPointPopup(page).isVisible()).toBeTruthy();
+
+  await CreateMonomerDialog(page).discard();
+});

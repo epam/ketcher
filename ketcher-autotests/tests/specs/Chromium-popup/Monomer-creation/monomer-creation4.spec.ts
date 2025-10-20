@@ -524,3 +524,46 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
 
   await CreateMonomerDialog(page).discard();
 });
+
+test(`13. Check that clicking on "Remove assignment", deleted that AP - the LGA and the AA stop being a part of that AP (they are not deleted)" (see mockups)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that clicking on "Remove assignment", deleted that AP - the LGA and the AA stop being a part of that AP (they are not deleted)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. r-click on the created attachment point label
+   *      8. Verify that context menu contains options "Edit attachment point" and "Remove assignment"
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C(NCC)C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await ContextMenu(page, attachmentPointR1).click(
+    ConnectionPointOption.RemoveAssignment,
+  );
+
+  await expect(attachmentPointR1).not.toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
+});

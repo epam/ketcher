@@ -2,7 +2,7 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="H" x2="8.2791" y2="-7.416"/>
+            <atom id="a0" elementType="C" x2="8.2791" y2="-7.416"/>
             <atom id="a2" elementType="C" x2="9.15292" y2="-7.86875"/>
             <atom id="a3" elementType="C" x2="10.0189" y2="-7.36875"/>
         </atomArray>

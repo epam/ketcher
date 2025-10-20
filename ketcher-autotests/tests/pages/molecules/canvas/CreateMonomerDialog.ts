@@ -142,14 +142,14 @@ export const CreateMonomerDialog = (page: Page) => {
     r6AtomCombobox: page.getByTestId('attachment-point-atom-select-R6'),
     r7AtomCombobox: page.getByTestId('attachment-point-atom-select-R7'),
     r8AtomCombobox: page.getByTestId('attachment-point-atom-select-R8'),
-    r1DeleteButton: page.getByTestId('attachment-point-atom-select-R1'),
-    r2DeleteButton: page.getByTestId('attachment-point-atom-select-R2'),
-    r3DeleteButton: page.getByTestId('attachment-point-atom-select-R3'),
-    r4DeleteButton: page.getByTestId('attachment-point-atom-select-R4'),
-    r5DeleteButton: page.getByTestId('attachment-point-atom-select-R5'),
-    r6DeleteButton: page.getByTestId('attachment-point-atom-select-R6'),
-    r7DeleteButton: page.getByTestId('attachment-point-atom-select-R7'),
-    r8DeleteButton: page.getByTestId('attachment-point-atom-select-R8'),
+    r1DeleteButton: page.getByTestId('attachment-point-delete-button-R1'),
+    r2DeleteButton: page.getByTestId('attachment-point-delete-button-R2'),
+    r3DeleteButton: page.getByTestId('attachment-point-delete-button-R3'),
+    r4DeleteButton: page.getByTestId('attachment-point-delete-button-R4'),
+    r5DeleteButton: page.getByTestId('attachment-point-delete-button-R5'),
+    r6DeleteButton: page.getByTestId('attachment-point-delete-button-R6'),
+    r7DeleteButton: page.getByTestId('attachment-point-delete-button-R7'),
+    r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };
@@ -221,7 +221,7 @@ export const CreateMonomerDialog = (page: Page) => {
       const combobox =
         attachmentPointAtomComboboxByAP[options.attachmentPointName];
       await combobox.click();
-      await page.getByTestId(options.newAtom).click();
+      await page.getByTestId(options.newAtom).first().click();
     },
 
     async deleteAttachmentPoint(attachmentPointName: AttachmentPointName) {

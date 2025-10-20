@@ -685,7 +685,7 @@ export class Ketcher {
       const convertResult = await this.indigo.convert(rawMonomersDataString, {
         inputFormat: ChemicalMimeType.MonomerLibrary,
         outputFormat: ChemicalMimeType.MonomerLibrary,
-        outputContentType: 'chemical/x-monomer-library',
+        outputContentType: ChemicalMimeType.MonomerLibrary,
       });
 
       dataInKetFormat = convertResult.struct;

@@ -17,18 +17,17 @@
 // Single entry point to Raphaël library
 
 import { Vec2 } from 'domain/entities';
+import * as raphaelModule from 'raphael';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let Raphael: any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let raphaelModule: any;
 
 if (typeof window !== 'undefined') {
-  raphaelModule = require('raphael');
   // Some environments (vite, webpack etc) might resolve this import differently
   // this is a workaround to make it work in all environments
-  Raphael =
-    typeof raphaelModule === 'function' ? raphaelModule : raphaelModule.default;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mod: any = raphaelModule as unknown as any;
+  Raphael = typeof mod === 'function' ? mod : mod.default;
 
   // TODO: refactor ugly prototype extensions to plain old functions
   Raphael.el.translateAbs = function (x: number, y: number): void {

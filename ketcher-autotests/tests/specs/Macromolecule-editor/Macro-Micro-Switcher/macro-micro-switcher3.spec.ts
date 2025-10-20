@@ -8,7 +8,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  moveOnBond,
   BondType,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
@@ -39,6 +38,7 @@ import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/A
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -313,7 +313,8 @@ interface IMonomer {
 // });
 
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
-  await moveOnBond(page, BondType.SINGLE, 1);
+  const bondLocator = getBondLocator(page, { bondId: 7 });
+  await bondLocator.hover({ force: true });
   await dragMouseTo(x, y, page);
 }
 
@@ -381,8 +382,9 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 300, 200);
       await moveMouseToTheMiddleOfTheScreen(page);
+
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -423,7 +425,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 250, 400);
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 

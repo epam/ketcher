@@ -840,6 +840,19 @@ class Editor implements KetcherEditor {
     return visited.size === atomIds.length;
   }
 
+  static isStructureImpure(struct: Struct) {
+    const { atoms, sgroups, rgroups, functionalGroups } = struct;
+
+    return (
+      sgroups.size > 0 ||
+      rgroups.size > 0 ||
+      functionalGroups.size > 0 ||
+      Array.from(atoms.values()).some((atom) =>
+        genericsList.includes(atom.label),
+      )
+    );
+  }
+
   private originalStruct: Struct = new Struct();
   private originalSelection: Selection = {};
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();

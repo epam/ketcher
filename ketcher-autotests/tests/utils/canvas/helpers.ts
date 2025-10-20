@@ -505,14 +505,6 @@ export async function copyStructureByCtrlMove(
   await page.keyboard.up('Control');
 }
 
-export async function waitForElementInCanvas(
-  page: Page,
-  text: string,
-): Promise<void> {
-  const canvas = page.getByTestId(KETCHER_CANVAS);
-  const targetElement = canvas.locator(`div:has-text("${text}")`);
-  await expect(targetElement).toBeVisible();
-}
 export async function selectCanvasArea(
   page: Page,
   firstCorner: { x: number; y: number },

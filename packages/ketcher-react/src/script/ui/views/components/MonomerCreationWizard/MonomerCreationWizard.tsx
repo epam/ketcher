@@ -248,6 +248,23 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
 
 const validateStructure = (editor: Editor) => {
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const isStructureImpure = Editor.isStructureImpure(editor.struct());
+  if (isStructureImpure) {
+    notifications.set('impureStructure', {
+      type: 'error',
+      message: NotificationMessages.impureStructure,
+    });
+  }
+
+  const isMinimalViableStructure = editor.isMinimalViableStructure();
+  if (!isMinimalViableStructure) {
+    notifications.set('notMinimalViableStructure', {
+      type: 'error',
+      message: NotificationMessages.notMinimalViableStructure,
+    });
+    return notifications;
+  }
+
   const isStructureContinuous = Editor.isStructureContinuous(editor.struct());
   if (!isStructureContinuous) {
     notifications.set('incontinuousStructure', {
@@ -623,9 +640,11 @@ const MonomerCreationWizard = () => {
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('symbol', event.target.value)
                   }
+                  disabled={!type}
                 />
               }
               required
+              disabled={!type}
             />
             <AttributeField
               title="Name"
@@ -639,9 +658,11 @@ const MonomerCreationWizard = () => {
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     handleFieldChange('name', event.target.value)
                   }
+                  disabled={!type}
                 />
               }
               required
+              disabled={!type}
             />
             <AttributeField
               title="Natural analogue"

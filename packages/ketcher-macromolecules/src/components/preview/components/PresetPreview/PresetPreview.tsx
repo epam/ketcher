@@ -25,8 +25,8 @@ import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
+import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
-import IDTAliases from '../IDTAliases/IDTAliases';
 import { PresetPreviewState } from 'state';
 
 const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
@@ -46,12 +46,15 @@ const PresetPreview = ({ className }: Props) => {
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
+  const axoLabsText = baseMonomer?.props.aliasAxoLabs;
 
   const idtAliasesText = useIDTAliasesTextForPreset({
     presetName,
     position,
     idtAliases,
   });
+
+  const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
 
   return (
     <PresetContainer
@@ -70,7 +73,13 @@ const PresetPreview = ({ className }: Props) => {
             </PresetMonomerRow>
           ),
       )}
-      {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} preset />}
+      {isMonomerPreviewPropertiesVisible && (
+        <MonomerPreviewProperties
+          preset
+          idtAliasesText={idtAliasesText ?? undefined}
+          axoLabsText={axoLabsText}
+        />
+      )}
     </PresetContainer>
   );
 };

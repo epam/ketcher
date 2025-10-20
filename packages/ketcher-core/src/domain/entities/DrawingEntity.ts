@@ -15,7 +15,7 @@ export abstract class DrawingEntity {
 
   protected constructor(
     private _position: Vec2 = new Vec2(0, 0),
-    private config: DrawingEntityConfig = {
+    private readonly config: DrawingEntityConfig = {
       generateId: true,
     },
   ) {

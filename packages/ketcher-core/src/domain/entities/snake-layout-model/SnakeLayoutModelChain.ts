@@ -6,7 +6,7 @@ import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySn
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModelChain {
-  private rows: ISnakeLayoutModelRow[] = [];
+  private readonly rows: ISnakeLayoutModelRow[] = [];
 
   public get lastRow() {
     return this.rows[this.rows.length - 1];

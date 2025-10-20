@@ -1664,7 +1664,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   // Removed due to bug: https://github.com/epam/ketcher/issues/6736
   // {
   //   Id: 13,
-  //   ContentType: MacroFileType.Ket,
+  //   ContentType: MacroFileType.KetFormat,
   //   SenseForm:
   //     'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/13. Sence Base(oC64m5).ket',
   //   AntiSenseForm:
@@ -1673,7 +1673,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   // },
   {
     Id: 14,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/14. Sense Ambiguous Alternatives Base(%).ket',
     AntiSenseForm:
@@ -1682,7 +1682,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 15,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/15. Sense Ambiguous Mixed Base(%).ket',
     AntiSenseForm:
@@ -1698,7 +1698,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 17,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/17. Sense Ambiguous Mixed Phosphate(%).ket',
     AntiSenseForm:
@@ -1707,7 +1707,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 18,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/18. Sense Ambiguous Alternatives Phosphate(%).ket',
     AntiSenseForm:
@@ -1817,10 +1817,10 @@ async function setupSenseAndAntiSenseSequences(
       antisenseSequence.AntiSenseForm,
     );
   }
-  if (senseSequence.ContentType === MacroFileType.Ket) {
+  if (senseSequence.ContentType === MacroFileType.KetFormat) {
     await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
-  if (antisenseSequence.ContentType === MacroFileType.Ket) {
+  if (antisenseSequence.ContentType === MacroFileType.KetFormat) {
     await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 

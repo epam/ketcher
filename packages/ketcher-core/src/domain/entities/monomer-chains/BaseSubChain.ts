@@ -5,8 +5,6 @@ export class BaseSubChain {
   public nodes: Array<SubChainNode> = [];
   public bonds: Array<PolymerBond> = [];
 
-  constructor() {}
-
   public get lastNode() {
     return this.nodes[this.nodes.length - 1];
   }

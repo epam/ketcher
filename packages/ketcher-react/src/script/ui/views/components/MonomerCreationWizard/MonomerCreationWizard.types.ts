@@ -30,7 +30,9 @@ export type WizardNotificationId =
   | 'creationSuccessful'
   | 'incontinuousStructure'
   | 'notUniqueModificationTypes'
-  | 'modificationTypeExists';
+  | 'modificationTypeExists'
+  | 'notMinimalViableStructure'
+  | 'impureStructure';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

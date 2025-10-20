@@ -685,7 +685,7 @@ export class Ketcher {
       const convertResult = await this.indigo.convert(rawMonomersDataString, {
         inputFormat: ChemicalMimeType.MonomerLibrary,
         outputFormat: ChemicalMimeType.MonomerLibrary,
-        outputContentType: 'chemical/x-monomer-library',
+        outputContentType: ChemicalMimeType.MonomerLibrary,
       });
 
       dataInKetFormat = convertResult.struct;
@@ -714,7 +714,6 @@ export class Ketcher {
     );
 
     editor.updateMonomersLibrary(dataInKetFormat);
-    SettingsManager.addMonomerLibraryUpdate(dataInKetFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 
@@ -739,9 +738,6 @@ export class Ketcher {
 
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    SettingsManager.addMonomerLibraryUpdate(
-      JSON.stringify({ replacement: true, data: dataInKetFormat }),
-    );
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
     editor.events.updateMonomersLibrary.dispatch();
   }

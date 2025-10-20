@@ -27,7 +27,10 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
@@ -39,9 +42,6 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
-
-export type SequencePointer = number;
-export type SequenceLastCaretPosition = number;
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -62,28 +62,26 @@ export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
-  private static caretPositionValue: SequencePointer = -1;
-  private static lastUserDefinedCaretPositionValue: SequenceLastCaretPosition = 0;
+  private static caretPositionValue = -1;
+  private static lastUserDefinedCaretPositionValue = 0;
   private static chainsCollectionValue: ChainsCollection;
   private static lastChainStartPositionValue: Vec2;
   private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
 
-  public static get caretPosition(): SequencePointer {
+  public static get caretPosition(): number {
     return this.caretPositionValue;
   }
 
-  private static set caretPosition(value: SequencePointer) {
+  private static set caretPosition(value: number) {
     this.caretPositionValue = value;
   }
 
-  public static get lastUserDefinedCaretPosition(): SequenceLastCaretPosition {
+  public static get lastUserDefinedCaretPosition(): number {
     return this.lastUserDefinedCaretPositionValue;
   }
 
-  private static set lastUserDefinedCaretPosition(
-    value: SequenceLastCaretPosition,
-  ) {
+  private static set lastUserDefinedCaretPosition(value: number) {
     this.lastUserDefinedCaretPositionValue = value;
   }
 
@@ -170,7 +168,7 @@ export class SequenceRenderer {
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
-    const handledNodes = new Set<SubChainNode | BackBoneSequenceNode>();
+    const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
@@ -441,7 +439,7 @@ export class SequenceRenderer {
     });
   }
 
-  public static setCaretPosition(caretPosition: SequencePointer) {
+  public static setCaretPosition(caretPosition: number) {
     const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -564,7 +562,7 @@ export class SequenceRenderer {
   }
 
   public static getMonomersByCaretPositionRange(
-    startCaretPosition: SequencePointer,
+    startCaretPosition: number,
     endCaretPosition,
   ) {
     const monomers: BaseMonomer[] = [];
@@ -753,7 +751,7 @@ export class SequenceRenderer {
     return currentChainIndex;
   }
 
-  public static get lastNodeCaretPosition(): SequencePointer | undefined {
+  public static get lastNodeCaretPosition(): number | undefined {
     if (SequenceRenderer.chainsCollection.chains.length === 0) {
       return undefined;
     }
@@ -767,7 +765,7 @@ export class SequenceRenderer {
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
 
-  public static getNodeByPointer(sequencePointer?: SequencePointer) {
+  public static getNodeByPointer(sequencePointer?: number) {
     if (sequencePointer === undefined) return undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
@@ -857,7 +855,7 @@ export class SequenceRenderer {
     return SequenceRenderer.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
-  private static get nextCaretPosition(): SequencePointer | undefined {
+  private static get nextCaretPosition(): number | undefined {
     const nodeOnNextPosition = SequenceRenderer.getNodeByPointer(
       this.caretPosition + 1,
     );

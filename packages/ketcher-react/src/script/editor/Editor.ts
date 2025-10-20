@@ -747,6 +747,37 @@ class Editor implements KetcherEditor {
     return false;
   }
 
+  public isMinimalViableStructure() {
+    const nonLeavingAtoms = this.struct().atoms.filter((atomId) => {
+      assert(this.monomerCreationState);
+
+      return Array.from(
+        this.monomerCreationState.assignedAttachmentPoints.values(),
+      ).every((atomPair) => atomPair[1] !== atomId);
+    });
+
+    if (nonLeavingAtoms.size < 2) {
+      return false;
+    }
+
+    const nonLeavingAtomBonds = this.struct().bonds.filter(
+      (_, bond) =>
+        nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
+    );
+
+    if (nonLeavingAtomBonds.size < 1) {
+      return false;
+    }
+
+    const simpleSingleBonds = nonLeavingAtomBonds.filter(
+      (_, bond) =>
+        bond.type === Bond.PATTERN.TYPE.SINGLE &&
+        bond.stereo === Bond.PATTERN.STEREO.NONE,
+    );
+
+    return simpleSingleBonds.size >= 1;
+  }
+
   static isStructureContinuous(struct: Struct, selection?: Selection): boolean {
     let atomIds: number[];
     let bondIds: number[];
@@ -798,9 +829,22 @@ class Editor implements KetcherEditor {
     return visited.size === atomIds.length;
   }
 
+  static isStructureImpure(struct: Struct) {
+    const { atoms, sgroups, rgroups, functionalGroups } = struct;
+
+    return (
+      sgroups.size > 0 ||
+      rgroups.size > 0 ||
+      functionalGroups.size > 0 ||
+      Array.from(atoms.values()).some((atom) =>
+        genericsList.includes(atom.label),
+      )
+    );
+  }
+
   private originalStruct: Struct = new Struct();
   private originalSelection: Selection = {};
-  private selectedToOriginalAtomsIdMap = new Map<number, number>();
+  private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
   private selectionBBox;
 
   private changeEventSubscriber: any = null;
@@ -1074,7 +1118,7 @@ class Editor implements KetcherEditor {
   }
 
   // Maps attachment atom id to either set of leaving group atom ids or created leaving group atom id and bond id to properly revert changes when removing AP
-  private preservedConnectionPointData = new Map<
+  private readonly preservedConnectionPointData = new Map<
     number,
     Set<number> | [number, number]
   >();
@@ -1164,9 +1208,11 @@ class Editor implements KetcherEditor {
     );
     assert(originalLeavingAtom);
 
-    originalLeavingAtom.rglabel = null;
-    originalLeavingAtom.label = leavingAtom.label;
-    this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
+    if (originalLeavingAtom.rglabel !== null) {
+      originalLeavingAtom.rglabel = null;
+      originalLeavingAtom.label = leavingAtom.label;
+      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
+    }
   }
 
   saveNewMonomer(data) {
@@ -1414,9 +1460,25 @@ class Editor implements KetcherEditor {
         );
         this.update(action, true);
       }
+
+      this.preservedConnectionPointData.delete(attachmentAtomId);
+    } else {
+      const leavingAtoms = this.findPotentialLeavingAtoms(attachmentAtomId);
+      const leavingAtomIdsSet = new Set<number>();
+
+      leavingAtoms.forEach((atom) => {
+        const atomId = this.struct().atoms.keyOf(atom);
+        if (atomId !== null) {
+          leavingAtomIdsSet.add(atomId);
+        }
+      });
+
+      this.monomerCreationState.potentialAttachmentPoints.set(
+        attachmentAtomId,
+        leavingAtomIdsSet,
+      );
     }
 
-    this.preservedConnectionPointData.delete(attachmentAtomId);
     this.monomerCreationState.assignedAttachmentPoints.delete(name);
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
@@ -1569,6 +1631,7 @@ class Editor implements KetcherEditor {
       switch (operation) {
         case OperationType.ATOM_DELETE:
           {
+            // Invalidate assigned attachment points – check if any of the atoms in the atom pair is deleted
             const attachmentPointsToInvalidate = Array.from(
               this.monomerCreationState.assignedAttachmentPoints.entries(),
             ).filter(
@@ -1583,17 +1646,21 @@ class Editor implements KetcherEditor {
               ([attachmentPointName, atomPair]) => {
                 const [attachmentAtomId, leavingAtomId] = atomPair;
                 if (ids.has(attachmentAtomId)) {
+                  // If attachment atom is deleted, remove the entire entry
                   this.monomerCreationState?.assignedAttachmentPoints.delete(
                     attachmentPointName,
                   );
                 } else if (ids.has(leavingAtomId)) {
+                  // If leaving atom is deleted, try to find another suitable leaving atom
                   const potentialLeavingAtoms =
                     this.findPotentialLeavingAtoms(attachmentAtomId);
                   if (potentialLeavingAtoms.length === 0) {
+                    // If no suitable leaving atom is found, remove the entire entry
                     this.monomerCreationState?.assignedAttachmentPoints.delete(
                       attachmentPointName,
                     );
                   } else {
+                    // If a suitable leaving atom is found, update the entry with the new leaving atom
                     const newLeavingAtomId = this.struct().atoms.keyOf(
                       potentialLeavingAtoms[0],
                     );
@@ -1601,6 +1668,40 @@ class Editor implements KetcherEditor {
                     this.monomerCreationState?.assignedAttachmentPoints.set(
                       attachmentPointName,
                       [attachmentAtomId, newLeavingAtomId],
+                    );
+                  }
+                }
+              },
+            );
+
+            // Invalidate potential attachment points
+            const potentialAttachmentPointsToInvalidate = Array.from(
+              this.monomerCreationState.potentialAttachmentPoints.entries(),
+            );
+
+            potentialAttachmentPointsToInvalidate.forEach(
+              ([attachmentAtomId, leavingAtomIds]) => {
+                // If the attachment atom is deleted, remove the entire entry
+                if (ids.has(attachmentAtomId)) {
+                  this.monomerCreationState?.potentialAttachmentPoints.delete(
+                    attachmentAtomId,
+                  );
+                } else {
+                  // If any leaving atoms are deleted, remove them from the set
+                  const updatedLeavingAtomIds = new Set(
+                    Array.from(leavingAtomIds).filter((id) => !ids.has(id)),
+                  );
+
+                  // If no leaving atoms remain, remove the entire entry
+                  if (updatedLeavingAtomIds.size === 0) {
+                    this.monomerCreationState?.potentialAttachmentPoints.delete(
+                      attachmentAtomId,
+                    );
+                  } else {
+                    // Update the set with remaining leaving atoms
+                    this.monomerCreationState?.potentialAttachmentPoints.set(
+                      attachmentAtomId,
+                      updatedLeavingAtomIds,
                     );
                   }
                 }
@@ -1614,6 +1715,7 @@ class Editor implements KetcherEditor {
             const bond = this.struct().bonds.get(id);
             assert(bond);
 
+            // Handle assigned attachment points
             const attachmentPointWithBond = Array.from(
               this.monomerCreationState.assignedAttachmentPoints.entries(),
             ).find(([, atomPair]) => {
@@ -1623,20 +1725,59 @@ class Editor implements KetcherEditor {
               );
             });
 
-            if (!attachmentPointWithBond) {
-              continue;
+            // If bond between attachment atom and leaving atom becomes non-single or has stereo, mark the AP as problematic
+            if (attachmentPointWithBond) {
+              if (
+                bond.type !== Bond.PATTERN.TYPE.SINGLE ||
+                bond.stereo !== Bond.PATTERN.STEREO.NONE
+              ) {
+                this.monomerCreationState.problematicAttachmentPoints.add(
+                  attachmentPointWithBond[0],
+                );
+              } else {
+                this.monomerCreationState.problematicAttachmentPoints.delete(
+                  attachmentPointWithBond[0],
+                );
+              }
             }
 
+            // Handle potential attachment points
+            // If bond becomes non-single or has stereo, we need to remove the leaving atom from potential attachment points
             if (
               bond.type !== Bond.PATTERN.TYPE.SINGLE ||
               bond.stereo !== Bond.PATTERN.STEREO.NONE
             ) {
-              this.monomerCreationState.problematicAttachmentPoints.add(
-                attachmentPointWithBond[0],
-              );
-            } else {
-              this.monomerCreationState.problematicAttachmentPoints.delete(
-                attachmentPointWithBond[0],
+              this.monomerCreationState.potentialAttachmentPoints.forEach(
+                (leavingAtomIds, attachmentAtomId) => {
+                  const updatedLeavingAtomIds = new Set(leavingAtomIds);
+
+                  // Check if this bond connects the attachment atom to any of its potential leaving atoms
+                  const bondFromAttachmentAtom =
+                    bond.begin === attachmentAtomId &&
+                    leavingAtomIds.has(bond.end);
+                  const bondToAttachmentAtom =
+                    bond.end === attachmentAtomId &&
+                    leavingAtomIds.has(bond.begin);
+                  // If so, remove the leaving atom from the set
+                  if (bondFromAttachmentAtom || bondToAttachmentAtom) {
+                    updatedLeavingAtomIds.delete(
+                      bondFromAttachmentAtom ? bond.end : bond.begin,
+                    );
+                  }
+
+                  if (updatedLeavingAtomIds.size === 0) {
+                    // If no leaving atoms remain, remove the entire entry
+                    this.monomerCreationState?.potentialAttachmentPoints.delete(
+                      attachmentAtomId,
+                    );
+                  } else {
+                    // Update the set with remaining leaving atoms
+                    this.monomerCreationState?.potentialAttachmentPoints.set(
+                      attachmentAtomId,
+                      updatedLeavingAtomIds,
+                    );
+                  }
+                },
               );
             }
           }
@@ -1648,21 +1789,76 @@ class Editor implements KetcherEditor {
             const bond = this.struct().bonds.get(id);
             assert(bond);
 
+            // Handle assigned attachment points - existing logic
             const attachmentPointWithBondToLeavingAtom = Array.from(
               this.monomerCreationState.assignedAttachmentPoints.entries(),
             ).find(([, [, leavingAtomId]]) => {
               return bond.begin === leavingAtomId || bond.end === leavingAtomId;
             });
 
-            if (!attachmentPointWithBondToLeavingAtom) {
-              continue;
+            if (attachmentPointWithBondToLeavingAtom) {
+              const [attachmentPointName] =
+                attachmentPointWithBondToLeavingAtom;
+              this.monomerCreationState.assignedAttachmentPoints.delete(
+                attachmentPointName,
+              );
             }
 
-            const [attachmentPointName] = attachmentPointWithBondToLeavingAtom;
+            // Handle potential attachment points
+            // If a single non-stereo bond is created from a potential attachment atom,
+            // add the other end to the set of potential leaving atoms
+            if (
+              bond.type === Bond.PATTERN.TYPE.SINGLE &&
+              bond.stereo === Bond.PATTERN.STEREO.NONE
+            ) {
+              // Check if bond.begin is a potential attachment atom
+              if (
+                this.monomerCreationState.potentialAttachmentPoints.has(
+                  bond.begin,
+                )
+              ) {
+                const leavingAtomIds =
+                  this.monomerCreationState.potentialAttachmentPoints.get(
+                    bond.begin,
+                  );
+                assert(leavingAtomIds);
 
-            this.monomerCreationState.assignedAttachmentPoints.delete(
-              attachmentPointName,
-            );
+                // Check if the other end (bond.end) can be a leaving atom (has only one neighbor)
+                const endAtom = this.struct().atoms.get(bond.end);
+                if (endAtom && endAtom.neighbors.length === 1) {
+                  const updatedLeavingAtomIds = new Set(leavingAtomIds);
+                  updatedLeavingAtomIds.add(bond.end);
+                  this.monomerCreationState.potentialAttachmentPoints.set(
+                    bond.begin,
+                    updatedLeavingAtomIds,
+                  );
+                }
+              }
+
+              // Check if bond.end is a potential attachment atom
+              if (
+                this.monomerCreationState.potentialAttachmentPoints.has(
+                  bond.end,
+                )
+              ) {
+                const leavingAtomIds =
+                  this.monomerCreationState.potentialAttachmentPoints.get(
+                    bond.end,
+                  );
+                assert(leavingAtomIds);
+
+                // Check if the other end (bond.begin) can be a leaving atom (has only one neighbor)
+                const beginAtom = this.struct().atoms.get(bond.begin);
+                if (beginAtom && beginAtom.neighbors.length === 1) {
+                  const updatedLeavingAtomIds = new Set(leavingAtomIds);
+                  updatedLeavingAtomIds.add(bond.begin);
+                  this.monomerCreationState.potentialAttachmentPoints.set(
+                    bond.end,
+                    updatedLeavingAtomIds,
+                  );
+                }
+              }
+            }
           }
           break;
         }

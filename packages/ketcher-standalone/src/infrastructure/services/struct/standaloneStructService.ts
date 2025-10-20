@@ -221,7 +221,7 @@ const messageTypeToEventMapping: {
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private worker: Worker;
+  private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
 
@@ -779,6 +779,7 @@ class IndigoService implements StructService {
         'render-stereo-bond-width': restOptions['render-stereo-bond-width'],
         'render-stereo-bond-width-unit':
           restOptions['render-stereo-bond-width-unit'],
+        'render-stereo-style': restOptions['render-stereo-style'],
         'render-hash-spacing': restOptions['render-hash-spacing'],
         'render-hash-spacing-unit': restOptions['render-hash-spacing-unit'],
         'render-output-sheet-width': restOptions['render-output-sheet-width'],

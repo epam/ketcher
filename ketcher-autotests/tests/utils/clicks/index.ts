@@ -3,19 +3,15 @@
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType, takeEditorScreenshot } from '..';
-import { selectButtonById } from '../canvas/tools/helpers';
-import { AtomLabelType } from './types';
+import { BondType } from '..';
+import { AtomLabelType, MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type BoundingBox = {
   width: number;
@@ -49,7 +45,7 @@ export async function clickAfterItemsToMergeInitialization(
   page: Page,
   x: number,
   y: number,
-  button: 'left' | 'right' = 'left',
+  button: MouseButton = 'left',
 ) {
   await page.mouse.move(x, y);
   await waitForItemsToMergeInitialization(page);
@@ -63,7 +59,7 @@ export async function clickAfterItemsToMergeInitialization(
 
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
-  button: 'left' | 'right' = 'left',
+  button: MouseButton = 'left',
   options: { waitForMergeInitialization: boolean } = {
     waitForMergeInitialization: false,
   },
@@ -89,7 +85,7 @@ export async function clickOnCanvas(
     /**
      * Defaults to `left`.
      */
-    button?: 'left' | 'right' | 'middle';
+    button?: MouseButton;
 
     /**
      * defaults to 1. See [UIEvent.detail].
@@ -258,7 +254,7 @@ export async function clickOnBond(
   page: Page,
   bondType: BondType,
   bondNumber: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await clickOnCanvas(page, point.x, point.y, {
@@ -271,7 +267,7 @@ export async function clickOnAtom(
   page: Page,
   atomLabel: AtomLabelType,
   atomNumber: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await clickOnCanvas(page, point.x, point.y, {
@@ -283,7 +279,7 @@ export async function clickOnAtom(
 export async function clickOnAtomById(
   page: Page,
   atomId: number,
-  buttonSelect?: 'left' | 'right' | 'middle',
+  buttonSelect?: MouseButton,
 ) {
   const point = await getAtomById(page, atomId);
   await clickOnCanvas(page, point.x, point.y, {
@@ -321,30 +317,4 @@ export async function moveOnAtom(
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await page.mouse.move(point.x, point.y);
-}
-
-export async function moveOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.move(point.x, point.y);
-}
-
-export async function applyAutoMapMode(
-  page: Page,
-  mode: string,
-  withScreenshot = true,
-) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
-  await LeftToolbar(page).selectReactionMappingTool(
-    ReactionMappingType.ReactionAutoMapping,
-  );
-  await page.getByTestId('automap-mode-input-span').click();
-  await selectOption(page, mode);
-  await selectButtonById('OK', page);
-  if (withScreenshot) {
-    await takeEditorScreenshot(page);
-  }
 }

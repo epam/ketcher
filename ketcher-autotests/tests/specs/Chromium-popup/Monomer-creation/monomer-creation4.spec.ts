@@ -455,6 +455,7 @@ test(`11. Check that if the potential AA is not attached to any potential LGAs, 
    *      4. Press Create Monomer button
    *      5. r-click on a potential AA on canvas
    *      6. Click "Mark as connection point" option
+   *      7. Take screenshot to validate that implicit hydrogen is drawn and set as LGA
    *
    * Version 3.9
    */
@@ -474,4 +475,52 @@ test(`11. Check that if the potential AA is not attached to any potential LGAs, 
     ConnectionPointOption.MarkAsConnectionPoint,
   );
   await takeElementScreenshot(page, targetAtom, { padding: 50 });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`12. Check that right-clicking on that label, gives a menu with two options "Edit attachment point" and "Remove assignment" (see mockups)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8268
+   * Description: Check that right-clicking on that label, gives a menu with two options "Edit attachment point" and "Remove assignment" (see mockups)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. r-click on a potential AA on canvas
+   *      6. Click "Mark as connection point" option
+   *      7. r-click on the created attachment point label
+   *      8. Verify that context menu contains options "Edit attachment point" and "Remove assignment"
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C(NCC)C');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
+  await ContextMenu(page, targetAtom).click(
+    ConnectionPointOption.MarkAsConnectionPoint,
+  );
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await ContextMenu(page, attachmentPointR1).open();
+
+  await expect(
+    page.getByTestId(ConnectionPointOption.EditConnectionPoint),
+  ).toBeVisible();
+  await expect(
+    page.getByTestId(ConnectionPointOption.RemoveAssignment),
+  ).toBeVisible();
+
+  await CreateMonomerDialog(page).discard();
 });

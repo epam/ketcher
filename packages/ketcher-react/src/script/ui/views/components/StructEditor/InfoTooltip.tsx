@@ -114,6 +114,7 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
   }
 
   const shiftedPosition = getPanelPosition(position, render);
+  const isSmall = ["5'", "3'"].includes((tooltip || '').trim());
 
   return (
     <div
@@ -123,7 +124,11 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
         left: shiftedPosition.x + 'px',
         top: shiftedPosition.y + 'px',
       }}
-      className={clsx(classes.infoTooltip, className)}
+      className={clsx(
+        classes.infoTooltip,
+        isSmall && classes.infoTooltipSmallSquare,
+        className,
+      )}
       dangerouslySetInnerHTML={{ __html: tooltip }}
     />
   );

@@ -55,6 +55,10 @@ export const SelectedMonomersContextMenu = ({
 
   const menuItems = [
     {
+      name: 'layout_circular',
+      title: 'Circular layout',
+    },
+    {
       name: 'copy',
       title: 'Copy',
       icon: <Icon name={'copyMenu' as IconName} />,
@@ -123,6 +127,9 @@ export const SelectedMonomersContextMenu = ({
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
     switch (true) {
+      case menuItemId === 'layout_circular':
+        editor?.events.layoutCircular.dispatch();
+        break;
       case menuItemId === 'copy':
         editor?.events.copySelectedStructure.dispatch();
         break;

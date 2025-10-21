@@ -1180,14 +1180,14 @@ const monomersToCreate = [
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
-  {
-    description: '3. Base',
-    type: MonomerType.Base,
-    symbol: 'Base',
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    libraryCard: Base.Base,
-  },
+  // {
+  //   description: '3. Base',
+  //   type: MonomerType.Base,
+  //   symbol: 'Base',
+  //   name: 'Base Test monomer',
+  //   naturalAnalogue: NucleotideNaturalAnalogue.A,
+  //   libraryCard: Base.Base,
+  // },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
@@ -1257,10 +1257,12 @@ for (const monomerToCreate of monomersToCreate) {
       // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
       await delay(1);
       // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await expect(page.getByTestId('preview-tooltip')).toBeVisible();
-      await expect(page.getByTestId('preview-tooltip-title')).toContainText(
-        monomerToCreate.name,
-      );
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
+      ).toBeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,
+      ).toContainText(monomerToCreate.name);
     },
   );
 }

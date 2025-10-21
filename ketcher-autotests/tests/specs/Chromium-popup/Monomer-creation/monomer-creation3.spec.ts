@@ -1280,7 +1280,7 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     AminoAcidNaturalAnalogue.A,
   );
-  await CreateMonomerDialog(page).submit();
+  await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1327,7 +1327,7 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,
   );
-  await CreateMonomerDialog(page).submit();
+  await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1371,7 +1371,7 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await CreateMonomerDialog(page).selectType(MonomerType.Phosphate);
   await CreateMonomerDialog(page).setSymbol('Phosphate');
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
-  await CreateMonomerDialog(page).submit();
+  await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1415,7 +1415,7 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   await CreateMonomerDialog(page).selectType(MonomerType.Sugar);
   await CreateMonomerDialog(page).setSymbol('Sugar');
   await CreateMonomerDialog(page).setName('Sugar Test monomer');
-  await CreateMonomerDialog(page).submit();
+  await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1462,7 +1462,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,
   );
-  await CreateMonomerDialog(page).submit();
+  await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

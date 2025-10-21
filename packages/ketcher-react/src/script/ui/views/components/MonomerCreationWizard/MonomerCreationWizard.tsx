@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconButton } from 'components';
+import { Icon, IconButton, Dialog } from 'components';
 import {
   AttachmentPointClickData,
   AttachmentPointName,
@@ -37,6 +37,7 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
+import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
@@ -346,6 +347,8 @@ const MonomerCreationWizard = () => {
   const { values, notifications, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
+    useState('');
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -544,6 +547,20 @@ const MonomerCreationWizard = () => {
         notifications: structureNotifications,
       });
       return;
+    }
+
+    if (type) {
+      const leavingGroupNotifications = validateMonomerLeavingGroups(
+        editor,
+        type,
+        assignedAttachmentPoints,
+      );
+      if (leavingGroupNotifications.size > 0) {
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
+        setLeavingGroupDialogMessage(firstMessage);
+        return;
+      }
     }
 
     editor.saveNewMonomer({
@@ -791,6 +808,39 @@ const MonomerCreationWizard = () => {
           </button>
         </div>
       </div>
+      {leavingGroupDialogMessage &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Non-typical attachment points"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  setLeavingGroupDialogMessage('');
+                  editor.saveNewMonomer({
+                    type,
+                    symbol,
+                    name,
+                    naturalAnalogue,
+                    modificationTypes,
+                  });
+                  resetWizard();
+                },
+                onCancel: () => setLeavingGroupDialogMessage(''),
+              }}
+              buttons={['Cancel', 'OK']}
+              buttonsNameMap={{ OK: 'Cancel', Cancel: 'Yes' }}
+            >
+              <div className={styles.DialogMessage}>
+                {leavingGroupDialogMessage}
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
     </div>
   );
 };

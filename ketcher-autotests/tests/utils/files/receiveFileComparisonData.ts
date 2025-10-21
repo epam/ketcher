@@ -244,6 +244,23 @@ export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
   await SaveStructureDialog(page).cancel();
 }
 
+export async function verifyAxoLabsExport(
+  page: Page,
+  AxoLabsExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.AxoLabs,
+  );
+  const AxoLabsExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(AxoLabsExportResult).toEqual(AxoLabsExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}
+
 export async function verifyPNGExport(page: Page) {
   await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(

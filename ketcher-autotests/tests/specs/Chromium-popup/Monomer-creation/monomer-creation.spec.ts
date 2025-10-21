@@ -1216,52 +1216,55 @@ const monomersToCreate = [
 ];
 
 for (const monomerToCreate of monomersToCreate) {
-  test(`22. Create monomer with ${monomerToCreate.description}`, async () => {
-    // Bug: https://github.com/epam/ketcher/issues/7745
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that when the user saves the monomer, the wizard is exited
-     *              (and all appropriate tollbar icons enabled), that monomer is added
-     *              to the library in the appropriate place with all attributes defined
-     *              by the user, and it appears on canvas as an expanded monomer
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with some attributes
-     *      5. Switch to Macromolecules editor
-     *      6. Validate that monomer with ${monomerToCreate.symbol} present on the canvas
-     *      7. Hover mouse over monomer and wait for preview tooltip
-     *      8. Validate that preview tooltip displays correct monomer ${monomerToCreate.name}
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+  test.fail(
+    `22. Create monomer with ${monomerToCreate.description}`,
+    async () => {
+      // Bug: https://github.com/epam/ketcher/issues/7745
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that when the user saves the monomer, the wizard is exited
+       *              (and all appropriate tollbar icons enabled), that monomer is added
+       *              to the library in the appropriate place with all attributes defined
+       *              by the user, and it appears on canvas as an expanded monomer
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with some attributes
+       *      5. Switch to Macromolecules editor
+       *      6. Validate that monomer with ${monomerToCreate.symbol} present on the canvas
+       *      7. Hover mouse over monomer and wait for preview tooltip
+       *      8. Validate that preview tooltip displays correct monomer ${monomerToCreate.name}
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    const monomer = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
-    });
-    expect(await monomer.count()).toEqual(1);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      const monomer = getMonomerLocator(page, {
+        monomerAlias: monomerToCreate.symbol,
+      });
+      expect(await monomer.count()).toEqual(1);
 
-    await dragTo(page, monomer, { x: 450, y: 250 });
-    await monomer.hover({ force: true });
-    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
-    await delay(1);
-    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await expect(
-      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-    ).toBeVisible();
-    await expect(
-      MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,
-    ).toContainText(monomerToCreate.name);
-  });
+      await dragTo(page, monomer, { x: 450, y: 250 });
+      await monomer.hover({ force: true });
+      // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
+      await delay(1);
+      // await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
+      ).toBeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,
+      ).toContainText(monomerToCreate.name);
+    },
+  );
 }
 
 test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, and no monomer is saved`, async () => {

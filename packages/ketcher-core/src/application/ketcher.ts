@@ -61,7 +61,6 @@ import {
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
-import { IndigoProvider } from 'ketcher-react';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -572,7 +571,6 @@ export class Ketcher {
 
     await runAsyncAction<void>(async () => {
       if (window.isPolymerEditorTurnedOn) {
-        const indigo = IndigoProvider.getIndigo() as StructService;
         const ketSerializer = new KetSerializer();
         const serializedKet = ketSerializer.serialize(
           new Struct(),
@@ -582,7 +580,7 @@ export class Ketcher {
           true,
         );
 
-        const result = await indigo.layout(
+        const result = await this.structService.layout(
           {
             struct: serializedKet,
             output_format: ChemicalMimeType.KET,

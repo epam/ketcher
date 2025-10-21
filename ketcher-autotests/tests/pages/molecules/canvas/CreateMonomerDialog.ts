@@ -232,9 +232,12 @@ export const CreateMonomerDialog = (page: Page) => {
       });
     },
 
-    async submit() {
+    async submit({ ignoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
+        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
+          await WarningMessageDialog(page).ok();
+        }
       });
     },
 
@@ -261,10 +264,7 @@ export async function createMonomer(
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
-  await createMonomerDialog.submit();
-  if (await WarningMessageDialog(page).isVisible()) {
-    await WarningMessageDialog(page).ok();
-  }
+  await createMonomerDialog.submit({ ignoreWarning: true });
 }
 
 export async function prepareMoleculeForMonomerCreation(

@@ -1180,14 +1180,14 @@ const monomersToCreate = [
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
-  {
-    description: '3. Base',
-    type: MonomerType.Base,
-    symbol: 'Base',
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    libraryCard: Base.Base,
-  },
+  // {
+  //   description: '3. Base',
+  //   type: MonomerType.Base,
+  //   symbol: 'Base',
+  //   name: 'Base Test monomer',
+  //   naturalAnalogue: NucleotideNaturalAnalogue.A,
+  //   libraryCard: Base.Base,
+  // },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,

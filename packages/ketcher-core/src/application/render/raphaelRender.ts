@@ -28,6 +28,7 @@ import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 import { AttachmentPointName } from 'domain/types';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
@@ -36,6 +37,7 @@ export type MonomerCreationState = {
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
   clickedAttachmentPoint?: AttachmentPointName | null;
+  selectedMonomerClass?: KetMonomerClass;
 } | null;
 
 export class Render {

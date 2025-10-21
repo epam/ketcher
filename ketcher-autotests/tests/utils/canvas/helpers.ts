@@ -123,6 +123,7 @@ export async function takeElementScreenshot(
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
     delay?: number;
+    padding?: number;
   },
 ) {
   if (options?.hideMonomerPreview) {
@@ -131,13 +132,41 @@ export async function takeElementScreenshot(
     });
     await MonomerPreviewTooltip(page).waitForBecomeHidden();
   }
+
   let element = elementLocator;
 
   if ((await elementLocator.count()) > 1) {
     element = element.filter({ has: page.locator(':visible') }).first();
   }
+
   await element.waitFor({ state: 'visible' });
-  await expect(element).toHaveScreenshot(options);
+
+  if (!options?.padding) {
+    await expect(element).toHaveScreenshot(options);
+    return;
+  }
+
+  const box = await element.boundingBox();
+  if (!box) throw new Error('Cannot get bounding box of element');
+
+  const padding = options.padding;
+
+  const clip = {
+    x: Math.max(box.x - padding, 0),
+    y: Math.max(box.y - padding, 0),
+    width: box.width + padding * 2,
+    height: box.height + padding * 2,
+  };
+
+  if (options?.delay) {
+    await page.waitForTimeout(options.delay);
+  }
+
+  const screenshot = await page.screenshot({ clip });
+
+  expect(screenshot).toMatchSnapshot({
+    ...options,
+  });
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {

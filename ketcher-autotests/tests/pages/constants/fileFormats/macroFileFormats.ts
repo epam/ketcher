@@ -5,6 +5,7 @@ export enum MacromoleculesFileFormatType {
   Sequence3LetterCode = 'Sequence (3-letter code)-option',
   FASTA = 'FASTA-option',
   IDT = 'IDT-option',
+  AxoLabs = 'AxoLabs-option',
   SVGDocument = 'SVG Document-option',
   HELM = 'HELM-option',
 }
@@ -16,6 +17,7 @@ export enum MacromoleculesFileFormatName {
   Sequence3LetterCode = 'Sequence (3-letter code)',
   FASTA = 'FASTA',
   IDT = 'IDT',
+  AxoLabs = 'axolabs',
   SVGDocument = 'SVG Document',
   HELM = 'HELM',
 }

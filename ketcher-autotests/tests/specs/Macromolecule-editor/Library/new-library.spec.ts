@@ -606,7 +606,7 @@ const monomerToDrag2 = [
   Sugar.FMOE,
   Phosphate.bP,
   Nucleotide.AmMC6T,
-  Chem.DOTA,
+  // Chem.DOTA,
 ];
 
 for (const monomer of monomerToDrag2) {

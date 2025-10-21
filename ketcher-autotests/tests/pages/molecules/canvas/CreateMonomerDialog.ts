@@ -24,6 +24,7 @@ type CreateMonomerDialogLocators = {
   symbolEditbox: Locator;
   nameEditbox: Locator;
   naturalAnalogueCombobox: Locator;
+  infoIcon: Locator;
   r1ControlGroup: Locator;
   r2ControlGroup: Locator;
   r3ControlGroup: Locator;
@@ -118,6 +119,7 @@ export const CreateMonomerDialog = (page: Page) => {
     symbolEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
     naturalAnalogueCombobox: page.getByTestId('natural-analogue-picker'),
+    infoIcon: page.getByTestId('attachment-point-info-icon'),
     r1ControlGroup: page.getByTestId('attachment-point-controls-R1'),
     r2ControlGroup: page.getByTestId('attachment-point-controls-R2'),
     r3ControlGroup: page.getByTestId('attachment-point-controls-R3'),

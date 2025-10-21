@@ -681,6 +681,7 @@ const MonomerCreationWizard = () => {
               <span
                 className={styles.attachmentPointInfoIcon}
                 title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                data-testid="attachment-point-info-icon"
               >
                 <Icon name="about" />
               </span>

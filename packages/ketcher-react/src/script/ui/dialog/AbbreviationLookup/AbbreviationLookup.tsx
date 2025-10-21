@@ -200,7 +200,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
         }}
         renderOption={(props, option) => {
           return (
-            <li {...props} title={option.label}>
+            <li {...props} title={option.label} key={option.label}>
               <div className={classes.optionItemContent}>
                 {highlightOptionLabel(option, loweredLookupValue)}
               </div>

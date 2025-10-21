@@ -70,9 +70,9 @@ class ReStruct {
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
+  public bonds: Map<number, ReBond> = new Map();
   public visibleAtoms: Map<number, ReAtom> = new Map();
   public visibleBonds: Map<number, ReBond> = new Map();
-  public bonds: Map<number, ReBond> = new Map();
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
   public rxnArrows: Map<number, ReRxnArrow> = new Map();

@@ -14,7 +14,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacroFileType } from '@utils/canvas/types';
 import { pasteFromClipboardAndAddToMacromoleculesCanvas } from '@utils/files/readFile';
 import { verifyAxoLabsExport } from '@utils/files/receiveFileComparisonData';
-import { PresetType } from '@utils/index';
+import { MonomerType, PresetType } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
@@ -83,6 +83,7 @@ const monomersWithAliases = [
   { axoLabsString: "5'-AAA-3'", expectedMonomer: Preset.A },
   { axoLabsString: "5'-CCC-3'", expectedMonomer: Preset.C },
   { axoLabsString: "5'-GGG-3'", expectedMonomer: Preset.G },
+  { axoLabsString: "5'-UUU-3'", expectedMonomer: Preset.U },
   { axoLabsString: "5'-dIdIdI-3'", expectedMonomer: Preset.dR_In_P },
   { axoLabsString: "5'-AmAmAm-3'", expectedMonomer: Preset.MOE_A_P },
   { axoLabsString: "5'-GmGmGm-3'", expectedMonomer: Preset.MOE_G_P },
@@ -134,7 +135,8 @@ test('Case 3: Check that for following structures in the library, aliases assign
    *
    * Scenario:
    *            1. Load axolabs string via Paste from Clipboard dialog
-   *            2. Validate that five chains of three nucleotide monomers are present on the canvas
+   *            2. Validate that three nucleotide monomers are present on the canvas
+   *            3. Verify AxoLabs export
    *
    * Version 3.9
    */
@@ -156,4 +158,81 @@ test('Case 3: Check that for following structures in the library, aliases assign
 
     await verifyAxoLabsExport(page, monomer.axoLabsString);
   }
+});
+
+const monomersWithS = [
+  { axoLabsString: "5'-AsAsA-3'", expectedMonomer: Preset.A },
+  { axoLabsString: "5'-CsCsC-3'", expectedMonomer: Preset.C },
+  { axoLabsString: "5'-GsGsG-3'", expectedMonomer: Preset.G },
+  { axoLabsString: "5'-UsUsU-3'", expectedMonomer: Preset.U },
+  { axoLabsString: "5'-dIsdIsdI-3'", expectedMonomer: Preset.dR_In_P },
+  { axoLabsString: "5'-AmsAmsAm-3'", expectedMonomer: Preset.MOE_A_P },
+  { axoLabsString: "5'-GmsGmsGm-3'", expectedMonomer: Preset.MOE_G_P },
+  { axoLabsString: "5'-TmsTmsTm-3'", expectedMonomer: Preset.MOE_T_P },
+  { axoLabsString: "5'-AfsAfsAf-3'", expectedMonomer: Preset.fR_A_P },
+  { axoLabsString: "5'-CfsCfsCf-3'", expectedMonomer: Preset.fR_C_P },
+  { axoLabsString: "5'-GfsGfsGf-3'", expectedMonomer: Preset.fR_G_P },
+  { axoLabsString: "5'-UfsUfsUf-3'", expectedMonomer: Preset.fR_U_P },
+];
+
+test('Case 4: Check that symbols without brackets that represent nucleotides can be followed by symbol s', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8331
+   * Description: 1. Check that symbols without brackets that represent nucleotides can be followed by symbol s
+   *              2. Check that all symbols can exist at every position except symbols s (that can only be internal) and symbol p (that can only be terminal)
+   *
+   * Scenario:
+   *            1. Load axolabs string via Paste from Clipboard dialog
+   *            2. Validate that three nucleotide monomers are present on the canvas
+   *            3. Verify AxoLabs export
+   *
+   * Version 3.9
+   */
+  test.slow();
+  const sMonomer = getMonomerLocator(page, Phosphate.sP);
+  for (const monomer of monomersWithS) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.AxoLabs,
+      monomer.axoLabsString,
+    );
+    const monomerOnCanvas = isPresetType(monomer.expectedMonomer)
+      ? getMonomerLocator(page, monomer.expectedMonomer.base ?? Base.NoBase)
+      : getMonomerLocator(page, monomer.expectedMonomer);
+
+    await expect(monomerOnCanvas.nth(0)).toBeVisible();
+    await expect(monomerOnCanvas.nth(1)).toBeVisible();
+    await expect(monomerOnCanvas.nth(2)).toBeVisible();
+
+    await expect(sMonomer.nth(0)).toBeVisible();
+    await expect(sMonomer.nth(1)).toBeVisible();
+
+    await verifyAxoLabsExport(page, monomer.axoLabsString);
+  }
+});
+
+test('Case 5: Check that in case of import, where a symbol with brackets that is not defined in the Ketcher library exist, the monomer loaded as an unresolved AxoLab monomer', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8331
+   * Description: 1. Check that in case of import, where a symbol with brackets that is not defined in the Ketcher
+   *                 library exist, the monomer loaded as an unresolved AxoLab monomer
+   *
+   * Scenario:
+   *            1. Load axolabs string via Paste from Clipboard dialog
+   *            2. Validate that unknown monomers are present on the canvas
+   *
+   * Version 3.9
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    "5'-(NHC6)(Unknown)(NHC6)-3'",
+  );
+  const unknownMonomerOnCanvas = getMonomerLocator(page, {
+    monomerAlias: '(Unknown)',
+    monomerType: MonomerType.UnknownMonomer,
+  });
+
+  await expect(unknownMonomerOnCanvas).toBeVisible();
 });

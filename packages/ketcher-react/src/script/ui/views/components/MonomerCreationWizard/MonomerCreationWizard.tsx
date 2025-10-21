@@ -415,6 +415,10 @@ const MonomerCreationWizard = () => {
     }
   };
 
+  useEffect(() => {
+    editor?.setMonomerCreationSelectedType?.(values.type);
+  }, [editor, values.type]);
+
   const handleModificationTypeChange = (
     indexToChange: number,
     value: string,

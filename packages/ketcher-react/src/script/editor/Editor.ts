@@ -88,6 +88,7 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
+import { KetMonomerClass } from 'ketcher-core/dist/application/formatters/types';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -572,6 +573,16 @@ class Editor implements KetcherEditor {
 
   private set monomerCreationState(state: MonomerCreationState) {
     this.render.monomerCreationState = state;
+  }
+
+  public setMonomerCreationSelectedType(type: KetMonomerClass | undefined) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+    this.render.monomerCreationState = {
+      ...currentState,
+      selectedMonomerClass: type,
+    };
+    this.render.update(true);
   }
 
   public get isMonomerCreationWizardActive() {

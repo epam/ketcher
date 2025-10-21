@@ -4,11 +4,17 @@
 import { test } from '@fixtures';
 import { Page, expect } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacroFileType } from '@utils/canvas/types';
@@ -235,4 +241,220 @@ test('Case 5: Check that in case of import, where a symbol with brackets that is
   });
 
   await expect(unknownMonomerOnCanvas).toBeVisible();
+});
+
+const badAxoLabsStrings = [
+  {
+    description: 'No opening token',
+    axoLabsString: "AAA-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Sequence too short: 'AAA-3''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'No closing token',
+    axoLabsString: "5'-AAA",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Sequence too short: '5'-AAA'', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Bad opening token',
+    axoLabsString: "5-AAA-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got 5-A', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Bad closing token',
+    axoLabsString: "5'-AAA-3",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Invalid AxoLabs sequence: expected -3' got A-3', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Invalid base',
+    axoLabsString: "5'-Z-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unexpected end of data', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Unmatched opening bracket',
+    axoLabsString: "5'-(AAA-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unexpected end of data', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Unmatched closing bracket',
+    axoLabsString: "5'-AAA)-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Unexpected end of data', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Wrong brackets brackets',
+    axoLabsString: "5'-[invdA]-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: The following string cannot be interpreted as an AxoLabs string: [i', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Empty sequence',
+    axoLabsString: "5'--3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Sequence too short: '5'--3''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Wrong symbol (-) inside',
+    axoLabsString: "5'-(invdA)-(invdA)-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: The following string cannot be interpreted as an AxoLabs string: -(', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Wrong symbol (*) inside',
+    axoLabsString: "5'-(invdA)*(invdA)-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: The following string cannot be interpreted as an AxoLabs string: *(', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Wrong symbol (/) inside',
+    axoLabsString: "5'-(invdA)/(invdA)-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: The following string cannot be interpreted as an AxoLabs string: /(', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+  {
+    description: 'Wrong symbol (_) inside',
+    axoLabsString: "5'-(invdA)_(invdA)-3'",
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: The following string cannot be interpreted as an AxoLabs string: _(', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'scanner: BufferScanner::read() error'",
+  },
+];
+
+test('Case 6: Check error message on import', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8331
+   * Description: Check error message on import
+   *
+   * Scenario:
+   *            1. Load bad axolabs string via Paste from Clipboard dialog
+   *            2. Validate error message is shown
+   *
+   * Version 3.9
+   */
+  test.slow();
+  for (const axoLab of badAxoLabsStrings) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.AxoLabs,
+      axoLab.axoLabsString,
+      // error is expected
+      true,
+    );
+
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(axoLab.expectedErrorMessage);
+    await ErrorMessageDialog(page).close();
+
+    await PasteFromClipboardDialog(page).closeWindow();
+  }
+});
+
+const monomerWithNoAxoLabsAlias = [
+  {
+    description: 'Preset: dR_isoG_P has no AxoLabs alias',
+    monomer: Preset.dR_isoG_P,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Monomer group 'dR(isoG)P' has no AxoLabs alias.",
+  },
+  {
+    description: 'Monomer: Peptide C has no AxoLabs alias',
+    monomer: Peptide.C,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found AminoAcid monomer C.',
+  },
+  {
+    description: 'Monomer: Ambigous peptide X has no AxoLabs alias',
+    monomer: Peptide.X,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found AminoAcid monomer X.',
+  },
+  {
+    description: 'Monomer: Sugar _12ddR has no AxoLabs alias',
+    monomer: Sugar._12ddR,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Monomer group '12ddR()P' has no AxoLabs alias.",
+  },
+  {
+    description: 'Monomer: Base _2imen2 has no AxoLabs alias',
+    monomer: Base._2imen2,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found Base monomer 2imen2.',
+  },
+  {
+    description: 'Monomer: Ambigous DNA base H has no AxoLabs alias',
+    monomer: Base.DNA_H,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found Base monomer H.',
+  },
+  {
+    description: 'Monomer: Ambigous RNA base H has no AxoLabs alias',
+    monomer: Base.DNA_H,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found Base monomer H.',
+  },
+  {
+    description: 'Monomer: Ambigous base R has no AxoLabs alias',
+    monomer: Base.R,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - expected sugar but found Base monomer R.',
+  },
+  {
+    description: 'Monomer: Phosphate AmC12 has no AxoLabs alias',
+    monomer: Phosphate.AmC12,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Cannot save molecule in AxoLabs format - phosphate AmC12 cannot be first monomer in sequence.',
+  },
+  {
+    description: 'Monomer: Nucleotide 5Ade has no AxoLabs alias',
+    monomer: Nucleotide._5Ade,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Nucleotide '5Ade' has no AxoLabs alias.",
+  },
+  {
+    description: 'Monomer: Nucleotide 5NitInd has no AxoLabs alias',
+    monomer: Nucleotide._5NitInd,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Nucleotide '5NitInd' has no AxoLabs alias.",
+  },
+  {
+    description: 'Monomer: CHEM 2-Bio has no AxoLabs alias',
+    monomer: Chem._2_Bio,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Chem '2-Bio' has no AxoLabs alias.",
+  },
+];
+
+test('Case 7: Check error message on export', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8331
+   * Description: Check error message on export
+   *
+   * Scenario:
+   *            1. Clear canvas
+   *            2. Put monomer that could be exported on the canvas from Library
+   *            3. Export monomer in AxoLabs format
+   *            4. Validate export is successful
+   *
+   * Version 3.9
+   */
+  test.slow();
+  for (const monomer of monomerWithNoAxoLabsAlias) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await Library(page).clickMonomerAutochain(monomer.monomer);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.AxoLabs,
+    );
+
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(monomer.expectedErrorMessage);
+
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
+  }
 });

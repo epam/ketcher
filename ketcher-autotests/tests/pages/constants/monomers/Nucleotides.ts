@@ -16,6 +16,26 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: 'AmMC6T',
     testId: 'AmMC6T___Amino Modifier C6 dT',
   },
+  InvdA: {
+    alias: 'InvdA',
+    testId: 'InvdA___Inverted dA',
+  },
+  InvdC: {
+    alias: 'InvdC',
+    testId: 'InvdC___Inverted dC',
+  },
+  InvdG: {
+    alias: 'InvdG',
+    testId: 'InvdG___Inverted dGn',
+  },
+  InvdT: {
+    alias: 'InvdT',
+    testId: 'InvdT___Inverted dT',
+  },
+  vinU: {
+    alias: 'vinU',
+    testId: "vinU___5'-vinylphosphonate-2'-OMe-uridine",
+  },
   Nucleotide: {
     alias: 'Nucleotide',
     testId: 'Nucleotide___Nucleotide Test monomer',
@@ -28,6 +48,7 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: 'Super-T',
     testId: 'Super-T___5-hydroxybutynl-2’-deoxyuridine',
   },
+  _3InvdT: { alias: '3InvdT', testId: "3InvdT___3' Inverted dT" },
   _5Br_dU: {
     alias: '5Br-dU',
     testId: '5Br-dU___5-Bromo-deoxyuridine',
@@ -59,7 +80,6 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
   FAMKdT: { alias: 'FAMKdT', testId: 'FAMKdT___dT 6-FAM Azide' },
   Dab: { alias: 'Dab', testId: 'Dab___d5meC Dabcyl' },
   ddC: { alias: 'ddC', testId: 'ddC___Dideoxycytidine' },
-  _3InvdT: { alias: '3InvdT', testId: "3InvdT___3' Inverted dT" },
 });
 
 export type NucleotidesType = typeof Nucleotide;

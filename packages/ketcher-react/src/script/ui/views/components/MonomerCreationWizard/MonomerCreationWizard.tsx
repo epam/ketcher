@@ -581,7 +581,7 @@ const MonomerCreationWizard = () => {
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
 
   const displayModificationTypes =
-    wizardState.values.type === KetMonomerClass.AminoAcid && naturalAnalogue;
+    wizardState.values.type === KetMonomerClass.AminoAcid;
 
   return (
     <div className={styles.monomerCreationWizard}>

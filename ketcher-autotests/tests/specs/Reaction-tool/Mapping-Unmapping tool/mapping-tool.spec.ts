@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -39,11 +40,13 @@ test.describe('Mapping Tools', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 10 },
+      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
+      getAtomLocator(page, { atomLabel: 'C' }).nth(14),
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await takeEditorScreenshot(page);
   });
 

@@ -1,5 +1,5 @@
 import { moveOnAtom } from '@utils/clicks';
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -9,13 +9,13 @@ interface Atom {
   number: number;
 }
 
-export async function mapTwoAtoms(page: Page, atom1: Atom, atom2: Atom) {
+export async function mapTwoAtoms(page: Page, atom1: Locator, atom2: Locator) {
   await CommonLeftToolbar(page).selectAreaSelectionTool();
   await LeftToolbar(page).selectReactionMappingTool(
     ReactionMappingType.ReactionMapping,
   );
-  await moveOnAtom(page, atom1.label, atom1.number);
+  await atom1.hover();
   await page.mouse.down();
-  await moveOnAtom(page, atom2.label, atom2.number);
+  await atom2.hover();
   await page.mouse.up();
 }

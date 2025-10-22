@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { Arrows } from '..';
 
 export function getArrowLocator(page: Page, options: { arrowType?: Arrows }) {
   const attributes: Record<string, string> = {};

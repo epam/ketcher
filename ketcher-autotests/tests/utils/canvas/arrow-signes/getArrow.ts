@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 import { getLeftTopBarSize } from '../common/getLeftTopBarSize';
 import { sortItems } from '../common/sortItems';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '../constants';
-import { Arrows, ArrowXy, Pluses, SORT_TYPE } from '../types';
+import { Arrows, ArrowXy, SORT_TYPE } from '../types';
 import { clickOnCanvas } from '@utils';
 
 export async function getArrowsByIndex(
@@ -48,18 +48,22 @@ export async function clickOnArrow(page: Page, index: number) {
   await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 }
 
-export function getArrowLocator(page: Page, type: Arrows) {
-  const element = page.getByTestId(type);
-  return {
-    click: () => element.click({ force: true }),
-    hover: () => element.hover({ force: true }),
-  };
+export function getArrowLocator(page: Page, options: { arrowType?: Arrows }) {
+  const attributes: Record<string, string> = {};
+
+  attributes['data-testid'] = 'rxn-arrow';
+
+  if (options.arrowType !== undefined) {
+    attributes['data-arrowtype'] = String(options.arrowType);
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  return page.locator(attributeSelectors);
 }
 
-export function getPlusLocator(page: Page, type: Pluses) {
-  const element = page.getByTestId(type);
-  return {
-    click: () => element.click({ force: true }),
-    hover: () => element.hover({ force: true }),
-  };
+export function getPlusLocator(page: Page) {
+  return page.getByTestId('rxn-plus');
 }

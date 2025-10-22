@@ -27,7 +27,6 @@ import {
   MolFileFormat,
   dragMouseTo,
   Arrows,
-  Pluses,
 } from '@utils';
 import {
   copyAndPaste,
@@ -1231,17 +1230,23 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, Arrows.OpenAngle).hover();
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover();
     await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, Arrows.FilledBow).hover();
+    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover();
     await dragMouseTo(200, 300, page);
-    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.BothEndsFilledTriangle,
+    }).hover();
     await dragMouseTo(200, 350, page);
-    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.UnbalancedOpenHalfAngle,
+    }).hover();
     await dragMouseTo(200, 400, page);
-    await getArrowLocator(page, Arrows.EllipticalArcFilledTriangle).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.EllipticalArcFilledTriangle,
+    }).hover();
     await dragMouseTo(200, 450, page);
-    await getPlusLocator(page, Pluses.Plus).hover();
+    await getPlusLocator(page).hover();
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1379,17 +1384,23 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, Arrows.OpenAngle).hover();
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover();
     await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, Arrows.FilledBow).hover();
+    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover();
     await dragMouseTo(200, 300, page);
-    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.BothEndsFilledTriangle,
+    }).hover();
     await dragMouseTo(200, 350, page);
-    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.UnbalancedOpenHalfAngle,
+    }).hover();
     await dragMouseTo(200, 400, page);
-    await getArrowLocator(page, Arrows.EllipticalArcFilledBow).hover();
+    await getArrowLocator(page, {
+      arrowType: Arrows.EllipticalArcFilledBow,
+    }).hover();
     await dragMouseTo(200, 450, page);
-    await getPlusLocator(page, Pluses.Plus).hover();
+    await getPlusLocator(page).hover();
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

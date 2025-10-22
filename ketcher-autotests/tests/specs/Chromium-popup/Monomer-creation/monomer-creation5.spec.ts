@@ -32,7 +32,6 @@ import {
   MicroBondDataIds,
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/molecules/TopLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 

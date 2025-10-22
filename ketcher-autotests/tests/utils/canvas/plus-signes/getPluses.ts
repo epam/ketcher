@@ -3,7 +3,6 @@ import { getLeftTopBarSize } from '../common/getLeftTopBarSize';
 import { sortItems } from '../common/sortItems';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '../constants';
 import { PlusXy, SORT_TYPE } from '../types';
-import { clickOnCanvas } from '@utils';
 
 export async function getPlusesByIndex(
   page: Page,

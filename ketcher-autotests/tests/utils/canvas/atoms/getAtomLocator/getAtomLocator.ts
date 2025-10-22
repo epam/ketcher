@@ -21,7 +21,7 @@ type AtomLocatorOptions = {
   atomLabel?: string;
   atomCharge?: number | string;
   atomIsotopeAtomicMass?: number | string;
-  atomValence?: Valence;
+  atomValence?: number | string;
   atomRadical?: Radical;
   atomRingBondCount?: RingBondCount;
   atomHCount?: HCount;

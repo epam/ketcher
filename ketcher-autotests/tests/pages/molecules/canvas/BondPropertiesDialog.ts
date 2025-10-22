@@ -7,6 +7,7 @@ import {
 import { waitForRender } from '@utils/common';
 
 type BondPropertiesDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   bondDialog: Locator;
   bondTypeDropdown: Locator;
@@ -20,6 +21,7 @@ type BondPropertiesDialogLocators = {
 
 export const BondPropertiesDialog = (page: Page) => {
   const locators: BondPropertiesDialogLocators = {
+    window: page.getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),
     bondDialog: page.getByTestId('bondProps-dialog'),
     bondTypeDropdown: page.getByTestId('type-input-span'),

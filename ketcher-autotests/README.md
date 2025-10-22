@@ -61,7 +61,6 @@ For atoms:
 
 getAtomByIndex - get atom by attributes and index
 getRightAtomByAttributes - get right atom by attributes
-getFirstAtomCoordinatesByAttributes - get one atom by attributes
 
 For bonds:
 

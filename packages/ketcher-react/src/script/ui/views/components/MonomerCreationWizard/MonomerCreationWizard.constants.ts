@@ -37,7 +37,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
   creationSuccessful: 'The monomer was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
-  notUniqueModificationTypes: 'Modification types must be unique.',
+  notUniqueModificationTypes:
+    'Only one amino acid within a natural analogue can have the same modification type.',
   modificationTypeExists:
     'Only one amino acid within a natural analogue can have the same modification type.',
   notMinimalViableStructure:

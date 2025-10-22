@@ -19,14 +19,13 @@ import {
   clickOnCanvas,
   delay,
 } from '@utils';
-import {
-  getBondByIndex,
-  getLeftBondByAttributes,
-  getTopBondByAttributes,
-} from '@utils/canvas/bonds';
+import { getBondByIndex, getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MicroBondDataIds,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -49,6 +48,7 @@ import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibrar
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -177,19 +177,15 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
-      const doubleBond = await getTopBondByAttributes(page, {
-        type: BondType.DOUBLE,
-      });
-      await clickOnCanvas(page, doubleBond.x, doubleBond.y, {
-        from: 'pageTopLeft',
-      });
+      const doubleBond = getBondLocator(page, {
+        bondType: MicroBondDataIds.Double,
+      }).first();
+      await doubleBond.click({ force: true });
 
-      const singleBond = await getTopBondByAttributes(page, {
-        type: BondType.SINGLE,
-      });
-      await clickOnCanvas(page, singleBond.x, singleBond.y, {
-        from: 'pageTopLeft',
-      });
+      const singleBond = getBondLocator(page, {
+        bondType: MicroBondDataIds.Single,
+      }).first();
+      await singleBond.click({ force: true });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     });

@@ -6,13 +6,7 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import {
-  clickOnAtom,
-  clickOnCanvas,
-  dragMouseTo,
-  moveOnAtom,
-} from '@utils/clicks';
-import { ELEMENT_TITLE } from './types';
+import { clickOnAtom, dragMouseTo, moveOnAtom } from '@utils/clicks';
 import { getControlModifier } from '@utils/keyboard';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
@@ -39,21 +33,6 @@ export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
   await clickOnAtom(page, 'C', 0);
   const anyAtom = 3;
   await clickOnAtom(page, 'C', anyAtom);
-}
-
-export async function drawElementByTitle(
-  page: Page,
-  elementTitle: string = ELEMENT_TITLE.HYDROGEN,
-  offsetX = 0,
-  offsetY = 0,
-) {
-  const leftBarWidth = await getLeftToolBarWidth(page);
-  const topBarHeight = await getTopToolBarHeight(page);
-  await page.getByTitle(elementTitle, { exact: true }).click();
-
-  await clickOnCanvas(page, leftBarWidth + offsetX, topBarHeight + offsetY, {
-    from: 'pageTopLeft',
-  });
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
@@ -165,32 +144,6 @@ export async function takeElementScreenshot(
   });
 }
 
-export async function getCoordinatesOfTopMostCarbon(page: Page) {
-  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
-    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
-    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
-    return {
-      carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
-    };
-  });
-  let min = {
-    x: Infinity,
-    y: Infinity,
-  };
-  for (const carbonAtom of carbonAtoms) {
-    if (carbonAtom.pp.y < min.y) {
-      min = carbonAtom.pp;
-    }
-  }
-  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
-  return {
-    x: min.x * scale + offset.x + leftBarWidth,
-    y: min.y * scale + offset.y + topBarHeight,
-  };
-}
-
 export async function takePageScreenshot(
   page: Page,
   options?: {
@@ -281,11 +234,6 @@ export async function takeRightToolbarScreenshot(page: Page) {
 
 export async function takeTopToolbarScreenshot(page: Page) {
   await takeElementScreenshot(page, page.getByTestId('top-toolbar'));
-}
-
-export async function takePolymerEditorScreenshot(page: Page) {
-  const editor = page.locator('.Ketcher-polymer-editor-root');
-  await expect(editor).toHaveScreenshot();
 }
 
 export async function takeMultitoolDropdownScreenshot(page: Page) {

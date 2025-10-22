@@ -364,10 +364,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await Library(page).switchToCHEMTab();
     await Library(page).hoverMonomer(Chem.SS3);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(
-      page,
-      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-    );
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {

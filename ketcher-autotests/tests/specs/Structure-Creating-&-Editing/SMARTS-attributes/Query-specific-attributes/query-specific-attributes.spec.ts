@@ -3,7 +3,6 @@ import { Page, test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue, checkSmartsWarnings } from '../utils';
@@ -31,7 +30,7 @@ async function drawStructureAndDoubleClickOnAtom(
   await drawStructure(page);
   await page.keyboard.press('Escape');
   await doubleClickOnAtom(page, atomType, numberOfAtom);
-  await waitForAtomPropsModal(page);
+  await expect(AtomPropertiesDialog(page).window).toBeVisible();
 }
 
 test.describe('Checking query specific attributes in SMARTS format', () => {

@@ -8,8 +8,6 @@ import {
   pressButton,
   setBondType,
   setCustomQueryForBond,
-  waitForAtomPropsModal,
-  waitForBondPropsModal,
   waitForPageInit,
 } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -23,6 +21,7 @@ import {
   Aromaticity,
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -45,7 +44,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', anyAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('returns true, when atom has custom query', async ({ page }) => {
@@ -103,7 +102,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
     await doubleClickOnBond(page, BondType.SINGLE, anyBond);
-    await waitForBondPropsModal(page);
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
   const queryBonds = [

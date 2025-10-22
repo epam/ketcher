@@ -10,7 +10,6 @@ import {
   moveOnAtom,
   clickOnAtom,
   waitForRender,
-  waitForAtomPropsModal,
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
@@ -107,7 +106,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 

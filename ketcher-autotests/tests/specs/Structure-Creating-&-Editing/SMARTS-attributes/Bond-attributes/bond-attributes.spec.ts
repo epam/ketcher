@@ -19,6 +19,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 async function setAndCheckBondProperties(
   page: Page,
@@ -32,10 +33,6 @@ async function setAndCheckBondProperties(
   await checkSmartsValue(page, expectedSmarts);
 }
 
-async function waitForBondPropsModal(page: Page) {
-  await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
-}
-
 async function drawStructureAndDoubleClickOnBond(
   page: Page,
   bondType: BondType,
@@ -45,7 +42,7 @@ async function drawStructureAndDoubleClickOnBond(
   await drawStructure(page);
   await page.keyboard.press('Escape');
   await doubleClickOnBond(page, bondType, numberOfBond);
-  await waitForBondPropsModal(page);
+  await expect(BondPropertiesDialog(page).window).toBeVisible();
 }
 
 async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {

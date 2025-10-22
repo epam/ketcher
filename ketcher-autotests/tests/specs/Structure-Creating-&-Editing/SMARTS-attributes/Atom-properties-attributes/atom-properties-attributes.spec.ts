@@ -3,7 +3,6 @@ import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue, checkSmartsWarnings } from '../utils';
@@ -30,7 +29,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     await drawStructure(page, numberOfBondsAtStructure);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting atom label and checking the atom number', async ({ page }) => {

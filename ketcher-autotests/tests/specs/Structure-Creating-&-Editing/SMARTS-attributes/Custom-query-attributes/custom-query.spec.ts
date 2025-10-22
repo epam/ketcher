@@ -2,7 +2,6 @@ import { test } from '@fixtures';
 import {
   doubleClickOnAtom,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
@@ -16,7 +15,7 @@ test.describe('Checking custom query in SMARTS format', () => {
     await drawStructure(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting custom query - one attribute', async ({ page }) => {

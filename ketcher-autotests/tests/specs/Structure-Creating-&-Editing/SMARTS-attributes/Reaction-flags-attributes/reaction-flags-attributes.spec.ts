@@ -5,7 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -32,7 +31,7 @@ async function drawStructureAndDoubleClickOnAtom(
   await drawStructure(page, numberOfBondsAtStructure);
   await page.keyboard.press('Escape');
   await doubleClickOnAtom(page, atomType, numberOfAtom);
-  await waitForAtomPropsModal(page);
+  await expect(AtomPropertiesDialog(page).window).toBeVisible();
 }
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {

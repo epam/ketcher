@@ -23,6 +23,8 @@ export const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
   { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
 ];
 
+export const MAX_MODIFICATION_TYPES = 5;
+
 export const NotificationMessages: WizardNotificationMessageMap = {
   defaultAttachmentPoints:
     'Attachment points are set by default with hydrogens as leaving groups.',

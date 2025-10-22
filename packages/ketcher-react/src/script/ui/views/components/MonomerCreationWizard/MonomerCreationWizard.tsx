@@ -36,6 +36,7 @@ import {
   MonomerTypeSelectConfig,
   NotificationMessages,
   NotificationTypes,
+  MAX_MODIFICATION_TYPES,
 } from './MonomerCreationWizard.constants';
 import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
@@ -432,7 +433,12 @@ const MonomerCreationWizard = () => {
   };
 
   const handleAddModificationType = () => {
-    setModificationTypes((types) => [...types, '']);
+    setModificationTypes((types) => {
+      if (types.length >= MAX_MODIFICATION_TYPES) {
+        return types;
+      }
+      return [...types, ''];
+    });
   };
 
   const deleteModificationType = (indexToDelete: number) => {
@@ -769,6 +775,9 @@ const MonomerCreationWizard = () => {
                       type="button"
                       className={styles.addModificationTypeButton}
                       onClick={handleAddModificationType}
+                      disabled={
+                        modificationTypes.length >= MAX_MODIFICATION_TYPES
+                      }
                     >
                       Add modification type
                     </button>

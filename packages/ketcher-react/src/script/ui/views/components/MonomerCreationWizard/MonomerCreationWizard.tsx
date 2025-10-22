@@ -831,8 +831,8 @@ const MonomerCreationWizard = () => {
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}
-              buttons={['Cancel', 'OK']}
-              buttonsNameMap={{ OK: 'Cancel', Cancel: 'Yes' }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
             >
               <div className={styles.DialogMessage}>
                 {leavingGroupDialogMessage}

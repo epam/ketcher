@@ -3520,7 +3520,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('[C 85.6 H 14.4] > [C 85.6 H 14.4]');
-    await CalculatedValuesDialog(page).closeByX();
+    await CalculatedValuesDialog(page).closeWindow();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

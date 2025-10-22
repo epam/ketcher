@@ -25,7 +25,7 @@ export const ExtendedTableDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

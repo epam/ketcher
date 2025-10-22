@@ -1450,7 +1450,7 @@ test.describe('Image files', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('[C 92.3 H 7.7] > [C 92.3 H 7.7]');
-    await CalculatedValuesDialog(page).closeByX();
+    await CalculatedValuesDialog(page).closeWindow();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',

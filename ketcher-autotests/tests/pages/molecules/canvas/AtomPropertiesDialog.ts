@@ -217,7 +217,7 @@ export const AtomPropertiesDialog = (page: Page) => {
       await ifNotNull(p => this.fillCustomQueryText(p), customQueryProperties.CustomQueryTextArea);
     },
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

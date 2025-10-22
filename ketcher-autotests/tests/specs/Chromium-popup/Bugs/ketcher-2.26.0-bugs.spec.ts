@@ -203,7 +203,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await IndigoFunctionsToolbar(page).ThreeDViewer();
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await MiewDialog(page).closeByX();
+    await MiewDialog(page).closeWindow();
     await disableViewOnlyModeBySetOptions(page);
   });
 

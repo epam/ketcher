@@ -6,6 +6,7 @@ import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -26,6 +27,14 @@ import { PeriodicTableDialog } from '@tests/pages/molecules/canvas/PeriodicTable
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  MicroBondDataIds,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/molecules/TopLeftToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -499,19 +508,18 @@ test(`11. Verify that in create monomer wizard: it is possible to put molecules 
   await CreateMonomerDialog(page).discard();
 });
 
-
-test(`11. Verify that in create monomer wizard: it is possible to put molecules on the canvas from bottom toolbar`, async () => {
+test(`12. Verify that in create monomer wizard: in the Structure library, the Functional Groups section and the option Save to SDF are disabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
-   * Description: Verify that in create monomer wizard: it is possible to put molecules on the canvas from bottom toolbar
+   * Description: Verify that in create monomer wizard: in the Structure library, the Functional Groups section and the option Save to SDF are disabled
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press Create Monomer button
-   *      5. Click on Benzene from the bottom toolbar and put them on the canvas
-   *      5. Take screenshot to validate its appearance
+   *      5. Open Structure library
+   *      6. Verify that the Functional Groups section and the option Save to SDF are disabled
    *
    * Version 3.9
    */
@@ -521,21 +529,275 @@ test(`11. Verify that in create monomer wizard: it is possible to put molecules 
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
+  await BottomToolbar(page).StructureLibrary();
+
+  await expect(StructureLibraryDialog(page).functionalGroupTab).toBeDisabled();
+  await expect(StructureLibraryDialog(page).saveToSdfButton).toBeDisabled();
+
+  await StructureLibraryDialog(page).close();
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`13. Verify that in create monomer wizard: on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Verify that on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  await Promise.all([
+    expect(CommonLeftToolbar(page).eraseButton).toBeEnabled(),
+    expect(CommonLeftToolbar(page).bondSelectionDropdownButton).toBeEnabled(),
+    expect(LeftToolbar(page).chainButton).toBeEnabled(),
+    expect(LeftToolbar(page).chargePlusButton).toBeEnabled(),
+    expect(LeftToolbar(page).chargeMinusButton).toBeEnabled(),
+  ]);
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`14. Verify that in create monomer wizard: user can delete atoms and bonds with Erase button`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: user can delete atoms and bonds with Erase button
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Press Erase button and delete atom and bond
+   *      5. Verify that atom and bond got deleted
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
+  const targetBond = getBondLocator(page, {});
+  await CommonLeftToolbar(page).erase();
+
+  await targetBond.first().click({ force: true });
+  await targetAtom.click({ force: true });
+
+  await expect(targetAtom).not.toBeVisible();
+  expect(await targetBond.count()).toBe(1);
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`15. Verify that in create monomer wizard: user can add bonds to molecule and modify bonds using Bond tool`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: user can add bonds to molecule and modify bonds using Bond tool
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Press Single Bond from Bond tool and click on existing bond to change its type
+   *      6. Verify that bond type got changed
+   *      7. Press Single Bond from Bond tool and click on existing atom to add a bond
+   *      8. Take screenshot to validate its appearance
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(500, 250, page);
 
-  const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
-  await BottomToolbar(page).Benzene();
+  const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
+  const targetSingleBond = getBondLocator(page, {
+    bondType: MicroBondDataIds.Single,
+  });
+  const targetDoubleBond = getBondLocator(page, {
+    bondType: MicroBondDataIds.Double,
+  });
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+
+  await targetSingleBond.first().click({ force: true });
+  expect(targetDoubleBond.first()).toBeVisible();
 
   await targetAtom.click({ force: true });
 
-  await takeElementScreenshot(
-    page,
-    getAtomLocator(page, { atomLabel: 'C', atomValence: 5 }),
-    { padding: 75 },
-  );
+  await takeElementScreenshot(page, targetAtom, { padding: 80 });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`16. Verify that in create monomer wizard: user can add bonds using Chain tool`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: user can add bonds using Chain tool
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Press Chain button
+   *      6. Draw two bonds starting from existing atom
+   *      7. Take screenshot to validate its appearance
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
+  await LeftToolbar(page).chain();
+
+  await targetAtom.hover({ force: true });
+  await dragMouseTo(500, 350, page);
+
+  await takeElementScreenshot(page, targetAtom, { padding: 80 });
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`17. Verify that in create monomer wizard: user can use Charge plus and Charge minus tools to charge atoms on the canvas`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: user can use Charge plus and Charge minus tools to charge atoms on the canvas
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Press Charge plus button and click on atom to add positive charge
+   *      6. Verify that atom charge got changed
+   *      7. Press Charge minus button and click on existing atom to add negative charge
+   *      8. Verify that atom charge got changed
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCN');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtomBr = getAtomLocator(page, { atomLabel: 'Br' }).first();
+  const targetAtomN = getAtomLocator(page, { atomLabel: 'N' }).first();
+  await LeftToolbar(page).chargePlus();
+
+  await targetAtomBr.click({ force: true });
+  expect(targetAtomBr).toHaveAttribute('data-atomCharge', '1');
+
+  await LeftToolbar(page).chargeMinus();
+
+  await targetAtomN.click({ force: true });
+  expect(targetAtomN).toHaveAttribute('data-atomCharge', '-1');
+
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`18. Verify that in create monomer wizard: user can use Copy, Paste, Cut buttons and they works correct`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8340
+   * Description: Verify that in create monomer wizard: user can use Copy, Paste, Cut buttons and they works correct
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press Create Monomer button
+   *      5. Select all structure and press Cut button
+   *      6. Verify that molecule got removed from canvas
+   *      7. Press Paste button and verify that Error message dialog appears
+   *      8. Close Error message dialog and paste molecule using keyboard shortcut
+   *      9. Verify that molecule got pasted on canvas
+   *      10. Select all structure and press Copy button
+   *      11. Select all structure and erase it from canvas
+   *      12. Verify that molecule got removed from canvas
+   *      13. Paste molecule using keyboard shortcut
+   *      14. Verify that molecule got pasted on canvas
+   *      15. Discard created monomer
+   *
+   * Version 3.9
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'BrCC');
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(500, 250, page);
+
+  const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
+  const targetBond = getBondLocator(page, {}).first();
+
+  await selectAllStructuresOnCanvas(page);
+  await TopLeftToolbar(page).cut();
+
+  expect(targetAtom).not.toBeVisible();
+  expect(targetBond).not.toBeVisible();
+
+  await TopLeftToolbar(page).paste();
+  expect(ErrorMessageDialog(page).window).toBeVisible();
+  await ErrorMessageDialog(page).close();
+
+  await pasteFromClipboardByKeyboard(page);
+  await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
+
+  await expect(targetAtom).toBeVisible();
+  await expect(targetBond).toBeVisible();
+
+  await selectAllStructuresOnCanvas(page);
+  await TopLeftToolbar(page).copy();
+  await selectAllStructuresOnCanvas(page);
+  await CommonLeftToolbar(page).erase();
+
+  expect(targetAtom).not.toBeVisible();
+  expect(targetBond).not.toBeVisible();
+
+  await pasteFromClipboardByKeyboard(page);
+  await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
+
+  await expect(targetAtom).toBeVisible();
+  await expect(targetBond).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
 });

@@ -1,13 +1,7 @@
-import { moveOnAtom } from '@utils/clicks';
 import { Locator, Page } from '@playwright/test';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-
-interface Atom {
-  label: string;
-  number: number;
-}
 
 export async function mapTwoAtoms(page: Page, atom1: Locator, atom2: Locator) {
   await CommonLeftToolbar(page).selectAreaSelectionTool();

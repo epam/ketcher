@@ -2,10 +2,7 @@
 import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
-import {
-  getBottomAtomByAttributes,
-  getRightAtomByAttributes,
-} from '@utils/canvas/atoms';
+import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {
@@ -21,6 +18,7 @@ import { keyboardPressOnCanvas } from '@utils/keyboard';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -60,14 +58,22 @@ test.describe('Chain Tool drawing', () => {
     });
 
     await LeftToolbar(page).chain();
-    point = await getBottomAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
-    await dragMouseTo(point.x, point.y + DELTA, page);
-
-    const size = await page.evaluate(() => {
-      return window.ketcher.editor.struct().bonds.size;
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    const atom = getAtomLocator(page, {
+      atomId: 12,
     });
-    expect(size).toEqual(expectedNumberOfBondsAfterDrag);
+    const atomBoundingBox = await atom.boundingBox();
+    if (!atomBoundingBox) {
+      throw new Error('Unable to determine atom position for dragging');
+    }
+    const { x, y } = atomBoundingBox;
+    await atom.hover();
+    await dragMouseTo(x, y + DELTA, page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+
+    expect(await getBondLocator(page, {}).count()).toEqual(
+      expectedNumberOfBondsAfterDrag,
+    );
     await takeEditorScreenshot(page);
   });
 

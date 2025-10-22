@@ -12,7 +12,6 @@ import {
   RingMembership,
   RingSize,
   SubstitutionCount,
-  Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
 
 type AtomLocatorOptions = {

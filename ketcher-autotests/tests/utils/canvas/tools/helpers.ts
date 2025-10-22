@@ -3,7 +3,6 @@ import { Page } from '@playwright/test';
 import { takeEditorScreenshot, waitForRender } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -39,18 +38,6 @@ export async function saveStructureWithReaction(
     await SaveStructureDialog(page).chooseFileFormat(format);
   }
   await SaveStructureDialog(page).save();
-}
-
-export async function typeAllEnglishAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-}
-
-export async function typeRNADNAAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ATGCU');
-}
-
-export async function typePeptideAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function selectWithLasso(

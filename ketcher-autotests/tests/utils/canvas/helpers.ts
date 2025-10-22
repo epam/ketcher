@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable no-useless-escape */
 import {
   LocatorScreenshotOptions,
@@ -107,11 +108,6 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
     x: min.x * scale + offset.x + leftBarWidth,
     y: min.y * scale + offset.y + topBarHeight,
   };
-}
-
-export async function screenshotDialog(page: Page, dialogId: string) {
-  const dialog = page.getByTestId(dialogId).getByRole('dialog');
-  await expect(dialog).toHaveScreenshot();
 }
 
 export async function takeElementScreenshot(

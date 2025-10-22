@@ -1972,7 +1972,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   );
   await expect(fullDialogMessage).toBeVisible();
 
-  pressCancelInConfirmYourActionDialog(page);
+  await pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -2036,7 +2036,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   );
   await expect(fullDialogMessage).toBeVisible();
 
-  pressCancelInConfirmYourActionDialog(page);
+  await pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

@@ -79,13 +79,13 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {
-    shortcut: '+',
+    shortcut: ['Equal', 'Shift+Equal', 'NumpadAdd'],
     title: 'Charge Plus',
     action: { tool: 'charge', opts: 1 },
     hidden: (options) => isHidden(options, 'charge-plus'),
   },
   'charge-minus': {
-    shortcut: '-',
+    shortcut: ['Minus', 'NumpadSubtract'],
     title: 'Charge Minus',
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus'),

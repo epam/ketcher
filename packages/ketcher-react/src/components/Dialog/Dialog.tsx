@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
 import {
   FC,
+  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
   useLayoutEffect,
@@ -53,6 +52,7 @@ interface DialogProps {
     [key in string]: string;
   };
   focusable?: boolean;
+  primaryButtons?: string[];
 }
 
 interface DialogCallProps {
@@ -77,6 +77,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     needMargin = true,
     withDivider = false,
     focusable = true,
+    primaryButtons,
     ...rest
   } = props;
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -99,6 +100,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return button === 'OK' || button === 'Save';
   };
 
+  const isPrimary = (button) => {
+    if (primaryButtons && primaryButtons.length > 0) {
+      return primaryButtons.includes(button);
+    }
+    return isButtonOk(button);
+  };
+
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
@@ -106,8 +114,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event) => {
-    const key = KN.keyName(event);
+  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const { key } = event;
     const active = document.activeElement;
     const activeTextarea = active?.tagName === 'TEXTAREA';
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
@@ -161,7 +169,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   key={button}
                   type="button"
                   className={clsx(
-                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
                   value={buttonsNameMap?.[button] ?? button}

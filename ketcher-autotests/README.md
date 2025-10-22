@@ -67,7 +67,6 @@ For bonds:
 getBondByIndex - get bond by attributes and index
 getRightBondByAttributes - get right bond by attributes
 getLeftBondByAttributes - get left bond by attributes
-getFirstBondCoordinatesByAttributes - get one bond by attributes
 
 ## Docker
 

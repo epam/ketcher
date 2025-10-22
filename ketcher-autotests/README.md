@@ -60,10 +60,8 @@ To search some bond / atom testers can use next methods:
 For atoms:
 
 getAtomByIndex - get atom by attributes and index
-getTopAtomByAttributes - get top atom by attributes
 getRightAtomByAttributes - get right atom by attributes
 getBottomAtomByAttributes - get bottom atom by attributes
-getLeftAtomByAttributes - get left atom by attributes
 getFirstAtomCoordinatesByAttributes - get one atom by attributes
 
 For bonds:

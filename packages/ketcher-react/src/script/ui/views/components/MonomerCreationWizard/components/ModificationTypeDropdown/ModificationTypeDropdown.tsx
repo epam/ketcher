@@ -1,7 +1,7 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
 import styles from './ModificationTypeDropdown.module.less';
-import { CoreEditor } from 'ketcher-core';
+import { CoreEditor, compareByTitleWithNaturalFirst } from 'ketcher-core';
 
 interface IOptionType {
   title: string;
@@ -36,12 +36,12 @@ export default function ModificationTypeDropdown(
     ),
   ];
 
-  const options = modificationTypesOthersFromCurrentNaturalAnalogue.map(
-    (modificationType) => {
+  const options = modificationTypesOthersFromCurrentNaturalAnalogue
+    .map((modificationType) => {
       return { title: modificationType };
-    },
-  );
-  const value = props.value ?? '';
+    })
+    .sort(compareByTitleWithNaturalFirst);
+  const value = props.value || '';
 
   const onValueChange = (newValue) => {
     if (props.onChange) {

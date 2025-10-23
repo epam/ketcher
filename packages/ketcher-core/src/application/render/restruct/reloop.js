@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Bond, Vec2 } from 'domain/entities';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';

@@ -1230,23 +1230,27 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover();
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+      force: true,
+    });
     await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover();
+    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
+      force: true,
+    });
     await dragMouseTo(200, 300, page);
     await getArrowLocator(page, {
       arrowType: Arrows.BothEndsFilledTriangle,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 350, page);
     await getArrowLocator(page, {
       arrowType: Arrows.UnbalancedOpenHalfAngle,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 400, page);
     await getArrowLocator(page, {
       arrowType: Arrows.EllipticalArcFilledTriangle,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 450, page);
-    await getPlusLocator(page).hover();
+    await getPlusLocator(page).hover({ force: true });
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1384,23 +1388,27 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover();
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+      force: true,
+    });
     await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover();
+    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
+      force: true,
+    });
     await dragMouseTo(200, 300, page);
     await getArrowLocator(page, {
       arrowType: Arrows.BothEndsFilledTriangle,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 350, page);
     await getArrowLocator(page, {
       arrowType: Arrows.UnbalancedOpenHalfAngle,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 400, page);
     await getArrowLocator(page, {
       arrowType: Arrows.EllipticalArcFilledBow,
-    }).hover();
+    }).hover({ force: true });
     await dragMouseTo(200, 450, page);
-    await getPlusLocator(page).hover();
+    await getPlusLocator(page).hover({ force: true });
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

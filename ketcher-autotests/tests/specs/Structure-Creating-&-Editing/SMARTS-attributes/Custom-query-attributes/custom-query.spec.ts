@@ -1,4 +1,4 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
   takeEditorScreenshot,

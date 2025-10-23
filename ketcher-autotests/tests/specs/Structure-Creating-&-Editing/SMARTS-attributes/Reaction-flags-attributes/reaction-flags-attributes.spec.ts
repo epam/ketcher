@@ -1,4 +1,4 @@
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   checkSmartsValue,
   checkSmartsWarnings,

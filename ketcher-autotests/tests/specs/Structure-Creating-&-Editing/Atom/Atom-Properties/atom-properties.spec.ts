@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,

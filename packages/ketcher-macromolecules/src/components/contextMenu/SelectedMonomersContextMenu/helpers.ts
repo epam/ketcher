@@ -13,7 +13,7 @@ import {
   Sugar,
   getAminoAcidsToModify,
   canModifyAminoAcid,
-  NATURAL_AMINO_ACID_MODIFICATION_TYPE,
+  compareByTitleWithNaturalFirst,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -229,16 +229,7 @@ export const getModifyAminoAcidsMenuItems = (
       };
     });
 
-  menuItems.sort((a, b) => {
-    const aTitle = a.title.toLowerCase();
-    const bTitle = b.title.toLowerCase();
-    const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
-
-    if (aTitle === naturalType) return -1;
-    if (bTitle === naturalType) return 1;
-
-    return aTitle.localeCompare(bTitle);
-  });
+  menuItems.sort(compareByTitleWithNaturalFirst);
 
   return menuItems;
 };

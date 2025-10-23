@@ -178,6 +178,15 @@ export const Preset = {
     base: Base.baA,
     phosphate: Phosphate.bP,
   } as PresetType,
+  // for library update test, doesn't exist initially
+  _A1: {
+    alias: '_A1',
+    testId: '_A1_Base1_Sugar1_Phosphate1',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar.Sugar,
+    base: Base.Base,
+    phosphate: Phosphate.Phosphate,
+  } as PresetType,
 };
 
 export type PresetsType = typeof Preset;

@@ -38,8 +38,8 @@ const parseFile = (file): Promise<string> =>
       }
       resolve('');
     };
-    reader.onerror = function (err) {
-      reject(err);
+    reader.onerror = function () {
+      reject(new Error(reader.error?.message || 'Failed to read file'));
     };
   });
 

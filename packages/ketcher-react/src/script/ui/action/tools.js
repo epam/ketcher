@@ -350,6 +350,7 @@ const toolActions = {
     disabled: (editor) =>
       editor.isMonomerCreationWizardActive ||
       !editor.isMonomerCreationWizardEnabled,
+    hidden: (options) => isHidden(options, CREATE_MONOMER_TOOL_NAME),
   },
   shapes: {
     disabled: (editor) => editor.isMonomerCreationWizardActive,

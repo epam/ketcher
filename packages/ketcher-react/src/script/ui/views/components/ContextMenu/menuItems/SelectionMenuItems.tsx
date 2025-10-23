@@ -17,7 +17,10 @@ import {
 import { getIconName, Icon } from 'components';
 import { useAppContext } from 'src/hooks';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider } from 'ketcher-core';
+import { CREATE_MONOMER_TOOL_NAME, ketcherProvider } from 'ketcher-core';
+import isHidden from '../../../../action/isHidden';
+import { useSelector } from 'react-redux';
+import { optionsSelector } from '../../../../state/options/selectors';
 
 const bondNames = getBondNames(tools);
 
@@ -45,6 +48,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       color: color === '' ? 'transparent' : color,
     });
   };
+  const options = useSelector(optionsSelector);
 
   return (
     <>
@@ -83,14 +87,17 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           );
         })}
       </Submenu>
-      <Item
-        {...props}
-        data-testid="Create a monomer-option"
-        onClick={handleCreateMonomer}
-        disabled={createMonomerDisabled}
-      >
-        Create a monomer
-      </Item>
+
+      {!isHidden(options, CREATE_MONOMER_TOOL_NAME) && (
+        <Item
+          {...props}
+          data-testid="Create a monomer-option"
+          onClick={handleCreateMonomer}
+          disabled={createMonomerDisabled}
+        >
+          Create a monomer
+        </Item>
+      )}
 
       <Item
         {...props}

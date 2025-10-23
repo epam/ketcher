@@ -39,7 +39,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
+import { TopLeftToolbar } from '@tests/pages/molecules/TopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
@@ -173,7 +173,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectAllStructuresOnCanvas(page);
     await expect(CommonTopLeftToolbar(page).openButton).toBeEnabled();
     await expect(CommonTopLeftToolbar(page).saveButton).toBeEnabled();
-    await expect(MoleculesTopToolbar(page).copyButton).toBeEnabled();
+    await expect(TopLeftToolbar(page).copyButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -204,7 +204,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
 
-    await MoleculesTopToolbar(page).copyAsMOL();
+    await TopLeftToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -222,7 +222,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).copyAsKET();
+    await TopLeftToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });

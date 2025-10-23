@@ -9,7 +9,7 @@ type MoleculesTopToolbarLocators = {
   cutButton: Locator;
 };
 
-export const MoleculesTopToolbar = (page: Page) => {
+export const TopLeftToolbar = (page: Page) => {
   const locators: MoleculesTopToolbarLocators = {
     copyButton: page.getByTestId('copy-button'),
     pasteButton: page.getByTestId('paste-button'),
@@ -83,4 +83,4 @@ export const MoleculesTopToolbar = (page: Page) => {
   };
 };
 
-export type MoleculesTopToolbarType = ReturnType<typeof MoleculesTopToolbar>;
+export type MoleculesTopToolbarType = ReturnType<typeof TopLeftToolbar>;

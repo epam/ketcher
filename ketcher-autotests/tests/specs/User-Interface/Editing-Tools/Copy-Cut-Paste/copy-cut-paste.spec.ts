@@ -27,7 +27,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
+import { TopLeftToolbar } from '@tests/pages/molecules/TopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { INPUT_DELAY } from '@utils/globals';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -50,7 +50,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await MoleculesTopToolbar(page).cut();
+    await TopLeftToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -62,7 +62,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).cut();
+    await TopLeftToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -75,7 +75,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await clickOnAtom(page, 'C', anyAtom);
-    await MoleculesTopToolbar(page).cut();
+    await TopLeftToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -88,7 +88,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyBond = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await clickOnBond(page, BondType.TRIPLE, anyBond);
-    await MoleculesTopToolbar(page).cut();
+    await TopLeftToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -215,7 +215,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).copy();
+    await TopLeftToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -227,7 +227,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await clickOnAtom(page, 'C', anyAtom);
-    await MoleculesTopToolbar(page).copy();
+    await TopLeftToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -238,7 +238,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await clickOnBond(page, BondType.SINGLE, 0);
-    await MoleculesTopToolbar(page).copy();
+    await TopLeftToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -1153,12 +1153,12 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is selected. Buttons are enabled.
     */
     await waitForIndigoToLoad(page);
-    await MoleculesTopToolbar(page).expandCopyDropdown();
+    await TopLeftToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).expandCopyDropdown();
+    await TopLeftToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
   });
 
@@ -1174,7 +1174,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
-    await MoleculesTopToolbar(page).cut();
+    await TopLeftToolbar(page).cut();
     await expect(page).toHaveScreenshot();
   });
 
@@ -1192,8 +1192,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).cut();
-    await MoleculesTopToolbar(page).paste();
+    await TopLeftToolbar(page).cut();
+    await TopLeftToolbar(page).paste();
     await expect(page).toHaveScreenshot();
   });
 

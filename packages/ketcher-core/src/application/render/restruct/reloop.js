@@ -81,7 +81,7 @@ class ReLoop extends ReObject {
     this.radius *= 0.7;
     if (!loop.aromatic) return;
 
-    // Check if all atoms in the loop belong to a contracted monomer
+    // Check if all atoms in the loop belong to a contracted sgroup
     // If they do, skip rendering the aromatic circle
     const atomIds = new Set();
     loop.hbs.forEach((hbid) => {
@@ -90,12 +90,12 @@ class ReLoop extends ReObject {
       atomIds.add(hb.end);
     });
 
-    // Get the sgroup for the first atom to check if it's a contracted monomer
+    // Get the sgroup for the first atom to check if it's a contracted sgroup
     const firstAtomId = atomIds.values().next().value;
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
 
-    // If the loop is inside a contracted monomer micromolecule, don't render it
-    if (sgroup instanceof MonomerMicromolecule && sgroup.isContracted()) {
+    // If the loop is inside a contracted sgroup, don't render it
+    if (sgroup.isContracted()) {
       // Verify all atoms in the loop belong to the same contracted sgroup
       const allAtomsInSameSgroup = Array.from(atomIds).every((atomId) => {
         const atomSgroup = molecule.getGroupFromAtomId(atomId);

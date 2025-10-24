@@ -22,6 +22,7 @@ export const ConfirmYourActionDialog = (page: Page) => {
     ...locators,
 
     async isVisible() {
+      await locators.window.waitFor({ state: 'visible' });
       return await locators.window.isVisible();
     },
     async closeWindow() {

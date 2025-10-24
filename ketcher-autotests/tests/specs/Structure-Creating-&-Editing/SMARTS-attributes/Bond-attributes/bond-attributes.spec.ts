@@ -1,6 +1,7 @@
 import { Page, test, expect } from '@fixtures';
 import {
   BondType,
+  clickInTheMiddleOfTheScreen,
   doubleClickOnBond,
   pressButton,
   takeEditorScreenshot,
@@ -20,6 +21,8 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function setAndCheckBondProperties(
   page: Page,
@@ -39,7 +42,10 @@ async function drawStructureAndDoubleClickOnBond(
   numberOfBond: number,
 ) {
   await waitForPageInit(page);
-  await drawStructure(page);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
   await doubleClickOnBond(page, bondType, numberOfBond);
   await expect(BondPropertiesDialog(page).window).toBeVisible();

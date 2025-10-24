@@ -629,7 +629,6 @@ const MonomerCreationWizard = () => {
       KetMonomerClass.Base,
       KetMonomerClass.Sugar,
       KetMonomerClass.Phosphate,
-      KetMonomerClass.CHEM,
     ].includes(wizardState.values.type);
 
   return (

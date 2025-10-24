@@ -49,6 +49,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
+import { TextField } from '@mui/material';
 
 const initialWizardState: WizardState = {
   values: {
@@ -56,6 +57,7 @@ const initialWizardState: WizardState = {
     symbol: '',
     name: '',
     naturalAnalogue: '',
+    aliasHELM: '',
   },
   errors: {},
   notifications: new Map([
@@ -346,7 +348,7 @@ const MonomerCreationWizard = () => {
     useState<AttachmentPointClickData | null>(null);
 
   const { values, notifications, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
@@ -409,6 +411,11 @@ const MonomerCreationWizard = () => {
         type: 'SetFieldValue',
         fieldId: 'type',
         value: value as KetMonomerClass,
+      });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasHELM',
+        value: '',
       });
     } else {
       wizardStateDispatch({
@@ -575,6 +582,7 @@ const MonomerCreationWizard = () => {
       name,
       naturalAnalogue,
       modificationTypes,
+      aliasHELM,
     });
 
     resetWizard();
@@ -588,6 +596,15 @@ const MonomerCreationWizard = () => {
 
   const displayModificationTypes =
     wizardState.values.type === KetMonomerClass.AminoAcid;
+  const displayAliases =
+    wizardState.values.type &&
+    [
+      KetMonomerClass.AminoAcid,
+      KetMonomerClass.Base,
+      KetMonomerClass.Sugar,
+      KetMonomerClass.Phosphate,
+      KetMonomerClass.CHEM,
+    ].includes(wizardState.values.type);
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -786,6 +803,41 @@ const MonomerCreationWizard = () => {
               </div>
             </>
           )}
+
+          {displayAliases && (
+            <>
+              <div className={styles.divider} />
+
+              <div>
+                <Accordion
+                  className={clsx(accordionClasses.accordion, styles.accordion)}
+                  square={true}
+                >
+                  <AccordionSummary
+                    className={styles.accordionSummary}
+                    expandIcon={
+                      <Icon
+                        className={accordionClasses.expandIcon}
+                        name="chevron"
+                      />
+                    }
+                  >
+                    Aliases
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <TextField
+                      label="HELM"
+                      variant="standard"
+                      className={clsx(styles.inputField)}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        handleFieldChange('aliasHELM', event.target.value)
+                      }
+                    />
+                  </AccordionDetails>
+                </Accordion>
+              </div>
+            </>
+          )}
         </div>
 
         {displayEditDialog &&
@@ -835,6 +887,7 @@ const MonomerCreationWizard = () => {
                     name,
                     naturalAnalogue,
                     modificationTypes,
+                    aliasHELM,
                   });
                   resetWizard();
                 },

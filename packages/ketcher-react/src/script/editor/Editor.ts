@@ -1238,7 +1238,14 @@ class Editor implements KetcherEditor {
       ketSerializer.serialize(this.render.ctab.molecule),
     );
 
-    const { symbol, name, type, naturalAnalogue, modificationTypes } = data;
+    const {
+      symbol,
+      name,
+      type,
+      naturalAnalogue,
+      modificationTypes,
+      aliasHELM,
+    } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
     this.monomerCreationState.assignedAttachmentPoints.forEach(
@@ -1278,6 +1285,7 @@ class Editor implements KetcherEditor {
       fullName: name,
       naturalAnalogShort: naturalAnalogueToUse,
       modificationTypes,
+      aliasHELM,
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,

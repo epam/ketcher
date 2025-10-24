@@ -1,6 +1,7 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
 import styles from './ModificationTypeDropdown.module.less';
+import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
 import { CoreEditor, compareByTitleWithNaturalFirst } from 'ketcher-core';
 
 interface IOptionType {
@@ -123,7 +124,10 @@ export default function ModificationTypeDropdown(
           {...params}
           variant="standard"
           error={Boolean(props.error)}
-          className={clsx(styles.inputField, props.error && styles.error)}
+          className={clsx(
+            monomerWizardStyles.inputField,
+            props.error && styles.error,
+          )}
           placeholder="..."
         />
       )}

@@ -1,14 +1,11 @@
-import { Page, test, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue, checkSmartsWarnings } from '../utils';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Radical,

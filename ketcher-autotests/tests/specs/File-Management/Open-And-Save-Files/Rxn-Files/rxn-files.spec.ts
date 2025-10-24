@@ -17,7 +17,6 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,

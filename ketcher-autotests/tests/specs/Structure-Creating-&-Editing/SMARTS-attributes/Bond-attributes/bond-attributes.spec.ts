@@ -15,7 +15,6 @@ import {
   setCustomQueryForBond,
   setReactingCenter,
 } from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,

@@ -12,7 +12,6 @@ import {
   waitForIndigoToLoad,
   waitForPageInit,
 } from '@utils';
-import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -30,10 +29,6 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-const RING_OFFSET = 150;
-const ARROW_OFFSET = 20;
-const ARROW_LENGTH = 100;
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {

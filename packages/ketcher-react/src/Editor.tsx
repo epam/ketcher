@@ -95,6 +95,7 @@ export const Editor = (props: Props) => {
   useEffect(() => {
     if (moleculesEditor && macromoleculesEditor) {
       if (showPolymerEditor) {
+        moleculesEditor?.closeMonomerCreationWizard?.();
         macromoleculesEditor?.switchToMacromolecules();
       } else {
         macromoleculesEditor?.switchToMicromolecules();

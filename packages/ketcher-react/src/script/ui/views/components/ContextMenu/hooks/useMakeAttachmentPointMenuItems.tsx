@@ -38,10 +38,6 @@ const useMakeAttachmentPointMenuItems = ({
     );
   });
 
-  if (isAtomInAssignedAttachmentPoint) {
-    return null;
-  }
-
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
   const isPotentialLeavingGroupAtom = Array.from(
@@ -66,7 +62,9 @@ const useMakeAttachmentPointMenuItems = ({
       <Item
         {...props}
         onClick={handleMarkLeavingGroupAtomClick}
-        disabled={attachmentPointsLimitReached}
+        disabled={
+          attachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
+        }
         key="mark-as-leaving-group"
         data-testid="mark-as-leaving-group"
       >
@@ -76,26 +74,28 @@ const useMakeAttachmentPointMenuItems = ({
     );
   }
 
-  if (isPotentialAttachmentAtom) {
-    const handleMarkConnectionPointAtomClick = () => {
-      assert(selectedAtomId !== undefined);
+  const handleMarkConnectionPointAtomClick = () => {
+    assert(selectedAtomId !== undefined);
 
-      editor.assignConnectionPointAtom(selectedAtomId);
-    };
+    editor.assignConnectionPointAtom(selectedAtomId);
+  };
 
-    menuItems.push(
-      <Item
-        {...props}
-        onClick={handleMarkConnectionPointAtomClick}
-        disabled={attachmentPointsLimitReached}
-        data-testid="mark-as-connection-point"
-        key="mark-as-connection-point"
-      >
-        <Icon name="connectionPoint" className={styles.icon} />
-        Mark as connection point
-      </Item>,
-    );
-  }
+  menuItems.push(
+    <Item
+      {...props}
+      onClick={handleMarkConnectionPointAtomClick}
+      disabled={
+        attachmentPointsLimitReached ||
+        !isPotentialAttachmentAtom ||
+        isAtomInAssignedAttachmentPoint
+      }
+      data-testid="mark-as-connection-point"
+      key="mark-as-connection-point"
+    >
+      <Icon name="connectionPoint" className={styles.icon} />
+      Mark as connection point
+    </Item>,
+  );
 
   return menuItems.length > 0 ? menuItems : null;
 };

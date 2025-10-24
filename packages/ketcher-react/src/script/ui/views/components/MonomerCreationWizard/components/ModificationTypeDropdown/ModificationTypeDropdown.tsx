@@ -126,7 +126,7 @@ export default function ModificationTypeDropdown(
           error={Boolean(props.error)}
           className={clsx(
             monomerWizardStyles.inputField,
-            props.error && styles.error,
+            props.error && monomerWizardStyles.error,
           )}
           placeholder="..."
         />

@@ -37,7 +37,9 @@ export type WizardNotificationId =
   | 'notUniqueModificationTypes'
   | 'modificationTypeExists'
   | 'notMinimalViableStructure'
-  | 'impureStructure';
+  | 'impureStructure'
+  | 'notUniqueHELMAlias'
+  | 'invalidHELMAlias';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

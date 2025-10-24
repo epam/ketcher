@@ -158,12 +158,16 @@ const wizardReducer = (
 };
 
 const validateInputs = (values: WizardValues) => {
+  const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
-      if (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) {
+      if (
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
+        key !== 'aliasHELM'
+      ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
           type: 'error',
@@ -181,15 +185,37 @@ const validateInputs = (values: WizardValues) => {
           type: 'error',
           message: NotificationMessages.invalidSymbol,
         });
+
         return;
       }
 
-      const editor = CoreEditor.provideEditorInstance();
       if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
           type: 'error',
           message: NotificationMessages.symbolExists,
+        });
+      }
+    }
+
+    if (key === 'aliasHELM') {
+      const helmAliasRegex = /^[A-Za-z0-9\-_\\*]*$/;
+
+      if (value && !helmAliasRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidHELMAlias,
+        });
+
+        return;
+      }
+
+      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueHELMAlias,
         });
       }
     }
@@ -660,7 +686,10 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={clsx(styles.input, errors.symbol && styles.error)}
+                  className={clsx(
+                    styles.input,
+                    errors.symbol && styles.inputError,
+                  )}
                   placeholder="e.g. PEG-2"
                   data-testid="symbol-input"
                   value={symbol}
@@ -678,7 +707,10 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={clsx(styles.input, errors.name && styles.error)}
+                  className={clsx(
+                    styles.input,
+                    errors.name && styles.inputError,
+                  )}
                   placeholder="e.g. Diethylene Glycol"
                   value={name}
                   data-testid="name-input"
@@ -828,7 +860,11 @@ const MonomerCreationWizard = () => {
                     <TextField
                       label="HELM"
                       variant="standard"
-                      className={clsx(styles.inputField)}
+                      className={clsx(
+                        styles.inputField,
+                        errors.aliasHELM && styles.error,
+                      )}
+                      error={Boolean(errors.aliasHELM)}
                       onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         handleFieldChange('aliasHELM', event.target.value)
                       }

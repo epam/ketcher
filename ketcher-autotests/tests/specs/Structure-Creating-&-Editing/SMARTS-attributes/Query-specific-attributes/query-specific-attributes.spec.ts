@@ -2,11 +2,11 @@
 import { Page, test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue, checkSmartsWarnings } from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Aromaticity,
@@ -27,8 +27,7 @@ async function drawStructureAndDoubleClickOnAtom(
   numberOfAtom: number,
 ) {
   await waitForPageInit(page);
-  await drawStructure(page);
-  await page.keyboard.press('Escape');
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
   await doubleClickOnAtom(page, atomType, numberOfAtom);
   await expect(AtomPropertiesDialog(page).window).toBeVisible();
 }

@@ -24,11 +24,6 @@ export async function selectRectangleArea(
   await page.mouse.up();
 }
 
-export async function selectButtonById(buttonId: 'OK', page: Page) {
-  const element = page.getByTestId(buttonId);
-  await element.click();
-}
-
 export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,

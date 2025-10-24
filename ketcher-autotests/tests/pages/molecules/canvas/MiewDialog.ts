@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type MiewDialogLocators = {

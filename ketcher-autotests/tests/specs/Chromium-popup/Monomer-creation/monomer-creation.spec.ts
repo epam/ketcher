@@ -58,6 +58,7 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   FileType,
   verifyFileExport,
@@ -794,6 +795,10 @@ for (const eligableSymbol of eligableSymbols) {
       symbol: eligableSymbol.value,
       name: 'Temp',
     });
+    const infoMessageDialog = InfoMessageDialog(page);
+    if (await infoMessageDialog.isVisible()) {
+      await infoMessageDialog.ok();
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomer = getMonomerLocator(page, {
       monomerAlias: eligableSymbol.value,

@@ -22,7 +22,7 @@ import { PasteErrorModalBody } from './PasteErrorModalBody';
 
 import styles from './InfoModal.module.less';
 
-function ErrorInfoModal(props) {
+function InfoModalView(props) {
   const paste = config.paste.title ?? 'Paste';
   const isPasteError = props.message === paste;
 
@@ -64,6 +64,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-const InfoModal = connect(mapStateToProps, mapDispatchToProps)(ErrorInfoModal);
+const InfoModal = connect(mapStateToProps, mapDispatchToProps)(InfoModalView);
 
 export default InfoModal;

@@ -56,7 +56,6 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
@@ -72,6 +71,7 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 export async function doubleClickOnAtom(page: Page, atomText: string) {
   const atomLocator = page
@@ -355,7 +355,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -372,7 +372,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in macromolecules mode
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
@@ -390,7 +390,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -412,7 +412,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: Clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

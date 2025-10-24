@@ -49,10 +49,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -74,7 +71,7 @@ async function saveToTemplates(page: Page) {
 async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
   await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await selectRingButton(page, RingButton.Benzene);
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
@@ -928,7 +925,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1025,7 +1022,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1087,7 +1084,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(

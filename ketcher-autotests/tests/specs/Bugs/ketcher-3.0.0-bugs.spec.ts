@@ -53,8 +53,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -1004,7 +1004,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .filter({ has: page.locator(':visible') })
       .getByText('A', { exact: true });
     await expandMonomer(page, baseA);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

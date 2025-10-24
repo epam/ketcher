@@ -72,7 +72,6 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import {
   BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
@@ -536,7 +535,7 @@ test.describe('Macro-Micro-Switcher', () => {
     });
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseAway(page);
@@ -588,7 +587,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await CommonTopLeftToolbar(page).saveFile();
-    expect(SaveStructureDialog(page).saveStructureDialog).toBeVisible();
+    expect(SaveStructureDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 });
@@ -1016,7 +1015,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

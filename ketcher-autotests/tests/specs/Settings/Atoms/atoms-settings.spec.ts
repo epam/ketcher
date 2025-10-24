@@ -22,8 +22,8 @@ import {
   ShowHydrogenLabelsOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   setSettingsOption,
@@ -95,7 +95,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     const point = getAtomLocator(page, { atomLabel: 'C', atomId: 4 });

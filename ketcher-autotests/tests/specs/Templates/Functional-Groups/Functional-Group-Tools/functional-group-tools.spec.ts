@@ -31,10 +31,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   contractAbbreviation,
@@ -440,7 +437,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await ContextMenu(
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
@@ -448,7 +445,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -780,7 +777,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await leftToolbar.text();
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 

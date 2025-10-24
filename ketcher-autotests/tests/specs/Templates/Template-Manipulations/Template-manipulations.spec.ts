@@ -10,7 +10,6 @@ import {
   clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
-  addCyclopentadieneRingWithTwoAtoms,
   clickOnBond,
   BondType,
   takePageScreenshot,
@@ -43,9 +42,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
-  drawCyclohexaneRing,
-  drawCyclopentadieneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
@@ -185,7 +181,7 @@ test.describe('Template Manupulations', () => {
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -251,7 +247,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -380,7 +376,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
     await clickOnCanvas(page, 1, 1, { from: 'pageCenter' });
-    await selectRingButton(page, RingButton.Cyclooctane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclooctane);
     // eslint-disable-next-line no-magic-numbers
     await clickOnCanvas(page, 1, -4, { from: 'pageCenter' });
     await takePageScreenshot(page);
@@ -429,9 +425,12 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring on canvas
     Add another cyclopentadiene ring to a single bond with two atoms, where each atom is connected to any atom with a double bond
     */
-    await drawCyclopentadieneRing(page);
-    await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -442,8 +441,10 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring to to a double bond with two atom, where each atom is connected to any atom with a single bond
     */
     await drawBenzeneRing(page);
-    await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -455,12 +456,13 @@ test.describe('Template Manupulations', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await drawCyclohexaneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+    await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -470,12 +472,11 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add on it an atom
     Add cyclopentadiene ring to a single bond
     */
-    const atomToolbar = RightToolbar(page);
-
-    await drawCyclohexaneRing(page);
-    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+    await clickInTheMiddleOfTheScreen(page);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -485,10 +486,10 @@ test.describe('Template Manupulations', () => {
     Click on the Cyclopentadiene atom in the existing structure to add the same template.
     To add the structure connected with a single bond click & drag.
     */
-    await drawCyclopentadieneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
     await clickOnBond(page, BondType.SINGLE, 0);
     await clickOnBond(page, BondType.SINGLE, 1);
-    // eslint-disable-next-line no-magic-numbers
     await clickOnBond(page, BondType.SINGLE, 2);
     await clickOnBond(page, BondType.SINGLE, 1);
     await clickOnBond(page, BondType.SINGLE, 0);
@@ -502,7 +503,8 @@ test.describe('Template Manupulations', () => {
     Draw benzene using the template
     Again using the benzene template, left click on the single bond circled in blue.
     */
-    await drawCyclopentadieneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
     await clickOnBond(page, BondType.SINGLE, 0);
     await takeEditorScreenshot(page);
   });
@@ -526,7 +528,7 @@ test.describe('Template Manupulations', () => {
     await expandAbbreviation(page, middleOfTheScreen);
     const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
       from: 'pageTopLeft',
     });
@@ -628,7 +630,7 @@ test.describe('Open Ketcher', () => {
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
       const xOffsetFromCenter = 40;
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
@@ -639,9 +641,9 @@ test.describe('Open Ketcher', () => {
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await takePageScreenshot(page);
     },
   );

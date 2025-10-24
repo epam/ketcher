@@ -39,8 +39,8 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -192,7 +192,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
     const applyButton = MiewDialog(page).applyButton;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({

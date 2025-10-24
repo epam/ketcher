@@ -79,28 +79,10 @@ export const BottomToolbar = (page: Page) => {
   };
 };
 
-export async function openStructureLibrary(page: Page) {
-  await BottomToolbar(page).StructureLibrary();
-}
-
-export async function selectRingButton(page: Page, name: RingButton) {
-  await BottomToolbar(page).clickRing(name);
-}
-
 export async function drawBenzeneRing(page: Page) {
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
-}
-
-export async function drawCyclohexaneRing(page: Page) {
-  await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclopentadieneRing(page: Page) {
-  await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 export type BottomToolbarType = ReturnType<typeof BottomToolbar>;

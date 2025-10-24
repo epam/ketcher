@@ -3,8 +3,8 @@
 import { test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
@@ -50,7 +50,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);

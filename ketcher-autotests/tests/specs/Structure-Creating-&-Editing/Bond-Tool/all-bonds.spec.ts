@@ -36,7 +36,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -120,7 +119,7 @@ test.describe(`Bond tool:`, () => {
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -173,7 +172,7 @@ test.describe(`Bond tool:`, () => {
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -378,7 +377,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
         await CommonTopLeftToolbar(page).undo();
 
-        await selectRingButton(page, RingButton.Cyclohexane);
+        await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
           from: 'pageTopLeft',
@@ -607,7 +606,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure
      */
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     let i = 0;

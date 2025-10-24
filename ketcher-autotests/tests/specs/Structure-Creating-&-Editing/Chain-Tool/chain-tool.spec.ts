@@ -12,13 +12,13 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -52,7 +52,7 @@ test.describe('Chain Tool drawing', () => {
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
       from: 'pageTopLeft',
     });

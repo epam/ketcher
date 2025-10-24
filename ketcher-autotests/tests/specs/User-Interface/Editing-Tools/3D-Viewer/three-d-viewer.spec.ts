@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -17,6 +16,7 @@ import {
 import { getKet } from '@utils/formats';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe('3D Viewer', () => {
     The structure is spinned.
     Position of structure on the canvas is not changed. 
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 20);
@@ -130,7 +130,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene is drawn in it. 
     */
     // we need remove or block the variable number of frames per second in the lower right corner
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
@@ -148,7 +148,7 @@ test.describe('3D Viewer', () => {
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();

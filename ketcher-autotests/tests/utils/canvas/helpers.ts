@@ -6,7 +6,7 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { clickOnAtom, dragMouseTo, moveOnAtom } from '@utils/clicks';
+import { dragMouseTo, moveOnAtom } from '@utils/clicks';
 import { getControlModifier } from '@utils/keyboard';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
@@ -19,21 +19,10 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-
-export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
-  const atomToolbar = RightToolbar(page);
-
-  await atomToolbar.clickAtom(Atom.Nitrogen);
-  await clickOnAtom(page, 'C', 0);
-  const anyAtom = 3;
-  await clickOnAtom(page, 'C', anyAtom);
-}
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
   const leftBarSize = await page

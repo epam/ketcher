@@ -22,25 +22,21 @@ export const ConfirmYourActionDialog = (page: Page) => {
     ...locators,
 
     async isVisible() {
-      await locators.window.waitFor({ state: 'visible' });
+      // await locators.window.waitFor({ state: 'visible' });
       return await locators.window.isVisible();
     },
     async closeWindow() {
-      await this.isVisible();
       await locators.closeWindowButton.click();
     },
     async getMessageBodyText() {
-      await this.isVisible();
       return await locators.messageBody.textContent();
     },
 
     async yes() {
-      await this.isVisible();
       await locators.yesButton.click();
     },
 
     async cancel() {
-      await this.isVisible();
       await locators.cancelButton.click();
     },
   };

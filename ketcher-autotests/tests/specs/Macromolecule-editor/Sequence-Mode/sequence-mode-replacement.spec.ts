@@ -1964,7 +1964,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  expect(ConfirmYourActionDialog(page).window).toBeVisible();
   await ConfirmYourActionDialog(page).cancel();
 
   await takeEditorScreenshot(page, {
@@ -2025,7 +2025,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  expect(ConfirmYourActionDialog(page).window).toBeVisible();
   await ConfirmYourActionDialog(page).cancel();
 
   await takeEditorScreenshot(page, {

@@ -492,9 +492,6 @@ test.describe('Template Manupulations', () => {
     await clickOnBond(page, BondType.SINGLE, 2);
     await clickOnBond(page, BondType.SINGLE, 1);
     await clickOnBond(page, BondType.SINGLE, 0);
-
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
     await takeEditorScreenshot(page);
   });
 

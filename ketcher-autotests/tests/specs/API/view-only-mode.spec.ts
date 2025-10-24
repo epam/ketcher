@@ -290,7 +290,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 92.3 H 7.7');
     await OpenStructureDialog(page).closeWindow();
-    await IndigoFunctionsToolbar(page).threeDViewer(false);
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await takeEditorScreenshot(page);
   });
 

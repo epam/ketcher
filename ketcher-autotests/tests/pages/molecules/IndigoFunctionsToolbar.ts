@@ -100,12 +100,16 @@ export const IndigoFunctionsToolbar = (page: Page) => {
       );
     },
 
-    async threeDViewer(waitForButtonIsEnabled = true) {
+    async threeDViewer(
+      options: { waitForApplyButtonIsEnabled?: boolean } = {
+        waitForApplyButtonIsEnabled: true,
+      },
+    ) {
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.ThreeDViewerButton.click(),
       );
-      if (waitForButtonIsEnabled) {
+      if (options.waitForApplyButtonIsEnabled) {
         await expect(MiewDialog(page).applyButton).toBeEnabled();
       }
     },

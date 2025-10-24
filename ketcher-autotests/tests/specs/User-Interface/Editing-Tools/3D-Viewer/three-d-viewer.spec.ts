@@ -114,7 +114,9 @@ test.describe('3D Viewer', () => {
     Test case: EPMLSOPKET-1932
     Description: 3D Viewer window is opened. There is no structure in the opened  window.
     */
-    await IndigoFunctionsToolbar(page).threeDViewer(false);
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,

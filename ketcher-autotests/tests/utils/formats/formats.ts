@@ -165,6 +165,18 @@ export async function updateMonomersLibrary(
   );
 }
 
+export async function replaceMonomersLibrary(
+  page: Page,
+  rawMonomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams,
+): Promise<void> {
+  return await page.evaluate(
+    ({ rawMonomersData, params }) =>
+      window.ketcher.replaceMonomersLibrary(rawMonomersData, params),
+    { rawMonomersData, params },
+  );
+}
+
 export async function addFragment(
   page: Page,
   structStr: string,

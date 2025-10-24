@@ -4,16 +4,23 @@ import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { takeMonomerLibraryScreenshot, updateMonomersLibrary } from '@utils';
+import {
+  replaceMonomersLibrary,
+  takeMonomerLibraryScreenshot,
+  updateMonomersLibrary,
+} from '@utils';
 import {
   SDF_Ala88,
   SDF_Bz88,
   SDF_C88,
   SDF_E88,
+  SDF_EMPTY,
   SDF_Gua88,
+  SDF_P77,
   SDF_P88,
   SDF_rA88,
   SDF_Rib88,
+  SDF_S88,
   SDF_UNS88,
   SDF_X88,
   SDF_Xalt88,
@@ -211,6 +218,84 @@ test.describe('API for update Library', () => {
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).setSearchValue('UNS88');
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 12: Verify adding new Sugar with natural analog to the Ketcher library with ketcher.updateMonomersLibrary method', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Adding new Sugar with natural analog to the Ketcher library with ketcher.updateMonomersLibrary method
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.updateMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    await updateMonomersLibrary(page, SDF_S88, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Sugars);
+    await Library(page).setSearchValue('S88');
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 13: Verify adding new Phosphate with natural analog to the Ketcher library with ketcher.updateMonomersLibrary method', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Adding new Phosphate with natural analog to the Ketcher library with ketcher.updateMonomersLibrary method
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.updateMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    await updateMonomersLibrary(page, SDF_P77, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await Library(page).setSearchValue('P77');
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 14: Replace whole library with library of one monomer inside with ketcher.replaceMonomersLibrary method', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of one monomer inside with ketcher.replaceMonomersLibrary method
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    await replaceMonomersLibrary(page, SDF_P77, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 15: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToPeptidesTab();
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToRNATab();
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Sugars);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Bases);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToCHEMTab();
     await takeMonomerLibraryScreenshot(page);
   });
 });

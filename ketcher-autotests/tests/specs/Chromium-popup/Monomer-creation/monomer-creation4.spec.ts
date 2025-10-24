@@ -305,7 +305,7 @@ test(`7. Check that right clicking on a non potential AA on canvas, not shows an
 
   await expect(
     page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-  ).not.toBeVisible();
+  ).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
 });

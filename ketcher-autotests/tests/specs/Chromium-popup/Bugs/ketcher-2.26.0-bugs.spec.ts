@@ -200,7 +200,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
     await MiewDialog(page).closeWindow();

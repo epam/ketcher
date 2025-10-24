@@ -35,7 +35,6 @@ import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
   FileType,
   verifyFileExport,
@@ -128,13 +127,6 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
     await page.mouse.wheel(scrollValue, 0);
   });
-}
-
-async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).ThreeDViewer();
-  if (waitForButtonIsEnabled) {
-    await miewApplyButtonIsEnabled(page);
-  }
 }
 
 export let page: Page;
@@ -546,7 +538,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       maxDiffPixelRatio: 0.05,
@@ -1919,7 +1911,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,

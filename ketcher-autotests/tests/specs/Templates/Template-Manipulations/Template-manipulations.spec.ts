@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable prettier/prettier */
 import { Page, test } from '@fixtures';
@@ -26,7 +27,6 @@ import {
   MolFileFormat,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
@@ -167,8 +167,14 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await dragMouseTo(rotationHandleX, rotationHandleY, page);
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
     await takeEditorScreenshot(page);
@@ -486,9 +492,9 @@ test.describe('Template Manupulations', () => {
     await clickOnBond(page, BondType.SINGLE, 2);
     await clickOnBond(page, BondType.SINGLE, 1);
     await clickOnBond(page, BondType.SINGLE, 0);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await takeEditorScreenshot(page);
   });
 

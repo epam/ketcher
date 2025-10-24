@@ -19,7 +19,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
@@ -535,12 +534,10 @@ test.describe('Attachment Point Tool', () => {
       y: 160,
     };
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
-
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,

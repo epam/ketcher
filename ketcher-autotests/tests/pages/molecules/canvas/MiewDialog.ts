@@ -24,7 +24,7 @@ export const MiewDialog = (page: Page) => {
     },
 
     async apply() {
-      await delay(0.2);
+      expect(locators.applyButton).toBeEnabled();
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });

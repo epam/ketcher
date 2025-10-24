@@ -1500,7 +1500,7 @@ test.describe('Image files', () => {
       'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
     await verifyFileExport(

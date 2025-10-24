@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
+import { MiewDialog } from './canvas/MiewDialog';
 
 type IndigoFunctionsToolbarLocators = {
   aromatizeButton: Locator;
@@ -99,11 +100,14 @@ export const IndigoFunctionsToolbar = (page: Page) => {
       );
     },
 
-    async ThreeDViewer() {
+    async threeDViewer(waitForButtonIsEnabled = true) {
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.ThreeDViewerButton.click(),
       );
+      if (waitForButtonIsEnabled) {
+        await expect(MiewDialog(page).applyButton).toBeEnabled();
+      }
     },
   };
 };

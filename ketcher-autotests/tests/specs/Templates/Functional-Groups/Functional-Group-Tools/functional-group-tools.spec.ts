@@ -19,7 +19,6 @@ import {
   dragMouseAndMoveTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -137,10 +136,9 @@ test.describe('Templates - Functional Group Tools', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -170,10 +168,8 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -1015,7 +1011,7 @@ test.describe('Templates - Functional Group Tools3', () => {
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
   });
 });

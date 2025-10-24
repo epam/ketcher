@@ -193,16 +193,13 @@ export const Library = (page: Page) => {
 
       const monomerCard = getElement(monomer.testId);
       const monomerCardBbox = await monomerCard.boundingBox();
-
-      await waitForRender(page, async () => {
-        await monomerCard.click({
-          position: {
-            // eslint-disable-next-line no-magic-numbers
-            x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
-            // eslint-disable-next-line no-magic-numbers
-            y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
-          },
-        });
+      await monomerCard.click({
+        position: {
+          // eslint-disable-next-line no-magic-numbers
+          x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
+          // eslint-disable-next-line no-magic-numbers
+          y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
+        },
       });
     },
 

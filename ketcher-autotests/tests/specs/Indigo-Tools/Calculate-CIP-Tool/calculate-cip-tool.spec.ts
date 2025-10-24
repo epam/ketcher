@@ -23,7 +23,6 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -306,7 +305,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
   });
 
@@ -361,16 +360,16 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       x: 20,
       y: 160,
     };
+
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,

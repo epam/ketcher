@@ -1352,7 +1352,7 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
-    atom.queryProperties.customQuery ||
+    atom.queryProperties.customQuery ??
     getAtomCustomQuery(
       {
         ...atom,

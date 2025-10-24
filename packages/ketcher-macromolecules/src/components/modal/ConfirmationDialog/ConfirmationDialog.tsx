@@ -18,8 +18,7 @@ export const ConfirmationDialog = ({
   return (
     <Modal
       isOpen={isModalOpen}
-      title={title || 'Confirm your action'}
-      testId="confirmation-dialog"
+      title={title ?? 'Confirm your action'}
       onClose={onClose}
     >
       <Modal.Content>

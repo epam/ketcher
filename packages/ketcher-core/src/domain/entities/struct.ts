@@ -109,7 +109,7 @@ export class Struct {
 
   hasRxnProps(): boolean {
     return !!(
-      this.atoms.find((_aid, atom) => atom.hasRxnProps()) ||
+      this.atoms.find((_aid, atom) => atom.hasRxnProps()) ??
       this.bonds.find((_bid, bond) => bond.hasRxnProps())
     );
   }

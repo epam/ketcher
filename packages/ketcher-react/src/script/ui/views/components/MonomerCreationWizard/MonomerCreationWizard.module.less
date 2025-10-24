@@ -192,6 +192,12 @@
   border-radius: 3px;
   font-size: 12px;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .smallDialog {

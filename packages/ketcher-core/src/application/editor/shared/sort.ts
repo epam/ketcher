@@ -14,31 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-type Props = {
-  clickHandler: () => void;
-  disabled: boolean;
-  label: string;
-  styles: string;
-  title?: string;
-  testId?: string;
-};
+import { NATURAL_AMINO_ACID_MODIFICATION_TYPE } from '../Editor';
 
-export const DialogActionButton = ({
-  clickHandler,
-  label,
-  title,
-  styles,
-  disabled,
-  testId,
-}: Props) => (
-  <input
-    key="Open"
-    type="button"
-    className={styles}
-    data-testid={testId}
-    value={label}
-    title={title ?? label}
-    disabled={disabled}
-    onClick={clickHandler}
-  />
-);
+export function compareStringsWithNaturalFirst(a: string, b: string): number {
+  const aTitle = (a || '').toLowerCase();
+  const bTitle = (b || '').toLowerCase();
+  const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
+
+  if (aTitle === naturalType) return -1;
+  if (bTitle === naturalType) return 1;
+
+  return aTitle.localeCompare(bTitle);
+}
+
+export function compareByTitleWithNaturalFirst<T extends { title: string }>(
+  a: T,
+  b: T,
+): number {
+  return compareStringsWithNaturalFirst(a.title, b.title);
+}

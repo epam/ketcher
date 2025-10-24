@@ -2,6 +2,7 @@ import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -14,20 +15,11 @@ import {
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
 
-async function drawStructure(page: Page, numberOfClicks: number) {
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-  for (let i = 0; i < numberOfClicks; i++) {
-    await clickInTheMiddleOfTheScreen(page);
-  }
-}
-
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
-    const numberOfBondsAtStructure = 3;
     await waitForPageInit(page);
-    await drawStructure(page, numberOfBondsAtStructure);
-    await page.keyboard.press('Escape');
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });

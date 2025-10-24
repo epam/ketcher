@@ -225,6 +225,37 @@ export const Library = (page: Page) => {
       return getElement(monomer.testId);
     },
 
+    getMonomerHELMAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-helm');
+    },
+
+    getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-axoLabs');
+    },
+
+    getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-idtAlias-base');
+    },
+
+    getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtAlias-modifications-endpoint5',
+      );
+    },
+    getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtAlias-modifications-endpoint3',
+      );
+    },
+    getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtAlias-modifications-internal',
+      );
+    },
+    getMonomerModificationTypes(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-modificationType');
+    },
+
     async isMonomerExist(
       monomer: Monomer | PresetType,
       selectOnFavoritesTab = false,

@@ -41,6 +41,26 @@ export const MonomerPreviewTooltip = (page: Page) => {
       await this.waitForBecomeVisible();
       return await locators.monomerPreviewTooltipTitle.textContent();
     },
+
+    async getHELMAlias() {
+      await this.waitForBecomeVisible();
+      return await locators.window.getAttribute('data-helm');
+    },
+
+    async getAxoLabsAlias() {
+      await this.waitForBecomeVisible();
+      return await locators.window.getAttribute('data-axoLabs');
+    },
+
+    async getIDTAliases() {
+      await this.waitForBecomeVisible();
+      return await locators.window.getAttribute('data-idtAliases');
+    },
+
+    async getModificationTypes() {
+      await this.waitForBecomeVisible();
+      return await locators.window.getAttribute('data-modificationType');
+    },
   };
 };
 

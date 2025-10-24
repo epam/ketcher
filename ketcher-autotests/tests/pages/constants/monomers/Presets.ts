@@ -187,6 +187,22 @@ export const Preset = {
     base: Base.Base,
     phosphate: Phosphate.Phosphate,
   } as PresetType,
+  _A2: {
+    alias: '_A1',
+    testId: '_A2_Base1_Sugar1_Phosphate1',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar.Sugar,
+    base: Base.Base,
+    phosphate: Phosphate.Phosphate,
+  } as PresetType,
+  _A3: {
+    alias: '_A3',
+    testId: '_A3_Base1_Sugar1_Phosphate1',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar.Sugar,
+    base: Base.Base,
+    phosphate: Phosphate.Phosphate,
+  } as PresetType,
 };
 
 export type PresetsType = typeof Preset;

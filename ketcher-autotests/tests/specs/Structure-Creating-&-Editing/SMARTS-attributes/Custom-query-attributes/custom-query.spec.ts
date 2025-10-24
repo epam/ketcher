@@ -1,19 +1,18 @@
 import { test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 test.describe('Checking custom query in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });

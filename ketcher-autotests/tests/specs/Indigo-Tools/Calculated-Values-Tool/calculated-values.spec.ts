@@ -26,7 +26,7 @@ test.describe('Calculated Values Tools', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+  test.afterEach(async () => {
     if (await CalculatedValuesDialog(page).window.isVisible()) {
       await CalculatedValuesDialog(page).close();
     }

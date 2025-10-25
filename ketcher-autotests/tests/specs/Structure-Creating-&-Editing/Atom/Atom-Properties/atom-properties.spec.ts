@@ -83,7 +83,7 @@ test.describe('Atom Properties', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+  test.afterEach(async () => {
     if (await AtomPropertiesDialog(page).window.isVisible()) {
       await AtomPropertiesDialog(page).cancel();
     }

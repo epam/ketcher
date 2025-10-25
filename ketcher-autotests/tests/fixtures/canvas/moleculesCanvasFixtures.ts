@@ -3,6 +3,7 @@ import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';
 import { mergeTests, Page } from '@playwright/test';
+import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 export const test = mergeTests(utils, pageObjects).extend<
   { MoleculesCanvas: void },
@@ -20,6 +21,9 @@ export const test = mergeTests(utils, pageObjects).extend<
     use,
   ) => {
     const page = ketcher.page as Page;
+    if (await SettingsDialog(page).window.isVisible()) {
+      await SettingsDialog(page).close();
+    }
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);

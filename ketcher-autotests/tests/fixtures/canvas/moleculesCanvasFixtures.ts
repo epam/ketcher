@@ -25,7 +25,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     if (await SettingsDialog(page).window.isVisible()) {
       await SettingsDialog(page).close();
     }
-    if (await ErrorMessageDialog(page).window.isVisible()) {
+    if (await ErrorMessageDialog(page).isVisible()) {
       await ErrorMessageDialog(page).close();
     }
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

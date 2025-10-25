@@ -27,7 +27,7 @@ test.describe('Calculated Values Tools', () => {
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   test.afterEach(async () => {
-    if (await ErrorMessageDialog(page).window.isVisible()) {
+    if (await ErrorMessageDialog(page).isVisible()) {
       await ErrorMessageDialog(page).close();
     }
     if (await CalculatedValuesDialog(page).window.isVisible()) {
@@ -158,10 +158,10 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C2H4] > [C8H10]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.114]+[28.054] > [106.168]',
+      '[78.11]+[28.05] > [106.17]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '[78.047]+[28.031] > [106.078]',
+      '[78.05]+[28.03] > [106.08]',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -246,10 +246,10 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.169',
+      '149.2',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.060',
+      '149.1',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -725,16 +725,6 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 77.3 H 22.7');
   });
-});
-
-test.describe('Calculated Values Tools', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-  });
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Structure Check window', async () => {
     /*

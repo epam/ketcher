@@ -83,6 +83,11 @@ test.describe('Atom Properties', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+    if (await AtomPropertiesDialog(page).window.isVisible()) {
+      await AtomPropertiesDialog(page).cancel();
+    }
+  });
 
   test('Check Atom Properties modal window by double click on atom', async () => {
     /*

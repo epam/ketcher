@@ -26,6 +26,11 @@ test.describe('Calculated Values Tools', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+    if (await CalculatedValuesDialog(page).window.isVisible()) {
+      await CalculatedValuesDialog(page).close();
+    }
+  });
 
   test('Calculate selected structure', async () => {
     /*

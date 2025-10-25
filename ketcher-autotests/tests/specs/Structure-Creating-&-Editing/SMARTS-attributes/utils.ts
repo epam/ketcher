@@ -40,6 +40,7 @@ export async function checkSmartsValue(page: Page, value: string) {
     MoleculesFileFormatType.DaylightSMARTS,
   );
   await expect(saveStructureTextarea).toHaveValue(value);
+  await SaveStructureDialog(page).close();
 }
 
 export async function checkSmartsWarnings(page: Page) {

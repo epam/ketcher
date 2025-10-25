@@ -17,7 +17,6 @@ import {
   getCachedBodyCenter,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
-  saveToTemplates,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

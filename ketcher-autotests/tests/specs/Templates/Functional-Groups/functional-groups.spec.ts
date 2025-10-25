@@ -81,7 +81,7 @@ test.describe('Functional Groups', () => {
       await StructureLibraryDialog(page).close();
     }
     if (await SaveStructureDialog(page).window.isVisible()) {
-      await SaveStructureDialog(page).close();
+      await SaveStructureDialog(page).closeWindow();
     }
     if (await EditAbbreviationDialog(page).window.isVisible()) {
       await EditAbbreviationDialog(page).cancel();

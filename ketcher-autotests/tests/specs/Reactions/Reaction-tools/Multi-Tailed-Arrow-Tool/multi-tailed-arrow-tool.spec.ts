@@ -162,12 +162,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+  test.afterEach(async () => {
     if (await ErrorMessageDialog(page).window.isVisible()) {
       await ErrorMessageDialog(page).close();
     }
     if (await OpenStructureDialog(page).window.isVisible()) {
       await OpenStructureDialog(page).closeWindow();
+    }
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).closeWindow();
     }
   });
 

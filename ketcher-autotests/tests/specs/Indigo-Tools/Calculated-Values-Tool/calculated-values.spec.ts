@@ -27,6 +27,9 @@ test.describe('Calculated Values Tools', () => {
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   test.afterEach(async () => {
+    if (await ErrorMessageDialog(page).window.isVisible()) {
+      await ErrorMessageDialog(page).close();
+    }
     if (await CalculatedValuesDialog(page).window.isVisible()) {
       await CalculatedValuesDialog(page).close();
     }

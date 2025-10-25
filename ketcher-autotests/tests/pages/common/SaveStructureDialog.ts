@@ -98,7 +98,7 @@ export const SaveStructureDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
   };

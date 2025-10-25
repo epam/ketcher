@@ -25,6 +25,7 @@ type TemplateLibraryTabLocators = {
 };
 
 type StructureLibraryDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   searchEditBox: Locator;
   templateLibraryTab: Locator & TemplateLibraryTabLocators;
@@ -63,6 +64,7 @@ export const StructureLibraryDialog = (page: Page) => {
     });
 
   const locators: StructureLibraryDialogLocators = {
+    window: page.getByTestId('attach-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     searchEditBox: page.getByTestId('template-search-input'),
     templateLibraryTab,

@@ -48,6 +48,7 @@ import {
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -75,6 +76,17 @@ test.describe('Functional Groups', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+    if (await StructureLibraryDialog(page).window.isVisible()) {
+      await StructureLibraryDialog(page).close();
+    }
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).close();
+    }
+    if (await EditAbbreviationDialog(page).window.isVisible()) {
+      await EditAbbreviationDialog(page).cancel();
+    }
+  });
 
   test('Open from V2000 file with expanded functional group', async () => {
     /*

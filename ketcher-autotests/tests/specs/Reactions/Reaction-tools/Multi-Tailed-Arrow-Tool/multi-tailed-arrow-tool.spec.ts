@@ -58,6 +58,8 @@ import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureChe
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -160,6 +162,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {
+    if (await ErrorMessageDialog(page).window.isVisible()) {
+      await ErrorMessageDialog(page).close();
+    }
+    if (await OpenStructureDialog(page).window.isVisible()) {
+      await OpenStructureDialog(page).closeWindow();
+    }
+  });
 
   test('Verify that default Multi-Tailed Arrow with two tails can be saved to .ket file with correct coordinates of spine, tails and head', async () => {
     /**

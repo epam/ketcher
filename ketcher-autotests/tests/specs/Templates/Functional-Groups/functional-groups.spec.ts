@@ -78,7 +78,7 @@ test.describe('Functional Groups', () => {
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   test.afterEach(async () => {
     if (await StructureLibraryDialog(page).window.isVisible()) {
-      await StructureLibraryDialog(page).close();
+      await StructureLibraryDialog(page).closeWindow();
     }
     if (await SaveStructureDialog(page).window.isVisible()) {
       await SaveStructureDialog(page).closeWindow();

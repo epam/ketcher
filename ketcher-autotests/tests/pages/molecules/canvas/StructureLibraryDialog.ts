@@ -77,7 +77,7 @@ export const StructureLibraryDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
@@ -194,7 +194,7 @@ export const StructureLibraryDialog = (page: Page) => {
       await page.getByTestId(cardName).click();
     },
 
-    async clickSaveToSdfButton() {
+    async saveToSdfButton() {
       await locators.saveToSdfButton.click();
     },
   };

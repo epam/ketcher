@@ -3,6 +3,7 @@ import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
 type MiewDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -10,6 +11,7 @@ type MiewDialogLocators = {
 
 export const MiewDialog = (page: Page) => {
   const locators: MiewDialogLocators = {
+    window: page.getByTestId('miew-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('miew-modal-button'),
     cancelButton: page.getByTestId('Cancel'),

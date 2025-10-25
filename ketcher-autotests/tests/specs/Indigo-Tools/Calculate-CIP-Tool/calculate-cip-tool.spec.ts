@@ -51,6 +51,8 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -307,6 +309,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
+    await MiewDialog(page).closeWindow();
   });
 
   test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async () => {
@@ -905,12 +908,17 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await SettingsDialog(page).setACSSettings();
     await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    if (await InfoMessageDialog(page).isVisible()) {
+      await InfoMessageDialog(page).ok();
+    }
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
+    if (await InfoMessageDialog(page).isVisible()) {
+      await InfoMessageDialog(page).ok();
+    }
   });
 
   test('Add ACS style in Settings and check structure with CIP stereo-labels for atoms on various structures and levels of canvas zoom (rings, chains)', async () => {

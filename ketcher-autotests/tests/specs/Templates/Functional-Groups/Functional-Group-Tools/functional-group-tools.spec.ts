@@ -17,6 +17,7 @@ import {
   getCachedBodyCenter,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
+  saveToTemplates,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -49,8 +50,7 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
-
-// const X_DELTA = 300;
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -387,7 +387,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Horizontal Flip (Alt+H)');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
 
@@ -706,6 +706,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).setSearchValue('Y');
     await StructureLibraryDialog(page).clickSearch();
     await takeEditorScreenshot(page);
+    await StructureLibraryDialog(page).closeWindow();
   });
 
   test('Expand/Remove abbreviation context menu with selected tools', async () => {
@@ -821,7 +822,8 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
-    await StructureLibraryDialog(page).clickSaveToSdfButton();
+    await StructureLibraryDialog(page).saveToSdfButton();
+    await TemplateEditDialog(page).cancel();
   });
 
   test('Check aromatize/dearomatize tool on FG', async () => {

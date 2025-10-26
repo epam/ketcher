@@ -504,6 +504,9 @@ export async function resetSettingsValuesToDefault(page: Page) {
   await TopRightToolbar(page).Settings();
   await SettingsDialog(page).reset();
   await SettingsDialog(page).apply();
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
+  }
 }
 
 export type SettingsDialogLocatorsType = ReturnType<typeof SettingsDialog>;

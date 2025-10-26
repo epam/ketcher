@@ -47,6 +47,11 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await EnhancedStereochemistry(page).isVisible()) {
+      await EnhancedStereochemistry(page).closeWindow();
+    }
+  });
 
   test('OR stereo mark assignment', async () => {
     /*

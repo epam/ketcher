@@ -94,6 +94,7 @@ test.describe('S-Group Properties', () => {
     ).toContainText('Nucleotide Component');
     // required to unlock screen and find locator for close button
     await page.keyboard.press('Escape');
+    await SGroupPropertiesDialog(page).closeWindow();
   });
 
   test('Checking Nucleotide Component drop-down options', async () => {
@@ -128,6 +129,7 @@ test.describe('S-Group Properties', () => {
     );
     // required to unlock screen and find locator for close button
     await page.keyboard.press('Escape');
+    await SGroupPropertiesDialog(page).closeWindow();
   });
 
   test('Checking Sugar type S-Group creation', async () => {

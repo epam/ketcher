@@ -986,6 +986,7 @@ test.describe('Macro-Micro-Switcher', () => {
       ).open();
     });
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Check that in context menu for AP - only Delete and Highlight avaliable', async () => {
@@ -1587,6 +1588,7 @@ test.describe('Macro-Micro-Switcher', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
     ).open();
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Validate that we can save bond between micro and macro structures to KET', async () => {

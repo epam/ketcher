@@ -472,6 +472,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MoleculesFileFormatType.KetFormat,
     );
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Verify that 3 different Multi-Tailed Arrows can be zoomed in/out (20, 400, 100) after adding to Canvas from .ket file', async () => {

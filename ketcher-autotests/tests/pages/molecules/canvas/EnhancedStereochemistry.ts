@@ -6,6 +6,7 @@ import { LeftToolbar } from '../LeftToolbar';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 
 type EnhancedStereochemistryLocators = {
+  window: Locator;
   absRadio: Locator;
   newAndGroupRadio: Locator;
   addToAndGroupRadio: Locator;
@@ -20,6 +21,7 @@ type EnhancedStereochemistryLocators = {
 
 export const EnhancedStereochemistry = (page: Page) => {
   const locators: EnhancedStereochemistryLocators = {
+    window: page.getByTestId('enhancedStereo-dialog'),
     absRadio: page.getByTestId('abs-radio'),
     newAndGroupRadio: page.getByTestId('create-new-and-group-radio'),
     addToAndGroupRadio: page.getByTestId('add-to-and-group-radio'),
@@ -34,6 +36,10 @@ export const EnhancedStereochemistry = (page: Page) => {
 
   return {
     ...locators,
+
+    async isVisible() {
+      return await locators.window.isVisible();
+    },
 
     async closeWindow() {
       await locators.closeWindowButton.click();

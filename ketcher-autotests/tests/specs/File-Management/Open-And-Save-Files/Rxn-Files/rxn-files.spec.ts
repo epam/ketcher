@@ -48,6 +48,7 @@ async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
     : expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  await SaveStructureDialog(page).cancel();
 }
 
 let page: Page;
@@ -107,6 +108,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Open and Save file - Reaction from file that contains Sgroup', async () => {

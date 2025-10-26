@@ -75,6 +75,7 @@ test.describe('Attachment Point Tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
+    await AttachmentPointsDialog(page).closeWindow();
   });
 
   test('Able to check any check-mark', async () => {
@@ -92,6 +93,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     ).secondaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
+    await AttachmentPointsDialog(page).closeWindow();
   });
 
   test('Rendering of Attachment points', async () => {

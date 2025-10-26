@@ -102,6 +102,9 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async openSection(sectionName: TemplateLibraryTab) {
+      if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
+        await this.switchToTemplateLibraryTab();
+      }
       if (!(await this.isSectionOpened(sectionName))) {
         await getElement(sectionName).click();
       }

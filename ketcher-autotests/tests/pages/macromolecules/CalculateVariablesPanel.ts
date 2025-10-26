@@ -82,7 +82,7 @@ export const CalculateVariablesPanel = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeButton.click();
       await locators.closeButton.waitFor({ state: 'hidden' });
     },

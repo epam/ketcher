@@ -45,6 +45,11 @@ test.describe('SMILES files', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.beforeEach(async () => {
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).cancel();
+    }
+  });
 
   test('SmileString for structure with Bond properties', async () => {
     /*
@@ -105,9 +110,10 @@ test.describe('SMILES files', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sec-butyl-abr.mol');
     await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await page.getByText('Warnings').click();
+    await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
   });
 
   test('SmileString  from mol file that contains Sgroup', async () => {

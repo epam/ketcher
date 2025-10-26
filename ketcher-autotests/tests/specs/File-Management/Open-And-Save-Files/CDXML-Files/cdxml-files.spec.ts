@@ -36,6 +36,12 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+test.afterEach(async () => {
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
+  }
+});
+
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test('Paste CDXML', async () => {
     /**

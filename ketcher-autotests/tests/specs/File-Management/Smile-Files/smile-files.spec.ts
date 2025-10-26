@@ -363,6 +363,11 @@ test.describe('SMILES files', () => {
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
+    // Dirty hack
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).cancel();
+    }
+
     await openFileAndAddToCanvas(
       page,
       'KET/benzene-arrow-benzene-reagent-nh3.ket',

@@ -276,6 +276,11 @@ test.describe('Checking converting bond attributes to custom query', () => {
       numberOfBond,
     );
   });
+  test.afterEach(async () => {
+    if (await BondPropertiesDialog(page).window.isVisible()) {
+      await BondPropertiesDialog(page).cancel();
+    }
+  });
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
     /**

@@ -592,11 +592,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await Ruler(page).dragRulerHandle(400, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    // await Ruler(page).dragRulerHandle(400, 300);
+    // await takeEditorScreenshot(page, {
+    //   hideMonomerPreview: true,
+    //   hideMacromoleculeEditorScrollBars: true,
+    // });
     await Ruler(page).dragRulerHandle(600, 300);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -612,11 +612,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    // await Ruler(page).dragRulerHandle(600, 300);
-    // await takeEditorScreenshot(page, {
-    //   hideMonomerPreview: true,
-    //   hideMacromoleculeEditorScrollBars: true,
-    // });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {

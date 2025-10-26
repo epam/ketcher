@@ -12,7 +12,7 @@ import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type SGroupPropertiesLocators = {
-  sGroupDialog: Locator;
+  window: Locator;
   closeWindowButton: Locator;
   typeDropdown: Locator;
   contextDropdown: Locator;
@@ -32,7 +32,7 @@ type SGroupPropertiesLocators = {
 
 export const SGroupPropertiesDialog = (page: Page) => {
   const locators: SGroupPropertiesLocators = {
-    sGroupDialog: page.getByTestId('sgroup-dialog'),
+    window: page.getByTestId('sgroup-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     typeDropdown: page.getByTestId('s-group-type-input-span'),
     contextDropdown: page.getByTestId('context-input-span'),
@@ -53,7 +53,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

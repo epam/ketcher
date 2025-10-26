@@ -31,10 +31,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   contractAbbreviation,
@@ -51,6 +48,7 @@ import {
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -78,6 +76,17 @@ test.describe('Functional Groups', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await StructureLibraryDialog(page).window.isVisible()) {
+      await StructureLibraryDialog(page).closeWindow();
+    }
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).closeWindow();
+    }
+    if (await EditAbbreviationDialog(page).isVisible()) {
+      await EditAbbreviationDialog(page).cancel();
+    }
+  });
 
   test('Open from V2000 file with expanded functional group', async () => {
     /*
@@ -226,17 +235,6 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
-});
-
-test.describe('Functional Groups', () => {
-  let page: Page;
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-  });
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Open from V3000 file with contracted and expanded functional groups', async () => {
     /*
@@ -317,6 +315,9 @@ test.describe('Functional Groups', () => {
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
+    if (await EditAbbreviationDialog(page).isVisible()) {
+      await EditAbbreviationDialog(page).cancel();
+    }
   });
 
   test('Add Chain to expanded Functional Group', async () => {
@@ -342,7 +343,7 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

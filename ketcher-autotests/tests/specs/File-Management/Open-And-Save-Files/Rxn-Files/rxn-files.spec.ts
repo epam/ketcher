@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
-  pressButton,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -153,7 +152,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShift, y, page);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(
       page,
@@ -167,7 +165,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await CommonLeftToolbar(page).erase();
     await clickOnCanvas(
       page,
@@ -182,7 +179,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
     await savedFileInfoStartsWithRxn(page, true);
 
-    await pressButton(page, 'Cancel');
     await CommonTopLeftToolbar(page).clearCanvas();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);

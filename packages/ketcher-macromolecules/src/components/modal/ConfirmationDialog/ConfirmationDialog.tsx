@@ -20,6 +20,7 @@ export const ConfirmationDialog = ({
       isOpen={isModalOpen}
       title={title ?? 'Confirm your action'}
       onClose={onClose}
+      testId="confirmation-dialog"
     >
       <Modal.Content>
         <ConfirmationText data-testid="confirmation-text">

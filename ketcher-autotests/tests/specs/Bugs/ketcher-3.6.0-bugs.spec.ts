@@ -51,7 +51,6 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -303,7 +302,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 6: The ruler is not limited to 190 divisions', async () => {
+  test('Case 6: The ruler is not limited to 190 divisions', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7209
@@ -326,7 +327,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 7: Rectangular input field wide enough to fit any (at least 4) digit number', async () => {
+  test('Case 7: Rectangular input field wide enough to fit any (at least 4) digit number', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7207
@@ -339,9 +342,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('1000');
     await keyboardPressOnCanvas(page, 'Enter');

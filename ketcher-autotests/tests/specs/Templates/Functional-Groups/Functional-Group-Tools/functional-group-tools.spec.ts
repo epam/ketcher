@@ -49,7 +49,6 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
-import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -822,7 +821,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
     await StructureLibraryDialog(page).saveToSdfButton();
-    await TemplateEditDialog(page).cancel();
+    await StructureLibraryDialog(page).closeWindow();
   });
 
   test('Check aromatize/dearomatize tool on FG', async () => {

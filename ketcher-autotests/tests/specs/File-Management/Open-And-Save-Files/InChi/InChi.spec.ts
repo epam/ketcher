@@ -406,6 +406,7 @@ test.describe('Open and Save InChI file', () => {
     const expectedErrorMessage =
       'Convert error!\ncore: <reaction> is not a molecule';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).closeWindow();
   });
 

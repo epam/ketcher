@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  pressTab,
   FILE_TEST_DATA,
   clickOnAtom,
   moveOnAtom,

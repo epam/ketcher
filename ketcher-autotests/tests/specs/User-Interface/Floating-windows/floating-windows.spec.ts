@@ -167,7 +167,7 @@ test.describe('Floating windows', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
     await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(4);
     await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(1);
-    await CalculatedValuesDialog(page).closeByX();
+    await CalculatedValuesDialog(page).closeWindow();
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,

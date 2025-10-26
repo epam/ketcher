@@ -80,6 +80,11 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
   FAMKdT: { alias: 'FAMKdT', testId: 'FAMKdT___dT 6-FAM Azide' },
   Dab: { alias: 'Dab', testId: 'Dab___d5meC Dabcyl' },
   ddC: { alias: 'ddC', testId: 'ddC___Dideoxycytidine' },
+  // for library update test, doesn't exist initially
+  _Nucleotide1: {
+    alias: '_Nucleotide1',
+    testId: '_Nucleotide1____Nucleotide1',
+  },
 });
 
 export type NucleotidesType = typeof Nucleotide;

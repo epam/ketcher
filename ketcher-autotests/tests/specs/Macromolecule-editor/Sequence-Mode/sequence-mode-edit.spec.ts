@@ -21,8 +21,6 @@ import {
   pasteFromClipboardByKeyboard,
   takeEditorScreenshot,
   takePageScreenshot,
-  typePeptideAlphabet,
-  typeRNADNAAlphabet,
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -104,13 +102,13 @@ test.describe('Sequence edit mode', () => {
 
   test('Add/edit sequence', async ({ page }) => {
     test.slow();
-    await typeRNADNAAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ATGCU');
     await MacromoleculesTopToolbar(page).dna();
-    await typeRNADNAAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ATGCU');
     await MacromoleculesTopToolbar(page).peptides();
-    await typePeptideAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
     await keyboardPressOnCanvas(page, 'Enter');
-    await typePeptideAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);

@@ -20,7 +20,6 @@ import {
   MolFileFormat,
   clickOnCanvas,
   openFile,
-  pressButton,
   delay,
 } from '@utils';
 import {
@@ -53,6 +52,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
+  verticalFlip,
 } from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -386,31 +386,27 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test.fail(
-    'Case 12: DNA/RNA sequences should NOT accept * symbols',
-    async () => {
-      // This test fails because of https://github.com/epam/Indigo/issues/3210
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/7243
-       * Bug: https://github.com/epam/ketcher/issues/4358
-       * Description: DNA/RNA sequences should NOT accept * symbols.
-       * Error message should appear: "*" symbol is not allowed for DNA sequence.
-       * Scenario:
-       * 1. Open Macro mode
-       * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
-       */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        MacroFileType.FASTA,
-        'AAAA*AAAA',
-        true,
-      );
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+  test('Case 12: DNA/RNA sequences should NOT accept * symbols', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7243
+     * Bug: https://github.com/epam/ketcher/issues/4358
+     * Description: DNA/RNA sequences should NOT accept * symbols.
+     * Error message should appear: "*" symbol is not allowed for DNA sequence.
+     * Scenario:
+     * 1. Open Macro mode
+     * 2. Load by Paste from Clipboard as FASTA - RNA/DNA
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.FASTA,
+      'AAAA*AAAA',
+      true,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
     /*
@@ -579,10 +575,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Go to Macro
      * 2. Open the "Calculate Properties" window by Alt+C hotkey
      */
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
     await page.keyboard.press('Alt+C');
     await delay(1);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -1097,7 +1093,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await verifySVGExport(page);
   });
 

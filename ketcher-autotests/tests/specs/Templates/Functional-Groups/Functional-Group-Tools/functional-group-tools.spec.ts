@@ -19,7 +19,6 @@ import {
   dragMouseAndMoveTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -32,10 +31,7 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   contractAbbreviation,
@@ -53,8 +49,10 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
-
-// const X_DELTA = 300;
+import {
+  horizontalFlip,
+  verticalFlip,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -137,10 +135,9 @@ test.describe('Templates - Functional Group Tools', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -170,10 +167,8 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -354,7 +349,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expand-functional-group-with-benzene.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -364,7 +359,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -383,9 +378,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -393,8 +388,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await horizontalFlip(page);
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
 
@@ -444,7 +439,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await ContextMenu(
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
@@ -452,7 +447,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -713,6 +708,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).setSearchValue('Y');
     await StructureLibraryDialog(page).clickSearch();
     await takeEditorScreenshot(page);
+    await StructureLibraryDialog(page).closeWindow();
   });
 
   test('Expand/Remove abbreviation context menu with selected tools', async () => {
@@ -784,7 +780,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await leftToolbar.text();
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
@@ -828,7 +824,8 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await BottomToolbar(page).StructureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
-    await StructureLibraryDialog(page).clickSaveToSdfButton();
+    await StructureLibraryDialog(page).saveToSdfButton();
+    await StructureLibraryDialog(page).closeWindow();
   });
 
   test('Check aromatize/dearomatize tool on FG', async () => {
@@ -1015,7 +1012,7 @@ test.describe('Templates - Functional Group Tools3', () => {
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
   });
 });

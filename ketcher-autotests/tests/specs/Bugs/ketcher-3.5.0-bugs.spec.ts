@@ -269,6 +269,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     ).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
+    await CalculateVariablesPanel(page).closeWindow();
   });
 
   test('Case 8: Monomer selection without bonds work the same as with bonds', async () => {

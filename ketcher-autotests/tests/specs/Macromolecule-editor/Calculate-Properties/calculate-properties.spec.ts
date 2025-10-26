@@ -53,7 +53,7 @@ test.describe('Calculate Properties tests', () => {
 
   test.afterEach(async ({ context: _ }, testInfo) => {
     if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
-      await CalculateVariablesPanel(page).close();
+      await CalculateVariablesPanel(page).closeWindow();
     }
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
@@ -252,7 +252,7 @@ test.describe('Calculate Properties tests', () => {
     await takePageScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await CalculateVariablesPanel(page).close();
+    await CalculateVariablesPanel(page).closeWindow();
     await takePageScreenshot(page);
   });
 

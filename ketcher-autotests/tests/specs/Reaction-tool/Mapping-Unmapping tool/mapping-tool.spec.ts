@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -20,11 +21,11 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -39,11 +40,13 @@ test.describe('Mapping Tools', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 10 },
+      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
+      getAtomLocator(page, { atomLabel: 'C' }).nth(14),
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await takeEditorScreenshot(page);
   });
 
@@ -97,7 +100,7 @@ test.describe('Mapping Tools', () => {
   }) => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,

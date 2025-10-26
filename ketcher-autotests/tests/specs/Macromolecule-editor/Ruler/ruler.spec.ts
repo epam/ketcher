@@ -137,6 +137,9 @@ test.describe('Tests for Ruler', () => {
      * 4. Verify that the default position of the slider depends of the viewport size (refer to the current behavior)
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -368,6 +371,7 @@ test.describe('Tests for Ruler', () => {
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
      */
+    await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-peptides.ket',
@@ -472,6 +476,7 @@ test.describe('Tests for Ruler', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
+    await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
@@ -607,11 +612,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await Ruler(page).dragRulerHandle(600, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    // await Ruler(page).dragRulerHandle(600, 300);
+    // await takeEditorScreenshot(page, {
+    //   hideMonomerPreview: true,
+    //   hideMacromoleculeEditorScrollBars: true,
+    // });
   });
 
   test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {

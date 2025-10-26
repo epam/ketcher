@@ -1,8 +1,5 @@
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { BondTypeName } from '@utils';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 // Custom query - bond properties:
 
@@ -29,29 +26,4 @@ export async function setReactingCenter(
 ) {
   await page.getByTestId('reacting-center-input-span').click();
   await page.getByTestId(reactingCenterOptionTestId).click();
-}
-
-// Other
-
-export async function checkSmartsValue(page: Page, value: string) {
-  const saveStructureTextarea = SaveStructureDialog(page).saveStructureTextarea;
-
-  await CommonTopLeftToolbar(page).saveFile();
-  await SaveStructureDialog(page).chooseFileFormat(
-    MoleculesFileFormatType.DaylightSMARTS,
-  );
-  await expect(saveStructureTextarea).toHaveValue(value);
-}
-
-export async function checkSmartsWarnings(page: Page) {
-  const value =
-    'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
-  await SaveStructureDialog(page).switchToWarningsTab();
-  const warningSmartsTextArea = SaveStructureDialog(
-    page,
-  ).warningTextarea.filter({ hasText: 'SMARTS' });
-  const warningText = await warningSmartsTextArea.evaluate(
-    (node) => node.textContent,
-  );
-  expect(warningText).toEqual(value);
 }

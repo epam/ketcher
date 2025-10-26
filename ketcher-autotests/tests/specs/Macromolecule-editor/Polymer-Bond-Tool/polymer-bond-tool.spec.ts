@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasMacro,
-  pressButton,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
@@ -1599,7 +1598,7 @@ test.describe('Verify "Select/Edit Attachment Points" dialogues for ambiguous mo
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await pressButton(page, 'Cancel');
+      await AttachmentPointsDialog(page).cancel();
     });
   }
 });

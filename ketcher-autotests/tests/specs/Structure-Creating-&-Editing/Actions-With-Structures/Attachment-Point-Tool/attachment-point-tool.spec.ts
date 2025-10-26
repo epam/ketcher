@@ -19,7 +19,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
@@ -33,7 +32,6 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   PeriodicTableElement,
@@ -47,6 +45,7 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -76,6 +75,7 @@ test.describe('Attachment Point Tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
+    await AttachmentPointsDialog(page).closeWindow();
   });
 
   test('Able to check any check-mark', async () => {
@@ -93,6 +93,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     ).secondaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
+    await AttachmentPointsDialog(page).closeWindow();
   });
 
   test('Rendering of Attachment points', async () => {
@@ -535,12 +536,10 @@ test.describe('Attachment Point Tool', () => {
       y: 160,
     };
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
-
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -685,7 +684,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await dragTo(page, getAtomLocator(page, { atomId: 2 }), {
       x: 520,
       y: 450,

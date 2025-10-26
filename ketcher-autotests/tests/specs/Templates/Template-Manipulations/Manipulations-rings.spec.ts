@@ -19,10 +19,7 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
@@ -127,7 +124,7 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await takeEditorScreenshot(page);
   await CommonTopLeftToolbar(page).clearCanvas();
 
-  await selectRingButton(page, type);
+  await BottomToolbar(page).clickRing(type);
   await clickInTheMiddleOfTheScreen(page);
   await deleteRightBondInRing(page);
   await moveMouseAway(page);

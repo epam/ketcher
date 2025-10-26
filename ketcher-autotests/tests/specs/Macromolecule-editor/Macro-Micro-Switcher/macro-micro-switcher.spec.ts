@@ -35,7 +35,6 @@ import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
   FileType,
   verifyFileExport,
@@ -73,7 +72,6 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import {
   BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
@@ -128,13 +126,6 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
     await page.mouse.wheel(scrollValue, 0);
   });
-}
-
-async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).ThreeDViewer();
-  if (waitForButtonIsEnabled) {
-    await miewApplyButtonIsEnabled(page);
-  }
 }
 
 export let page: Page;
@@ -544,9 +535,9 @@ test.describe('Macro-Micro-Switcher', () => {
     });
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       maxDiffPixelRatio: 0.05,
@@ -596,7 +587,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await CommonTopLeftToolbar(page).saveFile();
-    expect(SaveStructureDialog(page).saveStructureDialog).toBeVisible();
+    expect(SaveStructureDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 });
@@ -995,6 +986,7 @@ test.describe('Macro-Micro-Switcher', () => {
       ).open();
     });
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Check that in context menu for AP - only Delete and Highlight avaliable', async () => {
@@ -1024,7 +1016,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1596,6 +1588,7 @@ test.describe('Macro-Micro-Switcher', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
     ).open();
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Validate that we can save bond between micro and macro structures to KET', async () => {
@@ -1919,7 +1912,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,

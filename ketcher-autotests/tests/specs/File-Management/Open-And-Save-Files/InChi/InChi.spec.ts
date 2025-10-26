@@ -3,7 +3,6 @@ import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  pressButton,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
@@ -406,6 +405,8 @@ test.describe('Open and Save InChI file', () => {
     const expectedErrorMessage =
       'Convert error!\ncore: <reaction> is not a molecule';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Open and Save file - InChi string - for Sgroup', async () => {
@@ -424,6 +425,7 @@ test.describe('Open and Save InChI file', () => {
     await expect(saveStructureDialog.warningTextarea).toContainText(
       'In InChI the structure will be saved without S-groups',
     );
+    await saveStructureDialog.cancel();
   });
 
   test('Open and Save file - InChI String - Alias', async () => {
@@ -482,6 +484,8 @@ test.describe('Open and Save InChI file', () => {
     const expectedErrorMessage =
       'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Open and Save file - InChI String for invalid atom symbol or special symbol', async () => {
@@ -500,6 +504,8 @@ test.describe('Open and Save InChI file', () => {
     const expectedErrorMessage =
       'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button', async () => {
@@ -509,7 +515,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await openPasteFromClipboard(page, '123.!@*');
-    await pressButton(page, 'Cancel');
+    await PasteFromClipboardDialog(page).cancel();
     await openPasteFromClipboard(page, '123.!@*');
     await page.keyboard.press('Escape');
     // await press

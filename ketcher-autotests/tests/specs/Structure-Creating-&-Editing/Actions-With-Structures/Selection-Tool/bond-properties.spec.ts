@@ -21,7 +21,6 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 import {
@@ -29,6 +28,7 @@ import {
   BondTopologyOption,
   BondReactingCenterOption,
 } from '@tests/pages/constants/bondProperties/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Bond Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -547,7 +547,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, x + 150, y + 150, { from: 'pageTopLeft' });
 
     await verifyFileExport(

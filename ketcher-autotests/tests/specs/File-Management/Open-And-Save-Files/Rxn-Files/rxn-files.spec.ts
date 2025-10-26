@@ -7,16 +7,15 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
-  pressButton,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   RxnFileFormat,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,
@@ -48,6 +47,7 @@ async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
     : expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  await SaveStructureDialog(page).cancel();
 }
 
 let page: Page;
@@ -107,6 +107,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Open and Save file - Reaction from file that contains Sgroup', async () => {
@@ -151,7 +152,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShift, y, page);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(
       page,
@@ -165,7 +165,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await CommonLeftToolbar(page).erase();
     await clickOnCanvas(
       page,
@@ -180,7 +179,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
     await savedFileInfoStartsWithRxn(page, true);
 
-    await pressButton(page, 'Cancel');
     await CommonTopLeftToolbar(page).clearCanvas();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
@@ -193,15 +191,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-8904
      * Description: Structure isn't missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures
      */
-    test.slow();
-    const RING_OFFSET = 150;
-    const ARROW_OFFSET = 20;
-    const ARROW_LENGTH = 100;
-    await drawReactionWithTwoBenzeneRings(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
-      RING_OFFSET,
-      ARROW_OFFSET,
-      ARROW_LENGTH,
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
     const xOffsetFromCenter = 50;

@@ -11,7 +11,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  pressButton,
   resetZoomLevelToDefault,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
@@ -45,10 +44,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
@@ -59,6 +55,7 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -953,7 +950,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
     await saveToTemplates(page, 'My Custom Template');
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -1000,7 +997,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1029,7 +1026,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1091,7 +1088,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1123,7 +1120,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1179,7 +1176,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
@@ -1205,7 +1202,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
@@ -1255,7 +1252,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -1281,7 +1278,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -1450,7 +1447,7 @@ test.describe('Image files', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('[C 92.3 H 7.7] > [C 92.3 H 7.7]');
-    await CalculatedValuesDialog(page).closeByX();
+    await CalculatedValuesDialog(page).closeWindow();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
@@ -1500,9 +1497,9 @@ test.describe('Image files', () => {
       'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await MiewDialog(page).cancel();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
@@ -2704,7 +2701,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -2738,7 +2735,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -2778,7 +2775,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -2813,7 +2810,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -2843,7 +2840,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -2894,7 +2891,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -2928,7 +2925,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -2968,7 +2965,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -3003,7 +3000,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -3033,7 +3030,7 @@ test.describe('Image files', () => {
       200,
       200,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -3152,7 +3149,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -3181,7 +3178,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -3210,7 +3207,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3245,7 +3242,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3280,7 +3277,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -3309,7 +3306,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -3338,7 +3335,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -3363,7 +3360,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -3388,7 +3385,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -3414,7 +3411,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);

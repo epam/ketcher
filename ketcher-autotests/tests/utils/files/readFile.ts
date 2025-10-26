@@ -371,12 +371,9 @@ export async function openPasteFromClipboard(
   page: Page,
   fillStructure: string,
 ) {
-  const openStructureTextarea =
-    PasteFromClipboardDialog(page).openStructureTextarea;
-
   await CommonTopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
-  await openStructureTextarea.fill(fillStructure);
+  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
   // The 'Add to Canvas' button step is removed.
   // If you need to use this function in another context and include the button press, you can do so separately.
   // await waitForLoad(page);

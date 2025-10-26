@@ -49,6 +49,10 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  horizontalFlip,
+  verticalFlip,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -345,7 +349,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expand-functional-group-with-benzene.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -355,7 +359,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -374,9 +378,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -384,7 +388,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });

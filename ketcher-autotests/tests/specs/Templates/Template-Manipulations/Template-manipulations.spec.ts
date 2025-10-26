@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  pressButton,
   clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
@@ -57,6 +56,10 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import {
+  horizontalFlip,
+  verticalFlip,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 let page: Page;
 
@@ -353,9 +356,9 @@ test.describe('Template Manupulations', () => {
     await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 

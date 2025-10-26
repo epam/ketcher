@@ -87,19 +87,6 @@ test.describe('Import-Saving .fasta Files', () => {
     await expect(addToCanvasButton).toBeDisabled();
   });
 
-  // Fail while performance issue on Indigo side
-  // test('Check that system does not let uploading corrupted .fasta file', async ({
-  //   page,
-  // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
-  //
-  //   const filename = 'FASTA/fasta-corrupted.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Validate correct displaying of snake viewed RNA chain loaded from .fasta file format', async () => {
     await openFileAndAddToCanvasMacro(
       page,

@@ -5,7 +5,6 @@ import {
   clickOnAtom,
   doubleClickOnAtom,
   doubleClickOnBond,
-  pressButton,
   setBondType,
   setCustomQueryForBond,
   waitForPageInit,
@@ -87,7 +86,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   test('returns true, when structure has "Any" atom', async ({ page }) => {
     const anyAtomButton = RightToolbar(page).anyAtomButton;
 
-    await pressButton(page, 'Cancel');
+    await AtomPropertiesDialog(page).cancel();
     await anyAtomButton.click();
     await clickOnAtom(page, 'C', 0);
     await selectAllStructuresOnCanvas(page);
@@ -117,7 +116,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   for (const queryBond of queryBonds) {
     test(`returns true for ${queryBond} bond`, async ({ page }) => {
       await setBondType(page, queryBond);
-      await pressButton(page, 'Apply');
+      await BondPropertiesDialog(page).apply();
       await checkIsQueryStructureSelected(page, true);
     });
   }
@@ -125,7 +124,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   test(`returns true for customQuery bond`, async ({ page }) => {
     const customQuery = 'x2&D3,D2';
     await setCustomQueryForBond(page, customQuery);
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).apply();
     await checkIsQueryStructureSelected(page, true);
   });
 });

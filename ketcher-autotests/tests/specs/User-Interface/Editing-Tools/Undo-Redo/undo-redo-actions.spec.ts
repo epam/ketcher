@@ -14,7 +14,6 @@ import {
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   waitForPageInit,
-  waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
@@ -58,6 +57,7 @@ import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -408,9 +408,7 @@ test.describe('Undo/Redo Actions', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
-    });
+    await ReactionAutoMappingDialog(page).apply();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });

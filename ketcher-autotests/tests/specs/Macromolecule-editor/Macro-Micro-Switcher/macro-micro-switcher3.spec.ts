@@ -34,7 +34,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
@@ -1076,7 +1076,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1114,7 +1114,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1447,7 +1447,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
@@ -1505,7 +1505,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

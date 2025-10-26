@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   openFile,
-  pressButton,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
   screenshotBetweenUndoRedo,
@@ -2722,14 +2721,12 @@ test.describe('Cascade Reactions', () => {
               470,
               360,
             );
-            await pressButton(page, 'Apply');
             await addTextToCanvas(
               page,
               'abcde FGHIJKLMNOP!@##$%^^^&*',
               700,
               360,
             );
-            await pressButton(page, 'Apply');
             await takeEditorScreenshot(page);
             await verifyFileExport(
               page,

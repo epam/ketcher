@@ -92,14 +92,21 @@ export const SaveStructureDialog = (page: Page) => {
 
     async save() {
       await locators.saveButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
       await locators.cancelButton.click();
+      await this.window.waitFor({ state: 'hidden' });
+    },
+
+    async saveToTemplates() {
+      await locators.saveToTemplatesButton.click();
     },
 
     async closeWindow() {
       await locators.closeWindowButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
   };
 };

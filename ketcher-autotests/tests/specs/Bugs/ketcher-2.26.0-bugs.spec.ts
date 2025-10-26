@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
@@ -67,6 +66,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setACSSettings,
   setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
@@ -219,10 +219,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/equilibrium-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -989,10 +986,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/error with cat and arr.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1260,10 +1254,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1607,10 +1598,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 

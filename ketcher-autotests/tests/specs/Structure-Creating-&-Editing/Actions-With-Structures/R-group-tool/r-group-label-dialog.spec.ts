@@ -4,7 +4,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  pressButton,
   dragMouseTo,
   openFileAndAddToCanvas,
   clickOnAtom,
@@ -42,6 +41,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { verticalFlip } from '../Rotation/utils';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -180,9 +180,7 @@ test.describe('R-Group Label Tool', () => {
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await selectAllStructuresOnCanvas(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Vertical Flip (Alt+V)');
-    });
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
   });
 

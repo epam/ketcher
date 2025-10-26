@@ -2,7 +2,6 @@ import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  pressButton,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -101,11 +100,11 @@ test.describe('Text tools test cases', () => {
   }) => {
     await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
-    await pressButton(page, 'Cancel');
+    await TextEditorDialog(page).cancel();
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).selectAllText();
     await deleteByKeyboard(page);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();

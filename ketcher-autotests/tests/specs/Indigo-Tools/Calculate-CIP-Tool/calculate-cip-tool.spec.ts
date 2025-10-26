@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   clickOnAtom,
-  pressButton,
   addMonomerToCenterOfCanvas,
   deleteByKeyboard,
 } from '@utils';
@@ -42,10 +41,15 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
+  horizontalFlip,
   rotateToCoordinates,
+  verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  setACSSettings,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -795,7 +799,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -823,7 +827,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -875,10 +879,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -944,10 +945,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('150');
     await takeEditorScreenshot(page);

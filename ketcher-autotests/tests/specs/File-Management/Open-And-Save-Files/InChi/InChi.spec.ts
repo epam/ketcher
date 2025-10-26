@@ -3,7 +3,6 @@ import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  pressButton,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
@@ -516,7 +515,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await openPasteFromClipboard(page, '123.!@*');
-    await pressButton(page, 'Cancel');
+    await PasteFromClipboardDialog(page).cancel();
     await openPasteFromClipboard(page, '123.!@*');
     await page.keyboard.press('Escape');
     // await press

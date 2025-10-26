@@ -11,7 +11,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  pressButton,
   resetZoomLevelToDefault,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
@@ -56,6 +55,7 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -1499,7 +1499,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await MiewDialog(page).cancel();
     await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',

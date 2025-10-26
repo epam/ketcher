@@ -60,8 +60,8 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
-  performHorizontalFlip,
-  performVerticalFlip,
+  horizontalFlipByKeyboard,
+  verticalFlipByKeyboard,
   rotateToCoordinates,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
@@ -1131,7 +1131,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1157,7 +1157,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {

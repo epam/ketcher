@@ -1,7 +1,6 @@
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -345,10 +344,10 @@ test.describe('Templates field lenght validations', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('name');
-    await page.getByPlaceholder('template').fill('');
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).clickMoleculeName();
+    await TemplateEditDialog(page).setMoleculeName('template');
+    await TemplateEditDialog(page).setMoleculeName('');
     await getEditorScreenshot(page);
   });
 

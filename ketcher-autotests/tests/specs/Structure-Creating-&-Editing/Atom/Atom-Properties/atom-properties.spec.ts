@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
@@ -73,6 +72,10 @@ import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
+
+function pressButton(page: Page, name = '') {
+  return page.getByRole('button', { name }).click();
+}
 
 test.describe('Atom Properties', () => {
   let page: Page;

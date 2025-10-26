@@ -1,10 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@fixtures';
+import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  pressButton,
   doubleClickOnAtom,
   doubleClickOnBond,
   BondType,
@@ -58,27 +57,15 @@ import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomProperti
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import {
+  BondReactingCenterOption,
+  BondTopologyOption,
+  BondTypeOption,
+} from '@tests/pages/constants/bondProperties/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function selectBondProperties(
-  page: Page,
-  bondType: string,
-  bondTopology: string,
-  bondReactingCenter: string,
-  finalizationButton: string,
-) {
-  await page.getByTestId('type-input-span').click();
-  await page.getByRole('option', { name: bondType, exact: true }).click();
-  await page.getByTestId('topology-input-span').click();
-  await page.getByRole('option', { name: bondTopology }).click();
-  await page.getByTestId('reacting-center-input-span').click();
-  await page
-    .getByRole('option', { name: bondReactingCenter, exact: true })
-    .click();
-  await pressButton(page, finalizationButton);
-}
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
@@ -159,7 +146,11 @@ test.describe('Undo/Redo Actions', () => {
     );
 
     await doubleClickOnBond(page, BondType.SINGLE, 0);
-    await selectBondProperties(page, 'Double', 'Ring', 'Center', 'Apply');
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+      topology: BondTopologyOption.Ring,
+      reactingCenter: BondReactingCenterOption.Center,
+    });
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

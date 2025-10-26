@@ -707,7 +707,7 @@ test.describe('Functional Groups', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+t');
-    await pressTab(page, 'Functional Groups');
+    await StructureLibraryDialog(page).switchToFunctionalGroupTab();
     await page.getByTitle('Boc').click();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();

@@ -8,6 +8,7 @@ import {
   resetZoomLevelToDefault,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
+  moveMouseAway,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -33,6 +34,7 @@ test.describe('Tests for Ruler', () => {
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -51,6 +53,9 @@ test.describe('Tests for Ruler', () => {
      * 4. Verify that ruler is available and placed below the main toolbar
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).hover();
     await takeEditorScreenshot(page, {
@@ -63,6 +68,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await moveMouseAway(page);
   });
 
   test('Case 2: Verify that a rectangular input field positioned to the right of the slider, allowing users to manually enter a specific numeric value', async () => {
@@ -82,6 +88,9 @@ test.describe('Tests for Ruler', () => {
      * We have a bug: https://github.com/epam/ketcher/issues/7245
      * After fixing need to update screenshots
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).hoverOnInputField();
     await takeEditorScreenshot(page, {
@@ -562,6 +571,23 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await Ruler(page).setLength('14');
+  });
+
+  test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7811
+     * Bug: https://github.com/epam/ketcher/issues/7245
+     * Description: Not missing tooltip for standalone input field in ruler control
+     * Scenario:
+     * 1. Go to Macro mode - Snake mode
+     * 2. Drag the ruler slider outside the visible canvas so that the input field becomes standalone
+     * 3. Hover over the input field
+     */
+    await Ruler(page).setLength('100');
+    await Ruler(page).hoverOnInputField();
+    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
+    await Ruler(page).setLength('30');
   });
 
   test('Case 16: Change layout by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window', async () => {
@@ -592,11 +618,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    // await Ruler(page).dragRulerHandle(400, 300);
-    // await takeEditorScreenshot(page, {
-    //   hideMonomerPreview: true,
-    //   hideMacromoleculeEditorScrollBars: true,
-    // });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await Ruler(page).dragRulerHandle(600, 300);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -617,20 +643,5 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-  });
-
-  test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7811
-     * Bug: https://github.com/epam/ketcher/issues/7245
-     * Description: Not missing tooltip for standalone input field in ruler control
-     * Scenario:
-     * 1. Go to Macro mode - Snake mode
-     * 2. Drag the ruler slider outside the visible canvas so that the input field becomes standalone
-     * 3. Hover over the input field
-     */
-    await Ruler(page).setLength('100');
-    await Ruler(page).hoverOnInputField();
-    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
   });
 });

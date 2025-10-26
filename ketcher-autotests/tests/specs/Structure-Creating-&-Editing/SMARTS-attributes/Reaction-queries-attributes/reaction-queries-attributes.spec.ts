@@ -13,7 +13,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { checkSmartsValue } from '../utils';
+import { verifySMARTSExport } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -65,7 +65,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[H]>>[#8]');
+    await verifySMARTSExport(page, '[H]>>[#8]');
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickOnAtom(page, 'C', 1);
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6:1]-[#6:2]');
+    await verifySMARTSExport(page, '[#6:1]-[#6:2]');
   });
 
   test('Checking SMARTS with S-Group', async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
       Type: TypeOption.QueryComponent,
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
+    await verifySMARTSExport(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
   });
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
@@ -122,7 +122,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
       Type: TypeOption.QueryComponent,
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
+    await verifySMARTSExport(page, '([#6]1-[#6]-[#6]-1.[#6])');
   });
 
   test('Checking SMARTS with reaction mapping and S-Group', async ({
@@ -174,7 +174,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     });
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6:1].[#9:2])');
+    await verifySMARTSExport(page, '([#6:1].[#9:2])');
   });
 });
 

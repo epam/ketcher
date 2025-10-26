@@ -1,7 +1,5 @@
 import { test, expect } from '@fixtures';
 import {
-  checkSmartsValue,
-  checkSmartsWarnings,
   doubleClickOnAtom,
   pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
@@ -9,6 +7,7 @@ import {
 } from '@utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { Inversion } from '@tests/pages/constants/atomProperties/Constants';
+import { verifySMARTSExportWarnings, verifySMARTSExport } from '../utils';
 
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 
@@ -32,8 +31,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting reaction flag - Retains', async ({ page }) => {
@@ -47,8 +46,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting reaction flag - Exact change checked', async ({ page }) => {
@@ -62,7 +61,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExportWarnings(page);
   });
 });

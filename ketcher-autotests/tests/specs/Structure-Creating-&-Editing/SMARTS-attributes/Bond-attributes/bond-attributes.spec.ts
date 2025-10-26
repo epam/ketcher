@@ -8,8 +8,8 @@ import {
   waitForPageInit,
 } from '@utils';
 import {
-  checkSmartsValue,
-  checkSmartsWarnings,
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
   setBondTopology,
   setBondType,
   setCustomQueryForBond,
@@ -32,7 +32,7 @@ async function setAndCheckBondProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
+  await verifySMARTSExport(page, expectedSmarts);
 }
 
 async function drawStructureAndDoubleClickOnBond(
@@ -164,7 +164,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Hydrogen-option',
       '[#6](-[#6])(-[#6])[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting bond type - single/double', async () => {
@@ -201,7 +201,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Dative-option',
       '[#6](-[#6])(-[#6])[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   // Tests for bond topology:
@@ -235,7 +235,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Center-option',
       '[#6](-[#6])(-[#6])-[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   // Custom query for bond

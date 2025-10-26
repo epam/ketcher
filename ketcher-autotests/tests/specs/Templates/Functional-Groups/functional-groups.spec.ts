@@ -83,7 +83,7 @@ test.describe('Functional Groups', () => {
     if (await SaveStructureDialog(page).window.isVisible()) {
       await SaveStructureDialog(page).closeWindow();
     }
-    if (await EditAbbreviationDialog(page).window.isVisible()) {
+    if (await EditAbbreviationDialog(page).isVisible()) {
       await EditAbbreviationDialog(page).cancel();
     }
   });
@@ -235,17 +235,6 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });
-});
-
-test.describe('Functional Groups', () => {
-  let page: Page;
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-  });
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Open from V3000 file with contracted and expanded functional groups', async () => {
     /*
@@ -326,6 +315,9 @@ test.describe('Functional Groups', () => {
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
+    if (await EditAbbreviationDialog(page).isVisible()) {
+      await EditAbbreviationDialog(page).cancel();
+    }
   });
 
   test('Add Chain to expanded Functional Group', async () => {

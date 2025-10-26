@@ -30,29 +30,31 @@ export async function setReactingCenter(
   await page.getByTestId(reactingCenterOptionTestId).click();
 }
 
-// Other
-
-export async function checkSmartsValue(page: Page, value: string) {
-  const saveStructureTextarea = SaveStructureDialog(page).saveStructureTextarea;
-
+export async function verifySMARTSExport(page: Page, value: string) {
   await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.DaylightSMARTS,
   );
-  await expect(saveStructureTextarea).toHaveValue(value);
+  await expect(SaveStructureDialog(page).saveStructureTextarea).toHaveValue(
+    value,
+  );
   await SaveStructureDialog(page).closeWindow();
 }
 
-export async function checkSmartsWarnings(page: Page) {
+export async function verifySMARTSExportWarnings(page: Page) {
   const value =
     'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
-  const warningsTab = SaveStructureDialog(page).warningsTab;
-  const warningTextarea = SaveStructureDialog(page).warningTextarea;
-
-  await warningsTab.click();
-  const warningSmartsTextArea = warningTextarea.filter({ hasText: 'SMARTS' });
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await SaveStructureDialog(page).switchToWarningsTab();
+  const warningSmartsTextArea = SaveStructureDialog(
+    page,
+  ).warningTextarea.filter({ hasText: 'SMARTS' });
   const warningText = await warningSmartsTextArea.evaluate(
     (node) => node.textContent,
   );
   expect(warningText).toEqual(value);
+  await SaveStructureDialog(page).closeWindow();
 }

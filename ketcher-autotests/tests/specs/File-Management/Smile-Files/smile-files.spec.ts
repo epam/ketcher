@@ -45,7 +45,7 @@ test.describe('SMILES files', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-  test.beforeEach(async () => {
+  test.afterEach(async () => {
     if (await SaveStructureDialog(page).window.isVisible()) {
       await SaveStructureDialog(page).cancel();
     }

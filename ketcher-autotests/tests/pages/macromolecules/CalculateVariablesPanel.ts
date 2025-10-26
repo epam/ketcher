@@ -28,6 +28,7 @@ type RNATabLocators = {
 };
 
 type CalculateVariablesPanelLocators = {
+  panel: Locator;
   molecularFormula: Locator;
   molecularMassValue: Locator;
   molecularMassUnitsCombobox: Locator;
@@ -69,6 +70,7 @@ export const CalculateVariablesPanel = (page: Page) => {
   );
 
   const locators: CalculateVariablesPanelLocators = {
+    panel: page.getByTestId('macromolecule-properties-window'),
     peptidesTab,
     rnaTab,
     molecularFormula: page.getByTestId('Gross-formula'),
@@ -81,6 +83,10 @@ export const CalculateVariablesPanel = (page: Page) => {
 
   return {
     ...locators,
+
+    async isVisible() {
+      return await locators.panel.isVisible();
+    },
 
     async closeWindow() {
       await locators.closeButton.click();

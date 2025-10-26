@@ -52,8 +52,6 @@ import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbrev
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
-// const MAX_BOND_LENGTH = 50;
-
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {

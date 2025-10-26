@@ -4,7 +4,6 @@ import {
   doubleClickOnAtom,
   pressButton,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
   waitForRender,
 } from '@utils';
@@ -50,7 +49,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting all query specific attributes', async ({ page }) => {
@@ -223,7 +222,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     await takeEditorScreenshot(page);
 
     await doubleClickOnAtom(page, 'C', 0);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         Connectivity: Connectivity.Seven,

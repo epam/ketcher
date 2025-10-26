@@ -60,20 +60,13 @@ To search some bond / atom testers can use next methods:
 For atoms:
 
 getAtomByIndex - get atom by attributes and index
-getTopAtomByAttributes - get top atom by attributes
 getRightAtomByAttributes - get right atom by attributes
-getBottomAtomByAttributes - get bottom atom by attributes
-getLeftAtomByAttributes - get left atom by attributes
-getFirstAtomCoordinatesByAttributes - get one atom by attributes
 
 For bonds:
 
 getBondByIndex - get bond by attributes and index
-getTopBondByAttributes - get top bond by attributes
 getRightBondByAttributes - get right bond by attributes
-getBottomBondByAttributes - get bottom bond by attributes
 getLeftBondByAttributes - get left bond by attributes
-getFirstBondCoordinatesByAttributes - get one bond by attributes
 
 ## Docker
 

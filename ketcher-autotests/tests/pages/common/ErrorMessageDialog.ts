@@ -1,18 +1,18 @@
 import { Page, Locator, expect } from '@playwright/test';
 
 type ErrorMessageDialogLocators = {
-  errorMessageWindow: Locator;
+  window: Locator;
   errorMessageBody: Locator;
-  errorMessageClose: Locator;
+  closeButton: Locator;
 };
 
 export const ErrorMessageDialog = (page: Page) => {
   const locators: ErrorMessageDialogLocators = {
-    errorMessageWindow: page.getByTestId('info-modal-window'),
+    window: page.getByTestId('info-modal-window'),
     errorMessageBody: page
       .getByTestId('info-modal-window')
       .getByTestId('error-message-body'),
-    errorMessageClose: page.getByTestId('info-modal-close'),
+    closeButton: page.getByTestId('info-modal-close'),
   };
 
   return {
@@ -22,8 +22,8 @@ export const ErrorMessageDialog = (page: Page) => {
     },
 
     async close() {
-      await locators.errorMessageClose.click();
-      await locators.errorMessageClose.waitFor({ state: 'detached' });
+      await locators.closeButton.click();
+      await locators.closeButton.waitFor({ state: 'detached' });
     },
 
     async getErrorMessage() {

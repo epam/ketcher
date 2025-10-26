@@ -252,7 +252,8 @@ export class RxnArrowRenderer extends BaseRenderer {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
-        .attr('data-testid', this.arrow.type + '-arrow')
+        .attr('data-testid', 'rxn-arrow')
+        .attr('data-arrowtype', this.arrow.type + '-arrow')
         .attr('fill', 'none')
         .attr('stroke', '#000')
         .attr('stroke-width', ARROW_STROKE_WIDTH)

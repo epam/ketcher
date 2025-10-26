@@ -12,8 +12,8 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -45,10 +45,10 @@ test.describe('Paste Tool', () => {
     */
     await drawBenzeneRing(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);

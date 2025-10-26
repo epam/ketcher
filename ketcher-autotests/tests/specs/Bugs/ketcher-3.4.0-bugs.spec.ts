@@ -20,7 +20,6 @@ import {
   MolFileFormat,
   clickOnCanvas,
   openFile,
-  pressButton,
   delay,
 } from '@utils';
 import {
@@ -53,6 +52,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
+  verticalFlip,
 } from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -404,12 +404,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'AAAA*AAAA',
       true,
     );
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: *'",
-    );
-    await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).closeWindow();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
@@ -579,10 +577,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Go to Macro
      * 2. Open the "Calculate Properties" window by Alt+C hotkey
      */
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
     await page.keyboard.press('Alt+C');
     await delay(1);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -1097,7 +1095,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await verifySVGExport(page);
   });
 

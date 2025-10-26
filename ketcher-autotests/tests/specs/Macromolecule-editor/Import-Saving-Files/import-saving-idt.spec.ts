@@ -18,7 +18,7 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   takeEditorScreenshot,
-  takePolymerEditorScreenshot,
+  takeElementScreenshot,
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -207,7 +207,7 @@ test.describe('Import-Saving .idt Files', () => {
     await Library(page).openRNASection(RNASection.Phosphates);
     await Library(page).hoverMonomer(Phosphate.P);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePolymerEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   const rnaNucleotides = [
@@ -232,7 +232,7 @@ test.describe('Import-Saving .idt Files', () => {
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).hoverMonomer(monomer);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takePolymerEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 
@@ -255,7 +255,7 @@ test.describe('Import-Saving .idt Files', () => {
       await Library(page).switchToRNATab();
       await Library(page).hoverMonomer(monomer);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takePolymerEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 

@@ -163,13 +163,11 @@ test.describe('Tests for Ruler', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('23');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('27');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -191,13 +189,11 @@ test.describe('Tests for Ruler', () => {
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Ruler(page).setLength('8');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('13');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -254,6 +250,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await Ruler(page).setLength('14');
   });
 
   test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async () => {
@@ -352,7 +349,6 @@ test.describe('Tests for Ruler', () => {
      */
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('50');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -434,13 +430,11 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('10');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('40');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -451,13 +445,11 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('7');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('12');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -542,13 +534,11 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('10');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('40');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -559,13 +549,11 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('7');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('12');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -602,6 +590,7 @@ test.describe('Tests for Ruler', () => {
     });
     await Ruler(page).dragRulerHandle(400, 300);
     await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).dragRulerHandle(600, 300);
@@ -637,7 +626,6 @@ test.describe('Tests for Ruler', () => {
      * 3. Hover over the input field
      */
     await Ruler(page).setLength('100');
-    await keyboardPressOnCanvas(page, 'Enter');
     await Ruler(page).hoverOnInputField();
     await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
   });

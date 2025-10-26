@@ -9,7 +9,6 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import {
-  keyboardPressOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
   takeEditorScreenshot,

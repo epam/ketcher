@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   keyboardTypeOnCanvas,
-  keyboardPressOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';

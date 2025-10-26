@@ -27,6 +27,7 @@ import {
   GeneralSetting,
   MeasurementUnit,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {

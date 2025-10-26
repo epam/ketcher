@@ -5,7 +5,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -37,6 +36,7 @@ import {
   applyEnhancedStereochemistry,
 } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 test.describe('Enhanced Stereochemistry Tool', () => {
@@ -47,6 +47,11 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await EnhancedStereochemistry(page).isVisible()) {
+      await EnhancedStereochemistry(page).closeWindow();
+    }
+  });
 
   test('OR stereo mark assignment', async () => {
     /*
@@ -663,7 +668,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2924
     Description: Values 'ABS' and "CH3" aren't overlapped on canvas.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);
@@ -678,7 +683,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-8917
     Description: Stereo flag is presented as 'ABS' without 'Chiral'
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);

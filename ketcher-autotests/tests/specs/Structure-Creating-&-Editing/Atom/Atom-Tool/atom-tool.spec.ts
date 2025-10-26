@@ -60,6 +60,14 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await ExtendedTableDialog(page).isVisible()) {
+      await ExtendedTableDialog(page).closeWindow();
+    }
+    if (await PeriodicTableDialog(page).isVisible()) {
+      await PeriodicTableDialog(page).close();
+    }
+  });
 
   test('Periodic table dialog', async () => {
     /*

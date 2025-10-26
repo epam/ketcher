@@ -323,7 +323,7 @@ test.describe('Templates field lenght validations', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await pressButton(page, 'Save to Templates');
+    await SaveStructureDialog(page).saveToTemplates();
     await page.getByPlaceholder('template').click();
 
     const tooLongValueLength = 130;

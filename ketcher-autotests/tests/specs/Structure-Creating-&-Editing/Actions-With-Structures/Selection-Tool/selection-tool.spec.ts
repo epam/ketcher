@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   moveOnAtom,
-  pressButton,
   dragMouseTo,
   takeLeftToolbarScreenshot,
   waitForRender,
@@ -18,8 +17,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -33,6 +32,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { horizontalFlip, verticalFlip } from '../Rotation/utils';
 
 test.describe('Selection tools', () => {
   let page: Page;
@@ -49,7 +49,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-8925
     Description: Selection is not reset. User can use right-click menu in order to perform actions.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await selectAllStructuresOnCanvas(page);
@@ -88,7 +88,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Atom becomes lighter than the rest of the structure.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
@@ -101,7 +101,7 @@ test.describe('Selection tools', () => {
     Description: When hovered selected Bond becomes lighter than the rest of the structure.
     */
     const bondLocator = getBondLocator(page, { bondId: 7 });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await bondLocator.hover({ force: true });
@@ -115,7 +115,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -126,7 +126,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -356,7 +356,7 @@ test.describe('Selection tools', () => {
     Description: If user presses esc, then last chosen selected tool must be
     selected and pressing esc doesn't choose another mode of selection tool
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 2; i++) {

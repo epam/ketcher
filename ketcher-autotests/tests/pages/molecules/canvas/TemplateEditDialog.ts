@@ -4,7 +4,7 @@ import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
 type TemplateEditDialogLocators = {
-  dialog: Locator;
+  window: Locator;
   closeWindowButton: Locator;
   moleculeNameInput: Locator;
   selectedAttachmentPoints: Locator;
@@ -15,7 +15,7 @@ type TemplateEditDialogLocators = {
 };
 export const TemplateEditDialog = (page: Page) => {
   const locators: TemplateEditDialogLocators = {
-    dialog: page.getByTestId('attach-dialog'),
+    window: page.getByTestId('attach-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     moleculeNameInput: page.getByTestId('name-input'),
     selectedAttachmentPoints: page.getByTestId('attach-output'),

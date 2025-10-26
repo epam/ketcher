@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -10,7 +10,6 @@ import {
   moveOnAtom,
   clickOnAtom,
   waitForRender,
-  waitForAtomPropsModal,
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
@@ -34,8 +33,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
@@ -84,6 +83,11 @@ test.describe('Atom Properties', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await AtomPropertiesDialog(page).window.isVisible()) {
+      await AtomPropertiesDialog(page).cancel();
+    }
+  });
 
   test('Check Atom Properties modal window by double click on atom', async () => {
     /*
@@ -107,7 +111,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -205,7 +209,7 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 2;
     const secondAnyAtom = 3;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
 
@@ -284,7 +288,7 @@ test.describe('Atom Properties', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
 

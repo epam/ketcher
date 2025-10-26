@@ -227,7 +227,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       expect(
         await CalculateVariablesPanel(page).getIsoelectricPointValue(),
       ).toEqual(expected);
-      await CalculateVariablesPanel(page).close();
+      await CalculateVariablesPanel(page).closeWindow();
       await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
@@ -252,7 +252,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
     ).toEqual(['A6', 'C6', 'G6', 'T6', 'U12', 'Other168']);
-    await CalculateVariablesPanel(page).close();
+    await CalculateVariablesPanel(page).closeWindow();
   });
 
   test('Case 9: HELM load not fails if it contains more than one instance of monomers with aliasHELM property', async ({
@@ -351,7 +351,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CalculateVariablesPanel(page).close();
+    await CalculateVariablesPanel(page).closeWindow();
     await clickOnCanvas(page, 700, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
@@ -364,7 +364,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CalculateVariablesPanel(page).close();
+    await CalculateVariablesPanel(page).closeWindow();
     await resetZoomLevelToDefault(page);
   });
 

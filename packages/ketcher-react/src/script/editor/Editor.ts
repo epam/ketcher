@@ -64,6 +64,7 @@ import {
   CoordinateTransformation,
   AssignLeavingGroupAtomOperation,
   RemoveAttachmentPointOperation,
+  ReassignAttachmentPointOperation,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1395,31 +1396,15 @@ class Editor implements KetcherEditor {
   ) {
     assert(this.monomerCreationState);
 
-    this.monomerCreationState.problematicAttachmentPoints.delete(currentName);
-
-    const atomPair =
-      this.monomerCreationState.assignedAttachmentPoints.get(currentName);
-
-    assert(atomPair);
-
-    if (this.monomerCreationState.assignedAttachmentPoints.has(newName)) {
-      const existingAtomPair =
-        this.monomerCreationState.assignedAttachmentPoints.get(newName);
-      assert(existingAtomPair);
-
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.set(
+    const action = new Action([
+      new ReassignAttachmentPointOperation(
+        this.monomerCreationState,
         currentName,
-        existingAtomPair,
-      );
-    } else {
-      this.monomerCreationState.assignedAttachmentPoints.set(newName, atomPair);
-      this.monomerCreationState.assignedAttachmentPoints.delete(currentName);
-    }
+        newName,
+      ),
+    ]).perform(this.render.ctab);
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
-
-    this.render.update(true);
+    this.update(action);
   }
 
   removeAttachmentPoint(name: AttachmentPointName) {

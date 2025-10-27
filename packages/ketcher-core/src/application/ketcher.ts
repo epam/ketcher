@@ -166,6 +166,11 @@ export class Ketcher {
       SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
     }
 
+    if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
+      SettingsManager.persistMonomerLibraryUpdates =
+        !!settings.persistMonomerLibraryUpdates;
+    }
+
     return this.editor.setOptions(JSON.stringify(options));
   }
 
@@ -714,6 +719,13 @@ export class Ketcher {
     );
 
     editor.updateMonomersLibrary(dataInKetFormat);
+    if (SettingsManager.persistMonomerLibraryUpdates) {
+      const updateString =
+        typeof dataInKetFormat === 'string'
+          ? dataInKetFormat
+          : JSON.stringify(dataInKetFormat);
+      SettingsManager.addMonomerLibraryUpdate(updateString);
+    }
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 

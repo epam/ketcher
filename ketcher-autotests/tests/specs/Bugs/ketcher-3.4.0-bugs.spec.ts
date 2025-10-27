@@ -79,8 +79,8 @@ import {
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -404,10 +404,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'AAAA*AAAA',
       true,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: *'",
+    );
+    await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).closeWindow();
   });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
@@ -564,8 +566,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
-    await MacromoleculesTopToolbar(page).calculateProperties();
+    expect(
+      await CalculateVariablesPanel(page).getUnipositiveIonsValue(),
+    ).toEqual('140');
+    await CalculateVariablesPanel(page).closeWindow();
   });
 
   test('Case 20: Alt+C hotkey open the “Calculate Properties” window', async () => {

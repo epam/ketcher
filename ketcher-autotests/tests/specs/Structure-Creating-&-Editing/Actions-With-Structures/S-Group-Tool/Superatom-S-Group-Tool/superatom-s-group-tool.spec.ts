@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
   BondType,
   clickOnAtom,
   clickOnBond,
@@ -40,6 +39,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -188,7 +188,7 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 3);
-    await pressButton(page, 'Remove Abbreviation');
+    await EditAbbreviationDialog(page).removeAbbreviation();
     await keyboardPressOnCanvas(page, 'o');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

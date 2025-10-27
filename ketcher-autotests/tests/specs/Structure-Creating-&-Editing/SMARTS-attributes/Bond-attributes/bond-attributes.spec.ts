@@ -3,7 +3,6 @@ import {
   BondType,
   clickInTheMiddleOfTheScreen,
   doubleClickOnBond,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -30,7 +29,7 @@ async function setAndCheckBondProperties(
   expectedSmarts: string,
 ) {
   await setProperty(page, value);
-  await pressButton(page, 'Apply');
+  await BondPropertiesDialog(page).apply();
   await takeEditorScreenshot(page);
   await verifySMARTSExport(page, expectedSmarts);
 }
@@ -277,6 +276,11 @@ test.describe('Checking converting bond attributes to custom query', () => {
       numberOfBond,
     );
   });
+  test.afterEach(async () => {
+    if (await BondPropertiesDialog(page).window.isVisible()) {
+      await BondPropertiesDialog(page).cancel();
+    }
+  });
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
     /**
@@ -376,10 +380,9 @@ test.describe('Checking saving attributes to .ket file', () => {
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: In KET format customQuery should be saved into the bond object without other properties
      */
-    await setBondType(page, 'Double-option');
-    await setBondTopology(page, 'Ring-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: '=;@',
+    });
 
     await verifyFileExport(
       page,

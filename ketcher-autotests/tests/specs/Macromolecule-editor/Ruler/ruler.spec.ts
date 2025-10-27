@@ -9,6 +9,7 @@ import {
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
+  clickOnCanvas,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -619,6 +620,7 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).dragRulerHandle(400, 300);
+    await clickOnCanvas(page, 0, 0);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

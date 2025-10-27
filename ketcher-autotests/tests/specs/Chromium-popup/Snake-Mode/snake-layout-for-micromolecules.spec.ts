@@ -9,7 +9,6 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import {
-  keyboardPressOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
   takeEditorScreenshot,
@@ -397,7 +396,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -428,7 +426,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -460,7 +457,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -492,7 +488,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -525,7 +520,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -556,7 +550,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -588,7 +581,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -619,7 +611,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -651,7 +642,6 @@ test.describe('Snake Layout for Microstructures by Ruler', () => {
     });
     for (const len of ['10', '16']) {
       await Ruler(page).setLength(len);
-      await keyboardPressOnCanvas(page, 'Enter');
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

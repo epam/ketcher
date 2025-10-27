@@ -109,6 +109,11 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   B: { alias: 'B', testId: '_D___Aspartic acid_N___Asparagine' },
   J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' },
   Z: { alias: 'Z', testId: '_E___Glutamic acid_Q___Glutamine' },
+  // for library update test, doesn't exist initially
+  _Peptide1: {
+    alias: '_Peptide1',
+    testId: '_Peptide1____Peptide1',
+  },
 });
 
 export type PeptidesType = typeof Peptide;

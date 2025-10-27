@@ -25,11 +25,11 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 const atomIndex = 3;
 
@@ -42,7 +42,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1582 and EPMLSOPKET-1610
      * Description:  R-Fragment-Group dialog opening
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -56,7 +56,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1583
      * Description: R-Fragment-Group UI Verification
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -69,7 +69,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1584
      * Description:  R-Fragment-Group dialog cancelling
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -84,7 +84,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1585
      * Description: Create Single R-Fragment-Group member
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -100,7 +100,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1587
      * Description: Change R-Group definition for single R-Group member
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -117,7 +117,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1598
      * Description: Change R-Group definition for single R-Group member
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -210,7 +210,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1599
      * Description: Define a structure with attachment points as R-Group member
      */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);

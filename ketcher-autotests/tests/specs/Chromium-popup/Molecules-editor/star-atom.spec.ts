@@ -43,8 +43,8 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
-  performHorizontalFlip,
-  performVerticalFlip,
+  horizontalFlipByKeyboard,
+  verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 let page: Page;
@@ -679,7 +679,7 @@ test('25. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performHorizontalFlip(page);
+  await horizontalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });
@@ -702,7 +702,7 @@ test('26. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performVerticalFlip(page);
+  await verticalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

@@ -5,6 +5,7 @@ import {
   BondsSetting,
   MeasurementUnit,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   setACSSettings,
   setSettingsOptions,
@@ -714,6 +715,9 @@ test.describe('Open and Save file', () => {
      * 1. Go to Macro - Flex
      * 2. Open prepared monomer file
      */
+    if (await InfoMessageDialog(page).isVisible()) {
+      await InfoMessageDialog(page).ok();
+    }
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/Original Peptide.mol');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

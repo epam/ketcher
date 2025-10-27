@@ -4,7 +4,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  pressButton,
   dragMouseTo,
   openFileAndAddToCanvas,
   clickOnAtom,
@@ -33,7 +32,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -42,6 +40,8 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { verticalFlip } from '../Rotation/utils';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe('R-Group Label Tool', () => {
     /* Test case: EPMLSOPKET-1556
       Description: R-group label dialog appears
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -76,7 +76,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Single R-Group label
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -91,7 +91,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Multiple R-Group label
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -106,7 +106,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Delete R-Group label using Erase tool
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -126,7 +126,7 @@ test.describe('R-Group Label Tool', () => {
       Description: R-group atom label is changed accordingly on the canvas. The R-group label buttons in the "R-Group" dialog are highlighted properly.
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -147,7 +147,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Create S-Group with R-Group
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -171,7 +171,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Structure with R-Group label is rotated correctly
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -180,9 +180,7 @@ test.describe('R-Group Label Tool', () => {
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await selectAllStructuresOnCanvas(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Vertical Flip (Alt+V)');
-    });
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -191,7 +189,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Single R-Group label
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -216,7 +214,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Create the same R-Group label as existing. The same R-group atom label is created correctly.
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -240,7 +238,7 @@ test.describe('R-Group Label Tool', () => {
       Description: The structures are zoomed correctly without R-group labels loss
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -260,7 +258,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Delete R-Group label using hotkey
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -439,7 +437,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

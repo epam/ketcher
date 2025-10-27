@@ -4,7 +4,6 @@ import { Page, expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -17,24 +16,7 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-
-async function getPreviewForSmiles(
-  page: Page,
-  smileType: MoleculesFileFormatType,
-) {
-  await CommonTopLeftToolbar(page).saveFile();
-  await SaveStructureDialog(page).chooseFileFormat(smileType);
-  const previewInput = await SaveStructureDialog(page).getTextAreaValue();
-  expect(previewInput).not.toBe('');
-}
-
-async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
-  await pressButton(page, 'Cancel');
-  await CommonTopLeftToolbar(page).clearCanvas();
-
-  await pasteFromClipboardAndAddToCanvas(page, smiles);
-  await clickInTheMiddleOfTheScreen(page);
-}
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
 let page: Page;
 test.describe('SMILES files', () => {
@@ -45,6 +27,11 @@ test.describe('SMILES files', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).cancel();
+    }
+  });
 
   test('SmileString for structure with Bond properties', async () => {
     /*
@@ -66,7 +53,14 @@ test.describe('SMILES files', () => {
     const previewValue = await SaveStructureDialog(page).getTextAreaValue();
     expect(previewValue).toBe('CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
 
-    await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -89,11 +83,14 @@ test.describe('SMILES files', () => {
     );
     const previewValue = await SaveStructureDialog(page).getTextAreaValue();
     expect(previewValue).toBe('CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|');
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
 
-    await clearCanvasAndPasteSmiles(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -104,10 +101,15 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sec-butyl-abr.mol');
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await page.getByText('Warnings').click();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
+    await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
   });
 
   test('SmileString  from mol file that contains Sgroup', async () => {
@@ -129,11 +131,14 @@ test.describe('SMILES files', () => {
     expect(previewValue).toBe(
       'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
     );
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
 
-    await clearCanvasAndPasteSmiles(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -158,7 +163,11 @@ test.describe('SMILES files', () => {
     );
     const previewValue = await SaveStructureDialog(page).getTextAreaValue();
     expect(previewValue).toBe('NOSPFClBrI[H]');
-    await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+
+    await pasteFromClipboardAndAddToCanvas(page, 'NOSPFClBrI[H]');
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -175,15 +184,21 @@ test.describe('SMILES files', () => {
       'SMILES/attached-data-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
-    await page.getByText('Warnings').click();
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
+    await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-
-    await clearCanvasAndPasteSmiles(
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
       page,
       'CCCC[C@@H](C)[C@@H](C)CC |SgD:4,5:Purity:Purity = 96%::: :|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -208,11 +223,13 @@ test.describe('SMILES files', () => {
     expect(previewValue).toBe(
       '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
     );
-    await clearCanvasAndPasteSmiles(
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
       page,
-      // eslint-disable-next-line max-len
       '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -240,11 +257,13 @@ test.describe('SMILES files', () => {
     expect(previewValue).toBe(
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
     );
-    await clearCanvasAndPasteSmiles(
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
       page,
-      // eslint-disable-next-line max-len
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -260,14 +279,20 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-cis-trans-cycle-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-
-    await clearCanvasAndPasteSmiles(
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
       page,
       'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
     );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -283,10 +308,20 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-alias-pseudoatom-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
     await moveMouseAway(page);
 
-    await clearCanvasAndPasteSmiles(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'CCCC*CC |$;;alias123;;GH*;;$|',
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -305,14 +340,20 @@ test.describe('SMILES files', () => {
         'SMILES/smiles-two-arrows-and-plus-expected.smi',
         FileType.SMILES,
       );
-      await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.DaylightSMILES,
+      );
+      expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
-
-      await clearCanvasAndPasteSmiles(
+      await SaveStructureDialog(page).cancel();
+      await CommonTopLeftToolbar(page).clearCanvas();
+      await pasteFromClipboardAndAddToCanvas(
         page,
         'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
       );
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -322,6 +363,11 @@ test.describe('SMILES files', () => {
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
+    // Dirty hack
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).cancel();
+    }
+
     await openFileAndAddToCanvas(
       page,
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
@@ -331,11 +377,18 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-benzene-arrow-benzene-reagent-nh3-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+    await clickInTheMiddleOfTheScreen(page);
 
-    await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -356,8 +409,14 @@ test.describe('SMILES files', () => {
     );
     await page.getByText('info2').dblclick();
     await takeEditorScreenshot(page);
+    await SGroupPropertiesDialog(page).cancel();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'CCC |SgD:1:atropisomer:info2::::|',
+    );
+    await clickInTheMiddleOfTheScreen(page);
 
-    await clearCanvasAndPasteSmiles(page, 'CCC |SgD:1:atropisomer:info2::::|');
     await takeEditorScreenshot(page);
   });
 

@@ -99,6 +99,7 @@ export const OperationType = Object.freeze({
   MONOMER_CREATION_ASSIGN_LEAVING_ATOM:
     'Monomer creation :: Assign leaving atom',
   MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
+  MONOMER_CREATION_REASSIGN_AP: 'Monomer creation :: Reassign attachment point',
 });
 
 export enum OperationPriority {

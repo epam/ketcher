@@ -16,7 +16,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  pressButton,
   moveOnAtom,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
@@ -69,6 +68,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -238,7 +238,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     }).click();
     await page.keyboard.up('Shift');
     await Library(page).selectMonomer(Peptide.C);
-    await pressButton(page, 'Yes');
+    await ConfirmYourActionDialog(page).yes();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

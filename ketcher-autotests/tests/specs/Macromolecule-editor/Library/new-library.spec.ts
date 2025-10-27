@@ -638,8 +638,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 4,
-      box.y + box.height / 2 - 4,
+      box.x + box.width / 2 + 4,
+      box.y + box.height / 2 + 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);

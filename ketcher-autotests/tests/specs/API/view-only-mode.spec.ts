@@ -11,7 +11,6 @@ import {
   waitForSpinnerFinishedWork,
   openFile,
   moveOnAtom,
-  pressButton,
   dragMouseTo,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
@@ -469,7 +468,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.mouse.down();
     await page.waitForTimeout(timeout);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await page.getByRole('button', { name: 'Cancel' }).click();
     await enableViewOnlyModeBySetOptions(page);
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();

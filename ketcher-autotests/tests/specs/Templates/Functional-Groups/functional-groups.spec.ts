@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  pressTab,
   FILE_TEST_DATA,
   clickOnAtom,
   moveOnAtom,
@@ -52,8 +51,6 @@ import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbrev
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-// const MAX_BOND_LENGTH = 50;
 
 const anyAtom = 3;
 
@@ -707,7 +704,7 @@ test.describe('Functional Groups', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+t');
-    await pressTab(page, 'Functional Groups');
+    await StructureLibraryDialog(page).switchToFunctionalGroupTab();
     await page.getByTitle('Boc').click();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();

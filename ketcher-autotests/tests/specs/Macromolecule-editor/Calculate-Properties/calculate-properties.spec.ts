@@ -1618,6 +1618,12 @@ test.describe('Calculate Properties tests', () => {
 
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
+    // Dirty hack
+    await CalculateVariablesPanel(page).closeWindow();
+    await delay(1);
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    await waitForCalculateProperties(page);
+
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

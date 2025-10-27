@@ -2,7 +2,6 @@ import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -99,7 +98,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     */
     const atomLabels = ['Na', 'K', 'B', 'Er', 'Se'];
     await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 });
@@ -164,7 +163,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
       .first()
       .boundingBox();
     await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).apply();
     if (point) {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x, point.y);

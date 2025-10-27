@@ -4,7 +4,6 @@ import { Page, expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -17,6 +16,7 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
 let page: Page;
 test.describe('SMILES files', () => {
@@ -363,6 +363,11 @@ test.describe('SMILES files', () => {
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
+    // Dirty hack
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).cancel();
+    }
+
     await openFileAndAddToCanvas(
       page,
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
@@ -404,7 +409,7 @@ test.describe('SMILES files', () => {
     );
     await page.getByText('info2').dblclick();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await SGroupPropertiesDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,

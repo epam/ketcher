@@ -322,7 +322,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
 
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('210');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -348,7 +347,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
 
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('1000');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -3,7 +3,6 @@
 import { Page, test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
@@ -53,6 +52,7 @@ import {
   horizontalFlip,
   verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -189,9 +189,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await LeftToolbar(page).chargeMinus();
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
 
     await LeftToolbar(page).chargePlus();
     await clickInTheMiddleOfTheScreen(page);
@@ -228,9 +226,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -249,9 +245,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await LeftToolbar(page).chain();
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
     await clickOnAtom(page, 'O', anyAtom);
     await dragMouseTo(x, y, page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
@@ -269,9 +263,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Remove Abbreviation');
-    });
+    await EditAbbreviationDialog(page).removeAbbreviation();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
@@ -331,7 +323,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     await takeEditorScreenshot(page);
 
-    await pressButton(page, 'Cancel');
+    await EditAbbreviationDialog(page).cancel();
     await CommonLeftToolbar(page).selectAreaSelectionTool();
     await takeEditorScreenshot(page);
   });

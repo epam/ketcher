@@ -2,7 +2,6 @@ import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { test } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -12,6 +11,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -61,12 +62,13 @@ test.describe('Actions with CHEM', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.Test_6_Ch).hover();
-    await page.mouse.down();
-    await getMonomerLocator(page, Chem.A6OH).hover();
-    await page.mouse.up();
+    await bondTwoMonomers(
+      page,
+      getMonomerLocator(page, Chem.Test_6_Ch),
+      getMonomerLocator(page, Chem.A6OH),
+    );
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await AttachmentPointsDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 });

@@ -25,6 +25,8 @@ import {
   SDF_X88,
   SDF_Xalt88,
 } from '@utils/files/testData';
+import path from 'path';
+import fs from 'fs';
 
 let page: Page;
 
@@ -295,6 +297,164 @@ test.describe('API for update Library', () => {
     await takeMonomerLibraryScreenshot(page);
     await Library(page).openRNASection(RNASection.Nucleotides);
     await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToCHEMTab();
+    await takeMonomerLibraryScreenshot(page);
+  });
+});
+
+test.describe('API for replace Library', () => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+  test.afterEach(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  test('Case 1: Replace whole library with library of 3000 Presets monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Presets monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     * We have a bug https://github.com/epam/Indigo/issues/3277
+     * After fixing we need update snapshots if necessary
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 presets.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 2: Replace whole library with library of 3000 Peptides monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Peptides monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 Peptides.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToPeptidesTab();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 3: Replace whole library with library of 3000 Sugars monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Sugars monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 Sugars.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Sugars);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 4: Replace whole library with library of 3000 Bases monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Bases monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 Bases.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Bases);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 5: Replace whole library with library of 3000 Phosphates monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Phosphates monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 Phosphates.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 6: Replace whole library with library of 3000 Nucleotides monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 Nucleotides monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 Nucleotides.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 7: Replace whole library with library of 3000 CHEMs monomers inside', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of 3000 CHEMs monomers inside
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const sdfPath = path.join(
+      __dirname,
+      '../../../test-data/SDF/3000 CHEMs.sdf',
+    );
+    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
+    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
     await Library(page).switchToCHEMTab();
     await takeMonomerLibraryScreenshot(page);
   });

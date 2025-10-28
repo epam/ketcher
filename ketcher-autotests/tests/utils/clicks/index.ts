@@ -275,17 +275,6 @@ export async function doubleClickOnAtom(
   });
 }
 
-export async function doubleClickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.dblclick(point.x, point.y);
-  });
-}
-
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,

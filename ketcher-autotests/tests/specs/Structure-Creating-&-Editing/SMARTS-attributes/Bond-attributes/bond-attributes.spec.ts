@@ -1,8 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import {
-  BondType,
   clickInTheMiddleOfTheScreen,
-  doubleClickOnBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -18,6 +16,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -36,7 +35,6 @@ async function setAndCheckBondProperties(
 
 async function drawStructureAndDoubleClickOnBond(
   page: Page,
-  bondType: BondType,
   numberOfBond: number,
 ) {
   await waitForPageInit(page);
@@ -45,7 +43,9 @@ async function drawStructureAndDoubleClickOnBond(
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
-  await doubleClickOnBond(page, bondType, numberOfBond);
+  await getBondLocator(page, { bondId: numberOfBond }).dblclick({
+    force: true,
+  });
   await expect(BondPropertiesDialog(page).window).toBeVisible();
 }
 
@@ -58,13 +58,9 @@ async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
 test.describe('Checking bond attributes in SMARTS format', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
+    const numberOfBond = 0;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+    await drawStructureAndDoubleClickOnBond(page, numberOfBond);
   });
 
   // Tests for bond type:
@@ -268,13 +264,9 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 test.describe('Checking converting bond attributes to custom query', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
+    const numberOfBond = 0;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+    await drawStructureAndDoubleClickOnBond(page, numberOfBond);
   });
   test.afterEach(async () => {
     if (await BondPropertiesDialog(page).window.isVisible()) {
@@ -366,13 +358,9 @@ test.describe('Checking converting bond attributes to custom query', () => {
 test.describe('Checking saving attributes to .ket file', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
+    const numberOfBond = 0;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+    await drawStructureAndDoubleClickOnBond(page, numberOfBond);
   });
 
   test('Save *.ket file with custom query for bond attribute', async () => {

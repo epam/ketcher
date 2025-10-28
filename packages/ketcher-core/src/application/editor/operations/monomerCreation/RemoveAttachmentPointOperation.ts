@@ -43,8 +43,6 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
         this.potentialLeavingAtoms,
       );
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
-
     BaseOperation.invalidateAtom(restruct, attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, leavingAtomId);
   }

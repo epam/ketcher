@@ -61,8 +61,6 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
       BaseOperation.invalidateAtom(restruct, atomPair[0]);
       BaseOperation.invalidateAtom(restruct, atomPair[1]);
     }
-
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
   }
 
   invert() {

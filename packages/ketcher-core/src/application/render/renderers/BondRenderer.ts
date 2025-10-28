@@ -190,6 +190,7 @@ export class BondRenderer extends BaseRenderer {
       const moleculeStruct = this.bond.firstAtom.monomer.monomerItem.struct;
       return moleculeStruct.bonds.get(this.bond.bondIdInMicroMode);
     } catch (error) {
+      // Bond may not have an associated molecule struct in some cases (e.g., not connected to a monomer)
       return null;
     }
   }

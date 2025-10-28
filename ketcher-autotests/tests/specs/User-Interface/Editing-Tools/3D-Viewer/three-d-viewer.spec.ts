@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@fixtures';
+import { expect, test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -14,17 +13,10 @@ import {
   waitForRender,
   dragMouseAndMoveTo,
 } from '@utils';
-import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
-
-async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).ThreeDViewer();
-  if (waitForButtonIsEnabled) {
-    await miewApplyButtonIsEnabled(page);
-  }
-}
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,9 +32,9 @@ test.describe('3D Viewer', () => {
     The structure is spinned.
     Position of structure on the canvas is not changed. 
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 20);
     await waitForRender(page, async () => {
       await MiewDialog(page).cancel();
@@ -58,7 +50,7 @@ test.describe('3D Viewer', () => {
     Position of the structure on the canvas isn't changed. 
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).cancel();
@@ -75,7 +67,7 @@ test.describe('3D Viewer', () => {
     The structure isn't changed.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).cancel();
@@ -95,7 +87,7 @@ test.describe('3D Viewer', () => {
       page,
       'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, -20);
     await waitForRender(page, async () => {
       await MiewDialog(page).cancel();
@@ -122,7 +114,9 @@ test.describe('3D Viewer', () => {
     Test case: EPMLSOPKET-1932
     Description: 3D Viewer window is opened. There is no structure in the opened  window.
     */
-    await open3DViewer(page, false);
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
@@ -136,9 +130,9 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene is drawn in it. 
     */
     // we need remove or block the variable number of frames per second in the lower right corner
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
@@ -154,10 +148,10 @@ test.describe('3D Viewer', () => {
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
@@ -181,7 +175,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-br.mol');
     const initialStructureData = await getKet(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 80);
     await waitForRender(page, async () => {
       await MiewDialog(page).apply();
@@ -202,7 +196,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-stereo.mol');
     const initialStructureData = await getKet(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 75);
     await waitForRender(page, async () => {
       await MiewDialog(page).apply();
@@ -226,7 +220,7 @@ test.describe('3D Viewer', () => {
       'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
     );
     const initialStructureData = await getKet(page);
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, -90);
     await waitForRender(page, async () => {
       await MiewDialog(page).apply();

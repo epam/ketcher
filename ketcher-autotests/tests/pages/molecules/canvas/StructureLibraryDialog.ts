@@ -25,6 +25,7 @@ type TemplateLibraryTabLocators = {
 };
 
 type StructureLibraryDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   searchEditBox: Locator;
   templateLibraryTab: Locator & TemplateLibraryTabLocators;
@@ -63,6 +64,7 @@ export const StructureLibraryDialog = (page: Page) => {
     });
 
   const locators: StructureLibraryDialogLocators = {
+    window: page.getByTestId('attach-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     searchEditBox: page.getByTestId('template-search-input'),
     templateLibraryTab,
@@ -75,7 +77,7 @@ export const StructureLibraryDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
@@ -100,6 +102,9 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async openSection(sectionName: TemplateLibraryTab) {
+      if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
+        await this.switchToTemplateLibraryTab();
+      }
       if (!(await this.isSectionOpened(sectionName))) {
         await getElement(sectionName).click();
       }
@@ -192,7 +197,7 @@ export const StructureLibraryDialog = (page: Page) => {
       await page.getByTestId(cardName).click();
     },
 
-    async clickSaveToSdfButton() {
+    async saveToSdfButton() {
       await locators.saveToSdfButton.click();
     },
   };

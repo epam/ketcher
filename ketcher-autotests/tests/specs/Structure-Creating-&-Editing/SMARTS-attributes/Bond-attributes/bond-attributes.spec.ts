@@ -1,24 +1,26 @@
 import { Page, test, expect } from '@fixtures';
 import {
   BondType,
+  clickInTheMiddleOfTheScreen,
   doubleClickOnBond,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import {
-  checkSmartsValue,
-  checkSmartsWarnings,
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
   setBondTopology,
   setBondType,
   setCustomQueryForBond,
   setReactingCenter,
 } from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function setAndCheckBondProperties(
   page: Page,
@@ -27,13 +29,9 @@ async function setAndCheckBondProperties(
   expectedSmarts: string,
 ) {
   await setProperty(page, value);
-  await pressButton(page, 'Apply');
+  await BondPropertiesDialog(page).apply();
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
-}
-
-async function waitForBondPropsModal(page: Page) {
-  await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
+  await verifySMARTSExport(page, expectedSmarts);
 }
 
 async function drawStructureAndDoubleClickOnBond(
@@ -42,10 +40,13 @@ async function drawStructureAndDoubleClickOnBond(
   numberOfBond: number,
 ) {
   await waitForPageInit(page);
-  await drawStructure(page);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
   await doubleClickOnBond(page, bondType, numberOfBond);
-  await waitForBondPropsModal(page);
+  await expect(BondPropertiesDialog(page).window).toBeVisible();
 }
 
 async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
@@ -162,7 +163,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Hydrogen-option',
       '[#6](-[#6])(-[#6])[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting bond type - single/double', async () => {
@@ -199,7 +200,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Dative-option',
       '[#6](-[#6])(-[#6])[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   // Tests for bond topology:
@@ -233,7 +234,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Center-option',
       '[#6](-[#6])(-[#6])-[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   // Custom query for bond
@@ -274,6 +275,11 @@ test.describe('Checking converting bond attributes to custom query', () => {
       BondType.SINGLE,
       numberOfBond,
     );
+  });
+  test.afterEach(async () => {
+    if (await BondPropertiesDialog(page).window.isVisible()) {
+      await BondPropertiesDialog(page).cancel();
+    }
   });
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
@@ -374,10 +380,9 @@ test.describe('Checking saving attributes to .ket file', () => {
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: In KET format customQuery should be saved into the bond object without other properties
      */
-    await setBondType(page, 'Double-option');
-    await setBondTopology(page, 'Ring-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: '=;@',
+    });
 
     await verifyFileExport(
       page,

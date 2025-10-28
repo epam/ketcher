@@ -7,6 +7,7 @@ import {
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { ExtendedTableDialog } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -251,6 +252,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await disableQueryElements(page);
     await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
+    await ExtendedTableDialog(page).closeWindow();
   });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule', async () => {

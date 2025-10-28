@@ -2,9 +2,7 @@ import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
-  pressButton,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
   waitForRender,
 } from '@utils';
@@ -50,7 +48,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting all query specific attributes', async ({ page }) => {
@@ -100,7 +98,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     */
     const atomLabels = ['Na', 'K', 'B', 'Er', 'Se'];
     await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 });
@@ -165,7 +163,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
       .first()
       .boundingBox();
     await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).apply();
     if (point) {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x, point.y);
@@ -223,7 +221,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     await takeEditorScreenshot(page);
 
     await doubleClickOnAtom(page, 'C', 0);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         Connectivity: Connectivity.Seven,

@@ -110,6 +110,8 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   ChTEG: { alias: 'ChTEG', testId: 'ChTEG___Cholesterol-TEG' },
   AmMO: { alias: 'AmMO', testId: 'AmMO___3-(3-aminopropoxy)propane-1,2-diol' },
   MGBEc: { alias: 'MGBEc', testId: 'MGBEc___MGBEc' },
+  // for library update test, doesn't exist initially
+  _CHEM1: { alias: '_CHEM1', testId: '_CHEM1____CHEM1' },
 });
 
 export type ChemType = typeof Chem;

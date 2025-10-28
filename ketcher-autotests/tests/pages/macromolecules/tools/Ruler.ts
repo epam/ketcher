@@ -2,6 +2,7 @@
 /* tests/pages/macromolecules/tools/Ruler.ts */
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';
+import { keyboardPressOnCanvas } from '@utils/keyboard';
 
 type RulerLocators = {
   handle: Locator;
@@ -46,6 +47,7 @@ export const Ruler = (page: Page) => {
     async setLength(value: string) {
       await expect(locators.valueInput).toBeVisible();
       await locators.valueInput.fill(value);
+      await keyboardPressOnCanvas(page, 'Enter');
     },
 
     async getLength(): Promise<string> {

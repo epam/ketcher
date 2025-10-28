@@ -1239,10 +1239,7 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Chem.CHEM);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });
 
 test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1286,10 +1283,7 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Peptide.Peptide);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });
 
 test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1333,10 +1327,7 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Base.Base);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });
 
 test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1377,10 +1368,7 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Phosphate.Phosphate);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });
 
 test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1421,10 +1409,7 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Sugar.Sugar);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });
 
 test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1468,8 +1453,5 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Nucleotide.Nucleotide);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  await takeElementScreenshot(
-    page,
-    MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-  );
+  await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 });

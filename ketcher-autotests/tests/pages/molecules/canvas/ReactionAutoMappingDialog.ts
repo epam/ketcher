@@ -4,7 +4,7 @@ import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDia
 import { waitForRender } from '@utils/common';
 
 type ReactionAutoMappingLocators = {
-  autoMapDialog: Locator;
+  window: Locator;
   closeButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -13,7 +13,7 @@ type ReactionAutoMappingLocators = {
 
 export const ReactionAutoMappingDialog = (page: Page) => {
   const locators: ReactionAutoMappingLocators = {
-    autoMapDialog: page.getByTestId('automap-dialog'),
+    window: page.getByTestId('automap-dialog'),
     closeButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),

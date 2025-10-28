@@ -6,8 +6,6 @@ import {
   pressButton,
   setBondType,
   setCustomQueryForBond,
-  waitForAtomPropsModal,
-  waitForBondPropsModal,
   waitForPageInit,
 } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -22,6 +20,7 @@ import {
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -44,7 +43,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', anyAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('returns true, when atom has custom query', async ({ page }) => {
@@ -87,7 +86,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   test('returns true, when structure has "Any" atom', async ({ page }) => {
     const anyAtomButton = RightToolbar(page).anyAtomButton;
 
-    await pressButton(page, 'Cancel');
+    await AtomPropertiesDialog(page).cancel();
     await anyAtomButton.click();
     await clickOnAtom(page, 'C', 0);
     await selectAllStructuresOnCanvas(page);
@@ -101,7 +100,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
     await getBondLocator(page, { bondId: 9 }).dblclick({ force: true });
-    await waitForBondPropsModal(page);
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
   const queryBonds = [
@@ -116,7 +115,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   for (const queryBond of queryBonds) {
     test(`returns true for ${queryBond} bond`, async ({ page }) => {
       await setBondType(page, queryBond);
-      await pressButton(page, 'Apply');
+      await BondPropertiesDialog(page).apply();
       await checkIsQueryStructureSelected(page, true);
     });
   }
@@ -124,7 +123,7 @@ test.describe('API isQueryStructureSelected for bonds', () => {
   test(`returns true for customQuery bond`, async ({ page }) => {
     const customQuery = 'x2&D3,D2';
     await setCustomQueryForBond(page, customQuery);
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).apply();
     await checkIsQueryStructureSelected(page, true);
   });
 });

@@ -26,7 +26,6 @@ import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { pressYesInConfirmYourActionDialog } from '@utils/macromolecules/sequence';
 import {
   MacroBondDataIds,
   MacroBondType,
@@ -39,6 +38,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -2079,7 +2079,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         SequenceSymbolOption.DeleteHydrogenBonds,
       );
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
-      await pressYesInConfirmYourActionDialog(page);
+      await ConfirmYourActionDialog(page).yes();
       await selectAllStructuresOnCanvas(page);
       await antisenseSymbolWithHBond.hover();
       await ContextMenu(page, antisenseSymbolWithHBond).open();
@@ -2198,7 +2198,7 @@ test(`Case 15. Verify warning message on deleting all hydrogen bonds between two
   await ContextMenu(page, anySymbolA).click(
     SequenceSymbolOption.DeleteHydrogenBonds,
   );
-  await pressYesInConfirmYourActionDialog(page);
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -2233,7 +2233,7 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
   await ContextMenu(page, anySymbolA).click(
     SequenceSymbolOption.DeleteHydrogenBonds,
   );
-  await pressYesInConfirmYourActionDialog(page);
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

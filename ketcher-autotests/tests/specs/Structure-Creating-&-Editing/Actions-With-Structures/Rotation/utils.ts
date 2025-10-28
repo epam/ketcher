@@ -106,17 +106,29 @@ export async function checkUndoRedo(page: Page) {
   await takeEditorScreenshot(page);
 }
 
-export async function performHorizontalFlip(page: Page) {
+export async function horizontalFlipByKeyboard(page: Page) {
   await moveMouseAway(page);
   await waitForRender(page, async () => {
     await page.keyboard.press('Alt+h');
   });
 }
 
-export async function performVerticalFlip(page: Page) {
+export async function verticalFlipByKeyboard(page: Page) {
   await moveMouseAway(page);
   await waitForRender(page, async () => {
     await page.keyboard.press('Alt+v');
+  });
+}
+
+export async function horizontalFlip(page: Page) {
+  await waitForRender(page, async () => {
+    await page.getByTestId('transform-flip-h').click();
+  });
+}
+
+export async function verticalFlip(page: Page) {
+  await waitForRender(page, async () => {
+    await page.getByTestId('transform-flip-v').click();
   });
 }
 

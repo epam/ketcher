@@ -60,6 +60,15 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     alias: 'UNA',
     testId: "UNA___2'-3'-Unlocked-ribose",
   },
+  // for library update test, doesn't exist initially
+  Sugar1: {
+    alias: 'Sugar1',
+    testId: 'Sugar1___Sugar1',
+  },
+  _Sugar1: {
+    alias: '_Sugar1',
+    testId: '_Sugar1____Sugar1',
+  },
 });
 
 export type SugarsType = typeof Sugar;

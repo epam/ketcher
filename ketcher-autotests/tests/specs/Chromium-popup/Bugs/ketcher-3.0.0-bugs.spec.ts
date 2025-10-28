@@ -16,7 +16,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  pressButton,
   moveOnAtom,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
@@ -53,8 +52,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -69,6 +68,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -238,7 +238,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     }).click();
     await page.keyboard.up('Shift');
     await Library(page).selectMonomer(Peptide.C);
-    await pressButton(page, 'Yes');
+    await ConfirmYourActionDialog(page).yes();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -997,7 +997,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .filter({ has: page.locator(':visible') })
       .getByText('A', { exact: true });
     await expandMonomer(page, baseA);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

@@ -12,9 +12,9 @@ import {
   selectRedoByKeyboard,
   clearCanvasByKeyboard,
   deleteByKeyboard,
+  keyboardTypeOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -197,7 +197,7 @@ test.describe('Hotkeys', () => {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Sequence,
         );
-        await typeAllEnglishAlphabet(page);
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });

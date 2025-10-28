@@ -1,9 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/canvas';
+import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
 type MiewDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -11,6 +11,7 @@ type MiewDialogLocators = {
 
 export const MiewDialog = (page: Page) => {
   const locators: MiewDialogLocators = {
+    window: page.getByTestId('miew-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('miew-modal-button'),
     cancelButton: page.getByTestId('Cancel'),
@@ -19,12 +20,12 @@ export const MiewDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
     async apply() {
-      await delay(0.2);
+      expect(locators.applyButton).toBeEnabled();
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });

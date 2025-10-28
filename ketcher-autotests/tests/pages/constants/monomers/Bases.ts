@@ -109,6 +109,9 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     alias: 'h456UR',
     testId: 'h456UR___(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
   },
+  // for library update test, doesn't exist initially
+  Base1: { alias: 'Base1', testId: 'Base1___Base1' },
+  _Base1: { alias: '_Base1', testId: '_Base1____Base1' },
 });
 
 export type BasesType = typeof Base;

@@ -4,7 +4,7 @@ import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFile
 import { delay } from '@utils/canvas';
 
 type SaveStructureDialogLocators = {
-  saveStructureDialog: Locator;
+  window: Locator;
   fileNameEditbox: Locator;
   fileFormatDropdownList: Locator;
   previewTab: Locator;
@@ -20,7 +20,7 @@ type SaveStructureDialogLocators = {
 
 export const SaveStructureDialog = (page: Page) => {
   const locators: SaveStructureDialogLocators = {
-    saveStructureDialog: page.getByTestId('save-structure-dialog'),
+    window: page.getByTestId('save-structure-dialog'),
     fileNameEditbox: page.getByTestId('filename-input'),
     fileFormatDropdownList: page.getByTestId('file-format-list').first(),
     previewTab: page.getByTestId('Preview-tab'),
@@ -92,14 +92,21 @@ export const SaveStructureDialog = (page: Page) => {
 
     async save() {
       await locators.saveButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
       await locators.cancelButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
 
-    async close() {
+    async saveToTemplates() {
+      await locators.saveToTemplatesButton.click();
+    },
+
+    async closeWindow() {
       await locators.closeWindowButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
   };
 };

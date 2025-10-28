@@ -5,28 +5,11 @@ import { Page } from '@playwright/test';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
+  readFileContent,
   replaceMonomersLibrary,
   takeMonomerLibraryScreenshot,
   updateMonomersLibrary,
 } from '@utils';
-import {
-  SDF_Ala88,
-  SDF_Bz88,
-  SDF_C88,
-  SDF_E88,
-  SDF_EMPTY,
-  SDF_Gua88,
-  SDF_P77,
-  SDF_P88,
-  SDF_rA88,
-  SDF_Rib88,
-  SDF_S88,
-  SDF_UNS88,
-  SDF_X88,
-  SDF_Xalt88,
-} from '@utils/files/testData';
-import path from 'path';
-import fs from 'fs';
 
 let page: Page;
 
@@ -51,6 +34,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_Ala88 = await readFileContent('SDF/SDF_Ala88.sdf');
     await updateMonomersLibrary(page, SDF_Ala88, { format: 'sdf' });
     await Library(page).switchToPeptidesTab();
     await Library(page).setSearchValue('Ala88');
@@ -67,6 +51,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_Rib88 = await readFileContent('SDF/SDF_Rib88.sdf');
     await updateMonomersLibrary(page, SDF_Rib88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Sugars);
@@ -84,6 +69,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_Gua88 = await readFileContent('SDF/SDF_Gua88.sdf');
     await updateMonomersLibrary(page, SDF_Gua88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Bases);
@@ -101,6 +87,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_P88 = await readFileContent('SDF/SDF_P88.sdf');
     await updateMonomersLibrary(page, SDF_P88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
@@ -118,6 +105,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_rA88 = await readFileContent('SDF/SDF_rA88.sdf');
     await updateMonomersLibrary(page, SDF_rA88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Nucleotides);
@@ -135,6 +123,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_Bz88 = await readFileContent('SDF/SDF_Bz88.sdf');
     await updateMonomersLibrary(page, SDF_Bz88, { format: 'sdf' });
     await Library(page).switchToCHEMTab();
     await Library(page).setSearchValue('Bz88');
@@ -151,6 +140,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_E88 = await readFileContent('SDF/SDF_E88.sdf');
     await updateMonomersLibrary(page, SDF_E88, { format: 'sdf' });
     await Library(page).switchToPeptidesTab();
     await Library(page).setSearchValue('E88');
@@ -167,6 +157,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_X88 = await readFileContent('SDF/SDF_X88.sdf');
     await updateMonomersLibrary(page, SDF_X88, { format: 'sdf' });
     await Library(page).switchToPeptidesTab();
     await Library(page).setSearchValue('X88');
@@ -183,6 +174,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_Xalt88 = await readFileContent('SDF/SDF_Xalt88.sdf');
     await updateMonomersLibrary(page, SDF_Xalt88, { format: 'sdf' });
     await Library(page).switchToPeptidesTab();
     await Library(page).setSearchValue('Xalt88');
@@ -199,6 +191,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_C88 = await readFileContent('SDF/SDF_C88.sdf');
     await updateMonomersLibrary(page, SDF_C88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Bases);
@@ -216,6 +209,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_UNS88 = await readFileContent('SDF/SDF_UNS88.sdf');
     await updateMonomersLibrary(page, SDF_UNS88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Nucleotides);
@@ -233,6 +227,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_S88 = await readFileContent('SDF/SDF_S88.sdf');
     await updateMonomersLibrary(page, SDF_S88, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Sugars);
@@ -250,6 +245,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.updateMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_P77 = await readFileContent('SDF/SDF_P77.sdf');
     await updateMonomersLibrary(page, SDF_P77, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
@@ -267,6 +263,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_P77 = await readFileContent('SDF/SDF_P77.sdf');
     await replaceMonomersLibrary(page, SDF_P77, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
@@ -283,6 +280,7 @@ test.describe('API for update Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
+    const SDF_EMPTY = await readFileContent('SDF/SDF_EMPTY.sdf');
     await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
     await takeMonomerLibraryScreenshot(page);
     await Library(page).switchToPeptidesTab();
@@ -325,12 +323,8 @@ test.describe('API for replace Library', () => {
      * We have a bug https://github.com/epam/Indigo/issues/3277
      * After fixing we need update snapshots if necessary
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 presets.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Presets = await readFileContent('SDF/3000 presets.sdf');
+    await replaceMonomersLibrary(page, Presets, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -345,12 +339,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 Peptides.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Peptides = await readFileContent('SDF/3000 Peptides.sdf');
+    await replaceMonomersLibrary(page, Peptides, { format: 'sdf' });
     await Library(page).switchToPeptidesTab();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -365,12 +355,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 Sugars.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Sugars = await readFileContent('SDF/3000 Sugars.sdf');
+    await replaceMonomersLibrary(page, Sugars, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Sugars);
     await takeMonomerLibraryScreenshot(page);
@@ -386,12 +372,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 Bases.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Bases = await readFileContent('SDF/3000 Bases.sdf');
+    await replaceMonomersLibrary(page, Bases, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Bases);
     await takeMonomerLibraryScreenshot(page);
@@ -407,12 +389,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 Phosphates.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Phosphates = await readFileContent('SDF/3000 Phosphates.sdf');
+    await replaceMonomersLibrary(page, Phosphates, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Phosphates);
     await takeMonomerLibraryScreenshot(page);
@@ -428,12 +406,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 Nucleotides.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const Nucleotides = await readFileContent('SDF/3000 Nucleotides.sdf');
+    await replaceMonomersLibrary(page, Nucleotides, { format: 'sdf' });
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Nucleotides);
     await takeMonomerLibraryScreenshot(page);
@@ -449,12 +423,8 @@ test.describe('API for replace Library', () => {
      * 2. Add command by ketcher.replaceMonomersLibrary method
      * 3. Check monomer is added to the library
      */
-    const sdfPath = path.join(
-      __dirname,
-      '../../../test-data/SDF/3000 CHEMs.sdf',
-    );
-    const largeSdf = fs.readFileSync(sdfPath, 'utf8');
-    await replaceMonomersLibrary(page, largeSdf, { format: 'sdf' });
+    const CHEMs = await readFileContent('SDF/3000 CHEMs.sdf');
+    await replaceMonomersLibrary(page, CHEMs, { format: 'sdf' });
     await Library(page).switchToCHEMTab();
     await takeMonomerLibraryScreenshot(page);
   });

@@ -1,6 +1,11 @@
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
+import {
+  MolfileFormat,
+  Struct,
+  SupportedModes,
+  UpdateMonomersLibraryParams,
+} from 'ketcher-core';
 
 export enum MolFileFormat {
   v2000 = 'v2000',
@@ -145,6 +150,30 @@ export async function setMolecule(
     ({ structStr, position }) =>
       window.ketcher.setMolecule(structStr, { position }),
     { structStr, position },
+  );
+}
+
+export async function updateMonomersLibrary(
+  page: Page,
+  rawMonomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams,
+): Promise<void> {
+  return await page.evaluate(
+    ({ rawMonomersData, params }) =>
+      window.ketcher.updateMonomersLibrary(rawMonomersData, params),
+    { rawMonomersData, params },
+  );
+}
+
+export async function replaceMonomersLibrary(
+  page: Page,
+  rawMonomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams,
+): Promise<void> {
+  return await page.evaluate(
+    ({ rawMonomersData, params }) =>
+      window.ketcher.replaceMonomersLibrary(rawMonomersData, params),
+    { rawMonomersData, params },
   );
 }
 

@@ -65,6 +65,7 @@ import {
   AssignLeavingGroupAtomOperation,
   RemoveAttachmentPointOperation,
   ReassignAttachmentPointOperation,
+  ReassignLeavingAtomOperation,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1365,29 +1366,37 @@ class Editor implements KetcherEditor {
       this.monomerCreationState.assignedAttachmentPoints.get(name);
     assert(atomPair);
 
-    const [attachmentAtomId] = atomPair;
+    const [attachmentAtomId, currentLeavingAtomId] = atomPair;
 
-    let newAtomPair: [number, number];
+    let leavingAtomIdToUse = newLeavingAtomId;
+    let additionalAction: Action | null = null;
     if (newLeavingAtomId === -1) {
-      const [action, , endAtomId] = fromBondAddition(
+      const [bondAdditionAction, , endAtomId] = fromBondAddition(
         this.render.ctab,
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         attachmentAtomId,
         { label: AtomLabel.H },
       );
 
-      this.update(action, true);
-
-      newAtomPair = [attachmentAtomId, endAtomId];
-    } else {
-      newAtomPair = [attachmentAtomId, newLeavingAtomId];
+      additionalAction = bondAdditionAction;
+      leavingAtomIdToUse = endAtomId;
     }
 
-    this.monomerCreationState.assignedAttachmentPoints.set(name, newAtomPair);
+    let finalAction = new Action([
+      new ReassignLeavingAtomOperation(
+        this.monomerCreationState,
+        name,
+        attachmentAtomId,
+        leavingAtomIdToUse,
+        currentLeavingAtomId,
+      ),
+    ]).perform(this.render.ctab);
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    if (additionalAction) {
+      finalAction = finalAction.mergeWith(additionalAction);
+    }
 
-    this.render.update(true);
+    this.update(finalAction);
   }
 
   reassignAttachmentPoint(
@@ -1741,8 +1750,12 @@ class Editor implements KetcherEditor {
             // Handle assigned attachment points - existing logic
             const attachmentPointWithBondToLeavingAtom = Array.from(
               this.monomerCreationState.assignedAttachmentPoints.entries(),
-            ).find(([, [, leavingAtomId]]) => {
-              return bond.begin === leavingAtomId || bond.end === leavingAtomId;
+            ).find(([, [attachmentAtomId, leavingAtomId]]) => {
+              return (
+                (bond.begin === leavingAtomId &&
+                  bond.end !== attachmentAtomId) ||
+                (bond.end === leavingAtomId && bond.begin !== attachmentAtomId)
+              );
             });
 
             if (attachmentPointWithBondToLeavingAtom) {

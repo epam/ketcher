@@ -7,7 +7,12 @@ export type MonomerTypeSelectItem = {
   iconName: IconName;
 };
 
-export type WizardFormFieldId = 'type' | 'symbol' | 'name' | 'naturalAnalogue';
+export type WizardFormFieldId =
+  | 'type'
+  | 'symbol'
+  | 'name'
+  | 'naturalAnalogue'
+  | 'aliasHELM';
 
 export type StringWizardFormFieldId = Exclude<WizardFormFieldId, 'type'>;
 
@@ -32,7 +37,9 @@ export type WizardNotificationId =
   | 'notUniqueModificationTypes'
   | 'modificationTypeExists'
   | 'notMinimalViableStructure'
-  | 'impureStructure';
+  | 'impureStructure'
+  | 'notUniqueHELMAlias'
+  | 'invalidHELMAlias';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

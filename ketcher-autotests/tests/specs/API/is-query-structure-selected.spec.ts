@@ -1,10 +1,9 @@
 import { Page, expect, test } from '@fixtures';
 import {
-  BondType,
   BondTypeName,
   clickOnAtom,
   doubleClickOnAtom,
-  doubleClickOnBond,
+  pressButton,
   setBondType,
   setCustomQueryForBond,
   waitForPageInit,
@@ -20,6 +19,7 @@ import {
   Aromaticity,
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
@@ -97,10 +97,9 @@ test.describe('API isQueryStructureSelected for atoms', () => {
 test.describe('API isQueryStructureSelected for bonds', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    const anyBond = 0;
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnBond(page, BondType.SINGLE, anyBond);
+    await getBondLocator(page, { bondId: 9 }).dblclick({ force: true });
     await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 

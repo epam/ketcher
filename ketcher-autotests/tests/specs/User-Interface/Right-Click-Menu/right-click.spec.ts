@@ -43,6 +43,7 @@ import {
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -227,9 +228,8 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).fillLabel('N');
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -438,9 +438,8 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).fillLabel('N');
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 

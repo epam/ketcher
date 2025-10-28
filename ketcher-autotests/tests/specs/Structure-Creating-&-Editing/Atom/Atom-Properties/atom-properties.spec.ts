@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
@@ -71,6 +70,7 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -177,8 +177,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
-
-    await page.getByLabel('Label').fill('J%');
+    await AtomPropertiesDialog(page).fillLabel('J%');
     await takeEditorScreenshot(page);
   });
 
@@ -681,8 +680,8 @@ test.describe('Atom Properties', () => {
     await page.mouse.down();
     await page.waitForTimeout(timeout);
 
-    await page.getByLabel('Atom').fill('18O');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('18O');
+    await LabelEditDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -707,8 +706,8 @@ test.describe('Atom Properties', () => {
     await page.mouse.down();
     await page.waitForTimeout(timeout);
 
-    await page.getByLabel('Atom').fill('18S');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('18S');
+    await LabelEditDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -869,20 +868,20 @@ test.describe('Atom Properties', () => {
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('O.');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('O.');
+    await LabelEditDialog(page).apply();
 
     await clickOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('N:');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('N:');
+    await LabelEditDialog(page).apply();
 
     await moveOnAtom(page, 'C', secondAnyAtom);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('F^^');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('F^^');
+    await LabelEditDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -1003,20 +1002,20 @@ test.describe('Atom Properties', () => {
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('15s^^2-');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('15s^^2-');
+    await LabelEditDialog(page).apply();
 
     await clickOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('209Pb:2+');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('209Pb:2+');
+    await LabelEditDialog(page).apply();
 
     await moveOnAtom(page, 'C', secondAnyAtom);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('22F.3+');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('22F.3+');
+    await LabelEditDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -1371,8 +1370,8 @@ test.describe('Atom Properties', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('FE');
-    await pressButton(page, 'Apply');
+    await LabelEditDialog(page).fillLabel('FE');
+    await LabelEditDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 

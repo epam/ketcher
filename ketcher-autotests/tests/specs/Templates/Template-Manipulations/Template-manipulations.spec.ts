@@ -61,6 +61,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 
 let page: Page;
 
@@ -304,9 +305,8 @@ test.describe('Template Manupulations', () => {
       page,
       getAtomLocator(page, { atomLabel: 'S', atomId: 0 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('Br');
-    await page.getByTestId('OK').click();
+    await AtomPropertiesDialog(page).fillLabel('Br');
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 

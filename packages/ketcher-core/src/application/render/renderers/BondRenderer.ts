@@ -185,6 +185,15 @@ export class BondRenderer extends BaseRenderer {
     return `cip-bond-${this.bond.id}`;
   }
 
+  private getBondFromMoleculeStruct() {
+    try {
+      const moleculeStruct = this.bond.firstAtom.monomer.monomerItem.struct;
+      return moleculeStruct.bonds.get(this.bond.bondIdInMicroMode);
+    } catch (error) {
+      return null;
+    }
+  }
+
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
@@ -248,7 +257,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    return this.canvas
+    const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('data-testid', 'bond')
@@ -256,11 +265,34 @@ export class BondRenderer extends BaseRenderer {
       .attr('data-bondstereo', this.bond.stereo)
       .attr('data-bondid', this.bond.id)
       .attr('data-fromatomid', this.bond.firstAtom.id)
-      .attr('data-toatomid', this.bond.secondAtom.id)
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
+      .attr('data-toatomid', this.bond.secondAtom.id);
+
+    // Add topology and reacting center attributes from molecule struct if available
+    const bondFromStruct = this.getBondFromMoleculeStruct();
+    if (bondFromStruct) {
+      if (
+        bondFromStruct.topology !== null &&
+        bondFromStruct.topology !== undefined
+      ) {
+        rootElement.attr('data-topology', String(bondFromStruct.topology));
+      }
+      if (
+        bondFromStruct.reactingCenterStatus !== null &&
+        bondFromStruct.reactingCenterStatus !== undefined
+      ) {
+        rootElement.attr(
+          'data-reacting-center',
+          String(bondFromStruct.reactingCenterStatus),
+        );
+      }
+    }
+
+    rootElement.attr(
+      'transform',
+      `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+    );
+
+    return rootElement as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   getSelectionPoints() {

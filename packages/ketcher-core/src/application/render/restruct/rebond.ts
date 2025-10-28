@@ -515,6 +515,18 @@ class ReBond extends ReObject {
     bondPathElement.setAttribute('data-bondstereo', bond.stereo);
     bondPathElement.setAttribute('data-fromatomid', bond.begin);
     bondPathElement.setAttribute('data-toatomid', bond.end);
+    if (bond.topology !== null && bond.topology !== undefined) {
+      bondPathElement.setAttribute('data-topology', String(bond.topology));
+    }
+    if (
+      bond.reactingCenterStatus !== null &&
+      bond.reactingCenterStatus !== undefined
+    ) {
+      bondPathElement.setAttribute(
+        'data-reacting-center',
+        String(bond.reactingCenterStatus),
+      );
+    }
 
     const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
     const endSGroupId = struct.getGroupIdFromAtomId(bond.end);

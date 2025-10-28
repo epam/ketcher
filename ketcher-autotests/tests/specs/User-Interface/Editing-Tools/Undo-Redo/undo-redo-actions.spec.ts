@@ -5,8 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   doubleClickOnAtom,
-  doubleClickOnBond,
-  BondType,
   moveOnAtom,
   dragMouseTo,
   screenshotBetweenUndoRedo,
@@ -55,6 +53,7 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
@@ -145,7 +144,7 @@ test.describe('Undo/Redo Actions', () => {
       SelectionToolType.Rectangle,
     );
 
-    await doubleClickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
       topology: BondTopologyOption.Ring,

@@ -23,29 +23,12 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       this.newLeavingAtomId,
     ];
 
-    console.log(
-      'Before change:',
-      this.monomerCreationState.assignedAttachmentPoints.get(
-        this.attachmentPointName,
-      ),
-    );
-
     this.monomerCreationState.assignedAttachmentPoints.set(
       this.attachmentPointName,
       newAtomPair,
     );
 
-    console.log(
-      'After change:',
-      this.monomerCreationState.assignedAttachmentPoints,
-    );
-
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
-
-    console.log(
-      'After rewrite:',
-      this.monomerCreationState.assignedAttachmentPoints,
-    );
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, this.newLeavingAtomId);

@@ -66,6 +66,7 @@ import {
   RemoveAttachmentPointOperation,
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
+  AssignAttachmentAtomOperation,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1094,12 +1095,6 @@ class Editor implements KetcherEditor {
     this.update(action);
   }
 
-  // Maps attachment atom id to either set of leaving group atom ids or created leaving group atom id and bond id to properly revert changes when removing AP
-  private readonly preservedConnectionPointData = new Map<
-    number,
-    Set<number> | [number, number]
-  >();
-
   assignConnectionPointAtom(atomId: number) {
     assert(this.monomerCreationState);
 
@@ -1107,6 +1102,7 @@ class Editor implements KetcherEditor {
       this.monomerCreationState.potentialAttachmentPoints.get(atomId);
 
     let leavingAtomId: number;
+    let additionalAction: Action | null = null;
     if (potentialLeavingAtoms) {
       const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
         .sort((a, b) => a - b)
@@ -1129,34 +1125,31 @@ class Editor implements KetcherEditor {
         );
 
       leavingAtomId = minimalAtomicNumberAtomId;
-      this.preservedConnectionPointData.set(atomId, potentialLeavingAtoms);
     } else {
-      const [action, , endAtomId, bondId] = fromBondAddition(
+      const [bondAdditionAction, , endAtomId] = fromBondAddition(
         this.render.ctab,
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         atomId,
         { label: AtomLabel.H },
       );
 
-      this.update(action, true);
-
+      additionalAction = bondAdditionAction;
       leavingAtomId = endAtomId;
-      this.preservedConnectionPointData.set(atomId, [endAtomId, bondId]);
     }
 
-    const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(this.monomerCreationState.assignedAttachmentPoints.keys()),
-    );
+    let finalAction = new Action([
+      new AssignAttachmentAtomOperation(
+        this.monomerCreationState,
+        atomId,
+        leavingAtomId,
+      ),
+    ]).perform(this.render.ctab);
 
-    this.monomerCreationState.assignedAttachmentPoints.set(
-      attachmentPointName,
-      [atomId, leavingAtomId],
-    );
-    this.monomerCreationState.potentialAttachmentPoints.delete(atomId);
+    if (additionalAction) {
+      finalAction = finalAction.mergeWith(additionalAction);
+    }
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
-
-    this.render.update(true);
+    this.update(finalAction);
   }
 
   closeMonomerCreationWizard() {

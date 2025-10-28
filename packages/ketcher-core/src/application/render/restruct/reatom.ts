@@ -145,11 +145,6 @@ class ReAtom extends ReObject {
 
     const { assignedAttachmentPoints } = render.monomerCreationState;
 
-    console.log(
-      'Reatom:',
-      render.monomerCreationState.assignedAttachmentPoints,
-    );
-
     const attachmentPointEntry = Array.from(
       assignedAttachmentPoints.entries(),
     ).find(([, atomsPair]) => {

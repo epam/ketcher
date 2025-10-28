@@ -16,7 +16,7 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
     private monomerCreationState: MonomerCreationState,
     private atomId: number,
   ) {
-    super(OperationType.MONOMER_CREATION_ASSIGN_LEAVING_ATOM);
+    super(OperationType.MONOMER_CREATION_ASSIGN_LGA);
   }
 
   execute(restruct: ReStruct) {

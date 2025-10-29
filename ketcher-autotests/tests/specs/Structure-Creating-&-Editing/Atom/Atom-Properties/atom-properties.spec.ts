@@ -12,6 +12,7 @@ import {
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
+  longClickOnAtom,
 } from '@utils';
 import {
   copyAndPaste,
@@ -69,13 +70,10 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
-
-function pressButton(page: Page, name = '') {
-  return page.getByRole('button', { name }).click();
-}
 
 test.describe('Atom Properties', () => {
   let page: Page;
@@ -184,8 +182,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
     await doubleClickOnAtom(page, 'N', 0);
-
-    await page.getByLabel('Label').fill('J%');
+    await AtomPropertiesDialog(page).fillLabel('J%');
     await takeEditorScreenshot(page);
   });
 
@@ -681,15 +678,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1617
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
-    const timeout = 2000;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-
-    await page.getByLabel('Atom').fill('18O');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', 1);
+    await LabelEditDialog(page).setLabel('18O');
     await takeEditorScreenshot(page);
   });
 
@@ -698,7 +689,6 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1618
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
-    const timeout = 2000;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/heteroatoms-structure.mol',
@@ -710,12 +700,8 @@ test.describe('Atom Properties', () => {
     await clickOnAtom(page, 'F', 0);
     await page.keyboard.up('Shift');
 
-    await moveOnAtom(page, 'S', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-
-    await page.getByLabel('Atom').fill('18S');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'S', 0);
+    await LabelEditDialog(page).setLabel('18S');
     await takeEditorScreenshot(page);
   });
 
@@ -868,28 +854,18 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1634
       Description: All selected atoms is replaced with the typed atom symbols and Radicals.
     */
-    const timeout = 2000;
     const anyAtom = 2;
     const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('O.');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', 0);
+    await LabelEditDialog(page).setLabel('O.');
 
-    await clickOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('N:');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', anyAtom);
+    await LabelEditDialog(page).setLabel('N:');
 
-    await moveOnAtom(page, 'C', secondAnyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('F^^');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', secondAnyAtom);
+    await LabelEditDialog(page).setLabel('F^^');
     await takeEditorScreenshot(page);
   });
 
@@ -1002,28 +978,18 @@ test.describe('Atom Properties', () => {
       Description: Several atoms are selected.
       All selected atoms are replaced with the correct atom symbol with the correct atom properties.
     */
-    const timeout = 2000;
     const anyAtom = 2;
     const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('15s^^2-');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', 0);
+    await LabelEditDialog(page).setLabel('15s^^2-');
 
-    await clickOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('209Pb:2+');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', anyAtom);
+    await LabelEditDialog(page).setLabel('209Pb:2+');
 
-    await moveOnAtom(page, 'C', secondAnyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('22F.3+');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', secondAnyAtom);
+    await LabelEditDialog(page).setLabel('22F.3+');
     await takeEditorScreenshot(page);
   });
 
@@ -1371,15 +1337,11 @@ test.describe('Atom Properties', () => {
       "E" symbol appeared in "Atom" field next to "F".
       Selected atom now has "Fe" label.
     */
-    const timeout = 2000;
     const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('FE');
-    await pressButton(page, 'Apply');
+    await longClickOnAtom(page, 'C', anyAtom);
+    await LabelEditDialog(page).setLabel('FE');
     await takeEditorScreenshot(page);
   });
 

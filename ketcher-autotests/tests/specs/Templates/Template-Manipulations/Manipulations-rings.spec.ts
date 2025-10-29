@@ -24,6 +24,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];
@@ -74,6 +75,15 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     );
   }
   let point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+  // const bond = getBondLocator(page, { reactingCenter: 0 });
+  // const bondBoundingBox = await bond.boundingBox();
+  // if (!bondBoundingBox) {
+  //   throw new Error('Unable to get boundingBox for bond');
+  // }
+  // let point: { x: number; y: number } = {
+  //   x: bondBoundingBox.x + bondBoundingBox.width / 2,
+  //   y: bondBoundingBox.y + bondBoundingBox.height / 2,
+  // };
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -86,7 +96,17 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);
+
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
+  // const bond2 = getBondLocator(page, { reactingCenter: 0 });
+  // const bondBoundingBox2 = await bond2.boundingBox();
+  // if (!bondBoundingBox2) {
+  //   throw new Error('Unable to get boundingBox for bond');
+  // }
+  // point = {
+  //   x: bondBoundingBox2.x + bondBoundingBox2.width / 2,
+  //   y: bondBoundingBox2.y + bondBoundingBox2.height / 2,
+  // };
   await dragMouseTo(point.x, point.y, page);
 }
 

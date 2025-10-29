@@ -16,6 +16,7 @@ import {
   clickOnCanvas,
   deleteByKeyboard,
   keyboardPressOnCanvas,
+  longClickOnAtom,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -458,21 +459,16 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: In view-only mode, when user clicks and holds on an atom for several seconds, atom's edit window does not appear.
     */
-    const timeout = 2000;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
+    await longClickOnAtom(page, 'C', 1);
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Cancel' }).click();
     await enableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
+    await longClickOnAtom(page, 'C', 1);
     await takeEditorScreenshot(page);
   });
 

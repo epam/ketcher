@@ -186,15 +186,9 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private getBondFromMoleculeStruct() {
-    try {
-      const moleculeStruct = this.bond.firstAtom.monomer.monomerItem.struct;
-      return moleculeStruct.bonds.get(this.bond.bondIdInMicroMode);
-    } catch (error) {
-      // Bond may not have an associated molecule struct in cases such as:
-      // - Bond not connected to a monomer
-      // - Monomer not having a monomerItem or struct property
-      return null;
-    }
+    return this.bond.firstAtom.monomer.monomerItem.struct?.bonds.get(
+      this.bond.bondIdInMicroMode,
+    );
   }
 
   public appendSelection() {
@@ -273,15 +267,11 @@ export class BondRenderer extends BaseRenderer {
     // Add topology and reacting center attributes from molecule struct if available
     const bondFromStruct = this.getBondFromMoleculeStruct();
     if (bondFromStruct) {
-      if (bondFromStruct.topology != null) {
-        rootElement.attr('data-topology', String(bondFromStruct.topology));
-      }
-      if (bondFromStruct.reactingCenterStatus != null) {
-        rootElement.attr(
-          'data-reacting-center',
-          String(bondFromStruct.reactingCenterStatus),
-        );
-      }
+      rootElement.attr('data-topology', bondFromStruct.topology);
+      rootElement.attr(
+        'data-reacting-center',
+        bondFromStruct.reactingCenterStatus,
+      );
     }
 
     rootElement.attr(

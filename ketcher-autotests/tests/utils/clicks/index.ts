@@ -275,6 +275,18 @@ export async function doubleClickOnAtom(
   });
 }
 
+export async function longClickOnAtom(
+  page: Page,
+  atomLabel: string,
+  atomNumber: number,
+  timeout = 2000,
+) {
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
+  await page.mouse.move(point.x, point.y);
+  await page.mouse.down();
+  await page.waitForTimeout(timeout);
+}
+
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,

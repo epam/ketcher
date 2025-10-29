@@ -14,7 +14,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   constructor(
     private monomerCreationState: MonomerCreationState,
     private attachmentPointName: AttachmentPointName,
-    private potentialLeavingAtoms: Set<number>,
+    private potentialLeavingAtoms?: Set<number>,
   ) {
     super(OperationType.MONOMER_CREATION_REMOVE_AP);
 

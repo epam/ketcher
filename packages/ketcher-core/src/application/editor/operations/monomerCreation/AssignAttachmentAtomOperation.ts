@@ -5,8 +5,8 @@ import {
   RemoveAttachmentPointOperation,
 } from 'application/editor';
 import assert from 'assert';
-import { getNextFreeAttachmentPoint } from 'ketcher-core';
 import { AttachmentPointName } from 'domain/types';
+import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointName: AttachmentPointName | null = null;

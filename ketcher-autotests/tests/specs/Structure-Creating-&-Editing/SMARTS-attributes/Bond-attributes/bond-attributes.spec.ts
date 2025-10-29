@@ -347,6 +347,9 @@ test.describe('Checking saving attributes to .ket file', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
     await drawStructure(page);
     await getBondLocator(page, { bondId: 0 }).dblclick({ force: true });
     await expect(BondPropertiesDialog(page).window).toBeVisible();

@@ -310,8 +310,9 @@ test.describe('Template Manupulations', () => {
       page,
       getAtomLocator(page, { atomLabel: 'S', atomId: 0 }),
     ).click(MicroAtomOption.Edit);
-    await AtomPropertiesDialog(page).fillLabel('Br');
-    await AtomPropertiesDialog(page).apply();
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'Br' },
+    });
     await takeEditorScreenshot(page);
   });
 

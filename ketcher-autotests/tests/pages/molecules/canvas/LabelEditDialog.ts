@@ -40,6 +40,11 @@ export const LabelEditDialog = (page: Page) => {
     async close() {
       await locators.closeButton.click();
     },
+
+    async setLabel(label: string) {
+      await this.fillLabel(label);
+      await this.apply();
+    },
   };
 };
 

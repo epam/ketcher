@@ -3,7 +3,6 @@ import {
   BondTypeName,
   clickOnAtom,
   doubleClickOnAtom,
-  pressButton,
   setBondType,
   setCustomQueryForBond,
   waitForPageInit,

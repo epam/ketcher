@@ -3,7 +3,6 @@ import {
   BondTypeName,
   clickOnAtom,
   doubleClickOnAtom,
-  setBondType,
   setCustomQueryForBond,
   waitForPageInit,
 } from '@utils';

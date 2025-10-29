@@ -24,7 +24,6 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];

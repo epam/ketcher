@@ -17,19 +17,6 @@ export async function setBondType(page: Page, bondTypeTestId: string) {
   await page.getByTestId(bondTypeTestId).click();
 }
 
-export async function setBondTopology(page: Page, bondTopologyTestId: string) {
-  await page.getByTestId('topology-input-span').click();
-  await page.getByTestId(bondTopologyTestId).click();
-}
-
-export async function setReactingCenter(
-  page: Page,
-  reactingCenterOptionTestId: string,
-) {
-  await page.getByTestId('reacting-center-input-span').click();
-  await page.getByTestId(reactingCenterOptionTestId).click();
-}
-
 export async function verifySMARTSExport(page: Page, value: string) {
   await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(

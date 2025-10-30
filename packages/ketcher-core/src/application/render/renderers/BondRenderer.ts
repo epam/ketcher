@@ -150,7 +150,7 @@ export class BondRenderer extends BaseRenderer {
     atom: Atom,
     halfEdge: HalfEdge,
   ) {
-    if (!atom.renderer || !atom.renderer.isLabelVisible) {
+    if (!atom.renderer?.isLabelVisible) {
       return position;
     }
 

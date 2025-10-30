@@ -41,6 +41,7 @@ import {
   SettingsManager,
   getSvgFromDrawnStructures,
   KetcherLogger,
+  ensureString,
 } from 'utilities';
 import {
   deleteAllEntitiesOnCanvas,
@@ -164,6 +165,11 @@ export class Ketcher {
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
       SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
+    }
+
+    if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
+      SettingsManager.persistMonomerLibraryUpdates =
+        !!settings.persistMonomerLibraryUpdates;
     }
 
     return this.editor.setOptions(JSON.stringify(options));
@@ -670,10 +676,7 @@ export class Ketcher {
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
   ) {
-    const rawMonomersDataString =
-      typeof rawMonomersData !== 'string'
-        ? JSON.stringify(rawMonomersData)
-        : rawMonomersData;
+    const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
       params?.format ?? identifyStructFormat(rawMonomersDataString);
 
@@ -739,7 +742,12 @@ export class Ketcher {
       rawMonomersData,
       params,
     );
+
     editor.updateMonomersLibrary(dataInSdfFormat);
+    if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
+      const updateString = ensureString(dataInSdfFormat);
+      SettingsManager.addMonomerLibraryUpdate(updateString);
+    }
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 

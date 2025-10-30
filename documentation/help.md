@@ -610,11 +610,11 @@ Using the `Attributes` panel, the user is able to define following monomer prope
 
 <img src=images/Monomer-Creation-Wizard-3-3.9..png width = "450"/>
 
-User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydrohyl by replacing the atoms:
+User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by replacing the atoms:
 
 <img src=images/Monomer-Creation-Wizard-4-3.9..png width = "200"/>
 
-New attachment points can be added by right-clicking on atoms an selecting _Mark as a leaving group_:
+New attachment points can be added by right-clicking on atoms and selecting _Mark as a leaving group_:
 
 <img src=images/Monomer-Creation-Wizard-5-3.9..png width = "200"/>
 <img src=images/Monomer-Creation-Wizard-6-3.9..png width = "200"/>
@@ -629,7 +629,7 @@ The Attachment points section of the _Attributes_ panel allows the users to dele
 <img src=images/Monomer-Creation-Wizard-9-3.9..png width = "450"/>
 <img src=images/Monomer-Creation-Wizard-10-3.9..png width = "200"/>
 
-After _Sumbit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an apropriate shape and colour) in macromolecules mode, and that monomer in the library:
+After _Submit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an appropriate shape and colour) in macromolecules mode, and that monomer in the library:
 
 <img src=images/Monomer-Creation-Wizard-11-3.9..png width = "500"/>
 

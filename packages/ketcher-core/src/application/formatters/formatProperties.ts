@@ -185,9 +185,14 @@ const formatProperties: FormatPropertiesMap = {
   ),
   'monomer-library-sdf': new SupportedFormatProperties(
     'Monomer Library SDF',
-    ChemicalMimeType.MonomerLibrarySdf,
+    ChemicalMimeType.MonomerLibrary,
     ['.sdf'],
     true,
+    {
+      'output-content-type': ChemicalMimeType.MonomerLibrary,
+      'monomer-library-saving-mode': 'sdf',
+      'molfile-saving-skip-date': 'true',
+    },
   ),
 };
 

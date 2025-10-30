@@ -712,8 +712,10 @@ export class Ketcher {
 
     const convertResult = await this.indigo.convert(rawMonomersDataString, {
       inputFormat: ChemicalMimeType.MonomerLibrary,
-      outputFormat: ChemicalMimeType.MonomerLibrarySdf,
-      outputContentType: ChemicalMimeType.MonomerLibrarySdf,
+      outputFormat: ChemicalMimeType.MonomerLibrary,
+      outputContentType: ChemicalMimeType.MonomerLibrary,
+      monomerLibrarySavingMode: 'sdf',
+      molfileSavingSkipDate: 'true',
     });
 
     return convertResult.struct;
@@ -733,11 +735,11 @@ export class Ketcher {
       );
     }
 
-    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
       rawMonomersData,
       params,
     );
-    editor.updateMonomersLibrary(dataInKetFormat);
+    editor.updateMonomersLibrary(dataInSdfFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
   }
 
@@ -755,13 +757,13 @@ export class Ketcher {
       );
     }
 
-    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
       rawMonomersData,
       params,
     );
 
     editor.clearMonomersLibrary();
-    editor.updateMonomersLibrary(dataInKetFormat);
+    editor.updateMonomersLibrary(dataInSdfFormat);
     this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
     editor.events.updateMonomersLibrary.dispatch();
   }

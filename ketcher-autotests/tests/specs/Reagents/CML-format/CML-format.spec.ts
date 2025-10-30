@@ -81,7 +81,7 @@ test.describe('Reagents CML format', () => {
       */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
+      await FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

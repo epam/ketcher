@@ -408,7 +408,7 @@ To add a functional group to the canvas and join it to the structure do the foll
    - Select _Single Bond_ tool in the left Ketcher toolbar;
    - Drag bond **from** the connection atom and drop it **to** the Functional Group on the canvas.
 
-<img src = images/FG_chain.gif width = "400"/>
+<img src = images/FG_chain-3.9..gif width = "400"/>
 
 #### Contracted S-group Tooltip
 
@@ -474,7 +474,7 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-canvas-3.8..png width = "1000"/>
+<img src=images/Macro-canvas-3.9..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
@@ -533,7 +533,7 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.8..png width = "800"/>
+<img src=images/Library-Tabs-3.9..png width = "800"/>
 
 **Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
 
@@ -594,41 +594,44 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 #### Monomer Creation Wizard
 
-When a structure with some outgoing bonds is selected, for example:
+A chemical structure can be loaded into the monomer creation wizard in molecules mode, after a selection is made, and the _Create a monomer_ button on the left toolbar is clicked:
 
-<img src=images/Selection-for-Creating-a-Monomer-3.7..png width = "150"/>
-
-_Monomer Creation_ icon on the left toolbar in Molecules mode is enabled:
-
+<img src=images/Monomer-Creation-Wizard-3.9..png width = "450"/>
 <img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
+<img src=images/Monomer-Creation-Wizard-2-3.9..png width = "450"/>
 
-Clicking it will open a _Monomer Creation Wizard_:
+The selected structure can contain bonds to non-selected parts of the structure and/or R-groups. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
 
-<img src=images/Entering-the-Monomer-Creation-Wizard-3.7..png width = "700"/>
+Using the `Attributes` panel, the user is able to define following monomer properties:
+- Monomer type (amino acid, sugar, base, phosphate, nucleotide or CHEM);
+- Monomer symbol (used on library cards, appears on canvas, and is used during HELM export if a different HELM alias is not specified);
+- Monomer name (appears on monomer preview);
+- Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides)
 
-In the _Monomer Creation Wizard_ users can set the following properties:
-- Monomer type;
-- Monomer symbol;
-- Monomer name;
-- Monomer natural analogue (if appropriate based on monomer type).
+<img src=images/Monomer-Creation-Wizard-3-3.9..png width = "450"/>
 
-Monomer attachment points are assigned by default in case of outgoing bonds or R-groups, but additional ones can be added by the user via right-click on a potential leaving group atom. Monomer structure cannot be changed after _The Wizard_ is entered.
+User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydrohyl by replacing the atoms:
 
-After mandatory fields are filled:
+<img src=images/Monomer-Creation-Wizard-4-3.9..png width = "200"/>
 
-<img src=images/Exiting-the-Monomer-Creation-Wizard-3.7..png width = "700"/>
+New attachment points can be added by right-clicking on atoms an selecting _Mark as a leaving group_:
 
-the user can click on _Submit_. That causes the previouselly selected structure to become an expanded monomer in Molecules mode:
+<img src=images/Monomer-Creation-Wizard-5-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-6-3.9..png width = "200"/>
 
-<img src=images/New-Monomer-Micro-3.7..png width = "150"/>
+or _Mark as a connection point_:
 
-and a regular monomer in Macromolecules mode:
+<img src=images/Monomer-Creation-Wizard-7-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-8-3.9..png width = "200"/>
 
-<img src=images/New-Monomer-Macro-3.7..png width = "150"/>
+The Attachment points section of the _Attributes_ panel allows the users to delete an already set attachment point, change the R-number, or change the leaving group atom(s):
 
-that can also be seen in the library:
+<img src=images/Monomer-Creation-Wizard-9-3.9..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-10-3.9..png width = "200"/>
 
-<img src=images/New-Monomer-Library-3.7..png width = "150"/>
+After _Sumbit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an apropriate shape and colour) in macromolecules mode, and that monomer in the library:
+
+<img src=images/Monomer-Creation-Wizard-11-3.9..png width = "500"/>
 
 #### Monomer Addition Through API
 
@@ -684,7 +687,7 @@ Different shapes of monomers indicate different monomer types:
 - **Rhombuses** (4) represent bases; purines are shades of gray and pyrimidines are yellow (C), light orange (T), or dark purple (U);
 - **Coral circles** (5) represent phosphates;
 - **Pentagons** (6) represent unsplit nucleotides; logic for the colouring is the same as for bases;
-- **Dark rounded squares** (7) represent unresolved IDT nucleotides (see section _Working with files_).
+- **Dark rounded squares** (7) represent unresolved IDT or AxoLabs nucleotides (see section _Working with files_).
 
 Modifications are also noted for amino acids, sugars, bases and phosphates using a banner over the monomer symbol:
 
@@ -764,7 +767,7 @@ There are two differences between snake and flex modes:
 
 <img src=images/Snake-Flex-Diff-3.8..png width = "500"/>
 
-2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers on canvas get layouted; when flex mode is entered, no layout is applied.
+2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers and small molecules on canvas get layouted; when flex mode is entered, no layout is applied.
 
 ### Custom Chain Geometry
 
@@ -940,10 +943,11 @@ In **macromolecules mode**, the supported file formats are:
 - Sequence (3-letter code);
 - FASTA;
 - IDT*;
+- AxoLabs*,
 - SVG Document;
 - HELM;
 
-* _IDT is a vendor of oligonucleotides where modifications are indicated in their own format._
+* _IDT and AxoLabs are vendors of oligonucleotides where modifications are indicated in their own formats._
 
 Structures can be opened using the _Open..._ button on the main toolbars of both modes:
 
@@ -951,7 +955,7 @@ Structures can be opened using the _Open..._ button on the main toolbars of both
 
 - _Paste From Clipboard_ allows pasting of the file contents (for both modes) and selecting of the format (only for macromolecules mode - in molecules mode the recondition of the format is possible unambiguously);
 
-<img src=images/Open-Structure-Macro-2-3.0..png width = "350"/>
+<img src=images/Open-Structure-Macro-2-3.9..png width = "350"/>
 
 - _Open from File_ allows browsing for a file. After the file is selected editable file contents are visible before the structure is added to the canvas;
 

@@ -1380,7 +1380,10 @@ class Editor implements KetcherEditor {
     });
 
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
-    ketcher.updateMonomersLibrary(libraryItem);
+    ketcher.updateMonomersLibrary(libraryItem, {
+      format: 'ket',
+      shouldPersist: true,
+    });
   }
 
   reassignAttachmentPointLeavingAtom(

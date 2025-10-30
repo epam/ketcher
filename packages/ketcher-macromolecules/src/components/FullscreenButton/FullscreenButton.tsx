@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'ketcher-react';
+import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -54,49 +54,6 @@ const ButtonContainer = styled.div`
     border-radius: 4px;
   }
 `;
-
-const getFullscreenElement = (): HTMLElement => {
-  const ketcherRoot = document.querySelector(
-    '.Ketcher-root, .Ketcher-polymer-editor-root',
-  ) as HTMLElement;
-
-  if (ketcherRoot) {
-    const markedContainer = ketcherRoot.closest(
-      '[data-ketcher-fullscreen-container]',
-    );
-    if (markedContainer) {
-      return markedContainer as HTMLElement;
-    }
-
-    const editorRoot = ketcherRoot.closest('[data-ketcher-editor]');
-    if (editorRoot) {
-      const editorParent = editorRoot.parentElement;
-
-      if (
-        editorParent &&
-        editorParent !== document.body &&
-        editorParent !== document.documentElement
-      ) {
-        if (editorParent.id === 'root') {
-          return editorParent;
-        }
-        return editorParent;
-      }
-
-      const rootElement = editorRoot.closest('#root');
-      if (rootElement) {
-        return rootElement as HTMLElement;
-      }
-    }
-
-    const rootById = document.getElementById('root');
-    if (rootById) {
-      return rootById;
-    }
-  }
-
-  return document.getElementById('root') || document.documentElement;
-};
 
 export const FullscreenButton = (props) => {
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());

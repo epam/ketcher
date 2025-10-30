@@ -55,17 +55,53 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const getFullscreenElement = (): HTMLElement => {
+  const ketcherRoot = document.querySelector(
+    '.Ketcher-root, .Ketcher-polymer-editor-root',
+  ) as HTMLElement;
+
+  if (ketcherRoot) {
+    const markedContainer = ketcherRoot.closest(
+      '[data-ketcher-fullscreen-container]',
+    );
+    if (markedContainer) {
+      return markedContainer as HTMLElement;
+    }
+
+    const editorRoot = ketcherRoot.closest('[data-ketcher-editor]');
+    if (editorRoot) {
+      const editorParent = editorRoot.parentElement;
+
+      if (
+        editorParent &&
+        editorParent !== document.body &&
+        editorParent !== document.documentElement
+      ) {
+        if (editorParent.id === 'root') {
+          return editorParent;
+        }
+        return editorParent;
+      }
+
+      const rootElement = editorRoot.closest('#root');
+      if (rootElement) {
+        return rootElement as HTMLElement;
+      }
+    }
+
+    const rootById = document.getElementById('root');
+    if (rootById) {
+      return rootById;
+    }
+  }
+
+  return document.getElementById('root') || document.documentElement;
+};
+
 export const FullscreenButton = (props) => {
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
   const toggleFullscreen = () => {
-    // Check if we're in popup mode (has MuiPaper-root with ketcher-dialog class)
-    const popupDialog = document.querySelector(
-      '.MuiPaper-root.ketcher-dialog',
-    ) as HTMLElement;
-    const fullscreenElement: HTMLElement =
-      popupDialog ||
-      document.getElementById('root') ||
-      document.documentElement;
+    const fullscreenElement = getFullscreenElement();
     fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
     setFullScreenMode(!fullScreenMode);
   };

@@ -17,4 +17,5 @@ export type ExportImageParams = {
 
 export type UpdateMonomersLibraryParams = {
   format: 'ket' | 'sdf';
+  shouldPersist?: boolean;
 };

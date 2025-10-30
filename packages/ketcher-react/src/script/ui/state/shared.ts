@@ -244,3 +244,23 @@ export function openInfoModalWithCustomMessage(message: string): {
     data: { name: 'info-modal', prop: { customText: message } },
   };
 }
+
+export function openSuccessModal(
+  title: string,
+  message: string,
+  button = 'OK',
+): {
+  type: 'MODAL_OPEN';
+  data: {
+    name: 'info-modal';
+    prop: { title: string; customText: string; button: string };
+  };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: {
+      name: 'info-modal',
+      prop: { title, customText: message, button },
+    },
+  };
+}

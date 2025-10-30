@@ -18,8 +18,9 @@ import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
+import { openSuccessModal } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -364,6 +365,7 @@ const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
+  const dispatch = useDispatch();
 
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
@@ -612,6 +614,20 @@ const MonomerCreationWizard = () => {
     });
 
     resetWizard();
+    console.log(
+      NotificationMessages.creationSuccessful,
+      'NotificationMessages.creationSuccessful',
+    );
+    // Show success message in a modal dialog after wizard closes
+    setTimeout(() => {
+      dispatch(
+        openSuccessModal(
+          'All Set!',
+          NotificationMessages.creationSuccessful,
+          'OK',
+        ),
+      );
+    }, 100);
   };
 
   const ketcherEditorRootElement = document.querySelector(
@@ -925,6 +941,15 @@ const MonomerCreationWizard = () => {
                     aliasHELM,
                   });
                   resetWizard();
+                  setTimeout(() => {
+                    dispatch(
+                      openSuccessModal(
+                        'All Set!',
+                        NotificationMessages.creationSuccessful,
+                        'OK',
+                      ),
+                    );
+                  }, 100);
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}

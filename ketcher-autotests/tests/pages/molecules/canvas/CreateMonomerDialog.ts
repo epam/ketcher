@@ -19,6 +19,7 @@ import {
   AttachmentPointName,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { InfoMessageDialog } from './InfoMessageDialog';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
@@ -239,6 +240,10 @@ export const CreateMonomerDialog = (page: Page) => {
         await locators.submitButton.click();
         if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
           await WarningMessageDialog(page).ok();
+        }
+        // Close success message if it appears to avoid overlay blocking next steps
+        if (await InfoMessageDialog(page).isVisible()) {
+          await InfoMessageDialog(page).ok();
         }
       });
     },

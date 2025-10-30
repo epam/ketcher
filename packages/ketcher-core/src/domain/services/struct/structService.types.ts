@@ -40,6 +40,7 @@ export enum ChemicalMimeType {
   HELM = 'chemical/x-helm',
   RDF = 'chemical/x-rdf',
   MonomerLibrary = 'chemical/x-monomer-library',
+  MonomerLibrarySdf = 'chemical/x-monomer-library-sdf',
 }
 
 export interface WithStruct {

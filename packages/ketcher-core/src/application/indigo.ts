@@ -55,7 +55,7 @@ type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
   inputFormat?: ChemicalMimeType;
   sequenceType?: SequenceType;
-  outputContentType?: ChemicalMimeType.MonomerLibrary;
+  outputContentType?: ChemicalMimeType;
 };
 type AutomapOptions = {
   mode?: AutomapMode;

@@ -54,17 +54,11 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
 
   const preparedPreviewData = useMemo(() => {
     const sortedData = [...previewData];
-    sortedData.sort((a, b) => {
-      if (isAlternatives) {
+    if (isAlternatives) {
+      sortedData.sort((a, b) => {
         return a.monomerName.localeCompare(b.monomerName);
-      } else {
-        if (!a.ratio || !b.ratio) {
-          return 0;
-        }
-        return b.ratio - a.ratio;
-      }
-    });
-    if (!isAlternatives) {
+      });
+    } else {
       const overallRatio = sortedData.reduce(
         (acc, item) => acc + (item.ratio ?? 1),
         0,
@@ -72,6 +66,10 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
 
       sortedData.forEach((entry) => {
         entry.ratio = Math.round(((entry.ratio ?? 1) / overallRatio) * 100);
+      });
+
+      sortedData.sort((a, b) => {
+        return (b.ratio ?? 0) - (a.ratio ?? 0);
       });
     }
 

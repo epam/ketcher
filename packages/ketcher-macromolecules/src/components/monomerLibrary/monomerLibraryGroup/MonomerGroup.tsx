@@ -132,6 +132,11 @@ const MonomerGroup = ({
     return selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
+  // Don't render the group if there are no items
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   return (
     <GroupContainerColumn>
       {title && <GroupTitle>{title}</GroupTitle>}

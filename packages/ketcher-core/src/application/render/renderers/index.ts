@@ -7,6 +7,7 @@ export type { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from './Polymer
 export { SugarRenderer } from './SugarRenderer';
 export { RNABaseRenderer } from './RNABaseRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
+export { UnresolvedPeptideRenderer } from './UnresolvedPeptideRenderer';
 export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 export * from './sequence';

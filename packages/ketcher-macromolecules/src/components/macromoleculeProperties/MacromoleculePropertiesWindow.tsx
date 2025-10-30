@@ -980,6 +980,11 @@ export const MacromoleculePropertiesWindow = () => {
     [],
   );
 
+  // Track previous unit values to detect unit-only changes
+  const prevUnipositiveIonsUnitRef = useRef(unipositiveIonsMeasurementUnit);
+  const prevOligonucleotidesUnitRef = useRef(oligonucleotidesMeasurementUnit);
+  const isInitialMountRef = useRef(true);
+
   useEffect(() => {
     recalculateMacromoleculePropertiesRef.current = (shouldSkip?: boolean) => {
       recalculateMacromoleculeProperties(shouldSkip);
@@ -1005,11 +1010,37 @@ export const MacromoleculePropertiesWindow = () => {
     };
   }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
 
+  // Separate effect for unit changes (immediate recalculation, no debounce)
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    // Skip recalculation on initial mount
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      prevUnipositiveIonsUnitRef.current = unipositiveIonsMeasurementUnit;
+      prevOligonucleotidesUnitRef.current = oligonucleotidesMeasurementUnit;
+      return;
+    }
+
+    const unitChanged =
+      prevUnipositiveIonsUnitRef.current !== unipositiveIonsMeasurementUnit ||
+      prevOligonucleotidesUnitRef.current !== oligonucleotidesMeasurementUnit;
+
+    if (unitChanged) {
+      prevUnipositiveIonsUnitRef.current = unipositiveIonsMeasurementUnit;
+      prevOligonucleotidesUnitRef.current = oligonucleotidesMeasurementUnit;
+      // Immediate recalculation for unit changes
+      recalculateMacromoleculeProperties(skipDataFetch);
+    }
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
+    skipDataFetch,
+    recalculateMacromoleculeProperties,
+  ]);
+
+  // Separate effect for value changes (debounced recalculation)
+  useEffect(() => {
+    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+  }, [
     unipositiveIonsValue,
     oligonucleotidesValue,
     skipDataFetch,

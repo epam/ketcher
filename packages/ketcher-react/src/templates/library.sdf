@@ -9642,6 +9642,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+C60
+
+>  <name>
+Fullerene C60
+
 >  <atomid>
 18
 
@@ -9678,6 +9684,12 @@ adamantane
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Adamantane
+
+>  <name>
+Adamantane
 
 >  <atomid>
 1
@@ -9718,6 +9730,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Cubane
+
+>  <name>
+Cubane
 
 $$$$
 ring 6 boat
@@ -9770,6 +9788,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+Ring 6 boat
+
+>  <name>
+Ring 6 boat
+
 $$$$
 ring 6 chair
   Ketcher  3131814142D 1   1.00000     0.00000     0
@@ -9820,6 +9844,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Ring 6 chair
+
+>  <name>
+Ring 6 chair
 
 $$$$
 Ferrocene_covalent
@@ -9893,6 +9923,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Ferrocene
+
+>  <name>
+Ferrocene_covalent
 $$$$
 Ferrocene_haptic
   Ketcher  3312515452D 1   1.00000     0.00000     0
@@ -9943,6 +9979,12 @@ M  CHG  3  10  -1  11   2  18  -1
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Ferrocene
+
+>  <name>
+Ferrocene_haptic
 
 $$$$
 bis(benzene)chromium_haptic
@@ -10001,6 +10043,12 @@ bis(benzene)chromium_haptic
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Bis(benzene)chromium
+
+>  <name>
+Bis(benzene)chromium_haptic
 
 $$$$
 bis(benzene)chromium_covalent
@@ -10078,6 +10126,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+Bis(benzene)chromium
+
+>  <name>
+Bis(benzene)chromium_covalent
+
 $$$$
 Dodecaborate
   -INDIGO-03312515463D
@@ -10153,6 +10207,12 @@ M  CHG  2   1  -1  12  -1
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+B12H12(2-)
+
+>  <name>
+Dodecaborate
 
 $$$$
 Vitamin B12_dative
@@ -10380,6 +10440,12 @@ M  CHG  4  20   1  24  -1  25  -1  78  -1
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Vitamin B12
+
+>  <name>
+Vitamin B12_dative
 
 $$$$
 Vitamin B12_covalent
@@ -10614,6 +10680,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+Vitamin B12
+
+>  <name>
+Vitamin B12_covalent
+
 $$$$
 sucrose
   Ketcher  3131814142D 1   1.00000     0.00000     0
@@ -10691,6 +10763,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Sucrose
+
+>  <name>
+Sucrose
 
 $$$$
 Heptamolybdate ion_dative
@@ -10776,6 +10854,12 @@ M  CHG  2  29  -2  31  -1
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Mo7O24(6-)
+
+>  <name>
+Heptamolybdate ion_dative
 
 $$$$
 Heptamolybdate ion_covalent
@@ -10865,6 +10949,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Mo7O24(6-)
+
+>  <name>
+Heptamolybdate ion_covalent
 
 $$$$
 C20H20
@@ -10971,6 +11061,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+C20H20
+
+>  <name>
+C20H20
+
 $$$$
 Tetracobalt dodecacarbonyl_dative
   -INDIGO-03312515423D
@@ -11043,6 +11139,12 @@ M  CHG  8  18   1  19   1  20  -2  22   2  23  -2  25   2  26  -2  27   2
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Co4(CO)12
+
+>  <name>
+Tetracobalt dodecacarbonyl_dative
 
 $$$$
 Tetracobalt dodecacarbonyl_covalent
@@ -11120,6 +11222,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+Co4(CO)12
+
+>  <name>
+Tetracobalt dodecacarbonyl_covalent
+
 $$$$
 Iron pentacarbonyl_dative
   -INDIGO-03312515433D
@@ -11151,6 +11259,12 @@ M  CHG  2  10   1  11   1
 M  END
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Fe(CO)5
+
+>  <name>
+Iron pentacarbonyl_dative
 
 $$$$
 Iron pentacarbonyl_covalent
@@ -11187,6 +11301,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Fe(CO)5
+
+>  <name>
+Iron pentacarbonyl_covalent
 
 $$$$
 Chlorophyll A_dative
@@ -11355,6 +11475,12 @@ M  END
 >  <group>
 3D Templates
 
+>  <abbreviation>
+Chlorophyll A
+
+>  <name>
+Chlorophyll A_dative
+
 $$$$
 Chlorophyll A_covalent
   Ketcher  3131814142D 1   1.00000     0.00000     0
@@ -11520,6 +11646,12 @@ M  END
 
 >  <group>
 3D Templates
+
+>  <abbreviation>
+Chlorophyll A
+
+>  <name>
+Chlorophyll A_covalent
 
 $$$$
 Phenylalanine mustard

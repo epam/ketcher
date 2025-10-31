@@ -323,6 +323,7 @@ test.describe('API for replace Library', () => {
      * We have a bug https://github.com/epam/Indigo/issues/3277
      * After fixing we need update snapshots if necessary
      */
+    test.slow();
     const Presets = await readFileContent('SDF/3000 presets.sdf');
     await replaceMonomersLibrary(page, Presets, { format: 'sdf' });
     await Library(page).switchToRNATab();

@@ -68,6 +68,10 @@ export const BondPropertiesDialog = (page: Page) => {
       await locators.bondCustomQueryText.fill(text);
     },
 
+    async getCustomQueryText(): Promise<string> {
+      return await locators.bondCustomQueryText.inputValue();
+    },
+
     async apply() {
       await waitForRender(page, async () => {
         await locators.applyButton.click();

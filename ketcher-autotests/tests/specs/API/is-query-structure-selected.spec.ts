@@ -1,12 +1,5 @@
 import { Page, expect, test } from '@fixtures';
-import {
-  BondTypeName,
-  clickOnAtom,
-  doubleClickOnAtom,
-  setBondType,
-  setCustomQueryForBond,
-  waitForPageInit,
-} from '@utils';
+import { clickOnAtom, doubleClickOnAtom, waitForPageInit } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -20,6 +13,7 @@ import {
 } from '@tests/pages/constants/atomProperties/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { BondTypeOption } from '@tests/pages/constants/bondProperties/Constants';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -102,27 +96,28 @@ test.describe('API isQueryStructureSelected for bonds', () => {
     await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
-  const queryBonds = [
-    BondTypeName.Any,
-    BondTypeName.SingleDouble,
-    BondTypeName.SingleAromatic,
-    BondTypeName.DoubleAromatic,
-    BondTypeName.Aromatic,
-    BondTypeName.SingleUpDown,
+  const queryBonds: [string, BondTypeOption][] = [
+    ['Any', BondTypeOption.Any],
+    ['Single/Double', BondTypeOption.SingleDouble],
+    ['Single/Aromatic', BondTypeOption.SingleAromatic],
+    ['Double/Aromatic', BondTypeOption.DoubleAromatic],
+    ['Aromatic', BondTypeOption.Aromatic],
+    ['Single/UpDown', BondTypeOption.SingleUpDown],
   ];
 
   for (const queryBond of queryBonds) {
-    test(`returns true for ${queryBond} bond`, async ({ page }) => {
-      await setBondType(page, queryBond);
-      await BondPropertiesDialog(page).apply();
+    test(`returns true for ${queryBond[0]} bond`, async ({ page }) => {
+      await BondPropertiesDialog(page).setOptions({
+        type: queryBond[1],
+      });
       await checkIsQueryStructureSelected(page, true);
     });
   }
 
   test(`returns true for customQuery bond`, async ({ page }) => {
-    const customQuery = 'x2&D3,D2';
-    await setCustomQueryForBond(page, customQuery);
-    await BondPropertiesDialog(page).apply();
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: 'x2&D3,D2',
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 });

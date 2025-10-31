@@ -183,17 +183,6 @@ const formatProperties: FormatPropertiesMap = {
     true,
     { 'molfile-saving-mode': '3000' },
   ),
-  'monomer-library-sdf': new SupportedFormatProperties(
-    'Monomer Library SDF',
-    ChemicalMimeType.MonomerLibrary,
-    ['.sdf'],
-    true,
-    {
-      'output-content-type': ChemicalMimeType.MonomerLibrary,
-      'monomer-library-saving-mode': 'sdf',
-      'molfile-saving-skip-date': 'true',
-    },
-  ),
 };
 
 const imgFormatProperties = {

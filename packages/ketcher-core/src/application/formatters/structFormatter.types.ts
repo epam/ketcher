@@ -58,7 +58,6 @@ export enum SupportedFormat {
   unknown = 'unknown',
   rdf = 'rdf',
   rdfV3000 = 'rdfV3000',
-  monomerLibrarySdf = 'monomer-library-sdf',
 }
 
 export type FormatterFactoryOptions = Partial<

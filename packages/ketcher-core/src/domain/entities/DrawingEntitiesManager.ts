@@ -214,6 +214,17 @@ export class DrawingEntitiesManager {
     return this.monomersArray.filter((monomer) => monomer.selected);
   }
 
+  public get selectedMicromoleculeEntities() {
+    return this.selectedEntitiesArr.filter(
+      (entity) =>
+        !(
+          entity instanceof BaseMonomer ||
+          entity instanceof PolymerBond ||
+          entity instanceof HydrogenBond
+        ),
+    );
+  }
+
   public get externalConnectionsToSelection() {
     const connectedMonomers: MonomerConnectedToSelection[] = [];
 

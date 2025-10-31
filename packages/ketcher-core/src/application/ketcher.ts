@@ -64,6 +64,7 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
+  needZoom?: boolean;
 };
 
 const allowedApiSettings = {
@@ -486,8 +487,11 @@ export class Ketcher {
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
-        macromoleculesEditor?.zoomToStructuresIfNeeded();
-        macromoleculesEditor.mode.initialize();
+
+        if (options?.needZoom !== false) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+          macromoleculesEditor.mode.initialize();
+        }
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
@@ -562,11 +566,37 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async layout(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
-      throw new Error('Layout is not available in macro mode');
-    }
+  async circularLayoutMonomers() {
+    const editor = CoreEditor.provideEditorInstance();
 
+    await runAsyncAction<void>(async () => {
+      if (window.isPolymerEditorTurnedOn) {
+        const ketSerializer = new KetSerializer();
+        const serializedKet = ketSerializer.serialize(
+          new Struct(),
+          editor.drawingEntitiesManager,
+          undefined,
+          false,
+          true,
+        );
+
+        const result = await this.structService.layout(
+          {
+            struct: serializedKet,
+            output_format: ChemicalMimeType.KET,
+          },
+          {
+            'smart-layout': false,
+          },
+        );
+        this.setMolecule(result.struct, { needZoom: false });
+      } else {
+        // implement
+      }
+    }, this.eventBus);
+  }
+
+  async layout(): Promise<void> {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.layout(
         this.editor.struct(),

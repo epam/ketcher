@@ -83,7 +83,7 @@ export async function selectTAndDeselectWithLasso(
 
 export async function saveToTemplates(page: Page, templateName: string) {
   await CommonTopLeftToolbar(page).saveFile();
-  await SaveStructureDialog(page).save();
+  await SaveStructureDialog(page).saveToTemplates();
   await TemplateEditDialog(page).setMoleculeName(templateName);
   await TemplateEditDialog(page).save();
 }

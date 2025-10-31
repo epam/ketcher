@@ -251,6 +251,9 @@ export class RemoteStructService implements StructService {
         options?.['reaction-component-margin-size'],
       'image-resolution': options?.['image-resolution'],
       'molfile-saving-mode': options?.['molfile-saving-mode'],
+      'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
+      'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
+      'output-content-type': options?.['output-content-type'],
       'sequence-type': options?.['sequence-type'],
     };
 

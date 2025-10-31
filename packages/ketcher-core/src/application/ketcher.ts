@@ -73,6 +73,12 @@ const allowedApiSettings = {
   bondThickness: 'bondThickness',
 };
 
+const MONOMER_LIBRARY_FORMAT_OPTIONS = {
+  inputFormat: ChemicalMimeType.MonomerLibrary,
+  outputFormat: ChemicalMimeType.MonomerLibrary,
+  outputContentType: ChemicalMimeType.MonomerLibrary,
+} as const;
+
 export class Ketcher {
   _id: string;
   logging: LogSettings;
@@ -685,16 +691,36 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.indigo.convert(rawMonomersDataString, {
-        inputFormat: ChemicalMimeType.MonomerLibrary,
-        outputFormat: ChemicalMimeType.MonomerLibrary,
-        outputContentType: ChemicalMimeType.MonomerLibrary,
-      });
+      const convertResult = await this.indigo.convert(
+        rawMonomersDataString,
+        MONOMER_LIBRARY_FORMAT_OPTIONS,
+      );
 
       dataInKetFormat = convertResult.struct;
     }
 
     return dataInKetFormat;
+  }
+
+  public async ensureMonomersLibraryDataInSdfFormat(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const rawMonomersDataString = ensureString(rawMonomersData);
+    const format =
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
+
+    if (format === SupportedFormat.sdf || format === SupportedFormat.sdfV3000) {
+      return rawMonomersDataString;
+    }
+
+    const convertResult = await this.indigo.convert(rawMonomersDataString, {
+      ...MONOMER_LIBRARY_FORMAT_OPTIONS,
+      monomerLibrarySavingMode: 'sdf',
+      molfileSavingSkipDate: 'true',
+    });
+
+    return convertResult.struct;
   }
 
   public async updateMonomersLibrary(
@@ -716,12 +742,17 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.updateMonomersLibrary(dataInKetFormat);
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
   }
 
   public async replaceMonomersLibrary(
@@ -743,9 +774,14 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     editor.events.updateMonomersLibrary.dispatch();
   }
 

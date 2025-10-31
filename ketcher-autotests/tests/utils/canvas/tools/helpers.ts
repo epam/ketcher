@@ -82,11 +82,8 @@ export async function selectTAndDeselectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
-  const inputText = templateName;
-
   await CommonTopLeftToolbar(page).saveFile();
-  await saveToTemplatesButton.click();
-  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await SaveStructureDialog(page).saveToTemplates();
+  await TemplateEditDialog(page).setMoleculeName(templateName);
   await TemplateEditDialog(page).save();
 }

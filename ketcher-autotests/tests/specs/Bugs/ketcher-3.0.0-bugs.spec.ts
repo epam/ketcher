@@ -603,7 +603,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await indigoFunctionsToolbar.layout();
     await indigoFunctionsToolbar.cleanUp();
     await indigoFunctionsToolbar.calculateCIP();
-    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 

@@ -44,12 +44,10 @@ import {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.7.0', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });

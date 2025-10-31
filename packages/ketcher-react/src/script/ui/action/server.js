@@ -24,8 +24,7 @@ const config = {
     action: {
       thunk: serverTransform('layout'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'layout'),
   },
   clean: {
@@ -34,8 +33,7 @@ const config = {
     action: {
       thunk: serverTransform('clean'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'clean'),
   },
   arom: {
@@ -44,8 +42,7 @@ const config = {
     action: {
       thunk: serverTransform('aromatize'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'arom'),
   },
   dearom: {
@@ -54,8 +51,7 @@ const config = {
     action: {
       thunk: serverTransform('dearomatize'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'dearom'),
   },
   cip: {
@@ -64,8 +60,7 @@ const config = {
     action: {
       thunk: serverTransform('calculateCip'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'cip'),
   },
   check: {
@@ -89,9 +84,7 @@ const config = {
     action: { dialog: 'recognize' },
     disabled: (editor, server, options) =>
       // TODO: provide the list of disabled functions as array
-      !options.app.server ||
-      !options.app.imagoVersions?.length > 0 ||
-      editor.isMonomerCreationWizardActive,
+      !options.app.server || !options.app.imagoVersions?.length > 0,
     hidden: (options) => isHidden(options, 'recognize'),
   },
   miew: {
@@ -105,8 +98,7 @@ const config = {
     action: {
       thunk: serverTransform('toggleExplicitHydrogens'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'explicit-hydrogens'),
   },
 };

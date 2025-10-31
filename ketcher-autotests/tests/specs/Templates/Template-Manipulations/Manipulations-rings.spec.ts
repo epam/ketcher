@@ -10,11 +10,16 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { BondType } from '@utils/canvas/types';
+import {
+  BondAttributes,
+  BondType,
+  BondXy,
+  SORT_TYPE,
+} from '@utils/canvas/types';
 import {
   getBondByIndex,
+  getBondsCoordinatesByAttributes,
   getLeftBondByAttributes,
-  getRightBondByAttributes,
 } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -24,6 +29,29 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+
+/**
+ * Get right bond by attributes.
+ * If there are no bonds after filtering throws error.
+ * @param page - playwright page object
+ * @param attributes - Bond attributes like type, angle, begin etc.
+ * See BondAttributes in @utils/canvas/types.ts for full list
+ * @param index - number to search, starting from 0
+ * @returns {BondXy} - searched Bond right object + x, y coordinates
+ * returned example {type: 1, x: 123, y: 432 }
+ */
+async function getRightBondByAttributes(
+  page: Page,
+  attributes: BondAttributes,
+): Promise<BondXy> {
+  const result = await getBondsCoordinatesByAttributes(
+    page,
+    attributes,
+    SORT_TYPE.DESC_X,
+  );
+
+  return result[0];
+}
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];

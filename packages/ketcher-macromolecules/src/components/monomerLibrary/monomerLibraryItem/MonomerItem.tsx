@@ -141,19 +141,19 @@ const MonomerItem = ({
       }}
       {...(!isDisabled ? { onClick } : {})}
       ref={cardRef}
-      data-idtAlias-base={monomerItem?.props.idtAliases?.base ?? undefined}
-      data-idtAlias-modifications-endpoint5={
+      data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
+      data-idtalias-modifications-endpoint5={
         monomerItem?.props.idtAliases?.modifications?.endpoint5 ?? undefined
       }
-      data-idtAlias-modifications-endpoint3={
+      data-idtalias-modifications-endpoint3={
         monomerItem?.props.idtAliases?.modifications?.endpoint3 ?? undefined
       }
-      data-idtAlias-modifications-internal={
+      data-idtalias-modifications-internal={
         monomerItem?.props.idtAliases?.modifications?.internal ?? undefined
       }
-      data-axoLabs={monomerItem?.props.aliasAxoLabs ?? undefined}
+      data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
-      data-modificationType={
+      data-modificationtype={
         monomerItem?.props.modificationTypes
           ? Array.isArray(monomerItem?.props.modificationTypes)
             ? monomerItem?.props.modificationTypes.join(', ')

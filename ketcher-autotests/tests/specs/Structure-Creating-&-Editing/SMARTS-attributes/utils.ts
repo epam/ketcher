@@ -3,31 +3,11 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
-// Custom query - bond properties:
-
-export async function setCustomQueryForBond(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('bond-custom-query').fill(customQuery);
-}
-
 // Bond attributes:
 
 export async function setBondType(page: Page, bondTypeTestId: string) {
   await page.getByTestId('type-input-span').click();
   await page.getByTestId(bondTypeTestId).click();
-}
-
-export async function setBondTopology(page: Page, bondTopologyTestId: string) {
-  await page.getByTestId('topology-input-span').click();
-  await page.getByTestId(bondTopologyTestId).click();
-}
-
-export async function setReactingCenter(
-  page: Page,
-  reactingCenterOptionTestId: string,
-) {
-  await page.getByTestId('reacting-center-input-span').click();
-  await page.getByTestId(reactingCenterOptionTestId).click();
 }
 
 export async function verifySMARTSExport(page: Page, value: string) {

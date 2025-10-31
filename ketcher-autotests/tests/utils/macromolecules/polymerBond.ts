@@ -470,6 +470,8 @@ export function getBondLocator(
     bondType,
     bondStereo,
     bondId,
+    topology,
+    reactingCenter,
     fromMonomerId,
     toMonomerId,
     toAtomId,
@@ -482,6 +484,8 @@ export function getBondLocator(
     bondType?: MacroBondDataIds | MicroBondDataIds | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
+    topology?: string | number;
+    reactingCenter?: string | number;
     fromMonomerId?: string | number;
     toMonomerId?: string | number;
     toAtomId?: string | number;
@@ -501,6 +505,12 @@ export function getBondLocator(
     attributes['data-bondstereo'] = String(bondStereo);
   }
   if (bondId !== undefined) attributes['data-bondid'] = String(bondId);
+  if (topology !== undefined) {
+    attributes['data-topology'] = String(topology);
+  }
+  if (reactingCenter !== undefined) {
+    attributes['data-reacting-center'] = String(reactingCenter);
+  }
   if (fromMonomerId !== undefined) {
     attributes['data-frommonomerid'] = String(fromMonomerId);
   }

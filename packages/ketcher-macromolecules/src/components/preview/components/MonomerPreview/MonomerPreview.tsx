@@ -73,9 +73,9 @@ const MonomerPreview = ({ className }: Props) => {
         className={className}
         data-testid="polymer-library-preview"
         data-idtAliases={idtAliasesText ?? undefined}
-        data-axoLabs={axoLabsAlias ?? undefined}
+        data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
-        data-modificationType={
+        data-modificationtype={
           modificationTypes
             ? Array.isArray(modificationTypes)
               ? modificationTypes.join(', ')

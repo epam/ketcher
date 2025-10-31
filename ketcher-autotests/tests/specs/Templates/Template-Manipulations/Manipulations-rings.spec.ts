@@ -10,11 +10,16 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { BondType } from '@utils/canvas/types';
+import {
+  BondAttributes,
+  BondType,
+  BondXy,
+  SORT_TYPE,
+} from '@utils/canvas/types';
 import {
   getBondByIndex,
+  getBondsCoordinatesByAttributes,
   getLeftBondByAttributes,
-  getRightBondByAttributes,
 } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -24,6 +29,29 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+
+/**
+ * Get right bond by attributes.
+ * If there are no bonds after filtering throws error.
+ * @param page - playwright page object
+ * @param attributes - Bond attributes like type, angle, begin etc.
+ * See BondAttributes in @utils/canvas/types.ts for full list
+ * @param index - number to search, starting from 0
+ * @returns {BondXy} - searched Bond right object + x, y coordinates
+ * returned example {type: 1, x: 123, y: 432 }
+ */
+async function getRightBondByAttributes(
+  page: Page,
+  attributes: BondAttributes,
+): Promise<BondXy> {
+  const result = await getBondsCoordinatesByAttributes(
+    page,
+    attributes,
+    SORT_TYPE.DESC_X,
+  );
+
+  return result[0];
+}
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];
@@ -74,6 +102,15 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     );
   }
   let point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+  // const bond = getBondLocator(page, { reactingCenter: 0 });
+  // const bondBoundingBox = await bond.boundingBox();
+  // if (!bondBoundingBox) {
+  //   throw new Error('Unable to get boundingBox for bond');
+  // }
+  // let point: { x: number; y: number } = {
+  //   x: bondBoundingBox.x + bondBoundingBox.width / 2,
+  //   y: bondBoundingBox.y + bondBoundingBox.height / 2,
+  // };
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
   );
@@ -86,7 +123,17 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);
+
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
+  // const bond2 = getBondLocator(page, { reactingCenter: 0 });
+  // const bondBoundingBox2 = await bond2.boundingBox();
+  // if (!bondBoundingBox2) {
+  //   throw new Error('Unable to get boundingBox for bond');
+  // }
+  // point = {
+  //   x: bondBoundingBox2.x + bondBoundingBox2.width / 2,
+  //   y: bondBoundingBox2.y + bondBoundingBox2.height / 2,
+  // };
   await dragMouseTo(point.x, point.y, page);
 }
 

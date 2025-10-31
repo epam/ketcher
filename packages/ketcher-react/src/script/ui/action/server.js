@@ -24,8 +24,7 @@ const config = {
     action: {
       thunk: serverTransform('layout'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'layout'),
   },
   clean: {
@@ -34,8 +33,7 @@ const config = {
     action: {
       thunk: serverTransform('clean'),
     },
-    disabled: (editor, server, options) =>
-      !options.app.server || editor.isMonomerCreationWizardActive,
+    disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'clean'),
   },
   arom: {
@@ -86,9 +84,7 @@ const config = {
     action: { dialog: 'recognize' },
     disabled: (editor, server, options) =>
       // TODO: provide the list of disabled functions as array
-      !options.app.server ||
-      !options.app.imagoVersions?.length > 0 ||
-      editor.isMonomerCreationWizardActive,
+      !options.app.server || !options.app.imagoVersions?.length > 0,
     hidden: (options) => isHidden(options, 'recognize'),
   },
   miew: {

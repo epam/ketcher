@@ -14,6 +14,7 @@ import {
   AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
   getModifyAminoAcidsMenuItems,
   getMonomersForAminoAcidModification,
+  isCycleExistsForSelectedMonomers,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from './helpers';
@@ -54,7 +55,9 @@ export const SelectedMonomersContextMenu = ({
     isAntisenseOptionVisible(selectedMonomers);
 
   const cyclicStructureFormationDisabled =
-    editor?.mode.modeName !== 'flex-layout-mode';
+    editor?.mode.modeName !== 'flex-layout-mode' ||
+    editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length > 0 ||
+    !isCycleExistsForSelectedMonomers(selectedMonomers);
 
   const menuItems = [
     {

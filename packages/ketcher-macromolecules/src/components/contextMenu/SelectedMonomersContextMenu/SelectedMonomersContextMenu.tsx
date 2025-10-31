@@ -53,10 +53,14 @@ export const SelectedMonomersContextMenu = ({
     selectedMonomers.length > 0 &&
     isAntisenseOptionVisible(selectedMonomers);
 
+  const cyclicStructureFormationDisabled =
+    editor?.mode.modeName !== 'flex-layout-mode';
+
   const menuItems = [
     {
       name: 'layout_circular',
-      title: 'Circular layout',
+      title: 'Create cyclic structure',
+      disabled: cyclicStructureFormationDisabled,
     },
     {
       name: 'copy',

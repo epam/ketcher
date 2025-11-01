@@ -24,6 +24,7 @@ import {
   ketcherProvider,
   SupportedFormat,
   Editor,
+  EditorSelection,
   getStructure,
   MolSerializer,
   runAsyncAction,
@@ -195,11 +196,16 @@ function keyHandle(dispatch, getState, hotKeys, event) {
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (
+      // However, for eraser tool (Delete/Backspace), prioritize selection over hover
+      const shouldProcessHoveredItem =
         hoveredItem &&
         newAction.tool !== 'select' &&
-        newAction.dialog !== 'templates'
-      ) {
+        newAction.dialog !== 'templates' &&
+        !(
+          newAction.tool === 'eraser' && hasActiveSelection(editor.selection())
+        );
+
+      if (shouldProcessHoveredItem) {
         newAction = getCurrentAction(group[index]) || newAction;
         handleHotkeyOverItem({
           hoveredItem,
@@ -263,6 +269,23 @@ function checkGroupOnTool(group, actionTool) {
   });
 
   return index;
+}
+
+function hasActiveSelection(
+  selection: EditorSelection | null,
+): selection is EditorSelection {
+  if (selection === null) {
+    return false;
+  }
+  return (
+    (selection.atoms?.length || 0) > 0 ||
+    (selection.bonds?.length || 0) > 0 ||
+    (selection.rgroupAttachmentPoints?.length || 0) > 0 ||
+    (selection.rxnArrows?.length || 0) > 0 ||
+    (selection.rxnPluses?.length || 0) > 0 ||
+    (selection.simpleObjects?.length || 0) > 0 ||
+    (selection.texts?.length || 0) > 0
+  );
 }
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;

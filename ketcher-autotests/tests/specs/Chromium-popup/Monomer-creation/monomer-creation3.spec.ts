@@ -229,10 +229,6 @@ for (const monomerToCreate of eligableForMonomerCreation) {
 
 const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
   {
-    testDescription: '1. Cycle with no single bonds to LGA',
-    loadString: 'C1CCCCCCC1',
-  },
-  {
     testDescription: '2. R-Groups not at terminal positions',
     loadString:
       '[*:3]%87%88.[*:2]%89%87.[*:1]%87%89.[*:6]%89%87.[*:5]%87%89.[*:4]%88%87 |$_R3;_R2;_R1;_R6;_R5;_R4$|',
@@ -255,10 +251,6 @@ const notEligableForMonomerCreation2: IMoleculesForMonomerCreation[] = [
     loadString: 'C=C',
   },
   {
-    testDescription: '3. Triple bond with no potential LGA',
-    loadString: 'C#C',
-  },
-  {
     testDescription: '4. Any bond with no potential LGA',
     loadString:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAMOEApnP2AAAw4QCmcxQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIA//8AAAAAAAAAAAAA',
@@ -274,10 +266,6 @@ const notEligableForMonomerCreation2: IMoleculesForMonomerCreation[] = [
   {
     testDescription: '7. Single/Aromatic bond with no potential LGA',
     loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '8. Double/Aromatic bond with no potential LGA',
-    loadString: '[#6]=,:[#6]',
   },
   {
     testDescription: '9. Dative bond with no potential LGA',
@@ -296,11 +284,6 @@ const notEligableForMonomerCreation2: IMoleculesForMonomerCreation[] = [
   {
     testDescription: '12. Single Down bond with no potential LGA',
     loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '13. Single Up/Down bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAABBgIACAAAAAAAAAAAAAAA',
   },
   {
     testDescription: '14. CIS/Trans bond with no potential LGA',

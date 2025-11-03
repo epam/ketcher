@@ -1360,13 +1360,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Put selected template to canvas
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,

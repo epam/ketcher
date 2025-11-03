@@ -954,7 +954,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
     await saveToTemplates(page, 'My Custom Template');
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );

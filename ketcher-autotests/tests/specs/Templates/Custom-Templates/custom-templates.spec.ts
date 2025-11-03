@@ -32,7 +32,7 @@ test.describe('Open Ketcher', () => {
     Description:
     The 'Template Library' tab is opened by default.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -45,7 +45,7 @@ test.describe('Open Ketcher', () => {
     Check any structures
     Open the 'User Templates' folder'
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -62,11 +62,11 @@ test.describe('Open Ketcher', () => {
     Click the 'X' button.
     Click on the 'Custom Templates' button.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
     await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolventsTab);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -77,7 +77,7 @@ test.describe('Open Ketcher', () => {
     Open 'Custom Templates'
     Switch between tabs
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
     await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
     await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolventsTab);
@@ -91,7 +91,7 @@ test.describe('Open Ketcher', () => {
     Switch to "Functional Groups" tab
     Observe some large structure
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Tf,
     );
@@ -106,11 +106,11 @@ test.describe('Open Ketcher', () => {
     Close 'Custom Templates' window
     Open 'Custom Templates' window
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).setSearchValue('DMF');
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -121,7 +121,7 @@ test.describe('Open Ketcher', () => {
     Click the 'Custom Templates' button.
     Click to add the selected template on the canvas.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Anthracene,
@@ -136,7 +136,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Click on Edit button in right down corner of template (e.g. alpha-D-Arabinofuranose)
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -150,7 +150,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Make any change(s) in the window. Click the 'Apply' button.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -178,7 +178,7 @@ test.describe('Open Ketcher', () => {
     */
     const inputText =
       'My new template for everyone who want to create new table with more than 128 symbols of elements like Azulene with merged Cyclopentadiene';
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -194,7 +194,7 @@ test.describe('Open Ketcher', () => {
     Description: The edited template has the 'γ-template name' (Greek symbol) name in the Template Library.
     */
     const inputText = 'γ-template name';
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -208,7 +208,7 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-1708
     Description: The info text 'Atom Id: xx; Bond Id: yy' contains the ids of the new attachment atom and bond.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -225,7 +225,7 @@ test.describe('Open Ketcher', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,

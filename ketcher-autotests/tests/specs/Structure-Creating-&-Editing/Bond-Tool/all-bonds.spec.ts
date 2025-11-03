@@ -402,7 +402,7 @@ test.describe('Bond Tool', () => {
        *Test case: EPMLSOPKET-10086
        *Description: A bond is added to a contracted functional group and form a bond
        */
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.Boc,
       );

@@ -64,7 +64,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
@@ -94,7 +94,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -159,12 +159,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       with bond to another FG it should replace it
     */
     const atomToolbar = RightToolbar(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );

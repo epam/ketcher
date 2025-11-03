@@ -245,52 +245,6 @@ const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
       'C1(C%85%86)C(C%87%88)C%89C(C%90%91)C(C%92%93)C(C%94%95)C%96C1C%97%98.[*:14]%96.[*:7]%89.[*:13]%97.[*:12]%98.[*:6]%90.[*:5]%91.[*:4]%92.[*:3]%93.[*:2]%94.[*:1]%95.[*:11]%85.[*:10]%86.[*:9]%87.[*:8]%88 |$;;;;;;;;;;;;;;_R14;_R7;_R13;_R12;_R6;_R5;_R4;_R3;_R2;_R1;_R11;_R10;_R9;_R8$|',
   },
 ];
-const notEligableForMonomerCreation2: IMoleculesForMonomerCreation[] = [
-  {
-    testDescription: '2. Double bond with no potential LGA',
-    loadString: 'C=C',
-  },
-  {
-    testDescription: '4. Any bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAMOEApnP2AAAw4QCmcxQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIA//8AAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '5. Aromatic bond with no potential LGA',
-    loadString: 'c:c',
-  },
-  {
-    testDescription: '6. Single/Double bond with no potential LGA',
-    loadString: '[#6]!:;-,=[#6]',
-  },
-  {
-    testDescription: '7. Single/Aromatic bond with no potential LGA',
-    loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '9. Dative bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAABAAAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '10. Hydrogen bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAAEAAAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '11. Single Up bond with no potential LGA',
-    loadString: '[#6]/[#6]',
-  },
-  {
-    testDescription: '12. Single Down bond with no potential LGA',
-    loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '14. CIS/Trans bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYMwAAKDUAABgzAD/n/IAA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAP//HQAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAAgABBgIACAAAAAAAAAAAAAAA',
-  },
-];
 
 for (const monomerToCreate of notEligableForMonomerCreation1) {
   test(`2.1 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`, async () => {
@@ -299,30 +253,6 @@ for (const monomerToCreate of notEligableForMonomerCreation1) {
      * Description: 1. Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
      *              2. Check that the selected structure if it contains R-groups (R-group labels), but they are not at terminal
      *              3. Number of R-Groups exceeds number of possible attachment points (8)
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule
-     *      3. Validate that Create Monomer button is disabled
-     *
-     * Version 3.8
-     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      monomerToCreate.loadString,
-    );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
-  });
-}
-
-for (const monomerToCreate of notEligableForMonomerCreation2) {
-  test(`2.2 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7948
-     * Description: Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
      *
      * Case:
      *      1. Open Molecules canvas

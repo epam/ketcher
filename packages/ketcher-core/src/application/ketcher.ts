@@ -589,9 +589,13 @@ export class Ketcher {
             'smart-layout': false,
           },
         );
-        this.setMolecule(result.struct, { needZoom: false });
-      } else {
-        // implement
+
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(
+          result.struct,
+          this.structService,
+          true,
+        );
       }
     }, this.eventBus);
   }

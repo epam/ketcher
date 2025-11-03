@@ -36,3 +36,4 @@ export * from './sgroup';
 export * from './Text';
 export * from './monomer';
 export * from './modes';
+export * from './monomerCreation';

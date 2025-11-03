@@ -7,6 +7,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { Valence } from '@tests/pages/constants/atomProperties/Constants';
 import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   MicroAtomOption,
@@ -16,7 +17,7 @@ import {
   RingBondCountOption,
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
-import { LibraryTab } from '@tests/pages/constants/library/Constants';
+import { RNASection } from '@tests/pages/constants/library/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
@@ -29,6 +30,7 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { prepareMoleculeForMonomerCreation } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
@@ -39,6 +41,7 @@ import {
   delay,
   keyboardTypeOnCanvas,
   MacroFileType,
+  MolFileFormat,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -46,10 +49,14 @@ import {
   selectCanvasArea,
   takeEditorScreenshot,
   takeElementScreenshot,
+  takeMonomerLibraryScreenshot,
+  updateMonomersLibrary,
   ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
+  FileType,
+  verifyFileExport,
   verifyHELMExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -232,6 +239,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       'RNA1{r(A)p}$$$$V2.0',
     );
     await ContextMenu(page, getMonomerLocator(page, Base.A).first()).open();
+    await delay(0.2);
     await takeElementScreenshot(page, page.getByTestId(MonomerOption.Paste), {
       padding: 10,
     });
@@ -425,7 +433,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     expect(idtAliases).toBe('(3, 5)Phos');
   });
 
-  test('Case 12: "Create a monomer" option is missing in right-click menu when selection meets conditions', async ({
+  test('Case 13: "Create a monomer" option is missing in right-click menu when selection meets conditions', async ({
     MoleculesCanvas: _,
   }) => {
     /*
@@ -460,7 +468,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     expect(page.getByTestId(MicroAtomOption.CreateAMonomer)).toBeEnabled();
   });
 
-  test('Case 13: IDT alias of CHEM 5TAMRA is displayed wrong', async ({
+  test('Case 14: IDT alias of CHEM 5TAMRA is displayed wrong', async ({
     FlexCanvas: _,
   }) => {
     /*
@@ -481,7 +489,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     expect(idtAliases).toBe('(5)6-TAMN');
   });
 
-  test('Case 14: Microstructure not removed properly with Redo, duplicates on repeated Undo/Redo in Sequence mode', async ({
+  test('Case 15: Microstructure not removed properly with Redo, duplicates on repeated Undo/Redo in Sequence mode', async ({
     SequenceCanvas: _,
   }) => {
     /*
@@ -512,7 +520,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 15: Export to SVG Documets works wrong for unsplite nucleotides with dash symbole (-) in alias', async ({
+  test('Case 16: Export to SVG Documets works wrong for unsplite nucleotides with dash symbole (-) in alias', async ({
     SnakeCanvas: _,
   }) => {
     /*
@@ -535,7 +543,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await verifySVGExport(page);
   });
 
-  test('Case 16: Save to SDF button is missed on Salts and Solvents tab in Structure Library dialog', async ({
+  test('Case 17: Save to SDF button is missed on Salts and Solvents tab in Structure Library dialog', async ({
     MoleculesCanvas: _,
   }) => {
     /*
@@ -554,9 +562,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolvents);
     await expect(StructureLibraryDialog(page).saveToSdfButton).toBeVisible();
+    await StructureLibraryDialog(page).closeWindow();
   });
 
-  test('Case 17: Undo after deleting RNA preset connected to benzene ring leaves undeletable artifacts in Flex, Snake, and Sequence modes', async ({
+  test('Case 18: Undo after deleting RNA preset connected to benzene ring leaves undeletable artifacts in Flex, Snake, and Sequence modes', async ({
     FlexCanvas: _,
   }) => {
     /*
@@ -586,4 +595,107 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
+
+  test('Case 19: Missing valence of 0 in mol file', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7895
+     * Description:  Missing valence of 0 in mol file
+     *
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from SMILES: [NaH]
+     * 3. Set valence of Na atom to 0
+     * 4. Export to MOL file
+     * 5. Verify that valence of Na atom is set to 0 in the mol v2000 file
+     * 6. Verify that valence of Na atom is set to 0 in the mol v3000 file
+     *
+     * Version 3.9
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, '[NaH]');
+    const sodiumAtom = getAtomLocator(page, { atomLabel: 'Na' });
+    await ContextMenu(page, sodiumAtom).click(MicroAtomOption.Edit);
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Valence: Valence.Zero },
+    });
+    await verifyFileExport(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/zero-valence-v2000-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v2000,
+    );
+    await verifyFileExport(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/zero-valence-v3000-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+  });
+
+  test('Case 20: Existing Presets in the library disappear after adding new preset via API', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8070
+     * Description:  Existing Presets in the library disappear after adding new preset via API
+     *
+     * Scenario:
+     * 1. Open Ketcher Standalone
+     * 2. Open the browser console and execute: 'await ketcher.updateMonomersLibrary('\n  -INDIGO-08262516282D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 3 2 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 G 15.9 -4.575 0.0 0 CLASS=BASE SEQID=1 ATTCHORD=(2 2 Al)\nM  V30 2 R 15.9 -3.075 0.0 0 CLASS=SUGAR SEQID=1 ATTCHORD=(4 1 Cx 3 Br)\nM  V30 3 P 17.4 -3.075 0.0 0 CLASS=PHOSPHATE SEQID=1 ATTCHORD=(2 2 Al)\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 BASE/Gua/Z NATREPLACE=BASE/Z\nM  V30 BEGIN CTAB\nM  V30 COUNTS 12 13 2 0 0\nM  V30 BEGIN ATOM\nM  V30 1 N -0.438 0.541 0.0 0\nM  V30 2 C -0.438 -0.459 0.0 0\nM  V30 3 C 0.428 -0.959 0.0 0\nM  V30 4 C 1.294 -0.459 0.0 0\nM  V30 5 N 1.294 0.541 0.0 0\nM  V30 6 C 0.428 1.041 0.0 0\nM  V30 7 N 0.22 -1.937 0.0 0\nM  V30 8 C -0.775 -2.041 0.0 0\nM  V30 9 N -1.182 -1.128 0.0 0\nM  V30 10 O 2.16 -0.959 0.0 0\nM  V30 11 H -2.16 -0.92 0.0 0\nM  V30 12 N 0.428 2.041 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 2 6 1\nM  V30 2 1 1 2\nM  V30 3 2 2 3\nM  V30 4 1 3 4\nM  V30 5 1 4 5\nM  V30 6 1 5 6\nM  V30 7 1 2 9\nM  V30 8 1 9 8\nM  V30 9 2 8 7\nM  V30 10 1 7 3\nM  V30 11 2 4 10\nM  V30 12 1 9 11\nM  V30 13 1 6 12\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 11) XBONDS=(1 12) BRKXYZ=(9 0.489000 -0.104000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=LGRP\nM  V30 2 SUP 2 ATOMS=(11 1 2 3 4 5 6 7 8 9 10 12) XBONDS=(1 12) BRKXYZ=(9 -0.489000 0.104000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=Z CLASS=BASE SAP=(3 9 11 Al) NATREPLACE=BASE/G\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 TEMPLATE 2 SUGAR/Rib/R NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 12 12 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 C 1.499 1.176 0.0 0 CFG=1\nM  V30 2 C 1.656 0.188 0.0 0 CFG=2\nM  V30 3 C 0.765 -0.266 0.0 0 CFG=1\nM  V30 4 C 0.058 0.441 0.0 0 CFG=2\nM  V30 5 O 0.512 1.332 0.0 0\nM  V30 6 O 2.207 1.883 0.0 0\nM  V30 7 O 0.608 -1.254 0.0 0\nM  V30 8 O 2.547 -0.266 0.0 0\nM  V30 9 H 1.386 -1.883 0.0 0\nM  V30 10 C -0.93 0.285 0.0 0\nM  V30 11 O -1.559 1.062 0.0 0\nM  V30 12 H -2.547 0.905 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 5\nM  V30 2 1 5 4\nM  V30 3 1 4 3\nM  V30 4 1 3 2\nM  V30 5 1 2 1\nM  V30 6 1 1 6 CFG=1\nM  V30 7 1 3 7 CFG=3\nM  V30 8 1 2 8 CFG=1\nM  V30 9 1 7 9\nM  V30 10 1 4 10 CFG=1\nM  V30 11 1 10 11\nM  V30 12 1 11 12\nM  V30 END BOND\nM  V30 BEGIN COLLECTION\nM  V30 MDLV30/STEABS ATOMS=(4 1 2 3 4)\nM  V30 END COLLECTION\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 12) XBONDS=(1 12) BRKXYZ=(9 0.494000 0.078500 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=LGRP\nM  V30 2 SUP 2 ATOMS=(1 9) XBONDS=(1 9) BRKXYZ=(9 -0.389000 0.314500 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 6) XBONDS=(1 6) BRKXYZ=(9 -0.354000 -0.353500 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=OH CLASS=LGRP\nM  V30 4 SUP 4 ATOMS=(9 1 2 3 4 5 7 8 10 11) XBONDS=(3 6 9 12) BRKXYZ=(9 0.354000 0.353500 0.000000 0.389000 -0.314500 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(9 -0.494000 -0.078500 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=R CLASS=SUGAR SAP=(3 11 12 Al) SAP=(3 7 9 Br) SAP=(3 1 6 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 TEMPLATE 3 PHOSPHATE/P/P NATREPLACE=PHOSPHATE/P\nM  V30 BEGIN CTAB\nM  V30 COUNTS 5 4 3 0 0\nM  V30 BEGIN ATOM\nM  V30 1 P 0.0 0.0 0.0 0\nM  V30 2 O 0.5 -0.866 0.0 0\nM  V30 3 O 0.5 0.866 0.0 0\nM  V30 4 O -1.0 0.0 0.0 0\nM  V30 5 O 1.0 0.0 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 2 1 2\nM  V30 2 1 1 3\nM  V30 3 1 1 4\nM  V30 4 1 1 5\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 4) XBONDS=(1 3) BRKXYZ=(9 0.500000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=OH CLASS=LGRP\nM  V30 2 SUP 2 ATOMS=(1 5) XBONDS=(1 4) BRKXYZ=(9 -0.500000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=OH CLASS=LGRP\nM  V30 3 SUP 3 ATOMS=(3 1 2 3) XBONDS=(2 3 4) BRKXYZ=(9 -0.500000 0.000000 0.000000 0.500000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=P CLASS=PHOSPHATE SAP=(3 1 4 Al) SAP=(3 1 5 Br) NATREPLACE=PHOSPHATE/P\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerGroupTemplate\n\n>  <groupClass>\nRNA\n\n>  <groupName>\nZ\n\n>  <idtAliases>\nbase=rZ\n\n$$$$\n', { format: 'sdf' })'
+     * 3. Observe the monomer library after the update completes.
+     *
+     * Version 3.9
+     */
+    await updateMonomersLibrary(
+      page,
+      `\n  -INDIGO-10092514292D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 3 2 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 Base1 7.7 -8.025 0.0 0 CLASS=BASE SEQID=1 ATTCHORD=(2 3 Al)\nM  V30 2 Phosphate1 9.2 -6.525 0.0 0 CLASS=PHOSPHATE SEQID=1 ATTCHORD=(2 3 Al-\nM  V30 )\nM  V30 3 Sugar1 7.7 -6.525 0.0 0 CLASS=SUGAR SEQID=1 ATTCHORD=(4 1 Cx 2 Br)\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 3 1\nM  V30 2 1 3 2\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 BASE/Base1/Base1 NATREPLACE=BASE/U\nM  V30 BEGIN CTAB\nM  V30 COUNTS 13 12 5 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -4.33 0.75 0.0 0\nM  V30 2 C -3.464 0.25 0.0 0\nM  V30 3 C -2.598 0.75 0.0 0\nM  V30 4 C -1.732 0.25 0.0 0\nM  V30 5 C -0.866 0.75 0.0 0\nM  V30 6 C 0.0 0.25 0.0 0\nM  V30 7 C 0.866 0.75 0.0 0\nM  V30 8 C 1.732 0.25 0.0 0\nM  V30 9 C 2.598 0.75 0.0 0\nM  V30 10 C 3.464 0.25 0.0 0\nM  V30 11 H 4.33 0.75 0.0 0\nM  V30 12 H -3.464 -0.75 0.0 0\nM  V30 13 H -1.732 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 2 12\nM  V30 12 1 4 13\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 11) XBONDS=(1 10) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 12) XBONDS=(1 11) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(9 2 3 4 5 6 7 8 9 10) XBONDS=(4 1 11 12 10) BRKXYZ=(9 --\nM  V30 0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.0000-\nM  V30 00 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.433000 0.250000 0-\nM  V30 .000000 0.000000 0.000000 0.000000) LABEL=Base1 CLASS=BASE SAP=(3 2 1 -\nM  V30 Al) SAP=(3 10 11 Br) SAP=(3 2 12 Cx) SAP=(3 4 13 Dx) NATREPLACE=BASE/U\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 TEMPLATE 2 PHOSPHATE/Phosphate1/Phosphate1 NATREPLACE=PHOSPHATE/P\nM  V30 BEGIN CTAB\nM  V30 COUNTS 16 15 6 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 15 H -2.598 -0.75 0.0 0\nM  V30 16 H -0.866 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 14 1 4 15\nM  V30 15 1 6 16\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(1 15) XBONDS=(1 14) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(1 16) XBONDS=(1 15) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 6 SUP 6 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(5 1 13 14 15 12) B-\nM  V30 RKXYZ=(9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000-\nM  V30 000 0.000000 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.000000 -\nM  V30 -0.500000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(9 0.433000 0.25-\nM  V30 0000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) L-\nM  V30 ABEL=Phosphate1 CLASS=PHOSPHATE SAP=(3 2 1 Al) SAP=(3 12 13 Br) SAP=(3-\nM  V30  2 14 Cx) SAP=(3 4 15 Dx) SAP=(3 6 16 Ex) NATREPLACE=PHOSPHATE/P\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 TEMPLATE 3 SUGAR/Sugar1/Sugar1 NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=Sugar1 CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerGroupTemplate\n\n>  <groupClass>\nRNA\n\n>  <groupName>\nZ\n\n>  <idtAliases>\nbase=rZ\n\n$$$$`,
+      { format: 'sdf' },
+    );
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Presets);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test.fail(
+    'Case 21: HELM (and IDT) alias collision is possible after library update',
+    async ({ FlexCanvas: _ }) => {
+      // Fails due to issue: https://github.com/epam/ketcher/issues/8394
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/8351
+       * Bug: https://github.com/epam/ketcher/issues/8123
+       * Description:  HELM (and IDT) alias collision is possible after library update
+       *
+       * Scenario:
+       * 1. Open Ketcher Standalone
+       * 2. Open the browser console and execute: await ketcher.updateMonomersLibrary('\n  -INDIGO-10092512212D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 Sugar2 10.4962 -10.55 0.0 0 CLASS=SUGAR SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 SUGAR/Sugar2/Sugar2 NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=Sugar2 CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\nSugar1_HELM\n\n$$$$\n', { format: 'sdf' })
+       * 3. Open the browser console and execute: await ketcher.updateMonomersLibrary('\n  -INDIGO-10092512212D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 Sugar3 10.4962 -10.55 0.0 0 CLASS=SUGAR SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 SUGAR/Sugar3/Sugar3 NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=Sugar3 CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\nSugar1_HELM\n\n$$$$\n', { format: 'sdf' })
+       * 3. Observe the monomer library after the update completes.
+       *
+       * Version 3.9
+       */
+      const errorinConsole = [];
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') {
+          errorinConsole.push(msg.text());
+        }
+      });
+      await updateMonomersLibrary(
+        page,
+        `\n  -INDIGO-10092512212D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 Sugar2 10.4962 -10.55 0.0 0 CLASS=SUGAR SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 SUGAR/Sugar2/Sugar2 NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=Sugar2 CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\nSugar1_HELM\n\n$$$$\n`,
+        { format: 'sdf' },
+      );
+      await updateMonomersLibrary(
+        page,
+        `\n  -INDIGO-10092512212D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 Sugar3 10.4962 -10.55 0.0 0 CLASS=SUGAR SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 SUGAR/Sugar3/Sugar3 NATREPLACE=SUGAR/R\nM  V30 BEGIN CTAB\nM  V30 COUNTS 14 13 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(3 1 13 12) BRKXYZ=-\nM  V30 (9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.-\nM  V30 000000 0.000000) BRKXYZ=(9 0.433000 0.250000 0.000000 0.000000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000) LABEL=Sugar3 CLASS=SUGAR SAP=(3-\nM  V30  2 1 Al) SAP=(3 12 13 Br) SAP=(3 2 14 Cx) NATREPLACE=SUGAR/R\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\nSugar1_HELM\n\n$$$$\n`,
+        { format: 'sdf' },
+      );
+
+      expect(await Library(page).isMonomerExist(Sugar.Sugar2)).toBe(true);
+      expect(await Library(page).isMonomerExist(Sugar.Sugar3)).toBe(false);
+      expect(errorinConsole.length).toBeGreaterThan(0);
+    },
+  );
 });

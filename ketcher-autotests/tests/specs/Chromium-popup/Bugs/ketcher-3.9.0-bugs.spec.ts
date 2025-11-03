@@ -11,6 +11,7 @@ import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Const
 import {
   MicroBondOption,
   MonomerOption,
+  SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -22,7 +23,6 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
   clickOnMiddleOfCanvas,
-  cutToClipboardByKeyboard,
   keyboardTypeOnCanvas,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -32,9 +32,12 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 let page: Page;
 
@@ -196,10 +199,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      * Description:  Line between Paste option and Create RNA antisense strand option is missing in the context menu
      *
      * Scenario:
-     * 1. Go to Molecules mode
-     * 2. Load from SMART: `C1C=CC=CC=1`
-     * 3. Select any atom
-     * 4. Right click on selected atom to call context menu
+     * 1. Go to Macromolecules mode - Flex (clean canvas)
+     * 2. Load from HELM: RNA1{r(A)p}$$$$V2.0
+     * 3. Open context on A base
+     * 4. Validate that there is a separator line between Paste option and Create RNA antisense strand option
      *
      * Version 3.9
      */
@@ -212,5 +215,66 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await takeElementScreenshot(page, page.getByTestId(MonomerOption.Paste), {
       padding: 10,
     });
+  });
+
+  test('Case 6: Missing separator line above "Delete" in context menu', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7327
+     * Description:  Missing separator line above "Delete" in context menu
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence (clean canvas)
+     * 2. Load from HELM: PEPTIDE1{A}|RNA1{r(C)p}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0
+     * 3. Select whole sequence
+     * 4. Open context for A amino acid
+     * 5. Validate that there is a separator line above "Delete" in context menu
+     *
+     * Version 3.9
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p}$$$$V2.0',
+    );
+    await ContextMenu(
+      page,
+      getSymbolLocator(page, { symbolAlias: 'A' }),
+    ).open();
+    await takeElementScreenshot(
+      page,
+      page.getByTestId(SequenceSymbolOption.Delete),
+      {
+        padding: 20,
+      },
+    );
+  });
+
+  test('Case 7: Ketcher losts aliasHELM property for unknown monomers that makes export to HELM incorrect', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7256
+     * Description:  Ketcher losts aliasHELM property for unknown monomers that makes export to HELM incorrect
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence (clean canvas)
+     * 2. Load from HELM: RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0
+     * 3. Verify that all unknown monomers are displayed correctly
+     *
+     * Version 3.9
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0',
+    );
+    await verifyHELMExport(
+      page,
+      'RNA1{[Unknown sugar](A)p.r([Unknown base])p.[Unknown sugar]([Unknown base])p.[Unknown sugar](A)[Unknown phosphate].r([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).r([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
+    );
   });
 });

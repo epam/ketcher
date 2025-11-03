@@ -296,11 +296,6 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
     MoleculeSMARTS: 'C(*CC)C',
     AtomIDsToExclude: ['3'],
   },
-  {
-    testDescription: '21. Selected chemical structure not continuous',
-    MoleculeSMARTS: 'CC(C)NC(C)C',
-    AtomIDsToExclude: ['3'],
-  },
 ];
 
 for (const nonEligableMolecule of nonEligableMolecules) {

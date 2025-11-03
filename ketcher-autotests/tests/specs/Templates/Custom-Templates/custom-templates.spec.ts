@@ -63,8 +63,8 @@ test.describe('Open Ketcher', () => {
     Click on the 'Custom Templates' button.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
-    await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolventsTab);
+    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroups);
+    await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolvents);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
@@ -78,9 +78,9 @@ test.describe('Open Ketcher', () => {
     Switch between tabs
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
-    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
-    await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolventsTab);
+    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroups);
+    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibrary);
+    await StructureLibraryDialog(page).openTab(TabSection.SaltsAndSolvents);
     await takeEditorScreenshot(page);
   });
 

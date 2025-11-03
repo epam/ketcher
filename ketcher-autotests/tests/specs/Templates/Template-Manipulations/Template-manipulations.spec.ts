@@ -280,7 +280,7 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
+    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibrary);
     await takeEditorScreenshot(page);
   });
 

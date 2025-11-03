@@ -689,7 +689,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     All FG's which contain symbols 'Y' are displayed on FG's window.
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
+    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroups);
     await StructureLibraryDialog(page).setSearchValue('C2');
     await StructureLibraryDialog(page).clickSearch();
     await takeEditorScreenshot(page);
@@ -815,8 +815,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: FG is downloaded ('ketcher-fg-tmpls.sdf' file). File contains all FG's from library
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroupsTab);
-    await StructureLibraryDialog(page).saveToSdfButton();
+    await StructureLibraryDialog(page).openTab(TabSection.FunctionalGroups);
+    await StructureLibraryDialog(page).saveToSdf();
     await StructureLibraryDialog(page).closeWindow();
   });
 

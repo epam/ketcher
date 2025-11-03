@@ -601,6 +601,10 @@ export class Ketcher {
   }
 
   async layout(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Layout is not available in macro mode');
+    }
+
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.layout(
         this.editor.struct(),

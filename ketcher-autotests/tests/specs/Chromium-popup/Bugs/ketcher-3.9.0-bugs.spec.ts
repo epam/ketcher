@@ -277,4 +277,31 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       'RNA1{[Unknown sugar](A)p.r([Unknown base])p.[Unknown sugar]([Unknown base])p.[Unknown sugar](A)[Unknown phosphate].r([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A).r([Unknown base]).[Unknown sugar]([Unknown base])}$$$$V2.0',
     );
   });
+
+  test('Case 8: Pressing Right Scroll Arrow button of top menu cause exception to console', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7770
+     * Description:  Pressing Right Scroll Arrow button of top menu cause exception to console
+     *
+     * Scenario:
+     * 1. Open Ketcher in Popup mode
+     * 2. Toggle to Macro - Sequence mode
+     * 3. Press Right Scroll Arrow button for top menu
+     *
+     * Version 3.9
+     */
+
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await MacromoleculesTopToolbar(page).arrowScrollRight();
+  });
 });

@@ -643,7 +643,14 @@ export class CoreEditor {
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
+  private onLayoutCircular() {
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+
+    ketcher.circularLayoutMonomers();
+  }
+
   private subscribeEvents() {
+    this.events.layoutCircular.add(() => this.onLayoutCircular());
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add(([tool, options]) =>

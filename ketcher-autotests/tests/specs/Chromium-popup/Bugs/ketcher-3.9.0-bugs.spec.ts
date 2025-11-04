@@ -13,6 +13,7 @@ import {
   MicroBondDataIds,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
+  ConnectionPointOption,
   MicroAtomOption,
   MicroBondOption,
   MonomerOption,
@@ -37,6 +38,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { AttachmentPointOption } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
+import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import {
   CreateMonomerDialog,
@@ -47,8 +50,10 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  clickOnCanvas,
   clickOnMiddleOfCanvas,
   delay,
+  dragMouseTo,
   keyboardTypeOnCanvas,
   MacroFileType,
   MolFileFormat,
@@ -916,5 +921,117 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     const textLabel = getTextLabelLocator(page, {}).first();
     await textLabel.dblclick();
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 29: Create monomer process changes atom of not related part of the molecule', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7978
+     * Description:  Create monomer process changes atom of not related part of the molecule
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from SMARTS: `CCCOCCC`
+     * 3. Fill all fields with valid data
+     * 4. Submit the Create Monomer form
+     * 5. Verify that no H atom appears on the canvas
+     *
+     * Version 3.9
+     */
+    const createMonomerDialog = CreateMonomerDialog(page);
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCOCCC');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await prepareMoleculeForMonomerCreation(
+      page,
+      ['0', '1', '2', '3'],
+      ['0', '1', '2', '3'],
+    );
+    await LeftToolbar(page).createMonomer();
+    await createMonomerDialog.selectType(MonomerType.Sugar);
+    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setName('gly');
+    await createMonomerDialog.submit();
+
+    const hAtom = getAtomLocator(page, { atomLabel: 'H' }).first();
+    expect(await hAtom.count()).toBe(0);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+  });
+
+  test('Case 30: Monomer Wizard allows creation of monomer with Functional Group', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8000
+     * Description:  Monomer Wizard allows creation of monomer with Functional Group
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from SMARTS: `C%91.[*:1]%91 |$;_R1$|`
+     * 3. Open Create Monomer dialog
+     * 4. Open Structure Library from Create Monomer dialog
+     * 5. Verify that Functional Group tab is disabled
+     *
+     * Version 3.9
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
+    await prepareMoleculeForMonomerCreation(page);
+    await LeftToolbar(page).createMonomer();
+    await BottomToolbar(page).structureLibrary();
+
+    expect(StructureLibraryDialog(page).functionalGroupTab).toBeDisabled();
+    await StructureLibraryDialog(page).closeWindow();
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 31: Changing name for attachment points works wrong', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8005
+     * Description:  Changing name for attachment points works wrong
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from SMARTS: `CC%91.[*:1]%91 |$;;_R1$|`
+     * 3. Select whole structure and open Create Monomer dialog
+     * 4. Edit R1 attachment point
+     * 5. Verify that list of attachment points contains R1, R2, R3
+     *
+     * Version 3.9
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
+    await prepareMoleculeForMonomerCreation(page);
+    await LeftToolbar(page).createMonomer();
+    // to make molecule visible
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(600, 250, page);
+
+    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    await ContextMenu(page, attachmentPointR1).click(
+      ConnectionPointOption.EditConnectionPoint,
+    );
+
+    await EditConnectionPointPopup(page).connectionPointNameCombobox.click();
+    await expect(
+      page.getByTestId(AttachmentPointOption.R1).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId(AttachmentPointOption.R2).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId(AttachmentPointOption.R3).first(),
+    ).toBeVisible();
+
+    await clickOnCanvas(page, 0, 0);
+    await CreateMonomerDialog(page).discard();
   });
 });

@@ -8,7 +8,10 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Valence } from '@tests/pages/constants/atomProperties/Constants';
-import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondType,
+  MicroBondDataIds,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   MicroAtomOption,
   MicroBondOption,
@@ -17,13 +20,16 @@ import {
   RingBondCountOption,
   SequenceSymbolOption,
 } from '@tests/pages/constants/contextMenu/Constants';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { TabSection } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -31,7 +37,11 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
-import { prepareMoleculeForMonomerCreation } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import {
+  CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
@@ -42,7 +52,9 @@ import {
   keyboardTypeOnCanvas,
   MacroFileType,
   MolFileFormat,
+  openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
+  openPPTXFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   selectAllStructuresOnCanvas,
@@ -54,6 +66,8 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
+import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -61,6 +75,7 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
+  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -271,6 +286,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       getSymbolLocator(page, { symbolAlias: 'A' }),
     ).open();
+    await delay(0.2);
     await takeElementScreenshot(
       page,
       page.getByTestId(SequenceSymbolOption.Delete),
@@ -698,4 +714,207 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       expect(errorinConsole.length).toBeGreaterThan(0);
     },
   );
+
+  test('Case 22: R2 attachment point is missing for vinU monomer', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8040
+     * Description:  R2 attachment point is missing for vinU monomer
+     *
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from AxoLabs: `5'-(vinu)-3'`
+     * 3. Hover mouse over appeared monomer
+     *
+     * Version 3.9
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.AxoLabs,
+      `5'-(vinu)-3'`,
+    );
+
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    const vinU = getMonomerLocator(page, Nucleotide.vinU);
+    await vinU.hover();
+    await expect(vinU.getByTestId(AttachmentPoint.R2)).toBeVisible();
+  });
+
+  test('Case 23: Do not save added/updated monomer in local storage', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8067
+     * Description:  Do not save added/updated monomer in local storage
+     *
+     * Scenario:
+     * 1. Open Ketcher Standalone
+     * 2. Open the browser console and execute: await ketcher.updateMonomersLibrary("\n  -INDIGO-08262513072D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 A 1.25 -1.25 0.0 0 CLASS=AA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 AA/Ala/A2/ NATREPLACE=AA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 7 6 3 0 0\nM  V30 BEGIN ATOM\nM  V30 1 N -0.866 -0.25 0.0 0\nM  V30 2 C 0.0 0.25 0.0 0 CFG=2\nM  V30 3 H -1.732 0.25 0.0 0\nM  V30 4 C 0.866 -0.25 0.0 0\nM  V30 5 O 1.732 0.25 0.0 0\nM  V30 6 O 0.866 -1.25 0.0 0\nM  V30 7 C 0.0 1.25 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 1 3\nM  V30 3 1 2 4\nM  V30 4 1 4 5\nM  V30 5 2 4 6\nM  V30 6 1 2 7 CFG=1\nM  V30 END BOND\nM  V30 BEGIN COLLECTION\nM  V30 MDLV30/STEABS ATOMS=(1 2)\nM  V30 END COLLECTION\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 3) XBONDS=(1 2) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 5) XBONDS=(1 4) BRKXYZ=(9 -0.433000 -0.250000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=OH CLAS-\nM  V30 S=LGRP\nM  V30 3 SUP 3 ATOMS=(5 1 2 4 6 7) XBONDS=(2 2 4) BRKXYZ=(9 -0.433000 0.25000-\nM  V30 0 0.000000 0.433000 0.250000 0.000000 0.000000 0.000000 0.000000) LABE-\nM  V30 L=A2 CLASS=AA SAP=(3 1 3 Al) SAP=(3 4 5 Br) NATREPLACE=AA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerGroupTemplate\n\n>  <aliasHELM>\nA2\n\n>  <modificationType>\nNatural amino acid\n\n$$$$\n", { format: 'sdf' })
+     * 3. Validate that the monomer is added to the library
+     * 4. Reload the page
+     * 5. Validate that the monomer is absent in the library
+     *
+     * Version 3.9
+     */
+    await updateMonomersLibrary(
+      page,
+      `\n  -INDIGO-08262513072D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 A 1.25 -1.25 0.0 0 CLASS=AA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 AA/Ala/A2/ NATREPLACE=AA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 7 6 3 0 0\nM  V30 BEGIN ATOM\nM  V30 1 N -0.866 -0.25 0.0 0\nM  V30 2 C 0.0 0.25 0.0 0 CFG=2\nM  V30 3 H -1.732 0.25 0.0 0\nM  V30 4 C 0.866 -0.25 0.0 0\nM  V30 5 O 1.732 0.25 0.0 0\nM  V30 6 O 0.866 -1.25 0.0 0\nM  V30 7 C 0.0 1.25 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 1 3\nM  V30 3 1 2 4\nM  V30 4 1 4 5\nM  V30 5 2 4 6\nM  V30 6 1 2 7 CFG=1\nM  V30 END BOND\nM  V30 BEGIN COLLECTION\nM  V30 MDLV30/STEABS ATOMS=(1 2)\nM  V30 END COLLECTION\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 3) XBONDS=(1 2) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 5) XBONDS=(1 4) BRKXYZ=(9 -0.433000 -0.250000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=OH CLAS-\nM  V30 S=LGRP\nM  V30 3 SUP 3 ATOMS=(5 1 2 4 6 7) XBONDS=(2 2 4) BRKXYZ=(9 -0.433000 0.25000-\nM  V30 0 0.000000 0.433000 0.250000 0.000000 0.000000 0.000000 0.000000) LABE-\nM  V30 L=A2 CLASS=AA SAP=(3 1 3 Al) SAP=(3 4 5 Br) NATREPLACE=AA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerGroupTemplate\n\n>  <aliasHELM>\nA2\n\n>  <modificationType>\nNatural amino acid\n\n$$$$\n`,
+      { format: 'sdf' },
+    );
+
+    expect(await Library(page).isMonomerExist(Peptide.A2)).toBe(true);
+    await pageReload(page);
+    expect(await Library(page).isMonomerExist(Peptide.A2)).toBe(false);
+  });
+
+  test('Case 24: Ketcher losts attachment point name on loading s-group from mol v3000', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/7877
+     * Description:  Ketcher losts attachment point name on loading s-group from mol v3000
+     *
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from MOLv3000 file: KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/ket_in.mol
+     * 3. Verify export to mol v3000 file
+     *
+     * Version 3.9
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/ket_in.mol',
+    );
+    await verifyFileExport(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/ket_in-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+  });
+
+  test('Case 25: No validation message shown for minimal monomer structure in Monomer Wizard', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8002
+     * Description:  No validation message shown for minimal monomer structure in Monomer Wizard
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from SMARTS: `C%91.[*:1]%91 |$;_R1$|`
+     * 3. Fill all fields with valid data
+     * 4. Submit the Create Monomer form
+     * 5. Verify that validation message is shown: "Minimal monomer structure is two atoms connected via a single bond."
+     *
+     * Version 3.9
+     */
+    const createMonomerDialog = CreateMonomerDialog(page);
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
+    await prepareMoleculeForMonomerCreation(page);
+    await LeftToolbar(page).createMonomer();
+    await createMonomerDialog.selectType(MonomerType.CHEM);
+    await createMonomerDialog.setSymbol('TempSymbol');
+    await createMonomerDialog.setName('TempName');
+    await createMonomerDialog.submit();
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.notMinimalViableStructure,
+      ).getNotificationMessage(),
+    ).toEqual(
+      'Minimal monomer structure is two atoms connected via a single bond.',
+    );
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 26: "Edit S-Group" option have to be removed for molecules with connection points (optionaly attached to macro structure)', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/5375
+     * Description:  "Edit S-Group" option have to be removed for molecules with connection points (optionaly attached to macro structure)
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from Extended SMILES: `CC*`
+     * 3. Right click on the any bond to open the context menu
+     * 4. Verify that "Edit S-Group" option is not present in the context menu
+     *
+     * Version 3.9
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CC*');
+    const bond = getBondLocator(page, {}).first();
+    await ContextMenu(page, bond).open();
+    await expect(
+      page.getByTestId(MicroBondOption.EditSGroup),
+    ).not.toBeVisible();
+  });
+
+  test('Case 27: System loads invdC monomer as unresolved monomer from AxoLabs', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/8041
+     * Description:  System loads invdC monomer as unresolved monomer from AxoLabs
+     *
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode (clean canvas)
+     * 2. Load from AxoLabs: `5'-(invdC)(invdC)(invdC)p-3'`
+     * 3. Validate that system loads invdC monomer as unsplit nucleotide
+     *
+     * Version 3.9
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.AxoLabs,
+      `5'-(invdC)(invdC)(invdC)p-3'`,
+    );
+
+    const invdC = getMonomerLocator(page, Nucleotide.InvdC);
+    expect(await invdC.count()).toBe(3);
+  });
+
+  test('Case 28: Font sizes in the Text Editor and on the canvas are different', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8351
+     * Bug: https://github.com/epam/ketcher/issues/4078
+     * Description:  Font sizes in the Text Editor and on the canvas are different
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from PPTX: "Problem with FONTS.pptx"
+     * 3. Double click on the text label to open the Text Editor
+     * 4. Verify that font size in the Text Editor matches font size on the canvas
+     *
+     * Version 3.9
+     */
+
+    await openPPTXFileAndAddToCanvasAsNewProject(
+      page,
+      'PPTX/Chromium-popup/Bugs/ketcher-3.9.0-bugs/Problem.with.FONTS.pptx',
+    );
+    const textLabel = getTextLabelLocator(page, {}).first();
+    await textLabel.dblclick();
+    await takeEditorScreenshot(page);
+  });
 });

@@ -53,10 +53,7 @@ const useBondTypeChange = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor;
 
       if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
-        if (editor.struct().isBondFromMacromolecule(selectedBondIds[0])) {
-          return true;
-        }
-        return false;
+        return editor.struct().isBondFromMacromolecule(selectedBondIds[0])
       }
       return true;
     },

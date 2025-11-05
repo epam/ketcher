@@ -69,38 +69,6 @@ export async function connectMonomersWithBonds(
   }
 }
 
-export async function getMonomerIDsByAlias(
-  page: Page,
-  name: string,
-): Promise<number[]> {
-  const monomerIDs = await page
-    .locator('[data-testid="monomer"]')
-    .evaluateAll((elements, alias) => {
-      return elements
-        .filter(
-          (element) => element.getAttribute('data-monomeralias') === alias,
-        )
-        .map((element) => {
-          const monomerId = element.getAttribute('data-monomerid');
-          return monomerId ? parseInt(monomerId, 10) : null;
-        })
-        .filter((id) => id !== null);
-    }, name);
-  return monomerIDs as number[];
-}
-
-export function getMonomerLocatorByAlias(page: Page, monomerAlias: string) {
-  return page.locator(
-    `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
-  );
-}
-
-export function getMonomerLocatorById(page: Page, id: number | string) {
-  return page
-    .locator(`[data-testid="monomer"][data-monomerid="${id}"]`)
-    .first();
-}
-
 export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];

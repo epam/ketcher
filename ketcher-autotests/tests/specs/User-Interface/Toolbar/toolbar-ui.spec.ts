@@ -54,7 +54,7 @@ test.describe('Open Ketcher', () => {
      */
     await takeTopToolbarScreenshot(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );

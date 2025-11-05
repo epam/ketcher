@@ -902,7 +902,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await saveToTemplates(page);
     await CommonTopLeftToolbar(page).clearCanvas();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );

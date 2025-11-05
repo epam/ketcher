@@ -30,7 +30,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should show a preview of a functional group when hovering over atom', async ({
     page,
   }) => {
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
@@ -42,7 +42,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should hide preview of a functional group when hovering over atom and then moving the mouse away', async ({
     page,
   }) => {
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
@@ -55,7 +55,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should remove preview and add the functional group to atom in contracted state when clicked', async ({
     page,
   }) => {
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
@@ -69,7 +69,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   test('Should remove preview when context menu is shown after right click', async ({
     page,
   }) => {
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );

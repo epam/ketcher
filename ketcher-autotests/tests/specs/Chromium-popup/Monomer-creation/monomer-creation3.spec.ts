@@ -27,7 +27,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
@@ -856,14 +856,30 @@ test(`18. Check that for an already set APs the user can Delete the AP, by click
   const attachmentPointR7 = page.getByTestId(AttachmentPoint.R7).first();
   const attachmentPointR8 = page.getByTestId(AttachmentPoint.R8).first();
 
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R1);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R2);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R3);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R4);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R5);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R6);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R7);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R8);
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R1,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R2,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R3,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R4,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R5,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R6,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R7,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R8,
+  );
 
   await expect(attachmentPointR1).not.toBeVisible();
   await expect(attachmentPointR2).not.toBeVisible();
@@ -909,8 +925,8 @@ test(`19. Check that for an already set APs the user can change the R-group numb
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
-    oldName: AttachmentPointName.R2,
-    newName: AttachmentPointName.R1,
+    oldName: AttachmentPointOption.R2,
+    newName: AttachmentPointOption.R1,
   });
 
   await expect(attachmentPointR2).not.toBeVisible();
@@ -949,43 +965,43 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
   await dragMouseTo(425, 200, page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.H,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.OH,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.NH2,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.F,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.Cl,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.Br,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.I,
   });
   await takeEditorScreenshot(page);
@@ -1103,8 +1119,8 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
   await dragMouseTo(425, 200, page);
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
-    oldName: AttachmentPointName.R2,
-    newName: AttachmentPointName.R3,
+    oldName: AttachmentPointOption.R2,
+    newName: AttachmentPointOption.R3,
   });
 
   await CommonLeftToolbar(page).erase();

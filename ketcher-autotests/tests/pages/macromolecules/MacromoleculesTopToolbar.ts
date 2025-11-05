@@ -17,6 +17,8 @@ type MacromoleculesTopToolbarLocators = {
   rnaButton: Locator;
   dnaButton: Locator;
   peptidesButton: Locator;
+  arrowScrollLeftButton: Locator;
+  arrowScrollRightButton: Locator;
 };
 
 export const MacromoleculesTopToolbar = (page: Page) => {
@@ -36,6 +38,8 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     rnaButton: page.getByTestId('RNABtn'),
     dnaButton: page.getByTestId('DNABtn'),
     peptidesButton: page.getByTestId('PEPTIDEBtn'),
+    arrowScrollLeftButton: page.getByTestId('arrow-scroll-left-button'),
+    arrowScrollRightButton: page.getByTestId('arrow-scroll-right-button'),
   };
 
   return {
@@ -158,6 +162,14 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
     async peptides() {
       await locators.peptidesButton.click();
+    },
+
+    async arrowScrollLeft() {
+      return locators.arrowScrollLeftButton.click();
+    },
+
+    async arrowScrollRight() {
+      return locators.arrowScrollRightButton.click();
     },
   };
 };

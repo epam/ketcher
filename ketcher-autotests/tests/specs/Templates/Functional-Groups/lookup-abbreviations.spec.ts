@@ -181,7 +181,7 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16926
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
     await page.keyboard.type('mer');
@@ -195,7 +195,7 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
     await page.keyboard.type('bn');

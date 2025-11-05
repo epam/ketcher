@@ -136,7 +136,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
       console.log('hello'),
     );
   });
-  await BottomToolbar(page).StructureLibrary();
+  await BottomToolbar(page).structureLibrary();
   await StructureLibraryDialog(page).addFunctionalGroup(
     FunctionalGroupsTabItems.CF3,
   );

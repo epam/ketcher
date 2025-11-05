@@ -65,6 +65,14 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     alias: 'Sugar1',
     testId: 'Sugar1___Sugar1',
   },
+  Sugar2: {
+    alias: 'Sugar2',
+    testId: 'Sugar2___Sugar2',
+  },
+  Sugar3: {
+    alias: 'Sugar3',
+    testId: 'Sugar3___Sugar3',
+  },
   _Sugar1: {
     alias: '_Sugar1',
     testId: '_Sugar1____Sugar1',

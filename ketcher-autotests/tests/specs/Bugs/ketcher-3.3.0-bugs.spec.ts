@@ -825,7 +825,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Select DBU
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
     );

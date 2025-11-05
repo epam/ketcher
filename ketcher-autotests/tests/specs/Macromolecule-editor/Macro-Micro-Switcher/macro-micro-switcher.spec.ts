@@ -1074,7 +1074,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
@@ -1105,7 +1105,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );

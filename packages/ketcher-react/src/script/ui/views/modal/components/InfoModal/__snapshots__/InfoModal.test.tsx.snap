@@ -37,6 +37,7 @@ Object {
           <div>
             <div
               class="pasteErrorModalBody"
+              data-testid="error-message-body"
             >
               <div>
                 Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
@@ -107,6 +108,7 @@ Object {
         <div>
           <div
             class="pasteErrorModalBody"
+            data-testid="error-message-body"
           >
             <div>
               Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.

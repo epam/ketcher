@@ -245,7 +245,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -273,7 +273,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -303,7 +303,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -331,7 +331,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );

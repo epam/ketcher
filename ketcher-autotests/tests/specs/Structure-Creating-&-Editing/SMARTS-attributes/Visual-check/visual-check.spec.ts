@@ -44,7 +44,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 3;
     await waitForPageInit(page);
-    await BottomToolbar(page).Cyclooctane();
+    await BottomToolbar(page).cyclooctane();
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);

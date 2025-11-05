@@ -351,6 +351,9 @@ export const selectFilteredMonomers = createSelector(
       fullName = '',
       idtAliases: IKetIdtAliases | undefined,
       searchFilter: string,
+      helmAlias: string | undefined = '',
+      axoLabsAlias: string | undefined = '',
+      modificationTypes: string[] | undefined = [],
     ) => {
       const monomerName = name.toLowerCase();
       const monomerNameFull = fullName.toLowerCase();
@@ -362,6 +365,13 @@ export const selectFilteredMonomers = createSelector(
             .map((mod) => mod.toLowerCase())
             .join(' ')
         : '';
+
+      const helmAliasLower = helmAlias?.toLowerCase() ?? '';
+      const axoLabsAliasLower = axoLabsAlias?.toLowerCase() ?? '';
+      const modificationTypesLower =
+        modificationTypes && modificationTypes.length > 0
+          ? modificationTypes.map((type) => type.toLowerCase()).join(' ')
+          : '';
 
       if (searchFilter === '/') {
         return Boolean(idtBase || idtModifications);
@@ -445,11 +455,24 @@ export const selectFilteredMonomers = createSelector(
         ? idtModifications.includes(searchFilter)
         : false;
 
+      const matchesHelmAlias = helmAliasLower
+        ? helmAliasLower.includes(searchFilter)
+        : false;
+      const matchesAxoLabsAlias = axoLabsAliasLower
+        ? axoLabsAliasLower.includes(searchFilter)
+        : false;
+      const matchesModificationTypes = modificationTypesLower
+        ? modificationTypesLower.includes(searchFilter)
+        : false;
+
       const cond =
         monomerName.includes(searchFilter) ||
         monomerNameFull.includes(searchFilter) ||
         matchesIdtBase ||
-        matchesIdtModifications;
+        matchesIdtModifications ||
+        matchesHelmAlias ||
+        matchesAxoLabsAlias ||
+        matchesModificationTypes;
 
       return cond;
     };
@@ -474,26 +497,44 @@ export const selectFilteredMonomers = createSelector(
           return (
             matchesMonomer ||
             components.some((monomer) => {
-              const { Name, MonomerName, idtAliases } =
-                monomer.monomerItem.props;
+              const {
+                Name,
+                MonomerName,
+                idtAliases,
+                aliasHELM,
+                aliasAxoLabs,
+                modificationTypes,
+              } = monomer.monomerItem.props;
 
               return checkMonomerMatch(
                 Name,
                 MonomerName,
                 idtAliases,
                 normalizedSearchFilter,
+                aliasHELM,
+                aliasAxoLabs,
+                modificationTypes,
               );
             })
           );
         } else {
-          const { Name, MonomerName, idtAliases } = (item as MonomerItemType)
-            .props;
+          const {
+            Name,
+            MonomerName,
+            idtAliases,
+            aliasHELM,
+            aliasAxoLabs,
+            modificationTypes,
+          } = (item as MonomerItemType).props;
 
           return checkMonomerMatch(
             Name,
             MonomerName,
             idtAliases,
             normalizedSearchFilter,
+            aliasHELM,
+            aliasAxoLabs,
+            modificationTypes,
           );
         }
       })

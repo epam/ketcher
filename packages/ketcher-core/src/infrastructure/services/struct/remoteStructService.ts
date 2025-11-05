@@ -98,7 +98,9 @@ function request(
     response = response.then((response) =>
       response
         .json()
-        .then((res) => (response.ok ? res : Promise.reject(res.error))),
+        .then((res) =>
+          response.ok ? res : Promise.reject(new Error(res.error)),
+        ),
     );
   }
 
@@ -198,7 +200,7 @@ export class RemoteStructService implements StructService {
       return this.defaultOptions;
     }
     if (!this.ketcherId) {
-      throw Error('ketcherId is missed when options getting');
+      throw new Error('ketcherId is missed when options getting');
     }
 
     return pickStandardServerOptions(this.ketcherId, options);
@@ -249,6 +251,9 @@ export class RemoteStructService implements StructService {
         options?.['reaction-component-margin-size'],
       'image-resolution': options?.['image-resolution'],
       'molfile-saving-mode': options?.['molfile-saving-mode'],
+      'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
+      'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
+      'output-content-type': options?.['output-content-type'],
       'sequence-type': options?.['sequence-type'],
     };
 
@@ -399,7 +404,8 @@ export class RemoteStructService implements StructService {
         pollDeferred(
           status.bind(null, { id: data.upload_id }),
           (response: any) => {
-            if (response.state === 'FAILURE') throw response;
+            if (response.state === 'FAILURE')
+              throw new Error(JSON.stringify(response));
             return response.state === 'SUCCESS';
           },
           500,

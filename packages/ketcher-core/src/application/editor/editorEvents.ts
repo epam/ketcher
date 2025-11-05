@@ -75,6 +75,7 @@ export interface IEditorEvents {
   removeAutochainPreview: Subscription;
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
+  layoutCircular: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -150,6 +151,7 @@ export function resetEditorEvents() {
     removeAutochainPreview: new Subscription(),
     switchToMacromoleculesMode: new Subscription(),
     switchToMoleculesMode: new Subscription(),
+    layoutCircular: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -261,13 +263,13 @@ export const hotkeysConfiguration = {
     },
   },
   'zoom-plus': {
-    shortcut: 'Mod+=',
+    shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
     handler: () => {
       ZoomTool.instance.zoomIn();
     },
   },
   'zoom-minus': {
-    shortcut: 'Mod+-',
+    shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     handler: () => {
       ZoomTool.instance.zoomOut();
     },

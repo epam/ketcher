@@ -19,14 +19,13 @@ import {
   clickOnCanvas,
   delay,
 } from '@utils';
-import {
-  getBondByIndex,
-  getLeftBondByAttributes,
-  getTopBondByAttributes,
-} from '@utils/canvas/bonds';
+import { getBondByIndex, getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MicroBondDataIds,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -37,7 +36,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -49,6 +47,7 @@ import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibrar
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -120,7 +119,7 @@ test.describe(`Bond tool:`, () => {
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -173,23 +172,19 @@ test.describe(`Bond tool:`, () => {
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
-      const doubleBond = await getTopBondByAttributes(page, {
-        type: BondType.DOUBLE,
-      });
-      await clickOnCanvas(page, doubleBond.x, doubleBond.y, {
-        from: 'pageTopLeft',
-      });
+      const doubleBond = getBondLocator(page, {
+        bondType: MicroBondDataIds.Double,
+      }).first();
+      await doubleBond.click({ force: true });
 
-      const singleBond = await getTopBondByAttributes(page, {
-        type: BondType.SINGLE,
-      });
-      await clickOnCanvas(page, singleBond.x, singleBond.y, {
-        from: 'pageTopLeft',
-      });
+      const singleBond = getBondLocator(page, {
+        bondType: MicroBondDataIds.Single,
+      }).first();
+      await singleBond.click({ force: true });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     });
@@ -382,7 +377,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
         await CommonTopLeftToolbar(page).undo();
 
-        await selectRingButton(page, RingButton.Cyclohexane);
+        await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
           from: 'pageTopLeft',
@@ -611,7 +606,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure
      */
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     let i = 0;

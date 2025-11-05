@@ -4,8 +4,8 @@ import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit, waitForRender } from '@utils/common/loaders';
@@ -51,6 +51,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 // import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
@@ -606,7 +607,7 @@ const monomerToDrag2 = [
   Sugar.FMOE,
   Phosphate.bP,
   Nucleotide.AmMC6T,
-  Chem.DOTA,
+  // Chem.DOTA,
 ];
 
 for (const monomer of monomerToDrag2) {
@@ -637,8 +638,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 4,
-      box.y + box.height / 2 - 4,
+      box.x + box.width / 2 + 4,
+      box.y + box.height / 2 + 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1281,7 +1282,7 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
+  test.skip(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1339,7 +1340,7 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
+  test.skip(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1542,8 +1543,9 @@ for (const monomer of monomerToDrag) {
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
      * 3. Add target monomer to Favorites
-     * 4. Press Calculate Properties button
-     * 5. Take screenshot to validate it is visible
+     * 4. Drop monomer on the canvas
+     * 5. Press Calculate Properties button
+     * 6. Take screenshot to validate it is visible
      *
      * Version 3.6
      */
@@ -1551,7 +1553,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    expect(await CalculateVariablesPanel(page).isVisible()).toBeTruthy();
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 }

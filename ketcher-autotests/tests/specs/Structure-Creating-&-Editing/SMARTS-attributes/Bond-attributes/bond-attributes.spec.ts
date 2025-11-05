@@ -1,225 +1,176 @@
 import { Page, test, expect } from '@fixtures';
 import {
-  BondType,
-  doubleClickOnBond,
-  pressButton,
+  clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  checkSmartsValue,
-  checkSmartsWarnings,
-  setBondTopology,
-  setBondType,
-  setCustomQueryForBond,
-  setReactingCenter,
-} from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
+import { verifySMARTSExport, verifySMARTSExportWarnings } from '../utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  BondReactingCenterOption,
+  BondTopologyOption,
+  BondTypeOption,
+} from '@tests/pages/constants/bondProperties/Constants';
 
-async function setAndCheckBondProperties(
-  page: Page,
-  setProperty: (arg0: Page, arg1: string) => Promise<void>,
-  value: string,
-  expectedSmarts: string,
-) {
-  await setProperty(page, value);
-  await pressButton(page, 'Apply');
-  await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
-}
-
-async function waitForBondPropsModal(page: Page) {
-  await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
-}
-
-async function drawStructureAndDoubleClickOnBond(
-  page: Page,
-  bondType: BondType,
-  numberOfBond: number,
-) {
+async function drawStructure(page: Page) {
   await waitForPageInit(page);
-  await drawStructure(page);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
-  await doubleClickOnBond(page, bondType, numberOfBond);
-  await waitForBondPropsModal(page);
-}
-
-async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  const customQueryInput = page.getByTestId('bond-custom-query');
-  await expect(customQueryInput).toHaveValue(expectedValue);
 }
 
 test.describe('Checking bond attributes in SMARTS format', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+    await drawStructure(page);
+    await getBondLocator(page, { bondId: 0 }).dblclick({ force: true });
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
   // Tests for bond type:
 
   test('Setting bond type - single (aliphatic))', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single-option',
-      '[#6](-[#6])(-[#6])-[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Single,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
   });
 
   test('Setting bond type - single up', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single Up-option',
-      '[#6](-[#6])(-[#6])/[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleUp,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])/[#6]');
   });
 
   test('Setting bond type - single down', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single Down-option',
-      '[#6](-[#6])(-[#6])\\[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleDown,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])\\[#6]');
   });
 
   test('Setting bond type - single up/down', async () => {
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single Up/Down-option',
-      '[#6](-[#6])(-[#6])-[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleUpDown,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
   });
 
   test('Setting bond type - double', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Double-option',
-      '[#6](-[#6])(-[#6])=[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])=[#6]');
   });
 
   test('Setting bond type - double cis/trans', async () => {
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Double Cis/Trans-option',
-      '[#6](-[#6])(-[#6])=[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.DoubleCisTrans,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])=[#6]');
   });
 
   test('Setting bond type - triple', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Triple-option',
-      '[#6](-[#6])(-[#6])#[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Triple,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])#[#6]');
   });
 
   test('Setting bond type - aromatic', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Aromatic-option',
-      '[#6](-[#6])(-[#6]):[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Aromatic,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6]):[#6]');
   });
 
   test('Setting bond type - any', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Any-option',
-      '[#6](-[#6])(-[#6])~[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Any,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])~[#6]');
   });
 
   test('Setting bond type - hydrogen', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Hydrogen-option',
-      '[#6](-[#6])(-[#6])[#6]',
-    );
-    await checkSmartsWarnings(page);
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Hydrogen,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting bond type - single/double', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single/Double-option',
-      '[#6](-[#6])(-[#6])!:;-,=[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleDouble,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])!:;-,=[#6]');
   });
 
   test('Setting bond type - single/aromatic', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Single/Aromatic-option',
-      '[#6](-[#6])(-[#6])[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleAromatic,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])[#6]');
   });
 
   test('Setting bond type - double/aromatic', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Double/Aromatic-option',
-      '[#6](-[#6])(-[#6])=,:[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.DoubleAromatic,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])=,:[#6]');
   });
 
   test('Setting bond type - dative', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondType,
-      'Dative-option',
-      '[#6](-[#6])(-[#6])[#6]',
-    );
-    await checkSmartsWarnings(page);
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Dative,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   // Tests for bond topology:
 
   test('Setting bond topology - ring', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondTopology,
-      'Ring-option',
-      '[#6](-[#6])(-[#6])-;@[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Ring,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-;@[#6]');
   });
 
   test('Setting bond topology - chain', async () => {
-    await setAndCheckBondProperties(
-      page,
-      setBondTopology,
-      'Chain-option',
-      '[#6](-[#6])(-[#6])-;!@[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Chain,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-;!@[#6]');
   });
 
   test('Setting reacting center', async () => {
@@ -227,13 +178,12 @@ test.describe('Checking bond attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: setting reacting center option should have no impact on SMARTS output but warning should be displayed
      */
-    await setAndCheckBondProperties(
-      page,
-      setReactingCenter,
-      'Center-option',
-      '[#6](-[#6])(-[#6])-[#6]',
-    );
-    await checkSmartsWarnings(page);
+    await BondPropertiesDialog(page).setOptions({
+      reactingCenter: BondReactingCenterOption.Center,
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   // Custom query for bond
@@ -242,12 +192,11 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
      */
-    await setAndCheckBondProperties(
-      page,
-      setCustomQueryForBond,
-      '~,=',
-      '[#6](-[#6])(-[#6])~,=[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: '~,=',
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])~,=[#6]');
   });
 
   test('Setting custom query - directional bond "up or unspecified"', async () => {
@@ -255,25 +204,29 @@ test.describe('Checking bond attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/Indigo/issues/1281
      * Description: "or unspecified"("?") quantifier should be supported
      */
-    await setAndCheckBondProperties(
-      page,
-      setCustomQueryForBond,
-      '/?',
-      '[#6](-[#6])(-[#6])/?[#6]',
-    );
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: '/?',
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])/?[#6]');
   });
 });
 
 test.describe('Checking converting bond attributes to custom query', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+    await drawStructure(page);
+    await getBondLocator(page, { bondId: 0 }).dblclick({ force: true });
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
+  });
+  test.afterEach(async () => {
+    if (await BondPropertiesDialog(page).window.isVisible()) {
+      await BondPropertiesDialog(page).cancel();
+    }
   });
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
@@ -282,9 +235,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Description: If topology = "Either" then customQuery should be empty e.g. Type=Single, Topology=Either => customQuery=-
      */
     const expectedValue = '-';
-    await setBondType(page, 'Single-option');
-    await setBondTopology(page, 'Either-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Single);
+    await BondPropertiesDialog(page).selectBondTopology(
+      BondTopologyOption.Either,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -294,9 +252,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Description: If topology = "Ring" then customQuery should be @, e.g. Type=Double, Topology=Ring=>customQuery==;@
      */
     const expectedValue = '=;@';
-    await setBondType(page, 'Double-option');
-    await setBondTopology(page, 'Ring-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Double);
+    await BondPropertiesDialog(page).selectBondTopology(
+      BondTopologyOption.Ring,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 
   test('Converting Topology = "Chain" and Type = "Triple" to custom query', async () => {
@@ -305,9 +268,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Description: If topology = "Chain" then customQuery should be !@, e.g. Type=Triple, Topology=Chain=>customQuery=#;!@
      */
     const expectedValue = '#;!@';
-    await setBondType(page, 'Triple-option');
-    await setBondTopology(page, 'Chain-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Triple);
+    await BondPropertiesDialog(page).selectBondTopology(
+      BondTopologyOption.Chain,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 
   test('Converting Type = "Aromatic" and Reacting Center = "Center" to custom query', async () => {
@@ -317,9 +285,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Reacting Center option should be ingored at custom query
      */
     const expectedValue = ':';
-    await setBondType(page, 'Aromatic-option');
-    await setReactingCenter(page, 'Center-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Aromatic);
+    await BondPropertiesDialog(page).selectBondReactingCenter(
+      BondReactingCenterOption.Center,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 
   test('Converting Type = "Any" and Reacting Center = "Made/broken" to custom query', async () => {
@@ -329,9 +302,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Reacting Center option should be ingored at custom query
      */
     const expectedValue = '~';
-    await setBondType(page, 'Any-option');
-    await setReactingCenter(page, 'Made/broken-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.Any);
+    await BondPropertiesDialog(page).selectBondReactingCenter(
+      BondReactingCenterOption.MadeBroken,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 
   test('Converting Type = "Single up" and Reacting Center = "Order changes" to custom query', async () => {
@@ -341,9 +319,14 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Reacting Center option should be ingored at custom query
      */
     const expectedValue = '/';
-    await setBondType(page, 'Single Up-option');
-    await setReactingCenter(page, 'Order changes-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleUp);
+    await BondPropertiesDialog(page).selectBondReactingCenter(
+      BondReactingCenterOption.OrderChanges,
+    );
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 
   test('Converting Type = "Single down" to custom query', async () => {
@@ -352,21 +335,24 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Description: Single down bond should be converted to custom query as: \
      */
     const expectedValue = '\\';
-    await setBondType(page, 'Single Down-option');
-    await setCustomQueryAndCheckValue(page, expectedValue);
+    await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleDown);
+    await BondPropertiesDialog(page).checkCustomQueryCheckbox();
+    expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(
+      expectedValue,
+    );
   });
 });
 
 test.describe('Checking saving attributes to .ket file', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
-    const numberOfBond = 2;
     page = await initMoleculesCanvas();
-    await drawStructureAndDoubleClickOnBond(
-      page,
-      BondType.SINGLE,
-      numberOfBond,
-    );
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+    await drawStructure(page);
+    await getBondLocator(page, { bondId: 0 }).dblclick({ force: true });
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Save *.ket file with custom query for bond attribute', async () => {
@@ -374,10 +360,9 @@ test.describe('Checking saving attributes to .ket file', () => {
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: In KET format customQuery should be saved into the bond object without other properties
      */
-    await setBondType(page, 'Double-option');
-    await setBondTopology(page, 'Ring-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    await pressButton(page, 'Apply');
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: '=;@',
+    });
 
     await verifyFileExport(
       page,

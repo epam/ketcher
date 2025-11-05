@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "3.9.0-rc.1",
+  "version": "3.10.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -81,7 +81,6 @@
     "subscription": "^3.0.0",
     "url-search-params-polyfill": "^8.1.1",
     "use-resize-observer": "^7.0.0",
-    "w3c-keyname": "^2.2.4",
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {

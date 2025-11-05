@@ -141,6 +141,25 @@ const MonomerItem = ({
       }}
       {...(!isDisabled ? { onClick } : {})}
       ref={cardRef}
+      data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
+      data-idtalias-modifications-endpoint5={
+        monomerItem?.props.idtAliases?.modifications?.endpoint5 ?? undefined
+      }
+      data-idtalias-modifications-endpoint3={
+        monomerItem?.props.idtAliases?.modifications?.endpoint3 ?? undefined
+      }
+      data-idtalias-modifications-internal={
+        monomerItem?.props.idtAliases?.modifications?.internal ?? undefined
+      }
+      data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
+      data-helm={monomerItem?.props.aliasHELM ?? undefined}
+      data-modificationtype={
+        monomerItem?.props.modificationTypes
+          ? Array.isArray(monomerItem?.props.modificationTypes)
+            ? monomerItem?.props.modificationTypes.join(', ')
+            : monomerItem?.props.modificationTypes
+          : undefined
+      }
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (

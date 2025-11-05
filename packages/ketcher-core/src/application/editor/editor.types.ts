@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Action } from '../editor/actions';
-import { Render } from 'application/render';
+import { MonomerCreationState, Render } from 'application/render';
 import { Struct } from 'domain/entities';
 import { selectionKeys } from './shared/constants';
 import { PipelineSubscription, Subscription } from 'subscription';
@@ -96,7 +96,10 @@ export interface Editor {
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
   focusCliparea: () => void;
+  closeMonomerCreationWizard: () => void;
   ketcherId: string;
+  isMonomerCreationWizardActive: boolean;
+  monomerCreationState: MonomerCreationState;
 }
 
 export type LibraryItemDragState = {

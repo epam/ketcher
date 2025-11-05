@@ -76,6 +76,7 @@ type AtomPropertiesDialogLocators = GeneralProperties &
   QuerySpecificProperties &
   ReactionFlags &
   CustomQuery & {
+    window: Locator;
     closeWindowButton: Locator;
     applyButton: Locator;
     cancelButton: Locator;
@@ -142,6 +143,7 @@ export const AtomPropertiesDialog = (page: Page) => {
     customQueryCheckbox: page.getByTestId('custom-query-checkbox'),
     customQueryTextArea: page.getByTestId('atom-custom-query'),
 
+    window: page.getByTestId('atomProps-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
@@ -215,7 +217,7 @@ export const AtomPropertiesDialog = (page: Page) => {
       await ifNotNull(p => this.fillCustomQueryText(p), customQueryProperties.CustomQueryTextArea);
     },
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

@@ -123,8 +123,8 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 
   if (key && key.length === 1 && !hoveredItem) {
     const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-    const isShortcutKey = shortcutKeys.includes(key?.toLowerCase());
-    const isTheSameKey = key === currentlyPressedKeys;
+    const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+    const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
     const isAbbreviationLookupShown =
       (!isTheSameKey || !isShortcutKey) && currentlyPressedKeys;
     if (isAbbreviationLookupShown) {
@@ -147,7 +147,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     }
   }
 
-  if (key && key.length === 1 && key.match('/')) {
+  if (key === 'Slash') {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
       bonds: actions['bond-props'].action,

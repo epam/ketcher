@@ -95,6 +95,7 @@ export const Editor = (props: Props) => {
   useEffect(() => {
     if (moleculesEditor && macromoleculesEditor) {
       if (showPolymerEditor) {
+        moleculesEditor?.closeMonomerCreationWizard?.();
         macromoleculesEditor?.switchToMacromolecules();
       } else {
         macromoleculesEditor?.switchToMicromolecules();
@@ -125,6 +126,7 @@ export const Editor = (props: Props) => {
   return (
     <>
       <div
+        data-ketcher-editor
         className={styles.editorsWrapper}
         style={{
           display: showPolymerEditor ? undefined : 'none',
@@ -150,6 +152,7 @@ export const Editor = (props: Props) => {
         </Suspense>
       </div>
       <div
+        data-ketcher-editor
         className={styles.editorsWrapper}
         style={{
           display: showPolymerEditor ? 'none' : undefined,

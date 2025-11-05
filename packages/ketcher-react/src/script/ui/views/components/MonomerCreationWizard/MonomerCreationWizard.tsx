@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconButton } from 'components';
+import { Icon, IconButton, Dialog } from 'components';
 import {
   AttachmentPointClickData,
   AttachmentPointName,
@@ -36,7 +36,9 @@ import {
   MonomerTypeSelectConfig,
   NotificationMessages,
   NotificationTypes,
+  MAX_MODIFICATION_TYPES,
 } from './MonomerCreationWizard.constants';
+import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
@@ -47,6 +49,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
+import { TextField } from '@mui/material';
 
 const initialWizardState: WizardState = {
   values: {
@@ -54,6 +57,7 @@ const initialWizardState: WizardState = {
     symbol: '',
     name: '',
     naturalAnalogue: '',
+    aliasHELM: '',
   },
   errors: {},
   notifications: new Map([
@@ -154,12 +158,16 @@ const wizardReducer = (
 };
 
 const validateInputs = (values: WizardValues) => {
+  const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
-      if (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) {
+      if (
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
+        key !== 'aliasHELM'
+      ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
           type: 'error',
@@ -177,15 +185,37 @@ const validateInputs = (values: WizardValues) => {
           type: 'error',
           message: NotificationMessages.invalidSymbol,
         });
+
         return;
       }
 
-      const editor = CoreEditor.provideEditorInstance();
       if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
           type: 'error',
           message: NotificationMessages.symbolExists,
+        });
+      }
+    }
+
+    if (key === 'aliasHELM') {
+      const helmAliasRegex = /^[A-Za-z0-9\-_\\*]*$/;
+
+      if (value && !helmAliasRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidHELMAlias,
+        });
+
+        return;
+      }
+
+      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueHELMAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueHELMAlias,
         });
       }
     }
@@ -247,6 +277,23 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
 
 const validateStructure = (editor: Editor) => {
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const isStructureImpure = Editor.isStructureImpure(editor.struct());
+  if (isStructureImpure) {
+    notifications.set('impureStructure', {
+      type: 'error',
+      message: NotificationMessages.impureStructure,
+    });
+  }
+
+  const isMinimalViableStructure = editor.isMinimalViableStructure();
+  if (!isMinimalViableStructure) {
+    notifications.set('notMinimalViableStructure', {
+      type: 'error',
+      message: NotificationMessages.notMinimalViableStructure,
+    });
+    return notifications;
+  }
+
   const isStructureContinuous = Editor.isStructureContinuous(editor.struct());
   if (!isStructureContinuous) {
     notifications.set('incontinuousStructure', {
@@ -327,8 +374,10 @@ const MonomerCreationWizard = () => {
     useState<AttachmentPointClickData | null>(null);
 
   const { values, notifications, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
+    useState('');
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -389,6 +438,11 @@ const MonomerCreationWizard = () => {
         fieldId: 'type',
         value: value as KetMonomerClass,
       });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasHELM',
+        value: '',
+      });
     } else {
       wizardStateDispatch({
         type: 'SetFieldValue',
@@ -397,6 +451,10 @@ const MonomerCreationWizard = () => {
       });
     }
   };
+
+  useEffect(() => {
+    editor?.setMonomerCreationSelectedType?.(values.type);
+  }, [editor, values.type]);
 
   const handleModificationTypeChange = (
     indexToChange: number,
@@ -408,7 +466,12 @@ const MonomerCreationWizard = () => {
   };
 
   const handleAddModificationType = () => {
-    setModificationTypes((types) => [...types, '']);
+    setModificationTypes((types) => {
+      if (types.length >= MAX_MODIFICATION_TYPES) {
+        return types;
+      }
+      return [...types, ''];
+    });
   };
 
   const deleteModificationType = (indexToDelete: number) => {
@@ -525,12 +588,27 @@ const MonomerCreationWizard = () => {
       return;
     }
 
+    if (type) {
+      const leavingGroupNotifications = validateMonomerLeavingGroups(
+        editor,
+        type,
+        assignedAttachmentPoints,
+      );
+      if (leavingGroupNotifications.size > 0) {
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
+        setLeavingGroupDialogMessage(firstMessage);
+        return;
+      }
+    }
+
     editor.saveNewMonomer({
       type,
       symbol,
       name,
       naturalAnalogue,
       modificationTypes,
+      aliasHELM,
     });
 
     resetWizard();
@@ -543,7 +621,15 @@ const MonomerCreationWizard = () => {
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
 
   const displayModificationTypes =
-    wizardState.values.type === KetMonomerClass.AminoAcid && naturalAnalogue;
+    wizardState.values.type === KetMonomerClass.AminoAcid;
+  const displayAliases =
+    wizardState.values.type &&
+    [
+      KetMonomerClass.AminoAcid,
+      KetMonomerClass.Base,
+      KetMonomerClass.Sugar,
+      KetMonomerClass.Phosphate,
+    ].includes(wizardState.values.type);
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -599,7 +685,10 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={clsx(styles.input, errors.symbol && styles.error)}
+                  className={clsx(
+                    styles.input,
+                    errors.symbol && styles.inputError,
+                  )}
                   placeholder="e.g. PEG-2"
                   data-testid="symbol-input"
                   value={symbol}
@@ -617,7 +706,10 @@ const MonomerCreationWizard = () => {
               control={
                 <input
                   type="text"
-                  className={clsx(styles.input, errors.name && styles.error)}
+                  className={clsx(
+                    styles.input,
+                    errors.name && styles.inputError,
+                  )}
                   placeholder="e.g. Diethylene Glycol"
                   value={name}
                   data-testid="name-input"
@@ -660,6 +752,7 @@ const MonomerCreationWizard = () => {
               <span
                 className={styles.attachmentPointInfoIcon}
                 title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                data-testid="attachment-point-info-icon"
               >
                 <Icon name="about" />
               </span>
@@ -689,7 +782,7 @@ const MonomerCreationWizard = () => {
               <div>
                 <Accordion
                   className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
+                  square
                 >
                   <AccordionSummary
                     className={styles.accordionSummary}
@@ -730,9 +823,51 @@ const MonomerCreationWizard = () => {
                       type="button"
                       className={styles.addModificationTypeButton}
                       onClick={handleAddModificationType}
+                      disabled={
+                        modificationTypes.length >= MAX_MODIFICATION_TYPES
+                      }
                     >
                       Add modification type
                     </button>
+                  </AccordionDetails>
+                </Accordion>
+              </div>
+            </>
+          )}
+
+          {displayAliases && (
+            <>
+              <div className={styles.divider} />
+
+              <div>
+                <Accordion
+                  className={clsx(accordionClasses.accordion, styles.accordion)}
+                  square
+                >
+                  <AccordionSummary
+                    className={styles.accordionSummary}
+                    expandIcon={
+                      <Icon
+                        className={accordionClasses.expandIcon}
+                        name="chevron"
+                      />
+                    }
+                  >
+                    Aliases
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <p className={styles.inputLabel}>HELM</p>
+                    <TextField
+                      variant="standard"
+                      className={clsx(
+                        styles.inputField,
+                        errors.aliasHELM && styles.error,
+                      )}
+                      error={Boolean(errors.aliasHELM)}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        handleFieldChange('aliasHELM', event.target.value)
+                      }
+                    />
                   </AccordionDetails>
                 </Accordion>
               </div>
@@ -769,6 +904,41 @@ const MonomerCreationWizard = () => {
           </button>
         </div>
       </div>
+      {leavingGroupDialogMessage &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Non-typical attachment points"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  setLeavingGroupDialogMessage('');
+                  editor.saveNewMonomer({
+                    type,
+                    symbol,
+                    name,
+                    naturalAnalogue,
+                    modificationTypes,
+                    aliasHELM,
+                  });
+                  resetWizard();
+                },
+                onCancel: () => setLeavingGroupDialogMessage(''),
+              }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              primaryButtons={['Cancel']}
+            >
+              <div className={styles.DialogMessage}>
+                {leavingGroupDialogMessage}
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
     </div>
   );
 };

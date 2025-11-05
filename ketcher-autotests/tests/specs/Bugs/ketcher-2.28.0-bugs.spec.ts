@@ -45,10 +45,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   getSettingsOptionValue,
@@ -102,7 +99,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await selectRingButton(page, RingButton.Benzene);
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

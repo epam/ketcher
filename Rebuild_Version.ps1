@@ -7,4 +7,6 @@ npm run build
 cd .\ketcher-autotests\
 npm run docker:build
 cd ..
+$wshell = New-Object -ComObject Wscript.Shell
+$Output = $wshell.Popup("Build is ready")
 npm run serve

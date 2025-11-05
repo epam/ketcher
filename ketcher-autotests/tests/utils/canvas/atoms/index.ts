@@ -1,19 +1,11 @@
-import { getTopAtomByAttributes } from './getTopAtomByAttributes/getTopAtomByAttributes';
 import { getRightAtomByAttributes } from './getRightAtomByAttributes/getRightAtomByAttributes';
-import { getBottomAtomByAttributes } from './getBottomAtomByAttributes/getBottomAtomByAttributes';
-import { getLeftAtomByAttributes } from './getLeftAtomByAttributes/getLeftAtomByAttributes';
 // eslint-disable-next-line max-len
-import { getFirstAtomCoordinatesByAttributes } from './getFirstAtomCoordinatesByAttributes/getFirstAtomCoordinatesByAttributes';
 import { getAtomsCoordinatesByAttributes } from './getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
 import { getAtomByIndex } from './getAtomByIndex/getAtomByIndex';
 export * from '@utils/canvas/atoms';
 
 export {
   getAtomByIndex,
-  getTopAtomByAttributes,
   getRightAtomByAttributes,
-  getBottomAtomByAttributes,
-  getLeftAtomByAttributes,
-  getFirstAtomCoordinatesByAttributes,
   getAtomsCoordinatesByAttributes,
 };

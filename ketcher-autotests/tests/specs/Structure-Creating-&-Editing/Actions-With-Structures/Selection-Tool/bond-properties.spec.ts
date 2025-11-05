@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  BondType,
   clickOnCanvas,
   delay,
-  doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   MolFileFormat,
@@ -21,7 +19,6 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 import {
@@ -29,6 +26,8 @@ import {
   BondTopologyOption,
   BondReactingCenterOption,
 } from '@tests/pages/constants/bondProperties/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Bond Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,7 +45,7 @@ test.describe('Bond Properties', () => {
       Reacting Center - 'Unmarked'.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnBond(page, BondType.DOUBLE, 1);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -67,7 +66,7 @@ test.describe('Bond Properties', () => {
         (first letters of the bond types in the list).
       */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 5) {
@@ -99,7 +98,7 @@ test.describe('Bond Properties', () => {
         (first letters of the bond types in the list).
       */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 2) {
@@ -124,7 +123,7 @@ test.describe('Bond Properties', () => {
         (first letters of the bond types in the list).
       */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 2) {
@@ -158,7 +157,7 @@ test.describe('Bond Properties', () => {
             *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
           */
       await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
       await BondPropertiesDialog(page).setOptions({
         type: type[1] as BondTypeOption,
       });
@@ -172,7 +171,7 @@ test.describe('Bond Properties', () => {
           *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
         */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
     });
@@ -186,7 +185,7 @@ test.describe('Bond Properties', () => {
      * */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
     });
@@ -211,7 +210,7 @@ test.describe('Bond Properties', () => {
           User is able to select the Topology by typing the E, C, R letters.
         */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).bondTopologyDropdown.click();
     let i = 0;
     while (i < 2) {
@@ -240,7 +239,7 @@ test.describe('Bond Properties', () => {
           User is able to select the Topology by typing the E, C, R letters.
         */
       await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
       await BondPropertiesDialog(page).bondTopologyDropdown.click();
       await page.keyboard.press(letter);
       await takeEditorScreenshot(page);
@@ -260,16 +259,16 @@ test.describe('Bond Properties', () => {
         */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       topology: BondTopologyOption.Ring,
     });
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 6 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       topology: BondTopologyOption.Chain,
     });
 
-    await doubleClickOnBond(page, BondType.DOUBLE, 1);
+    await getBondLocator(page, { bondId: 11 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       topology: BondTopologyOption.Chain,
     });
@@ -294,7 +293,7 @@ test.describe('Bond Properties', () => {
       'Molfiles-V2000/mol_1461_to_open-expected.mol',
     );
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 6 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       topology: BondTopologyOption.Either,
     });
@@ -314,7 +313,7 @@ test.describe('Bond Properties', () => {
         */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await BondPropertiesDialog(page).bondReactingCenterDropdown.click();
     let i = 0;
     while (i < 2) {
@@ -343,7 +342,7 @@ test.describe('Bond Properties', () => {
           User is able to select the Topology by typing the E, C, R letters.
         */
       await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
       await BondPropertiesDialog(page).bondReactingCenterDropdown.click();
       await page.keyboard.press(letter);
       await takeEditorScreenshot(page);
@@ -359,6 +358,8 @@ test.describe('Bond Properties', () => {
     BondReactingCenterOption.MadeBrokenAndChanges,
     BondReactingCenterOption.Unmarked,
   ];
+
+  const bondIds = [22, 18, 19, 24, 25, 26, 20];
 
   test(`Change 'Reacting Center' field value - 1/2 edit and save`, async ({
     page,
@@ -385,19 +386,20 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
 
-    for (let i = 0; i < rCOptions.length - 1; i++) {
-      await doubleClickOnBond(page, BondType.SINGLE, i);
+    for (let i = 0; i < bondIds.length; i++) {
+      await getBondLocator(page, { bondId: bondIds[i] }).dblclick({
+        force: true,
+      });
       await BondPropertiesDialog(page).setOptions({
         reactingCenter: rCOptions[i],
       });
     }
-
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       reactingCenter: BondReactingCenterOption.Center,
     });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       reactingCenter: BondReactingCenterOption.Unmarked,
     });
@@ -423,7 +425,7 @@ test.describe('Bond Properties', () => {
       page,
       'Rxn-V2000/rxn-1463-to-open-expected.rxn',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       reactingCenter: BondReactingCenterOption.Center,
     });
@@ -446,7 +448,7 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
     await selectAllStructuresOnCanvas(page);
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 10 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
     });
@@ -460,17 +462,17 @@ test.describe('Bond Properties', () => {
     await page.mouse.move(x - offset, y - offset);
     await dragMouseTo(x + offset, y + offset, page);
 
-    await doubleClickOnBond(page, BondType.DOUBLE, 3);
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Single,
     });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       topology: BondTopologyOption.Chain,
     });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       reactingCenter: BondReactingCenterOption.Center,
     });
@@ -489,21 +491,21 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await getBondLocator(page, { bondId: 11 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
       topology: BondTopologyOption.Chain,
       reactingCenter: BondReactingCenterOption.Center,
     });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 13 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.SingleUp,
       topology: BondTopologyOption.Ring,
       reactingCenter: BondReactingCenterOption.NoChange,
     });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 4);
+    await getBondLocator(page, { bondId: 15 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.SingleUp,
       topology: BondTopologyOption.Chain,
@@ -532,7 +534,7 @@ test.describe('Bond Properties', () => {
       page,
       'Molfiles-V2000/mol_1465_to_open-expected.mol',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 5);
+    await getBondLocator(page, { bondId: 16 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.SingleUp,
       topology: BondTopologyOption.Chain,
@@ -547,7 +549,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, x + 150, y + 150, { from: 'pageTopLeft' });
 
     await verifyFileExport(
@@ -572,7 +574,7 @@ test.describe('Bond Properties', () => {
       page,
       'Rxn-V2000/rxn-1465-to-open-expected.rxn',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 10);
+    await getBondLocator(page, { bondId: 31 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
       type: BondTypeOption.Double,
     });

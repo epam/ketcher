@@ -1094,6 +1094,7 @@ export const MacromoleculePropertiesWindow = () => {
           hasPeptidesTabError) ||
         (selectedTabIndex === PROPERTIES_TABS.RNA && hasNucleotidesTabError)
       }
+      data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
         <WindowDragControl>

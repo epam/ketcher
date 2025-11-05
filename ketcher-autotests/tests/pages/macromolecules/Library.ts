@@ -193,7 +193,6 @@ export const Library = (page: Page) => {
 
       const monomerCard = getElement(monomer.testId);
       const monomerCardBbox = await monomerCard.boundingBox();
-
       await monomerCard.click({
         position: {
           // eslint-disable-next-line no-magic-numbers
@@ -223,6 +222,37 @@ export const Library = (page: Page) => {
 
     getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
       return getElement(monomer.testId);
+    },
+
+    getMonomerHELMAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-helm');
+    },
+
+    getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-axolabs');
+    },
+
+    getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-idtalias-base');
+    },
+
+    getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint5',
+      );
+    },
+    getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint3',
+      );
+    },
+    getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-internal',
+      );
+    },
+    getMonomerModificationTypes(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-modificationtype');
     },
 
     async isMonomerExist(

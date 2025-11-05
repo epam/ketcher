@@ -2,7 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
@@ -43,6 +42,13 @@ import {
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import {
+  ContextOption,
+  PropertyLabelType,
+  TypeOption,
+} from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -227,9 +233,9 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'N' },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -413,11 +419,13 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await ContextMenu(page, point).click(MicroBondOption.AttachSGroup);
-    await page.getByPlaceholder('Enter name').click();
-    await page.getByPlaceholder('Enter name').fill('A!@#$$$test');
-    await page.getByPlaceholder('Enter value').click();
-    await page.getByPlaceholder('Enter value').fill('Test!@#$%');
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Bond,
+      FieldName: 'A!@#$$$test',
+      FieldValue: 'Test!@#$%',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -438,9 +446,9 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'N' },
+    });
     await takeEditorScreenshot(page);
   });
 

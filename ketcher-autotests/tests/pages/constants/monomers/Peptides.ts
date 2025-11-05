@@ -67,6 +67,10 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     testId: 'LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid',
   },
   O: { alias: 'O', testId: 'O___Pyrrolysine' },
+  Peptide: {
+    alias: 'Peptide',
+    testId: 'Peptide___Peptide Test monomer',
+  },
   Phe_ol: { alias: 'Phe-ol', testId: 'Phe-ol___L-phenylalaninol' },
   SertBu: {
     alias: 'SertBu',
@@ -105,6 +109,11 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   B: { alias: 'B', testId: '_D___Aspartic acid_N___Asparagine' },
   J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' },
   Z: { alias: 'Z', testId: '_E___Glutamic acid_Q___Glutamine' },
+  // for library update test, doesn't exist initially
+  _Peptide1: {
+    alias: '_Peptide1',
+    testId: '_Peptide1____Peptide1',
+  },
 });
 
 export type PeptidesType = typeof Peptide;

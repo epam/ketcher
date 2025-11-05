@@ -18,12 +18,14 @@ import {
   AttachmentPointAtom,
   AttachmentPointName,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
+import { WarningMessageDialog } from './createMonomer/WarningDialog';
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
   symbolEditbox: Locator;
   nameEditbox: Locator;
   naturalAnalogueCombobox: Locator;
+  infoIcon: Locator;
   r1ControlGroup: Locator;
   r2ControlGroup: Locator;
   r3ControlGroup: Locator;
@@ -118,6 +120,7 @@ export const CreateMonomerDialog = (page: Page) => {
     symbolEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
     naturalAnalogueCombobox: page.getByTestId('natural-analogue-picker'),
+    infoIcon: page.getByTestId('attachment-point-info-icon'),
     r1ControlGroup: page.getByTestId('attachment-point-controls-R1'),
     r2ControlGroup: page.getByTestId('attachment-point-controls-R2'),
     r3ControlGroup: page.getByTestId('attachment-point-controls-R3'),
@@ -142,14 +145,14 @@ export const CreateMonomerDialog = (page: Page) => {
     r6AtomCombobox: page.getByTestId('attachment-point-atom-select-R6'),
     r7AtomCombobox: page.getByTestId('attachment-point-atom-select-R7'),
     r8AtomCombobox: page.getByTestId('attachment-point-atom-select-R8'),
-    r1DeleteButton: page.getByTestId('attachment-point-atom-select-R1'),
-    r2DeleteButton: page.getByTestId('attachment-point-atom-select-R2'),
-    r3DeleteButton: page.getByTestId('attachment-point-atom-select-R3'),
-    r4DeleteButton: page.getByTestId('attachment-point-atom-select-R4'),
-    r5DeleteButton: page.getByTestId('attachment-point-atom-select-R5'),
-    r6DeleteButton: page.getByTestId('attachment-point-atom-select-R6'),
-    r7DeleteButton: page.getByTestId('attachment-point-atom-select-R7'),
-    r8DeleteButton: page.getByTestId('attachment-point-atom-select-R8'),
+    r1DeleteButton: page.getByTestId('attachment-point-delete-button-R1'),
+    r2DeleteButton: page.getByTestId('attachment-point-delete-button-R2'),
+    r3DeleteButton: page.getByTestId('attachment-point-delete-button-R3'),
+    r4DeleteButton: page.getByTestId('attachment-point-delete-button-R4'),
+    r5DeleteButton: page.getByTestId('attachment-point-delete-button-R5'),
+    r6DeleteButton: page.getByTestId('attachment-point-delete-button-R6'),
+    r7DeleteButton: page.getByTestId('attachment-point-delete-button-R7'),
+    r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };
@@ -221,7 +224,7 @@ export const CreateMonomerDialog = (page: Page) => {
       const combobox =
         attachmentPointAtomComboboxByAP[options.attachmentPointName];
       await combobox.click();
-      await page.getByTestId(options.newAtom).click();
+      await page.getByTestId(options.newAtom).first().click();
     },
 
     async deleteAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -231,9 +234,12 @@ export const CreateMonomerDialog = (page: Page) => {
       });
     },
 
-    async submit() {
+    async submit({ ignoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
+        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
+          await WarningMessageDialog(page).ok();
+        }
       });
     },
 
@@ -260,7 +266,7 @@ export async function createMonomer(
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
-  await createMonomerDialog.submit();
+  await createMonomerDialog.submit({ ignoreWarning: true });
 }
 
 export async function prepareMoleculeForMonomerCreation(

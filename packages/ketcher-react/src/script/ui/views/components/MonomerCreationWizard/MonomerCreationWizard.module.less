@@ -51,6 +51,8 @@
   background-color: #F3F5F7;
   border-radius: 8px;
   pointer-events: auto;
+  overflow: auto;
+  min-height: 0;
 }
 
 .attributesTitle {
@@ -78,7 +80,7 @@
   width: 200px;
 }
 
-.error {
+.inputError {
   background-color: #FDE0DF !important;
   border: 1px solid @color-secondary-red !important;
 }
@@ -154,9 +156,15 @@
   }
 
   :global(.MuiAccordionDetails-root) {
+    margin-top: 10px !important;
     padding: 4px !important;
     background: none !important;
     box-shadow: none !important;
+  }
+
+  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+    min-height: 20px !important;
+    height: 20px !important;
   }
 }
 
@@ -192,4 +200,69 @@
   border-radius: 3px;
   font-size: 12px;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.smallDialog {
+  min-width: 360px;
+  max-width: 480px;
+}
+
+.dialogOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.DialogMessage {
+  margin: 16px 0 10px 0;
+}
+
+.inputField {
+  width: 100%;
+
+  &:global(.MuiTextField-root) {
+    :global(.MuiFormLabel-root) {
+      display: none;
+    }
+
+    :global(.MuiInputBase-root) {
+      margin: 0;
+      padding: 0 !important;
+
+      &::before {
+        display: none;
+      }
+
+      &::after {
+        display: none;
+      }
+
+      :global(.MuiInputBase-input) {
+        padding: 0 8px;
+      }
+    }
+  }
+
+  &.error {
+    & :global(.MuiInputBase-input) {
+      border-color: @color-secondary-red !important;
+      background: #FDE0DF !important;
+    }
+  }
+}
+
+.inputLabel {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  line-height: 14px;
 }

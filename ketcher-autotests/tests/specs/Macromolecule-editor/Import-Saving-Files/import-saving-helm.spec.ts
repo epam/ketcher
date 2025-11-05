@@ -343,10 +343,8 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (r)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
-    // There is bug 'https://github.com/epam/ketcher/issues/7763'
-    // So expected helm string is not correct
     differentHELMExport:
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (p)',
@@ -359,10 +357,8 @@ const correctHELMStrings: IHELMString[] = [
       '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)p}$$$$V2.0',
-    // There is bug 'https://github.com/epam/ketcher/issues/7763'
-    // So expected helm string is not correct
     differentHELMExport:
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)p}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {

@@ -59,7 +59,7 @@ test.describe('Hand tool', () => {
     // Verify if hand is not following coursor outside the canvas
     const point = { x: 45, y: 148 };
     await CommonLeftToolbar(page).handTool();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
   });

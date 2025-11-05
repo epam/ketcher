@@ -50,7 +50,7 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-13158
       Description: open template
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -71,7 +71,7 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = ' name ';
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -83,7 +83,7 @@ test.describe('Click User Templates on canvas', () => {
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -100,7 +100,7 @@ test.describe('Click User Templates on canvas', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'to_delete';
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -112,13 +112,13 @@ test.describe('Click User Templates on canvas', () => {
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
     await StructureLibraryDialog(page).setSearchValue('to_delete');
     await StructureLibraryDialog(page).deleteMyTemplate();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).setSearchValue('to_delete');
     await takeEditorScreenshot(page);
   });
@@ -141,7 +141,7 @@ test.describe('Click User Templates on canvas', () => {
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -168,7 +168,7 @@ test.describe('Click User Templates on canvas', () => {
     await TemplateEditDialog(page).save();
     await CommonTopLeftToolbar(page).clearCanvas();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -224,7 +224,7 @@ test.describe('Create and Save Templates', () => {
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -243,7 +243,7 @@ test.describe('Create and Save Templates', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'user_template_1';
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -256,7 +256,7 @@ test.describe('Create and Save Templates', () => {
     await TemplateEditDialog(page).save();
     await IndigoFunctionsToolbar(page).cleanUp();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -277,7 +277,7 @@ test.describe('Create and Save Templates', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -299,7 +299,7 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-11852
       Description: warning message validation
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -315,7 +315,7 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(1)
       Description: no mote than 128 symbols error validation
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -337,7 +337,7 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(2)
       Description: empty field validation
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -360,7 +360,7 @@ test.describe('Templates field lenght validations', () => {
       SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'user_template_1';
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,

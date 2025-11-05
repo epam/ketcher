@@ -33,39 +33,39 @@ export const BottomToolbar = (page: Page) => {
   return {
     ...locators,
 
-    async Benzene() {
+    async benzene() {
       await locators.benzeneButton.click();
     },
 
-    async Cyclopentadiene() {
+    async cyclopentadiene() {
       await locators.cyclopentadieneButton.click();
     },
 
-    async Cyclohexane() {
+    async cyclohexane() {
       await locators.cyclohexaneButton.click();
     },
 
-    async Cyclopentane() {
+    async cyclopentane() {
       await locators.cyclopentaneButton.click();
     },
 
-    async Cyclopropane() {
+    async cyclopropane() {
       await locators.cyclopropaneButton.click();
     },
 
-    async Cyclobutane() {
+    async cyclobutane() {
       await locators.cyclobutaneButton.click();
     },
 
-    async Cycloheptane() {
+    async cycloheptane() {
       await locators.cycloheptaneButton.click();
     },
 
-    async Cyclooctane() {
+    async cyclooctane() {
       await locators.cyclooctaneButton.click();
     },
 
-    async StructureLibrary() {
+    async structureLibrary() {
       await locators.structureLibraryButton.click();
     },
 

@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   BondType,
   clickOnAtom,
-  clickOnBond,
   screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
@@ -34,6 +33,7 @@ import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPro
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -65,7 +65,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.MultipleGroup,
       RepeatCount: '88',

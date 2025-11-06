@@ -226,19 +226,6 @@ export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
 }
 
-export async function clickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
 export async function clickOnAtom(
   page: Page,
   atomLabel: AtomLabelType,

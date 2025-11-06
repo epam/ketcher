@@ -8,7 +8,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
   waitForPageInit,
@@ -461,7 +460,7 @@ test.describe('Bond Tool', () => {
      */
     await drawBenzeneRing(page);
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -597,7 +596,7 @@ test.describe('Bond Tool', () => {
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 0 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -609,9 +608,10 @@ test.describe('Bond Tool', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
+    const bondIds = [11, 6, 7, 8, 9, 10];
     let i = 0;
-    while (i < 6) {
-      await clickOnBond(page, BondType.SINGLE, 0);
+    while (i < bondIds.length) {
+      await getBondLocator(page, { bondId: bondIds[i] }).click({ force: true });
       i++;
     }
     await takeEditorScreenshot(page);

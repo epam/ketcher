@@ -9,7 +9,6 @@ import {
   receiveFileComparisonData,
   saveToFile,
   waitForRender,
-  clickOnBond,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   clickOnAtom,
@@ -57,6 +56,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -329,7 +329,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await waitForRender(page, async () => {
-      await clickOnBond(page, BondType.SINGLE, 3);
+      await getBondLocator(page, { bondId: 2 }).click({ force: true });
     });
     await deleteByKeyboard(page);
 

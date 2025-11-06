@@ -9,8 +9,6 @@ import {
   clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
-  clickOnBond,
-  BondType,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
@@ -61,6 +59,7 @@ import {
   horizontalFlip,
   verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -492,11 +491,11 @@ test.describe('Template Manupulations', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    await clickOnBond(page, BondType.SINGLE, 2);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -509,7 +508,7 @@ test.describe('Template Manupulations', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 

@@ -4,7 +4,6 @@ import {
   BondType,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  clickOnBond,
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
@@ -39,6 +38,7 @@ import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPro
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -71,7 +71,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.SRUPolymer,
       PolymerLabel: 'A',

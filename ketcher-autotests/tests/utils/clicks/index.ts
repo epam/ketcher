@@ -2,8 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType } from '..';
 import { AtomLabelType, MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
@@ -224,19 +222,6 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
 
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
-}
-
-export async function clickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
 }
 
 export async function clickOnAtom(

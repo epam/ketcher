@@ -94,7 +94,7 @@ class ReLoop extends ReObject {
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
 
     // If the loop is inside a contracted sgroup, don't render it
-    if (sgroup.isContracted()) {
+    if (sgroup?.isContracted()) {
       // Verify all atoms in the loop belong to the same contracted sgroup
       const allAtomsInSameSgroup = Array.from(atomIds).every((atomId) => {
         const atomSgroup = molecule.getGroupFromAtomId(atomId);

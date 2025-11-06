@@ -4,9 +4,7 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  BondType,
   clickOnAtom,
-  clickOnBond,
   screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
@@ -40,6 +38,7 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -68,7 +67,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.Superatom,
       Name: 'Test@!#$%12345',

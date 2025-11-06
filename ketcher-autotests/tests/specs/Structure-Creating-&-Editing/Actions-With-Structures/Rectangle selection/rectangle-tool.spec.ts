@@ -2,7 +2,6 @@ import { Page, test } from '@fixtures';
 import {
   BondType,
   clickOnAtom,
-  clickOnBond,
   clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
@@ -19,6 +18,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -145,13 +145,13 @@ test.describe('Rectangle selection tool', () => {
 
   test('Fusing bonds together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
-    const firstBondNumber = 3;
+
     const secondBondnumber = 8;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnBond(page, BondType.SINGLE, firstBondNumber);
+    await getBondLocator(page, { bondId: 21 }).click({ force: true });
     const bondPoint = await getBondByIndex(
       page,
       { type: BondType.SINGLE },

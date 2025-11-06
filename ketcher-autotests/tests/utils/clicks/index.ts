@@ -2,8 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType } from '..';
 import { AtomLabelType, MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,

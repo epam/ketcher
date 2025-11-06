@@ -7,7 +7,6 @@ import {
   BondType,
   waitForPageInit,
   waitForRender,
-  clickOnBond,
   clickOnAtom,
   clickOnCanvas,
   screenshotBetweenUndoRedo,
@@ -49,6 +48,7 @@ import {
   PropertyLabelType,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -549,7 +549,7 @@ test.describe('Right-click menu', () => {
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
-    await clickOnBond(page, BondType.DOUBLE, 1);
+    await getBondLocator(page, { bondId: 2 }).click({ force: true });
     await clickOnAtom(page, 'C', 2);
     await page.keyboard.up('Shift');
     await ContextMenu(

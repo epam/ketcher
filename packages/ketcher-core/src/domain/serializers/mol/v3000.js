@@ -42,22 +42,22 @@ function parseAtomLineV3000(line) {
   };
   let label = split[1].trim();
   if (label.charAt(0) === '"' && label.charAt(label.length - 1) === '"') {
-    label = label.substr(1, label.length - 2);
+    label = label.slice(1, -1);
   } // strip qutation marks
   if (label.charAt(label.length - 1) === ']') {
     // assume atom list
-    label = label.substr(0, label.length - 1); // remove ']'
+    label = label.slice(0, -1); // remove ']'
     const atomListParams = {};
     atomListParams.notList = false;
     const matchNotListInfo = label.match(/NOT ?\[/);
     if (matchNotListInfo) {
       atomListParams.notList = true;
       const [matchedSubstr] = matchNotListInfo;
-      label = label.substr(matchedSubstr.length); // remove 'NOT [' or 'NOT['
+      label = label.slice(matchedSubstr.length); // remove 'NOT [' or 'NOT['
     } else if (label.charAt(0) !== '[') {
       throw new Error("Error: atom list expected, found '" + label + "'");
     } else {
-      label = label.substr(1); // remove '['
+      label = label.slice(1); // remove '['
     }
     atomListParams.ids = labelsListToIds(label.split(','));
     params.atomList = new AtomList(atomListParams);
@@ -78,7 +78,7 @@ function parseAtomLineV3000(line) {
       }
       params[utils.fmtInfo.v30atomPropMap[key]] = ival;
     } else if (key === 'RGROUPS') {
-      value = value.trim().substr(1, value.length - 2);
+      value = value.trim().slice(1, -1);
       const rgrsplit = value.split(' ').slice(1);
       params.rglabel = 0;
       for (const rgrValue of rgrsplit) {
@@ -144,9 +144,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     line = stripV30(ctabLines[shift++]).trim();
     if (line.trim() === 'END SGROUP') return shift;
     while (line.charAt(line.length - 1) === '-') {
-      line = (
-        line.substr(0, line.length - 1) + stripV30(ctabLines[shift++])
-      ).trim();
+      line = (line.slice(0, -1) + stripV30(ctabLines[shift++])).trim();
     }
     const split = splitSGroupDef(line);
     const type = split[1];
@@ -437,7 +435,7 @@ function spacebarsplit(line) {
 
   for (currentIndex; currentIndex < line.length; currentIndex += 1) {
     const currentSymbol = line[currentIndex];
-    if (line.substr(currentIndex, 3) === 'NOT') {
+    if (line.slice(currentIndex, currentIndex + 3) === 'NOT') {
       const closingBracketIndex = line.indexOf(']');
       split.push(line.slice(currentIndex, closingBracketIndex + 1));
       currentIndex = closingBracketIndex + 1;
@@ -461,7 +459,7 @@ function spacebarsplit(line) {
 // utils
 function stripQuotes(str) {
   if (str[0] === '"' && str[str.length - 1] === '"') {
-    return str.substr(1, str.length - 2);
+    return str.slice(1, -1);
   }
   return str;
 }
@@ -506,7 +504,7 @@ function parseBracedNumberList(line, shift) {
   if (!line) return null;
   const list = [];
   line = line.trim();
-  line = line.substr(1, line.length - 2);
+  line = line.slice(1, -1);
   const split = line.split(' ');
   shift = shift || 0;
 

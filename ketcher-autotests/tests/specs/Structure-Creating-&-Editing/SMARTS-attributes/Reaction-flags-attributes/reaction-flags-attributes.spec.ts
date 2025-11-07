@@ -7,7 +7,10 @@ import {
 } from '@utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { Inversion } from '@tests/pages/constants/atomProperties/Constants';
-import { verifySMARTSExportWarnings, verifySMARTSExport } from '../utils';
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
 
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 

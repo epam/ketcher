@@ -4,10 +4,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { verifySMARTSExport, verifySMARTSExportWarnings } from '../utils';
 import {
   FileType,
   verifyFileExport,
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
 } from '@utils/files/receiveFileComparisonData';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';

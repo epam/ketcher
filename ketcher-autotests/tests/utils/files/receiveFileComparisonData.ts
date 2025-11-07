@@ -298,3 +298,15 @@ export async function verifySequence1LetterCodeExport(
 
   await SaveStructureDialog(page).cancel();
 }
+
+export async function verifyIDTExport(page: Page, IDTExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
+  const IDTExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(IDTExportResult).toEqual(IDTExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}

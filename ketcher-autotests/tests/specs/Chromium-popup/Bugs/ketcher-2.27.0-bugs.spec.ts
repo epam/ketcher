@@ -9,7 +9,6 @@ import {
   MacroFileType,
   resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProjectMacro,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   takeMonomerLibraryScreenshot,

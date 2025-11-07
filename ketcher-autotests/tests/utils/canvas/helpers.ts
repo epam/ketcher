@@ -421,7 +421,7 @@ export async function pasteFromClipboardByKeyboard(
   );
 }
 
-export async function selectUndoByKeyboard(
+export async function undoByKeyboard(
   page: Page,
   options?:
     | {
@@ -436,7 +436,7 @@ export async function selectUndoByKeyboard(
   });
 }
 
-export async function selectRedoByKeyboard(
+export async function redoByKeyboard(
   page: Page,
   options?:
     | {
@@ -449,10 +449,6 @@ export async function selectRedoByKeyboard(
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
   });
-}
-
-export async function copyToClipboardByIcon(page: Page) {
-  await page.getByTestId('copy-to-clipboard').click();
 }
 
 export async function copyStructureByCtrlMove(

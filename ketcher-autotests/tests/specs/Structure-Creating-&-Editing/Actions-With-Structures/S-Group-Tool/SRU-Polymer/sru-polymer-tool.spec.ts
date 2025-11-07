@@ -8,7 +8,7 @@ import {
   MolFileFormat,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -156,7 +156,7 @@ test.describe('SRU Polymer tool', () => {
     );
     await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

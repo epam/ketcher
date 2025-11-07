@@ -14,8 +14,8 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectUndoByKeyboard,
-  selectRedoByKeyboard,
+  undoByKeyboard,
+  redoByKeyboard,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
   dragTo,
@@ -617,11 +617,11 @@ test.describe('Undo/Redo Actions', () => {
       { primary: true, secondary: true },
     );
     for (let i = 0; i < 2; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectRedoByKeyboard(page);
+      await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -639,11 +639,11 @@ test.describe('Undo/Redo Actions', () => {
     );
     await ZoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectRedoByKeyboard(page);
+      await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     await ZoomInByKeyboard(page, { repeat: 5 });
@@ -724,7 +724,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -747,7 +747,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await selectUndoByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
+    await undoByKeyboard(page);
   });
 });

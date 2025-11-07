@@ -17,7 +17,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   getControlModifier,
   MacroFileType,
 } from '@utils';
@@ -282,7 +282,7 @@ test.describe('Undo-Redo tests', () => {
     const numberOfPress = 6;
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
 

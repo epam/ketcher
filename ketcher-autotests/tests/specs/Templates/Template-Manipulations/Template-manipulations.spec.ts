@@ -16,7 +16,7 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   clickOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   pasteFromClipboardAndAddToCanvas,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -216,7 +216,7 @@ test.describe('Template Manupulations', () => {
       await selectAllStructuresOnCanvas(page);
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );

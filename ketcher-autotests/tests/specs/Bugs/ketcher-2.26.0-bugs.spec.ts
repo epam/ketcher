@@ -23,8 +23,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  moveMouseToTheMiddleOfTheScreen,
-  copyToClipboardByIcon,
   moveMouseAway,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -1623,8 +1621,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

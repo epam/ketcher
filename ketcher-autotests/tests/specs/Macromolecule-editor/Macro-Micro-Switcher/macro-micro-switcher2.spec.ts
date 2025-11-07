@@ -17,7 +17,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
-  copyToClipboardByIcon,
   screenshotBetweenUndoRedo,
   screenshotBetweenUndoRedoInMacro,
   copyToClipboardByKeyboard,
@@ -418,8 +417,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

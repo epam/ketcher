@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test } from '@fixtures';
 import {
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,

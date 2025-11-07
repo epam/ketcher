@@ -52,7 +52,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on functional group it should forms a bond between it
     */
     const atomToolbar = RightToolbar(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -74,7 +74,7 @@ test.describe('Click and drag Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -115,7 +115,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );

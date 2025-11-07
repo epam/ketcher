@@ -4,12 +4,9 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  BondType,
   dragMouseTo,
-  screenshotBetweenUndoRedo,
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
-  clickOnBond,
   waitForPageInit,
   waitForIndigoToLoad,
   waitForRender,
@@ -31,6 +28,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { INPUT_DELAY } from '@utils/globals';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -51,7 +49,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await MoleculesTopToolbar(page).cut();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -63,7 +65,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).cut();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -76,7 +82,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await clickOnAtom(page, 'C', anyAtom);
     await MoleculesTopToolbar(page).cut();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -85,11 +95,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    const anyBond = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await clickOnBond(page, BondType.TRIPLE, anyBond);
+    await getBondLocator(page, { bondId: 34 }).click({ force: true });
     await MoleculesTopToolbar(page).cut();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -145,7 +158,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +181,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -173,17 +194,20 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
-    const anyBond = 1;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
-      await clickOnBond(page, BondType.SINGLE, anyBond);
+      await getBondLocator(page, { bondId: 18 }).click({ force: true });
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -237,7 +261,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 30 }).click({ force: true });
     await MoleculesTopToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
@@ -323,7 +347,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
-      await clickOnBond(page, BondType.SINGLE, 0);
+      await getBondLocator(page, { bondId: 31 }).click({ force: true });
     });
 
     await copyToClipboardByKeyboard(page);

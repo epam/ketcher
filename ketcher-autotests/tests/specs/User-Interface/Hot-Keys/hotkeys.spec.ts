@@ -7,8 +7,6 @@ import {
   waitForRender,
   takeEditorScreenshot,
   clickOnAtom,
-  clickOnBond,
-  BondType,
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
@@ -38,6 +36,7 @@ import {
   SaltsAndSolventsTabItems,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -102,7 +101,7 @@ test.describe('Hot keys', () => {
     );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await page.keyboard.up('Shift');
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
@@ -245,7 +244,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -273,7 +272,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -303,7 +302,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -331,7 +330,7 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );

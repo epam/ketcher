@@ -782,7 +782,7 @@ const MonomerCreationWizard = () => {
               <div>
                 <Accordion
                   className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
+                  square
                 >
                   <AccordionSummary
                     className={styles.accordionSummary}
@@ -842,7 +842,7 @@ const MonomerCreationWizard = () => {
               <div>
                 <Accordion
                   className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
+                  square
                 >
                   <AccordionSummary
                     className={styles.accordionSummary}
@@ -856,8 +856,8 @@ const MonomerCreationWizard = () => {
                     Aliases
                   </AccordionSummary>
                   <AccordionDetails>
+                    <p className={styles.inputLabel}>HELM</p>
                     <TextField
-                      label="HELM"
                       variant="standard"
                       className={clsx(
                         styles.inputField,

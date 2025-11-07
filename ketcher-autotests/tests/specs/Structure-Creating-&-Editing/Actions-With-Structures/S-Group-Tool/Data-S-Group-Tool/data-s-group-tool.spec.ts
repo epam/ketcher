@@ -6,8 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  BondType,
-  clickOnBond,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   waitForPageInit,
@@ -44,6 +42,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -95,7 +94,7 @@ test.describe('Data S-Group tool', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -426,7 +425,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 11 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 

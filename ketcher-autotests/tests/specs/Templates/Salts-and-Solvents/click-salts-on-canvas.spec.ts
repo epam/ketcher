@@ -36,7 +36,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Glycerol,
     );
@@ -50,13 +50,13 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents on a FG it should replace it
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Isobutanol,
     );
@@ -71,12 +71,12 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Description: when clicking with a Salts and Solvents template on a Salts and Solvents
       it should replace it
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.TButanol,
     );
@@ -99,7 +99,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await dragMouseAndMoveTo(page, 50);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -119,7 +119,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -128,7 +128,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.Sulfolane,
     );

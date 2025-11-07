@@ -72,6 +72,7 @@ const ArrowScroll = ({
             classes.button,
             isLeftRight ? classes.right : classes.down,
           )}
+          data-testid="arrow-scroll-right-button"
         >
           {isLeftRight ? '►' : '▼'}
         </button>
@@ -90,6 +91,7 @@ const ArrowScroll = ({
             classes.button,
             isLeftRight ? classes.left : classes.up,
           )}
+          data-testid="arrow-scroll-left-button"
         >
           {isLeftRight ? '◄' : '▲'}
         </button>

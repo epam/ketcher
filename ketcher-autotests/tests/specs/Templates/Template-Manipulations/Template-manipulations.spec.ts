@@ -9,8 +9,6 @@ import {
   clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
-  clickOnBond,
-  BondType,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
@@ -61,6 +59,7 @@ import {
   horizontalFlip,
   verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -79,7 +78,7 @@ test.describe('Template Manupulations', () => {
     Description: Look at the bottom of the application.
     Choose any template.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -279,8 +278,8 @@ test.describe('Template Manupulations', () => {
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibrary);
     await takeEditorScreenshot(page);
   });
 
@@ -492,11 +491,11 @@ test.describe('Template Manupulations', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    await clickOnBond(page, BondType.SINGLE, 2);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -509,7 +508,7 @@ test.describe('Template Manupulations', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -523,7 +522,7 @@ test.describe('Template Manupulations', () => {
     Attach selected structure to the FG
     */
     const X_DELTA_ONE = 100;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CONH2,
     );
@@ -590,11 +589,11 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
-    await BottomToolbar(page).Cyclopentadiene();
+    await BottomToolbar(page).cyclopentadiene();
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takePageScreenshot(page);
@@ -609,7 +608,7 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -659,7 +658,7 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of merging the pasted Template with another Template is displayed under the mouse cursor, and click
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -687,10 +686,10 @@ test.describe('Open Ketcher', () => {
     Description:
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,

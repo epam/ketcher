@@ -29,13 +29,13 @@ test.describe('Salts and Solvents replacement', () => {
       */
       test.slow();
 
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
@@ -57,28 +57,28 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
       await atomToolbar.clickAtom(Atom.Carbon);
       await clickInTheMiddleOfTheScreen(page);
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.Bz,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
@@ -95,7 +95,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );

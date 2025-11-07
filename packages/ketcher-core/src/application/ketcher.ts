@@ -64,6 +64,7 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
+  needZoom?: boolean;
 };
 
 const allowedApiSettings = {
@@ -72,6 +73,12 @@ const allowedApiSettings = {
   disableQueryElements: 'disableQueryElements',
   bondThickness: 'bondThickness',
 };
+
+const MONOMER_LIBRARY_FORMAT_OPTIONS = {
+  inputFormat: ChemicalMimeType.MonomerLibrary,
+  outputFormat: ChemicalMimeType.MonomerLibrary,
+  outputContentType: ChemicalMimeType.MonomerLibrary,
+} as const;
 
 export class Ketcher {
   _id: string;
@@ -486,8 +493,11 @@ export class Ketcher {
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
-        macromoleculesEditor?.zoomToStructuresIfNeeded();
-        macromoleculesEditor.mode.initialize();
+
+        if (options?.needZoom !== false) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+          macromoleculesEditor.mode.initialize();
+        }
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
@@ -558,6 +568,40 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+      }
+    }, this.eventBus);
+  }
+
+  async circularLayoutMonomers() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    await runAsyncAction<void>(async () => {
+      if (window.isPolymerEditorTurnedOn) {
+        const ketSerializer = new KetSerializer();
+        const serializedKet = ketSerializer.serialize(
+          new Struct(),
+          editor.drawingEntitiesManager,
+          undefined,
+          false,
+          true,
+        );
+
+        const result = await this.structService.layout(
+          {
+            struct: serializedKet,
+            output_format: ChemicalMimeType.KET,
+          },
+          {
+            'smart-layout': false,
+          },
+        );
+
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(
+          result.struct,
+          this.structService,
+          true,
+        );
       }
     }, this.eventBus);
   }
@@ -685,16 +729,36 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.indigo.convert(rawMonomersDataString, {
-        inputFormat: ChemicalMimeType.MonomerLibrary,
-        outputFormat: ChemicalMimeType.MonomerLibrary,
-        outputContentType: ChemicalMimeType.MonomerLibrary,
-      });
+      const convertResult = await this.indigo.convert(
+        rawMonomersDataString,
+        MONOMER_LIBRARY_FORMAT_OPTIONS,
+      );
 
       dataInKetFormat = convertResult.struct;
     }
 
     return dataInKetFormat;
+  }
+
+  public async ensureMonomersLibraryDataInSdfFormat(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const rawMonomersDataString = ensureString(rawMonomersData);
+    const format =
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
+
+    if (format === SupportedFormat.sdf || format === SupportedFormat.sdfV3000) {
+      return rawMonomersDataString;
+    }
+
+    const convertResult = await this.indigo.convert(rawMonomersDataString, {
+      ...MONOMER_LIBRARY_FORMAT_OPTIONS,
+      monomerLibrarySavingMode: 'sdf',
+      molfileSavingSkipDate: 'true',
+    });
+
+    return convertResult.struct;
   }
 
   public async updateMonomersLibrary(
@@ -716,12 +780,17 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.updateMonomersLibrary(dataInKetFormat);
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
   }
 
   public async replaceMonomersLibrary(
@@ -743,9 +812,14 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     editor.events.updateMonomersLibrary.dispatch();
   }
 

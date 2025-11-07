@@ -19,7 +19,7 @@ import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 
 let page: Page;
@@ -658,7 +658,7 @@ test(`15. Check that when editing the LGA, the user should see all possible LGAs
   await takeElementScreenshot(page, targetAtom, { padding: 80 });
 
   await CreateMonomerDialog(page)
-    .getAttachmentPointAtomCombobox(AttachmentPointName.R1)
+    .getAttachmentPointAtomCombobox(AttachmentPointOption.R1)
     .click();
   await expect(page.getByTestId(AttachmentPointAtom.H)).toBeVisible();
   await expect(page.getByTestId(AttachmentPointAtom.CH3)).toBeVisible();
@@ -782,7 +782,9 @@ test(`18. Check that from the attributes panel, the user can delete an already s
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await expect(attachmentPointR1).toBeVisible();
 
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R1);
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R1,
+  );
 
   await expect(attachmentPointR1).not.toBeVisible();
 

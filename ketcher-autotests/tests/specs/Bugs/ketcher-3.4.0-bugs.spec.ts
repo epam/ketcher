@@ -81,8 +81,6 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,

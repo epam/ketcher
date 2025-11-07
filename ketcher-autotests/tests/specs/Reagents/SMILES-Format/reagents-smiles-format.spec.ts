@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
-  moveMouseAway,
   readFileContent,
 } from '@utils';
 import {

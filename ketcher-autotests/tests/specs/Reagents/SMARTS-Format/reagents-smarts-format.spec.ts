@@ -4,7 +4,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {

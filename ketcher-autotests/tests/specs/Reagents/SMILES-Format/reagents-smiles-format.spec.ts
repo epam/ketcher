@@ -17,6 +17,7 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { verifySMILESExport } from '@utils/files/receiveFileComparisonData';
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,12 +45,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMILES,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await verifySMILESExport(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -73,12 +69,10 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMILES,
+    await verifySMILESExport(
+      page,
+      'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule as reagent
@@ -96,12 +90,7 @@ test.describe('Reagents SMILES format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.ExtendedSMILES,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await verifySMILESExport(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -119,12 +108,10 @@ test.describe('Reagents SMILES format', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.ExtendedSMILES,
+    await verifySMILESExport(
+      page,
+      'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {

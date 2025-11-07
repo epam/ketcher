@@ -373,3 +373,18 @@ export async function verifySMARTSExportWarnings(page: Page) {
   expect(warningText).toEqual(value);
   await SaveStructureDialog(page).closeWindow();
 }
+
+export async function verifyInChiKeyExport(
+  page: Page,
+  InChiKeyExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
+  const IDTExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(IDTExportResult).toEqual(InChiKeyExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}

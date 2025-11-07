@@ -174,7 +174,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Benzene ring.ket',
     );
-    await takePageScreenshot(page, {
+    await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });

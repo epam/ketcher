@@ -809,7 +809,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/Export (and import) of sequence of nucleosides to HELM works wrong.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
     await verifyHELMExport(
       page,
       'RNA1{[5R6Rm5cEt](A).[5R6Rm5cEt](A).[5R6Rm5cEt](A)}$$$$V2.0',

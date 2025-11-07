@@ -40,6 +40,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   FileType,
+  verifyFASTAExport,
   verifyFileExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -47,8 +48,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
@@ -79,8 +78,8 @@ import {
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -376,16 +375,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await Library(page).selectMonomer(Peptide.O);
     await Library(page).selectMonomer(Peptide.K);
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.FASTA,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await SaveStructureDialog(page).cancel();
+    await verifyFASTAExport(page, '>Sequence1\nOK');
   });
 
   test('Case 12: DNA/RNA sequences should NOT accept * symbols', async () => {
@@ -409,7 +399,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence: *'",
     );
     await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).closeWindow();
+    await PasteFromClipboardDialog(page).closeWindow();
   });
 
   test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {

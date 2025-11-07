@@ -279,3 +279,22 @@ export async function verifyFASTAExport(page: Page, FASTAExportExpected = '') {
 
   await SaveStructureDialog(page).cancel();
 }
+
+export async function verifySequence1LetterCodeExport(
+  page: Page,
+  Sequence1LetterCodeExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
+  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(Sequence1LetterCodeExportResult).toEqual(
+    Sequence1LetterCodeExportExpected,
+  );
+
+  await SaveStructureDialog(page).cancel();
+}

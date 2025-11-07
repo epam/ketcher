@@ -41,6 +41,7 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -809,14 +810,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'KET/Bugs/Export (and import) of sequence of nucleosides to HELM works wrong.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
+    await verifyHELMExport(
+      page,
+      'RNA1{[5R6Rm5cEt](A).[5R6Rm5cEt](A).[5R6Rm5cEt](A)}$$$$V2.0',
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

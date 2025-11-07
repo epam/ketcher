@@ -267,3 +267,15 @@ export async function verifySVGExport(page: Page) {
   );
   await SaveStructureDialog(page).cancel();
 }
+
+export async function verifyFASTAExport(page: Page, FASTAExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.FASTA,
+  );
+  const FASTAExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(FASTAExportResult).toEqual(FASTAExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}

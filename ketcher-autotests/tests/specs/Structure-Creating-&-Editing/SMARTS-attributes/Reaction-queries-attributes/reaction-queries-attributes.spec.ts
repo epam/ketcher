@@ -13,7 +13,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { verifySMARTSExport } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -28,6 +27,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

@@ -284,3 +284,46 @@ export async function verifySVGExport(page: Page) {
   );
   await SaveStructureDialog(page).cancel();
 }
+
+export async function verifyFASTAExport(page: Page, FASTAExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.FASTA,
+  );
+  const FASTAExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(FASTAExportResult).toEqual(FASTAExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifySequence1LetterCodeExport(
+  page: Page,
+  Sequence1LetterCodeExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
+  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(Sequence1LetterCodeExportResult).toEqual(
+    Sequence1LetterCodeExportExpected,
+  );
+
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifyIDTExport(page: Page, IDTExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
+  const IDTExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(IDTExportResult).toEqual(IDTExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}

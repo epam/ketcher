@@ -23,7 +23,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
   const leftBarSize = await page

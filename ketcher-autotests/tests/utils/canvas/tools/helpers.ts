@@ -49,7 +49,7 @@ export async function selectWithLasso(
   });
 }
 
-export async function selectTAndDeselectWithLasso(
+export async function selectAndDeselectWithLasso(
   page: Page,
   startX: number,
   startY: number,

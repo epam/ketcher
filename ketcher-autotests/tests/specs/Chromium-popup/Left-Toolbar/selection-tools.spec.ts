@@ -17,7 +17,7 @@ import {
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectTAndDeselectWithLasso,
+  selectAndDeselectWithLasso,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
@@ -275,7 +275,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       'KET/micro-and-macro-structures.ket',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectTAndDeselectWithLasso(page, 320, 150, [
+    await selectAndDeselectWithLasso(page, 320, 150, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },
@@ -303,7 +303,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       'KET/micro-and-macro-structures.ket',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectTAndDeselectWithLasso(page, 300, 110, [
+    await selectAndDeselectWithLasso(page, 300, 110, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },
@@ -331,7 +331,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       'KET/micro-and-macro-structures.ket',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await selectTAndDeselectWithLasso(page, 300, 100, [
+    await selectAndDeselectWithLasso(page, 300, 100, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },

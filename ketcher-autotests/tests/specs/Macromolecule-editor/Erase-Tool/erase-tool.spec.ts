@@ -86,7 +86,7 @@ test.describe('Erase Tool', () => {
     );
 
     // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -442,7 +442,7 @@ test.describe('Erase Tool', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);
@@ -473,7 +473,7 @@ test.describe('Erase Tool', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);
@@ -504,7 +504,7 @@ test.describe('Erase Tool', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);
@@ -535,7 +535,7 @@ test.describe('Erase Tool', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);

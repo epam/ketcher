@@ -59,7 +59,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -452,7 +452,7 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);
@@ -496,7 +496,7 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);

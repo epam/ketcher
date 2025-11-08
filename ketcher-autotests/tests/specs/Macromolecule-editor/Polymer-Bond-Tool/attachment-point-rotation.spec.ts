@@ -59,7 +59,7 @@ test.describe('Check attachment point rotation', () => {
     );
 
     // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -108,7 +108,7 @@ test.describe('Check attachment point rotation', () => {
     );
 
     // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -122,14 +122,14 @@ test.describe('Check attachment point rotation', () => {
     });
 
     // Move selected monomer
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(410, 410);
     await dragMouseTo(200, 400, page);
     await moveMouseAway(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     // Hover 1th peptide
     await peptide1.hover();
     await takeEditorScreenshot(page, {

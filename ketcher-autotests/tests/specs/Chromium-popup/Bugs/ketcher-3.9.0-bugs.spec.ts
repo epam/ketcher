@@ -741,7 +741,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       `5'-(vinu)-3'`,
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const vinU = getMonomerLocator(page, Nucleotide.vinU);
     await vinU.hover();
     await expect(vinU.getByTestId(AttachmentPoint.R2)).toBeVisible();

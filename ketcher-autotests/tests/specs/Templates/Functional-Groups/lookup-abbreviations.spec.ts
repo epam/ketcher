@@ -201,7 +201,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
     await clickOnAtom(page, 'C', atomC);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });

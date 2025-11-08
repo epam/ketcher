@@ -333,7 +333,7 @@ test.describe('Zoom Tool', () => {
     await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
     await dragMouseTo(100, 100, page);
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

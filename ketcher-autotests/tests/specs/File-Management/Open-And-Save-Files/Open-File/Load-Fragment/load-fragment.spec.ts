@@ -182,7 +182,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     async function addAndMovePlusSymbol() {
       await LeftToolbar(page).reactionPlusTool();
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(x - shiftForReactionPlus, y, page);
@@ -200,7 +200,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     async function addArrowSymbol() {
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
     }
 
     async function addSecondHydrogen() {

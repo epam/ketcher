@@ -35,9 +35,7 @@ test.describe('Fragment selection tool', () => {
   test('Molecule selection', async ({ page }) => {
     // Test case: EPMLSOPKET-1355
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await clickOnAtom(page, 'C', 1);
     await takeEditorScreenshot(page);
   });
@@ -45,9 +43,7 @@ test.describe('Fragment selection tool', () => {
   test('Reaction component selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1356
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getPlusLocator(page).nth(1).click();
     await takeEditorScreenshot(page);
     await getArrowLocator(page, {}).nth(0).click({ force: true });
@@ -57,9 +53,7 @@ test.describe('Fragment selection tool', () => {
   test('Select and drag reaction components', async ({ page }) => {
     //  Test case: EPMLSOPKET-1357
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await page.keyboard.down('Shift');
     await getPlusLocator(page).nth(1).click({ force: true });
     await getArrowLocator(page, {}).nth(0).click({ force: true });
@@ -73,9 +67,7 @@ test.describe('Fragment selection tool', () => {
     //  Test case: EPMLSOPKET-1358
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await clickOnAtom(page, 'C', 2);
     await dragTo(
       page,
@@ -88,9 +80,7 @@ test.describe('Fragment selection tool', () => {
   test('Deleting molecule', async ({ page }) => {
     //  Test case: EPMLSOPKET-1359
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await clickOnAtom(page, 'Br', 0);
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
@@ -100,9 +90,7 @@ test.describe('Fragment selection tool', () => {
     // Test case: EPMLSOPKET-1360
     // Move some parts off structure - plus and arrow - then use Undo?redo
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await waitForRender(page, async () => {
       await page.keyboard.down('Shift');
       await getPlusLocator(page).nth(1).click({ force: true });
@@ -121,9 +109,7 @@ test.describe('Fragment selection tool', () => {
     // Test case: EPMLSOPKET-17664
     // Verify the bond contours are not intersected with atom contours
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     const point = await getRightAtomByAttributes(page, { label: 'N' });
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await page.mouse.move(point.x, point.y);

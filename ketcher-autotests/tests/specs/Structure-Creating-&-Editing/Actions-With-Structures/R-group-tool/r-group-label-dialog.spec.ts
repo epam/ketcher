@@ -266,7 +266,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R5').click();
@@ -282,7 +282,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R1').click();
@@ -319,7 +319,7 @@ test.describe('R-Group Label Tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R8').click();
@@ -403,7 +403,7 @@ test.describe('R-Group Label Tool', () => {
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

@@ -319,51 +319,6 @@ export async function addBondedMonomersToCanvas(
   return monomers;
 }
 
-export async function addMonomerToCenterOfCanvas(
-  page: Page,
-  monomerType: Monomer,
-) {
-  await Library(page).dragMonomerOnCanvas(monomerType, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
-}
-
-export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
-  await Library(page).dragMonomerOnCanvas(peptide, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-}
-
-export async function addRnaPresetOnCanvas(
-  page: Page,
-  preset: Monomer,
-  positionX: number,
-  positionY: number,
-  sugarIndex: number,
-  phosphateIndex: number,
-) {
-  await Library(page).dragMonomerOnCanvas(preset, {
-    x: positionX,
-    y: positionY,
-  });
-  await MonomerPreviewTooltip(page).hide();
-  const sugar = page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
-    .nth(sugarIndex);
-  const phosphate = page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
-    .nth(phosphateIndex);
-
-  return { sugar, phosphate };
-}
-
 export async function copyToClipboardByKeyboard(
   page: Page,
   options?:
@@ -468,9 +423,7 @@ export async function selectCanvasArea(
   firstCorner: { x: number; y: number },
   secondCorner: { x: number; y: number },
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

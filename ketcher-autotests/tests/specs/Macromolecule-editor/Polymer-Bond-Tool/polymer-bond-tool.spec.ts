@@ -110,7 +110,7 @@ test('Create bond between two peptides', async () => {
   );
 
   // Select bond tool
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -151,7 +151,7 @@ test('Create bond between two chems', async () => {
   const chem2 = getMonomerLocator(page, Chem.hxy).nth(1);
 
   // Select bond tool
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
   // Create bonds between chems, taking screenshots in middle states
   await chem1.hover();
@@ -189,7 +189,7 @@ test('Select monomers and pass a bond', async () => {
     400,
     1,
   );
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide2, peptide1);
   await page.waitForSelector('#error-tooltip');
@@ -355,7 +355,7 @@ test('Verify that clicking "Reconnect" with different attachment points chosen r
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -371,7 +371,7 @@ test('Verify that clicking "Reconnect" without changing the attachment points re
   await openFileAndAddToCanvasMacro(page, 'KET/two-peptides-connected.ket');
   await ContextMenu(page, bondLine).click(MacroBondOption.EditAttachmentPoints);
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -396,7 +396,7 @@ test('Verify that clicking "Cancel" in the dialog results in no change to the bo
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).cancel();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -421,7 +421,7 @@ test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" do
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).close();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -441,19 +441,19 @@ test('Verify that changes made in the "Edit Attachment Points" dialog can be und
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).undo();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).redo();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -478,7 +478,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     'KET/two-peptides-connected-expected.ket',
     FileType.KET,
   );
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -507,7 +507,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     MolFileFormat.v3000,
   );
 
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -538,7 +538,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.Sequence, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -569,7 +569,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.FASTA, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -595,7 +595,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
   await AttachmentPointsDialog(page).reconnect();
   await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
   await openFileAndAddToCanvasAsNewProject(page, 'IDT/moe-idt-expected.idt');
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -615,7 +615,7 @@ test('Verify changing connection points of a side chain bond', async () => {
     rightMonomer: AttachmentPoint.R1,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -635,7 +635,7 @@ test('Verify editing of a cyclic structure', async () => {
     rightMonomer: AttachmentPoint.R3,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -655,7 +655,7 @@ test('Verify correct display and changing of connection points in the dialog for
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

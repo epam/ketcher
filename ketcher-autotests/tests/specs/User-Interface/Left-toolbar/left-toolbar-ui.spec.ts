@@ -69,7 +69,7 @@ test.describe('Left toolbar UI tests', () => {
   test('stereochemistry ui verification', async ({ page }) => {
     // Test case: EPMLSOPKET-8918
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeLeftToolbarScreenshot(page);
   });

@@ -140,7 +140,7 @@ test.describe('Right-click menu', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', 1);
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -545,7 +545,7 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
@@ -593,7 +593,7 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const colors = [
@@ -629,7 +629,7 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const colors = [

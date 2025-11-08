@@ -38,7 +38,7 @@ test.describe('Check attachment point hover', () => {
       1,
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

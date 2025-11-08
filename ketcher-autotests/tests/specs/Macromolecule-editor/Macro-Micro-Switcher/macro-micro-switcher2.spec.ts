@@ -276,7 +276,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -664,7 +664,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

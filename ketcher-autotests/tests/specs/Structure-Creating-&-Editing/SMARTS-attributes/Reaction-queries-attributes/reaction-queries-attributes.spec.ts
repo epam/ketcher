@@ -38,15 +38,15 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
   await dragMouseTo(x - shiftForHydrogen, y, page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
 
@@ -69,7 +69,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 

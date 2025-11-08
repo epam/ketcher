@@ -12,7 +12,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   clickOnAtom,
-  addMonomerToCenterOfCanvas,
   deleteByKeyboard,
 } from '@utils';
 import {
@@ -57,6 +56,8 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -113,7 +114,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -396,7 +397,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -976,8 +977,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await addMonomerToCenterOfCanvas(page, Peptide.A);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -22,7 +22,7 @@ test.describe('Modal window', () => {
     chem2 = await addSingleMonomerToCanvas(page, Chem.Test_6_Ch, 400, 400, 1);
 
     // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   });
 
   test('"Connect" button is disabled', async ({ page }) => {

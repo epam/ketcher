@@ -211,7 +211,7 @@ test.describe('Atom Properties', () => {
     const secondAnyAtom = 3;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await doubleClickOnAtom(page, 'C', 1);
 
@@ -290,7 +290,7 @@ test.describe('Atom Properties', () => {
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await selectAllStructuresOnCanvas(page);
 
@@ -1325,7 +1325,7 @@ test.describe('Atom Properties', () => {
     await atomToolbar.clickAtom(Atom.Phosphorus);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -1500,7 +1500,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1516,7 +1516,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1528,7 +1528,7 @@ test.describe('Atom Properties', () => {
     */
     await selectExtendedTableElement(page, ExtendedTableButton.G);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1540,7 +1540,7 @@ test.describe('Atom Properties', () => {
     */
     await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('GH*').first().dblclick();

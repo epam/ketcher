@@ -569,7 +569,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -593,7 +593,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -835,7 +835,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(100, 100);
@@ -850,7 +850,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.keyboard.press('Shift+Tab');
@@ -888,7 +888,7 @@ test.describe('Image files', () => {
     await pageReloadMicro(page);
 
     await openImageAndAddToCanvas(page, 'Images/image-png.png');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -999,7 +999,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -1028,7 +1028,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -1055,7 +1055,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1090,7 +1090,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -1122,7 +1122,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -2703,7 +2703,7 @@ test.describe('Image files', () => {
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -2739,7 +2739,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -2777,7 +2777,7 @@ test.describe('Image files', () => {
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -2893,7 +2893,7 @@ test.describe('Image files', () => {
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -2929,7 +2929,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -2967,7 +2967,7 @@ test.describe('Image files', () => {
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -3151,7 +3151,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -3180,7 +3180,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -3211,7 +3211,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -3246,7 +3246,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -3279,7 +3279,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -3308,7 +3308,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);

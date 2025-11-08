@@ -22,7 +22,7 @@ import {
 
 async function drawStructure(page: Page) {
   await waitForPageInit(page);
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);

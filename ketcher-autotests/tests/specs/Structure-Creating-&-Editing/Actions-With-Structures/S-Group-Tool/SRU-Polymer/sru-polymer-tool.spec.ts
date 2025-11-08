@@ -170,7 +170,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -214,7 +214,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnAtom(page, 'C', 3);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
@@ -232,7 +232,7 @@ test.describe('SRU Polymer tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R12);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

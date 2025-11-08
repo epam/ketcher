@@ -116,7 +116,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -140,7 +140,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -165,7 +165,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -181,7 +181,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -197,7 +197,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -234,7 +234,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -251,7 +251,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -270,7 +270,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUpDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -289,7 +289,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleCisTrans);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -306,7 +306,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Any);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -323,7 +323,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -342,7 +342,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDouble);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -361,7 +361,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -380,7 +380,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -720,7 +720,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);

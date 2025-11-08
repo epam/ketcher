@@ -15,9 +15,7 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);

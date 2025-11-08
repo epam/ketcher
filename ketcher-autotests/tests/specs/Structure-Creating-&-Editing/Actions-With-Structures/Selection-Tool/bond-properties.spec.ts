@@ -456,7 +456,7 @@ test.describe('Bond Properties', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const offset = 100;
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(x - offset, y - offset);
@@ -545,7 +545,7 @@ test.describe('Bond Properties', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y + 30);
     dragMouseTo(x + 100, y + 100, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 

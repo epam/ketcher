@@ -1802,7 +1802,7 @@ test.describe('Cascade Reactions', () => {
             await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
             await BottomToolbar(page).clickRing(RingButton.Benzene);
             await clickOnCanvas(page, 200, 600, { from: 'pageTopLeft' });
-            await CommonLeftToolbar(page).selectAreaSelectionTool(
+            await CommonLeftToolbar(page).areaSelectionTool(
               SelectionToolType.Rectangle,
             );
             await addTail(page, 482, 464);

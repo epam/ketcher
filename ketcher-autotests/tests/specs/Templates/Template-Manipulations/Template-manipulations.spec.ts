@@ -162,7 +162,7 @@ test.describe('Template Manupulations', () => {
     With the template select any bond of the created structure, hold and drag "left-right".
     */
     const shift = 10;
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -186,7 +186,7 @@ test.describe('Template Manupulations', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -208,7 +208,7 @@ test.describe('Template Manupulations', () => {
 
       await atomToolbar.clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Fragment,
       );
       await getAtomLocator(page, { atomLabel: 'F' }).click();
@@ -235,7 +235,7 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 0;
     const atomToolbar = RightToolbar(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
@@ -270,7 +270,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await atomToolbar.clickAtom(Atom.Sulfur);
@@ -301,7 +301,7 @@ test.describe('Template Manupulations', () => {
     ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
     await AttachmentPointsDialog(page).apply();
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -635,7 +635,7 @@ test.describe('Open Ketcher', () => {
       const xOffsetFromCenter = 40;
       await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takePageScreenshot(page);
@@ -666,11 +666,11 @@ test.describe('Open Ketcher', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takePageScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);

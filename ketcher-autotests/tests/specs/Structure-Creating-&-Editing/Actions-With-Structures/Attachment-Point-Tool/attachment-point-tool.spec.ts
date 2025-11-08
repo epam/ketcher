@@ -558,7 +558,7 @@ test.describe('Attachment Point Tool', () => {
       page,
       'Molfiles-V2000/chain-attachment-list.mol',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -661,7 +661,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/chain-attachment-list.mol',
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -693,7 +693,7 @@ test.describe('Attachment Point Tool', () => {
       x: 670,
       y: 450,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
 
     await takeEditorScreenshot(page);

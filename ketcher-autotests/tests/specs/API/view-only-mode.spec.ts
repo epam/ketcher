@@ -461,7 +461,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await longClickOnAtom(page, 'C', 1);
@@ -481,9 +481,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
@@ -500,7 +498,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);

@@ -47,9 +47,7 @@ async function separetingAndMovingLines(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await selectLineWithSelectionTool(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await dragMouseTo(point5.x, point5.y, page);
@@ -128,9 +126,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     await setupLine(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
     await moveLineToNewPosition(page);

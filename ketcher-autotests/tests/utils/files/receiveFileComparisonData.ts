@@ -374,17 +374,19 @@ export async function verifySMARTSExportWarnings(page: Page) {
   await SaveStructureDialog(page).closeWindow();
 }
 
-export async function verifyInChiKeyExport(
+export async function verifyInChIKeyExport(
   page: Page,
-  InChiKeyExportExpected = '',
+  InChIKeyExportExpected = '',
 ) {
   await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
-    MacromoleculesFileFormatType.IDT,
+    MoleculesFileFormatType.InChIKey,
   );
-  const IDTExportResult = await SaveStructureDialog(page).getTextAreaValue();
+  const InChIKeyExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
 
-  expect(IDTExportResult).toEqual(InChiKeyExportExpected);
+  expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
 
   await SaveStructureDialog(page).cancel();
 }

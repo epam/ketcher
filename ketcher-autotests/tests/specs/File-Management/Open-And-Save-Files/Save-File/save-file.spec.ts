@@ -16,7 +16,7 @@ import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
-  verifyInChiKeyExport,
+  verifyInChIKeyExport,
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -194,7 +194,7 @@ test.describe('Save files', () => {
     await waitForIndigoToLoad(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await verifyInChiKeyExport(page, 'UHOVQNZJYSORNB-UHFFFAOYSA-N');
+    await verifyInChIKeyExport(page, 'UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
   test('Support for exporting to "SDF V2000" file format', async ({ page }) => {

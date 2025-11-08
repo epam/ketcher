@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -501,7 +500,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -552,7 +555,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -811,7 +818,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -830,7 +841,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -847,7 +862,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -864,7 +883,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1083,7 +1106,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1112,7 +1139,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1469,7 +1500,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

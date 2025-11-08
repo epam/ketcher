@@ -8,7 +8,6 @@ import {
   dragMouseTo,
   dragTo,
   openFileAndAddToCanvas,
-  screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -23,6 +22,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 const xMark = 300;
 const yMark = 200;
@@ -99,7 +99,11 @@ test.describe('Fragment selection tool', () => {
       await page.mouse.down();
     });
     await dragMouseTo(xMark, yMark, page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

@@ -12,7 +12,6 @@ import {
   dragMouseTo,
   waitForRender,
   moveOnAtom,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnCanvas,
@@ -235,7 +234,11 @@ test.describe('Atom Tool', () => {
     );
     await CommonLeftToolbar(page).erase();
     await page.getByText('AH').click();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -250,7 +253,11 @@ test.describe('Atom Tool', () => {
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).erase();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

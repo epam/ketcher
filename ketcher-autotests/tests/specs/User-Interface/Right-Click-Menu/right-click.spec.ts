@@ -9,7 +9,6 @@ import {
   waitForRender,
   clickOnAtom,
   clickOnCanvas,
-  screenshotBetweenUndoRedo,
   resetZoomLevelToDefault,
   takeElementScreenshot,
   pasteFromClipboardAndOpenAsNewProject,
@@ -49,6 +48,7 @@ import {
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -705,7 +705,11 @@ test.describe('Right-click menu', () => {
     ).click([MicroBondOption.Highlight, HighlightOption.Blue]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

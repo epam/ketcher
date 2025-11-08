@@ -17,7 +17,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
-  screenshotBetweenUndoRedo,
   copyToClipboardByKeyboard,
   takePageScreenshot,
   takeTopToolbarScreenshot,
@@ -625,7 +624,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

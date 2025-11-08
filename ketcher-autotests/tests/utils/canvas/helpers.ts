@@ -19,7 +19,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -254,14 +253,6 @@ export async function delay(seconds = 1) {
   return new Promise((resolve) =>
     setTimeout(() => resolve(true), seconds * msInSecond),
   );
-}
-
-export async function screenshotBetweenUndoRedo(page: Page) {
-  await CommonTopLeftToolbar(page).undo();
-  await takeEditorScreenshot(page, {
-    maxDiffPixels: 1,
-  });
-  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function addBondedMonomersToCanvas(

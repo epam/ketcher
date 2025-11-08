@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
@@ -178,7 +177,11 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

@@ -346,7 +346,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await selectAllStructuresOnCanvas(page);
         // Waiting for all selected elements to lose `display: none` is insufficient
         // because the "Copy" button becomes enabled last as an indicator of completion.
-        await waitForOpenButtonEnabled(page);
+        // await waitForOpenButtonEnabled(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),

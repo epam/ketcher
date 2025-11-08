@@ -8,7 +8,6 @@ import {
   openFile,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   moveOnAtom,
   dragMouseTo,
@@ -862,7 +861,11 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -897,7 +900,11 @@ test.describe('Cascade Reactions', () => {
       await selectPartOfMolecules(page);
       await CommonLeftToolbar(page).erase();
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -933,7 +940,11 @@ test.describe('Cascade Reactions', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -969,7 +980,11 @@ test.describe('Cascade Reactions', () => {
       await cutAndPaste(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -1005,7 +1020,11 @@ test.describe('Cascade Reactions', () => {
       await moveOnAtom(page, 'C', 2);
       await dragMouseTo(300, 600, page);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });

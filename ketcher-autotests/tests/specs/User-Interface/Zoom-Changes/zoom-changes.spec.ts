@@ -164,12 +164,10 @@ test.describe('Zoom changes', () => {
     await zoomSelector.click({ force: true, delay: 100 });
     await zoomInButton.waitFor({ state: 'detached' });
 
-    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);

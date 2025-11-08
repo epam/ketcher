@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickOnAtom,
-  screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -335,7 +334,11 @@ test.describe('Attachment Point Tool', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -351,7 +354,11 @@ test.describe('Attachment Point Tool', () => {
       from: 'pageTopLeft',
     });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -386,7 +393,11 @@ test.describe('Attachment Point Tool', () => {
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

@@ -7,7 +7,6 @@ import {
   doubleClickOnAtom,
   moveOnAtom,
   dragMouseTo,
-  screenshotBetweenUndoRedo,
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   waitForPageInit,
@@ -84,7 +83,11 @@ test.describe('Undo/Redo Actions', () => {
 
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -103,7 +106,11 @@ test.describe('Undo/Redo Actions', () => {
 
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -127,7 +134,11 @@ test.describe('Undo/Redo Actions', () => {
       },
     });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -151,7 +162,11 @@ test.describe('Undo/Redo Actions', () => {
       reactingCenter: BondReactingCenterOption.Center,
     });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -168,7 +183,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -184,7 +203,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -200,7 +223,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -220,7 +247,11 @@ test.describe('Undo/Redo Actions', () => {
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -237,7 +268,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -254,7 +289,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -273,7 +312,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -292,7 +335,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -309,7 +356,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -326,7 +377,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -345,7 +400,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -364,7 +423,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -383,7 +446,11 @@ test.describe('Undo/Redo Actions', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -399,7 +466,11 @@ test.describe('Undo/Redo Actions', () => {
       ReactionMappingType.ReactionAutoMapping,
     );
     await ReactionAutoMappingDialog(page).apply();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -420,7 +491,11 @@ test.describe('Undo/Redo Actions', () => {
       FieldValue: '33',
       PropertyLabelType: PropertyLabelType.Absolute,
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -438,7 +513,11 @@ test.describe('Undo/Redo Actions', () => {
       Type: TypeOption.MultipleGroup,
       RepeatCount: '88',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -457,7 +536,11 @@ test.describe('Undo/Redo Actions', () => {
       PolymerLabel: 'A',
       RepeatPattern: RepeatPatternOption.HeadToTail,
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -475,7 +558,11 @@ test.describe('Undo/Redo Actions', () => {
       Type: TypeOption.Superatom,
       Name: 'Test@!#$%12345',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -494,7 +581,11 @@ test.describe('Undo/Redo Actions', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -513,7 +604,11 @@ test.describe('Undo/Redo Actions', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -530,7 +625,11 @@ test.describe('Undo/Redo Actions', () => {
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
     );
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -582,7 +681,11 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -601,7 +704,11 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

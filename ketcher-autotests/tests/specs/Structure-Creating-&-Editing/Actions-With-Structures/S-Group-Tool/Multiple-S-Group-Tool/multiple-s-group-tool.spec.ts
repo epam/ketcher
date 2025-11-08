@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   BondType,
   clickOnAtom,
-  screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
@@ -34,6 +33,7 @@ import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Const
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -147,7 +147,11 @@ test.describe('Multiple S-Group tool', () => {
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -163,7 +167,11 @@ test.describe('Multiple S-Group tool', () => {
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -181,7 +189,11 @@ test.describe('Multiple S-Group tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

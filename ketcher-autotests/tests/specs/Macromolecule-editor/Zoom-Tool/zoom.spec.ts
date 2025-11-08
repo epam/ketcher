@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   clickInTheMiddleOfTheScreen,
-  screenshotBetweenUndoRedoInMacro,
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
@@ -315,7 +314,9 @@ test.describe('Zoom Tool', () => {
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     await ZoomInByKeyboard(page, { repeat: 5 });
-    await screenshotBetweenUndoRedoInMacro(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

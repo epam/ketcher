@@ -18,7 +18,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   screenshotBetweenUndoRedo,
-  screenshotBetweenUndoRedoInMacro,
   copyToClipboardByKeyboard,
   takePageScreenshot,
   takeTopToolbarScreenshot,
@@ -634,7 +633,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedoInMacro(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

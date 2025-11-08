@@ -5,7 +5,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { test, expect, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  addSingleMonomerToCanvas,
   openFileAndAddToCanvasMacro,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -79,38 +78,31 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
-  await Library(page).switchToPeptidesTab();
-  const peptide1 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    300,
-    300,
-    0,
-  );
-  const peptide2 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    400,
-    400,
-    1,
-  );
-  const peptide3 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    500,
-    500,
-    2,
-  );
-  const peptide4 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    500,
-    200,
-    3,
-  );
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 300,
+    y: 300,
+  });
+  const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
-  // Select bond tool
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 400,
+    y: 400,
+  });
+  const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
+
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 500,
+    y: 500,
+  });
+  const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
+
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 500,
+    y: 200,
+  });
+  const peptide4 = getMonomerLocator(page, Peptide.Tza).nth(3);
+
+  await CommonLeftToolbar(page).handTool();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -174,22 +166,17 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
 
-  await Library(page).switchToPeptidesTab();
-  const peptide1 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    300,
-    300,
-    0,
-  );
-  const peptide2 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.Tza,
-    400,
-    400,
-    1,
-  );
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 300,
+    y: 300,
+  });
+  const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
+
+  await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+    x: 400,
+    y: 400,
+  });
+  const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide2, peptide1);
   await page.waitForSelector('#error-tooltip');

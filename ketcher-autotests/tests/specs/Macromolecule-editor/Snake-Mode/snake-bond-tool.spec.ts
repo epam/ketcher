@@ -4,7 +4,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
   waitForRender,
@@ -31,22 +30,17 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { RNASection } from '@tests/pages/constants/library/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
-  await Library(page).switchToPeptidesTab();
-  const peptide1 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.dU,
-    200,
-    200,
-    0,
-  );
-
+  await Library(page).dragMonomerOnCanvas(Peptide.dU, {
+    x: 200,
+    y: 200,
+  });
+  const peptide1 = getMonomerLocator(page, Peptide.dU).nth(0);
   const [peptide2, peptide3] = await addBondedMonomersToCanvas(
     page,
     Peptide.Tza,
@@ -57,14 +51,11 @@ async function createBondedMonomers(page: Page) {
     2,
   );
 
-  const peptide4 = await addSingleMonomerToCanvas(
-    page,
-    Peptide.meC,
-    400,
-    400,
-    0,
-  );
-
+  await Library(page).dragMonomerOnCanvas(Peptide.meC, {
+    x: 400,
+    y: 400,
+  });
+  const peptide4 = getMonomerLocator(page, Peptide.meC).nth(0);
   await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide3, peptide4);
@@ -113,22 +104,17 @@ test.describe('Snake Bond Tool', () => {
       100,
       2,
     );
-    const peptide3 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.Tza,
-      300,
-      500,
-      2,
-    );
-    const peptide4 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.Tza,
-      200,
-      200,
-      3,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 500,
+    });
+    const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 200,
+      y: 200,
+    });
+    const peptide4 = getMonomerLocator(page, Peptide.Tza).nth(3);
 
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
@@ -427,20 +413,18 @@ test.describe('Snake Bond Tool', () => {
       x: 900,
       y: 300,
     });
-    const sugarOfNucleoside = await addSingleMonomerToCanvas(
-      page,
-      Sugar.R,
-      200,
-      200,
-      4,
-    );
-    const baseOfNucleoside = await addSingleMonomerToCanvas(
-      page,
-      Base.nC6n8A,
-      200,
-      350,
-      0,
-    );
+
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
+      x: 200,
+      y: 200,
+    });
+    const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(4);
+
+    await Library(page).dragMonomerOnCanvas(Base.nC6n8A, {
+      x: 200,
+      y: 350,
+    });
+    const baseOfNucleoside = getMonomerLocator(page, Base.nC6n8A).nth(0);
     const [peptide] = await addBondedMonomersToCanvas(
       page,
       Peptide.A,
@@ -470,14 +454,12 @@ test.describe('Snake Bond Tool', () => {
       0,
       2,
     );
-    const balPeptide1 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.bAla,
-      520,
-      500,
-      2,
-    );
 
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 520,
+      y: 500,
+    });
+    const balPeptide1 = getMonomerLocator(page, Peptide.bAla).nth(2);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(
       page,
@@ -518,26 +500,23 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
-    await Library(page).switchToPeptidesTab();
-    await addSingleMonomerToCanvas(page, Peptide.bAla, 300, 300, 0);
-    await Library(page).openRNASection(RNASection.Sugars);
-    const sugarOfNucleoside = await addSingleMonomerToCanvas(
-      page,
-      Sugar.R,
-      500,
-      500,
-      0,
-    );
-    await Library(page).openRNASection(RNASection.Bases);
-    const baseOfNucleoside = await addSingleMonomerToCanvas(
-      page,
-      Base.A,
-      600,
-      600,
-      0,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 300,
+      y: 300,
+    });
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
+      x: 500,
+      y: 500,
+    });
+    const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Base.A, {
+      x: 600,
+      y: 600,
+    });
+    const baseOfNucleoside = getMonomerLocator(page, Base.A).nth(0);
+
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
 
     await takeEditorScreenshot(page);

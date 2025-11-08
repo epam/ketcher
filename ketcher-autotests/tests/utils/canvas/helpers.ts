@@ -23,6 +23,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
   const leftBarSize = await page
@@ -264,27 +265,6 @@ export async function screenshotBetweenUndoRedo(page: Page) {
   await CommonTopLeftToolbar(page).redo();
 }
 
-export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await CommonTopLeftToolbar(page).undo();
-  await takeEditorScreenshot(page);
-  await CommonTopLeftToolbar(page).redo();
-}
-
-export async function addSingleMonomerToCanvas(
-  page: Page,
-  monomer: Monomer,
-  positionX: number,
-  positionY: number,
-  index: number,
-) {
-  await Library(page).dragMonomerOnCanvas(monomer, {
-    x: positionX,
-    y: positionY,
-  });
-  await MonomerPreviewTooltip(page).hide();
-  return getMonomerLocator(page, monomer).nth(index);
-}
-
 export async function addBondedMonomersToCanvas(
   page: Page,
   monomerType: Monomer,
@@ -298,13 +278,11 @@ export async function addBondedMonomersToCanvas(
 ) {
   const monomers = [];
   for (let index = 0; index < amount; index++) {
-    const monomer = await addSingleMonomerToCanvas(
-      page,
-      monomerType,
-      initialPositionX + deltaX * index,
-      initialPositionY + deltaY * index,
-      index,
-    );
+    await Library(page).dragMonomerOnCanvas(monomerType, {
+      x: initialPositionX + deltaX * index,
+      y: initialPositionY + deltaY * index,
+    });
+    const monomer = getMonomerLocator(page, monomerType).nth(index);
     monomers.push(monomer);
     if (index > 0) {
       await bondTwoMonomers(

@@ -11,6 +11,7 @@ import {
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { waitForPageInit } from '@utils/common/loaders';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {

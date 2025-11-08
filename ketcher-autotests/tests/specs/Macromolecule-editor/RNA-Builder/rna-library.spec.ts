@@ -275,7 +275,9 @@ test.describe('RNA Library', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).handTool();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Sugar._12ddR).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -293,7 +295,9 @@ test.describe('RNA Library', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).handTool();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Base.clA).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -311,7 +315,9 @@ test.describe('RNA Library', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).handTool();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Phosphate.Test_6_Ph).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

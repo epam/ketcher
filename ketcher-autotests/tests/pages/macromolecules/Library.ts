@@ -286,7 +286,7 @@ export const Library = (page: Page) => {
     },
 
     /** Click on the arrow button on the monomer card */
-    async clickMonomerAutochain(monomer: Monomer) {
+    async clickMonomerAutochain(monomer: Monomer | PresetType) {
       await this.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);

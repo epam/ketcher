@@ -17,6 +17,7 @@ import {
   CreateMonomerDialog,
   prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import {
   addTextBoxToCanvas,
   TextEditorDialog,
@@ -24,6 +25,7 @@ import {
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   copyToClipboardByKeyboard,
+  MacroFileType,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
@@ -31,12 +33,26 @@ import {
   takeLeftToolbarScreenshot,
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { expandMonomer } from '@utils/canvas/monomer/helpers';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import {
+  FileType,
+  verifyFileExport,
+  verifyHELMExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
+  clickInTheMiddleOfTheScreen,
+  clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
+  RdfFileFormat,
+  readFileContent,
 } from '@utils/index';
 import {
   AttachmentPoint,
@@ -50,7 +66,8 @@ test.describe('Ketcher bugs in 3.8.0', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async () => {
+  test.afterEach(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
     await CommonTopLeftToolbar(page).clearCanvas();
   });
   test.afterAll(async ({ closePage }) => {
@@ -434,5 +451,304 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 16: Submitting a monomer with R-group used for automatic leaving group assignment not leads to incorrect atom label after saving', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/ketcher/issues/7790
+     * Description: Submitting a monomer with R-group used for automatic leaving group assignment not leads to incorrect atom label after saving
+     * Scenario:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Load structure from clipboard
+     * 3. Select all
+     * 4. Press Create monomer button
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1%91CCCCC1.[*:1]%91 |$;;;;;;_R1$|',
+    );
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
+    await selectAllStructuresOnCanvas(page);
+    await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+    await LeftToolbar(page).createMonomer();
+    // to make molecule visible
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(450, 250, page);
+    await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 17: Ctrl+M open monomer creation wizard when selection meets conditions', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/ketcher/issues/7571
+     * Description: Ctrl+M open monomer creation wizard when selection meets conditions
+     * Scenario:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Load structure from clipboard
+     * 3. Select all
+     * 4. Press Create monomer hotkey Ctrl+M
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C1%91CCCCC1.[*:1]%91 |$;;;;;;_R1$|',
+    );
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
+    await selectAllStructuresOnCanvas(page);
+    await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+    await page.keyboard.press('Control+M');
+    // to make molecule visible
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(450, 250, page);
+    await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 18: Export to SVG work in popup mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/ketcher/issues/7509
+     * Description: Export to SVG work in popup mode
+     * Scenario:
+     * 1. Open Ketcher in POPUP mode
+     * 2. Toggle to Macro - Flex mode
+     * 3. Load from HELM: RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0
+     * 4. Export canvas to SVG
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
+    );
+    await verifySVGExport(page);
+  });
+
+  test('Case 19: Pressing ? key at Text Editor form while creation text label not opens Macromolecules help link', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/ketcher/issues/7619
+     * Description: Pressing ? key at Text Editor form while creation text label not opens Macromolecules help link
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Click T on the left tool bar
+     * 3. Click on the canvas to open Text Editor
+     * 4. Press ? key on keyboard
+     */
+    const pasteText = '?';
+    await addTextBoxToCanvas(page);
+    await TextEditorDialog(page).setText(pasteText);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 20: Unnecessary leaving groups (R-groups) not appear upon "Removing Abbreviation" of expanded monomer when an attachment point is occupied', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/ketcher/issues/6747
+     * Description: Unnecessary leaving groups (R-groups) not appear upon "Removing Abbreviation" of expanded monomer when an attachment point is occupied
+     * Scenario:
+     * 1. Go to Ketcher macromolecules mode
+     * 2. Toggle to Macro - Flex mode
+     * 3. Paste the following structures: RNA1{[SGNA](A)P.[SGNA](A)P}|RNA2{[SGNA](A)}|RNA3{[SGNA]}$$$$V2.0
+     * 4. Go to small molecules mode and expand SGNA sugars
+     * 5. "Remove abbreviation" for SGNA sugars
+     * 6. Observe the appearance of leaving groups (R-groups)
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[SGNA](A)P.[SGNA](A)P}|RNA2{[SGNA](A)}|RNA3{[SGNA]}$$$$V2.0',
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await clickInTheMiddleOfTheScreen(page);
+    await expandMonomer(
+      page,
+      getAbbreviationLocator(page, { name: 'SGNA' }).nth(0),
+    );
+    await expandMonomer(
+      page,
+      getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
+    );
+    await CommonLeftToolbar(page).erase();
+    await clickOnAtom(page, 'O', 0);
+    await EditAbbreviationDialog(page).removeAbbreviation();
+    await clickOnAtom(page, 'O', 1);
+    await EditAbbreviationDialog(page).removeAbbreviation();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 21: System can load HELM with inline SMILES if it has r-site star atom without square brackets', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3067
+     * Description: System can load HELM with inline SMILES if it has r-site star atom without square brackets
+     * Scenario:
+     * 1. Go to Ketcher macromolecules mode
+     * 2. Toggle to Macro - Flex mode
+     * 3. Load from HELM
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{[dF].C.F.[dW].K.T.C.[*N[C@H](CO)[C@@H](C)O|$_R1;;;;;;;$|]}$PEPTIDE1,PEPTIDE1,2:R3-7:R3$$$',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 22: Able to paste FASTA content from clipcoard', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3123
+     * Description: Able to paste FASTA content from clipcoard
+     * Scenario:
+     * 1. Go to Ketcher macromolecules mode
+     * 2. Load copy to clipboard folllowing text
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.FASTA,
+      '>Sequence1\nAAA',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 23: Export to RDF V2000 work if "star" atom on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3071
+     * Description: Export to RDF V2000 work if "star" atom on the canvas
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from KET as New Project
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Bad Cast.ket');
+    await verifyFileExport(
+      page,
+      'RDF-V2000/Bad Cast-expected.rdf',
+      FileType.RDF,
+      RdfFileFormat.v2000,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 24: Export to IDT work if R1-only CHEM stays on five prime position', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3169
+     * Description: Export to IDT work if R1-only CHEM stays on five prime position
+     * Scenario:
+     * 1. Switch to Macromolecules mode - Flex canvas (clear canvas)
+     * 2. Load from IDT: /56-FAM/A
+     * 3. Export canvas to IDT
+     */
+    await pasteFromClipboardAndOpenAsNewProjectMacro(
+      page,
+      MacroFileType.IDT,
+      '/56-FAM/A',
+    );
+    await verifyFileExport(page, 'IDT/56-FAM-expected.idt', FileType.IDT);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 25: System loads "star" atoms as "star" atoms', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3080
+     * Description: System loads "star" atoms as "star" atoms
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from SMILES: *1C=*C=*C=1 |$star_e;;star_e;;star_e;$|
+     * 3. Export canvas to CDXML
+     * 4. Load result back
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/benzene-ring-with-star-atoms-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'CDXML/benzene-ring-with-star-atoms-expected.cdxml',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 26: Export to HELM works correct for custom monomers imported from HELM with inline SMILES', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3159
+     * Description: Export to HELM works correct for custom monomers imported from HELM with inline SMILES
+     * Scenario:
+     * 1. Go to Ketcher macromolecules mode
+     * 2. Toggle to Macro - Flex mode
+     * 3. Load from HELM
+     * 4. Save canvas to HELM
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyHELMExport(
+      page,
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+    );
+  });
+
+  test('Case 27: System saves "star" atoms in Base64 CDX as star atoms', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3082
+     * Description: System saves "star" atoms in Base64 CDX as star atoms
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from SMILES: *1C=*C=*C=1 |$star_e;;star_e;;star_e;$|
+     * 3. Export canvas to CDX
+     * 4. Load result back
+     */
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDX/benzene-ring-with-star-atoms-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContent(
+      'CDX/benzene-ring-with-star-atoms-expected.cdx',
+    );
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await takeEditorScreenshot(page);
   });
 });

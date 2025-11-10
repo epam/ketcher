@@ -14,6 +14,7 @@ import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import {
   FileType,
+  verifyFASTAExport,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
@@ -328,11 +329,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
-      );
-      await takeEditorScreenshot(page);
+      await verifyFASTAExport(page, '>Sequence1\nCCCAAATTT');
     },
   );
 
@@ -394,13 +391,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
-      );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifyFASTAExport(page, '>Sequence1\nXXXX');
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -424,13 +415,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.FASTA,
-    );
-    await takeEditorScreenshot(page);
-
-    await SaveStructureDialog(page).cancel();
+    await verifyFASTAExport(page, '>Sequence1\nXXX');
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -456,13 +441,10 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
+      await verifyFASTAExport(
+        page,
+        '>Sequence1\nXXXXXXXXXX\n>Sequence2\nXXXXXXXXXX',
       );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );

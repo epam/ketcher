@@ -333,9 +333,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'KET/Bugs/reaction-file-with-substituent.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await CommonTopRightToolbar(page).setZoomInputValue('80');
     await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -424,7 +422,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Select all the molecule including atom and bond
      */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });

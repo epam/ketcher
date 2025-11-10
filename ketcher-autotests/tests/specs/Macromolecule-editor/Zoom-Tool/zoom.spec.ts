@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   clickInTheMiddleOfTheScreen,
-  screenshotBetweenUndoRedoInMacro,
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
@@ -315,7 +314,9 @@ test.describe('Zoom Tool', () => {
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     await ZoomInByKeyboard(page, { repeat: 5 });
-    await screenshotBetweenUndoRedoInMacro(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -333,7 +334,7 @@ test.describe('Zoom Tool', () => {
     await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
     await dragMouseTo(100, 100, page);
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

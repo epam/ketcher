@@ -5,8 +5,8 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { verifySMARTSExport } from '../utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
 
 test.describe('Checking custom query in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {

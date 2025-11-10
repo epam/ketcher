@@ -111,9 +111,7 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   //   x: bondBoundingBox.x + bondBoundingBox.width / 2,
   //   y: bondBoundingBox.y + bondBoundingBox.height / 2,
   // };
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await clickOnCanvas(
     page,
     point.x + selectionRange,

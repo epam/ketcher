@@ -1,9 +1,9 @@
 import { test } from '@fixtures';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
-  screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
@@ -50,7 +50,11 @@ test.describe('R-Group', () => {
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -68,7 +72,11 @@ test.describe('R-Group', () => {
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

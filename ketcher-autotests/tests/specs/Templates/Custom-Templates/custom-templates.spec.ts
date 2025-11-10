@@ -242,7 +242,7 @@ test.describe('Open Ketcher', () => {
     const point = { x: -50, y: 0 };
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
   });

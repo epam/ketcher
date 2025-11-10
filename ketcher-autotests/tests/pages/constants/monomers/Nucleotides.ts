@@ -85,6 +85,10 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: '_Nucleotide1',
     testId: '_Nucleotide1____Nucleotide1',
   },
+  NucleotideX: {
+    alias: 'NucleotideX',
+    testId: 'NucleotideX___NucleotideX',
+  },
 });
 
 export type NucleotidesType = typeof Nucleotide;

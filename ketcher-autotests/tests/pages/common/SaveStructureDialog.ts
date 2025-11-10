@@ -90,6 +90,11 @@ export const SaveStructureDialog = (page: Page) => {
       await locators.saveStructureTextarea.waitFor({ state: 'visible' });
     },
 
+    async copyToClipboard() {
+      await locators.saveStructureTextarea.hover();
+      await locators.copyToClipboardButton.click();
+    },
+
     async save() {
       await locators.saveButton.click();
       await this.window.waitFor({ state: 'hidden' });

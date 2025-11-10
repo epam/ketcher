@@ -25,10 +25,10 @@ test.describe('Bonds plus atoms selection ', () => {
 
   for (const bond of BondTypeId) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
-      await CommonLeftToolbar(page).selectBondTool(bond);
+      await CommonLeftToolbar(page).bondTool(bond);
       await clickInTheMiddleOfTheScreen(page);
 
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await page.keyboard.down('Shift');

@@ -109,9 +109,7 @@ test.describe('Action on simples objects', () => {
     await dragMouseTo(point1.x, point1.y, page);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     await waitForRender(page, async () => {
       await dragMouseTo(point3.x, point3.y, page);

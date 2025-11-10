@@ -60,11 +60,9 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });
@@ -143,7 +141,7 @@ test.describe('Open Ketcher', () => {
     const anyAtom = 2;
     const secondAtom = 4;
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
     await keyboardPressOnCanvas(page, 'n');
     await clickOnAtom(page, 'C', secondAtom);

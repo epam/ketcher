@@ -8,8 +8,8 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectUndoByKeyboard,
-  selectRedoByKeyboard,
+  undoByKeyboard,
+  redoByKeyboard,
   clearCanvasByKeyboard,
   deleteByKeyboard,
   keyboardTypeOnCanvas,
@@ -56,9 +56,9 @@ test.describe('Hotkeys', () => {
      */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
     await clearCanvasByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await selectRedoByKeyboard(page);
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -69,10 +69,10 @@ test.describe('Hotkeys', () => {
      */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
     await clearCanvasByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await selectRedoByKeyboard(page);
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -85,7 +85,7 @@ test.describe('Hotkeys', () => {
     */
     await deleteByKeyboard(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');

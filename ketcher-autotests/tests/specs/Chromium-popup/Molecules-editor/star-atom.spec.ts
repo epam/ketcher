@@ -13,8 +13,8 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectRedoByKeyboard,
-  selectUndoByKeyboard,
+  redoByKeyboard,
+  undoByKeyboard,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -218,9 +218,9 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
     .locator(':scope:visible')
     .first();
   await expect(starAtom).toHaveCount(1);
-  await selectUndoByKeyboard(page);
+  await undoByKeyboard(page);
   await expect(starAtom).toHaveCount(0);
-  await selectRedoByKeyboard(page);
+  await redoByKeyboard(page);
   await expect(starAtom).toHaveCount(1);
 });
 

@@ -92,7 +92,7 @@ test.describe('Enumerations', () => {
     Description: Chain recalculated after deleting base.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-baA.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await CommonLeftToolbar(page).erase();
@@ -106,7 +106,7 @@ test.describe('Enumerations', () => {
     Description: Chain recalculated after undoing base.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-baA.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await CommonLeftToolbar(page).erase();

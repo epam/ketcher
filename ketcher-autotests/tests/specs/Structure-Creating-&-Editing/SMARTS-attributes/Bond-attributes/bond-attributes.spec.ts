@@ -4,10 +4,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { verifySMARTSExport, verifySMARTSExportWarnings } from '../utils';
 import {
   FileType,
   verifyFileExport,
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
 } from '@utils/files/receiveFileComparisonData';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
@@ -21,7 +22,7 @@ import {
 
 async function drawStructure(page: Page) {
   await waitForPageInit(page);
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);

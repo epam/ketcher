@@ -24,9 +24,7 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
   await dragMouseTo(x, y, page);
 }
@@ -38,9 +36,7 @@ export async function moveMonomerOnMicro(
   y: number,
 ) {
   await CommonLeftToolbar(page).handTool();
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await waitForRender(page, async () => {
     await monomer.click();
   });
@@ -52,7 +48,7 @@ export async function connectMonomersWithBonds(
   monomerNames: string[],
   bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await CommonLeftToolbar(page).selectBondTool(bondType);
+  await CommonLeftToolbar(page).bondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];

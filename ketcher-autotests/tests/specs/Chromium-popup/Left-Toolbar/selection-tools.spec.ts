@@ -17,7 +17,7 @@ import {
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectTAndDeselectWithLasso,
+  selectAndDeselectWithLasso,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
@@ -73,16 +73,12 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * 10. Check that Fragment Selection tool is selected
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -103,9 +99,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
      * 4. Draw an irregular selection area on the canvas and select the Benzene ring
      */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/benzene-ring.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 360, 260, [
       { x: 720, y: 260 },
       { x: 720, y: 480 },
@@ -143,7 +137,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       },
     ];
     for (const c of cases) {
-      await CommonLeftToolbar(page).selectAreaSelectionTool(c.tool);
+      await CommonLeftToolbar(page).areaSelectionTool(c.tool);
       const iconButton = page.getByTestId(c.testId);
       await expect(iconButton).toHaveAttribute('title', c.title);
       await iconButton.hover();
@@ -186,9 +180,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 450, 250, [
       { x: 800, y: 250 },
       { x: 800, y: 500 },
@@ -219,9 +211,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -252,9 +242,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -286,10 +274,8 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
-    await selectTAndDeselectWithLasso(page, 320, 150, [
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await selectAndDeselectWithLasso(page, 320, 150, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },
@@ -316,10 +302,8 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
-    await selectTAndDeselectWithLasso(page, 300, 110, [
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await selectAndDeselectWithLasso(page, 300, 110, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },
@@ -346,10 +330,8 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
-    await selectTAndDeselectWithLasso(page, 300, 100, [
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await selectAndDeselectWithLasso(page, 300, 100, [
       { x: 780, y: 150 },
       { x: 780, y: 520 },
       { x: 300, y: 520 },
@@ -377,9 +359,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 450, 250, [
       { x: 800, y: 250 },
       { x: 800, y: 500 },
@@ -422,9 +402,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -470,9 +448,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -519,9 +495,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -572,9 +546,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -626,9 +598,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -677,9 +647,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 450, 250, [
       { x: 800, y: 250 },
       { x: 800, y: 500 },
@@ -715,9 +683,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -753,9 +719,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -792,9 +756,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -828,9 +790,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -864,9 +824,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -900,9 +858,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -940,9 +896,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -980,9 +934,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -1019,9 +971,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 450, 250, [
       { x: 800, y: 250 },
       { x: 800, y: 500 },
@@ -1058,9 +1008,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -1097,9 +1045,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/micro-and-macro-structures.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectWithLasso(page, 300, 110, [
       { x: 800, y: 110 },
       { x: 800, y: 540 },
@@ -1141,9 +1087,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1174,9 +1118,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1207,9 +1149,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1241,9 +1181,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1284,9 +1222,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1326,9 +1262,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1372,9 +1306,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1422,9 +1354,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1472,9 +1402,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1521,9 +1449,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
@@ -1553,9 +1479,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).click();
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
@@ -1585,9 +1509,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1621,9 +1543,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await MacromoleculesTopToolbar(page).createAntisenseStrand();
     await takeEditorScreenshot(page, {
@@ -1651,9 +1571,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await MacromoleculesTopToolbar(page).createAntisenseStrand();
     await takeEditorScreenshot(page, {
@@ -1681,9 +1599,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1714,9 +1630,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     const anySymbol = getMonomerLocator(page, {}).first();
     await ContextMenu(page, anySymbol).open();
@@ -1748,9 +1662,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     const anySymbol = getMonomerLocator(page, {}).first();
     await ContextMenu(page, anySymbol).open();
@@ -1782,9 +1694,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       MacroFileType.HELM,
       'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,
@@ -1818,9 +1728,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1851,9 +1759,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Sugar.R).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1884,9 +1790,7 @@ test.describe('Lasso Selection/Fragment Selection tool in macromolecules mode', 
       page,
       'KET/rna-connected-to-benzene-ring.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 0,

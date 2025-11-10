@@ -40,7 +40,7 @@ export async function bondTwoMonomers(
   attachmentPoint2?: AttachmentPoint,
   bondType: MacroBondType = MacroBondType.Single,
 ) {
-  await CommonLeftToolbar(page).selectBondTool(bondType);
+  await CommonLeftToolbar(page).bondTool(bondType);
   await firstMonomer.hover({ force: true });
   await page.mouse.down();
   await secondMonomer.hover({ force: true });
@@ -301,9 +301,9 @@ export async function bondTwoMonomersPointToPoint(
   chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
-    await CommonLeftToolbar(page).selectBondTool(bondType);
+    await CommonLeftToolbar(page).bondTool(bondType);
   } else {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   }
 
   await firstMonomer.hover({ force: true });
@@ -405,7 +405,7 @@ export async function bondMonomerPointToMoleculeAtom(
   monomerAttachmentPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await monomer.hover({ force: true });
 
   if (monomerAttachmentPoint) {

@@ -145,8 +145,6 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   rdf: 'getRdf' as keyof Ketcher,
 } as const;
 
-type KetcherApiFunction = (format?: string) => Promise<string>;
-
 function filterByIndexes(file: string[], indexes?: number[]): string[] {
   if (!indexes) {
     return file;

@@ -284,7 +284,19 @@ eventData is an object that contains information about the change. Below is the 
 | Move enhanced flag | {operation: 'Move enhanced flag'}                                           |
 
 
+---
 
+### Monomers library update event
+The 'libraryUpdate' event is triggered when some change in monomers library happens. For example when user creates new monomer using "Create monomer" tool, or library changes after the specific [API call](https://github.com/epam/ketcher/issues/7674).
+
+#### Example:
+```js
+ketcher.editor.subscribe('libraryUpdate', (eventData) => {
+    console.log('Library updated:', eventData);
+});
+```
+
+eventData is a string in SDF format according to [specification](https://github.com/epam/Indigo/issues/3161)
 
 
 ## Contribution

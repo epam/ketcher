@@ -38,6 +38,7 @@ export type MonomerCreationState = {
   problematicAttachmentPoints: Set<AttachmentPointName>;
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass;
+  hasDefaultAttachmentPoints?: boolean;
 } | null;
 
 export class Render {

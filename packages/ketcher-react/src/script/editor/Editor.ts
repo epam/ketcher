@@ -1070,10 +1070,15 @@ class Editor implements KetcherEditor {
       }
     });
 
+    const hasDefaultAttachmentPoints =
+      this.terminalRGroupAtoms.length > 0 ||
+      this.potentialLeavingAtomsForAutoAssignment.length > 0;
+
     this.monomerCreationState = {
       assignedAttachmentPoints,
       potentialAttachmentPoints,
       problematicAttachmentPoints: new Set(),
+      hasDefaultAttachmentPoints,
     };
 
     this.originalHistoryStack = this.historyStack;

@@ -96,7 +96,9 @@ test.describe('SMILES files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
-    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
+    expect(await SaveStructureDialog(page).getTextAreaValue()).toBe(
+      'CCCCCCC(C)CC',
+    );
     await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -168,10 +170,11 @@ test.describe('SMILES files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
-    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
+    expect(await SaveStructureDialog(page).getTextAreaValue()).toBe(
+      'CCCC[C@@H](C)[C@@H](C)CC |SgD:4,5:Purity:Purity = 96%::: :|',
+    );
     await SaveStructureDialog(page).switchToWarningsTab();
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
     await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
@@ -249,14 +252,10 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-cis-trans-cycle-expected.smi',
       FileType.SMILES,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMILES,
+    await verifySMILESExport(
+      page,
+      'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
     );
-    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -278,14 +277,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-alias-pseudoatom-expected.smi',
       FileType.SMILES,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMILES,
-    );
-    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
-    await moveMouseAway(page);
-
-    await SaveStructureDialog(page).cancel();
+    await verifySMILESExport(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -310,14 +302,10 @@ test.describe('SMILES files', () => {
         'SMILES/smiles-two-arrows-and-plus-expected.smi',
         FileType.SMILES,
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.DaylightSMILES,
+      await verifySMILESExport(
+        page,
+        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
       );
-      expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-      await SaveStructureDialog(page).cancel();
       await CommonTopLeftToolbar(page).clearCanvas();
       await pasteFromClipboardAndAddToCanvas(
         page,
@@ -347,14 +335,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-benzene-arrow-benzene-reagent-nh3-expected.smi',
       FileType.SMILES,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMILES,
-    );
-    expect(await SaveStructureDialog(page).getTextAreaValue()).not.toBe('');
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySMILESExport(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
     await clickInTheMiddleOfTheScreen(page);
@@ -378,7 +359,6 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
     await page.getByText('info2').dblclick();
-    await takeEditorScreenshot(page);
     await SGroupPropertiesDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(

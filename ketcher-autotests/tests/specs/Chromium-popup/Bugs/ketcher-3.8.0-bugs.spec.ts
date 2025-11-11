@@ -6,22 +6,27 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import {
   CreateMonomerDialog,
   prepareMoleculeForMonomerCreation,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import {
   addTextBoxToCanvas,
   TextEditorDialog,
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   copyToClipboardByKeyboard,
@@ -39,6 +44,8 @@ import {
   FileType,
   verifyFileExport,
   verifyHELMExport,
+  verifyIDTExport,
+  verifySMARTSExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
@@ -47,6 +54,7 @@ import {
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
+  MolFileFormat,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -112,9 +120,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      * 5. Switch to Sequence mode.
      * 6. Observe the active selection tool after each switch.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeLeftToolbarMacromoleculeScreenshot(page);
@@ -141,9 +147,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      * 5. Exit sequence edit mode by clicking on the canvas.
      * 6. Observe the active selection tool again.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -163,9 +167,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      * 3. Click on any tool from the left toolbar (Hand, Erase, Single bond, etc.).
      * 4. Observe the active selection tool.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await CommonLeftToolbar(page).handTool();
     await takeLeftToolbarMacromoleculeScreenshot(page);
@@ -750,5 +752,210 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 28: Saving "star" atoms to SMARTS', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3088
+     * Description: Saving "star" atoms to SMARTS should give [*,H]1=[#6]-[*,H]=[#6]-[*,H]=[#6]-1
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from Daylight SMILES: *1C=*C=*C=1
+     * 3. Export canvas to SMARTS
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, '*1C=*C=*C=1');
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[*,H]1=[#6]-[*,H]=[#6]-[*,H]=[#6]-1');
+  });
+
+  test('Case 29: System not replaces "star" atoms with AH atoms in Mol v3000 export result', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3068
+     * Description: System not replaces "star" atoms with AH atoms in Mol v3000 export result
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from Mol
+     * 3. Export canvas to Mol v3000 and load it back
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/Bugs/benzene-ring-with-star-atoms.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/benzene-ring-with-star-atoms-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/Bugs/benzene-ring-with-star-atoms-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 30: System can load atom properties (Charge, Isotope and Valence) in SMARTS with "star" atom', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3084
+     * Description: System can load atom properties (Charge, Isotope and Valence) in SMARTS with "star" atom
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from SMARTS: [15*+1v4]
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, '[15*+1v4]');
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[*;+;v4;15]');
+  });
+
+  test('Case 31: Indigo functions (Aromatize/Dearomatize, Layout, Clean-Up, Calculate-CIP, Check Structure, Calculate Values, Add/Remove Hydrogens) work for star atom', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3087
+     * Description: Indigo functions (Aromatize/Dearomatize, Layout, Clean-Up, Calculate-CIP, Check Structure, Calculate Values, Add/Remove Hydrogens) work for star atom
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from KET
+     * 3. Try to use indigo functions: Aromatize/Dearomatize, Layout, Clean-Up, Calculate-CIP, Check Structure, Calculate Values, Add/Remove Hydrogens
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Star atom with all regular properties and query specific features.ket',
+    );
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await takeEditorScreenshot(page);
+    await IndigoFunctionsToolbar(page).checkStructure();
+    await takeEditorScreenshot(page, {
+      mask: [StructureCheckDialog(page).lastCheckInfo],
+    });
+    await StructureCheckDialog(page).cancel();
+    await IndigoFunctionsToolbar(page).calculatedValues();
+    await takeEditorScreenshot(page);
+    await CalculatedValuesDialog(page).close();
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 32: SMILES - *1C=*C=*C=1 loaded with "star" atoms', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3090
+     * Description: SMILES - *1C=*C=*C=1 loaded with "star" atoms
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load from Daylight SMILES: *1C=*C=*C=1
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, '*1C=*C=*C=1');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 33: Export to IDT work if monomer at the end has no 3 position IDT code', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3148
+     * Description: Export to IDT work if monomer at the end has no 3 position IDT code
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex canvas (empty)
+     * 2. Load from HELM: RNA1{[5Br-dU].[5Br-dU].[5Br-dU]}$$$$V2.0
+     * 3. Try to export canvas to IDT
+     * 4. Error message appears
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[5Br-dU].[5Br-dU].[5Br-dU]}$$$$V2.0',
+    );
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.IDT,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 34: Export to IDT work for baseless preset', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3147
+     * Description: Export to IDT work for baseless preset
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex canvas (empty)
+     * 2. Load from IDT
+     * 3. Try to export canvas to IDT
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      '/5dSp//idSp//3dSp/',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyIDTExport(page, '/5dSp//idSp//3dSp/');
+  });
+
+  test('Case 35: Export to IDT work for modified phosphates at first 5` position', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3144
+     * Description: Export to IDT work for modified phosphates at first 5` position
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex canvas (empty)
+     * 2. Load from HELM
+     * 3. Try to export canvas to IDT
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[AmC6].r(A)p}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyIDTExport(page, '/5AmMC6/rA/3Phos/');
+  });
+
+  test('Case 36: Can save regular atom properties (Charge, Isotope, Valence and Radical) to CML', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8202
+     * Bug: https://github.com/epam/Indigo/issues/3086
+     * Description: Can save regular atom properties (Charge, Isotope, Valence and Radical) to CML
+     * Scenario:
+     * 1. Go to Molecules mode (empty canvas)
+     * 2. Load KET
+     * 3. Export canvas to CML
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/Standard atom properties.ket',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CML/Standard atom properties-expected.cml',
+      FileType.CML,
+    );
   });
 });

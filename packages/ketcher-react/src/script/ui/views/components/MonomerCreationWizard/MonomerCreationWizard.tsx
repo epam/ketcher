@@ -60,12 +60,7 @@ const initialWizardState: WizardState = {
     aliasHELM: '',
   },
   errors: {},
-  notifications: new Map([
-    [
-      'defaultAttachmentPoints',
-      { type: 'info', message: NotificationMessages.defaultAttachmentPoints },
-    ],
-  ]),
+  notifications: new Map(),
 };
 
 const wizardReducer = (
@@ -528,6 +523,15 @@ const MonomerCreationWizard = () => {
   };
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
+
+  useEffect(() => {
+    if (monomerCreationState?.hasDefaultAttachmentPoints) {
+      wizardStateDispatch({
+        type: 'AddNotification',
+        id: 'defaultAttachmentPoints',
+      });
+    }
+  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
 
   if (!monomerCreationState) {
     return null;

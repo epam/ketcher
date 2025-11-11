@@ -628,6 +628,8 @@ export class CoreEditor {
       const selectedMonomers = this.drawingEntitiesManager.selectedEntities
         .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
         .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
+      const hasSelectedEntities =
+        this.drawingEntitiesManager.selectedEntitiesArr.length > 0;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([event, sequenceSelections]);
@@ -641,6 +643,13 @@ export class CoreEditor {
         eventData instanceof BaseMonomerRenderer &&
         eventData.monomer.selected
       ) {
+        this.events.rightClickSelectedMonomers.dispatch([event]);
+        this.events.rightClickSelectedMonomers.dispatch([
+          event,
+          selectedMonomers,
+        ]);
+      } else if (hasSelectedEntities && eventData?.drawingEntity?.selected) {
+        // Handle right-click on selected microstructures (atoms, bonds, arrows, etc.)
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,

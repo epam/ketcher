@@ -17,9 +17,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
-  copyToClipboardByIcon,
-  screenshotBetweenUndoRedo,
-  screenshotBetweenUndoRedoInMacro,
   copyToClipboardByKeyboard,
   takePageScreenshot,
   takeTopToolbarScreenshot,
@@ -277,7 +274,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -418,8 +415,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
@@ -628,7 +624,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -636,7 +636,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedoInMacro(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -666,7 +668,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

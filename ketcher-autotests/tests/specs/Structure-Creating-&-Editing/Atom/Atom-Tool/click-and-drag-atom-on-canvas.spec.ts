@@ -40,7 +40,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +60,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -82,7 +82,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -127,7 +127,7 @@ test.describe('Click and drag Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -168,7 +168,7 @@ test.describe('Click and drag Atom on canvas', () => {
         );
       }
     }
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

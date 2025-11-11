@@ -1,15 +1,12 @@
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { test } from '@fixtures';
-import {
-  addSingleMonomerToCanvas,
-  waitForPageInit,
-  takeEditorScreenshot,
-} from '@utils';
+import { waitForPageInit, takeEditorScreenshot } from '@utils';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,24 +18,18 @@ test.describe('Check attachment point hover', () => {
   test('Move monomer bonded with another monomers and hover attachment points', async ({
     page,
   }) => {
-    const coordinatesStart = { x: 300, y: 300 };
-    const peptide1 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.Tza,
-      coordinatesStart.x,
-      coordinatesStart.y,
-      0,
-    );
-    const coordinatesEnd = { x: 400, y: 400 };
-    const peptide2 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.Tza,
-      coordinatesEnd.x,
-      coordinatesEnd.y,
-      1,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 300,
+    });
+    const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 400,
+      y: 400,
+    });
+    const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

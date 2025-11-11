@@ -924,7 +924,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -971,7 +971,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -1065,7 +1065,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

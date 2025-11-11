@@ -5,7 +5,7 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
 } from '@utils';
 import { copyAndPaste } from '@utils/canvas/selectSelection';
 import {
@@ -55,7 +55,7 @@ test.describe('General Settings', () => {
     await drawBenzeneRing(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

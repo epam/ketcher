@@ -19,7 +19,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -256,35 +255,6 @@ export async function delay(seconds = 1) {
   );
 }
 
-export async function screenshotBetweenUndoRedo(page: Page) {
-  await CommonTopLeftToolbar(page).undo();
-  await takeEditorScreenshot(page, {
-    maxDiffPixels: 1,
-  });
-  await CommonTopLeftToolbar(page).redo();
-}
-
-export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await CommonTopLeftToolbar(page).undo();
-  await takeEditorScreenshot(page);
-  await CommonTopLeftToolbar(page).redo();
-}
-
-export async function addSingleMonomerToCanvas(
-  page: Page,
-  monomer: Monomer,
-  positionX: number,
-  positionY: number,
-  index: number,
-) {
-  await Library(page).dragMonomerOnCanvas(monomer, {
-    x: positionX,
-    y: positionY,
-  });
-  await MonomerPreviewTooltip(page).hide();
-  return getMonomerLocator(page, monomer).nth(index);
-}
-
 export async function addBondedMonomersToCanvas(
   page: Page,
   monomerType: Monomer,
@@ -298,13 +268,11 @@ export async function addBondedMonomersToCanvas(
 ) {
   const monomers = [];
   for (let index = 0; index < amount; index++) {
-    const monomer = await addSingleMonomerToCanvas(
-      page,
-      monomerType,
-      initialPositionX + deltaX * index,
-      initialPositionY + deltaY * index,
-      index,
-    );
+    await Library(page).dragMonomerOnCanvas(monomerType, {
+      x: initialPositionX + deltaX * index,
+      y: initialPositionY + deltaY * index,
+    });
+    const monomer = getMonomerLocator(page, monomerType).nth(index);
     monomers.push(monomer);
     if (index > 0) {
       await bondTwoMonomers(
@@ -317,51 +285,6 @@ export async function addBondedMonomersToCanvas(
     }
   }
   return monomers;
-}
-
-export async function addMonomerToCenterOfCanvas(
-  page: Page,
-  monomerType: Monomer,
-) {
-  await Library(page).dragMonomerOnCanvas(monomerType, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
-}
-
-export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
-  await Library(page).dragMonomerOnCanvas(peptide, {
-    x: 0,
-    y: 0,
-    fromCenter: true,
-  });
-}
-
-export async function addRnaPresetOnCanvas(
-  page: Page,
-  preset: Monomer,
-  positionX: number,
-  positionY: number,
-  sugarIndex: number,
-  phosphateIndex: number,
-) {
-  await Library(page).dragMonomerOnCanvas(preset, {
-    x: positionX,
-    y: positionY,
-  });
-  await MonomerPreviewTooltip(page).hide();
-  const sugar = page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
-    .nth(sugarIndex);
-  const phosphate = page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
-    .nth(phosphateIndex);
-
-  return { sugar, phosphate };
 }
 
 export async function copyToClipboardByKeyboard(
@@ -421,7 +344,7 @@ export async function pasteFromClipboardByKeyboard(
   );
 }
 
-export async function selectUndoByKeyboard(
+export async function undoByKeyboard(
   page: Page,
   options?:
     | {
@@ -436,7 +359,7 @@ export async function selectUndoByKeyboard(
   });
 }
 
-export async function selectRedoByKeyboard(
+export async function redoByKeyboard(
   page: Page,
   options?:
     | {
@@ -449,10 +372,6 @@ export async function selectRedoByKeyboard(
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
   });
-}
-
-export async function copyToClipboardByIcon(page: Page) {
-  await page.getByTestId('copy-to-clipboard').click();
 }
 
 export async function copyStructureByCtrlMove(
@@ -472,9 +391,7 @@ export async function selectCanvasArea(
   firstCorner: { x: number; y: number },
   secondCorner: { x: number; y: number },
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

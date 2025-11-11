@@ -1,6 +1,5 @@
 import { Page, test, expect } from '@fixtures';
 import {
-  addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
@@ -78,7 +77,7 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
   const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
   await drawThreeMonomers(page);
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
   await base.hover();
@@ -225,7 +224,12 @@ test.describe('RNA Library', () => {
     // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
     await reloadPageAndConfigureInitialState(page);
 
-    await addMonomerToCenterOfCanvas(page, Sugar._12ddR);
+    await Library(page).dragMonomerOnCanvas(Sugar._12ddR, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
 
@@ -235,7 +239,12 @@ test.describe('RNA Library', () => {
     Description: The selected base monomer should be added to the canvas 
     in the form of a rhombus and in the corresponding color.
     */
-    await addMonomerToCenterOfCanvas(page, Base.A);
+    await Library(page).dragMonomerOnCanvas(Base.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
 
@@ -245,7 +254,12 @@ test.describe('RNA Library', () => {
     Description: The selected phosphate monomer should be added to the canvas 
     in the form of a circle and in the corresponding color.
     */
-    await addMonomerToCenterOfCanvas(page, Phosphate.Test_6_Ph);
+    await Library(page).dragMonomerOnCanvas(Phosphate.Test_6_Ph, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
 
@@ -256,7 +270,14 @@ test.describe('RNA Library', () => {
     in the form of a square with rounded edges and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(page, Sugar._12ddR);
+    await Library(page).dragMonomerOnCanvas(Sugar._12ddR, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Sugar._12ddR).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -269,7 +290,14 @@ test.describe('RNA Library', () => {
     in the form of a rhombus and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(page, Base.clA);
+    await Library(page).dragMonomerOnCanvas(Base.clA, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Base.clA).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -282,7 +310,14 @@ test.describe('RNA Library', () => {
     in the form of a circle and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(page, Phosphate.Test_6_Ph);
+    await Library(page).dragMonomerOnCanvas(Phosphate.Test_6_Ph, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Phosphate.Test_6_Ph).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -376,7 +411,7 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -687,7 +722,7 @@ test.describe('RNA Library', () => {
         fromCenter: true,
       },
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -716,7 +751,7 @@ test.describe('RNA Library', () => {
         fromCenter: true,
       },
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -885,7 +920,7 @@ test.describe('RNA Library', () => {
     const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
     await drawThreeMonomers(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await sugar.hover();
     await page.mouse.down();
     await base.hover();
@@ -917,7 +952,7 @@ test.describe('RNA Library', () => {
         y: -10,
         fromCenter: true,
       });
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await clickInTheMiddleOfTheScreen(page);
@@ -938,7 +973,7 @@ test.describe('RNA Library', () => {
       const anyPointX = 400;
       const anyPointY = 400;
       await drawThreeMonomersConnectedWithBonds(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await getMonomerLocator(page, monomer).click();
@@ -957,8 +992,12 @@ test.describe('RNA Library', () => {
     Description: Bond does not remain on the canvas and returns to original position.
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3539
     */
-      await addMonomerToCenterOfCanvas(page, Sugar._25R);
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await Library(page).dragMonomerOnCanvas(Sugar._25R, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, Sugar._25R).click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);

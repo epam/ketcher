@@ -46,12 +46,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -78,12 +78,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -108,12 +108,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -141,12 +141,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -180,12 +180,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

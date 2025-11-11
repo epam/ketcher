@@ -26,17 +26,17 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 100);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
   test('drawing benzene ring, then adding single bond', async ({ page }) => {
     await drawBenzeneRing(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
 
     await clickOnAtom(page, 'C', 2);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -45,10 +45,10 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
      *   Test case: EPMLSOPKET-1371
      */
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
 
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -56,10 +56,10 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     /*
      *   Test case: EPMLSOPKET-1380
      */
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
 
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

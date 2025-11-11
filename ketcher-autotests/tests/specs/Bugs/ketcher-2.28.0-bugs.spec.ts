@@ -8,7 +8,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -60,6 +59,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 declare global {
   interface Window {
@@ -309,7 +309,12 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
    * 6. Take a screenshot to validate the cursor blinks in the right place
    */
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  await addMonomerToCenterOfCanvas(page, Preset.T);
+  await Library(page).dragMonomerOnCanvas(Preset.T, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();

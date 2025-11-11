@@ -10,10 +10,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  screenshotBetweenUndoRedo,
   clickOnCanvas,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +37,11 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

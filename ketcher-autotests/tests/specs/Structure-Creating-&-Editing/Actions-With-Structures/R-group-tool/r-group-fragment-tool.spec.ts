@@ -146,7 +146,7 @@ test.describe('Open Ketcher', () => {
       { label: 'C', index: atomIndex },
       { primary: true },
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText('R8').click();
@@ -251,9 +251,7 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/R-fragment-structure.mol',
     );
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await page.getByText('R8').click();
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);

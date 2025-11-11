@@ -3386,16 +3386,12 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
 
   const sugarRs = getMonomerLocator(page, Sugar.R);
 
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await sugarRs.nth(2).click();
   await CommonLeftToolbar(page).erase();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await sugarRs.nth(1).click();
   await dragMouseTo(200, 200, page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

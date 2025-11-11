@@ -5,12 +5,15 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { verifySMARTSExport, verifySMARTSExportWarnings } from '../utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Radical,
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {

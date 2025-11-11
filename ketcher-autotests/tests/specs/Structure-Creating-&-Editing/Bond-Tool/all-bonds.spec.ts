@@ -102,7 +102,7 @@ test.describe(`Bond tool:`, () => {
       const drawnBonds = 3;
       const drawnBondsWithRing = 7;
       const bondAfterErase = 6;
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
       await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
       await clickInTheMiddleOfTheScreen(page);
@@ -121,7 +121,7 @@ test.describe(`Bond tool:`, () => {
       await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
 
       await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click();
 
@@ -141,7 +141,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(sizeAfterErase).toEqual(bondAfterErase);
 
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
 
       await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click();
 
@@ -164,7 +164,7 @@ test.describe(`Bond tool:`, () => {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
 
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
 
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
       await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
@@ -174,7 +174,7 @@ test.describe(`Bond tool:`, () => {
       await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
       const doubleBond = getBondLocator(page, {
         bondType: MicroBondDataIds.Double,
       }).first();
@@ -201,7 +201,7 @@ test.describe(`Bond tool:`, () => {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
 
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
 
       await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
 
@@ -262,7 +262,7 @@ test.describe(`Bond tool:`, () => {
       /**
        *  Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
        */
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
@@ -274,7 +274,7 @@ test.describe(`Bond tool:`, () => {
        */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
-        await CommonLeftToolbar(page).selectBondTool(bondType);
+        await CommonLeftToolbar(page).bondTool(bondType);
         await clickOnCanvas(page, -200, 0, { from: 'pageCenter' });
         await clickInTheMiddleOfTheScreen(page);
         await CommonTopLeftToolbar(page).saveFile();
@@ -293,7 +293,7 @@ test.describe(`Bond tool:`, () => {
        *Test case: EPMLSOPKET-16931
        *Description: Check that Bonds between atoms are centered and drawn symmetrically
        */
-      await CommonLeftToolbar(page).selectBondTool(bondType);
+      await CommonLeftToolbar(page).bondTool(bondType);
       await clickInTheMiddleOfTheScreen(page);
     });
   }
@@ -321,10 +321,10 @@ test.describe(`Bond tool (copy-paste):`, () => {
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
         const atomToolbar = RightToolbar(page);
 
-        await CommonLeftToolbar(page).selectBondTool(bondType);
+        await CommonLeftToolbar(page).bondTool(bondType);
         await clickInTheMiddleOfTheScreen(page);
 
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
 
@@ -332,7 +332,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await dragMouseTo(point.x + DELTA_X, point.y, page);
         await CommonTopLeftToolbar(page).undo();
 
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
 
@@ -406,7 +406,7 @@ test.describe('Bond Tool', () => {
         FunctionalGroupsTabItems.Boc,
       );
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectBondTool(tool);
+      await CommonLeftToolbar(page).bondTool(tool);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     });
@@ -416,7 +416,7 @@ test.describe('Bond Tool', () => {
        * Test cases: EPMLSOPKET - 2920/2921
        */
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectBondTool(tool);
+      await CommonLeftToolbar(page).bondTool(tool);
       await clickInTheMiddleOfTheScreen(page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
@@ -477,7 +477,7 @@ test.describe('Bond Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
@@ -488,7 +488,7 @@ test.describe('Bond Tool', () => {
       },
       200,
     );
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await takeEditorScreenshot(page);
 
     await moveOnAtom(page, 'O', 0);
@@ -518,7 +518,7 @@ test.describe('Bond Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
@@ -529,7 +529,7 @@ test.describe('Bond Tool', () => {
       },
       200,
     );
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
@@ -540,7 +540,7 @@ test.describe('Bond Tool', () => {
       },
       200,
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const point2 = await getAtomLocator(page, { atomLabel: 'N' })
@@ -562,7 +562,7 @@ test.describe('Bond Tool', () => {
     const point = { x: -200, y: -200 };
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas(page, 'KET/ketcher-42.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
@@ -582,7 +582,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-16888
      *Description: Bond Tool - Add new bonds to the same atom
      */
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -593,7 +593,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-16887
      *Description: Bond Tool - Change the type of bond by clicking on bond
      */
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await getBondLocator(page, { bondId: 0 }).click({ force: true });
@@ -607,7 +607,7 @@ test.describe('Bond Tool', () => {
      */
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
     const bondIds = [11, 6, 7, 8, 9, 10];
     let i = 0;
     while (i < bondIds.length) {

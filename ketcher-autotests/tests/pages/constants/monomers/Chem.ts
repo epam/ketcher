@@ -112,6 +112,7 @@ export const Chem = createMonomerGroup(MonomerType.CHEM, {
   MGBEc: { alias: 'MGBEc', testId: 'MGBEc___MGBEc' },
   // for library update test, doesn't exist initially
   _CHEM1: { alias: '_CHEM1', testId: '_CHEM1____CHEM1' },
+  CHEM1: { alias: 'CHEM1', testId: 'CHEM1___CHEM1' },
 });
 
 export type ChemType = typeof Chem;

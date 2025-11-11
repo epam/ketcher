@@ -36,7 +36,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -57,7 +57,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -76,7 +76,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -98,7 +98,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Iodine);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -122,7 +122,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

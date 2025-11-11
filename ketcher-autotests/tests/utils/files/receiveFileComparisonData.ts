@@ -327,3 +327,66 @@ export async function verifyIDTExport(page: Page, IDTExportExpected = '') {
 
   await SaveStructureDialog(page).cancel();
 }
+
+export async function verifySMILESExport(
+  page: Page,
+  SMILESExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMILES,
+  );
+  await expect(SaveStructureDialog(page).saveStructureTextarea).toHaveValue(
+    SMILESExportExpected,
+  );
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifySMARTSExport(
+  page: Page,
+  SMARTSExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await expect(SaveStructureDialog(page).saveStructureTextarea).toHaveValue(
+    SMARTSExportExpected,
+  );
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifySMARTSExportWarnings(page: Page) {
+  const value =
+    'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await SaveStructureDialog(page).switchToWarningsTab();
+  const warningSmartsTextArea = SaveStructureDialog(
+    page,
+  ).warningTextarea.filter({ hasText: 'SMARTS' });
+  const warningText = await warningSmartsTextArea.evaluate(
+    (node) => node.textContent,
+  );
+  expect(warningText).toEqual(value);
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifyInChIKeyExport(
+  page: Page,
+  InChIKeyExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.InChIKey,
+  );
+  const InChIKeyExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}

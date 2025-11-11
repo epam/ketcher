@@ -270,38 +270,34 @@ test.describe('API for update Library', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test.fail(
-    'Case 15: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method',
-    async () => {
-      // Fails due to bug: https://github.com/epam/Indigo/issues/3293
-      /*
-       * Version 3.9
-       * Test case: https://github.com/epam/ketcher/issues/7674
-       * Description: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method
-       * Scenario:
-       * 1. Go to Macromolecules mode - Flex mode
-       * 2. Add command by ketcher.replaceMonomersLibrary method
-       * 3. Check monomer is added to the library
-       */
-      const SDF_EMPTY = await readFileContent('SDF/SDF_EMPTY.sdf');
-      await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).switchToPeptidesTab();
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).switchToRNATab();
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Sugars);
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Bases);
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Phosphates);
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).openRNASection(RNASection.Nucleotides);
-      await takeMonomerLibraryScreenshot(page);
-      await Library(page).switchToCHEMTab();
-      await takeMonomerLibraryScreenshot(page);
-    },
-  );
+  test('Case 15: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method', async () => {
+    /*
+     * Version 3.9
+     * Test case: https://github.com/epam/ketcher/issues/7674
+     * Description: Replace whole library with library of no monomers inside with ketcher.replaceMonomersLibrary method
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Add command by ketcher.replaceMonomersLibrary method
+     * 3. Check monomer is added to the library
+     */
+    const SDF_EMPTY = await readFileContent('SDF/SDF_EMPTY.sdf');
+    await replaceMonomersLibrary(page, SDF_EMPTY, { format: 'sdf' });
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToPeptidesTab();
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToRNATab();
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Sugars);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Bases);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).openRNASection(RNASection.Nucleotides);
+    await takeMonomerLibraryScreenshot(page);
+    await Library(page).switchToCHEMTab();
+    await takeMonomerLibraryScreenshot(page);
+  });
 });
 
 test.describe('API for replace Library', () => {

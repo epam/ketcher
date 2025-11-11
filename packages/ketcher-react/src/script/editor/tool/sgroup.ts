@@ -511,10 +511,7 @@ class SGroupTool implements Tool {
     // Editing S-Group properties of expanded monomers can cause data corruption
     // when switching between Molecules and Macromolecules canvas
     if (sg?.isMonomer) {
-      editor.event.message.dispatch({
-        error: 'S-Group properties cannot be edited for monomers.',
-      });
-      return Promise.reject(new Error('Cannot edit monomer S-Group'));
+      return Promise.resolve();
     }
 
     let attrs;

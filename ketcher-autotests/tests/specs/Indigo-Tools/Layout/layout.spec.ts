@@ -100,59 +100,48 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Layout action on part of structure with S-Group',
-    async ({ page }) => {
-      // Fails because of bug: https://github.com/epam/Indigo/issues/3291
-      /*
-       * Test case: EPMLSOPKET-1812
-       * Description: The Layout action is implemented for the whole canvas.
-       */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/distorted-Sgroups.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with S-Group', async ({ page }) => {
+    /*
+     * Test case: EPMLSOPKET-1812
+     * Description: The Layout action is implemented for the whole canvas.
+     */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/distorted-Sgroups.mol');
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 
-  test.fail(
-    'Layout action on part of structure with R-Group label',
-    async ({ page }) => {
-      // Fails because of bug: https://github.com/epam/Indigo/issues/3291
-      /*
-       * Test case: EPMLSOPKET-1813
-       * Description: The Layout action is implemented for the whole canvas.
-       */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/distorted-r-group-labels.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with R-Group label', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1813
+     * Description: The Layout action is implemented for the whole canvas.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/distorted-r-group-labels.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 
-  test.fail(
-    'Layout action on part of structure with Attachment point',
-    async ({ page }) => {
-      // Fails because of bug: https://github.com/epam/Indigo/issues/3291
-      /*
-       * Test case: EPMLSOPKET-1815
-       * Description: The action is implemented for the whole canvas.
-       */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/distorted-structure-attachment-points.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with Attachment point', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1815
+     * Description: The action is implemented for the whole canvas.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/distorted-structure-attachment-points.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 
   test('Layout part of structure of R-Group member with R-Group logic', async ({
     page,
@@ -170,24 +159,22 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Layout action on part of structure with Stereobonds',
-    async ({ page }) => {
-      // Fails because of bug: https://github.com/epam/Indigo/issues/3291
-      /*
-       * Test case: EPMLSOPKET-1822
-       * Description: Layout action is correct for the selected part.
-       * Non-selected part is invariable.
-       */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/structure-with-stereobonds.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with Stereobonds', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1822
+     * Description: Layout action is correct for the selected part.
+     * Non-selected part is invariable.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/structure-with-stereobonds.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 
   test.fail('Clean reaction with Layout tool', async ({ page }) => {
     /*
@@ -225,23 +212,20 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Layout action on part of structure with different properties',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      // Fails because of bug: https://github.com/epam/Indigo/issues/3291
-      /*
-       * Test case: EPMLSOPKET-1823
-       * Description: Layout action is implemented for the whole canvas.
-       * Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
-       */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/clean-different-properties.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1823
+     * Description: Layout action is implemented for the whole canvas.
+     * Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/clean-different-properties.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 });

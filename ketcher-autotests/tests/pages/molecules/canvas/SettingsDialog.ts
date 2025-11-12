@@ -109,13 +109,13 @@ type SettingsDialogLocators = {
   saveToFileButton: Locator;
   resetButton: Locator;
   closeWindowButton: Locator;
-  generalSection: Locator & GeneralSectionLocators;
-  stereochemistrySection: Locator & StereochemistrySectionLocators;
-  atomsSection: Locator & AtomsSectionLocators;
-  bondsSection: Locator & BondsSectionLocators;
-  serverSection: Locator & ServerSectionLocators;
-  threeDViewerSection: Locator & ThreeDViewerSectionLocators;
-  optionsForDebuggingSection: Locator & OptionsForDebuggingSectionLocators;
+  generalSection: Locator;
+  stereochemistrySection: Locator;
+  atomsSection: Locator;
+  bondsSection: Locator;
+  serverSection: Locator;
+  threeDViewerSection: Locator;
+  optionsForDebuggingSection: Locator;
   setACSSettingsButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -271,22 +271,15 @@ export const SettingsDialog = (page: Page) => {
     saveToFileButton: page.getByTestId('save-settings-to-file-button'),
     resetButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
-    generalSection: page.getByTestId('General-accordion') as Locator &
-      typeof generalSection,
-    stereochemistrySection: page.getByTestId(
-      'Stereochemistry-accordion',
-    ) as Locator & typeof stereochemistrySection,
-    atomsSection: page.getByTestId('Atoms-accordion') as Locator &
-      typeof atomsSection,
-    bondsSection: page.getByTestId('Bonds-accordion') as Locator &
-      typeof bondsSection,
-    serverSection: page.getByTestId('Server-accordion') as Locator &
-      typeof serverSection,
-    threeDViewerSection: page.getByTestId('3D Viewer-accordion') as Locator &
-      typeof threeDViewerSection,
+    generalSection: page.getByTestId('General-accordion'),
+    stereochemistrySection: page.getByTestId('Stereochemistry-accordion'),
+    atomsSection: page.getByTestId('Atoms-accordion'),
+    bondsSection: page.getByTestId('Bonds-accordion'),
+    serverSection: page.getByTestId('Server-accordion'),
+    threeDViewerSection: page.getByTestId('3D Viewer-accordion'),
     optionsForDebuggingSection: page.getByTestId(
       'Options for Debugging-accordion',
-    ) as Locator & typeof optionsForDebuggingSection,
+    ),
     setACSSettingsButton: page.getByTestId('acs-style-button'),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),

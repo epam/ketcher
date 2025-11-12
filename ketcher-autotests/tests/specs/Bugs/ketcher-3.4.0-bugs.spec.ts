@@ -40,6 +40,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   FileType,
+  verifyFASTAExport,
   verifyFileExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -47,8 +48,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   rotateToCoordinates,
@@ -376,16 +375,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await Library(page).selectMonomer(Peptide.O);
     await Library(page).selectMonomer(Peptide.K);
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.FASTA,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await SaveStructureDialog(page).cancel();
+    await verifyFASTAExport(page, '>Sequence1\nOK');
   });
 
   test('Case 12: DNA/RNA sequences should NOT accept * symbols', async () => {
@@ -1360,13 +1350,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Put selected template to canvas
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,

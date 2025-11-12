@@ -27,7 +27,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
@@ -229,10 +229,6 @@ for (const monomerToCreate of eligableForMonomerCreation) {
 
 const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
   {
-    testDescription: '1. Cycle with no single bonds to LGA',
-    loadString: 'C1CCCCCCC1',
-  },
-  {
     testDescription: '2. R-Groups not at terminal positions',
     loadString:
       '[*:3]%87%88.[*:2]%89%87.[*:1]%87%89.[*:6]%89%87.[*:5]%87%89.[*:4]%88%87 |$_R3;_R2;_R1;_R6;_R5;_R4$|',
@@ -249,65 +245,6 @@ const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
       'C1(C%85%86)C(C%87%88)C%89C(C%90%91)C(C%92%93)C(C%94%95)C%96C1C%97%98.[*:14]%96.[*:7]%89.[*:13]%97.[*:12]%98.[*:6]%90.[*:5]%91.[*:4]%92.[*:3]%93.[*:2]%94.[*:1]%95.[*:11]%85.[*:10]%86.[*:9]%87.[*:8]%88 |$;;;;;;;;;;;;;;_R14;_R7;_R13;_R12;_R6;_R5;_R4;_R3;_R2;_R1;_R11;_R10;_R9;_R8$|',
   },
 ];
-const notEligableForMonomerCreation2: IMoleculesForMonomerCreation[] = [
-  {
-    testDescription: '2. Double bond with no potential LGA',
-    loadString: 'C=C',
-  },
-  {
-    testDescription: '3. Triple bond with no potential LGA',
-    loadString: 'C#C',
-  },
-  {
-    testDescription: '4. Any bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAMOEApnP2AAAw4QCmcxQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIA//8AAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '5. Aromatic bond with no potential LGA',
-    loadString: 'c:c',
-  },
-  {
-    testDescription: '6. Single/Double bond with no potential LGA',
-    loadString: '[#6]!:;-,=[#6]',
-  },
-  {
-    testDescription: '7. Single/Aromatic bond with no potential LGA',
-    loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '8. Double/Aromatic bond with no potential LGA',
-    loadString: '[#6]=,:[#6]',
-  },
-  {
-    testDescription: '9. Dative bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAABAAAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '10. Hydrogen bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAAEAAAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '11. Single Up bond with no potential LGA',
-    loadString: '[#6]/[#6]',
-  },
-  {
-    testDescription: '12. Single Down bond with no potential LGA',
-    loadString: '[#6][#6]',
-  },
-  {
-    testDescription: '13. Single Up/Down bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYN4AAKDmAABg3gAAoAQBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAAAAHgAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAABBgIACAAAAAAAAAAAAAAA',
-  },
-  {
-    testDescription: '14. CIS/Trans bond with no potential LGA',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAYMwAAKDUAABgzAD/n/IAA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAAAggAAAAAAP//HQAAAAWABwAAAAQGBAAFAAAABQYEAAYAAAAABgIAAgABBgIACAAAAAAAAAAAAAAA',
-  },
-];
 
 for (const monomerToCreate of notEligableForMonomerCreation1) {
   test(`2.1 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`, async () => {
@@ -316,30 +253,6 @@ for (const monomerToCreate of notEligableForMonomerCreation1) {
      * Description: 1. Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
      *              2. Check that the selected structure if it contains R-groups (R-group labels), but they are not at terminal
      *              3. Number of R-Groups exceeds number of possible attachment points (8)
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule
-     *      3. Validate that Create Monomer button is disabled
-     *
-     * Version 3.8
-     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      monomerToCreate.loadString,
-    );
-    await clickOnCanvas(page, 0, 0);
-    await selectAllStructuresOnCanvas(page);
-    expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
-  });
-}
-
-for (const monomerToCreate of notEligableForMonomerCreation2) {
-  test(`2.2 Check it is not possible to create monomer for ${monomerToCreate.testDescription}`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7948
-     * Description: Check that the selected structure if it not contains at least one R-group or LGA not activate monomer wizard button
      *
      * Case:
      *      1. Open Molecules canvas
@@ -943,14 +856,30 @@ test(`18. Check that for an already set APs the user can Delete the AP, by click
   const attachmentPointR7 = page.getByTestId(AttachmentPoint.R7).first();
   const attachmentPointR8 = page.getByTestId(AttachmentPoint.R8).first();
 
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R1);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R2);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R3);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R4);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R5);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R6);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R7);
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R8);
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R1,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R2,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R3,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R4,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R5,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R6,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R7,
+  );
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R8,
+  );
 
   await expect(attachmentPointR1).not.toBeVisible();
   await expect(attachmentPointR2).not.toBeVisible();
@@ -996,8 +925,8 @@ test(`19. Check that for an already set APs the user can change the R-group numb
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
-    oldName: AttachmentPointName.R2,
-    newName: AttachmentPointName.R1,
+    oldName: AttachmentPointOption.R2,
+    newName: AttachmentPointOption.R1,
   });
 
   await expect(attachmentPointR2).not.toBeVisible();
@@ -1036,43 +965,43 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
   await dragMouseTo(425, 200, page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.H,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.OH,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.NH2,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.F,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.Cl,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.Br,
   });
   await takeEditorScreenshot(page);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointName.R1,
+    attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.I,
   });
   await takeEditorScreenshot(page);
@@ -1190,8 +1119,8 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
   await dragMouseTo(425, 200, page);
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
-    oldName: AttachmentPointName.R2,
-    newName: AttachmentPointName.R3,
+    oldName: AttachmentPointOption.R2,
+    newName: AttachmentPointOption.R3,
   });
 
   await CommonLeftToolbar(page).erase();

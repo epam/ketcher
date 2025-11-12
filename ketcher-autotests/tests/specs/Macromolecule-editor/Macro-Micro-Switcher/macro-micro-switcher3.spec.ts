@@ -8,11 +8,9 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  BondType,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickOnBond,
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
@@ -44,12 +42,8 @@ async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
 }
 
-async function selectExpandedMonomer(
-  page: Page,
-  bondType: number = BondType.SINGLE,
-  bondNumber = 1,
-) {
-  await clickOnBond(page, bondType, bondNumber);
+async function selectExpandedMonomer(page: Page) {
+  await getBondLocator(page, { bondId: 1 }).click({ force: true });
 }
 
 async function expandMonomer(page: Page, locatorText: string) {

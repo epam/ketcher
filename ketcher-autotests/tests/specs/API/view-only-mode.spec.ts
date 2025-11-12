@@ -20,7 +20,6 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
   FileType,
   verifyFileExport,
@@ -346,7 +345,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await selectAllStructuresOnCanvas(page);
         // Waiting for all selected elements to lose `display: none` is insufficient
         // because the "Copy" button becomes enabled last as an indicator of completion.
-        await waitForOpenButtonEnabled(page);
+        // await waitForOpenButtonEnabled(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),
@@ -461,7 +460,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await longClickOnAtom(page, 'C', 1);
@@ -481,9 +480,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
@@ -500,7 +497,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);

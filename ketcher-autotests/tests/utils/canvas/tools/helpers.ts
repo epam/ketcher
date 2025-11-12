@@ -15,9 +15,7 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);
@@ -51,7 +49,7 @@ export async function selectWithLasso(
   });
 }
 
-export async function selectTAndDeselectWithLasso(
+export async function selectAndDeselectWithLasso(
   page: Page,
   startX: number,
   startY: number,
@@ -82,11 +80,8 @@ export async function selectTAndDeselectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
-  const inputText = templateName;
-
   await CommonTopLeftToolbar(page).saveFile();
-  await saveToTemplatesButton.click();
-  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await SaveStructureDialog(page).saveToTemplates();
+  await TemplateEditDialog(page).setMoleculeName(templateName);
   await TemplateEditDialog(page).save();
 }

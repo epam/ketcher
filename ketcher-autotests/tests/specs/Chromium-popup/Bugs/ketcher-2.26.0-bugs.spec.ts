@@ -25,8 +25,6 @@ import {
   cutToClipboardByKeyboard,
   readFileContent,
   pasteFromClipboardAndOpenAsNewProject,
-  moveMouseToTheMiddleOfTheScreen,
-  copyToClipboardByIcon,
   moveMouseAway,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -627,16 +625,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to "View Only" mode. ketcher.editor.options({ viewOnlyMode: true })
      * 4. Change the selection mode.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await enableViewOnlyModeBySetOptions(page);
     await CommonLeftToolbar(page).handTool();
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeLeftToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
     await disableViewOnlyModeBySetOptions(page);
   });
@@ -701,7 +695,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -736,7 +730,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         MultiTailedArrowOption.AddNewTail,
       );
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -1680,8 +1674,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

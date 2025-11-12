@@ -16,7 +16,7 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 
@@ -64,54 +64,54 @@ type CreateMonomerDialogLocators = {
 
 const createAttachmentPointControlGroupMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1ControlGroup,
-  [AttachmentPointName.R2]: dialogLocators.r2ControlGroup,
-  [AttachmentPointName.R3]: dialogLocators.r3ControlGroup,
-  [AttachmentPointName.R4]: dialogLocators.r4ControlGroup,
-  [AttachmentPointName.R5]: dialogLocators.r5ControlGroup,
-  [AttachmentPointName.R6]: dialogLocators.r6ControlGroup,
-  [AttachmentPointName.R7]: dialogLocators.r7ControlGroup,
-  [AttachmentPointName.R8]: dialogLocators.r8ControlGroup,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1ControlGroup,
+  [AttachmentPointOption.R2]: dialogLocators.r2ControlGroup,
+  [AttachmentPointOption.R3]: dialogLocators.r3ControlGroup,
+  [AttachmentPointOption.R4]: dialogLocators.r4ControlGroup,
+  [AttachmentPointOption.R5]: dialogLocators.r5ControlGroup,
+  [AttachmentPointOption.R6]: dialogLocators.r6ControlGroup,
+  [AttachmentPointOption.R7]: dialogLocators.r7ControlGroup,
+  [AttachmentPointOption.R8]: dialogLocators.r8ControlGroup,
 });
 
 const createAttachmentPointNameComboboxMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1NameCombobox,
-  [AttachmentPointName.R2]: dialogLocators.r2NameCombobox,
-  [AttachmentPointName.R3]: dialogLocators.r3NameCombobox,
-  [AttachmentPointName.R4]: dialogLocators.r4NameCombobox,
-  [AttachmentPointName.R5]: dialogLocators.r5NameCombobox,
-  [AttachmentPointName.R6]: dialogLocators.r6NameCombobox,
-  [AttachmentPointName.R7]: dialogLocators.r7NameCombobox,
-  [AttachmentPointName.R8]: dialogLocators.r8NameCombobox,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1NameCombobox,
+  [AttachmentPointOption.R2]: dialogLocators.r2NameCombobox,
+  [AttachmentPointOption.R3]: dialogLocators.r3NameCombobox,
+  [AttachmentPointOption.R4]: dialogLocators.r4NameCombobox,
+  [AttachmentPointOption.R5]: dialogLocators.r5NameCombobox,
+  [AttachmentPointOption.R6]: dialogLocators.r6NameCombobox,
+  [AttachmentPointOption.R7]: dialogLocators.r7NameCombobox,
+  [AttachmentPointOption.R8]: dialogLocators.r8NameCombobox,
 });
 
 const createAttachmentPointAtomComboboxMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1AtomCombobox,
-  [AttachmentPointName.R2]: dialogLocators.r2AtomCombobox,
-  [AttachmentPointName.R3]: dialogLocators.r3AtomCombobox,
-  [AttachmentPointName.R4]: dialogLocators.r4AtomCombobox,
-  [AttachmentPointName.R5]: dialogLocators.r5AtomCombobox,
-  [AttachmentPointName.R6]: dialogLocators.r6AtomCombobox,
-  [AttachmentPointName.R7]: dialogLocators.r7AtomCombobox,
-  [AttachmentPointName.R8]: dialogLocators.r8AtomCombobox,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1AtomCombobox,
+  [AttachmentPointOption.R2]: dialogLocators.r2AtomCombobox,
+  [AttachmentPointOption.R3]: dialogLocators.r3AtomCombobox,
+  [AttachmentPointOption.R4]: dialogLocators.r4AtomCombobox,
+  [AttachmentPointOption.R5]: dialogLocators.r5AtomCombobox,
+  [AttachmentPointOption.R6]: dialogLocators.r6AtomCombobox,
+  [AttachmentPointOption.R7]: dialogLocators.r7AtomCombobox,
+  [AttachmentPointOption.R8]: dialogLocators.r8AtomCombobox,
 });
 
 const createAttachmentPointDeleteButtonMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1DeleteButton,
-  [AttachmentPointName.R2]: dialogLocators.r2DeleteButton,
-  [AttachmentPointName.R3]: dialogLocators.r3DeleteButton,
-  [AttachmentPointName.R4]: dialogLocators.r4DeleteButton,
-  [AttachmentPointName.R5]: dialogLocators.r5DeleteButton,
-  [AttachmentPointName.R6]: dialogLocators.r6DeleteButton,
-  [AttachmentPointName.R7]: dialogLocators.r7DeleteButton,
-  [AttachmentPointName.R8]: dialogLocators.r8DeleteButton,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1DeleteButton,
+  [AttachmentPointOption.R2]: dialogLocators.r2DeleteButton,
+  [AttachmentPointOption.R3]: dialogLocators.r3DeleteButton,
+  [AttachmentPointOption.R4]: dialogLocators.r4DeleteButton,
+  [AttachmentPointOption.R5]: dialogLocators.r5DeleteButton,
+  [AttachmentPointOption.R6]: dialogLocators.r6DeleteButton,
+  [AttachmentPointOption.R7]: dialogLocators.r7DeleteButton,
+  [AttachmentPointOption.R8]: dialogLocators.r8DeleteButton,
 });
 
 export const CreateMonomerDialog = (page: Page) => {
@@ -172,19 +172,19 @@ export const CreateMonomerDialog = (page: Page) => {
   return {
     ...locators,
 
-    getAttachmentPointControlGroup(ap: AttachmentPointName) {
+    getAttachmentPointControlGroup(ap: AttachmentPointOption) {
       return attachmentPointControlGroupByAP[ap];
     },
 
-    getAttachmentPointNameCombobox(ap: AttachmentPointName) {
+    getAttachmentPointNameCombobox(ap: AttachmentPointOption) {
       return attachmentPointNameComboboxByAP[ap];
     },
 
-    getAttachmentPointAtomCombobox(ap: AttachmentPointName) {
+    getAttachmentPointAtomCombobox(ap: AttachmentPointOption) {
       return attachmentPointAtomComboboxByAP[ap];
     },
 
-    getAttachmentPointDeleteButton(ap: AttachmentPointName) {
+    getAttachmentPointDeleteButton(ap: AttachmentPointOption) {
       return attachmentPointDeleteButtonByAP[ap];
     },
 
@@ -209,8 +209,8 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async changeAttachmentPointName(options: {
-      oldName: AttachmentPointName;
-      newName: AttachmentPointName;
+      oldName: AttachmentPointOption;
+      newName: AttachmentPointOption;
     }) {
       const combobox = attachmentPointNameComboboxByAP[options.oldName];
       await combobox.click();
@@ -218,7 +218,7 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async changeAttachmentPointAtom(options: {
-      attachmentPointName: AttachmentPointName;
+      attachmentPointName: AttachmentPointOption;
       newAtom: AttachmentPointAtom;
     }) {
       const combobox =
@@ -227,7 +227,7 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.getByTestId(options.newAtom).first().click();
     },
 
-    async deleteAttachmentPoint(attachmentPointName: AttachmentPointName) {
+    async deleteAttachmentPoint(attachmentPointName: AttachmentPointOption) {
       const deleteButton = attachmentPointDeleteButtonByAP[attachmentPointName];
       await waitForRender(page, async () => {
         await deleteButton.click();

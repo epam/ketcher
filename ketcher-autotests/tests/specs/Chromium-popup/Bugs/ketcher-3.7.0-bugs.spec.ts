@@ -44,12 +44,10 @@ import {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.7.0', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -335,9 +333,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'KET/Bugs/reaction-file-with-substituent.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await CommonTopRightToolbar(page).setZoomInputValue('80');
     await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -412,7 +408,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 15: Area selection work for bond/atom reposition', async () => {
+  test('Case 15: Area selection work for bond/atom reposition', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7440
@@ -424,7 +422,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Select all the molecule including atom and bond
      */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
@@ -471,7 +469,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     });
   });
 
-  test('Case 17: Correct leaving group atoms for expanded monomers', async () => {
+  test('Case 17: Correct leaving group atoms for expanded monomers', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7222
@@ -496,7 +496,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 18: Saving to MOLv3000 work and system not throws exception', async () => {
+  test('Case 18: Saving to MOLv3000 work and system not throws exception', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3048
@@ -524,7 +526,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 19: Alanine and R2-R1 bonds not lost after loading from MOL if peptide has side connection', async () => {
+  test('Case 19: Alanine and R2-R1 bonds not lost after loading from MOL if peptide has side connection', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3051
@@ -540,7 +544,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 20: Stereo labels not missied on export to SVG result', async () => {
+  test('Case 20: Stereo labels not missied on export to SVG result', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3049
@@ -558,7 +564,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await verifySVGExport(page);
   });
 
-  test('Case 21: Loading monomer chain from SDF file works - bonds between monomers not lost ', async () => {
+  test('Case 21: Loading monomer chain from SDF file works - bonds between monomers not lost ', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3050
@@ -574,7 +582,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds', async () => {
+  test('Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/Indigo/issues/3069

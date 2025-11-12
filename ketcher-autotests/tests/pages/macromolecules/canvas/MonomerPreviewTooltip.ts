@@ -49,7 +49,7 @@ export const MonomerPreviewTooltip = (page: Page) => {
 
     async getAxoLabsAlias() {
       await this.waitForBecomeVisible();
-      return await locators.window.getAttribute('data-axoLabs');
+      return await locators.window.getAttribute('data-axolabs');
     },
 
     async getIDTAliases() {
@@ -59,7 +59,7 @@ export const MonomerPreviewTooltip = (page: Page) => {
 
     async getModificationTypes() {
       await this.waitForBecomeVisible();
-      return await locators.window.getAttribute('data-modificationType');
+      return await locators.window.getAttribute('data-modificationtype');
     },
   };
 };

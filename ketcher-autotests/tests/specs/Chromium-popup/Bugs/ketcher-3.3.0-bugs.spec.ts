@@ -106,7 +106,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Sugar.fR, centerOfTheCanvas);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Sugar.fR).first().hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
@@ -149,7 +149,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._2Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -176,7 +176,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -228,7 +228,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
@@ -806,7 +806,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

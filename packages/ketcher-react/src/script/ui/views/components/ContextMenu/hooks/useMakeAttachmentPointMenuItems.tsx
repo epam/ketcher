@@ -38,6 +38,13 @@ const useMakeAttachmentPointMenuItems = ({
     );
   });
 
+  const isAtomAlreadyLeavingAtom = Array.from(
+    assignedAttachmentPoints.values(),
+  ).some((atomPair) => {
+    const [, leavingAtomId] = atomPair;
+    return selectedAtomId === leavingAtomId;
+  });
+
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
   const isPotentialLeavingGroupAtom = Array.from(
@@ -87,7 +94,7 @@ const useMakeAttachmentPointMenuItems = ({
       disabled={
         attachmentPointsLimitReached ||
         !isPotentialAttachmentAtom ||
-        isAtomInAssignedAttachmentPoint
+        isAtomAlreadyLeavingAtom
       }
       data-testid="mark-as-connection-point"
       key="mark-as-connection-point"

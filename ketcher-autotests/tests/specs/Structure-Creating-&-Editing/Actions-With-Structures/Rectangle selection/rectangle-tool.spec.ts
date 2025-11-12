@@ -2,7 +2,6 @@ import { Page, test } from '@fixtures';
 import {
   BondType,
   clickOnAtom,
-  clickOnBond,
   clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
@@ -19,6 +18,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe('Rectangle selection tool', () => {
   }) => {
     // Test case: EPMLSOPKET-1347
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickCanvas(page);
@@ -66,7 +66,7 @@ test.describe('Rectangle selection tool', () => {
     const objectSelection = 100;
     const atomNumber = 5;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const point = await selectObjects(page, objectSelection, objectSelection);
@@ -81,7 +81,7 @@ test.describe('Rectangle selection tool', () => {
     const moveMouseCoordinatesY = 10;
     const moveMouseCoordinatesX = 270;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -108,7 +108,7 @@ test.describe('Rectangle selection tool', () => {
     const objectSelection = 100;
     const moveMouseCoordinatesY = 10;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickCanvas(page);
@@ -131,7 +131,7 @@ test.describe('Rectangle selection tool', () => {
     const firstAtomNumber = 2;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnAtom(page, 'C', firstAtomNumber);
@@ -145,13 +145,13 @@ test.describe('Rectangle selection tool', () => {
 
   test('Fusing bonds together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
-    const firstBondNumber = 3;
+
     const secondBondnumber = 8;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnBond(page, BondType.SINGLE, firstBondNumber);
+    await getBondLocator(page, { bondId: 21 }).click({ force: true });
     const bondPoint = await getBondByIndex(
       page,
       { type: BondType.SINGLE },
@@ -181,7 +181,7 @@ test.describe('Rectangle selection tool', () => {
     }
     const atomOnTheRightSide = 14;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectReactionLeftPart();

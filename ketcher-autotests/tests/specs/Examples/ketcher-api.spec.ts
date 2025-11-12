@@ -5,7 +5,7 @@ import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
 
 test('getting molV2000 from Ketcher API', async ({ page }) => {
   await waitForPageInit(page);
-  await BottomToolbar(page).Benzene();
+  await BottomToolbar(page).benzene();
   await clickInTheMiddleOfTheScreen(page);
   const [, , molFile] = (
     await page.evaluate(() => window.ketcher.getMolfile())

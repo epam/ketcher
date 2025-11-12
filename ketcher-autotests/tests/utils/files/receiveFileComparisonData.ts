@@ -78,12 +78,7 @@ async function getFileContent(
   }
 
   // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
-  return fileFormat
-    ? (handler as (page: Page, fileFormat: FileFormat) => Promise<string>)(
-        page,
-        fileFormat,
-      )
-    : (handler as (page: Page) => Promise<string>)(page);
+  return fileFormat ? handler(page, fileFormat) : handler(page);
 }
 
 export async function verifyFileExport(
@@ -150,8 +145,6 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   rdf: 'getRdf' as keyof Ketcher,
 } as const;
 
-type KetcherApiFunction = (format?: string) => Promise<string>;
-
 function filterByIndexes(file: string[], indexes?: number[]): string[] {
   if (!indexes) {
     return file;
@@ -183,9 +176,7 @@ async function receiveFile({
   await page.waitForFunction(() => window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format
-      ? (window.ketcher[method] as KetcherApiFunction)(format)
-      : (window.ketcher[method] as KetcherApiFunction)();
+    return format ? window.ketcher[method](format) : window.ketcher[method]();
   }, pageData);
 
   return file.split('\n');
@@ -282,5 +273,111 @@ export async function verifySVGExport(page: Page) {
     page,
     SaveStructureDialog(page).saveStructureTextarea,
   );
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifyFASTAExport(page: Page, FASTAExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.FASTA,
+  );
+  const FASTAExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(FASTAExportResult).toEqual(FASTAExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifySequence1LetterCodeExport(
+  page: Page,
+  Sequence1LetterCodeExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
+  const Sequence1LetterCodeExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(Sequence1LetterCodeExportResult).toEqual(
+    Sequence1LetterCodeExportExpected,
+  );
+
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifyIDTExport(page: Page, IDTExportExpected = '') {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
+  const IDTExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+  expect(IDTExportResult).toEqual(IDTExportExpected);
+
+  await SaveStructureDialog(page).cancel();
+}
+
+export async function verifySMILESExport(
+  page: Page,
+  SMILESExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMILES,
+  );
+  await expect(SaveStructureDialog(page).saveStructureTextarea).toHaveValue(
+    SMILESExportExpected,
+  );
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifySMARTSExport(
+  page: Page,
+  SMARTSExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await expect(SaveStructureDialog(page).saveStructureTextarea).toHaveValue(
+    SMARTSExportExpected,
+  );
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifySMARTSExportWarnings(page: Page) {
+  const value =
+    'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.DaylightSMARTS,
+  );
+  await SaveStructureDialog(page).switchToWarningsTab();
+  const warningSmartsTextArea = SaveStructureDialog(
+    page,
+  ).warningTextarea.filter({ hasText: 'SMARTS' });
+  const warningText = await warningSmartsTextArea.evaluate(
+    (node) => node.textContent,
+  );
+  expect(warningText).toEqual(value);
+  await SaveStructureDialog(page).closeWindow();
+}
+
+export async function verifyInChIKeyExport(
+  page: Page,
+  InChIKeyExportExpected = '',
+) {
+  await CommonTopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MoleculesFileFormatType.InChIKey,
+  );
+  const InChIKeyExportResult = await SaveStructureDialog(
+    page,
+  ).getTextAreaValue();
+
+  expect(InChIKeyExportResult).toEqual(InChIKeyExportExpected);
+
   await SaveStructureDialog(page).cancel();
 }

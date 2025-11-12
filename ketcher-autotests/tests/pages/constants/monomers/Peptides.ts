@@ -114,6 +114,14 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     alias: '_Peptide1',
     testId: '_Peptide1____Peptide1',
   },
+  A2: {
+    alias: 'A2',
+    testId: 'A2___Ala',
+  },
+  PeptideX: {
+    alias: 'PeptideX',
+    testId: 'PeptideX___PeptideX',
+  },
 });
 
 export type PeptidesType = typeof Peptide;

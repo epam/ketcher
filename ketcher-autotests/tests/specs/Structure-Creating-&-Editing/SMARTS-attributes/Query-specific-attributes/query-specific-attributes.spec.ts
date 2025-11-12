@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { verifySMARTSExport, verifySMARTSExportWarnings } from '../utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Aromaticity,
@@ -20,6 +19,10 @@ import {
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
 
 async function drawStructureAndDoubleClickOnAtom(
   page: Page,

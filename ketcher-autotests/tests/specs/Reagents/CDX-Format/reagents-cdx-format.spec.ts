@@ -1,4 +1,4 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -71,6 +71,10 @@ test.describe('Reagents CDX format', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDX,
     );
-    await takeEditorScreenshot(page);
+    const CDXExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+    expect(CDXExportResult).toEqual('Can not display binary content');
+
+    await SaveStructureDialog(page).cancel();
   });
 });

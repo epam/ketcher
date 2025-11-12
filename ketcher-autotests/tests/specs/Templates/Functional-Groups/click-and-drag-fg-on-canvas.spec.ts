@@ -34,12 +34,12 @@ test.describe('Click and drag FG on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -48,18 +48,18 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-11551
       Description: when click & drag with an FG on FG it should forms a bond between it
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -72,17 +72,17 @@ test.describe('Click and drag FG on canvas', () => {
       FG appears near Salt and Solvents where the left mouse button was released
       Bug: https://github.com/epam/ketcher/issues/2278
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -99,14 +99,14 @@ test.describe('Click and drag FG on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CF3,
     );
     await dragMouseAndMoveTo(page, -50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -116,29 +116,29 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on an FG connected with bond to another FG
       it should forms a bond
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await waitForRender(page, async () => {
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.CO2Et,
       );
       await dragMouseAndMoveTo(page, 50);
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await waitForRender(page, async () => {
-      await BottomToolbar(page).StructureLibrary();
+      await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.Ms,
       );
       await dragMouseAndMoveTo(page, -50);
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

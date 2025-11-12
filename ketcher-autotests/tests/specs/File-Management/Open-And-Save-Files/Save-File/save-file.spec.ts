@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test } from '@fixtures';
 import {
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
@@ -16,6 +16,7 @@ import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifyInChIKeyExport,
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -193,12 +194,7 @@ test.describe('Save files', () => {
     await waitForIndigoToLoad(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.InChIKey,
-    );
-    const inChistring = await SaveStructureDialog(page).getTextAreaValue();
-    expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
+    await verifyInChIKeyExport(page, 'UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
   test('Support for exporting to "SDF V2000" file format', async ({ page }) => {

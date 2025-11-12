@@ -461,8 +461,21 @@ export class Atom extends DrawingEntity {
         }
       }
     } else if (elementGroupNumber === 8) {
-      if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-      else hydrogenAmount = -1;
+      // Special handling for Platinum (Pt) - accepts valences 2 and 4
+      if (label === AtomLabel.Pt) {
+        if (connectionAmount + radicalAmount + absCharge <= 2) {
+          valence = 2;
+          hydrogenAmount = 2 - radicalAmount - connectionAmount - absCharge;
+        } else if (connectionAmount + radicalAmount + absCharge <= 4) {
+          valence = 4;
+          hydrogenAmount = 4 - radicalAmount - connectionAmount - absCharge;
+        } else {
+          hydrogenAmount = -1;
+        }
+      } else {
+        if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
+        else hydrogenAmount = -1;
+      }
     }
 
     // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {

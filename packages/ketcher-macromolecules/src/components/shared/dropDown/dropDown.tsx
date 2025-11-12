@@ -35,7 +35,7 @@ const DropDownSelect = styled(Select)`
   height: 24px;
   border: 1px solid #e1e5ea;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 12px;
   background-color: white;
 
   ${({ open }) =>
@@ -49,10 +49,12 @@ const DropDownSelect = styled(Select)`
   & .MuiSelect-select {
     padding: 0 24px 0 8px;
     height: 100%;
+    display: flex;
+    align-items: center;
   }
 
   & span {
-    ${({ theme }) => `font-size: ${theme.ketcher.font.size.medium}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
   }
 
   & .MuiOutlinedInput-notchedOutline {
@@ -75,14 +77,14 @@ const DropDownItem = styled(MenuItem)`
   justify-content: space-between;
   padding: 0 8px;
   height: 28px;
-  font-size: 14px;
+  font-size: 12px;
 
   &.MuiButtonBase-root:hover {
     border-left: 2px solid #167782;
   }
 
   & .MuiTypography-root {
-    ${({ theme }) => `font-size: ${theme.ketcher.font.size.medium}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
   }
 `;
 

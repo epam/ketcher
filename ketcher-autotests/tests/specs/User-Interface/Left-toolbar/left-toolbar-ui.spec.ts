@@ -3,12 +3,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
-import {
-  BondType,
-  clickOnBond,
-  takeLeftToolbarScreenshot,
-  waitForPageInit,
-} from '@utils';
+import { takeLeftToolbarScreenshot, waitForPageInit } from '@utils';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Left toolbar UI tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,9 +69,8 @@ test.describe('Left toolbar UI tests', () => {
   test('stereochemistry ui verification', async ({ page }) => {
     // Test case: EPMLSOPKET-8918
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    const bondNumber = 2;
-    await clickOnBond(page, BondType.SINGLE, bondNumber);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeLeftToolbarScreenshot(page);
   });
 });

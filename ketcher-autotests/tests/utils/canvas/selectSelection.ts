@@ -13,9 +13,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 export async function cutAndPaste(page: Page) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await selectAllStructuresOnCanvas(page);
@@ -24,9 +22,7 @@ export async function cutAndPaste(page: Page) {
 }
 
 export async function copyAndPaste(page: Page) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);

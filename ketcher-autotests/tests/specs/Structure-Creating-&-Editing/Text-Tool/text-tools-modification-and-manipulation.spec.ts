@@ -83,9 +83,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, { text: 'TEXT' }).click();
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
@@ -200,9 +198,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, {
       text: 'Ketcher is a cool tool',
     }).click();
@@ -227,9 +223,7 @@ test.describe('Text tools test cases', () => {
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
@@ -283,9 +277,7 @@ test.describe('Text tools test cases', () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await moveStructureToNewPosition(page);
     await takeEditorScreenshot(page);

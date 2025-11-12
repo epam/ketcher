@@ -60,12 +60,7 @@ const initialWizardState: WizardState = {
     aliasHELM: '',
   },
   errors: {},
-  notifications: new Map([
-    [
-      'defaultAttachmentPoints',
-      { type: 'info', message: NotificationMessages.defaultAttachmentPoints },
-    ],
-  ]),
+  notifications: new Map(),
 };
 
 const wizardReducer = (
@@ -529,6 +524,15 @@ const MonomerCreationWizard = () => {
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
+  useEffect(() => {
+    if (monomerCreationState?.hasDefaultAttachmentPoints) {
+      wizardStateDispatch({
+        type: 'AddNotification',
+        id: 'defaultAttachmentPoints',
+      });
+    }
+  }, [monomerCreationState?.hasDefaultAttachmentPoints]);
+
   if (!monomerCreationState) {
     return null;
   }
@@ -782,7 +786,7 @@ const MonomerCreationWizard = () => {
               <div>
                 <Accordion
                   className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
+                  square
                 >
                   <AccordionSummary
                     className={styles.accordionSummary}
@@ -842,7 +846,7 @@ const MonomerCreationWizard = () => {
               <div>
                 <Accordion
                   className={clsx(accordionClasses.accordion, styles.accordion)}
-                  square={true}
+                  square
                 >
                   <AccordionSummary
                     className={styles.accordionSummary}
@@ -856,8 +860,8 @@ const MonomerCreationWizard = () => {
                     Aliases
                   </AccordionSummary>
                   <AccordionDetails>
+                    <p className={styles.inputLabel}>HELM</p>
                     <TextField
-                      label="HELM"
                       variant="standard"
                       className={clsx(
                         styles.inputField,

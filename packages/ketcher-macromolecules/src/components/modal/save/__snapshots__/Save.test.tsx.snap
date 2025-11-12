@@ -101,7 +101,7 @@ Object {
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root css-11lzrtt-MuiFormControl-root"
+                  class="MuiFormControl-root css-lvo21p-MuiFormControl-root"
                 >
                   <label
                     for="fileformat"
@@ -109,7 +109,7 @@ Object {
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-3xl4j3-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1ydgb7t-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div

@@ -114,7 +114,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await clickOnAtom(page, 'C', atomNumber1);
         await clickOnAtom(page, 'C', atomNumber2);
         await takeEditorScreenshot(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
         await LeftToolbar(page).selectReactionMappingTool(
@@ -128,7 +128,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test.describe('With autoMapping', () => {
     test.afterEach(async ({ page }) => {
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takeEditorScreenshot(page);

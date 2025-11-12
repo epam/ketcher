@@ -341,10 +341,40 @@ export const CreateMonomerDialog = (page: Page) => {
       });
     },
 
+    async expandModificationSection() {
+      if (!(await modificationSection.getAttribute('data-expanded'))) {
+        await modificationSection.click();
+      }
+    },
+
+    async collapseModificationSection() {
+      if (await modificationSection.getAttribute('data-expanded')) {
+        await modificationSection.click();
+      }
+    },
+
+    async expandAliasesSection() {
+      if (!(await aliasesSection.getAttribute('data-expanded'))) {
+        await aliasesSection.click();
+      }
+    },
+
+    async collapseAliasesSection() {
+      if (await aliasesSection.getAttribute('data-expanded')) {
+        await aliasesSection.click();
+      }
+    },
+
+    async addModificationType() {
+      await this.expandModificationSection();
+      await modificationSection.addModificationTypeButton.click();
+    },
+
     async selectModificationType(options: {
       dropdown: ModificationTypeDropdown;
       type: ModificationType;
     }) {
+      await this.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
       await dropdown.click();
       const option = page.getByTestId(options.type);
@@ -356,13 +386,18 @@ export const CreateMonomerDialog = (page: Page) => {
       dropdown: ModificationTypeDropdown;
       text: string;
     }) {
+      await this.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
       await dropdown.click();
       await dropdown.fill(options.text);
       await page.keyboard.press('Escape');
     },
 
     async deleteModificationType(dropdown: ModificationTypeDropdown) {
+      await this.expandModificationSection();
       const deleteButton = deleteModificationTypeButtonEnum[dropdown];
       await deleteButton.click();
     },

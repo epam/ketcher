@@ -2,6 +2,7 @@
 import { Page, Locator } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
+  ModificationType,
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -20,7 +21,33 @@ import {
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 
+export enum ModificationTypeDropdown {
+  First = 'modificationTypeDropdown1',
+  Second = 'modificationTypeDropdown2',
+  Third = 'modificationTypeDropdown3',
+  Fourth = 'modificationTypeDropdown4',
+  Fifth = 'modificationTypeDropdown5',
+}
+
+export enum DeleteModificationTypeButton {
+  First = 'deleteModificationTypeButton1',
+  Second = 'deleteModificationTypeButton2',
+  Third = 'deleteModificationTypeButton3',
+  Fourth = 'deleteModificationTypeButton4',
+  Fifth = 'deleteModificationTypeButton5',
+}
+
 type ModificationSectionLocators = {
+  modificationTypeDropdown1: Locator;
+  modificationTypeDropdown2: Locator;
+  modificationTypeDropdown3: Locator;
+  modificationTypeDropdown4: Locator;
+  modificationTypeDropdown5: Locator;
+  deleteModificationTypeButton1: Locator;
+  deleteModificationTypeButton2: Locator;
+  deleteModificationTypeButton3: Locator;
+  deleteModificationTypeButton4: Locator;
+  deleteModificationTypeButton5: Locator;
   addModificationTypeButton: Locator;
 };
 
@@ -124,9 +151,58 @@ const createAttachmentPointDeleteButtonMap = (
   [AttachmentPointOption.R8]: dialogLocators.r8DeleteButton,
 });
 
+const createModificationTypeDropdownMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.modificationTypeDropdown1,
+  [ModificationTypeDropdown.Second]: section.modificationTypeDropdown2,
+  [ModificationTypeDropdown.Third]: section.modificationTypeDropdown3,
+  [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
+  [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
+});
+const deleteModificationTypeMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.deleteModificationTypeButton1,
+  [ModificationTypeDropdown.Second]: section.deleteModificationTypeButton2,
+  [ModificationTypeDropdown.Third]: section.deleteModificationTypeButton3,
+  [ModificationTypeDropdown.Fourth]: section.deleteModificationTypeButton4,
+  [ModificationTypeDropdown.Fifth]: section.deleteModificationTypeButton5,
+});
+
 export const CreateMonomerDialog = (page: Page) => {
   const modificationSection: Locator & ModificationSectionLocators =
     Object.assign(page.getByTestId('modification-types-accordion'), {
+      modificationTypeDropdown1: page.getByTestId(
+        'modification-type-dropdown-0',
+      ),
+      modificationTypeDropdown2: page.getByTestId(
+        'modification-type-dropdown-1',
+      ),
+      modificationTypeDropdown3: page.getByTestId(
+        'modification-type-dropdown-2',
+      ),
+      modificationTypeDropdown4: page.getByTestId(
+        'modification-type-dropdown-3',
+      ),
+      modificationTypeDropdown5: page.getByTestId(
+        'modification-type-dropdown-4',
+      ),
+      deleteModificationTypeButton1: page.getByTestId(
+        'delete-modification-type-button-0',
+      ),
+      deleteModificationTypeButton2: page.getByTestId(
+        'delete-modification-type-button-1',
+      ),
+      deleteModificationTypeButton3: page.getByTestId(
+        'delete-modification-type-button-2',
+      ),
+      deleteModificationTypeButton4: page.getByTestId(
+        'delete-modification-type-button-3',
+      ),
+      deleteModificationTypeButton5: page.getByTestId(
+        'delete-modification-type-button-4',
+      ),
       addModificationTypeButton: page.getByTestId(
         'add-modification-type-button',
       ),
@@ -194,6 +270,12 @@ export const CreateMonomerDialog = (page: Page) => {
   const attachmentPointDeleteButtonByAP =
     createAttachmentPointDeleteButtonMap(locators);
 
+  const modificationTypeDropdownByEnum =
+    createModificationTypeDropdownMap(modificationSection);
+
+  const deleteModificationTypeButtonEnum =
+    deleteModificationTypeMap(modificationSection);
+
   return {
     ...locators,
 
@@ -257,6 +339,32 @@ export const CreateMonomerDialog = (page: Page) => {
       await waitForRender(page, async () => {
         await deleteButton.click();
       });
+    },
+
+    async selectModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      type: ModificationType;
+    }) {
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      await dropdown.click();
+      const option = page.getByTestId(options.type);
+      await option.waitFor();
+      await option.click();
+    },
+
+    async setModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      text: string;
+    }) {
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      await dropdown.click();
+      await dropdown.fill(options.text);
+      await page.keyboard.press('Escape');
+    },
+
+    async deleteModificationType(dropdown: ModificationTypeDropdown) {
+      const deleteButton = deleteModificationTypeButtonEnum[dropdown];
+      await deleteButton.click();
     },
 
     async submit({ ignoreWarning = false } = {}) {

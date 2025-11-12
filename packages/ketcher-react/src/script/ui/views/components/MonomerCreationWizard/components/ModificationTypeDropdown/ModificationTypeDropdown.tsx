@@ -15,7 +15,7 @@ interface IModificationTypeDropdownProps {
   value: string | null;
   error?: string | null;
   onChange: (value: string) => void;
-  testid?: string;
+  testId?: string;
 }
 
 export default function ModificationTypeDropdown(
@@ -99,6 +99,7 @@ export default function ModificationTypeDropdown(
           <li
             key={key}
             {...optionProps}
+            data-testid={`modification-type-option-${option.title}`}
             className={clsx(
               props.className,
               styles.option,
@@ -130,6 +131,7 @@ export default function ModificationTypeDropdown(
             props.error && monomerWizardStyles.error,
           )}
           placeholder="..."
+          data-testid={props.testId}
         />
       )}
     />

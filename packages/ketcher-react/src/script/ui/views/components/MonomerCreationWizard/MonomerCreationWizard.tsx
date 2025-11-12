@@ -814,7 +814,7 @@ const MonomerCreationWizard = () => {
                           onChange={(value) =>
                             handleModificationTypeChange(idx, value)
                           }
-                          testid={`modification-type-dropdown-${idx}`}
+                          testId={`modification-type-dropdown-${idx}`}
                         />
 
                         <IconButton
@@ -822,7 +822,7 @@ const MonomerCreationWizard = () => {
                           className={styles.deleteModificationTypeButton}
                           title="Delete modification type"
                           onClick={() => deleteModificationType(idx)}
-                          data-testid={`delete-modification-type-button-${idx}`}
+                          testId={`delete-modification-type-button-${idx}`}
                         />
                       </div>
                     ))}

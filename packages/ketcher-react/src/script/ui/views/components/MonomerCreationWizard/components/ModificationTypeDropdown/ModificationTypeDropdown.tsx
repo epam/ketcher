@@ -15,6 +15,7 @@ interface IModificationTypeDropdownProps {
   value: string | null;
   error?: string | null;
   onChange: (value: string) => void;
+  testid?: string;
 }
 
 export default function ModificationTypeDropdown(

@@ -20,6 +20,14 @@ import {
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 
+type ModificationSectionLocators = {
+  addModificationTypeButton: Locator;
+};
+
+type AliasesSectionLocators = {
+  helmAliasEditbox: Locator;
+};
+
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
   symbolEditbox: Locator;
@@ -58,6 +66,8 @@ type CreateMonomerDialogLocators = {
   r6DeleteButton: Locator;
   r7DeleteButton: Locator;
   r8DeleteButton: Locator;
+  modificationSection: Locator & ModificationSectionLocators;
+  aliasesSection: Locator & AliasesSectionLocators;
   submitButton: Locator;
   discardButton: Locator;
 };
@@ -115,6 +125,19 @@ const createAttachmentPointDeleteButtonMap = (
 });
 
 export const CreateMonomerDialog = (page: Page) => {
+  const modificationSection: Locator & ModificationSectionLocators =
+    Object.assign(page.getByTestId('modification-types-accordion'), {
+      addModificationTypeButton: page.getByTestId(
+        'add-modification-type-button',
+      ),
+    });
+  const aliasesSection: Locator & AliasesSectionLocators = Object.assign(
+    page.getByTestId('aliases-accordion'),
+    {
+      helmAliasEditbox: page.getByTestId('helm-alias-input'),
+    },
+  );
+
   const locators: CreateMonomerDialogLocators = {
     typeCombobox: page.getByTestId('type-select'),
     symbolEditbox: page.getByTestId('symbol-input'),
@@ -153,6 +176,8 @@ export const CreateMonomerDialog = (page: Page) => {
     r6DeleteButton: page.getByTestId('attachment-point-delete-button-R6'),
     r7DeleteButton: page.getByTestId('attachment-point-delete-button-R7'),
     r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
+    modificationSection,
+    aliasesSection,
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };

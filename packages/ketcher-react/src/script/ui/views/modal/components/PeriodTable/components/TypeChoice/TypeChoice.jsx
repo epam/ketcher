@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
@@ -45,5 +46,11 @@ function TypeChoice({ value, onChange, disabled, ...props }) {
     </fieldset>
   );
 }
+
+TypeChoice.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+};
 
 export default TypeChoice;

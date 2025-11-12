@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { Dialog } from '../../../../components';
 import Logo from './logo.svg';
 import classes from './About.module.less';
@@ -107,6 +108,17 @@ function AboutDialog(props) {
     </Dialog>
   );
 }
+
+AboutDialog.propTypes = {
+  indigoVersion: PropTypes.string,
+  onOk: PropTypes.func.isRequired,
+  overviewLink: PropTypes.string,
+  version: PropTypes.string,
+  date: PropTypes.string,
+  feedbackLink: PropTypes.string,
+  lifeScienciesLink: PropTypes.string,
+  indigoMachine: PropTypes.string,
+};
 
 const mapStateToProps = (state) => ({
   date: state.options.app.buildDate.replace('T', '; '),

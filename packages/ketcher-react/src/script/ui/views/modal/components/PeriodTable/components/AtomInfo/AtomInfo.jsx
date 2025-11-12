@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { ElementColor } from 'ketcher-core';
 import classes from './AtomInfo.module.less';
 import clsx from 'clsx';
@@ -39,5 +40,15 @@ function AtomInfo({ el, isInfo }) {
     </div>
   );
 }
+
+AtomInfo.propTypes = {
+  isInfo: PropTypes.bool,
+  el: PropTypes.shape({
+    label: PropTypes.string,
+    number: PropTypes.number,
+    title: PropTypes.string,
+    mass: PropTypes.number,
+  }),
+};
 
 export default AtomInfo;

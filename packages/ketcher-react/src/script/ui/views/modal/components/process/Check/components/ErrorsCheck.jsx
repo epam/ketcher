@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
+
 function ErrorsCheck(props) {
   const { moleculeErrors, checkSchema } = props;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);
@@ -43,5 +45,19 @@ function ErrorsCheck(props) {
     </>
   );
 }
+
+ErrorsCheck.propTypes = {
+  moleculeErrors: PropTypes.object,
+  checkSchema: PropTypes.shape({
+    properties: PropTypes.shape({
+      checkOptions: PropTypes.shape({
+        items: PropTypes.shape({
+          enum: PropTypes.arrayOf(PropTypes.string),
+          enumNames: PropTypes.arrayOf(PropTypes.string),
+        }),
+      }),
+    }),
+  }),
+};
 
 export default ErrorsCheck;

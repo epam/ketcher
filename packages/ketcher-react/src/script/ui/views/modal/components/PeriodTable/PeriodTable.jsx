@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { AtomInfo, ElementsTable, TypeChoice } from './components';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
 
@@ -138,6 +139,16 @@ class Table extends Component {
     );
   }
 }
+
+Table.propTypes = {
+  type: PropTypes.string,
+  values: PropTypes.arrayOf(PropTypes.string),
+  label: PropTypes.string,
+  pseudo: PropTypes.string,
+  onOk: PropTypes.func.isRequired,
+  isNestedModal: PropTypes.bool,
+  isMonomerCreationWizardActive: PropTypes.bool,
+};
 
 function mapSelectionToProps(editor) {
   const selection = editor.selection();

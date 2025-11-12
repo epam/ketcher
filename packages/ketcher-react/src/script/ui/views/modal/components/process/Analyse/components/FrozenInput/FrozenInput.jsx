@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
+
 function FrozenInput({ value, 'data-testid': dataTestId }) {
   return (
     <input
@@ -26,5 +28,10 @@ function FrozenInput({ value, 'data-testid': dataTestId }) {
     />
   );
 }
+
+FrozenInput.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  'data-testid': PropTypes.string,
+};
 
 export default FrozenInput;

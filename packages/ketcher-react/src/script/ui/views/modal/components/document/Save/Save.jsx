@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import * as structFormat from '../../../../../data/convert/structConverter';
 
 import { Component, createRef } from 'react';
@@ -553,6 +554,48 @@ class SaveDialog extends Component {
     );
   }
 }
+
+SaveDialog.propTypes = {
+  struct: PropTypes.shape({
+    hasMultitailArrow: PropTypes.func,
+    hasRxnArrow: PropTypes.func,
+    atoms: PropTypes.shape({
+      size: PropTypes.number,
+    }),
+    bonds: PropTypes.shape({
+      size: PropTypes.number,
+    }),
+    isBlank: PropTypes.func,
+  }),
+  server: PropTypes.object,
+  checkState: PropTypes.shape({
+    checkOptions: PropTypes.array,
+  }),
+  onCheck: PropTypes.func.isRequired,
+  formState: PropTypes.shape({
+    errors: PropTypes.object,
+    valid: PropTypes.bool,
+    result: PropTypes.shape({
+      filename: PropTypes.string,
+      format: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+          mime: PropTypes.string,
+        }),
+      ]),
+    }),
+  }),
+  ignoreChiralFlag: PropTypes.bool,
+  options: PropTypes.object,
+  onResetForm: PropTypes.func.isRequired,
+  editor: PropTypes.shape({
+    selection: PropTypes.func,
+    errorHandler: PropTypes.func,
+  }),
+  moleculeErrors: PropTypes.object,
+  onTmplSave: PropTypes.func.isRequired,
+  onOk: PropTypes.func.isRequired,
+};
 
 const getOptions = (state) => state.options;
 const serverSettingsSelector = createSelector([getOptions], (options) =>

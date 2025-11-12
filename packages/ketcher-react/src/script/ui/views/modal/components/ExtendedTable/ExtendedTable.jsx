@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
 
 import { Dialog } from '../../../components';
@@ -61,6 +62,13 @@ const Table = (props) => {
       ></GenericGroups>
     </Dialog>
   );
+};
+
+Table.propTypes = {
+  label: PropTypes.string,
+  pseudo: PropTypes.string,
+  onOk: PropTypes.func.isRequired,
+  disabledQueryElements: PropTypes.arrayOf(PropTypes.string),
 };
 
 function mapSelectionToProps(editor) {

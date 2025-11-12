@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { FormulaInput, FrozenInput } from './components';
 
 import { Component } from 'react';
@@ -151,6 +152,18 @@ class AnalyseDialog extends Component {
     );
   }
 }
+
+AnalyseDialog.propTypes = {
+  onAnalyse: PropTypes.func.isRequired,
+  values: PropTypes.object,
+  round: PropTypes.shape({
+    roundWeight: PropTypes.number,
+    roundMass: PropTypes.number,
+    roundElAnalysis: PropTypes.number,
+  }),
+  loading: PropTypes.bool,
+  onChangeRound: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => ({
   values: state.options.analyse.values,

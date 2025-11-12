@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
@@ -119,6 +120,14 @@ const FooterContent = ({
   );
 };
 
+FooterContent.propTypes = {
+  handleCheck: PropTypes.func.isRequired,
+  handleApply: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  isStuctureChecking: PropTypes.bool.isRequired,
+  isCheckedWithNewSettings: PropTypes.bool.isRequired,
+};
+
 function CheckDialog(props) {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
@@ -220,6 +229,17 @@ function CheckDialog(props) {
     </Dialog>
   );
 }
+
+CheckDialog.propTypes = {
+  formState: PropTypes.shape({
+    moleculeErrors: PropTypes.object,
+    result: PropTypes.object,
+  }),
+  checkState: PropTypes.object,
+  onCheck: PropTypes.func.isRequired,
+  onApply: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => ({
   formState: state.modal.form,

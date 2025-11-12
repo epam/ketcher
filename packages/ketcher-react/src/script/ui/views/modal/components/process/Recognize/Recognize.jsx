@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   changeImage,
@@ -77,6 +78,17 @@ function FooterContent({
     </div>
   );
 }
+
+FooterContent.propTypes = {
+  onImage: PropTypes.func.isRequired,
+  structStr: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Promise),
+  ]),
+  openHandler: PropTypes.func.isRequired,
+  copyHandler: PropTypes.func.isRequired,
+  isAddToCanvasDisabled: PropTypes.bool,
+};
 
 function RecognizeDialog(prop) {
   const {

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 
@@ -62,5 +63,18 @@ function MainRow({
     </tbody>
   );
 }
+
+MainRow.propTypes = {
+  row: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+  ).isRequired,
+  caption: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  refer: PropTypes.func,
+  onAtomSelect: PropTypes.func.isRequired,
+  onDoubleClick: PropTypes.func.isRequired,
+  currentEvents: PropTypes.func.isRequired,
+  atomClassNames: PropTypes.func.isRequired,
+  className: PropTypes.string,
+};
 
 export default MainRow;

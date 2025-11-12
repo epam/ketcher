@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import PropTypes from 'prop-types';
 import { Header, MainRow, OutinerRow } from './components';
 import { Component } from 'react';
 
@@ -136,5 +137,16 @@ class ElementsTable extends Component {
     );
   }
 }
+
+ElementsTable.propTypes = {
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  selected: PropTypes.func.isRequired,
+  onDoubleClick: PropTypes.func.isRequired,
+  currentEvents: PropTypes.func.isRequired,
+  onAtomSelect: PropTypes.func.isRequired,
+};
 
 export default ElementsTable;

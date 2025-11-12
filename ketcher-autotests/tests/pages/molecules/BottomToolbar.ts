@@ -33,39 +33,39 @@ export const BottomToolbar = (page: Page) => {
   return {
     ...locators,
 
-    async Benzene() {
+    async benzene() {
       await locators.benzeneButton.click();
     },
 
-    async Cyclopentadiene() {
+    async cyclopentadiene() {
       await locators.cyclopentadieneButton.click();
     },
 
-    async Cyclohexane() {
+    async cyclohexane() {
       await locators.cyclohexaneButton.click();
     },
 
-    async Cyclopentane() {
+    async cyclopentane() {
       await locators.cyclopentaneButton.click();
     },
 
-    async Cyclopropane() {
+    async cyclopropane() {
       await locators.cyclopropaneButton.click();
     },
 
-    async Cyclobutane() {
+    async cyclobutane() {
       await locators.cyclobutaneButton.click();
     },
 
-    async Cycloheptane() {
+    async cycloheptane() {
       await locators.cycloheptaneButton.click();
     },
 
-    async Cyclooctane() {
+    async cyclooctane() {
       await locators.cyclooctaneButton.click();
     },
 
-    async StructureLibrary() {
+    async structureLibrary() {
       await locators.structureLibraryButton.click();
     },
 
@@ -79,28 +79,10 @@ export const BottomToolbar = (page: Page) => {
   };
 };
 
-export async function openStructureLibrary(page: Page) {
-  await BottomToolbar(page).StructureLibrary();
-}
-
-export async function selectRingButton(page: Page, name: RingButton) {
-  await BottomToolbar(page).clickRing(name);
-}
-
 export async function drawBenzeneRing(page: Page) {
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
-}
-
-export async function drawCyclohexaneRing(page: Page) {
-  await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclopentadieneRing(page: Page) {
-  await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 export type BottomToolbarType = ReturnType<typeof BottomToolbar>;

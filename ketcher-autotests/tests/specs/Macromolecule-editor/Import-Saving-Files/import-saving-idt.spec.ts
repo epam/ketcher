@@ -18,7 +18,7 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   takeEditorScreenshot,
-  takePolymerEditorScreenshot,
+  takeElementScreenshot,
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -207,7 +207,7 @@ test.describe('Import-Saving .idt Files', () => {
     await Library(page).openRNASection(RNASection.Phosphates);
     await Library(page).hoverMonomer(Phosphate.P);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePolymerEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   const rnaNucleotides = [
@@ -232,7 +232,7 @@ test.describe('Import-Saving .idt Files', () => {
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).hoverMonomer(monomer);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takePolymerEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 
@@ -255,7 +255,7 @@ test.describe('Import-Saving .idt Files', () => {
       await Library(page).switchToRNATab();
       await Library(page).hoverMonomer(monomer);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takePolymerEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 
@@ -551,7 +551,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/32MOErT/`,
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await bondLine.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -820,7 +820,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -852,7 +852,7 @@ test.describe('Import-Saving .idt Files', () => {
       AttachmentPoint.R2,
       AttachmentPoint.R1,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -885,7 +885,7 @@ test.describe('Import-Saving .idt Files', () => {
       AttachmentPoint.R3,
       AttachmentPoint.R4,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -998,7 +998,7 @@ test.describe('Import-Saving .idt Files', () => {
       x,
       y,
     });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptide._1Nal).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
@@ -1025,7 +1025,7 @@ test.describe('Import-Saving .idt Files', () => {
       y,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptide._1Nal).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.iMe_dC2).hover();
@@ -1051,7 +1051,7 @@ test.describe('Import-Saving .idt Files', () => {
       x,
       y,
     });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();

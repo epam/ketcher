@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import {
   clickOnCanvas,
@@ -8,7 +9,6 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   addStructureAndSelect,
@@ -16,8 +16,8 @@ import {
   resetSelection,
   selectPartOfStructure,
   checkUndoRedo,
-  performVerticalFlip,
-  performHorizontalFlip,
+  verticalFlipByKeyboard,
+  horizontalFlipByKeyboard,
   selectPartOfChain,
   selectPartOfBenzeneRing,
   anyStructure,
@@ -39,10 +39,9 @@ test.describe('Rotation', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol-1855-to-open.mol');
     await selectAllStructuresOnCanvas(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -156,7 +155,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -172,7 +171,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -200,10 +199,10 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(page, anyReaction);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -217,10 +216,10 @@ test.describe('Rotation', () => {
     await resetSelection(page);
     await checkUndoRedo(page);
 
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await checkUndoRedo(page);
 
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await checkUndoRedo(page);
   });
 
@@ -234,7 +233,7 @@ test.describe('Rotation', () => {
     const extraShiftToCoverBond = 25;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
@@ -249,7 +248,7 @@ test.describe('Rotation', () => {
     const extraShiftToCoverBond = 25;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
@@ -264,7 +263,7 @@ test.describe('Rotation', () => {
     const shift = 1;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
@@ -279,7 +278,7 @@ test.describe('Rotation', () => {
     const shift = 1;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
@@ -292,9 +291,14 @@ test.describe('Rotation', () => {
     const shift = 10;
     await addStructureAndSelect(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
-
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await page.mouse.move(rotationHandleX, rotationHandleY);
     await page.mouse.down();
     await page.mouse.move(rotationHandleX, rotationHandleY - shift);
@@ -333,12 +337,24 @@ test.describe('Rotation', () => {
       Description: Click on rotation handle doesn't change its position
     */
     await addStructureAndSelect(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await clickOnCanvas(page, rotationHandleX, rotationHandleY, {
       from: 'pageTopLeft',
     });
-    const { x, y } = await getRotationHandleCoordinates(page);
+    const rotationHandleBoundingBoxAfter = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBoxAfter) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x, y } = rotationHandleBoundingBoxAfter;
+    x += rotationHandleBoundingBoxAfter.width / 2;
+    y += rotationHandleBoundingBoxAfter.height / 2;
     expect(x).toEqual(rotationHandleX);
     expect(y).toEqual(rotationHandleY);
   });
@@ -365,10 +381,9 @@ test.describe('Rotation', () => {
     */
     await addStructureAndSelect(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -397,9 +412,14 @@ test.describe('Rotation', () => {
     */
     await addStructureAndSelect(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await page.mouse.move(rotationHandleX, rotationHandleY);
     await page.mouse.down();
     await page.mouse.move(

@@ -1,9 +1,9 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickOnCanvas,
-  applyAutoMapMode,
   waitForPageInit,
   clickOnAtom,
   waitForSpinnerFinishedWork,
@@ -15,6 +15,11 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
+import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -84,14 +89,23 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1809/EPMLSOPKET-1810/EPMLSOPKET-1811
      * Description:  Different modes - full reaction on canvas
      */
-    const modes = ['Discard', 'Keep', 'Alter'];
+    const modes = [
+      AutoMapModeOption.Discard,
+      AutoMapModeOption.Keep,
+      AutoMapModeOption.Alter,
+    ];
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
         const atomNumber1 = 1;
         const atomNumber2 = 2;
         await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
-        await applyAutoMapMode(page, mode);
+        const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(mode);
+        await takeEditorScreenshot(page);
         await CommonTopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
         await LeftToolbar(page).selectReactionMappingTool(
@@ -100,26 +114,46 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await clickOnAtom(page, 'C', atomNumber1);
         await clickOnAtom(page, 'C', atomNumber2);
         await takeEditorScreenshot(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
-        await applyAutoMapMode(page, mode, false);
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(mode);
+        await takeEditorScreenshot(page);
       });
     }
   });
 
   test.describe('With autoMapping', () => {
     test.afterEach(async ({ page }) => {
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takeEditorScreenshot(page);
-      await applyAutoMapMode(page, 'Discard');
+      const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(
+        AutoMapModeOption.Discard,
+      );
+      await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
-      await applyAutoMapMode(page, 'Keep');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
+      await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
-      await applyAutoMapMode(page, 'Alter', false);
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Alter);
+      await takeEditorScreenshot(page);
     });
+
     test('After the manual mapping with incorrect ordering', async ({
       page,
     }) => {
@@ -130,13 +164,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
     });
 
@@ -148,13 +182,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
     });
 
@@ -173,16 +207,31 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Description: Clear mode
      */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
-    await applyAutoMapMode(page, 'Alter');
-    await applyAutoMapMode(page, 'Clear');
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Alter);
+    await takeEditorScreenshot(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Clear);
+    await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 2 },
+      getAtomLocator(page, { atomLabel: 'C' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await takeEditorScreenshot(page);
-    await applyAutoMapMode(page, 'Clear');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Clear);
+    await takeEditorScreenshot(page);
   });
 
   test('Half reaction on canvas', async ({ page }) => {
@@ -191,7 +240,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Description: Half reaction on canvas
      */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-half.rxn');
-    await applyAutoMapMode(page, 'Discard', false);
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Discard);
+    await takeEditorScreenshot(page);
   });
 
   // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
@@ -202,11 +256,17 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      */
     const yOffsetFromCenter1 = 100;
     const yOffsetFromCenter2 = 300;
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
     await openFileAndAddToCanvas(page, 'Rxn-V2000/allenes.rxn');
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await applyAutoMapMode(page, 'Discard'),
-    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(
+        AutoMapModeOption.Discard,
+      );
+      await takeEditorScreenshot(page);
+    });
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/mapping-4-benzene.rxn',
@@ -215,9 +275,15 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await applyAutoMapMode(page, 'Keep'),
+      async () => {
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
+        await takeEditorScreenshot(page);
+      },
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      30_000,
     );
     await openFileAndAddToCanvas(
       page,
@@ -227,9 +293,17 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await applyAutoMapMode(page, 'Alter', false),
+      async () => {
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(
+          AutoMapModeOption.Alter,
+        );
+        await takeEditorScreenshot(page);
+      },
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      30_000,
     );
   });
 });

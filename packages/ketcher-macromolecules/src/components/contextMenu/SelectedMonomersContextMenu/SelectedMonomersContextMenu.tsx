@@ -14,6 +14,7 @@ import {
   AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
   getModifyAminoAcidsMenuItems,
   getMonomersForAminoAcidModification,
+  isCycleExistsForSelectedMonomers,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from './helpers';
@@ -38,9 +39,15 @@ export const SelectedMonomersContextMenu = ({
   const isCanvasContext = (props?: {
     selectedMonomers?: BaseMonomer[];
     polymerBondRenderer?: unknown;
-  }) =>
-    !props?.polymerBondRenderer &&
-    (!props?.selectedMonomers || props?.selectedMonomers.length === 0);
+  }) => {
+    const hasSelectedEntities =
+      (editor?.drawingEntitiesManager?.selectedEntitiesArr?.length ?? 0) > 0;
+    return (
+      !props?.polymerBondRenderer &&
+      (!props?.selectedMonomers || props?.selectedMonomers.length === 0) &&
+      !hasSelectedEntities
+    );
+  };
 
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
@@ -53,7 +60,17 @@ export const SelectedMonomersContextMenu = ({
     selectedMonomers.length > 0 &&
     isAntisenseOptionVisible(selectedMonomers);
 
+  const cyclicStructureFormationDisabled =
+    editor?.mode.modeName !== 'flex-layout-mode' ||
+    editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length > 0 ||
+    !isCycleExistsForSelectedMonomers(selectedMonomers);
+
   const menuItems = [
+    {
+      name: 'layout_circular',
+      title: 'Create cyclic structure',
+      disabled: cyclicStructureFormationDisabled,
+    },
     {
       name: 'copy',
       title: 'Copy',
@@ -123,6 +140,9 @@ export const SelectedMonomersContextMenu = ({
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
     switch (true) {
+      case menuItemId === 'layout_circular':
+        editor?.events.layoutCircular.dispatch();
+        break;
       case menuItemId === 'copy':
         editor?.events.copySelectedStructure.dispatch();
         break;

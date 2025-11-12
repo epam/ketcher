@@ -96,6 +96,7 @@ export enum QueryBondOption {
 export enum MicroAtomOption {
   EditSelectedAtoms = 'Edit selected atoms...-option',
   Edit = 'Edit...-option',
+  CreateAMonomer = 'Create a monomer-option',
   EnhancedStereochemistry = 'Enhanced stereochemistry...-option',
   QueryProperties = 'Query properties-option',
   AddAttachmentPoint = 'Add attachment point-option',

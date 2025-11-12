@@ -69,9 +69,7 @@ async function separetingAndMovingRecatngles(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await page.mouse.down();

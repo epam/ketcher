@@ -13,8 +13,8 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectRedoByKeyboard,
-  selectUndoByKeyboard,
+  redoByKeyboard,
+  undoByKeyboard,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
@@ -43,8 +43,8 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
-  performHorizontalFlip,
-  performVerticalFlip,
+  horizontalFlipByKeyboard,
+  verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 let page: Page;
@@ -218,9 +218,9 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
     .locator(':scope:visible')
     .first();
   await expect(starAtom).toHaveCount(1);
-  await selectUndoByKeyboard(page);
+  await undoByKeyboard(page);
   await expect(starAtom).toHaveCount(0);
-  await selectRedoByKeyboard(page);
+  await redoByKeyboard(page);
   await expect(starAtom).toHaveCount(1);
 });
 
@@ -679,7 +679,7 @@ test('25. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performHorizontalFlip(page);
+  await horizontalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });
@@ -702,7 +702,7 @@ test('26. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performVerticalFlip(page);
+  await verticalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

@@ -6,10 +6,7 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  BondType,
-  clickOnBond,
   clickOnAtom,
-  screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
@@ -31,7 +28,6 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   ContextOption,
@@ -44,6 +40,9 @@ import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -78,7 +77,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects atom.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
@@ -92,10 +91,10 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects bond.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 2);
+    await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -106,7 +105,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects whole structure.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -316,7 +315,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -332,7 +331,11 @@ test.describe('Data S-Group tool', () => {
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -347,10 +350,14 @@ test.describe('Data S-Group tool', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -366,7 +373,11 @@ test.describe('Data S-Group tool', () => {
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -384,7 +395,11 @@ test.describe('Data S-Group tool', () => {
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -426,7 +441,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 11 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 

@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -49,10 +48,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -61,6 +57,8 @@ import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureChe
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -74,11 +72,9 @@ async function saveToTemplates(page: Page) {
 async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
   await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await selectRingButton(page, RingButton.Benzene);
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
   await page.getByTestId('head-resize').hover({ force: true });
   await dragMouseTo(800, 500, page);
@@ -163,6 +159,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await ErrorMessageDialog(page).isVisible()) {
+      await ErrorMessageDialog(page).close();
+    }
+    if (await OpenStructureDialog(page).window.isVisible()) {
+      await OpenStructureDialog(page).closeWindow();
+    }
+    if (await SaveStructureDialog(page).window.isVisible()) {
+      await SaveStructureDialog(page).closeWindow();
+    }
+  });
 
   test('Verify that default Multi-Tailed Arrow with two tails can be saved to .ket file with correct coordinates of spine, tails and head', async () => {
     /**
@@ -462,6 +469,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MoleculesFileFormatType.KetFormat,
     );
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Verify that 3 different Multi-Tailed Arrows can be zoomed in/out (20, 400, 100) after adding to Canvas from .ket file', async () => {
@@ -492,7 +500,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -507,7 +519,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('reaction-arrow-multitail').click();
     await takeLeftToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeLeftToolbarScreenshot(page);
@@ -543,7 +555,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -802,7 +818,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -821,7 +841,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -838,7 +862,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -855,7 +883,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -891,7 +923,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await saveToTemplates(page);
     await CommonTopLeftToolbar(page).clearCanvas();
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openSection(
       TemplateLibraryTab.UserTemplate,
     );
@@ -928,9 +960,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 500, 600);
@@ -993,7 +1025,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 600, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1025,10 +1057,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1074,7 +1106,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1087,10 +1123,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1103,7 +1139,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1460,7 +1500,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -1549,7 +1593,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1579,7 +1623,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1616,7 +1660,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1650,7 +1694,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1686,7 +1730,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1723,7 +1767,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -1750,7 +1794,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 300, 400);
@@ -2047,7 +2091,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectPartOfMolecules(page);
@@ -2262,7 +2306,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectPartOfMolecules(page);
@@ -2305,7 +2349,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectPartOfMolecules(page);
@@ -2344,7 +2388,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectPartOfMolecules(page);
@@ -2488,7 +2532,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -2599,7 +2643,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -2837,7 +2881,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -2880,7 +2924,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -2918,7 +2962,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -2967,7 +3011,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await waitForRender(page, async () => {
@@ -3057,7 +3101,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
@@ -3090,7 +3134,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
@@ -3125,7 +3169,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
@@ -3520,7 +3564,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('[C 85.6 H 14.4] > [C 85.6 H 14.4]');
-    await CalculatedValuesDialog(page).closeByX();
+    await CalculatedValuesDialog(page).closeWindow();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

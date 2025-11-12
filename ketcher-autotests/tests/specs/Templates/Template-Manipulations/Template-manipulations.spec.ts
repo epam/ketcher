@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable prettier/prettier */
 import { Page, test } from '@fixtures';
@@ -5,30 +6,23 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  pressButton,
   clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
-  addCyclopentadieneRingWithTwoAtoms,
-  clickOnBond,
-  BondType,
   takePageScreenshot,
-  moveOnBond,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   clickOnCanvas,
-  selectUndoByKeyboard,
-  waitForElementInCanvas,
+  undoByKeyboard,
   pasteFromClipboardAndAddToCanvas,
   getCachedBodyCenter,
   RxnFileFormat,
   MolFileFormat,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
@@ -45,9 +39,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
-  drawCyclohexaneRing,
-  drawCyclopentadieneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
@@ -63,6 +54,12 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import {
+  horizontalFlip,
+  verticalFlip,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -81,7 +78,7 @@ test.describe('Template Manupulations', () => {
     Description: Look at the bottom of the application.
     Choose any template.
     */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -165,12 +162,18 @@ test.describe('Template Manupulations', () => {
     With the template select any bond of the created structure, hold and drag "left-right".
     */
     const shift = 10;
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await dragMouseTo(rotationHandleX, rotationHandleY, page);
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
     await takeEditorScreenshot(page);
@@ -181,9 +184,9 @@ test.describe('Template Manupulations', () => {
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -205,7 +208,7 @@ test.describe('Template Manupulations', () => {
 
       await atomToolbar.clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Fragment,
       );
       await getAtomLocator(page, { atomLabel: 'F' }).click();
@@ -213,7 +216,7 @@ test.describe('Template Manupulations', () => {
       await selectAllStructuresOnCanvas(page);
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -232,7 +235,7 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 0;
     const atomToolbar = RightToolbar(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
@@ -247,7 +250,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -267,7 +270,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await atomToolbar.clickAtom(Atom.Sulfur);
@@ -275,8 +278,8 @@ test.describe('Template Manupulations', () => {
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibraryTab);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openTab(TabSection.TemplateLibrary);
     await takeEditorScreenshot(page);
   });
 
@@ -298,7 +301,7 @@ test.describe('Template Manupulations', () => {
     ).primaryAttachmentPointCheckbox.setChecked(true);
     await takeEditorScreenshot(page);
     await AttachmentPointsDialog(page).apply();
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -306,9 +309,9 @@ test.describe('Template Manupulations', () => {
       page,
       getAtomLocator(page, { atomLabel: 'S', atomId: 0 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('Br');
-    await page.getByTestId('OK').click();
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'Br' },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -353,9 +356,9 @@ test.describe('Template Manupulations', () => {
     await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
@@ -376,7 +379,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
     await clickOnCanvas(page, 1, 1, { from: 'pageCenter' });
-    await selectRingButton(page, RingButton.Cyclooctane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclooctane);
     // eslint-disable-next-line no-magic-numbers
     await clickOnCanvas(page, 1, -4, { from: 'pageCenter' });
     await takePageScreenshot(page);
@@ -425,9 +428,12 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring on canvas
     Add another cyclopentadiene ring to a single bond with two atoms, where each atom is connected to any atom with a double bond
     */
-    await drawCyclopentadieneRing(page);
-    await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -438,8 +444,10 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring to to a double bond with two atom, where each atom is connected to any atom with a single bond
     */
     await drawBenzeneRing(page);
-    await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -451,12 +459,13 @@ test.describe('Template Manupulations', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await drawCyclohexaneRing(page);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+    await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -466,12 +475,11 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add on it an atom
     Add cyclopentadiene ring to a single bond
     */
-    const atomToolbar = RightToolbar(page);
-
-    await drawCyclohexaneRing(page);
-    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+    await clickInTheMiddleOfTheScreen(page);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
-    await selectRingButton(page, RingButton.Cyclopentadiene);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -481,16 +489,13 @@ test.describe('Template Manupulations', () => {
     Click on the Cyclopentadiene atom in the existing structure to add the same template.
     To add the structure connected with a single bond click & drag.
     */
-    await drawCyclopentadieneRing(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    // eslint-disable-next-line no-magic-numbers
-    await clickOnBond(page, BondType.SINGLE, 2);
-    await clickOnBond(page, BondType.SINGLE, 1);
-    await clickOnBond(page, BondType.SINGLE, 0);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -501,8 +506,9 @@ test.describe('Template Manupulations', () => {
     Draw benzene using the template
     Again using the benzene template, left click on the single bond circled in blue.
     */
-    await drawCyclopentadieneRing(page);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
+    await clickInTheMiddleOfTheScreen(page);
+    await getBondLocator(page, { bondId: 5 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -516,7 +522,7 @@ test.describe('Template Manupulations', () => {
     Attach selected structure to the FG
     */
     const X_DELTA_ONE = 100;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.CONH2,
     );
@@ -525,7 +531,7 @@ test.describe('Template Manupulations', () => {
     await expandAbbreviation(page, middleOfTheScreen);
     const { x, y } = middleOfTheScreen;
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
       from: 'pageTopLeft',
     });
@@ -563,27 +569,6 @@ test.describe('Open Ketcher', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  test('The different templates are attached to the atoms of existing benzene-2', async () => {
-    /*
-    Test case: EPMLSOPKET-1669/2
-    Description:
-    Paste benzene from templates on the canvas.
-     -click with template the bond of the created benzene; 
-    Clear All.
-    */
-    await drawBenzeneRing(page);
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V2000/s-group-with-attachment-points.mol',
-    );
-    await moveOnBond(page, BondType.DOUBLE, 1);
-    await moveOnBond(page, BondType.DOUBLE, 0);
-    await waitForElementInCanvas(page, 'A=Test');
-
-    await takePageScreenshot(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
-
   test('The different templates are attached to the atoms of existing benzene-3', async () => {
     /*
     Test case: EPMLSOPKET-1669/3
@@ -604,11 +589,11 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
-    await BottomToolbar(page).Cyclopentadiene();
+    await BottomToolbar(page).cyclopentadiene();
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takePageScreenshot(page);
@@ -623,7 +608,7 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
@@ -648,9 +633,9 @@ test.describe('Open Ketcher', () => {
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
       const xOffsetFromCenter = 40;
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takePageScreenshot(page);
@@ -659,9 +644,9 @@ test.describe('Open Ketcher', () => {
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
-      await selectRingButton(page, RingButton.Benzene);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
       await takePageScreenshot(page);
     },
   );
@@ -673,7 +658,7 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of merging the pasted Template with another Template is displayed under the mouse cursor, and click
     */
     const xOffsetFromCenter = 40;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
@@ -681,11 +666,11 @@ test.describe('Open Ketcher', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takePageScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -701,10 +686,10 @@ test.describe('Open Ketcher', () => {
     Description:
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,

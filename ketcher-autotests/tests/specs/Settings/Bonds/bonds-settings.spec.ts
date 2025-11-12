@@ -33,6 +33,7 @@ test.describe('Bonds Settings', () => {
     await SettingsDialog(page).openSection(SettingsSection.General);
     await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await takeEditorScreenshot(page);
+    await SettingsDialog(page).close();
   });
 
   test('Verify Bond length setting and entering a value with up to 1 decimal places in px option', async () => {

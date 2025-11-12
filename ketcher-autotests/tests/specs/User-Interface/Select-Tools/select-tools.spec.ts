@@ -12,8 +12,8 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
@@ -25,10 +25,10 @@ test.describe('Select tools tests', () => {
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
     page,
   }) => {
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
@@ -48,9 +48,7 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
     await takeEditorScreenshot(page);

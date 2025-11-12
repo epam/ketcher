@@ -10,12 +10,10 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  addMonomerToCenterOfCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  pressButton,
   moveOnAtom,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
@@ -53,8 +51,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -69,6 +67,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -209,7 +208,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
   });
@@ -247,7 +246,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     }).click();
     await page.keyboard.up('Shift');
     await Library(page).selectMonomer(Peptide.C);
-    await pressButton(page, 'Yes');
+    await ConfirmYourActionDialog(page).yes();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -272,7 +271,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const baseLocator = getMonomerLocator(page, Base.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -331,7 +330,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await addMonomerToCenterOfCanvas(page, Preset.A);
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -352,7 +356,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 6. Take a screenshot to validate the cursor blinks in the right place
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await addMonomerToCenterOfCanvas(page, Preset.T);
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -409,7 +417,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnAtom(page, 'C', 0);
@@ -603,7 +611,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await indigoFunctionsToolbar.layout();
     await indigoFunctionsToolbar.cleanUp();
     await indigoFunctionsToolbar.calculateCIP();
-    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+    await indigoFunctionsToolbar.addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 
@@ -1004,7 +1012,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .filter({ has: page.locator(':visible') })
       .getByText('A', { exact: true });
     await expandMonomer(page, baseA);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

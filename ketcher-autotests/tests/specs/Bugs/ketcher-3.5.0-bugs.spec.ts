@@ -27,8 +27,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import {
   ModifyAminoAcidsOption,
@@ -38,7 +36,10 @@ import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { verifySVGExport } from '@utils/files/receiveFileComparisonData';
+import {
+  verifyHELMExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -269,6 +270,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     ).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
+    await CalculateVariablesPanel(page).closeWindow();
   });
 
   test('Case 8: Monomer selection without bonds work the same as with bonds', async () => {
@@ -734,10 +736,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       MacroFileType.HELM,
       'RNA1{Raaa(Aaaa)Paaa}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page);
+    await verifyHELMExport(page, 'RNA1{[Raaa]([Aaaa])[Paaa]}$$$$V2.0');
   });
 });

@@ -46,12 +46,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -64,7 +64,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
@@ -78,12 +78,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -94,7 +94,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
@@ -108,12 +108,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -141,12 +141,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -159,12 +159,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       with bond to another FG it should replace it
     */
     const atomToolbar = RightToolbar(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
@@ -180,12 +180,12 @@ test.describe('Drag and drop Atom on canvas', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

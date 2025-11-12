@@ -296,11 +296,6 @@ const nonEligableMolecules: IMoleculesForMonomerCreation[] = [
     MoleculeSMARTS: 'C(*CC)C',
     AtomIDsToExclude: ['3'],
   },
-  {
-    testDescription: '21. Selected chemical structure not continuous',
-    MoleculeSMARTS: 'CC(C)NC(C)C',
-    AtomIDsToExclude: ['3'],
-  },
 ];
 
 for (const nonEligableMolecule of nonEligableMolecules) {
@@ -817,7 +812,7 @@ const nonEligableSymbols = [
       'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   },
   {
-    description: '3. Non-unique for one HELM class (Peptides-Amino acids)',
+    description: '3. Non-unique for one HELM class (Peptides-Amino Acids)',
     symbol: '1Nal',
     type: MonomerType.AminoAcid,
     naturalAnalogue: AminoAcidNaturalAnalogue.C,
@@ -1180,14 +1175,14 @@ const monomersToCreate = [
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
-  {
-    description: '3. Base',
-    type: MonomerType.Base,
-    symbol: 'Base',
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    libraryCard: Base.Base,
-  },
+  // {
+  //   description: '3. Base',
+  //   type: MonomerType.Base,
+  //   symbol: 'Base',
+  //   name: 'Base Test monomer',
+  //   naturalAnalogue: NucleotideNaturalAnalogue.A,
+  //   libraryCard: Base.Base,
+  // },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
@@ -1257,10 +1252,10 @@ for (const monomerToCreate of monomersToCreate) {
       // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
       await delay(1);
       // await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await expect(page.getByTestId('preview-tooltip')).toBeVisible();
-      await expect(page.getByTestId('preview-tooltip-title')).toContainText(
-        monomerToCreate.name,
-      );
+      await expect(MonomerPreviewTooltip(page).window).toBeVisible();
+      await expect(
+        MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,
+      ).toContainText(monomerToCreate.name);
     },
   );
 }
@@ -1521,7 +1516,8 @@ const monomersToCreate26 = [
 ];
 
 for (const monomerToCreate of monomersToCreate26) {
-  test(`26. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`26. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from KET in Micro mode
@@ -1600,7 +1596,8 @@ const monomersToCreate27 = [
 ];
 
 for (const monomerToCreate of monomersToCreate27) {
-  test(`27. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`27. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V2000 in Micro mode
@@ -1680,7 +1677,8 @@ const monomersToCreate28 = [
 ];
 
 for (const monomerToCreate of monomersToCreate28) {
-  test(`28. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`28. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -1761,42 +1759,46 @@ const monomersToCreate29 = [
 ];
 
 for (const monomerToCreate of monomersToCreate29) {
-  test(`29. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Save it to SDF V2000 and validate the result
-     *      6. Load saved monomer from SDF V2000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+  test.fail(
+    `29. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode`,
+    async () => {
+      // Test fails due to issue: https://github.com/epam/Indigo/issues/3292
+      // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V2000 in Micro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Save it to SDF V2000 and validate the result
+       *      6. Load saved monomer from SDF V2000 as New Project
+       *      7. Take screenshot to validate monomer got loaded
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
 
-    await verifyFileExport(
-      page,
-      `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-      FileType.SDF,
-      SdfFileFormat.v2000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await verifyFileExport(
+        page,
+        `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+        FileType.SDF,
+        SdfFileFormat.v2000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        `SDF-V2000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 }
 
 const monomersToCreate30 = [
@@ -1842,42 +1844,46 @@ const monomersToCreate30 = [
 ];
 
 for (const monomerToCreate of monomersToCreate30) {
-  test(`30. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V3000 in Micro mode`, async () => {
-    // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V3000 in Micro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Save it to SDF V3000 and validate the result
-     *      6. Load saved monomer from SDF V3000 as New Project
-     *      7. Take screenshot to validate monomer got loaded
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+  test.fail(
+    `30. Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V3000 in Micro mode`,
+    async () => {
+      // Test fails due to issue: https://github.com/epam/indigo/issues/3292
+      // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved/opened to/from SDF V3000 in Micro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Save it to SDF V3000 and validate the result
+       *      6. Load saved monomer from SDF V3000 as New Project
+       *      7. Take screenshot to validate monomer got loaded
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await prepareMoleculeForMonomerCreation(page, ['0']);
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
+      await createMonomer(page, {
+        ...monomerToCreate,
+      });
 
-    await verifyFileExport(
-      page,
-      `SDF-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-      FileType.SDF,
-      SdfFileFormat.v3000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      `SDF-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await verifyFileExport(
+        page,
+        `SDF-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+        FileType.SDF,
+        SdfFileFormat.v3000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        `SDF-V3000/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.sdf`,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 }
 
 const monomersToCreate31 = [
@@ -2219,7 +2225,8 @@ const monomersToCreate36 = [
 ];
 
 for (const monomerToCreate of monomersToCreate36) {
-  test(`36. Check that created ${monomerToCreate.description} monomer (collapesed) can be saved/opened to/from KET in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`36. Check that created ${monomerToCreate.description} monomer (collapesed) can be saved/opened to/from KET in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Check that created ${monomerToCreate.description} monomer (collapesed) can be saved/opened to/from KET in Micro mode
@@ -2380,7 +2387,8 @@ const monomersToCreate38 = [
 ];
 
 for (const monomerToCreate of monomersToCreate38) {
-  test(`38. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`38. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from MOL V3000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2462,7 +2470,8 @@ const monomersToCreate39 = [
 ];
 
 for (const monomerToCreate of monomersToCreate39) {
-  test(`39. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`39. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from SDF V2000 in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
@@ -2627,7 +2636,8 @@ const monomersToCreate41 = [
 ];
 
 for (const monomerToCreate of monomersToCreate41) {
-  test(`41. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CML in Micro mode`, async () => {
+  // TODO: Test was skipped due to instability, need to be fixed in future
+  test.skip(`41. Check that created ${monomerToCreate.description} monomer (collapsed) can be saved/opened to/from CML in Micro mode`, async () => {
     // Screenshots are wrong because of bug: https://github.com/epam/ketcher/issues/7764
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657

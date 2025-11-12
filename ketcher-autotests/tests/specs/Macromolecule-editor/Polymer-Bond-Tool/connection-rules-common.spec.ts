@@ -89,7 +89,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -102,7 +102,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
@@ -119,7 +119,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -130,7 +130,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 
@@ -396,12 +396,12 @@ test.describe('Common connection rules: ', () => {
       Phosphate.Test_6_Ph,
     );
     // Case 8-9
-    await page.getByTitle('expand window').click();
+    await AttachmentPointsDialog(page).expandWindow();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Case 10
-    await page.getByTitle('expand window').click();
+    await AttachmentPointsDialog(page).expandWindow();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });

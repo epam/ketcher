@@ -32,11 +32,13 @@ export const useAttachmentPointSelectsData = (
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
   assert(attachmentAtom);
 
-  const attachmentPointNameOptionsLength = Math.max(
-    ...Array.from(assignedAttachmentPoints.keys()).map((name) =>
-      getAttachmentPointNumberFromLabel(name),
-    ),
+  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
+    getAttachmentPointNumberFromLabel(name),
   );
+  const maxUsedNumber = Math.max(...usedNumbers);
+
+  const attachmentPointNameOptionsLength =
+    maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
   const nameOptions: Option[] = Array.from({
     length: attachmentPointNameOptionsLength,
@@ -70,7 +72,7 @@ export const useAttachmentPointSelectsData = (
 
       return {
         value: atomId.toString(),
-        label: '',
+        label,
         children,
       };
     });

@@ -8,12 +8,9 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  moveOnBond,
-  BondType,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickOnBond,
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
@@ -35,21 +32,18 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { performVerticalFlip } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
 }
 
-async function selectExpandedMonomer(
-  page: Page,
-  bondType: number = BondType.SINGLE,
-  bondNumber = 1,
-) {
-  await clickOnBond(page, bondType, bondNumber);
+async function selectExpandedMonomer(page: Page) {
+  await getBondLocator(page, { bondId: 1 }).click({ force: true });
 }
 
 async function expandMonomer(page: Page, locatorText: string) {
@@ -313,7 +307,8 @@ interface IMonomer {
 // });
 
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
-  await moveOnBond(page, BondType.SINGLE, 1);
+  const bondLocator = getBondLocator(page, { bondId: 7 });
+  await bondLocator.hover({ force: true });
   await dragMouseTo(x, y, page);
 }
 
@@ -381,8 +376,9 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 300, 200);
       await moveMouseToTheMiddleOfTheScreen(page);
+
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -423,7 +419,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 250, 400);
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
@@ -789,9 +785,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     await expandMonomer(page, monomer.name);
     await CommonLeftToolbar(page).erase();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    await expect(
-      EditAbbreviationDialog(page).editAbbreviationWindow,
-    ).toBeVisible();
+    await expect(EditAbbreviationDialog(page).window).toBeVisible();
     await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
   }
@@ -1076,7 +1070,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1114,7 +1108,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1447,7 +1441,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
@@ -1505,7 +1499,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await performVerticalFlip(page);
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

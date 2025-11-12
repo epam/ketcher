@@ -461,7 +461,7 @@ test.describe('Monomer APs checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,

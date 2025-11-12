@@ -4,9 +4,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -151,13 +148,6 @@ test.describe('Support aliases from HELM', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(page, `RNA1{[3A6]}$$$$V2.0`);
   });
 });

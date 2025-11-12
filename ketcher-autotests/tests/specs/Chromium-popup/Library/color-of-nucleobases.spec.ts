@@ -11,6 +11,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   clickOnCanvas,
+  moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -77,6 +78,7 @@ test.describe('Color of Nucleobases', () => {
        */
       await Library(page).openRNASection(RNASection.Bases);
       await Library(page).selectMonomer(base);
+      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

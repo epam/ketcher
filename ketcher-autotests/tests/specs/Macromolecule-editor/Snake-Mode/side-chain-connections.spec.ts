@@ -1005,7 +1005,7 @@ test.describe('Side chain connections', () => {
 
     // Selectiong ALL 60 available bonds
     const numberOfBondsToSelectAndDelete = 60;
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
@@ -1035,7 +1035,7 @@ test.describe('Side chain connections', () => {
 
     // Selecting ALL 53 available bonds
     const numberOfBondsToSelectAndDelete = 53;
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {

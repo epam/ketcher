@@ -1,6 +1,5 @@
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -12,6 +11,7 @@ import {
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,11 +24,11 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -38,11 +38,11 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

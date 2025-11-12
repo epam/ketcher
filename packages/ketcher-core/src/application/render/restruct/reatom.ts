@@ -50,6 +50,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
+import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 
 interface ElemAttr {
   text: string;
@@ -758,6 +759,16 @@ class ReAtom extends ReObject {
               cursor: 'pointer',
             });
 
+          const selectedClass =
+            render.monomerCreationState?.selectedMonomerClass;
+          const apTooltip = getAttachmentPointTooltip(
+            selectedClass,
+            attachmentPointName,
+          );
+          if (apTooltip) {
+            addTooltip(rLabelElement.node, apTooltip);
+          }
+
           const labelBBox = rLabelElement.getBBox();
           const bgRadius = Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
           const background = render.paper
@@ -768,6 +779,10 @@ class ReAtom extends ReObject {
               cursor: 'pointer',
               opacity: 0,
             });
+
+          if (apTooltip) {
+            background.node?.setAttribute('data-tooltip', apTooltip);
+          }
 
           if (isProblematic) {
             background.attr({
@@ -1337,7 +1352,7 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
-    atom.queryProperties.customQuery ||
+    atom.queryProperties.customQuery ??
     getAtomCustomQuery(
       {
         ...atom,

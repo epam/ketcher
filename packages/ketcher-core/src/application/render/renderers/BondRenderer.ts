@@ -185,6 +185,12 @@ export class BondRenderer extends BaseRenderer {
     return `cip-bond-${this.bond.id}`;
   }
 
+  private getBondFromMoleculeStruct() {
+    return this.bond.firstAtom.monomer.monomerItem.struct?.bonds.get(
+      this.bond.bondIdInMicroMode,
+    );
+  }
+
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
@@ -248,7 +254,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    return this.canvas
+    const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('data-testid', 'bond')
@@ -256,11 +262,24 @@ export class BondRenderer extends BaseRenderer {
       .attr('data-bondstereo', this.bond.stereo)
       .attr('data-bondid', this.bond.id)
       .attr('data-fromatomid', this.bond.firstAtom.id)
-      .attr('data-toatomid', this.bond.secondAtom.id)
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
+      .attr('data-toatomid', this.bond.secondAtom.id);
+
+    // Add topology and reacting center attributes from molecule struct if available
+    const bondFromStruct = this.getBondFromMoleculeStruct();
+    if (bondFromStruct) {
+      rootElement.attr('data-topology', bondFromStruct.topology);
+      rootElement.attr(
+        'data-reacting-center',
+        bondFromStruct.reactingCenterStatus,
+      );
+    }
+
+    rootElement.attr(
+      'transform',
+      `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+    );
+
+    return rootElement as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   getSelectionPoints() {

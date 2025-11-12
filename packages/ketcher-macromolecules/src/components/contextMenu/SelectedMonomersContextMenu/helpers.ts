@@ -13,7 +13,8 @@ import {
   Sugar,
   getAminoAcidsToModify,
   canModifyAminoAcid,
-  NATURAL_AMINO_ACID_MODIFICATION_TYPE,
+  compareByTitleWithNaturalFirst,
+  MonomerToAtomBond,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -229,16 +230,7 @@ export const getModifyAminoAcidsMenuItems = (
       };
     });
 
-  menuItems.sort((a, b) => {
-    const aTitle = a.title.toLowerCase();
-    const bTitle = b.title.toLowerCase();
-    const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
-
-    if (aTitle === naturalType) return -1;
-    if (bTitle === naturalType) return 1;
-
-    return aTitle.localeCompare(bTitle);
-  });
+  menuItems.sort(compareByTitleWithNaturalFirst);
 
   return menuItems;
 };
@@ -265,4 +257,73 @@ export const getMonomersForAminoAcidModification = (
   );
 
   return monomersForAminoAcidModification;
+};
+
+export const isCycleExistsForSelectedMonomers = (
+  selectedMonomers: BaseMonomer[],
+): boolean => {
+  if (selectedMonomers.length < 3) {
+    return false;
+  }
+
+  const monomerSet = new Set(selectedMonomers);
+  const visited = new Set<BaseMonomer>();
+  const inRecursionStack = new Set<BaseMonomer>();
+
+  const getNeighbors = (monomer: BaseMonomer): BaseMonomer[] => {
+    const neighbors: BaseMonomer[] = [];
+
+    monomer.forEachBond((bond) => {
+      if (bond instanceof MonomerToAtomBond) {
+        return;
+      }
+
+      const firstMonomer = bond.firstMonomer;
+      const secondMonomer = bond.secondMonomer;
+
+      if (!firstMonomer || !secondMonomer) {
+        return;
+      }
+
+      const neighbor = bond.getAnotherMonomer(monomer);
+
+      if (neighbor && monomerSet.has(neighbor)) {
+        neighbors.push(neighbor);
+      }
+    });
+
+    return neighbors;
+  };
+
+  const dfs = (monomer: BaseMonomer, parent: BaseMonomer | null): boolean => {
+    visited.add(monomer);
+    inRecursionStack.add(monomer);
+
+    const neighbors = getNeighbors(monomer);
+
+    for (const neighbor of neighbors) {
+      if (neighbor === parent) {
+        continue;
+      }
+
+      if (inRecursionStack.has(neighbor)) {
+        return true;
+      }
+
+      if (!visited.has(neighbor)) {
+        return dfs(neighbor, monomer);
+      }
+    }
+
+    inRecursionStack.delete(monomer);
+    return false;
+  };
+
+  for (const monomer of selectedMonomers) {
+    if (!visited.has(monomer)) {
+      return dfs(monomer, null);
+    }
+  }
+
+  return false;
 };

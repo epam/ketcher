@@ -50,9 +50,7 @@ async function separetingAndMovingEllipse(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await page.mouse.down();
@@ -99,9 +97,7 @@ test.describe('Draw Ellipse', () => {
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await createSomeStructure(page);
     await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();

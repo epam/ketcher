@@ -3,11 +3,11 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
+  keyboardTypeOnCanvas,
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,7 +46,7 @@ test.describe('Sequence edit mode', () => {
         await button.click();
         await takeTopToolbarScreenshot(page);
 
-        await typeAllEnglishAlphabet(page);
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         await takeEditorScreenshot(page);
       });
     }

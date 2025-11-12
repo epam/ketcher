@@ -55,7 +55,9 @@ type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
   inputFormat?: ChemicalMimeType;
   sequenceType?: SequenceType;
-  outputContentType?: 'chemical/x-monomer-library';
+  outputContentType?: ChemicalMimeType;
+  monomerLibrarySavingMode?: string;
+  molfileSavingSkipDate?: string;
 };
 type AutomapOptions = {
   mode?: AutomapMode;
@@ -119,6 +121,8 @@ export class Indigo {
       {
         'sequence-type': options?.sequenceType,
         'output-content-type': outputContentType,
+        'monomer-library-saving-mode': options?.monomerLibrarySavingMode,
+        'molfile-saving-skip-date': options?.molfileSavingSkipDate,
       },
     );
   }

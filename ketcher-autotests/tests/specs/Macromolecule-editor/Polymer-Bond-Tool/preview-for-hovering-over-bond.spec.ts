@@ -84,9 +84,7 @@ test(
         Will require to update screens after fix
         */
     test.setTimeout(240000);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
 
     for (const fileWithPairs of fileNames) {
       await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs);
@@ -128,9 +126,7 @@ test(
         Will require to update screens after fix
         */
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
 
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,

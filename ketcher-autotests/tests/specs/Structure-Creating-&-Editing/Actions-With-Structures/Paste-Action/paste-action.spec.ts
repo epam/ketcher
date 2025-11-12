@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -12,11 +12,12 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,8 +30,11 @@ test.describe('Paste Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).copy();
     await MoleculesTopToolbar(page).paste();
-    await page.getByTestId('infoModal-shortcut-for-paste').first().isVisible();
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.CTRL/Cmd + Vfor paste",
+    );
+    await ErrorMessageDialog(page).close();
   });
 
   test('Canvas in Micro mode copied as MOL', async ({ page }) => {
@@ -45,10 +49,10 @@ test.describe('Paste Tool', () => {
     */
     await drawBenzeneRing(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 
     await selectAllStructuresOnCanvas(page);

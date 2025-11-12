@@ -43,10 +43,10 @@ export class TextCreate extends BaseOperation {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
-      restruct.molecule.texts.set(this.data.id!, item);
+      restruct.molecule.texts.set(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
 
     restruct.texts.set(itemId, new ReText(item));
 
@@ -76,7 +76,7 @@ export class TextDelete extends BaseOperation {
 
   execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
-    const item = struct.texts.get(this.data.id)!;
+    const item = struct.texts.get(this.data.id);
     if (!item) return;
 
     this.data.content = item.content!;
@@ -84,7 +84,10 @@ export class TextDelete extends BaseOperation {
 
     restruct.markItemRemoved();
 
-    restruct.clearVisel(restruct.texts.get(this.data.id)!.visel);
+    const reText = restruct.texts.get(this.data.id);
+    if (reText) {
+      restruct.clearVisel(reText.visel);
+    }
     restruct.texts.delete(this.data.id);
 
     struct.texts.delete(this.data.id);

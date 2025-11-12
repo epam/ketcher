@@ -2006,7 +2006,7 @@ for (const monomerToCreate of monomersToCreate32) {
   test(`32. Check that created ${monomerToCreate.description} monomer (expanded) can be saved to SVG in Micro mode`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved SVG in Micro mode
+     * Description: Check that created ${monomerToCreate.description} monomer (expanded) can be saved SVG in Micro mode.
      *
      * Case:
      *      1. Open Molecules canvas

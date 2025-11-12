@@ -342,25 +342,37 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async expandModificationSection() {
-      if (!(await modificationSection.getAttribute('data-expanded'))) {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'false') {
         await modificationSection.click();
       }
     },
 
     async collapseModificationSection() {
-      if (await modificationSection.getAttribute('data-expanded')) {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'true') {
         await modificationSection.click();
       }
     },
 
     async expandAliasesSection() {
-      if (!(await aliasesSection.getAttribute('data-expanded'))) {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
     },
 
     async collapseAliasesSection() {
-      if (await aliasesSection.getAttribute('data-expanded')) {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'true') {
         await aliasesSection.click();
       }
     },
@@ -376,10 +388,24 @@ export const CreateMonomerDialog = (page: Page) => {
     }) {
       await this.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
       await dropdown.click();
       const option = page.getByTestId(options.type);
       await option.waitFor();
       await option.click();
+    },
+
+    async selectModificationTypes(
+      options: {
+        dropdown: ModificationTypeDropdown;
+        type: ModificationType;
+      }[],
+    ) {
+      for (const option of options) {
+        await this.selectModificationType(option);
+      }
     },
 
     async setModificationType(options: {
@@ -400,6 +426,12 @@ export const CreateMonomerDialog = (page: Page) => {
       await this.expandModificationSection();
       const deleteButton = deleteModificationTypeButtonEnum[dropdown];
       await deleteButton.click();
+    },
+
+    async setHELM(helm: string) {
+      await this.expandAliasesSection();
+      const helmAliasEditbox = aliasesSection.helmAliasEditbox;
+      await helmAliasEditbox.fill(helm);
     },
 
     async submit({ ignoreWarning = false } = {}) {
@@ -424,7 +456,13 @@ export async function createMonomer(
     symbol: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
+    modificationTypes?: {
+      dropdown: ModificationTypeDropdown;
+      type: ModificationType;
+    }[];
+    HELM?: string;
   },
+  ignoreWarning = true,
 ) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
@@ -434,7 +472,15 @@ export async function createMonomer(
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
-  await createMonomerDialog.submit({ ignoreWarning: true });
+  if (options.modificationTypes) {
+    await createMonomerDialog.selectModificationTypes(
+      options.modificationTypes,
+    );
+  }
+  if (options.HELM) {
+    await createMonomerDialog.setHELM(options.HELM);
+  }
+  await createMonomerDialog.submit({ ignoreWarning });
 }
 
 export async function prepareMoleculeForMonomerCreation(

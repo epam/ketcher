@@ -24,7 +24,7 @@ import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDial
 import { TopRightToolbar } from '../TopRightToolbar';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
-
+/*
 type GeneralSectionLocators = {
   resetToSelectToolCombobox: Locator;
   rotationStepEditbox: Locator;
@@ -95,20 +95,20 @@ type OptionsForDebuggingSectionLocators = {
   showHalfBondsIdsSwitcher: Locator;
   showLoopIdsSwitcher: Locator;
 };
-
+*/
 type SettingsDialogLocators = {
   window: Locator;
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
   closeWindowButton: Locator;
-  generalSection: Locator & GeneralSectionLocators;
-  stereochemistrySection: Locator & StereochemistrySectionLocators;
-  atomsSection: Locator & AtomsSectionLocators;
-  bondsSection: Locator & BondsSectionLocators;
-  serverSection: Locator & ServerSectionLocators;
-  threeDViewerSection: Locator & ThreeDViewerSectionLocators;
-  optionsForDebuggingSection: Locator & OptionsForDebuggingSectionLocators;
+  generalSection: Locator;
+  stereochemistrySection: Locator;
+  atomsSection: Locator;
+  bondsSection: Locator;
+  serverSection: Locator;
+  threeDViewerSection: Locator;
+  optionsForDebuggingSection: Locator;
   setACSSettingsButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;

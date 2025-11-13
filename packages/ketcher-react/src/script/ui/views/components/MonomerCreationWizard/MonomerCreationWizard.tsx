@@ -49,7 +49,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
-import { TextField } from '@mui/material';
+import { TextField, Autocomplete } from '@mui/material';
 
 const initialWizardState: WizardState = {
   values: {
@@ -866,17 +866,25 @@ const MonomerCreationWizard = () => {
                   </AccordionSummary>
                   <AccordionDetails>
                     <p className={styles.inputLabel}>HELM</p>
-                    <TextField
-                      variant="standard"
-                      className={clsx(
-                        styles.inputField,
-                        errors.aliasHELM && styles.error,
-                      )}
-                      error={Boolean(errors.aliasHELM)}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleFieldChange('aliasHELM', event.target.value)
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasHELM}
+                      onInputChange={(_event, newValue) =>
+                        handleFieldChange('aliasHELM', newValue)
                       }
                       data-testid="helm-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasHELM && styles.error,
+                          )}
+                          error={Boolean(errors.aliasHELM)}
+                        />
+                      )}
                     />
                   </AccordionDetails>
                 </Accordion>

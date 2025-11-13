@@ -415,10 +415,9 @@ export const selectFilteredMonomers = createSelector(
           const aliasRest = searchFilter.slice(1);
           return (
             idtBase?.startsWith(aliasRest) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.startsWith(aliasRest)))
+            idtModifications
+              ?.split(' ')
+              .some((mod) => mod.startsWith(aliasRest))
           );
         }
 

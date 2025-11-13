@@ -34,20 +34,20 @@ const ArrowScroll = ({
   scrollBack,
   isLeftRight,
 }: ArrowScrollProps) => {
-  const [isScrollDown, setScrollDown] = useState(false);
-  const [isScrollUp, setScrollUp] = useState(false);
+  const [isScrollDown, setIsScrollDown] = useState(false);
+  const [isScrollUp, setIsScrollUp] = useState(false);
   useRequestAnimationFrame(isScrollDown, (dt) => scrollForward(dt));
   useRequestAnimationFrame(isScrollUp, (dt) => scrollBack(dt));
 
   useEffect(() => {
     return () => {
-      setScrollUp(false);
+      setIsScrollUp(false);
     };
   }, [startInView]);
 
   useEffect(() => {
     return () => {
-      setScrollDown(false);
+      setIsScrollDown(false);
     };
   }, [endInView]);
 
@@ -66,8 +66,8 @@ const ArrowScroll = ({
             e.stopPropagation();
             scrollForward(100);
           }}
-          onMouseUp={() => setScrollDown(false)}
-          onMouseDown={() => setScrollDown(true)}
+          onMouseUp={() => setIsScrollDown(false)}
+          onMouseDown={() => setIsScrollDown(true)}
           className={clsx(
             classes.button,
             isLeftRight ? classes.right : classes.down,
@@ -85,8 +85,8 @@ const ArrowScroll = ({
             e.stopPropagation();
             scrollBack(100);
           }}
-          onMouseUp={() => setScrollUp(false)}
-          onMouseDown={() => setScrollUp(true)}
+          onMouseUp={() => setIsScrollUp(false)}
+          onMouseDown={() => setIsScrollUp(true)}
           className={clsx(
             classes.button,
             isLeftRight ? classes.left : classes.up,

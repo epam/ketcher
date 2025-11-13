@@ -126,13 +126,7 @@ export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const handleContextMenuClose = (e) => {
-      const isClickOnNucleotide =
-        e.target?.__data__?.node || e.target?.__data__?.monomer;
-      if (isClickOnNucleotide) {
-        e.stopPropagation();
-        return;
-      }
+    const handleContextMenuClose = () => {
       dispatch(setContextMenuActive(false));
     };
     document.addEventListener('click', handleContextMenuClose);

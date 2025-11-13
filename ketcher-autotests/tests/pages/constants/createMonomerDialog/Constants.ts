@@ -41,3 +41,13 @@ export enum NucleotideNaturalAnalogue {
   U = 'natural-analogue-picker-option-U',
   X = 'natural-analogue-picker-option-X',
 }
+
+export enum ModificationType {
+  NaturalAminoAcid = 'modification-type-option-Natural amino acid',
+  Citrullination = 'modification-type-option-Citrullination',
+  Hydroxylation = 'modification-type-option-Hydroxylation',
+  Inversion = 'modification-type-option-Inversion',
+  NMethylation = 'modification-type-option-N-methylation',
+  Phosphorylation = 'modification-type-option-Phosphorylation',
+  SideChainAcetylation = 'modification-type-option-Side chain acetylation',
+}

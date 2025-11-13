@@ -78,12 +78,7 @@ async function getFileContent(
   }
 
   // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
-  return fileFormat
-    ? (handler as (page: Page, fileFormat: FileFormat) => Promise<string>)(
-        page,
-        fileFormat,
-      )
-    : (handler as (page: Page) => Promise<string>)(page);
+  return fileFormat ? handler(page, fileFormat) : handler(page);
 }
 
 export async function verifyFileExport(
@@ -150,8 +145,6 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   rdf: 'getRdf' as keyof Ketcher,
 } as const;
 
-type KetcherApiFunction = (format?: string) => Promise<string>;
-
 function filterByIndexes(file: string[], indexes?: number[]): string[] {
   if (!indexes) {
     return file;
@@ -183,9 +176,7 @@ async function receiveFile({
   await page.waitForFunction(() => window.ketcher);
 
   const file = await page.evaluate(({ method, format }) => {
-    return format
-      ? (window.ketcher[method] as KetcherApiFunction)(format)
-      : (window.ketcher[method] as KetcherApiFunction)();
+    return format ? window.ketcher[method](format) : window.ketcher[method]();
   }, pageData);
 
   return file.split('\n');

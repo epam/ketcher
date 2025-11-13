@@ -1057,14 +1057,12 @@ export const MacromoleculePropertiesWindow = () => {
       <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
-          .map((atomNameWithAmount, i) => {
-            return (
-              <GrossFormulaPart
-                part={atomNameWithAmount}
-                key={i}
-              ></GrossFormulaPart>
-            );
-          })}
+          .map((atomNameWithAmount) => (
+            <GrossFormulaPart
+              part={atomNameWithAmount}
+              key={atomNameWithAmount}
+            />
+          ))}
       </GrossFormula>
     );
   }, [firstMacromoleculesProperties?.grossFormula]);

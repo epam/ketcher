@@ -39,7 +39,7 @@ const parseFile = (file): Promise<string> =>
       resolve('');
     };
     reader.onerror = function () {
-      reject(new Error(reader.error?.message || 'Failed to read file'));
+      reject(new Error(reader.error?.message ?? 'Failed to read file'));
     };
   });
 

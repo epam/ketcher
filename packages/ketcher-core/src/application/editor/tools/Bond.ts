@@ -605,7 +605,14 @@ class PolymerBond implements BaseTool {
     }
 
     // Modal: Any or both monomers are Chems
-    if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+    if (
+      firstMonomer instanceof Chem ||
+      secondMonomer instanceof Chem ||
+      (firstMonomer instanceof AmbiguousMonomer &&
+        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
+      (secondMonomer instanceof AmbiguousMonomer &&
+        secondMonomer.monomerClass === KetMonomerClass.CHEM)
+    ) {
       return true;
     }
 

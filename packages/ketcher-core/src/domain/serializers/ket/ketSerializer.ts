@@ -304,6 +304,7 @@ export class KetSerializer implements Serializer<Struct> {
       deserializedContent?.drawingEntitiesManager,
       struct,
     );
+
     return struct;
   }
 

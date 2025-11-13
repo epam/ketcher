@@ -45,6 +45,7 @@ import {
   flipPointByCenter,
   rotateDelta,
 } from 'application/editor/shared/utils';
+import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 
 export type Neighbor = {
   aid: number;
@@ -1482,5 +1483,150 @@ export class Struct {
         });
       }
     });
+  }
+
+  public applyStereoBondsToExpandedMonomers() {
+    const expandedMonomers: MonomerMicromolecule[] = [];
+    this.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()) {
+        expandedMonomers.push(sgroup);
+      }
+    });
+
+    if (expandedMonomers.length < 2) {
+      return;
+    }
+
+    for (let i = 0; i < expandedMonomers.length; i++) {
+      const firstMonomer = expandedMonomers[i];
+      const firstMonomerAtoms = new Set(SGroup.getAtoms(this, firstMonomer));
+      const firstMonomerAttachmentPoints = firstMonomer.getAttachmentPoints();
+
+      for (let j = i + 1; j < expandedMonomers.length; j++) {
+        const secondMonomer = expandedMonomers[j];
+        const secondMonomerAtoms = new Set(
+          SGroup.getAtoms(this, secondMonomer),
+        );
+        const secondMonomerAttachmentPoints =
+          secondMonomer.getAttachmentPoints();
+
+        this.bonds.forEach((bond, bondId) => {
+          const firstMonomerHasBondBegin = firstMonomerAtoms.has(bond.begin);
+          const firstMonomerHasBondEnd = firstMonomerAtoms.has(bond.end);
+          const secondMonomerHasBondBegin = secondMonomerAtoms.has(bond.begin);
+          const secondMonomerHasBondEnd = secondMonomerAtoms.has(bond.end);
+
+          const isBondConnectinBothMonomers =
+            (firstMonomerHasBondBegin && secondMonomerHasBondEnd) ||
+            (firstMonomerHasBondEnd && secondMonomerHasBondBegin);
+
+          if (!isBondConnectinBothMonomers) {
+            return;
+          }
+
+          const firstMonomerAtom = firstMonomerHasBondBegin
+            ? bond.begin
+            : bond.end;
+          const secondMonomerAtom = secondMonomerHasBondBegin
+            ? bond.begin
+            : bond.end;
+
+          const firstMonomerAttachmentPointInConnection =
+            firstMonomerAttachmentPoints.find(
+              (attachmentPoint) => attachmentPoint.atomId === firstMonomerAtom,
+            );
+          const secondMonomerAttachmentPointInConnection =
+            secondMonomerAttachmentPoints.find(
+              (attachmentPoint) => attachmentPoint.atomId === secondMonomerAtom,
+            );
+
+          if (
+            !firstMonomerAttachmentPointInConnection ||
+            !secondMonomerAttachmentPointInConnection
+          ) {
+            return;
+          }
+
+          const firstMonomerAttachmentPointBondStereo =
+            getAttachmentPointStereoBond(
+              firstMonomer,
+              firstMonomerAttachmentPointInConnection,
+            );
+          const secondMonomerAttachmentPointBondStereo =
+            getAttachmentPointStereoBond(
+              secondMonomer,
+              secondMonomerAttachmentPointInConnection,
+            );
+
+          const firstMonomerHasStereoBondOnAttachmentPoint =
+            firstMonomerAttachmentPointBondStereo !== null &&
+            firstMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
+          const secondMonomerHasStereoBondOnAttachmentPoint =
+            secondMonomerAttachmentPointBondStereo !== null &&
+            secondMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
+
+          if (
+            firstMonomerHasStereoBondOnAttachmentPoint &&
+            !secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            if (bond.begin !== firstMonomerAtom) {
+              this.flipBondAndSetStereo(
+                bondId,
+                bond,
+                firstMonomerAttachmentPointBondStereo,
+              );
+            } else {
+              bond.stereo = firstMonomerAttachmentPointBondStereo;
+            }
+          } else if (
+            !firstMonomerHasStereoBondOnAttachmentPoint &&
+            secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            if (bond.begin !== secondMonomerAtom) {
+              this.flipBondAndSetStereo(
+                bondId,
+                bond,
+                secondMonomerAttachmentPointBondStereo,
+              );
+            } else {
+              bond.stereo = secondMonomerAttachmentPointBondStereo;
+            }
+          } else if (
+            firstMonomerHasStereoBondOnAttachmentPoint &&
+            secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            bond.stereo = Bond.PATTERN.STEREO.NONE;
+          }
+        });
+      }
+    }
+  }
+
+  private flipBondAndSetStereo(
+    bondId: number,
+    bond: Bond,
+    stereo: number,
+  ): void {
+    this.bonds.delete(bondId);
+
+    const newBond = new Bond({
+      ...bond,
+      begin: bond.end,
+      end: bond.begin,
+      stereo,
+      beginSuperatomAttachmentPointNumber:
+        bond.endSuperatomAttachmentPointNumber,
+      endSuperatomAttachmentPointNumber:
+        bond.beginSuperatomAttachmentPointNumber,
+    });
+
+    this.bonds.set(bondId, newBond);
+
+    this.bondInitHalfBonds(bondId);
+    const newBondObj = this.bonds.get(bondId);
+    if (newBondObj?.hb1 && newBondObj?.hb2) {
+      this.atomAddNeighbor(newBondObj.hb1);
+      this.atomAddNeighbor(newBondObj.hb2);
+    }
   }
 }

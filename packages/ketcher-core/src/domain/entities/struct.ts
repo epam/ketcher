@@ -445,7 +445,7 @@ export class Struct {
     return [conn, false];
   }
 
-  findBondId(begin, end) {
+  findBondId(begin: number, end: number) {
     return this.bonds.find(
       (_bid, bond) =>
         (bond.begin === begin && bond.end === end) ||

@@ -8,11 +8,17 @@ type WarningMessageDialogLocators = {
 };
 
 export const WarningMessageDialog = (page: Page) => {
+  const warningMessageDialogWindow = page
+    .getByTestId('info-modal-window')
+    .filter({ hasText: 'Non-typical attachment points' });
+
   const locators: WarningMessageDialogLocators = {
-    warningMessageDialogWindow: page.getByTestId('info-modal-window'),
-    warningMessageBody: page.getByTestId('info-modal-body'),
-    warningMessageOkButton: page.getByTestId('OK'),
-    warningMessageCancelButton: page.getByTestId('Cancel'),
+    warningMessageDialogWindow,
+    warningMessageBody:
+      warningMessageDialogWindow.getByTestId('info-modal-body'),
+    warningMessageOkButton: warningMessageDialogWindow.getByTestId('OK'),
+    warningMessageCancelButton:
+      warningMessageDialogWindow.getByTestId('Cancel'),
   };
 
   return {
@@ -22,13 +28,33 @@ export const WarningMessageDialog = (page: Page) => {
     },
 
     async ok() {
-      await locators.warningMessageOkButton.click();
-      await locators.warningMessageOkButton.waitFor({ state: 'detached' });
+      await locators.warningMessageDialogWindow.waitFor({ state: 'visible' });
+      await locators.warningMessageOkButton.waitFor({ state: 'visible' });
+      await Promise.all([
+        locators.warningMessageOkButton.click(),
+        locators.warningMessageDialogWindow.waitFor({ state: 'hidden' }),
+      ]);
+    },
+
+    async okIfVisible() {
+      if (await this.isVisible()) {
+        await this.ok();
+      }
     },
 
     async cancel() {
-      await locators.warningMessageCancelButton.click();
-      await locators.warningMessageCancelButton.waitFor({ state: 'detached' });
+      await locators.warningMessageDialogWindow.waitFor({ state: 'visible' });
+      await locators.warningMessageCancelButton.waitFor({ state: 'visible' });
+      await Promise.all([
+        locators.warningMessageCancelButton.click(),
+        locators.warningMessageDialogWindow.waitFor({ state: 'hidden' }),
+      ]);
+    },
+
+    async cancelIfVisible() {
+      if (await this.isVisible()) {
+        await this.cancel();
+      }
     },
 
     async getWarningMessage() {

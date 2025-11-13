@@ -38,8 +38,9 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
   }
 
   get symbolToDisplay(): string {
+    // Ambiguous RNA bases (alternatives and mixed) should display @ symbol
     return this.node.rnaBase instanceof AmbiguousMonomer
-      ? this.node.rnaBase.label
+      ? '@'
       : this.node.rnaBase.monomerItem?.props.MonomerNaturalAnalogCode || '@';
   }
 

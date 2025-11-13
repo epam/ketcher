@@ -4,10 +4,10 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
-    // Ambiguous CHEM monomers should display @ symbol
+    // Ambiguous monomers (alternatives and mixed) should display @ symbol for non-peptide types
     if (
       this.node.monomer instanceof AmbiguousMonomer &&
-      this.node.monomer.monomerClass === KetMonomerClass.CHEM
+      this.node.monomer.monomerClass !== KetMonomerClass.AminoAcid
     ) {
       return '@';
     }

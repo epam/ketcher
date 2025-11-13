@@ -143,6 +143,7 @@ export class Chain {
     | MonomerSequenceNode
     | Nucleoside
     | Nucleotide
+    | AmbiguousMonomerSequenceNode
     | undefined {
     return this.lastSubChain?.lastNode;
   }

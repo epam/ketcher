@@ -1,4 +1,5 @@
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class AmbiguousMonomerSequenceNode {
   constructor(public monomer: AmbiguousMonomer) {}
@@ -15,7 +16,7 @@ export class AmbiguousMonomerSequenceNode {
     return this.monomer;
   }
 
-  public get monomers() {
+  public get monomers(): BaseMonomer[] {
     return [this.monomer];
   }
 

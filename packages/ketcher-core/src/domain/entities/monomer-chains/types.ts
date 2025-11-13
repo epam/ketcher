@@ -4,13 +4,15 @@ import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { LinkerSequenceNode } from 'domain/entities';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 
 export type SubChainNode =
   | MonomerSequenceNode
   | Nucleoside
   | Nucleotide
   | EmptySequenceNode
-  | LinkerSequenceNode;
+  | LinkerSequenceNode
+  | AmbiguousMonomerSequenceNode;
 
 export type SequenceNode = SubChainNode | BackBoneSequenceNode;
 

@@ -720,18 +720,25 @@ export class Ketcher {
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
   ) {
+    const serverSettings = this.editor.serverSettings;
     const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
       params?.format ?? identifyStructFormat(rawMonomersDataString);
-
     let dataInKetFormat: string | JSON;
 
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.indigo.convert(
-        rawMonomersDataString,
-        MONOMER_LIBRARY_FORMAT_OPTIONS,
+      const convertResult = await this.structService.convert(
+        {
+          struct: rawMonomersDataString,
+          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+        },
+        {
+          ...serverSettings,
+          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+        },
       );
 
       dataInKetFormat = convertResult.struct;

@@ -181,6 +181,44 @@ export class BondRenderer extends BaseRenderer {
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
 
+  private getDativeBondOffsetAngle(): number | undefined {
+    // Only apply offset for dative bonds
+    if (this.bond.type !== BondType.Dative) {
+      return undefined;
+    }
+
+    // Get all dative bonds pointing to the same target atom (secondAtom)
+    const targetAtom = this.bond.secondAtom;
+    const dativeBondsToTarget = targetAtom.bonds.filter(
+      (bond) =>
+        bond instanceof Bond &&
+        bond.type === BondType.Dative &&
+        bond.secondAtom === targetAtom,
+    ) as Bond[];
+
+    // If there's only one dative bond, no offset needed
+    if (dativeBondsToTarget.length <= 1) {
+      return undefined;
+    }
+
+    // Find the index of the current bond among all dative bonds to this target
+    const currentBondIndex = dativeBondsToTarget.findIndex(
+      (bond) => bond.id === this.bond.id,
+    );
+
+    if (currentBondIndex === -1) {
+      return undefined;
+    }
+
+    // Calculate the offset angle based on the bond's position
+    // Distribute bonds evenly in a range of angles
+    const totalBonds = dativeBondsToTarget.length;
+    const angleStep = Math.PI / (totalBonds + 1);
+    const offsetAngle = (currentBondIndex - (totalBonds - 1) / 2) * angleStep;
+
+    return offsetAngle;
+  }
+
   private get cipElementId() {
     return `cip-bond-${this.bond.id}`;
   }
@@ -606,6 +644,7 @@ export class BondRenderer extends BaseRenderer {
         bondSVGPaths = SingleBondPathRenderer.preparePaths(
           bondVectors,
           this.bond.type,
+          this.getDativeBondOffsetAngle(),
         );
         break;
 

@@ -272,9 +272,7 @@ export const SettingsDialog = (page: Page) => {
     resetButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     generalSection: page.getByTestId('General-accordion'),
-    stereochemistrySection: page.getByTestId(
-      'Stereochemistry-accordion',
-    ),
+    stereochemistrySection: page.getByTestId('Stereochemistry-accordion'),
     atomsSection: page.getByTestId('Atoms-accordion'),
     bondsSection: page.getByTestId('Bonds-accordion'),
     serverSection: page.getByTestId('Server-accordion'),

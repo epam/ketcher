@@ -193,9 +193,7 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? currentEnumeration === subChain.length
-        : currentEnumeration === 1;
+      const needToDrawTerminalIndicator = currentEnumeration === 1;
 
       if (!monomerRenderer) {
         return;
@@ -209,20 +207,9 @@ export class RenderersManager {
 
   private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
     let currentEnumeration = 1;
-    const nucleotidesAmount = subChain.nodes.reduce(
-      (nucleotidesAmount, node) =>
-        node instanceof Nucleotide ||
-        node instanceof Nucleoside ||
-        node.monomer instanceof UnsplitNucleotide
-          ? nucleotidesAmount + 1
-          : nucleotidesAmount,
-      0,
-    );
 
     subChain.nodes.forEach((node) => {
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? currentEnumeration === nucleotidesAmount
-        : currentEnumeration === 1;
+      const needToDrawTerminalIndicator = currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         node.rnaBase.renderer?.setEnumeration(currentEnumeration);

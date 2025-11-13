@@ -14,16 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import styled from '@emotion/styled';
+import { ZoomTool } from 'ketcher-core';
+import { AmbiguousMonomerPreview } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
-import { selectShowPreview } from 'state/common';
+import { PreviewType } from 'state';
+import { selectShowPreview, selectEditor } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
-import { PreviewType } from 'state';
-import { AmbiguousMonomerPreview } from 'ketcher-react';
-import { useEffect, useRef, useState } from 'react';
-import styled from '@emotion/styled';
-import { ZoomTool } from 'ketcher-core';
 
 const PreviewContainer = styled.div`
   display: inline-block;
@@ -36,6 +37,7 @@ export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
   const previewRef = useRef<HTMLDivElement>(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const editor = useSelector(selectEditor);
 
   useEffect(() => {
     if (!previewRef.current || preview.style) {
@@ -67,10 +69,15 @@ export const Preview = () => {
       const targetWidth = targetBoundingClientRect?.width || 0;
       const targetCenterX = targetLeft - targetWidth / 2;
 
-      const topPreviewPosition = targetTop - previewHeight - PREVIEW_OFFSET;
+      const ketcherRootRect = editor?.ketcherRootElementBoundingClientRect;
+      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
+      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
+
+      const topPreviewPosition =
+        targetTop - previewHeight - PREVIEW_OFFSET - ketcherRootOffsetY;
       const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
       const leftPreviewPosition =
-        targetLeft + targetWidth / 2 - previewWidth / 2;
+        targetLeft + targetWidth / 2 - previewWidth / 2 - ketcherRootOffsetX;
 
       if (targetTop > previewHeight + PREVIEW_OFFSET) {
         previewRef.current.style.top = `${topPreviewPosition}px`;

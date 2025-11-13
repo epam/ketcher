@@ -12,6 +12,8 @@ import {
   Pool,
   Sugar,
   Vec2,
+  LinkerSequenceNode,
+  UnresolvedMonomer,
 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
@@ -42,6 +44,8 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { MONOMER_CONST } from 'domain/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -125,6 +129,24 @@ export class SequenceRenderer {
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
+  }
+
+  /**
+   * Checks if a node should be excluded from position index counting.
+   * Nodes that should be excluded are similar to those in the ignore list
+   * for counter numbering (phosphates, linkers, unresolved monomers, etc.)
+   * This ensures consistent spacing when calculating positions.
+   */
+  private static shouldExcludeFromPositionIndex(node: SequenceNode): boolean {
+    return (
+      node instanceof LinkerSequenceNode ||
+      node instanceof EmptySequenceNode ||
+      node instanceof BackBoneSequenceNode ||
+      node.monomer instanceof Phosphate ||
+      node.monomer instanceof UnresolvedMonomer ||
+      (node instanceof AmbiguousMonomerSequenceNode &&
+        node.monomer.monomerClass !== MONOMER_CONST.AMINO_ACID)
+    );
   }
 
   private static setCaretToLastNodeInChain(chain: SequenceViewModelChain) {
@@ -240,7 +262,11 @@ export class SequenceRenderer {
 
           renderer.show();
           node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
-          currentMonomerIndexInChain++;
+
+          // Only increment position index for nodes that should be counted for spacing
+          if (!SequenceRenderer.shouldExcludeFromPositionIndex(node)) {
+            currentMonomerIndexInChain++;
+          }
           currentMonomerIndexOverall++;
           handledNodes.add(node);
 

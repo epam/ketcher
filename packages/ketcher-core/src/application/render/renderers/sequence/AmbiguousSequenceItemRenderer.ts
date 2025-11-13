@@ -13,11 +13,12 @@ export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
     const ambiguousMonomer = this.node.monomer as AmbiguousMonomer;
 
     // For CHEM class ambiguous monomers, display @ symbol
+    // Note: Mixed ambiguous monomers (containing different monomer types) are also classified as CHEM
     if (ambiguousMonomer.monomerClass === KetMonomerClass.CHEM) {
       return '@';
     }
 
-    // For other ambiguous monomers, display the label (typically '%')
+    // For other ambiguous monomers (bases, peptides, sugars, etc.), display the label (typically '%')
     return ambiguousMonomer.label;
   }
 

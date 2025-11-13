@@ -27,6 +27,7 @@ import {
   SGroupRemoveFromHierarchy,
   AtomDelete,
   BondDelete,
+  BondAttr,
 } from '../operations';
 import {
   BaseMonomer,
@@ -35,6 +36,7 @@ import {
   SGroupAttachmentPoint,
   Vec2,
   BondAttributes,
+  Bond,
 } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
@@ -122,6 +124,50 @@ export function setExpandSGroup(
   return action.perform(restruct);
 }
 
+/**
+ * Helper function to find stereo bond information for an attachment point
+ * Returns the stereo value (UP or DOWN) if the bond between LGA and AA has stereo
+ * and the narrow end is at the AA (attachment atom), otherwise returns null
+ */
+const getAttachmentPointStereoBond = (
+  restruct: Restruct,
+  attachmentPoint: SGroupAttachmentPoint,
+) => {
+  const attachmentAtomId = attachmentPoint.atomId;
+  const leavingAtomId = attachmentPoint.leaveAtomId;
+
+  if (!leavingAtomId) {
+    return null;
+  }
+
+  // Find the bond between LGA and AA
+  const bondId = restruct.molecule.findBondId(leavingAtomId, attachmentAtomId);
+  if (bondId === null) {
+    return null;
+  }
+
+  const bond = restruct.molecule.bonds.get(bondId);
+  if (!bond) {
+    return null;
+  }
+
+  const isSuitableStereoBond =
+    bond.stereo === Bond.PATTERN.STEREO.UP ||
+    bond.stereo === Bond.PATTERN.STEREO.DOWN;
+
+  if (!isSuitableStereoBond) {
+    return null;
+  }
+
+  // Check if the narrow end of the stereo bond is at the AA (attachment atom)
+  // The narrow end is at bond.begin, so we need bond.begin to be the attachment atom
+  if (bond.begin === attachmentAtomId) {
+    return bond.stereo;
+  }
+
+  return null;
+};
+
 export function setExpandMonomerSGroup(
   restruct: Restruct,
   sgid: number,
@@ -161,6 +207,98 @@ export function setExpandMonomerSGroup(
     } else {
       attachmentAtomsFromOutside.push(bond.begin);
     }
+  }
+
+  // Process stereo bonds between expanded monomers
+  // Only when expanding (not when contracting)
+  if (attrs.expanded) {
+    bondsToOutside.forEach((bondToOutside, bondId) => {
+      // Get the atom inside current monomer and the atom outside
+      const atomInsideCurrentMonomer = sGroupAtoms.includes(bondToOutside.begin)
+        ? bondToOutside.begin
+        : bondToOutside.end;
+      const atomOutsideCurrentMonomer = sGroupAtoms.includes(
+        bondToOutside.begin,
+      )
+        ? bondToOutside.end
+        : bondToOutside.begin;
+
+      // Check if the outside atom belongs to another monomer
+      const outsideAtomSGroups = restruct.atoms.get(atomOutsideCurrentMonomer)
+        ?.a.sgs;
+      if (!outsideAtomSGroups || outsideAtomSGroups.size === 0) {
+        return;
+      }
+
+      // Find the other monomer SGroup that contains the outside atom
+      for (const otherSGroupId of outsideAtomSGroups.values()) {
+        const otherSGroup = restruct.molecule.sgroups.get(otherSGroupId);
+        if (!otherSGroup || otherSGroupId === sgid) {
+          continue;
+        }
+
+        // Check if the other monomer is expanded
+        if (!otherSGroup.isExpanded()) {
+          continue;
+        }
+
+        // Find attachment point in current monomer that matches atomInsideCurrentMonomer
+        const currentMonomerAP = attachmentPoints.find(
+          (ap) => ap.atomId === atomInsideCurrentMonomer,
+        );
+        if (!currentMonomerAP) {
+          continue;
+        }
+
+        // Find attachment point in other monomer that matches atomOutsideCurrentMonomer
+        const otherMonomerAPs = otherSGroup.getAttachmentPoints();
+        const otherMonomerAP = otherMonomerAPs.find(
+          (ap) => ap.atomId === atomOutsideCurrentMonomer,
+        );
+        if (!otherMonomerAP) {
+          continue;
+        }
+
+        // Get stereo bond information from both monomers' attachment points
+        const currentMonomerStereo = getAttachmentPointStereoBond(
+          restruct,
+          currentMonomerAP,
+        );
+        const otherMonomerStereo = getAttachmentPointStereoBond(
+          restruct,
+          otherMonomerAP,
+        );
+
+        // Apply the logic from requirements:
+        // 1.2. If only one AP has a stereo bond (narrow end at AA), the bond between
+        // monomers should be that stereo-bond
+        // 1.3. If both APs have stereo bonds (narrow ends at AA), the bond between
+        // monomers should be a simple single bond
+
+        const hasCurrentStereo =
+          currentMonomerStereo !== null &&
+          currentMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+        const hasOtherStereo =
+          otherMonomerStereo !== null &&
+          otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+
+        if (hasCurrentStereo && !hasOtherStereo) {
+          // Apply stereo from current monomer to the bond between monomers
+          // The narrow end should be at the attachment atom of current monomer
+          action.addOp(new BondAttr(bondId, 'stereo', currentMonomerStereo));
+        } else if (!hasCurrentStereo && hasOtherStereo) {
+          // Apply stereo from other monomer to the bond between monomers
+          // The narrow end should be at the attachment atom of other monomer
+          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereo));
+        } else if (hasCurrentStereo && hasOtherStereo) {
+          // Both have stereo bonds, so the bond should be a simple single bond
+          action.addOp(
+            new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE),
+          );
+        }
+        // If neither has stereo, we don't need to do anything
+      }
+    });
   }
 
   const sGroupBBox = SGroup.getObjBBox(sGroupAtoms, restruct.molecule);

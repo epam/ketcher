@@ -18,16 +18,22 @@ class SingleBondPathRenderer {
     // Apply offset for dative bonds to prevent arrow overlap
     if (type === BondType.Dative && dativeBondOffsetAngle !== undefined) {
       const bondVector = endPosition.sub(startPosition);
-      const offsetRadius = 8; // Pixels to offset the endpoint radially
+      const bondAngle = Math.atan2(bondVector.y, bondVector.x);
+      const offsetRadius = 10; // Pixels to offset the endpoint radially around the target atom
 
-      // Calculate perpendicular offset based on the angle
-      const perpendicular = new Vec2(-bondVector.y, bondVector.x).normalized();
-      const offset = perpendicular.scaled(
-        offsetRadius * Math.sin(dativeBondOffsetAngle),
-      );
+      // Calculate the new endpoint position by rotating around the target atom
+      // The offset angle adjusts the position perpendicular to the bond direction
+      const offsetX =
+        offsetRadius *
+        Math.cos(bondAngle + Math.PI / 2) *
+        Math.sin(dativeBondOffsetAngle);
+      const offsetY =
+        offsetRadius *
+        Math.sin(bondAngle + Math.PI / 2) *
+        Math.sin(dativeBondOffsetAngle);
 
       // Apply the offset to the endpoint
-      endPosition = endPosition.add(offset);
+      endPosition = new Vec2(endPosition.x + offsetX, endPosition.y + offsetY);
     }
 
     const strokeDasharray =

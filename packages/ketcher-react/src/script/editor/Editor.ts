@@ -779,11 +779,11 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const simpleSingleBonds = nonLeavingAtomBonds.filter((_, bond) =>
+    const suitableBonds = nonLeavingAtomBonds.filter((_, bond) =>
       Editor.isBondSuitableForAttachmentPoint(bond),
     );
 
-    return simpleSingleBonds.size >= 1;
+    return suitableBonds.size >= 1;
   }
 
   static isStructureContinuous(struct: Struct, selection?: Selection): boolean {
@@ -971,8 +971,8 @@ class Editor implements KetcherEditor {
       },
     );
 
-    this.potentialLeavingAtomsForAutoAssignment.forEach((atomId) => {
-      const leavingAtom = currentStruct.atoms.get(atomId);
+    this.potentialLeavingAtomsForAutoAssignment.forEach((leavingAtomId) => {
+      const leavingAtom = currentStruct.atoms.get(leavingAtomId);
       assert(leavingAtom);
 
       let attachmentAtomId = -1;
@@ -998,19 +998,30 @@ class Editor implements KetcherEditor {
       );
       this.selectedToOriginalAtomsIdMap.set(
         selectedStructLeavingAtomId,
-        atomId,
+        leavingAtomId,
       );
 
       const selectedStructAttachmentAtomId =
         originalToSelectedAtomsIdMap.get(attachmentAtomId);
       assert(selectedStructAttachmentAtomId !== undefined);
+
       this.selectedToOriginalAtomsIdMap.set(
         selectedStructAttachmentAtomId,
         attachmentAtomId,
       );
 
+      const bondFromOriginalAttachmentAtom = Array.from(
+        currentStruct.bonds.values(),
+      ).find(
+        (bond) =>
+          (bond.begin === leavingAtomId && bond.end === attachmentAtomId) ||
+          (bond.end === leavingAtomId && bond.begin === attachmentAtomId),
+      );
+      assert(bondFromOriginalAttachmentAtom);
+
       const newBond = new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
+        type: bondFromOriginalAttachmentAtom.type,
+        stereo: bondFromOriginalAttachmentAtom.stereo,
         begin: selectedStructAttachmentAtomId,
         end: selectedStructLeavingAtomId,
       });
@@ -1031,11 +1042,12 @@ class Editor implements KetcherEditor {
     });
 
     const potentialAttachmentPoints = new Map<number, Set<number>>();
-    this.potentialLeavingAtomsForManualAssignment.forEach((atomId) => {
-      const leavingAtom = currentStruct.atoms.get(atomId);
+    this.potentialLeavingAtomsForManualAssignment.forEach((leavingAtomId) => {
+      const leavingAtom = currentStruct.atoms.get(leavingAtomId);
       assert(leavingAtom);
 
-      const originalLeavingAtomId = originalToSelectedAtomsIdMap.get(atomId);
+      const originalLeavingAtomId =
+        originalToSelectedAtomsIdMap.get(leavingAtomId);
       const isLeavingAtomSelected = isNumber(originalLeavingAtomId);
 
       if (!isLeavingAtomSelected) {
@@ -1685,7 +1697,7 @@ class Editor implements KetcherEditor {
               );
             });
 
-            // If bond between attachment atom and leaving atom becomes non-single or has stereo, mark the AP as problematic
+            // If bond between attachment atom and leaving atom becomes non-suitable, mark the AP as problematic
             if (attachmentPointWithBond) {
               if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
                 this.monomerCreationState.problematicAttachmentPoints.add(
@@ -1699,7 +1711,7 @@ class Editor implements KetcherEditor {
             }
 
             // Handle potential attachment points
-            // If bond becomes non-single or has stereo, we need to remove the leaving atom from potential attachment points
+            // If bond becomes non-suitable, we need to remove the leaving atom from potential attachment points
             if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
               this.monomerCreationState.potentialAttachmentPoints.forEach(
                 (leavingAtomIds, attachmentAtomId) => {
@@ -1763,12 +1775,9 @@ class Editor implements KetcherEditor {
             }
 
             // Handle potential attachment points
-            // If a single non-stereo bond is created from a potential attachment atom,
+            // If a suitable bond is created from a potential attachment atom,
             // add the other end to the set of potential leaving atoms
-            if (
-              bond.type === Bond.PATTERN.TYPE.SINGLE &&
-              bond.stereo === Bond.PATTERN.STEREO.NONE
-            ) {
+            if (Editor.isBondSuitableForAttachmentPoint(bond)) {
               // Check if bond.begin is a potential attachment atom
               if (
                 this.monomerCreationState.potentialAttachmentPoints.has(

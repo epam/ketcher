@@ -25,83 +25,83 @@ import { TopRightToolbar } from '../TopRightToolbar';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
-type GeneralSectionLocators = {
-  generalSection: Locator;
-  resetToSelectToolCombobox: Locator;
-  rotationStepEditbox: Locator;
-  showValenceWarningsSwitcher: Locator;
-  atomColoringSwitcher: Locator;
-  fontCombobox: Locator;
-  fontSizeEditbox: Locator;
-  fontSizeUnitsCombobox: Locator;
-  subFontSizeEditbox: Locator;
-  subFontSizeUnitsCombobox: Locator;
-  reactionComponentMarginSizeEditbox: Locator;
-  reactionComponentMarginSizeCombobox: Locator;
-  imageResolutionCombobox: Locator;
-};
+// type GeneralSectionLocators = {
+//   generalSection: Locator;
+//   resetToSelectToolCombobox: Locator;
+//   rotationStepEditbox: Locator;
+//   showValenceWarningsSwitcher: Locator;
+//   atomColoringSwitcher: Locator;
+//   fontCombobox: Locator;
+//   fontSizeEditbox: Locator;
+//   fontSizeUnitsCombobox: Locator;
+//   subFontSizeEditbox: Locator;
+//   subFontSizeUnitsCombobox: Locator;
+//   reactionComponentMarginSizeEditbox: Locator;
+//   reactionComponentMarginSizeCombobox: Locator;
+//   imageResolutionCombobox: Locator;
+// };
 
-type StereochemistrySectionLocators = {
-  stereochemistrySection: Locator;
-  showTheStereoFlagsSwitcher: Locator;
-  labelDisplayAtStereogenicCentersCombobox: Locator;
-  absoluteCenterColorColorpicker: Locator;
-  andCentersColorColorpicker: Locator;
-  orCentersColorColorpicker: Locator;
-  colorStereogenicCentersCombobox: Locator;
-  autoFadeAndOrCenterLabelsSwitcher: Locator;
-  textOfAbsoluteFlagEditbox: Locator;
-  textOfANDFlagEditbox: Locator;
-  textOfORFlagEditbox: Locator;
-  textOfMixedFlagEditbox: Locator;
-  ignoreTheChiralFlagSwitcher: Locator;
-};
+// type StereochemistrySectionLocators = {
+//   stereochemistrySection: Locator;
+//   showTheStereoFlagsSwitcher: Locator;
+//   labelDisplayAtStereogenicCentersCombobox: Locator;
+//   absoluteCenterColorColorpicker: Locator;
+//   andCentersColorColorpicker: Locator;
+//   orCentersColorColorpicker: Locator;
+//   colorStereogenicCentersCombobox: Locator;
+//   autoFadeAndOrCenterLabelsSwitcher: Locator;
+//   textOfAbsoluteFlagEditbox: Locator;
+//   textOfANDFlagEditbox: Locator;
+//   textOfORFlagEditbox: Locator;
+//   textOfMixedFlagEditbox: Locator;
+//   ignoreTheChiralFlagSwitcher: Locator;
+// };
 
-type AtomsSectionLocators = {
-  atomsSection: Locator;
-  displayCarbonExplicitlySwitcher: Locator;
-  displayChargeSwitcher: Locator;
-  displayValenceSwitcher: Locator;
-  showHydrogenLabelsCombobox: Locator;
-};
+// type AtomsSectionLocators = {
+//   atomsSection: Locator;
+//   displayCarbonExplicitlySwitcher: Locator;
+//   displayChargeSwitcher: Locator;
+//   displayValenceSwitcher: Locator;
+//   showHydrogenLabelsCombobox: Locator;
+// };
 
-type BondsSectionLocators = {
-  bondsSection: Locator;
-  aromaticBondsAsCircleSwitcher: Locator;
-  bondLengthEditbox: Locator;
-  bondLengthUnitsCombobox: Locator;
-  bondSpacingEditbox: Locator;
-  bondThicknessEditbox: Locator;
-  bondThicknessUnitsCombobox: Locator;
-  stereoWedgeBondWidthEditbox: Locator;
-  stereoWedgeBondWidthUnitsCombobox: Locator;
-  hashSpacingEditbox: Locator;
-  hashSpacingUnitsCombobox: Locator;
-};
+// type BondsSectionLocators = {
+//   bondsSection: Locator;
+//   aromaticBondsAsCircleSwitcher: Locator;
+//   bondLengthEditbox: Locator;
+//   bondLengthUnitsCombobox: Locator;
+//   bondSpacingEditbox: Locator;
+//   bondThicknessEditbox: Locator;
+//   bondThicknessUnitsCombobox: Locator;
+//   stereoWedgeBondWidthEditbox: Locator;
+//   stereoWedgeBondWidthUnitsCombobox: Locator;
+//   hashSpacingEditbox: Locator;
+//   hashSpacingUnitsCombobox: Locator;
+// };
 
-type ServerSectionLocators = {
-  serverSection: Locator;
-  smartLayoutSwitcher: Locator;
-  ignoreStereochemistryErrorsSwitcher: Locator;
-  ignorePseudoatomsAtMassSwitcher: Locator;
-  addRsitesAtMassCalculationSwitcher: Locator;
-  addIsotopesAtMassCalculationSwitcher: Locator;
-};
+// type ServerSectionLocators = {
+//   serverSection: Locator;
+//   smartLayoutSwitcher: Locator;
+//   ignoreStereochemistryErrorsSwitcher: Locator;
+//   ignorePseudoatomsAtMassSwitcher: Locator;
+//   addRsitesAtMassCalculationSwitcher: Locator;
+//   addIsotopesAtMassCalculationSwitcher: Locator;
+// };
 
-type ThreeDViewerSectionLocators = {
-  threeDViewerSection: Locator;
-  displayModeCombobox: Locator;
-  backgroundColorCombobox: Locator;
-  labelColoringCombobox: Locator;
-};
+// type ThreeDViewerSectionLocators = {
+//   threeDViewerSection: Locator;
+//   displayModeCombobox: Locator;
+//   backgroundColorCombobox: Locator;
+//   labelColoringCombobox: Locator;
+// };
 
-type OptionsForDebuggingSectionLocators = {
-  optionsForDebuggingSection: Locator;
-  showAtomIdsSwitcher: Locator;
-  showBondsIdsSwitcher: Locator;
-  showHalfBondsIdsSwitcher: Locator;
-  showLoopIdsSwitcher: Locator;
-};
+// type OptionsForDebuggingSectionLocators = {
+//   optionsForDebuggingSection: Locator;
+//   showAtomIdsSwitcher: Locator;
+//   showBondsIdsSwitcher: Locator;
+//   showHalfBondsIdsSwitcher: Locator;
+//   showLoopIdsSwitcher: Locator;
+// };
 
 type SettingsDialogLocators = {
   window: Locator;
@@ -125,145 +125,145 @@ export const SettingsDialog = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  const generalSection: GeneralSectionLocators = {
-    generalSection: page.getByTestId(SettingsSection.General),
-    resetToSelectToolCombobox: page.getByTestId(
-      GeneralSetting.ResetToSelectTool,
-    ),
-    rotationStepEditbox: page.getByTestId(GeneralSetting.RotationStep),
-    showValenceWarningsSwitcher: page.getByTestId(
-      GeneralSetting.ShowValenceWarnings,
-    ),
-    atomColoringSwitcher: page.getByTestId(GeneralSetting.AtomColoring),
-    fontCombobox: page.getByTestId(GeneralSetting.Font),
-    fontSizeEditbox: page.getByTestId(GeneralSetting.FontSize),
-    fontSizeUnitsCombobox: page.getByTestId(GeneralSetting.FontSizeUnits),
-    subFontSizeEditbox: page.getByTestId(GeneralSetting.SubFontSize),
-    subFontSizeUnitsCombobox: page.getByTestId(GeneralSetting.SubFontSizeUnits),
-    reactionComponentMarginSizeEditbox: page.getByTestId(
-      GeneralSetting.ReactionComponentMarginSize,
-    ),
-    reactionComponentMarginSizeCombobox: page.getByTestId(
-      GeneralSetting.ReactionComponentMarginSizeUnits,
-    ),
-    imageResolutionCombobox: page.getByTestId(GeneralSetting.ImageResolution),
-  };
+  // const _generalSection: GeneralSectionLocators = {
+  //   generalSection: page.getByTestId(SettingsSection.General),
+  //   resetToSelectToolCombobox: page.getByTestId(
+  //     GeneralSetting.ResetToSelectTool,
+  //   ),
+  //   rotationStepEditbox: page.getByTestId(GeneralSetting.RotationStep),
+  //   showValenceWarningsSwitcher: page.getByTestId(
+  //     GeneralSetting.ShowValenceWarnings,
+  //   ),
+  //   atomColoringSwitcher: page.getByTestId(GeneralSetting.AtomColoring),
+  //   fontCombobox: page.getByTestId(GeneralSetting.Font),
+  //   fontSizeEditbox: page.getByTestId(GeneralSetting.FontSize),
+  //   fontSizeUnitsCombobox: page.getByTestId(GeneralSetting.FontSizeUnits),
+  //   subFontSizeEditbox: page.getByTestId(GeneralSetting.SubFontSize),
+  //   subFontSizeUnitsCombobox: page.getByTestId(GeneralSetting.SubFontSizeUnits),
+  //   reactionComponentMarginSizeEditbox: page.getByTestId(
+  //     GeneralSetting.ReactionComponentMarginSize,
+  //   ),
+  //   reactionComponentMarginSizeCombobox: page.getByTestId(
+  //     GeneralSetting.ReactionComponentMarginSizeUnits,
+  //   ),
+  //   imageResolutionCombobox: page.getByTestId(GeneralSetting.ImageResolution),
+  // };
 
-  const stereochemistrySection: StereochemistrySectionLocators = {
-    stereochemistrySection: page.getByTestId(SettingsSection.Stereochemistry),
-    showTheStereoFlagsSwitcher: page.getByTestId(
-      StereochemistrySetting.ShowTheStereoFlags,
-    ),
-    labelDisplayAtStereogenicCentersCombobox: page.getByTestId(
-      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
-    ),
-    absoluteCenterColorColorpicker: page.getByTestId(
-      StereochemistrySetting.AbsoluteCenterColor,
-    ),
-    andCentersColorColorpicker: page.getByTestId(
-      StereochemistrySetting.ANDCentersColor,
-    ),
-    orCentersColorColorpicker: page.getByTestId(
-      StereochemistrySetting.ORCentersColor,
-    ),
-    colorStereogenicCentersCombobox: page.getByTestId(
-      StereochemistrySetting.ColorStereogenicCenters,
-    ),
-    autoFadeAndOrCenterLabelsSwitcher: page.getByTestId(
-      StereochemistrySetting.AutoFadeAndOrCenterLabels,
-    ),
-    textOfAbsoluteFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfAbsoluteFlag,
-    ),
-    textOfANDFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfANDFlag,
-    ),
-    textOfORFlagEditbox: page.getByTestId(StereochemistrySetting.TextOfORFlag),
-    textOfMixedFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfMixedFlag,
-    ),
-    ignoreTheChiralFlagSwitcher: page.getByTestId(
-      StereochemistrySetting.IgnoreTheChiralFlag,
-    ),
-  };
+  // const _stereochemistrySection: StereochemistrySectionLocators = {
+  //   stereochemistrySection: page.getByTestId(SettingsSection.Stereochemistry),
+  //   showTheStereoFlagsSwitcher: page.getByTestId(
+  //     StereochemistrySetting.ShowTheStereoFlags,
+  //   ),
+  //   labelDisplayAtStereogenicCentersCombobox: page.getByTestId(
+  //     StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+  //   ),
+  //   absoluteCenterColorColorpicker: page.getByTestId(
+  //     StereochemistrySetting.AbsoluteCenterColor,
+  //   ),
+  //   andCentersColorColorpicker: page.getByTestId(
+  //     StereochemistrySetting.ANDCentersColor,
+  //   ),
+  //   orCentersColorColorpicker: page.getByTestId(
+  //     StereochemistrySetting.ORCentersColor,
+  //   ),
+  //   colorStereogenicCentersCombobox: page.getByTestId(
+  //     StereochemistrySetting.ColorStereogenicCenters,
+  //   ),
+  //   autoFadeAndOrCenterLabelsSwitcher: page.getByTestId(
+  //     StereochemistrySetting.AutoFadeAndOrCenterLabels,
+  //   ),
+  //   textOfAbsoluteFlagEditbox: page.getByTestId(
+  //     StereochemistrySetting.TextOfAbsoluteFlag,
+  //   ),
+  //   textOfANDFlagEditbox: page.getByTestId(
+  //     StereochemistrySetting.TextOfANDFlag,
+  //   ),
+  //   textOfORFlagEditbox: page.getByTestId(StereochemistrySetting.TextOfORFlag),
+  //   textOfMixedFlagEditbox: page.getByTestId(
+  //     StereochemistrySetting.TextOfMixedFlag,
+  //   ),
+  //   ignoreTheChiralFlagSwitcher: page.getByTestId(
+  //     StereochemistrySetting.IgnoreTheChiralFlag,
+  //   ),
+  // };
 
-  const atomsSection: AtomsSectionLocators = {
-    atomsSection: page.getByTestId(SettingsSection.Atoms),
-    displayCarbonExplicitlySwitcher: page.getByTestId(
-      AtomsSetting.DisplayCarbonExplicitly,
-    ),
-    displayChargeSwitcher: page.getByTestId(AtomsSetting.DisplayCharge),
-    displayValenceSwitcher: page.getByTestId(AtomsSetting.DisplayValence),
-    showHydrogenLabelsCombobox: page.getByTestId(
-      AtomsSetting.ShowHydrogenLabels,
-    ),
-  };
+  // const _atomsSection: AtomsSectionLocators = {
+  //   atomsSection: page.getByTestId(SettingsSection.Atoms),
+  //   displayCarbonExplicitlySwitcher: page.getByTestId(
+  //     AtomsSetting.DisplayCarbonExplicitly,
+  //   ),
+  //   displayChargeSwitcher: page.getByTestId(AtomsSetting.DisplayCharge),
+  //   displayValenceSwitcher: page.getByTestId(AtomsSetting.DisplayValence),
+  //   showHydrogenLabelsCombobox: page.getByTestId(
+  //     AtomsSetting.ShowHydrogenLabels,
+  //   ),
+  // };
 
-  const bondsSection: BondsSectionLocators = {
-    bondsSection: page.getByTestId(SettingsSection.Bonds),
-    aromaticBondsAsCircleSwitcher: page.getByTestId(
-      BondsSetting.AromaticBondsAsCircle,
-    ),
-    bondLengthEditbox: page.getByTestId(BondsSetting.BondLength),
-    bondLengthUnitsCombobox: page.getByTestId(BondsSetting.BondLengthUnits),
-    bondSpacingEditbox: page.getByTestId(BondsSetting.BondSpacing),
-    bondThicknessEditbox: page.getByTestId(BondsSetting.BondThickness),
-    bondThicknessUnitsCombobox: page.getByTestId(
-      BondsSetting.BondThicknessUnits,
-    ),
-    stereoWedgeBondWidthEditbox: page.getByTestId(
-      BondsSetting.StereoWedgeBondWidth,
-    ),
-    stereoWedgeBondWidthUnitsCombobox: page.getByTestId(
-      BondsSetting.StereoWedgeBondWidthUnits,
-    ),
-    hashSpacingEditbox: page.getByTestId(BondsSetting.HashSpacing),
-    hashSpacingUnitsCombobox: page.getByTestId(BondsSetting.HashSpacingUnits),
-  };
+  // const _bondsSection: BondsSectionLocators = {
+  //   bondsSection: page.getByTestId(SettingsSection.Bonds),
+  //   aromaticBondsAsCircleSwitcher: page.getByTestId(
+  //     BondsSetting.AromaticBondsAsCircle,
+  //   ),
+  //   bondLengthEditbox: page.getByTestId(BondsSetting.BondLength),
+  //   bondLengthUnitsCombobox: page.getByTestId(BondsSetting.BondLengthUnits),
+  //   bondSpacingEditbox: page.getByTestId(BondsSetting.BondSpacing),
+  //   bondThicknessEditbox: page.getByTestId(BondsSetting.BondThickness),
+  //   bondThicknessUnitsCombobox: page.getByTestId(
+  //     BondsSetting.BondThicknessUnits,
+  //   ),
+  //   stereoWedgeBondWidthEditbox: page.getByTestId(
+  //     BondsSetting.StereoWedgeBondWidth,
+  //   ),
+  //   stereoWedgeBondWidthUnitsCombobox: page.getByTestId(
+  //     BondsSetting.StereoWedgeBondWidthUnits,
+  //   ),
+  //   hashSpacingEditbox: page.getByTestId(BondsSetting.HashSpacing),
+  //   hashSpacingUnitsCombobox: page.getByTestId(BondsSetting.HashSpacingUnits),
+  // };
 
-  const serverSection: ServerSectionLocators = {
-    serverSection: page.getByTestId(SettingsSection.Server),
-    smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
-    ignoreStereochemistryErrorsSwitcher: page.getByTestId(
-      ServerSetting.IgnoreStereochemistryErrors,
-    ),
-    ignorePseudoatomsAtMassSwitcher: page.getByTestId(
-      ServerSetting.IgnorePseudoatomsAtMass,
-    ),
-    addRsitesAtMassCalculationSwitcher: page.getByTestId(
-      ServerSetting.AddRsitesAtMassCalculation,
-    ),
-    addIsotopesAtMassCalculationSwitcher: page.getByTestId(
-      ServerSetting.AddIsotopesAtMassCalculation,
-    ),
-  };
+  // const _serverSection: ServerSectionLocators = {
+  //   serverSection: page.getByTestId(SettingsSection.Server),
+  //   smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
+  //   ignoreStereochemistryErrorsSwitcher: page.getByTestId(
+  //     ServerSetting.IgnoreStereochemistryErrors,
+  //   ),
+  //   ignorePseudoatomsAtMassSwitcher: page.getByTestId(
+  //     ServerSetting.IgnorePseudoatomsAtMass,
+  //   ),
+  //   addRsitesAtMassCalculationSwitcher: page.getByTestId(
+  //     ServerSetting.AddRsitesAtMassCalculation,
+  //   ),
+  //   addIsotopesAtMassCalculationSwitcher: page.getByTestId(
+  //     ServerSetting.AddIsotopesAtMassCalculation,
+  //   ),
+  // };
 
-  const threeDViewerSection: ThreeDViewerSectionLocators = {
-    threeDViewerSection: page.getByTestId(SettingsSection.ThreeDViewer),
-    displayModeCombobox: page.getByTestId(ThreeDViewerSetting.DisplayMode),
-    backgroundColorCombobox: page.getByTestId(
-      ThreeDViewerSetting.BackgroundColor,
-    ),
-    labelColoringCombobox: page.getByTestId(ThreeDViewerSetting.LabelColoring),
-  };
+  // const _threeDViewerSection: ThreeDViewerSectionLocators = {
+  //   threeDViewerSection: page.getByTestId(SettingsSection.ThreeDViewer),
+  //   displayModeCombobox: page.getByTestId(ThreeDViewerSetting.DisplayMode),
+  //   backgroundColorCombobox: page.getByTestId(
+  //     ThreeDViewerSetting.BackgroundColor,
+  //   ),
+  //   labelColoringCombobox: page.getByTestId(ThreeDViewerSetting.LabelColoring),
+  // };
 
-  const optionsForDebuggingSection: OptionsForDebuggingSectionLocators = {
-    optionsForDebuggingSection: page.getByTestId(
-      SettingsSection.OptionsForDebugging,
-    ),
-    showAtomIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowAtomIds,
-    ),
-    showBondsIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowBondsIds,
-    ),
-    showHalfBondsIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowHalfBondsIds,
-    ),
-    showLoopIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowLoopIds,
-    ),
-  };
+  // const _optionsForDebuggingSection: OptionsForDebuggingSectionLocators = {
+  //   optionsForDebuggingSection: page.getByTestId(
+  //     SettingsSection.OptionsForDebugging,
+  //   ),
+  //   showAtomIdsSwitcher: page.getByTestId(
+  //     OptionsForDebuggingSetting.ShowAtomIds,
+  //   ),
+  //   showBondsIdsSwitcher: page.getByTestId(
+  //     OptionsForDebuggingSetting.ShowBondsIds,
+  //   ),
+  //   showHalfBondsIdsSwitcher: page.getByTestId(
+  //     OptionsForDebuggingSetting.ShowHalfBondsIds,
+  //   ),
+  //   showLoopIdsSwitcher: page.getByTestId(
+  //     OptionsForDebuggingSetting.ShowLoopIds,
+  //   ),
+  // };
 
   const locators: SettingsDialogLocators = {
     window: page.getByTestId('settings-dialog'),
@@ -272,9 +272,7 @@ export const SettingsDialog = (page: Page) => {
     resetButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     generalSection: page.getByTestId('General-accordion'),
-    stereochemistrySection: page.getByTestId(
-      'Stereochemistry-accordion',
-    ),
+    stereochemistrySection: page.getByTestId('Stereochemistry-accordion'),
     atomsSection: page.getByTestId('Atoms-accordion'),
     bondsSection: page.getByTestId('Bonds-accordion'),
     serverSection: page.getByTestId('Server-accordion'),

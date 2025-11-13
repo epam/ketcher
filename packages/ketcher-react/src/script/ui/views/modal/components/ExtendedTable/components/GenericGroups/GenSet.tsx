@@ -44,7 +44,7 @@ function GenSet({
         const buttons = item.items;
         const caption = item.displayName;
         const fieldsetKey =
-          caption ||
+          caption ??
           buttons
             .map((b) => b.label)
             .sort()

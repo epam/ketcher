@@ -29,13 +29,13 @@ const selectHandler = (input) => {
 
 export const InputSelect = () => {
   const [input, setInput] = useState('');
-  const [isError, setError] = useState(false);
+  const [isError, setIsError] = useState(false);
   const regex = /^\d+(,\d+)*$/;
 
   const onChangeHandler = (event) => {
     setInput(event.target.value);
     const isInputValid = regex.test(event.target.value);
-    setError(!isInputValid);
+    setIsError(!isInputValid);
   };
 
   return (

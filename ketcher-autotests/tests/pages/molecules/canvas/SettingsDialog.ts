@@ -67,11 +67,27 @@ export const SettingsDialog = (page: Page) => {
     cancelButton: page.getByTestId('Cancel'),
   };
 
+  const sectionLocators: Record<SettingsSection, Locator> = {
+    [SettingsSection.General]: locators.generalSection,
+    [SettingsSection.Stereochemistry]: locators.stereochemistrySection,
+    [SettingsSection.Atoms]: locators.atomsSection,
+    [SettingsSection.Bonds]: locators.bondsSection,
+    [SettingsSection.Server]: locators.serverSection,
+    [SettingsSection.ThreeDViewer]: locators.threeDViewerSection,
+    [SettingsSection.OptionsForDebugging]: locators.optionsForDebuggingSection,
+  };
+
   return {
     ...locators,
 
     async close() {
       await locators.closeWindowButton.click();
+    },
+
+    getSectionLocator(option: AllSettingsOptions): Locator {
+      const section =
+        createOptionToSectionMap().get(option) ?? SettingsSection.General;
+      return sectionLocators[section];
     },
 
     async apply() {

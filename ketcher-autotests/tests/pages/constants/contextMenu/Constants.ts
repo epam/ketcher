@@ -20,6 +20,8 @@ export enum ModifyAminoAcidsOption {
   NMethylation = 'aminoAcidModification-N-methylation',
   Phosphorylation = 'aminoAcidModification-Phosphorylation',
   SideChainAcetylation = 'aminoAcidModification-Side chain acetylation',
+  // Modification below does not exist by default in Ketcher, it is created for test purposes
+  CustomModification = 'aminoAcidModification-Custom Modification',
 }
 
 export enum MonomerOnMicroOption {

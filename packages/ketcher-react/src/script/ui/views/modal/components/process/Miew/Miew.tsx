@@ -122,7 +122,7 @@ const MiewDialog = ({
   ...prop
 }: Props) => {
   const miewRef = useRef<MiewAsType>(undefined);
-  const [isInitialized, setIsIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -148,7 +148,7 @@ const MiewDialog = ({
         )
         .then(() => {
           miew.setOptions(miewOpts);
-          setIsIsInitialized(true);
+          setIsInitialized(true);
         })
         .catch((e) => {
           KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);

@@ -24,7 +24,7 @@ import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDial
 import { TopRightToolbar } from '../TopRightToolbar';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
-
+/*
 type GeneralSectionLocators = {
   generalSection: Locator;
   resetToSelectToolCombobox: Locator;
@@ -102,7 +102,7 @@ type OptionsForDebuggingSectionLocators = {
   showHalfBondsIdsSwitcher: Locator;
   showLoopIdsSwitcher: Locator;
 };
-
+*/
 type SettingsDialogLocators = {
   window: Locator;
   openFromFileButton: Locator;
@@ -124,7 +124,7 @@ type SettingsDialogLocators = {
 export const SettingsDialog = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
-
+  /*
   const generalSection: GeneralSectionLocators = {
     generalSection: page.getByTestId(SettingsSection.General),
     resetToSelectToolCombobox: page.getByTestId(
@@ -264,7 +264,7 @@ export const SettingsDialog = (page: Page) => {
       OptionsForDebuggingSetting.ShowLoopIds,
     ),
   };
-
+*/
   const locators: SettingsDialogLocators = {
     window: page.getByTestId('settings-dialog'),
     openFromFileButton: page.getByTestId('open-settings-from-file-button'),
@@ -272,9 +272,7 @@ export const SettingsDialog = (page: Page) => {
     resetButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     generalSection: page.getByTestId('General-accordion'),
-    stereochemistrySection: page.getByTestId(
-      'Stereochemistry-accordion',
-    ),
+    stereochemistrySection: page.getByTestId('Stereochemistry-accordion'),
     atomsSection: page.getByTestId('Atoms-accordion'),
     bondsSection: page.getByTestId('Bonds-accordion'),
     serverSection: page.getByTestId('Server-accordion'),

@@ -398,19 +398,29 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async selectModificationTypes(
-      options: {
-        dropdown: ModificationTypeDropdown;
-        type: ModificationType;
-      }[],
+      options: (
+        | {
+            dropdown: ModificationTypeDropdown;
+            type: ModificationType;
+          }
+        | {
+            dropdown: ModificationTypeDropdown;
+            customModification: string;
+          }
+      )[],
     ) {
       for (const option of options) {
-        await this.selectModificationType(option);
+        if ('type' in option) {
+          await this.selectModificationType(option);
+        } else {
+          await this.setModificationType(option);
+        }
       }
     },
 
     async setModificationType(options: {
       dropdown: ModificationTypeDropdown;
-      text: string;
+      customModification: string;
     }) {
       await this.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
@@ -418,7 +428,7 @@ export const CreateMonomerDialog = (page: Page) => {
         await this.addModificationType();
       }
       await dropdown.click();
-      await dropdown.fill(options.text);
+      await dropdown.fill(options.customModification);
       await page.keyboard.press('Escape');
     },
 
@@ -456,10 +466,16 @@ export async function createMonomer(
     symbol: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
-    modificationTypes?: {
-      dropdown: ModificationTypeDropdown;
-      type: ModificationType;
-    }[];
+    modificationTypes?: (
+      | {
+          dropdown: ModificationTypeDropdown;
+          type: ModificationType;
+        }
+      | {
+          dropdown: ModificationTypeDropdown;
+          customModification: string;
+        }
+    )[];
     HELM?: string;
   },
   ignoreWarning = true,

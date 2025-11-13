@@ -4,14 +4,21 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
-    // Ambiguous CHEM monomers should display @ symbol
-    if (
-      this.node.monomer instanceof AmbiguousMonomer &&
-      this.node.monomer.monomerClass === KetMonomerClass.CHEM
-    ) {
+    // Ambiguous CHEM monomers (alternatives and mixed) should display @ symbol
+    // Check if this is an ambiguous monomer with CHEM class
+    if (!(this.node.monomer instanceof AmbiguousMonomer)) {
+      return this.node.monomer.label;
+    }
+
+    const ambiguousMonomer = this.node.monomer as AmbiguousMonomer;
+
+    // For CHEM class ambiguous monomers, display @ symbol
+    if (ambiguousMonomer.monomerClass === KetMonomerClass.CHEM) {
       return '@';
     }
-    return this.node.monomer.label;
+
+    // For other ambiguous monomers, display the label (typically '%')
+    return ambiguousMonomer.label;
   }
 
   protected drawModification() {}

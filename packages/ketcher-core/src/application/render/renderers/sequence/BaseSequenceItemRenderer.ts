@@ -16,10 +16,12 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
+import { Sugar } from 'domain/entities/Sugar';
 import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -263,7 +265,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           if (
             node instanceof LinkerSequenceNode ||
             node.monomer instanceof Phosphate ||
-            this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
+            this.checkIfNodeIsAmbiguousMonomerNotPeptide(node) ||
+            this.checkIfNodeIsSugarOrPhosphateChemSeparator(node)
           ) {
             if (groups[groups.length - 1].length > 0) {
               groups.push([]);
@@ -311,15 +314,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       const ambiguousMonomerNonPeptideNodeIndex = subChain.nodes.findIndex(
         this.checkIfNodeIsAmbiguousMonomerNotPeptide,
       );
+      const chemSeparatorNodeIndex = subChain.nodes.findIndex(
+        this.checkIfNodeIsSugarOrPhosphateChemSeparator.bind(this),
+      );
       if (
         linkerNodeIndex !== -1 ||
         phosphateNodeIndex !== -1 ||
-        ambiguousMonomerNonPeptideNodeIndex !== -1
+        ambiguousMonomerNonPeptideNodeIndex !== -1 ||
+        chemSeparatorNodeIndex !== -1
       ) {
         if (
           linkerNodeIndex < nodeIndex ||
           phosphateNodeIndex < nodeIndex ||
-          ambiguousMonomerNonPeptideNodeIndex < nodeIndex
+          ambiguousMonomerNonPeptideNodeIndex < nodeIndex ||
+          chemSeparatorNodeIndex < nodeIndex
         ) {
           numberToDisplay = this.getNodeIndexInSubgroup();
         } else {
@@ -421,6 +429,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
+  // Check if node is a Sugar or Phosphate that should be treated as CHEM separator
+  private checkIfNodeIsSugarOrPhosphateChemSeparator(node: SequenceNode) {
+    const monomer = node.monomer;
+    if (!monomer) return false;
+
+    return (
+      (monomer instanceof Sugar || monomer instanceof Phosphate) &&
+      monomer.monomerItem?.props?.MonomerClass === KetMonomerClass.CHEM
+    );
+  }
+
   // returns true if it is first node in subchain after LinkerSequenceNode
   private get currentNodeNearBreakingNode() {
     return this.chain.subChains.some((subChain) => {
@@ -444,6 +463,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           )) ||
         (nodeIndex < subChain.nodes.length - 1 &&
           this.checkIfNodeIsAmbiguousMonomerNotPeptide(
+            subChain.nodes[nodeIndex + 1],
+          )) ||
+        (nodeIndex > 0 &&
+          this.checkIfNodeIsSugarOrPhosphateChemSeparator(
+            subChain.nodes[nodeIndex - 1],
+          )) ||
+        (nodeIndex < subChain.nodes.length - 1 &&
+          this.checkIfNodeIsSugarOrPhosphateChemSeparator(
             subChain.nodes[nodeIndex + 1],
           ))
       );

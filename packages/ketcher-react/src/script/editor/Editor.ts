@@ -597,6 +597,20 @@ class Editor implements KetcherEditor {
   private potentialLeavingAtomsForAutoAssignment: number[] = [];
   private potentialLeavingAtomsForManualAssignment: number[] = [];
 
+  private static isBondSuitableForAttachmentPoint(bond: Bond) {
+    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+      return false;
+    }
+
+    const acceptableStereoTypes = new Set([
+      Bond.PATTERN.STEREO.NONE,
+      Bond.PATTERN.STEREO.UP,
+      Bond.PATTERN.STEREO.DOWN,
+    ]);
+
+    return acceptableStereoTypes.has(bond.stereo);
+  }
+
   public get isMonomerCreationWizardEnabled() {
     if (this.isMonomerCreationWizardActive) {
       return false;
@@ -666,9 +680,7 @@ class Editor implements KetcherEditor {
     });
 
     const selectionHasInvalidOutgoingBonds = bondsToOutside.some(
-      (bond) =>
-        bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-        bond.stereo !== Bond.PATTERN.STEREO.NONE,
+      (bond) => !Editor.isBondSuitableForAttachmentPoint(bond),
     );
     if (selectionHasInvalidOutgoingBonds) {
       return false;
@@ -710,10 +722,7 @@ class Editor implements KetcherEditor {
       );
       assert(bondToSelectionAtom);
 
-      if (
-        bondToSelectionAtom.type !== Bond.PATTERN.TYPE.SINGLE ||
-        bondToSelectionAtom.stereo !== Bond.PATTERN.STEREO.NONE
-      ) {
+      if (!Editor.isBondSuitableForAttachmentPoint(bondToSelectionAtom)) {
         return;
       }
 
@@ -770,10 +779,8 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const simpleSingleBonds = nonLeavingAtomBonds.filter(
-      (_, bond) =>
-        bond.type === Bond.PATTERN.TYPE.SINGLE &&
-        bond.stereo === Bond.PATTERN.STEREO.NONE,
+    const simpleSingleBonds = nonLeavingAtomBonds.filter((_, bond) =>
+      Editor.isBondSuitableForAttachmentPoint(bond),
     );
 
     return simpleSingleBonds.size >= 1;
@@ -1501,10 +1508,7 @@ class Editor implements KetcherEditor {
 
     const potentialLeavingAtoms: Atom[] = [];
     bondsToOutside.forEach((bond) => {
-      if (
-        bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-        bond.stereo !== Bond.PATTERN.STEREO.NONE
-      ) {
+      if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
         return;
       }
 
@@ -1683,10 +1687,7 @@ class Editor implements KetcherEditor {
 
             // If bond between attachment atom and leaving atom becomes non-single or has stereo, mark the AP as problematic
             if (attachmentPointWithBond) {
-              if (
-                bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-                bond.stereo !== Bond.PATTERN.STEREO.NONE
-              ) {
+              if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
                 this.monomerCreationState.problematicAttachmentPoints.add(
                   attachmentPointWithBond[0],
                 );
@@ -1699,10 +1700,7 @@ class Editor implements KetcherEditor {
 
             // Handle potential attachment points
             // If bond becomes non-single or has stereo, we need to remove the leaving atom from potential attachment points
-            if (
-              bond.type !== Bond.PATTERN.TYPE.SINGLE ||
-              bond.stereo !== Bond.PATTERN.STEREO.NONE
-            ) {
+            if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
               this.monomerCreationState.potentialAttachmentPoints.forEach(
                 (leavingAtomIds, attachmentAtomId) => {
                   const updatedLeavingAtomIds = new Set(leavingAtomIds);

@@ -49,7 +49,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
-import { TextField } from '@mui/material';
+import { TextField, Autocomplete } from '@mui/material';
 
 const initialWizardState: WizardState = {
   values: {
@@ -796,6 +796,7 @@ const MonomerCreationWizard = () => {
                         name="chevron"
                       />
                     }
+                    data-testid="modification-types-accordion"
                   >
                     Modification
                   </AccordionSummary>
@@ -813,6 +814,7 @@ const MonomerCreationWizard = () => {
                           onChange={(value) =>
                             handleModificationTypeChange(idx, value)
                           }
+                          testId={`modification-type-dropdown-${idx}`}
                         />
 
                         <IconButton
@@ -820,6 +822,7 @@ const MonomerCreationWizard = () => {
                           className={styles.deleteModificationTypeButton}
                           title="Delete modification type"
                           onClick={() => deleteModificationType(idx)}
+                          testId={`delete-modification-type-button-${idx}`}
                         />
                       </div>
                     ))}
@@ -830,6 +833,7 @@ const MonomerCreationWizard = () => {
                       disabled={
                         modificationTypes.length >= MAX_MODIFICATION_TYPES
                       }
+                      data-testid="add-modification-type-button"
                     >
                       Add modification type
                     </button>
@@ -856,21 +860,31 @@ const MonomerCreationWizard = () => {
                         name="chevron"
                       />
                     }
+                    data-testid="aliases-accordion"
                   >
                     Aliases
                   </AccordionSummary>
                   <AccordionDetails>
                     <p className={styles.inputLabel}>HELM</p>
-                    <TextField
-                      variant="standard"
-                      className={clsx(
-                        styles.inputField,
-                        errors.aliasHELM && styles.error,
-                      )}
-                      error={Boolean(errors.aliasHELM)}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleFieldChange('aliasHELM', event.target.value)
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasHELM}
+                      onInputChange={(_event, newValue) =>
+                        handleFieldChange('aliasHELM', newValue)
                       }
+                      data-testid="helm-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasHELM && styles.error,
+                          )}
+                          error={Boolean(errors.aliasHELM)}
+                        />
+                      )}
                     />
                   </AccordionDetails>
                 </Accordion>

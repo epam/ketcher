@@ -465,11 +465,14 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Press Create Monomer button
-   *      4. Set type in Create Monomer dialog to Amino Acid
-   *      5. Expand the modification type section
-   *      6. Take screenshot of the expanded modification type section
-   *      7. Collapse the modification type section
-   *      8. Take screenshot of the collapsed modification type section
+   *      4. Create amino acid monomer with custom modification type
+   *      5. Switch to Macromolecules mode
+   *      6. Clear the canvas
+   *      7. Add the natural analogue of the created monomer from the library to the canvas
+   *      8. Open context menu on the created monomer
+   *      9. Verify that the custom modification type is present in the Modify Amino Acids submenu
+   *      10. Click on the custom modification type
+   *      11. Verify that the monomer got converted to one custom modification type is created to
    *
    * Version 3.10
    */

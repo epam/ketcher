@@ -201,6 +201,9 @@ export class BondRenderer extends BaseRenderer {
       return undefined;
     }
 
+    // Sort bonds by ID for consistent ordering
+    dativeBondsToTarget.sort((a, b) => a.id - b.id);
+
     // Find the index of the current bond among all dative bonds to this target
     const currentBondIndex = dativeBondsToTarget.findIndex(
       (bond) => bond.id === this.bond.id,
@@ -213,7 +216,8 @@ export class BondRenderer extends BaseRenderer {
     // Calculate the offset angle based on the bond's position
     // Distribute bonds evenly in a range of angles
     const totalBonds = dativeBondsToTarget.length;
-    const angleStep = Math.PI / (totalBonds + 1);
+    const angleSpread = Math.PI * 0.6; // Spread arrows across 108 degrees (60% of 180)
+    const angleStep = angleSpread / Math.max(1, totalBonds - 1);
     const offsetAngle = (currentBondIndex - (totalBonds - 1) / 2) * angleStep;
 
     return offsetAngle;

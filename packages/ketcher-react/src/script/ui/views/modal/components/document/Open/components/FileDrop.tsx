@@ -14,12 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { useDropzone, DropzoneOptions } from 'react-dropzone';
 
 import parentStyles from './OpenOptions.module.less';
 import styles from './FileDrop.module.less';
 import { Icon, IconName } from 'components';
+import {
+  getIfFullScreen,
+  requestFullscreen,
+} from '../../../../../../action/fullscreen';
+import { getFullscreenElement } from '../../../../../../../../utils';
 
 type FileDropProps = {
   buttonLabel: string;
@@ -39,11 +44,41 @@ const FileDrop = ({
   testId,
   ...rest
 }: FileDropProps) => {
+  const wasFullscreenRef = useRef(false);
+
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
     disabled,
     ...rest,
   });
+
+  // Custom open handler that preserves fullscreen state
+  const handleOpenWithFullscreen = () => {
+    // Store fullscreen state before opening file dialog
+    wasFullscreenRef.current = getIfFullScreen();
+    open();
+  };
+
+  // Listen for file input change to restore fullscreen
+  useEffect(() => {
+    const restoreFullscreen = () => {
+      // Small delay to ensure file dialog is closed
+      setTimeout(() => {
+        if (wasFullscreenRef.current && !getIfFullScreen()) {
+          const fullscreenElement = getFullscreenElement();
+          requestFullscreen(fullscreenElement);
+          wasFullscreenRef.current = false;
+        }
+      }, 100);
+    };
+
+    // Listen for focus events which indicate file dialog closed
+    window.addEventListener('focus', restoreFullscreen);
+
+    return () => {
+      window.removeEventListener('focus', restoreFullscreen);
+    };
+  }, []);
 
   const getClassesString = useMemo((): string => {
     const classes = [
@@ -57,9 +92,18 @@ const FileDrop = ({
   return (
     <div
       data-testid={testId}
-      onKeyDown={open}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleOpenWithFullscreen();
+        }
+      }}
       {...getRootProps({
         className: getClassesString,
+        onClick: (e) => {
+          e.preventDefault();
+          handleOpenWithFullscreen();
+        },
       })}
     >
       <input {...getInputProps()} />

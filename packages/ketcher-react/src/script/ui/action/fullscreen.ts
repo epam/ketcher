@@ -17,7 +17,7 @@
 import isHidden from './isHidden';
 import { getFullscreenElement } from '../../../utils';
 
-const requestFullscreen = (element: HTMLElement) => {
+export const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
     element.requestFullscreen();
   } else if (element.msRequestFullscreen) {
@@ -41,7 +41,7 @@ const exitFullscreen = () => {
   }
 };
 
-const getIfFullScreen = () => {
+export const getIfFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||

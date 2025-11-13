@@ -47,7 +47,7 @@ function GenSet({
           caption ||
           buttons
             .map((b) => b.label)
-            .sort()
+            .sort((a, b) => a.localeCompare(b))
             .join('|');
         return (
           <fieldset className={className} key={fieldsetKey}>

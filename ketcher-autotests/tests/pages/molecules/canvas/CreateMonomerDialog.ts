@@ -2,6 +2,7 @@
 import { Page, Locator } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
+  ModificationType,
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -19,6 +20,40 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+
+export enum ModificationTypeDropdown {
+  First = 'modificationTypeDropdown1',
+  Second = 'modificationTypeDropdown2',
+  Third = 'modificationTypeDropdown3',
+  Fourth = 'modificationTypeDropdown4',
+  Fifth = 'modificationTypeDropdown5',
+}
+
+export enum DeleteModificationTypeButton {
+  First = 'deleteModificationTypeButton1',
+  Second = 'deleteModificationTypeButton2',
+  Third = 'deleteModificationTypeButton3',
+  Fourth = 'deleteModificationTypeButton4',
+  Fifth = 'deleteModificationTypeButton5',
+}
+
+type ModificationSectionLocators = {
+  modificationTypeDropdown1: Locator;
+  modificationTypeDropdown2: Locator;
+  modificationTypeDropdown3: Locator;
+  modificationTypeDropdown4: Locator;
+  modificationTypeDropdown5: Locator;
+  deleteModificationTypeButton1: Locator;
+  deleteModificationTypeButton2: Locator;
+  deleteModificationTypeButton3: Locator;
+  deleteModificationTypeButton4: Locator;
+  deleteModificationTypeButton5: Locator;
+  addModificationTypeButton: Locator;
+};
+
+type AliasesSectionLocators = {
+  helmAliasEditbox: Locator;
+};
 
 type CreateMonomerDialogLocators = {
   typeCombobox: Locator;
@@ -58,6 +93,8 @@ type CreateMonomerDialogLocators = {
   r6DeleteButton: Locator;
   r7DeleteButton: Locator;
   r8DeleteButton: Locator;
+  modificationSection: Locator & ModificationSectionLocators;
+  aliasesSection: Locator & AliasesSectionLocators;
   submitButton: Locator;
   discardButton: Locator;
 };
@@ -114,7 +151,69 @@ const createAttachmentPointDeleteButtonMap = (
   [AttachmentPointOption.R8]: dialogLocators.r8DeleteButton,
 });
 
+const createModificationTypeDropdownMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.modificationTypeDropdown1,
+  [ModificationTypeDropdown.Second]: section.modificationTypeDropdown2,
+  [ModificationTypeDropdown.Third]: section.modificationTypeDropdown3,
+  [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
+  [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
+});
+const deleteModificationTypeMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.deleteModificationTypeButton1,
+  [ModificationTypeDropdown.Second]: section.deleteModificationTypeButton2,
+  [ModificationTypeDropdown.Third]: section.deleteModificationTypeButton3,
+  [ModificationTypeDropdown.Fourth]: section.deleteModificationTypeButton4,
+  [ModificationTypeDropdown.Fifth]: section.deleteModificationTypeButton5,
+});
+
 export const CreateMonomerDialog = (page: Page) => {
+  const modificationSection: Locator & ModificationSectionLocators =
+    Object.assign(page.getByTestId('modification-types-accordion'), {
+      modificationTypeDropdown1: page.getByTestId(
+        'modification-type-dropdown-0',
+      ),
+      modificationTypeDropdown2: page.getByTestId(
+        'modification-type-dropdown-1',
+      ),
+      modificationTypeDropdown3: page.getByTestId(
+        'modification-type-dropdown-2',
+      ),
+      modificationTypeDropdown4: page.getByTestId(
+        'modification-type-dropdown-3',
+      ),
+      modificationTypeDropdown5: page.getByTestId(
+        'modification-type-dropdown-4',
+      ),
+      deleteModificationTypeButton1: page.getByTestId(
+        'delete-modification-type-button-0',
+      ),
+      deleteModificationTypeButton2: page.getByTestId(
+        'delete-modification-type-button-1',
+      ),
+      deleteModificationTypeButton3: page.getByTestId(
+        'delete-modification-type-button-2',
+      ),
+      deleteModificationTypeButton4: page.getByTestId(
+        'delete-modification-type-button-3',
+      ),
+      deleteModificationTypeButton5: page.getByTestId(
+        'delete-modification-type-button-4',
+      ),
+      addModificationTypeButton: page.getByTestId(
+        'add-modification-type-button',
+      ),
+    });
+  const aliasesSection: Locator & AliasesSectionLocators = Object.assign(
+    page.getByTestId('aliases-accordion'),
+    {
+      helmAliasEditbox: page.getByTestId('helm-alias-input'),
+    },
+  );
+
   const locators: CreateMonomerDialogLocators = {
     typeCombobox: page.getByTestId('type-select'),
     symbolEditbox: page.getByTestId('symbol-input'),
@@ -153,6 +252,8 @@ export const CreateMonomerDialog = (page: Page) => {
     r6DeleteButton: page.getByTestId('attachment-point-delete-button-R6'),
     r7DeleteButton: page.getByTestId('attachment-point-delete-button-R7'),
     r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
+    modificationSection,
+    aliasesSection,
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };
@@ -168,6 +269,12 @@ export const CreateMonomerDialog = (page: Page) => {
 
   const attachmentPointDeleteButtonByAP =
     createAttachmentPointDeleteButtonMap(locators);
+
+  const modificationTypeDropdownByEnum =
+    createModificationTypeDropdownMap(modificationSection);
+
+  const deleteModificationTypeButtonEnum =
+    deleteModificationTypeMap(modificationSection);
 
   return {
     ...locators,
@@ -234,6 +341,109 @@ export const CreateMonomerDialog = (page: Page) => {
       });
     },
 
+    async expandModificationSection() {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'false') {
+        await modificationSection.click();
+      }
+    },
+
+    async collapseModificationSection() {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'true') {
+        await modificationSection.click();
+      }
+    },
+
+    async expandAliasesSection() {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'false') {
+        await aliasesSection.click();
+      }
+    },
+
+    async collapseAliasesSection() {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'true') {
+        await aliasesSection.click();
+      }
+    },
+
+    async addModificationType() {
+      await this.expandModificationSection();
+      await modificationSection.addModificationTypeButton.click();
+    },
+
+    async selectModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      type: ModificationType;
+    }) {
+      await this.expandModificationSection();
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
+      await dropdown.click();
+      const option = page.getByTestId(options.type);
+      await option.waitFor();
+      await option.click();
+    },
+
+    async selectModificationTypes(
+      options: (
+        | {
+            dropdown: ModificationTypeDropdown;
+            type: ModificationType;
+          }
+        | {
+            dropdown: ModificationTypeDropdown;
+            customModification: string;
+          }
+      )[],
+    ) {
+      for (const option of options) {
+        if ('type' in option) {
+          await this.selectModificationType(option);
+        } else {
+          await this.setModificationType(option);
+        }
+      }
+    },
+
+    async setModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      customModification: string;
+    }) {
+      await this.expandModificationSection();
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
+      await dropdown.click();
+      await page.keyboard.type(options.customModification);
+      await page.keyboard.press('Escape');
+    },
+
+    async deleteModificationType(dropdown: ModificationTypeDropdown) {
+      await this.expandModificationSection();
+      const deleteButton = deleteModificationTypeButtonEnum[dropdown];
+      await deleteButton.click();
+    },
+
+    async setHELM(helm: string) {
+      await this.expandAliasesSection();
+      const helmAliasEditbox = aliasesSection.helmAliasEditbox;
+      await helmAliasEditbox.fill(helm);
+    },
+
     async submit({ ignoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
@@ -256,7 +466,19 @@ export async function createMonomer(
     symbol: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
+    modificationTypes?: (
+      | {
+          dropdown: ModificationTypeDropdown;
+          type: ModificationType;
+        }
+      | {
+          dropdown: ModificationTypeDropdown;
+          customModification: string;
+        }
+    )[];
+    HELM?: string;
   },
+  ignoreWarning = true,
 ) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
@@ -266,7 +488,15 @@ export async function createMonomer(
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
-  await createMonomerDialog.submit({ ignoreWarning: true });
+  if (options.modificationTypes) {
+    await createMonomerDialog.selectModificationTypes(
+      options.modificationTypes,
+    );
+  }
+  if (options.HELM) {
+    await createMonomerDialog.setHELM(options.HELM);
+  }
+  await createMonomerDialog.submit({ ignoreWarning });
 }
 
 export async function prepareMoleculeForMonomerCreation(

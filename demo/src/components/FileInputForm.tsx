@@ -39,7 +39,7 @@ const parseFile = (file): Promise<string> =>
       resolve('');
     };
     reader.onerror = function () {
-      reject(new Error(reader.error?.message || 'Failed to read file'));
+      reject(new Error(reader.error?.message ?? 'Failed to read file'));
     };
   });
 
@@ -57,11 +57,11 @@ interface FileInputProps {
 }
 
 export const FileInputForm = ({ printToTerminal }: FileInputProps) => {
-  const [chosenFile, setFile] = useState('');
+  const [chosenFile, setChosenFile] = useState('');
 
   const chooseFileHandler = (event) => {
     const file: File = event.target.files[0];
-    setFile(file.name);
+    setChosenFile(file.name);
 
     parseFile(file).then((str) => {
       let message = 'Selected file content:' + str;

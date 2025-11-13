@@ -79,7 +79,7 @@ class SGroupCreate extends BaseOperation {
     struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      sgroup!.pp = new Vec2(pp);
+      sgroup.pp = new Vec2(pp);
     }
 
     if (expanded) {

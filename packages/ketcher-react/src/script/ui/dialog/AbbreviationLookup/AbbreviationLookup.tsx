@@ -66,7 +66,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
 
   const cursorPosition = useSelector(selectCursorPosition);
   const usedCursorPositionRef = useRef(cursorPosition);
-  const [portalStyle, setPortalSize] = useState({} as CSSProperties);
+  const [portalStyle, setPortalStyle] = useState({} as CSSProperties);
 
   const initialLookupValue = useSelector(selectAbbreviationLookupValue);
   const [lookupValue, setLookupValue] = useState(initialLookupValue);
@@ -91,7 +91,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
     const left = Math.min(Math.max(0, calculatedLeft), maxLeft);
     const top = Math.min(Math.max(0, calculatedTop), maxTop);
 
-    setPortalSize({
+    setPortalStyle({
       left: `${left}px`,
       top: `${top}px`,
     });

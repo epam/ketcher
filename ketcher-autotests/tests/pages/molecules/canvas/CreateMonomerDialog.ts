@@ -428,7 +428,7 @@ export const CreateMonomerDialog = (page: Page) => {
         await this.addModificationType();
       }
       await dropdown.click();
-      await dropdown.fill(options.customModification);
+      await page.keyboard.type(options.customModification);
       await page.keyboard.press('Escape');
     },
 

@@ -497,11 +497,14 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
   await CommonTopLeftToolbar(page).clearCanvas();
   await Library(page).clickMonomerAutochain(Peptide.A);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.A);
-  await ContextMenu(page, monomerOnCanvas).open();
-  await expect(
-    page.getByTestId(ModifyAminoAcidsOption.CustomModification),
-  ).toBeVisible();
-  await page.getByTestId(ModifyAminoAcidsOption.CustomModification).click();
+  await ContextMenu(page, monomerOnCanvas).hover(
+    MonomerOption.ModifyAminoAcids,
+  );
+  const customModification = page.getByTestId(
+    ModifyAminoAcidsOption.CustomModification,
+  );
+  await expect(customModification).toBeVisible();
+  await customModification.click();
 
   await expect(getMonomerLocator(page, Peptide.Peptide)).toBeVisible();
 });

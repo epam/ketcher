@@ -28,6 +28,7 @@ import {
   AtomDelete,
   BondDelete,
   BondAttr,
+  BondAdd,
 } from '../operations';
 import {
   BaseMonomer,
@@ -45,6 +46,7 @@ import { Action } from './action';
 import { SgContexts } from '..';
 import { uniq } from 'lodash/fp';
 import { fromAtomsAttrs } from './atom';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
@@ -53,6 +55,31 @@ import Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
+
+const fromMonomerBondFlipWithNewStereo = (
+  struct: Struct,
+  bondId: number,
+  stereo: number,
+) => {
+  const bond = struct.bonds.get(bondId);
+  if (!bond) {
+    return;
+  }
+
+  const action = new Action();
+
+  const bondWithStereo = {
+    ...bond,
+    stereo,
+    beginSuperatomAttachmentPointNumber: bond.endSuperatomAttachmentPointNumber,
+    endSuperatomAttachmentPointNumber: bond.beginSuperatomAttachmentPointNumber,
+  };
+
+  action.addOp(new BondDelete(bondId));
+  action.addOp(new BondAdd(bond.end, bond.begin, bondWithStereo));
+
+  return action;
+};
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -129,42 +156,89 @@ export function setExpandSGroup(
 
 /**
  * Helper function to find stereo bond information for an attachment point
+ * by looking at the monomer's internal structure.
  * Returns the stereo value (UP or DOWN) if the bond between LGA and AA has stereo
  * and the narrow end is at the AA (attachment atom), otherwise returns null
  */
 const getAttachmentPointStereoBond = (
-  struct: Struct,
-  attachmentPoint: SGroupAttachmentPoint,
-) => {
-  const attachmentAtomId = attachmentPoint.atomId;
-  const leavingAtomId = attachmentPoint.leaveAtomId;
-
-  if (!leavingAtomId) {
+  sGroup: SGroup,
+  sGroupAttachmentPoint: SGroupAttachmentPoint,
+): number | null => {
+  if (!(sGroup instanceof MonomerMicromolecule)) {
+    return null;
+  }
+  const monomer = sGroup.monomer;
+  if (!monomer?.monomerItem) {
     return null;
   }
 
-  const bondId = struct.findBondId(leavingAtomId, attachmentAtomId);
-  if (bondId === null) {
+  const monomerStruct = monomer.monomerItem.struct;
+  const monomerAttachmentPoints = monomer.monomerItem.attachmentPoints;
+
+  if (!monomerStruct || !monomerAttachmentPoints) {
     return null;
   }
 
-  const bond = struct.bonds.get(bondId);
-  if (!bond) {
+  const attachmentPointNumber = sGroupAttachmentPoint.attachmentPointNumber;
+  if (!attachmentPointNumber) {
     return null;
   }
 
-  const isSuitableStereoBond =
-    bond.stereo === Bond.PATTERN.STEREO.UP ||
-    bond.stereo === Bond.PATTERN.STEREO.DOWN;
+  const attachmentPointLabel = getAttachmentPointLabel(attachmentPointNumber);
 
-  if (!isSuitableStereoBond) {
+  const orderedAttachmentPoints = monomer.listOfAttachmentPoints;
+
+  const attachmentPointIndex =
+    orderedAttachmentPoints.indexOf(attachmentPointLabel);
+  if (
+    attachmentPointIndex === -1 ||
+    attachmentPointIndex >= monomerAttachmentPoints.length
+  ) {
     return null;
   }
 
-  // Check if the narrow end of the stereo bond is at the AA (attachment atom)
-  // The narrow end is at bond.begin, so we need bond.begin to be the attachment atom
-  if (bond.begin === attachmentAtomId) {
-    return bond.stereo;
+  const monomerAttachmentPoint = monomerAttachmentPoints[attachmentPointIndex];
+  if (!monomerAttachmentPoint) {
+    return null;
+  }
+
+  const monomerAttachmentAtomId = monomerAttachmentPoint.attachmentAtom;
+  const monomerLeavingGroupAtoms = monomerAttachmentPoint.leavingGroup?.atoms;
+
+  if (
+    monomerAttachmentAtomId === undefined ||
+    !monomerLeavingGroupAtoms ||
+    monomerLeavingGroupAtoms.length === 0
+  ) {
+    return null;
+  }
+
+  for (const internalLeavingAtomId of monomerLeavingGroupAtoms) {
+    const bondId = monomerStruct.findBondId(
+      internalLeavingAtomId,
+      monomerAttachmentAtomId,
+    );
+
+    if (bondId === null) {
+      continue;
+    }
+
+    const bond = monomerStruct.bonds.get(bondId);
+    if (!bond) {
+      continue;
+    }
+
+    const isSuitableStereoBond =
+      bond.stereo === Bond.PATTERN.STEREO.UP ||
+      bond.stereo === Bond.PATTERN.STEREO.DOWN;
+
+    if (!isSuitableStereoBond) {
+      continue;
+    }
+
+    if (bond.begin === monomerAttachmentAtomId) {
+      return bond.stereo;
+    }
   }
 
   return null;
@@ -213,81 +287,94 @@ export function setExpandMonomerSGroup(
     }
   }
 
-  // Process stereo bonds between expanded monomers
-  // Only when expanding (not when contracting)
-  if (attrs.expanded) {
-    bondsToOutside.forEach((bondToOutside, bondId) => {
-      // Get the atom inside current monomer and the atom outside
-      const atomInsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
-        ? bondToOutside.begin
-        : bondToOutside.end;
-      const atomOutsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
-        ? bondToOutside.end
-        : bondToOutside.begin;
+  bondsToOutside.forEach((bondToOutside, bondId) => {
+    const atomInsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
+      ? bondToOutside.begin
+      : bondToOutside.end;
+    const atomOutsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
+      ? bondToOutside.end
+      : bondToOutside.begin;
 
-      // Check if the outside atom belongs to another monomer
-      const outsideAtomSGroups = struct.atoms.get(
-        atomOutsideCurrentMonomer,
-      )?.sgs;
-      if (!outsideAtomSGroups || outsideAtomSGroups.size === 0) {
-        return;
+    const outsideAtomSGroups = struct.atoms.get(atomOutsideCurrentMonomer)?.sgs;
+    if (!outsideAtomSGroups || outsideAtomSGroups.size === 0) {
+      return;
+    }
+
+    for (const otherSGroupId of outsideAtomSGroups.values()) {
+      const otherSGroup = struct.sgroups.get(otherSGroupId);
+      if (!otherSGroup || otherSGroupId === sgid) {
+        continue;
       }
 
-      // Find the other monomer SGroup that contains the outside atom
-      for (const otherSGroupId of outsideAtomSGroups.values()) {
-        const otherSGroup = struct.sgroups.get(otherSGroupId);
-        if (!otherSGroup || otherSGroupId === sgid) {
-          continue;
-        }
+      if (!attrs.expanded) {
+        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+        continue;
+      }
 
-        // Check if the other monomer is expanded
-        if (!otherSGroup.isExpanded()) {
-          continue;
-        }
+      if (!otherSGroup.isExpanded()) {
+        continue;
+      }
 
-        const currentMonomerAP = attachmentPoints.find(
-          (ap) => ap.atomId === atomInsideCurrentMonomer,
-        );
-        if (!currentMonomerAP) {
-          continue;
-        }
+      const currentMonomerAP = attachmentPoints.find(
+        (ap) => ap.atomId === atomInsideCurrentMonomer,
+      );
+      if (!currentMonomerAP) {
+        continue;
+      }
 
-        const otherMonomerAPs = otherSGroup.getAttachmentPoints();
-        const otherMonomerAP = otherMonomerAPs.find(
-          (ap) => ap.atomId === atomOutsideCurrentMonomer,
-        );
-        if (!otherMonomerAP) {
-          continue;
-        }
+      const otherMonomerAPs = otherSGroup.getAttachmentPoints();
+      const otherMonomerAP = otherMonomerAPs.find(
+        (ap) => ap.atomId === atomOutsideCurrentMonomer,
+      );
+      if (!otherMonomerAP) {
+        continue;
+      }
 
-        const currentMonomerStereo = getAttachmentPointStereoBond(
-          struct,
-          currentMonomerAP,
-        );
-        const otherMonomerStereo = getAttachmentPointStereoBond(
-          struct,
-          otherMonomerAP,
-        );
+      const currentMonomerStereo = getAttachmentPointStereoBond(
+        sGroup,
+        currentMonomerAP,
+      );
+      const otherMonomerStereo = getAttachmentPointStereoBond(
+        otherSGroup,
+        otherMonomerAP,
+      );
 
-        const hasCurrentStereo =
-          currentMonomerStereo !== null &&
-          currentMonomerStereo !== Bond.PATTERN.STEREO.NONE;
-        const hasOtherStereo =
-          otherMonomerStereo !== null &&
-          otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+      const hasCurrentStereo =
+        currentMonomerStereo !== null &&
+        currentMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+      const hasOtherStereo =
+        otherMonomerStereo !== null &&
+        otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
 
-        if (hasCurrentStereo && !hasOtherStereo) {
-          action.addOp(new BondAttr(bondId, 'stereo', currentMonomerStereo));
-        } else if (!hasCurrentStereo && hasOtherStereo) {
-          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereo));
-        } else if (hasCurrentStereo && hasOtherStereo) {
-          action.addOp(
-            new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE),
+      if (hasCurrentStereo && !hasOtherStereo) {
+        if (bondToOutside.begin !== atomInsideCurrentMonomer) {
+          action.mergeWith(
+            fromMonomerBondFlipWithNewStereo(
+              struct,
+              bondId,
+              currentMonomerStereo,
+            ),
           );
+        } else {
+          action.addOp(new BondAttr(bondId, 'stereo', currentMonomerStereo));
         }
+      } else if (!hasCurrentStereo && hasOtherStereo) {
+        if (bondToOutside.begin !== atomOutsideCurrentMonomer) {
+          action.mergeWith(
+            fromMonomerBondFlipWithNewStereo(
+              struct,
+              bondId,
+              otherMonomerStereo,
+            ),
+          );
+        } else {
+          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereo));
+        }
+      } else if (hasCurrentStereo && hasOtherStereo) {
+        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
       }
-    });
-  }
+    }
+  });
 
   const sGroupBBox = SGroup.getObjBBox(
     Array.from(sGroupAtoms.values()),

@@ -20,6 +20,7 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { takeEditorScreenshot } from '@utils/canvas';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -438,10 +439,11 @@ export const CreateMonomerDialog = (page: Page) => {
       await deleteButton.click();
     },
 
-    async setHELM(helm: string) {
+    async setHELMAlias(helmAlias: string) {
       await this.expandAliasesSection();
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
-      await helmAliasEditbox.fill(helm);
+      await helmAliasEditbox.click();
+      await page.keyboard.type(helmAlias);
     },
 
     async submit({ ignoreWarning = false } = {}) {
@@ -476,7 +478,7 @@ export async function createMonomer(
           customModification: string;
         }
     )[];
-    HELM?: string;
+    HELMAlias?: string;
   },
   ignoreWarning = true,
 ) {
@@ -493,9 +495,10 @@ export async function createMonomer(
       options.modificationTypes,
     );
   }
-  if (options.HELM) {
-    await createMonomerDialog.setHELM(options.HELM);
+  if (options.HELMAlias) {
+    await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
+  await takeEditorScreenshot(page);
   await createMonomerDialog.submit({ ignoreWarning });
 }
 

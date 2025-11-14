@@ -639,16 +639,6 @@ class PolymerBond implements BaseTool {
     ) {
       return true;
     }
-    // if (
-    //   (firstMonomer instanceof RNABase &&
-    //     secondMonomer instanceof Sugar &&
-    //     secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
-    //   (secondMonomer instanceof RNABase &&
-    //     firstMonomer instanceof Sugar &&
-    //     firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
-    // ) {
-    //   return true;
-    // }
 
     // Modal: special case for Peptide chain
     if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {

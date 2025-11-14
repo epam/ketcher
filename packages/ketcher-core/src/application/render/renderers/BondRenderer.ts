@@ -26,7 +26,6 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
-// const BOND_WIDTH_HOVER = 10;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -247,7 +246,6 @@ export class BondRenderer extends BaseRenderer {
     }
     if (this.bond.selected) {
       this.appendSelection();
-      // this.raiseElement();
     } else {
       this.removeSelection();
     }
@@ -482,9 +480,6 @@ export class BondRenderer extends BaseRenderer {
       .attr('d', combinedPath)
       .attr('fill', 'none')
       .attr('stroke', 'transparent')
-      // BOND_WIDTH_HOVER was replaced with 4 because otherwise - hover area for bond is too big
-      // and it is bad if triple bond is close to another bond (double in my case - see
-      // ketcher/ketcher-autotests/KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket)
       .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath

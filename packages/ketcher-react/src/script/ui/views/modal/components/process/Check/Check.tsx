@@ -24,7 +24,36 @@ import style from './Check.module.less';
 import { useEffect, useState } from 'react';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 
-const checkSchema = {
+type CheckOption =
+  | 'valence'
+  | 'radicals'
+  | 'pseudoatoms'
+  | 'stereo'
+  | 'query'
+  | 'overlapping_atoms'
+  | 'overlapping_bonds'
+  | 'rgroups'
+  | 'chiral'
+  | '3d'
+  | 'chiral_flag';
+
+interface CheckSchema {
+  title: string;
+  type: string;
+  properties: {
+    checkOptions: {
+      title: string;
+      type: string;
+      items: {
+        type: string;
+        enum: CheckOption[];
+        enumNames: string[];
+      };
+    };
+  };
+}
+
+const checkSchema: CheckSchema = {
   title: 'Check',
   type: 'object',
   properties: {
@@ -64,8 +93,8 @@ const checkSchema = {
   },
 };
 
-const getFormattedDateString = (date) => {
-  const getFixedString = (num) => (num + '').padStart(2, '0');
+const getFormattedDateString = (date: Date): string => {
+  const getFixedString = (num: number): string => (num + '').padStart(2, '0');
   return `${getFixedString(date.getHours())}:${getFixedString(
     date.getMinutes(),
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
@@ -75,13 +104,21 @@ const getFormattedDateString = (date) => {
   )}`;
 };
 
+interface FooterContentProps {
+  handleCheck: () => void;
+  handleApply: () => void;
+  onCancel: () => void;
+  isStuctureChecking: boolean;
+  isCheckedWithNewSettings: boolean;
+}
+
 const FooterContent = ({
   handleCheck,
   handleApply,
   onCancel,
   isStuctureChecking,
   isCheckedWithNewSettings,
-}) => {
+}: FooterContentProps) => {
   return (
     <div className={style.buttons}>
       <div>
@@ -119,12 +156,35 @@ const FooterContent = ({
   );
 };
 
-function CheckDialog(props) {
+interface CheckResult {
+  checkOptions: CheckOption[];
+}
+
+interface FormState {
+  result?: CheckResult;
+  moleculeErrors: Record<string, string>;
+  [key: string]: unknown;
+}
+
+interface CheckState {
+  checkOptions: CheckOption[];
+}
+
+interface CheckDialogProps {
+  formState: FormState;
+  checkState: CheckState;
+  onCheck: (opts: CheckOption[]) => Promise<unknown>;
+  onApply: (result: CheckResult) => void;
+  onCancel: () => void;
+  [key: string]: unknown;
+}
+
+function CheckDialog(props: CheckDialogProps) {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
   const { result = checkState, moleculeErrors } = formState;
   const [isStuctureChecking, setIsStructureChecking] = useState(false);
-  const [lastCheckDate, setLastCheckDate] = useState(null);
+  const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 
@@ -143,13 +203,14 @@ function CheckDialog(props) {
 
   useEffect(() => {
     handleCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Dialog
       title="Structure Check"
       className={style.dialog_body}
-      params={{ ...restProps, onCancel }}
+      params={{ ...restProps, onCancel, onOk: () => undefined }}
       buttons={[]}
       footerContent={
         <FooterContent
@@ -162,10 +223,11 @@ function CheckDialog(props) {
       }
       withDivider
     >
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <Form
         schema={checkSchema}
         init={checkState}
-        {...formState}
+        {...(formState as any)}
         result={result}
       >
         <div className={style.wrapper}>
@@ -174,13 +236,14 @@ function CheckDialog(props) {
             <div
               className={!isStuctureChecking ? style.checkBoxesDisabled : ''}
             >
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <Field
                 name="checkOptions"
                 labelPos={false}
-                multiple
                 type="checkbox"
                 disabled={!isStuctureChecking}
                 onChange={handleSettingsChange}
+                {...({ multiple: true } as any)}
               />
             </div>
           </div>
@@ -221,12 +284,32 @@ function CheckDialog(props) {
   );
 }
 
-const mapStateToProps = (state) => ({
+interface StateProps {
+  formState: FormState;
+  checkState: CheckState;
+}
+
+interface DispatchProps {
+  onCheck: (opts: CheckOption[]) => Promise<unknown>;
+  onApply: (res: CheckResult) => void;
+}
+
+interface OwnProps {
+  onCancel: () => void;
+  onOk: (res: CheckResult) => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapStateToProps = (state: any): StateProps => ({
   formState: state.modal.form,
   checkState: state.options.check,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatch: any,
+  ownProps: OwnProps,
+): DispatchProps => ({
   onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
   onApply: (res) => {
     dispatch(checkOpts(res));

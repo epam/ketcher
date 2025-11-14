@@ -14,10 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { FC, ReactNode } from 'react';
+import { Element, ElementLabel } from 'ketcher-core';
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
 
-function MainRow({
+interface MainRowProps {
+  row: Array<Element | number>;
+  caption: string | number;
+  refer: (element: number) => string | false;
+  onAtomSelect: (label: ElementLabel) => void;
+  onDoubleClick: () => void;
+  currentEvents: (element: Element) => {
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+  };
+  atomClassNames: (element: Element) => string[];
+  className?: string;
+}
+
+const MainRow: FC<MainRowProps> = ({
   row,
   caption,
   refer,
@@ -26,8 +42,8 @@ function MainRow({
   currentEvents,
   atomClassNames,
   className,
-}) {
-  const renderCell = (element, index) => {
+}) => {
+  const renderCell = (element: Element | number, index: number): ReactNode => {
     if (typeof element !== 'number') {
       return (
         <td key={index}>
@@ -36,7 +52,8 @@ function MainRow({
             className={clsx(...atomClassNames(element))}
             onClick={() => onAtomSelect(element.label)}
             onDoubleClick={() => onDoubleClick()}
-            {...currentEvents(element)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            {...(currentEvents(element) as any)}
           />
         </td>
       );
@@ -61,6 +78,6 @@ function MainRow({
       </tr>
     </tbody>
   );
-}
+};
 
 export default MainRow;

@@ -152,7 +152,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
   return (
     <menu
       className={className}
-      role={role}
+      role={role || 'menu'}
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => (

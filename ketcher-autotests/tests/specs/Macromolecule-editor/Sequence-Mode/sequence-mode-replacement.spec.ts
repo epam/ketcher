@@ -1368,7 +1368,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
-      // if (title.includes('Case 15-1-17.')) {
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(

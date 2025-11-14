@@ -472,7 +472,6 @@ export class Atom extends DrawingEntity {
       }
     }
 
-
     return {
       valence,
       hydrogenAmount,

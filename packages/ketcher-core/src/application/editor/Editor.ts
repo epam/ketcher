@@ -1715,7 +1715,6 @@ export class CoreEditor {
           return true;
         }
 
-
         this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
         if (isToolUsed) {

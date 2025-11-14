@@ -47,7 +47,9 @@ export class Action {
     );
     sortedOperations.forEach((operation) => {
       const invertedOperation = operation.perform(restruct);
-      action.addOp(invertedOperation);
+      if (operation.isInvertible()) {
+        action.addOp(invertedOperation);
+      }
     });
 
     return action;

@@ -558,11 +558,6 @@ class Editor implements KetcherEditor {
     };
   }
 
-  clearHistoryStack() {
-    this.historyStack = [];
-    this.historyPtr = 0;
-  }
-
   undo() {
     const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {

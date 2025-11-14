@@ -242,9 +242,7 @@ export const CreateMonomerDialog = (page: Page) => {
           await WarningMessageDialog(page).ok();
         }
         // Close success message if it appears to avoid overlay blocking next steps
-        if (await InfoMessageDialog(page).isVisible()) {
-          await InfoMessageDialog(page).ok();
-        }
+        await InfoMessageDialog(page).ok();
       });
     },
 

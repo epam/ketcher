@@ -99,7 +99,7 @@ test.describe('Import/export sequence:', () => {
       expect(values).toContain(value);
     }
     // Case 2
-    await page.getByText(MacroFileType.Sequence).click();
+    await page.getByRole('option', { name: MacroFileType.Sequence }).click();
 
     await PasteFromClipboardDialog(page).monomerTypeSelector.click();
 
@@ -118,7 +118,7 @@ test.describe('Import/export sequence:', () => {
 
     // Case 30
     await PasteFromClipboardDialog(page).contentTypeSelector.click();
-    await page.getByText(MacroFileType.FASTA).click();
+    await page.getByRole('option', { name: MacroFileType.FASTA }).click();
     await PasteFromClipboardDialog(page).monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();

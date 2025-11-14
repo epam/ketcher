@@ -796,6 +796,7 @@ const MonomerCreationWizard = () => {
                         name="chevron"
                       />
                     }
+                    data-testid="modification-types-accordion"
                   >
                     Modification
                   </AccordionSummary>
@@ -813,6 +814,7 @@ const MonomerCreationWizard = () => {
                           onChange={(value) =>
                             handleModificationTypeChange(idx, value)
                           }
+                          testId={`modification-type-dropdown-${idx}`}
                         />
 
                         <IconButton
@@ -820,6 +822,7 @@ const MonomerCreationWizard = () => {
                           className={styles.deleteModificationTypeButton}
                           title="Delete modification type"
                           onClick={() => deleteModificationType(idx)}
+                          testId={`delete-modification-type-button-${idx}`}
                         />
                       </div>
                     ))}
@@ -830,6 +833,7 @@ const MonomerCreationWizard = () => {
                       disabled={
                         modificationTypes.length >= MAX_MODIFICATION_TYPES
                       }
+                      data-testid="add-modification-type-button"
                     >
                       Add modification type
                     </button>
@@ -856,6 +860,7 @@ const MonomerCreationWizard = () => {
                         name="chevron"
                       />
                     }
+                    data-testid="aliases-accordion"
                   >
                     Aliases
                   </AccordionSummary>
@@ -868,6 +873,7 @@ const MonomerCreationWizard = () => {
                       onInputChange={(_event, newValue) =>
                         handleFieldChange('aliasHELM', newValue)
                       }
+                      data-testid="helm-alias-input"
                       renderInput={(params) => (
                         <TextField
                           {...params}

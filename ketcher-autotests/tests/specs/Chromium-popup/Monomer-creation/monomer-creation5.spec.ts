@@ -707,3 +707,89 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
     'CustomHELMAliasPhosphate',
   );
 });
+
+test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press Create Monomer button
+   *      4. Set all possible type in Create Monomer dialog one by one
+   *      5. Verify that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.selectType(MonomerType.AminoAcid);
+  expect(createMonomerDialog.aliasesSection).toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.Sugar);
+  expect(createMonomerDialog.aliasesSection).toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.Base);
+  expect(createMonomerDialog.aliasesSection).toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.Phosphate);
+  expect(createMonomerDialog.aliasesSection).toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  await createMonomerDialog.selectType(MonomerType.CHEM);
+  expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  await createMonomerDialog.discard();
+});
+
+test(`15. Check that the HELM symbol must be a string of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*) (spaces prohibited)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: Check that the HELM symbol must be a string of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*) (spaces prohibited)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press Create Monomer button
+   *      4. Set mandatory fields in Create Monomer dialog for phosphate monomer
+   *      5. Set HELM alias by clicking on + Add HELM alias and add custom HELM alias to the input field
+   *      6. Press Submit button
+   *      7. Switch to Macromolecules mode
+   *      8. Verify that the created monomer is present on the canvas
+   *      9. Hover the monomer and open the tooltip
+   *     10. Verify that the HELM alias is displayed in the tooltip
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
+    HELMAlias: 'ABCdef-123_*',
+  });
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  const monomerOnCanvas = getMonomerLocator(page, Phosphate.Phosphate);
+  await expect(monomerOnCanvas).toBeVisible();
+
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+
+  await monomerOnCanvas.hover();
+  await MonomerPreviewTooltip(page).waitForBecomeVisible();
+  expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
+    'ABCdef-123_*',
+  );
+});

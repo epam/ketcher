@@ -20,7 +20,7 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
-import { takeEditorScreenshot } from '@utils/canvas';
+import { delay } from '@utils/canvas';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -444,6 +444,8 @@ export const CreateMonomerDialog = (page: Page) => {
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
       await helmAliasEditbox.click();
       await page.keyboard.type(helmAlias);
+      // to avoid helm alias lost on submit due to async validation
+      await this.collapseAliasesSection();
     },
 
     async submit({ ignoreWarning = false } = {}) {
@@ -498,7 +500,6 @@ export async function createMonomer(
   if (options.HELMAlias) {
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
-  await takeEditorScreenshot(page);
   await createMonomerDialog.submit({ ignoreWarning });
 }
 

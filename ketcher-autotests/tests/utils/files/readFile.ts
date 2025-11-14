@@ -79,7 +79,7 @@ export async function openFileAndAddToCanvas(
 export async function openFileAndAddToCanvasMacro(
   page: Page,
   filename: string,
-  structureFormat: StructureFormat = MacroFileType.KetFormat,
+  structureFormat = MacroFileType.KetFormat,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();

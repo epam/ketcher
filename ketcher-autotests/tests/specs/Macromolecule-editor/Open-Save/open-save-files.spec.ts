@@ -104,12 +104,8 @@ test.describe('Open/save file tests: ', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-
-
   //   /*
   //    *  Test case3: https://github.com/epam/ketcher/issues/4422 - Cases 33
   //    *  Check the pop-up window appear in fullscreen mode after clicking the “Open” button
   //    */
-
-
 });

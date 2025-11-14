@@ -522,11 +522,8 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 
 //   // to make molecule visible
 
-
 //     page,
 //     attachmentPointR1,
-
-
 
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7657
@@ -549,8 +546,6 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //     ConnectionPointOption.EditConnectionPoint,
 
 //     AttachmentPointName.R3,
-
-
 
 test(`12. Check that for already set APs the user can Delete the AP by r-clicking on an AA`, async () => {
   /*

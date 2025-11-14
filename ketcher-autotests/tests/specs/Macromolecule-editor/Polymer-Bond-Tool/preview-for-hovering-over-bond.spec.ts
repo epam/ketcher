@@ -41,7 +41,6 @@ const fileNames: string[] = [
 //         */
 //      SelectionToolType.Rectangle,
 
-
 //     // count number of bonds on the page
 
 //         hideMonomerPreview: true,

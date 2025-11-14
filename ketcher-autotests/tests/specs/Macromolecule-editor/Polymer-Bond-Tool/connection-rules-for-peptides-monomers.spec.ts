@@ -576,12 +576,10 @@ test.describe('Connection rules for peptides: ', () => {
     );
   });
 
-
   //       /*
   //        *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4.1 (point to point case)
   //        */
   //       test(`Case 4.1: Connect ${leftPeptideAttachmentPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-
 
   //           page,
   //           tmpPeptideMonomers['Test-6-P-x'],
@@ -603,16 +601,12 @@ test.describe('Connection rules for peptides: ', () => {
   //           rightPeptideAttachmentPoint === AttachmentPoint.R2
   //         test(`Case 4.2: Connect Center to ${rightPeptideAttachmentPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
 
-
   //             page,
   //             tmpPeptideMonomers['Test-6-P-x'],
   //             rightPeptide,
   //             rightPeptideAttachmentPoint,
 
   //         hideMonomerPreview: true,
-
-
-
 
   //         hideMonomerPreview: true,
 

@@ -28,7 +28,6 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
-
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();

@@ -177,8 +177,6 @@ interface IMonomer {
 //         movableCollapsedMonomer.KETFile,
 //         movableCollapsedMonomer.monomerLocatorText,
 
-
-
 //       // Test should be skipped if related bug exists
 //         movableCollapsedMonomer.shouldFail === true,
 
@@ -681,7 +679,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //     KETFile:
 //     monomerLocatorText: '4aPEGMal',
 
-
 //       /*
 //        * Test task: https://github.com/epam/ketcher/issues/5773
 //        * Description: Verify that no atoms or bonds can be added/removed from the expanded monomer
@@ -698,9 +695,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //        */
 
 //         tryToChangeMonomer.KETFile,
-
-
-
 
 //       // Test should be skipped if related bug exists
 //         expandableMonomer.shouldFail === true,

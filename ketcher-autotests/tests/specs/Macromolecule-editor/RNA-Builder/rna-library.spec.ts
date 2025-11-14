@@ -1673,7 +1673,6 @@ test.describe('RNA Library', () => {
    */
       await pageReload(page);
 
-
       // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
 
       // 6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and

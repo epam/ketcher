@@ -29,7 +29,6 @@ const fileNames: string[] = [
   'KET/Preview-For-Hovering-Over-Bond/Horizontal - Part3.ket',
 ];
 
-// test('Hover mouse over each bond having select tool switched on', async ({
 //   page,
 // }) => {
 //   /*
@@ -43,26 +42,11 @@ const fileNames: string[] = [
 //             2. Take screenshot of the canvas to compare it with example
 //         */
 //   test.slow();
-//   await CommonLeftToolbar(page).selectAreaSelectionTool(
 //      SelectionToolType.Rectangle,
-//    );
 
-//   for (const fileWithPairs of fileNames) {
-//     await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs, page);
 
-//     // count number of bonds on the page
-//     const elements = await page.$$('g[pointer-events="stroke"]');
-//     const numberOfBonds = elements.length;
 
-//     let bondNumber = 0;
-//     for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
-//       await hoverOverBond(page, bondNumber);
-//       await takeEditorScreenshot(page, {
-//         hideMonomerPreview: true,
 //       });
-//     }
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
 // });
 
 test(

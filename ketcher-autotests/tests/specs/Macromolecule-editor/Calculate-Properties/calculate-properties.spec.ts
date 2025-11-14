@@ -1471,14 +1471,8 @@ test.describe('Calculate Properties tests', () => {
       'KET/microstructure-without-attachment-points.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    // expect(await CalculateVariablesPanel(page).getMolecularFormula()).toEqual(
     //   'C19H22N6O5',
-    // );
-    // expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
     //   '414.415',
-    // );
-    // expect(
-    //   await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
     // ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
     await takePageScreenshot(page);
   });

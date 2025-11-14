@@ -40,7 +40,6 @@ test.beforeAll(async ({ browser }) => {
     sharedContext = await browser.newContext();
   }
 
-  // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -58,7 +57,6 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 const ZOOM_STEP = 200;

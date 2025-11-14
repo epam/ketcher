@@ -636,7 +636,6 @@ for (const bondType of Object.values(MicroBondType)) {
     await CommonLeftToolbar(page).expandBondSelectionDropdown();
     const button = page.getByTestId(bondType);
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
-    // await button.click();
     await commonLeftToolbar.handTool();
   });
 }

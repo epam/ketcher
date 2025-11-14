@@ -40,7 +40,6 @@ test.describe('Ignore Chiral Flag', () => {
       LAminoAcidsTemplate.ARGLArginine,
     );
     await clickInTheMiddleOfTheScreen(page);
-    // await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);

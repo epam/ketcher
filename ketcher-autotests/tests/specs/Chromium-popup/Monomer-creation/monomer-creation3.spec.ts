@@ -505,7 +505,6 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
   await CreateMonomerDialog(page).discard();
 });
 
-// test(`10. Check that for already set APs the user can change the R-group number by clicking on an LGA`, async () => {
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7657
 //    * Description: 1. Check that for already set APs the user can change the R-group number by clicking on an LGA
@@ -521,33 +520,18 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //    *
 //    * Version 3.8
 //    */
-//   await pasteFromClipboardAndOpenAsNewProject(
 //     page,
 //     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-//   );
-//   await clickOnCanvas(page, 0, 0);
-//   await selectAllStructuresOnCanvas(page);
-//   await LeftToolbar(page).createMonomer();
 
-//   // to make molecule visible
-//   await CommonLeftToolbar(page).handTool();
-//   await page.mouse.move(600, 200);
-//   await dragMouseTo(600, 250, page);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
 
-//   await EditConnectionPointPopup(
 //     page,
 //     attachmentPointR1,
 //   ).selectConnectionPointName(AttachmentPointName.R3);
 
-//   await expect(attachmentPointR3).toHaveText('R3');
 
-//   await CreateMonomerDialog(page).discard();
 // });
 
-// test(`11. Check that for already set APs the user can change the R-group number by r-clicking on an AA`, async () => {
 //   /*
 //    * Test task: https://github.com/epam/ketcher/issues/7657
 //    * Description: Check that for already set APs the user can change the R-group number by r-clicking on an AA
@@ -562,32 +546,15 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //    *
 //    * Version 3.8
 //    */
-//   await pasteFromClipboardAndOpenAsNewProject(
 //     page,
 //     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-//   );
-//   await clickOnCanvas(page, 0, 0);
-//   await selectAllStructuresOnCanvas(page);
-//   await LeftToolbar(page).createMonomer();
 
-//   // to make molecule visible
-//   await CommonLeftToolbar(page).handTool();
-//   await page.mouse.move(600, 200);
-//   await dragMouseTo(600, 250, page);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-//   await ContextMenu(page, attachmentPointR1).click(
 //     ConnectionPointOption.EditConnectionPoint,
-//   );
 
-//   await EditConnectionPointPopup(page).selectConnectionPointName(
 //     AttachmentPointName.R3,
-//   );
 
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
-//   await expect(attachmentPointR3).toHaveText('R3');
 
-//   await CreateMonomerDialog(page).discard();
 // });
 
 test(`12. Check that for already set APs the user can Delete the AP by r-clicking on an AA`, async () => {

@@ -162,7 +162,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
     attributes['data-monomertype'] = options.monomerType;
-    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;

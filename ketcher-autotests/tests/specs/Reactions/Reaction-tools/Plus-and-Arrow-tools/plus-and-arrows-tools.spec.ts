@@ -260,17 +260,9 @@ test.describe('Plus and Arrows tools ', () => {
         );
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        // await TopToolbar(page).cut();
-        // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await TopToolbar(page).cut(),
-        // );
 
-        // await pasteFromClipboardByKeyboard(page);
-        // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await pasteFromClipboardByKeyboard(page);
-        // );
 
         await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
       },

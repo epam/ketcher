@@ -69,13 +69,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
-    //   alias: '(R3)_-_Side_only',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -86,117 +79,16 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
-    //   alias: '(R1,R3)_-_R2_gap',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
-    //   alias: '(R2,R3)_-_R1_gap',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     // '(R3,R4)': {
-    //        monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
-    //   alias: '(R3,R4)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R1,R2,R3)': {
-    //   monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
-    //   alias: '(R1,R2,R3)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     // '(R1,R3,R4)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
-    //   alias: '(R1,R3,R4)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R2,R3,R4)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
-    //   alias: '(R2,R3,R4)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R3,R4,R5)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
-    //   alias: '(R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: '(R1,R2,R3,R4)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
-    //   alias: '(R1,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
-    //   alias: '(R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
-    //   alias: '(R1,R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     N: {
       monomerType: MonomerType.Base,
       fileName:
@@ -207,13 +99,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '%': {
-    //   monomerType: MonomerType.Base,
-    //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
-    //   alias: '%',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //   },
-    // },
   };
 
   async function loadTwoMonomers(
@@ -337,13 +222,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
-    //   alias: '(R3)_-_Side_only',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -372,14 +250,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
-    //   alias: '(R3,R4)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
@@ -391,80 +261,12 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
-    //   alias: '(R1,R3,R4)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R2,R3,R4)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
-    //   alias: '(R2,R3,R4)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R3,R4,R5)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
-    //   alias: '(R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R1,R2,R3,R4)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: '(R1,R2,R3,R4)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
-    //   alias: '(R1,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
-    //   alias: '(R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
-    //   alias: '(R1,R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     J: {
       monomerType: MonomerType.Peptide,
       fileName:
@@ -476,14 +278,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '%': {
-    //   monomerType: MonomerType.Peptide,
-    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
-    //   alias: '%',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //   },
-    // },
   };
 
   Object.values(baseMonomers).forEach((leftBase) => {
@@ -547,13 +341,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
-    //   alias: '(R3)_-_Side_only',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     '(R1,R2) - R3 gap': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -564,32 +351,8 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
-    //   alias: '(R1,R3)_-_R2_gap',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
-    //   alias: '(R2,R3)_-_R1_gap',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //   },
-    // },
     // '(R3,R4)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
-    //   alias: '(R3,R4)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
@@ -601,35 +364,8 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
-    //   alias: '(R1,R3,R4)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R2,R3,R4)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
-    //   alias: '(R2,R3,R4)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R3,R4,R5)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
-    //   alias: '(R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
@@ -642,39 +378,8 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
-    //   alias: '(R1,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
-    //   alias: '(R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: MonomerType.CHEM,
-    //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
-    //   alias: '(R1,R2,R3,R4,R5)',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
   };
 
   Object.values(baseMonomers).forEach((leftBase) => {
@@ -843,14 +548,6 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     '(R1,R2,R3)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
@@ -862,35 +559,8 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R2,R3,R4)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //   },
-    // },
     // '(R3,R4,R5)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     '(R1,R2,R3,R4)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
@@ -903,27 +573,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R1: AttachmentPoint.R1,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: MonomerType.Molecule,
-    //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
-    //   alias: 'F1',
-    //   attachmentPoints: {
-    //     R2: AttachmentPoint.R2,
-    //     R3: AttachmentPoint.R3,
-    //     R4: AttachmentPoint.R4,
-    //     R5: AttachmentPoint.R5,
-    //   },
-    // },
     '(R1,R2,R3,R4,R5)': {
       monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',

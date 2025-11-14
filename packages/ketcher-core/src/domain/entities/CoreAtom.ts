@@ -135,11 +135,7 @@ export class Atom extends DrawingEntity {
     const charge = this.properties.charge ?? 0;
     const label = this.label;
     const element = Elements.get(this.label);
-    // if (!element) {
     //   // query atom, skip
-    //   this.implicitH = 0;
-    //   return 0;
-    // }
 
     const elementGroupNumber = element?.group;
     const radicalAmount = this.radicalAmount;
@@ -234,8 +230,6 @@ export class Atom extends DrawingEntity {
         valence = 1;
         hydrogenAmount = 1 - radicalAmount - connectionAmount - absCharge;
       } else {
-        // this.implicitH = 0;
-        // return true;
       }
     } else if (elementGroupNumber === 1) {
       if (
@@ -478,17 +472,6 @@ export class Atom extends DrawingEntity {
       }
     }
 
-    // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
-    //   hydrogenAmount = this.implicitHCount;
-    // }
-    // this.valence = valence;
-    // this.implicitH = hydrogenAmount;
-    // if (this.implicitH < 0) {
-    //   this.valence = connectionAmount;
-    //   this.implicitH = 0;
-    //   this.badConn = true;
-    //   return false;
-    // }
 
     return {
       valence,

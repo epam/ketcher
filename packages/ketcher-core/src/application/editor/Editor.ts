@@ -192,7 +192,6 @@ export class CoreEditor {
 
   public theme;
   public zoomTool: ZoomTool;
-  // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
 
   public get selectedTool(): Tool | BaseTool | undefined {
@@ -1716,14 +1715,6 @@ export class CoreEditor {
           return true;
         }
 
-        // if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
-        //   // to complete drag actions
-        //   if (!event.target || event.target.nodeName === 'DIV') {
-        //     // click on scroll
-        //     this.hover(null);
-        //     return true;
-        //   }
-        // }
 
         this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
@@ -1756,11 +1747,9 @@ export class CoreEditor {
     if (!editorTool) {
       return false;
     }
-    // this.lastEvent = event;
     const conditions = [
       eventHandlerName in editorTool,
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
-      // isContextMenuClosed(editor.contextMenu),
     ];
 
     if (conditions.every((condition) => condition)) {

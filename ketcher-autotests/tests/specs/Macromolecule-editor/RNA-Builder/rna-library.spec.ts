@@ -1337,7 +1337,6 @@ test.describe('RNA Library', () => {
     await Library(page).switchToCHEMTab();
     await takeMonomerLibraryScreenshot(page);
 
-    // await rnaLibrarySearch.press('Escape');
     // Case 27 here. Dirty hack, can't believe I did it.
     const xCoordinate = 1241;
     const yCoordinate = 62;
@@ -1640,9 +1639,7 @@ test.describe('RNA Library', () => {
    */
       await pageReload(page);
 
-      // const sectionTitle = page.getByText('Ambiguous Amino acids');
       // 1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
-      // await expect(sectionTitle).toHaveText('Ambiguous Amino acids');
 
       // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
       // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
@@ -1679,14 +1676,8 @@ test.describe('RNA Library', () => {
    */
       await pageReload(page);
 
-      // const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
-      // const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
-      // const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');
 
       // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
-      // await expect(sectionAmbiguousBases).toHaveText('Ambiguous Bases');
-      // await expect(sectionAmbiguousDNABases).toHaveText('Ambiguous DNA Bases');
-      // await expect(sectionAmbiguousRNABases).toHaveText('Ambiguous RNA Bases');
 
       // 5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),
       //    followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))

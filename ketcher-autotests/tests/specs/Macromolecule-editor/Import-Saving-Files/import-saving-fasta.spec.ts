@@ -28,9 +28,6 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
-// function removeNotComparableData(file: string) {
-//   return file.replaceAll('\r', '');
-// }
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -147,81 +144,28 @@ test.describe('Import-Saving .fasta Files', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  // const testData = [
-  //   {
-  //     filename: 'FASTA/fasta-dna-24.fasta',
-  //     monomers: 'DNA',
-  //   },
-  //   {
-  //     filename: 'FASTA/fasta-rna-musculus-rearranged.fasta',
-  //     monomers: 'RNA',
-  //   },
-  //   {
-  //     filename: 'FASTA/fasta-peptide.fasta',
-  //     monomers: 'Peptide',
-  //   },
-  // ];
 
   // Fail while performance issue on Indigo side
-  // for (const data of testData) {
-  //   test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
   //     page,
   //   }) => {
-  //     await CommonTopLeftToolbar(page).openFile();
-  //     await openFile(page, data.filename);
-  //     await selectOptionInDropdown(data.filename);
   //
-  //     if (data.monomers === 'Peptide') {
-  //       await page.getByTestId('dropdown-select-type').click();
-  //       await page.getByText(data.monomers, { exact: true }).click();
-  //     }
   //
-  //     await pressButton(page, 'Add to Canvas');
-  //     await takeEditorScreenshot(page);
   //   });
-  // }
 
   // Fail while performance issue on Indigo side
-  // test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
   //   page,
   // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
   //
-  //   const filename = 'FASTA/fasta-multiline-sequence.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await page.getByTestId('dropdown-select-type').click();
-  //   await page.getByText('Peptide', { exact: true }).click();
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
   // });
 
-  // test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
   //   page,
   // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
   //
-  //   const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
   // });
 
-  // test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
   //   page,
   // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
   //
-  //   const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await page.getByTestId('dropdown-select-type').click();
-  //   await page.getByText('Peptide', { exact: true }).click();
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
-  //   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
-  //   await takeEditorScreenshot(page);
   // });
 
   test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async () => {
@@ -239,21 +183,9 @@ test.describe('Import-Saving .fasta Files', () => {
   });
 
   // Fail while performance issue on Indigo side
-  // test('Import FASTA: Verify ignoring "-" symbol during import', async ({
   //   page,
   // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
   //
-  //   const filename = 'FASTA/fasta-with-dash-symbol.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await page.getByTestId('dropdown-select-type').click();
-  //   await page.getByText('Peptide', { exact: true }).click();
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
-  //   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Sequence);
-  //   await moveMouseAway(page);
-  //   await takeEditorScreenshot(page);
   // });
 
   test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async () => {

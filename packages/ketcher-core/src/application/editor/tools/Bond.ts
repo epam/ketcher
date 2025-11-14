@@ -588,7 +588,6 @@ class PolymerBond implements BaseTool {
       return false;
     }
 
-    // Modal: either of the monomers doesn't have any potential APs
     if (
       checkForPotentialBonds &&
       (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
@@ -604,12 +603,10 @@ class PolymerBond implements BaseTool {
       return false;
     }
 
-    // Modal: Any or both monomers are Chems
     if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
       return true;
     }
 
-    // Modal: Any or both monomers are unresolved
     if (
       firstMonomer instanceof UnresolvedMonomer ||
       secondMonomer instanceof UnresolvedMonomer
@@ -617,7 +614,6 @@ class PolymerBond implements BaseTool {
       return true;
     }
 
-    // Modal: One monomer is Peptide and another is RNA monomer
     const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
     const firstMonomerIsRNA = rnaMonomerClasses.find(
       (RNAClass) => firstMonomer instanceof RNAClass,
@@ -639,7 +635,6 @@ class PolymerBond implements BaseTool {
     ) {
       return true;
     }
-    // if (
     //   (firstMonomer instanceof RNABase &&
     //     secondMonomer instanceof Sugar &&
     //     secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
@@ -647,10 +642,7 @@ class PolymerBond implements BaseTool {
     //     firstMonomer instanceof Sugar &&
     //     firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
     // ) {
-    //   return true;
-    // }
 
-    // Modal: special case for Peptide chain
     if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {
       // one of monomers has more than 2 AP
       const hasPlentyAttachmentPoints =

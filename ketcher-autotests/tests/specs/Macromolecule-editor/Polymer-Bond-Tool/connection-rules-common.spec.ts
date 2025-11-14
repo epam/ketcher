@@ -59,7 +59,6 @@ test.describe('Common connection rules: ', () => {
       sharedContext = await browser.newContext();
     }
 
-    // Reminder: do not pass page as async
     page = await sharedContext.newPage();
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
@@ -80,7 +79,6 @@ test.describe('Common connection rules: ', () => {
     await browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   async function dragBondFromMonomerCenterAwayTo(
@@ -341,7 +339,6 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
-    // await saveToKet(page, '4 connected by Bond A6OH-expected.ket');
     await verifyFileExport(
       page,
       'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.ket',
@@ -409,7 +406,6 @@ test.describe('Common connection rules: ', () => {
     await AttachmentPointsDialog(page).cancel();
   });
 
-  // test(`Check that preview window of micro structure not shows pieces of macro structures and vice versa`, async () => {
   //   /*
   //    *  Test case5: https://github.com/epam/ketcher/issues/4422 - Cases 11
   //    *  Case 11:
@@ -417,33 +413,16 @@ test.describe('Common connection rules: ', () => {
   //    */
   //   test.setTimeout(20000);
   //
-  //   await openFileAndAddToCanvasMacro(page,
   //     'KET/Common-Bond-Tests/Micro and macro connected.ket',
-  //   );
   //
-  //   const leftMonomerLocator = page
-  //     .getByText('Test-6-Ch')
-  //     .locator('..')
-  //     .first();
-  //   const rightMonomerLocator = getMonomerLocator(page, Chem.F1).first();
-  //   await bondTwoMonomersPointToPoint(
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
   //     AttachmentPoint.R1,
   //     AttachmentPoint.R1,
-  //   );
   //
-  //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
-  //   await delay(1);
-  //           await takeEditorScreenshot(page, {
-  //         hideMonomerPreview: true,
   //       });
   //
-  //   await hoverMouseOverMonomer(page, 'F1');
-  //   await delay(1);
-  //           await takeEditorScreenshot(page, {
-  //         hideMonomerPreview: true,
   //       });
   // });
 
@@ -528,11 +507,7 @@ test.describe('Common connection rules: ', () => {
         leftMonomer: attachmentPoint,
         rightMonomer: attachmentPoint,
       });
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
       //   });
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
       //   });
     }
 

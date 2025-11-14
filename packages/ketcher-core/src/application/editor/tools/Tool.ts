@@ -132,7 +132,6 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// export type ToolOptions = MonomerItemType;
 // !todo
 export type ToolConstructorInterface = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

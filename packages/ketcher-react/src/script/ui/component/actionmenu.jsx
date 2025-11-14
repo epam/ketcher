@@ -82,8 +82,7 @@ function ActionButton({
 
 function findActiveMenuItem(menuItems, status) {
   let activeMenuItem = null;
-  for (let index = 0; index < menuItems.length; index++) {
-    const current = menuItems[index];
+  for (const current of menuItems) {
     if (status[current]?.selected) {
       activeMenuItem = current;
       break;

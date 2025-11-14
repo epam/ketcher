@@ -263,6 +263,14 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
+      // Additional check: if there's a previous monomer in the chain (via R1->R2 backbone connection),
+      // this monomer should not be considered a first monomer
+      // This is important for ambiguous monomers and other cases where R1PolymerBond might not be properly set
+      const previousMonomerInChain = getPreviousMonomerInChain(monomer);
+      if (previousMonomerInChain) {
+        return false;
+      }
+
       return (
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&

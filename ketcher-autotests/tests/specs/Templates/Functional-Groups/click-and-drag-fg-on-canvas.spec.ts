@@ -17,7 +17,6 @@ import {
   dragMouseAndMoveTo,
 } from '@utils';
 
-
 test.describe('Click and drag FG on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

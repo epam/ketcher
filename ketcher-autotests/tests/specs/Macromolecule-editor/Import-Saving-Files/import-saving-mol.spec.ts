@@ -266,10 +266,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .mol file
 
-    IMPORTANT: Test fails because of the bug - https://github.com/epam/ketcher/issues/5382
-    */
       test.setTimeout(20);
-      const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
 
       await CommonTopLeftToolbar(page).openFile();

@@ -10,34 +10,9 @@ export {};
 
 // skipped until cyclic reference is resolved
 describe.skip('contructor()', () => {
-  it('should throw exception when editor is null', () => {
-    // const editor: Editor = null as unknown as Editor;
-    // const structService: StructService = mock<StructService>();
-    // const formatterFactory: FormatterFactory = mock<FormatterFactory>();
-    //
-    // expect(
-    //   () => new Ketcher(editor, structService, formatterFactory),
-    // ).toThrowError(AssertionError);
-  });
+  it('should throw exception when editor is null', () => {});
 
-  it('should throw exception when structService is null', () => {
-    // const editor: Editor = mock<Editor>();
-    // const structService: StructService = null as unknown as StructService;
-    // const formatterFactory: FormatterFactory = mock<FormatterFactory>();
-    //
-    // expect(
-    //   () => new Ketcher(editor, structService, formatterFactory),
-    // ).toThrowError(AssertionError);
-  });
+  it('should throw exception when structService is null', () => {});
 
-  it('should throw exception when formatterFacory is null', () => {
-    // const editor: Editor = mock<Editor>();
-    // const structService: StructService = mock<StructService>();
-    // const formatterFactory: FormatterFactory =
-    //   null as unknown as FormatterFactory;
-    //
-    // expect(
-    //   () => new Ketcher(editor, structService, formatterFactory),
-    // ).toThrowError(AssertionError);
-  });
+  it('should throw exception when formatterFacory is null', () => {});
 });

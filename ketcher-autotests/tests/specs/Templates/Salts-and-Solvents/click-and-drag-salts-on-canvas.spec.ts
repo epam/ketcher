@@ -16,7 +16,6 @@ import {
   dragMouseAndMoveTo,
 } from '@utils';
 
-// const SHIFT = 50;
 
 test.describe('Click and drag Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {

@@ -11,10 +11,9 @@ Object {
     >
       <div
         class="dialog dialog"
-        data-testid="info-modal-window"
+        data-testid="save-structure-dialog"
         role="dialog"
         tabindex="-1"
-        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -169,7 +168,6 @@ Object {
           <button
             class="cancel"
             data-testid="cancel-button"
-            mode="onCancel"
             type="button"
           >
             Cancel
@@ -422,10 +420,9 @@ Object {
   >
     <div
       class="dialog dialog"
-      data-testid="info-modal-window"
+      data-testid="save-structure-dialog"
       role="dialog"
       tabindex="-1"
-      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"
@@ -580,7 +577,6 @@ Object {
         <button
           class="cancel"
           data-testid="cancel-button"
-          mode="onCancel"
           type="button"
         >
           Cancel

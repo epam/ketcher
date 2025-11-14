@@ -44,8 +44,6 @@ const fileNames: string[] = [
 //   test.slow();
 //      SelectionToolType.Rectangle,
 
-
-
 //       });
 // });
 

@@ -1676,7 +1676,6 @@ test.describe('RNA Library', () => {
    */
       await pageReload(page);
 
-
       // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
 
       // 5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),

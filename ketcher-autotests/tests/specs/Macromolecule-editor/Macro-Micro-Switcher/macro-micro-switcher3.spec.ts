@@ -176,8 +176,6 @@ interface IMonomer {
 //         movableCollapsedMonomer.monomerLocatorText,
 //         { exact: true },
 
-
-
 //       test.fixme(
 //         movableCollapsedMonomer.shouldFail === true,
 //         `That test results are wrong because of ${movableCollapsedMonomer.issueNumber} issue(s).`,
@@ -704,9 +702,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //        */
 
 //         tryToChangeMonomer.KETFile,
-
-
-
 
 //       test.fixme(
 //         expandableMonomer.shouldFail === true,

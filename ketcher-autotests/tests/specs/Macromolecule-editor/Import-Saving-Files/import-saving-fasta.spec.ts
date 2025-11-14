@@ -28,7 +28,6 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
-
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
@@ -143,7 +142,6 @@ test.describe('Import-Saving .fasta Files', () => {
       'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
-
 
   // Fail while performance issue on Indigo side
   //     page,

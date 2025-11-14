@@ -569,7 +569,6 @@ test.describe('Connection rules for peptides: ', () => {
   //        */
   //         test.setTimeout(15000);
 
-
   //           page,
   //           tmpPeptideMonomers['Test-6-P-x'],
   //           rightPeptide,
@@ -604,16 +603,12 @@ test.describe('Connection rules for peptides: ', () => {
   //       ) {
   //           test.setTimeout(15000);
 
-
   //             page,
   //             tmpPeptideMonomers['Test-6-P-x'],
   //             rightPeptide,
   //             rightPeptideAttachmentPoint,
 
   //       });
-
-
-
 
   //       });
   //         });

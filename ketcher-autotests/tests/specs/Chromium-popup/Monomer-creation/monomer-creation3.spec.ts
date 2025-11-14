@@ -523,12 +523,9 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //     page,
 //     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
 
-
-
 //     page,
 //     attachmentPointR1,
 //   ).selectConnectionPointName(AttachmentPointName.R3);
-
 
 // });
 
@@ -549,11 +546,9 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //     page,
 //     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
 
-
 //     ConnectionPointOption.EditConnectionPoint,
 
 //     AttachmentPointName.R3,
-
 
 // });
 

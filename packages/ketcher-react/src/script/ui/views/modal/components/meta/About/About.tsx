@@ -14,19 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog } from '../../../../components';
+import { Dialog, type DialogParams } from '../../../../components';
 import Logo from './logo.svg';
 import classes from './About.module.less';
 import { connect } from 'react-redux';
 import { Fragment } from 'react';
+import { Dispatch } from 'redux';
 
-function AboutDialog(props) {
-  const indigoInfo = props.indigoVersion?.split('.r'); // Indigo version and build info
+interface AboutDialogProps {
+  date: string;
+  indigoVersion?: string;
+  indigoMachine?: string;
+  feedbackLink: string;
+  overviewLink: string;
+  lifeScienciesLink: string;
+  version: string;
+  onOk: (result?: unknown) => void;
+}
+
+function AboutDialog(props: AboutDialogProps) {
+  const indigoInfo = props.indigoVersion?.split('.r') || []; // Indigo version and build info
+
+  const dialogParams: DialogParams = {
+    onOk: props.onOk,
+    onCancel: props.onOk, // Using onOk for both since About dialog only has an OK button
+  };
 
   return (
     <Dialog
       className={`${classes.about} ${classes.dialog_body}`}
-      params={props}
+      params={dialogParams}
       buttons={[
         <button
           onClick={props.onOk}
@@ -108,7 +125,18 @@ function AboutDialog(props) {
   );
 }
 
-const mapStateToProps = (state) => ({
+interface AppState {
+  options: {
+    app: {
+      buildDate: string;
+      indigoVersion?: string;
+      indigoMachine?: string;
+      version: string;
+    };
+  };
+}
+
+const mapStateToProps = (state: AppState) => ({
   date: state.options.app.buildDate.replace('T', '; '),
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
@@ -118,8 +146,8 @@ const mapStateToProps = (state) => ({
   version: state.options.app.version,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  onOk: (_result) => {
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  onOk: (_result?: unknown) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
 });

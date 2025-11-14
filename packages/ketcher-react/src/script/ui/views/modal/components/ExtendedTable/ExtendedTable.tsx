@@ -21,6 +21,7 @@ import GenericGroups from './components/GenericGroups';
 import classes from './ExtendedTable.module.less';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { Editor } from 'ketcher-core';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
 
@@ -33,7 +34,7 @@ interface GenericElement {
 interface TableProps {
   pseudo?: string;
   label?: string;
-  disabledQueryElements: Array<string> | null;
+  disabledQueryElements: Array<string> | null | undefined;
   isNestedModal?: boolean;
   onOk: (result: unknown) => void;
   onCancel: () => void;
@@ -75,25 +76,11 @@ const Table = (props: TableProps) => {
       <GenericGroups
         selected={selected}
         onAtomSelect={onAtomSelect}
-        disabledQueryElements={props.disabledQueryElements}
+        disabledQueryElements={props.disabledQueryElements ?? null}
       ></GenericGroups>
     </Dialog>
   );
 };
-
-interface Editor {
-  selection: () => {
-    atoms?: number[];
-  } | null;
-  struct: () => {
-    atoms: Map<number, unknown>;
-  };
-  render: {
-    options: {
-      disableQueryElements: Array<string> | null;
-    };
-  };
-}
 
 interface State {
   editor: Editor;
@@ -105,7 +92,7 @@ interface OwnProps {
 }
 
 interface StateProps {
-  disabledQueryElements: Array<string> | null;
+  disabledQueryElements: Array<string> | null | undefined;
   pseudo?: string;
   label?: string;
 }

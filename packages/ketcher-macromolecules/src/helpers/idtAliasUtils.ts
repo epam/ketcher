@@ -10,5 +10,5 @@ export const removeSlashesFromIdtAlias = (
   alias: string | undefined,
 ): string | undefined => {
   if (!alias) return alias;
-  return alias.replace(/^\/+|\/+$/g, '');
+  return alias.replace(/(?:^\/+)|(?:\/+$)/g, '');
 };

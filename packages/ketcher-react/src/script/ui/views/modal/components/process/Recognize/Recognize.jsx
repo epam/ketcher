@@ -130,7 +130,7 @@ function RecognizeDialog(prop) {
       title="Import Structure from Image"
       className={classes.recognize}
       params={{ ...props, onOk }}
-      result={() => result(structStr, fragment)}
+      result={result}
       withDivider={true}
       needMargin={false}
       footerContent={

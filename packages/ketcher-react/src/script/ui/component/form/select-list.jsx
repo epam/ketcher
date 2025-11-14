@@ -36,7 +36,7 @@ function SelectList({
   };
 
   return (
-    <ul {...props}>
+    <ul {...props} role="listbox">
       {schema.enum.map((opt, index) => (
         <li
           key={opt}

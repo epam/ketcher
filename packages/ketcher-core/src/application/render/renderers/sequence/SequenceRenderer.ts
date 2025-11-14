@@ -830,7 +830,7 @@ export class SequenceRenderer {
 
   public static get nextNodeInSameChain() {
     if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
-      return;
+      return undefined;
     }
 
     const currentNode = this.currentEdittingNode;

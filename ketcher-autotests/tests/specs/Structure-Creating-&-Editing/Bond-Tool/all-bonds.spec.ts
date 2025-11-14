@@ -442,7 +442,6 @@ test.describe('Bond Tool', () => {
     await page.keyboard.press('Escape');
     for (const [index, hotKey] of hotKeys.entries()) {
       // Delay prevents the search field from opening after the hotkey press
-      // (otherwise the main window is blocked and the panel tools can't be selected)
       if (index > 0) {
         await delay(1);
       }
@@ -636,7 +635,6 @@ for (const bondType of Object.values(MicroBondType)) {
     await CommonLeftToolbar(page).expandBondSelectionDropdown();
     const button = page.getByTestId(bondType);
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
-    // await button.click();
     await commonLeftToolbar.handTool();
   });
 }

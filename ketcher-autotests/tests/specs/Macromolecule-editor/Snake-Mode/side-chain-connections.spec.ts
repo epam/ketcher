@@ -140,7 +140,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
@@ -161,7 +160,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
@@ -320,7 +318,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
@@ -534,7 +531,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
@@ -596,7 +592,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
@@ -904,7 +899,6 @@ test.describe('Side chain connections', () => {
     /*
     /* Case 8: Verify display of side-chain connections when switching from snake mode to flex mode
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
     await pageReload(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
@@ -983,7 +977,6 @@ test.describe('Side chain connections', () => {
 
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
-    // await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -1024,7 +1017,6 @@ test.describe('Side chain connections', () => {
     /*
     /* Case 14: Verify deletion of a side-chain connection in a complex RNA structure and Undo
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();

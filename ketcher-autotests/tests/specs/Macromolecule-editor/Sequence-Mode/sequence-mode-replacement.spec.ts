@@ -304,7 +304,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
   },
   {
-    // Replacement of any monomer in the sequence on preset without base works wrong (it losts phosphate) #5337
     ReplaceMonomerId: [3],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5337'],
   },
@@ -322,7 +321,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5313'],
   },
   {
-    // Side chain connection is not shown if nucleotides connected from base to base (same problem with nuclesides) #5318
     TestNameContains: ['Case 17-', 'Case 18-'],
     SequenceId: [13, 14],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5318'],
@@ -366,71 +364,60 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5344'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-'],
     SequenceId: [22],
     ReplaceMonomerId: [11, 12, 13, 15, 16, 17, 18, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 18-'],
     SequenceId: [22],
     ReplaceMonomerId: [13, 15, 16, 17, 18, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-', 'Case 18-'],
     SequenceId: [23],
     ReplaceMonomerId: [11, 12, 13, 15, 16, 17, 18, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-', 'Case 18-'],
     SequenceId: [24],
     ReplaceMonomerId: [11, 12, 13, 15, 16, 17, 18, 19],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-'],
     SequenceId: [25, 26],
     ReplaceMonomerId: [13, 15, 16, 17, 18, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-', 'Case 18-'],
     SequenceId: [27],
     ReplaceMonomerId: [11, 12, 13, 15, 16, 17, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-', 'Case 18-'],
     SequenceId: [28],
     ReplaceMonomerId: [11, 12, 13, 15, 17, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong - system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 18-'],
     SequenceId: [28],
     ReplaceMonomerId: [11, 12, 13, 15, 16, 17, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    //  Prelacement of any monomer (side connected to another one) on monomer of different type works wrong -
-    // system keeps side chain bond (it shouldn't) #5345
     TestNameContains: ['Case 17-'],
     SequenceId: [29],
     ReplaceMonomerId: [11, 12, 13, 15, 17, 18, 19, 20],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5345'],
   },
   {
-    // Prelacement of any preset (side connected to another monomer) another type of monomer should cause
     // confirm action dialog on side chain bond loss #5346
     TestNameContains: ['Case 18-'],
     SequenceId: [13, 14, 15, 16, 17, 18, 19, 20, 22],
@@ -438,7 +425,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5346'],
   },
   {
-    // Prelacement of any preset (side connected to another monomer) another type of monomer should cause
     // confirm action dialog on side chain bond loss #5346
     TestNameContains: ['Case 18-'],
     SequenceId: [25, 26],
@@ -446,7 +432,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5346'],
   },
   {
-    // Prelacement of any preset (side connected to another monomer) another type of monomer should cause
     // confirm action dialog on side chain bond loss #5346
     TestNameContains: ['Case 18-'],
     SequenceId: [17, 18, 19, 20, 22, 23, 24, 25, 26, 27, 28, 29],
@@ -468,7 +453,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5344'],
   },
   {
-    // Prelacement of any preset (side connected to another monomer) another type of monomer should cause
     // confirm action dialog on side chain bond loss #5346
     TestNameContains: ['Case 19-'],
     SequenceId: [
@@ -533,7 +517,6 @@ async function createTestPresets(page: Page) {
 
   await Library(page).rnaBuilder.addToPresets();
 
-  // Create preset 25mo3r(nC6n5C)Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
   await Library(page).selectMonomer(Sugar._25mo3r);
@@ -546,7 +529,6 @@ async function createTestPresets(page: Page) {
 
   await Library(page).rnaBuilder.addToPresets();
 
-  // Create preset 25mo3r(nC6n5C)
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
   await Library(page).selectMonomer(Sugar._25mo3r);
@@ -556,7 +538,6 @@ async function createTestPresets(page: Page) {
 
   await Library(page).rnaBuilder.addToPresets();
 
-  // Create preset 25mo3r()Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
   await Library(page).selectMonomer(Sugar._25mo3r);
@@ -813,7 +794,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -854,7 +834,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -895,7 +874,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -934,7 +912,6 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -975,7 +952,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1016,7 +992,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1077,7 +1052,6 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR2AttachmentPointReplaceMonomer,
         sequence,
@@ -1139,7 +1113,6 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1orR2AttachmentPointReplaceMonomer,
         sequence,
@@ -1179,7 +1152,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1AttachmentPointReplaceMonomer,
         sequence,
@@ -1217,7 +1189,6 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR2AttachmentPointReplaceMonomer,
         sequence,
@@ -1257,7 +1228,6 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1orR2AttachmentPointReplaceMonomer,
         sequence,
@@ -1297,7 +1267,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1AttachmentPointReplaceMonomer,
         sequence,
@@ -1334,7 +1303,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1375,7 +1343,6 @@ for (const replaceMonomer of replaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1401,11 +1368,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
-      // const title = test.info().title;
-      // // If (for some reasons) on random test ErrorMessage doesn't work - use that dirty hack - page reload helps
       // if (title.includes('Case 15-1-17.')) {
-      //   await pageReload(page);
-      // }
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(
@@ -1420,7 +1383,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1AttachmentPointReplaceMonomer,
         sequence,
@@ -1460,7 +1422,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       await ErrorMessageDialog(page).close();
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         noR1AttachmentPointReplaceMonomer,
         sequence,
@@ -1699,7 +1660,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1744,7 +1704,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1790,7 +1749,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1832,7 +1790,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1874,7 +1831,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
@@ -1916,7 +1872,6 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      // skip that test if bug(s) exists
       await checkForKnownBugs(
         replaceMonomer,
         sequence,

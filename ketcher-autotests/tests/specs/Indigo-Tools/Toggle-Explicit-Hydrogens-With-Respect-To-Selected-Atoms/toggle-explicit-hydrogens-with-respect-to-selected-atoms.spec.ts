@@ -40,7 +40,6 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 test.describe('1. User can expand hydrogens for ', () => {
@@ -182,12 +181,10 @@ test.describe('1. User can expand hydrogens for ', () => {
     // ^-- https://github.com/epam/Indigo/issues/1832
     'Dative/Dative (Ring Topology) - Zero hydrogens (Any Atom).ket',
     'Dative/Dative (Ring Topology) - Zero hydrogens (He).ket',
-    // 'Dative/Dative - Eight hydrogens (c7).ket',
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
     'Dative/Dative - Five hydrogens (c5).ket',
     'Dative/Dative - Four hydrogens (C).ket',
     'Dative/Dative - One hydrogens (He).ket',
-    // 'Dative/Dative - Seven hydrogens (c7).ket',
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
     'Dative/Dative - Six hydrogens (c6).ket',
     'Dative/Dative - Three hydrogens (N).ket',
@@ -238,12 +235,10 @@ test.describe('1. User can expand hydrogens for ', () => {
     // ^-- https://github.com/epam/Indigo/issues/1832
     'Hydrogen/Hydrogen (Ring Topology) - Zero hydrogens (Any Atom).ket',
     // ^-- https://github.com/epam/Indigo/issues/1832
-    // 'Hydrogen/Hydrogen - Eight hydrogens (C8).ket',
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
     'Hydrogen/Hydrogen - Five hydrogens (C5).ket',
     'Hydrogen/Hydrogen - Four hydrogens (Ge).ket',
     'Hydrogen/Hydrogen - One hydrogens (Br).ket',
-    // 'Hydrogen/Hydrogen - Seven hydrogens (C7).ket',
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
     'Hydrogen/Hydrogen - Six hydrogens (C6).ket',
     'Hydrogen/Hydrogen - Three hydrogens (N).ket',
@@ -485,10 +480,8 @@ test.describe('2. User can expand hydrogens for ', () => {
     // ^-- https://github.com/epam/Indigo/issues/1627
     'Dative/Dative (Ring Topology) - Zero hydrogens (Any Atom)+A.ket',
     'Dative/Dative (Ring Topology) - Zero hydrogens (He)+A.ket',
-    // 'Dative/Dative - Eight hydrogens (c7)+A.ket',
     // ^-- https://github.com/epam/Indigo/issues/1627
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
-    // 'Dative/Dative - Five hydrogens (c5)+A.ket',
     // ^-- https://github.com/epam/Indigo/issues/1627
     // ^-- Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
     'Dative/Dative - Four hydrogens (C)+A.ket',

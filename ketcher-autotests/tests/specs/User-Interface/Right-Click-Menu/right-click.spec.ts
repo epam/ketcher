@@ -342,7 +342,6 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-8926
     Description: Only selected atoms and bonds are deleted. No error is thrown.
     */
-    // let point: { x: number; y: number };
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-stereo-and-atoms.ket',
@@ -434,7 +433,6 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-15496
     Description: Three selected Carbon atoms changed to Nitrogen atoms.
     */
-    // let point: { x: number; y: number };
     await openFileAndAddToCanvasAsNewProject(page, 'KET/chain.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await page.keyboard.down('Shift');

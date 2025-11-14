@@ -63,9 +63,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  // await resetZoomLevelToDefault(page);
   await CommonTopLeftToolbar(page).clearCanvas();
-  // await resetZoomLevelToDefault(page);
 });
 
 test.afterAll(async ({ browser }) => {

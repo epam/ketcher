@@ -50,7 +50,6 @@ test.describe('Open/save file tests: ', () => {
     await browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   test(`Check that it is possible to select all text by CTRL+A and delete it in 'Paste from Clipboard modal window`, async () => {
@@ -105,33 +104,12 @@ test.describe('Open/save file tests: ', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  // async function toggleFullScreenOn(page: Page) {
-  //   let cntxt = page.context();
-  //   let brwsr = cntxt.browser();
-  //   await page.close();
-  //   await cntxt.close();
-  //   await brwsr.contexts().forEach((someContext) => {
-  //     someContext.close();
-  //   });
 
-  //   cntxt = await Browser.NewContextAsync(new BrowserNewContextOptions()
-  //   {
-  //     ViewportSize = ViewportSize.NoViewport
-  //   });
-  //   page = await cntxt.newPage();
-  // }
 
-  // test(`Check the pop-up window appear in fullscreen mode after clicking the “Open” button`, async () => {
   //   /*
   //    *  Test case3: https://github.com/epam/ketcher/issues/4422 - Cases 33
   //    *  Check the pop-up window appear in fullscreen mode after clicking the “Open” button
   //    */
-  //   test.setTimeout(10000);
 
-  //   await toggleFullScreenOn(page);
-  //   await selectOpenTool(page);
-  //   const openDialog = await page.getByRole('dialog');
-  //   expect(openDialog).toBeVisible();
 
-  // });
 });

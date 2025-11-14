@@ -456,7 +456,6 @@ export async function bondMonomerPointToMoleculeAtom(
     }
   } else {
     await atom.hover({ force: true });
-    // console.log('Failed to locate atom on the canvas - using Center instead.');
   }
 
   await page.mouse.up();

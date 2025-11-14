@@ -979,7 +979,6 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await waitForRender(page, async () => {
-      // await page.keyboard.press('Escape');
       await ContextMenu(
         page,
         getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),

@@ -29,41 +29,22 @@ const fileNames: string[] = [
   'KET/Preview-For-Hovering-Over-Bond/Horizontal - Part3.ket',
 ];
 
-// test('Hover mouse over each bond having select tool switched on', async ({
 //   page,
-// }) => {
 //   /*
 //         Test task: https://github.com/epam/ketcher/issues/5553
 //         Description: Validate that hovering over the bond with the select tool highlights
 //                      the monomers and the bond the same way it currently is highlighted for
 //                      hovering over with the bond tool for every monomers pairs
 //         Case:
-//             1. Load pairs of monomers connected to each other (3 files)
 //             2. Hover mouse over each bond having select tool switched on
 //             2. Take screenshot of the canvas to compare it with example
 //         */
-//   test.slow();
-//   await CommonLeftToolbar(page).selectAreaSelectionTool(
 //      SelectionToolType.Rectangle,
-//    );
 
-//   for (const fileWithPairs of fileNames) {
-//     await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs, page);
 
 //     // count number of bonds on the page
-//     const elements = await page.$$('g[pointer-events="stroke"]');
-//     const numberOfBonds = elements.length;
 
-//     let bondNumber = 0;
-//     for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
-//       await hoverOverBond(page, bondNumber);
-//       await takeEditorScreenshot(page, {
 //         hideMonomerPreview: true,
-//       });
-//     }
-//     await CommonTopLeftToolbar(page).clearCanvas();
-//   }
-// });
 
 test(
   '1. Validate that preview tooltip content is correct for every monomers pairs',

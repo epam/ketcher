@@ -822,25 +822,16 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test(
   //   'Case 26: Correct structure of DBU (solvent in the structure library)',
   //
-  //   async () => {
   //     /*
   //      * Test case: https://github.com/epam/ketcher/issues/6937
   //      * Bug: https://github.com/epam/ketcher/issues/6553
-  //      * Description: Correct structure of DBU (solvent in the structure library).
   //      * Scenario:
   //      * 1. Go to Micro
   //      * 2. Go to the Structure library, Salts and Solvents tab
   //      * 3. Select DBU
   //      */
-  //     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  //     await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
-  //     await clickInTheMiddleOfTheScreen(page);
-  //     await takeEditorScreenshot(page);
-  //   },
-  // );
 
   test('Case 27: System not assign stereo label to every atom after load from MOL', async () => {
     /*

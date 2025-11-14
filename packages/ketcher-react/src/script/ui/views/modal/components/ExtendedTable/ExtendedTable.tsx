@@ -20,22 +20,40 @@ import { Dialog } from '../../../components';
 import GenericGroups from './components/GenericGroups';
 import classes from './ExtendedTable.module.less';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
 
-const Table = (props) => {
-  const [value, setValue] = useState(props.pseudo ? props.label : null);
+interface GenericElement {
+  type: 'gen';
+  label: string;
+  pseudo: string;
+}
 
-  const selected = (label) => value === label;
+interface TableProps {
+  pseudo?: string;
+  label?: string;
+  disabledQueryElements: Array<string> | null;
+  isNestedModal?: boolean;
+  onOk: (result: unknown) => void;
+  onCancel: () => void;
+}
 
-  const result = () => {
+const Table = (props: TableProps) => {
+  const [value, setValue] = useState<string | null>(
+    props.pseudo ? props.label || null : null,
+  );
+
+  const selected = (label: string): boolean => value === label;
+
+  const result = (): GenericElement | null => {
     if (!value?.length) {
       return null;
     }
     return { type: 'gen', label: value, pseudo: value };
   };
 
-  const onAtomSelect = (label, activateImmediately = false) => {
+  const onAtomSelect = (label: string, activateImmediately = false): void => {
     setValue(label);
 
     if (activateImmediately) {
@@ -63,7 +81,40 @@ const Table = (props) => {
   );
 };
 
-function mapSelectionToProps(editor) {
+interface Editor {
+  selection: () => {
+    atoms?: number[];
+  } | null;
+  struct: () => {
+    atoms: Map<number, unknown>;
+  };
+  render: {
+    options: {
+      disableQueryElements: Array<string> | null;
+    };
+  };
+}
+
+interface State {
+  editor: Editor;
+}
+
+interface OwnProps {
+  isNestedModal?: boolean;
+  onOk: (result: unknown) => void;
+}
+
+interface StateProps {
+  disabledQueryElements: Array<string> | null;
+  pseudo?: string;
+  label?: string;
+}
+
+interface DispatchProps {
+  onOk: (result: unknown) => void;
+}
+
+function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   const selection = editor.selection();
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
@@ -74,15 +125,18 @@ function mapSelectionToProps(editor) {
   return {};
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: State): StateProps => {
   const editor = state.editor;
   const disabledQueryElements = editor.render.options.disableQueryElements;
   return { disabledQueryElements, ...mapSelectionToProps(editor) };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (
+  dispatch: Dispatch,
+  ownProps: OwnProps,
+): DispatchProps => {
   return {
-    onOk: (result) => {
+    onOk: (result: unknown) => {
       if (!ownProps.isNestedModal) {
         dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
       }

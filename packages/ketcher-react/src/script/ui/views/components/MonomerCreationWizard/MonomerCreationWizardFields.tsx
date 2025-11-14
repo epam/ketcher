@@ -2,13 +2,11 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
 import {
-  AttachmentPointClickData,
   AttachmentPointName,
   ketcherProvider,
   KetMonomerClass,
-  MonomerCreationAttachmentPointClickEvent,
 } from 'ketcher-core';
-import { ChangeEvent, useEffect, useReducer, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -16,18 +14,8 @@ import NaturalAnaloguePicker, {
 import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import AttributeField from './components/AttributeField/AttributeField';
-import {
-  WizardAction,
-  WizardFormFieldId,
-  WizardNotificationId,
-  WizardState,
-} from './MonomerCreationWizard.types';
-import {
-  MonomerCreationExternalNotificationAction,
-  NotificationMessages,
-  NotificationTypes,
-  MAX_MODIFICATION_TYPES,
-} from './MonomerCreationWizard.constants';
+import { WizardFormFieldId, WizardState } from './MonomerCreationWizard.types';
+import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
@@ -38,114 +26,11 @@ import accordionClasses from '../../../../../components/Accordion/Accordion.modu
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
 
-const initialWizardState: WizardState = {
-  values: {
-    type: undefined,
-    symbol: '',
-    name: '',
-    naturalAnalogue: '',
-    aliasHELM: '',
-  },
-  errors: {},
-  notifications: new Map([
-    [
-      'defaultAttachmentPoints',
-      { type: 'info', message: NotificationMessages.defaultAttachmentPoints },
-    ],
-  ]),
-};
-
-const wizardReducer = (
-  state: WizardState,
-  action: WizardAction,
-): WizardState => {
-  switch (action.type) {
-    case 'SetFieldValue': {
-      const { fieldId, value } = action;
-
-      const values = {
-        ...state.values,
-        [fieldId]: value,
-      };
-
-      if (fieldId === 'type') {
-        values.naturalAnalogue = '';
-      }
-
-      return {
-        ...state,
-        values,
-        errors: {
-          ...state.errors,
-          [fieldId]: undefined,
-        },
-      };
-    }
-
-    case 'SetErrors': {
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          ...action.errors,
-        },
-      };
-    }
-
-    case 'SetNotifications': {
-      return {
-        ...state,
-        notifications: new Map([
-          ...state.notifications,
-          ...action.notifications,
-        ]),
-      };
-    }
-
-    case 'AddNotification': {
-      const notifications = new Map(state.notifications);
-      const { id } = action;
-      if (!notifications.has(id)) {
-        notifications.set(id, {
-          type: NotificationTypes[id],
-          message: NotificationMessages[id],
-        });
-      }
-
-      return {
-        ...state,
-        notifications,
-      };
-    }
-
-    case 'ResetErrors': {
-      return {
-        ...state,
-        errors: {},
-      };
-    }
-
-    case 'ResetWizard': {
-      return initialWizardState;
-    }
-
-    case 'RemoveNotification': {
-      const notifications = new Map(state.notifications);
-      notifications.delete(action.id);
-
-      return {
-        ...state,
-        notifications,
-      };
-    }
-
-    default:
-      return state;
-  }
-};
-
 interface IMonomerCreationWizardFieldsProps {
-  type: KetMonomerClass | undefined;
+  wizardState: WizardState;
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  onChangeModificationTypes: (modificationTypes: string[]) => void;
+  onFieldChange: (fieldId: WizardFormFieldId, value: string) => void;
 }
 
 const MonomerCreationWizardFields = (
@@ -154,92 +39,15 @@ const MonomerCreationWizardFields = (
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
-
-  const [wizardState, wizardStateDispatch] = useReducer(
-    wizardReducer,
-    initialWizardState,
-  );
-
-  const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
-    useState<AttachmentPointClickData | null>(null);
-
-  const type = props.type;
-  const { values, notifications, errors } = wizardState;
-  const { symbol, name, naturalAnalogue, aliasHELM } = values;
+  const {
+    wizardState,
+    assignedAttachmentPoints,
+    onChangeModificationTypes,
+    onFieldChange,
+  } = props;
+  const { values, errors } = wizardState;
+  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
-
-  useEffect(() => {
-    const externalNotificationEventListener = (event: Event) => {
-      const notificationId = (event as CustomEvent<WizardNotificationId>)
-        .detail;
-      if (notificationId) {
-        wizardStateDispatch({ type: 'AddNotification', id: notificationId });
-      }
-    };
-
-    window.addEventListener(
-      MonomerCreationExternalNotificationAction,
-      externalNotificationEventListener,
-    );
-
-    return () => {
-      window.removeEventListener(
-        MonomerCreationExternalNotificationAction,
-        externalNotificationEventListener,
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    const attachmentPointClickHandler = (event: Event) => {
-      const clickData = (event as CustomEvent<AttachmentPointClickData>).detail;
-      const { attachmentPointName, position } = clickData;
-
-      setAttachmentPointEditPopupData({
-        attachmentPointName,
-        position,
-      });
-    };
-
-    window.addEventListener(
-      MonomerCreationAttachmentPointClickEvent,
-      attachmentPointClickHandler,
-    );
-
-    return () => {
-      window.removeEventListener(
-        MonomerCreationAttachmentPointClickEvent,
-        attachmentPointClickHandler,
-      );
-    };
-  }, []);
-
-  const handleFieldChange = (
-    fieldId: WizardFormFieldId,
-    value: KetMonomerClass | string,
-  ) => {
-    if (['type', 'naturalAnalogue'].includes(fieldId)) {
-      setModificationTypes([]);
-    }
-    if (fieldId === 'type') {
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId: 'type',
-        value: value as KetMonomerClass,
-      });
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId: 'aliasHELM',
-        value: '',
-      });
-    } else {
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId,
-        value,
-      });
-    }
-  };
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
@@ -249,24 +57,31 @@ const MonomerCreationWizardFields = (
     indexToChange: number,
     value: string,
   ) => {
-    setModificationTypes((types) =>
-      types.map((t, i) => (i === indexToChange ? value : t)),
+    const newModificationTypes = modificationTypes.map((t, i) =>
+      i === indexToChange ? value : t,
     );
+
+    setModificationTypes(newModificationTypes);
+    onChangeModificationTypes(newModificationTypes);
   };
 
   const handleAddModificationType = () => {
-    setModificationTypes((types) => {
-      if (types.length >= MAX_MODIFICATION_TYPES) {
-        return types;
-      }
-      return [...types, ''];
-    });
+    const newModificationTypes =
+      modificationTypes.length >= MAX_MODIFICATION_TYPES
+        ? modificationTypes
+        : [...modificationTypes, ''];
+
+    setModificationTypes(newModificationTypes);
+    onChangeModificationTypes(newModificationTypes);
   };
 
   const deleteModificationType = (indexToDelete: number) => {
-    setModificationTypes((types) =>
-      types.filter((_, i) => i !== indexToDelete),
+    const newModificationTypes = modificationTypes.filter(
+      (_, i) => i !== indexToDelete,
     );
+
+    setModificationTypes(newModificationTypes);
+    onChangeModificationTypes(newModificationTypes);
   };
 
   const handleAttachmentPointNameChange = (
@@ -293,8 +108,6 @@ const MonomerCreationWizardFields = (
     return null;
   }
 
-  const { assignedAttachmentPoints } = monomerCreationState;
-
   const displayModificationTypes = type === KetMonomerClass.AminoAcid;
   const displayAliases =
     type &&
@@ -320,7 +133,7 @@ const MonomerCreationWizardFields = (
               data-testid="symbol-input"
               value={symbol}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                handleFieldChange('symbol', event.target.value)
+                onFieldChange('symbol', event.target.value)
               }
               disabled={!type}
             />
@@ -338,7 +151,7 @@ const MonomerCreationWizardFields = (
               value={name}
               data-testid="name-input"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                handleFieldChange('name', event.target.value)
+                onFieldChange('name', event.target.value)
               }
               disabled={!type}
             />
@@ -353,7 +166,7 @@ const MonomerCreationWizardFields = (
               monomerType={type}
               value={naturalAnalogue}
               onChange={(value) => {
-                handleFieldChange('naturalAnalogue', value);
+                onFieldChange('naturalAnalogue', value);
               }}
               error={errors.naturalAnalogue}
             />
@@ -486,7 +299,7 @@ const MonomerCreationWizardFields = (
                   options={[]}
                   value={aliasHELM}
                   onInputChange={(_event, newValue) =>
-                    handleFieldChange('aliasHELM', newValue)
+                    onFieldChange('aliasHELM', newValue)
                   }
                   data-testid="helm-alias-input"
                   renderInput={(params) => (

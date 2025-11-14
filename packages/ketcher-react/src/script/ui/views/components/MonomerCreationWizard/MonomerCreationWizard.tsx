@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, IconButton, Dialog } from 'components';
+import { Icon, Dialog } from 'components';
 import {
   AttachmentPointClickData,
   AttachmentPointName,
@@ -13,11 +13,9 @@ import {
   MonomerCreationAttachmentPointClickEvent,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { ChangeEvent, useEffect, useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
-import NaturalAnaloguePicker, {
-  isNaturalAnalogueRequired,
-} from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
+import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import { onAction } from '../../../state/shared';
@@ -43,13 +41,6 @@ import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
-import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
-import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
-import { TextField, Autocomplete } from '@mui/material';
 import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 
@@ -652,7 +643,16 @@ const MonomerCreationWizard = () => {
               }
               required
             />
-            <MonomerCreationWizardFields type={type} />
+            <MonomerCreationWizardFields
+              wizardState={wizardState}
+              assignedAttachmentPoints={assignedAttachmentPoints}
+              onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
+                handleFieldChange(fieldId, value);
+              }}
+              onChangeModificationTypes={(modificationTypes: string[]) => {
+                setModificationTypes(modificationTypes);
+              }}
+            />
           </div>
         </div>
 

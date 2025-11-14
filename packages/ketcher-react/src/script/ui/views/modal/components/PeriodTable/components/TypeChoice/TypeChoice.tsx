@@ -17,13 +17,27 @@
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
-const typeSchema = [
+type TypeValue = 'atom' | 'list' | 'not-list';
+
+interface TypeSchemaItem {
+  title: string;
+  value: TypeValue;
+  testId: string;
+}
+
+const typeSchema: TypeSchemaItem[] = [
   { title: 'Single', value: 'atom', testId: 'single-radio-button' },
   { title: 'List', value: 'list', testId: 'list-radio-button' },
   { title: 'Not List', value: 'not-list', testId: 'not-list-radio-button' },
 ];
 
-function TypeChoice({ value, onChange, disabled, ...props }) {
+interface TypeChoiceProps {
+  value: TypeValue;
+  onChange: (value: TypeValue) => void;
+  disabled?: boolean;
+}
+
+function TypeChoice({ value, onChange, disabled }: TypeChoiceProps) {
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
@@ -36,7 +50,8 @@ function TypeChoice({ value, onChange, disabled, ...props }) {
             checked={type.value === value}
             onChange={() => onChange(type.value)}
             disabled={disabled}
-            {...props}
+            schema={undefined}
+            innerRef={undefined}
           />
           {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}

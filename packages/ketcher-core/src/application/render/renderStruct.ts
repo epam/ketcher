@@ -114,7 +114,7 @@ export class RenderStruct {
         extendedOptions.fontszsub = 20;
         // Only set explicit dimensions if svgSize is valid and above a minimum threshold
         // Otherwise, let the renderer use auto-scaling based on the wrapper element
-        const MIN_SVG_SIZE = 50;
+        const MIN_SVG_SIZE = 70;
         if (svgSize && svgSize >= MIN_SVG_SIZE) {
           extendedOptions.width = svgSize;
           extendedOptions.height = svgSize;

@@ -6,6 +6,7 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
+  openFile,
   moveMouseAway,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -17,6 +18,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   FileType,
   verifyFileExport,
@@ -264,7 +266,10 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .mol file
 
+    IMPORTANT: Test fails because of the bug - https://github.com/epam/ketcher/issues/5382
+    */
       test.setTimeout(20);
+      const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
 
       await CommonTopLeftToolbar(page).openFile();
@@ -285,21 +290,20 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
-      const filename = 'Molfiles-V3000/corrupted-file.mol';
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
-      await resetZoomLevelToDefault(page);
+    const filename = 'Molfiles-V3000/corrupted-file.mol';
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await resetZoomLevelToDefault(page);
 
-      await openFileAndAddToCanvasMacro(
-        page,
-        filename,
-        MacroFileType.MOLv3000,
-        true,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasMacro(
+      page,
+      filename,
+      MacroFileType.MOLv3000,
+      true,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {
     /*

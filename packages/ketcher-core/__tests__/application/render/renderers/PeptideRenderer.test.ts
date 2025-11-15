@@ -11,5 +11,16 @@ export {};
 
 describe('PeptideRenderer', () => {
   // skipped until cyclic reference is resolved
-  it.skip('should render peptide', () => {});
+  it.skip('should render peptide', () => {
+    // const canvas = createPolymerEditorCanvas();
+    // const peptide = new Peptide(peptideMonomerItem);
+    // const peptideRenderer = new PeptideRenderer(peptide);
+    // global.SVGElement.prototype.getBBox = jest.fn();
+    // jest
+    //   .spyOn(global.SVGElement.prototype, 'getBBox')
+    //   .mockImplementation(() => ({ width: 30, height: 20 }));
+    // peptideRenderer.show(polymerEditorTheme);
+    //
+    // expect(canvas).toMatchSnapshot();
+  });
 });

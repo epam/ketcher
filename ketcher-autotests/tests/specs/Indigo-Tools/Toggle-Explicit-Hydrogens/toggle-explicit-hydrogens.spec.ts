@@ -732,7 +732,6 @@ test.describe('13. Fold/unfold hydrogens for', () => {
       await takeEditorScreenshot(page);
 
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-      // await takeEditorScreenshot(page);
     });
   }
 });

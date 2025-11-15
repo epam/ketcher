@@ -52,7 +52,6 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
-// import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 

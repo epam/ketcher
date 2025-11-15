@@ -890,7 +890,7 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode
      */
-    // await pageReloadMicro(page);
+await pageReloadMicro(page);
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     for (let i = 0; i < 2; i++) {

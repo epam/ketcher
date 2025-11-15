@@ -695,9 +695,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
     await monomer.hover({ force: true });
     await dragTo(page, monomer, { x: 100, y: 100 });
     await monomer.hover({ force: true });
-    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
     await delay(1);
-    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await expect(page.getByTestId('preview-tooltip')).toBeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
@@ -1175,14 +1173,6 @@ const monomersToCreate = [
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
   },
-  // {
-  //   description: '3. Base',
-  //   type: MonomerType.Base,
-  //   symbol: 'Base',
-  //   name: 'Base Test monomer',
-  //   naturalAnalogue: NucleotideNaturalAnalogue.A,
-  //   libraryCard: Base.Base,
-  // },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
@@ -1247,9 +1237,7 @@ for (const monomerToCreate of monomersToCreate) {
 
     await dragTo(page, monomer, { x: 450, y: 250 });
     await monomer.hover({ force: true });
-    // dirty hack, delay should be removed after fix of https://github.com/epam/ketcher/issues/7745
     await delay(1);
-    // await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await expect(MonomerPreviewTooltip(page).window).toBeVisible();
     await expect(
       MonomerPreviewTooltip(page).monomerPreviewTooltipTitle,

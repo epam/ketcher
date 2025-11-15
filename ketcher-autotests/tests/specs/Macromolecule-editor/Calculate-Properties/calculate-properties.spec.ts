@@ -1478,6 +1478,7 @@ test.describe('Calculate Properties tests', () => {
     //   '414.415',
     // );
     // expect(
+    //   await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
     // ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
     await takePageScreenshot(page);
   });

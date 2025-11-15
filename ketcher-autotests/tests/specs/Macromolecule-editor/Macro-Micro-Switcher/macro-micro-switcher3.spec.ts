@@ -102,10 +102,6 @@ interface IMonomer {
 }
 
 // Unable to stabilize because of Undo/redo shift object on the canvas
-// test.describe('Move collapsed monomer on Micro and Undo: ', () => {
-//   test.beforeEach(async () => {
-//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-//   });
 
 //   const movableCollapsedMonomers: IMonomer[] = [
 //     {
@@ -833,11 +829,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //     monomerLocatorText: '4aPEGMal',
 //   },
 // ];
-
-// test.describe('Trying to change: ', () => {
-//   test.beforeEach(async () => {
-//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-//   });
 
 //   for (const tryToChangeMonomer of tryToChangeMonomers) {
 //     test(`${tryToChangeMonomer.monomerDescription}`, async () => {

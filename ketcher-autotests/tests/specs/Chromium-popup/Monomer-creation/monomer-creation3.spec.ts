@@ -505,30 +505,6 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
   await CreateMonomerDialog(page).discard();
 });
 
-// test(`10. Check that for already set APs the user can change the R-group number by clicking on an LGA`, async () => {
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7657
-//    * Description: 1. Check that for already set APs the user can change the R-group number by clicking on an LGA
-//    *              2. Check that for already set APs the users can pick any R-number (R1, ... ,R8), and it obvious what numbers are already in use
-//    *
-//    * Case:
-//    *      1. Open Molecules canvas
-//    *      2. Load molecule on canvas
-//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-//    *      4. Press Create Monomer button
-//    *      5. Change R-group number for R1 and R2
-//    *      6. Take screenshot to validate that the R-group assigned to the correct AP
-//    *
-//    * Version 3.8
-//    */
-//   await pasteFromClipboardAndOpenAsNewProject(
-//     page,
-//     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-//   );
-//   await clickOnCanvas(page, 0, 0);
-//   await selectAllStructuresOnCanvas(page);
-//   await LeftToolbar(page).createMonomer();
-
 //   // to make molecule visible
 //   await CommonLeftToolbar(page).handTool();
 //   await page.mouse.move(600, 200);
@@ -546,29 +522,6 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 
 //   await CreateMonomerDialog(page).discard();
 // });
-
-// test(`11. Check that for already set APs the user can change the R-group number by r-clicking on an AA`, async () => {
-//   /*
-//    * Test task: https://github.com/epam/ketcher/issues/7657
-//    * Description: Check that for already set APs the user can change the R-group number by r-clicking on an AA
-//    *
-//    * Case:
-//    *      1. Open Molecules canvas
-//    *      2. Load molecule on canvas
-//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-//    *      4. Press Create Monomer button
-//    *      5. Change R-group number for R1 and R2
-//    *      6. Take screenshot to validate that the R-group assigned to the correct AP
-//    *
-//    * Version 3.8
-//    */
-//   await pasteFromClipboardAndOpenAsNewProject(
-//     page,
-//     '[*:1]CCCCCCC%91.[*:2]%91 |$_R1;;;;;;;;_R2$|',
-//   );
-//   await clickOnCanvas(page, 0, 0);
-//   await selectAllStructuresOnCanvas(page);
-//   await LeftToolbar(page).createMonomer();
 
 //   // to make molecule visible
 //   await CommonLeftToolbar(page).handTool();

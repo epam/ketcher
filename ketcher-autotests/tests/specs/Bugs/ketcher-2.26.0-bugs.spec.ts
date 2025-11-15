@@ -1371,56 +1371,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test('Case 50: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical', async () => {
-  //   /*
-  //    * Test case: https://github.com/epam/ketcher/issues/6947
-  //    * Bug: https://github.com/epam/Indigo/issues/2219
-  //    * Description: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical
-  //    * Scenario:
-  //    * 1. Go to Micro
-  //    * 2. Load from file
-  //    * 3. Click on Aromatize
-  //    * 4. Click on Dearomatize
-  //    * 5. Click on Calculate CIP
-  //    * 6. Click on Add explicit hydrogens
-  //    * 7. Take screenshot
-  //    */
-  //   await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/arr vert.ket');
-  //   await takeEditorScreenshot(page);
-  //   await verifyFileExport(
-  //     page,
-  //     'CDXML/arr vert-expected.cdxml',
-  //     FileType.CDXML,
-  //   );
-  //   await openFileAndAddToCanvasAsNewProject(
-  //     page,
-  //     'CDXML/arr vert-expected.cdxml',
-  //   );
-  //   await takeEditorScreenshot(page);
-  // });
-
-  // test('Case 51: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows', async () => {
-  //   /*
-  //    * Test case: https://github.com/epam/ketcher/issues/6947
-  //    * Bug: https://github.com/epam/Indigo/issues/2217
-  //    * Description: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows
-  //    * Scenario:
-  //    * 1. Go to Micro
-  //    * 2. Load from file
-  //    * 3. Export to CDXML
-  //    * 4. Load exported file
-  //    * 5. Take screenshot
-  //    */
-  //   await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
-  //   await takeEditorScreenshot(page);
-  //   await verifyFileExport(page, 'CDXML/4 mol-expected.cdxml', FileType.CDXML);
-  //   await openFileAndAddToCanvasAsNewProject(
-  //     page,
-  //     'CDXML/4 mol-expected.cdxml',
-  //   );
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Case 52: Arrow not changes direction after loading saved RXN single reaction if the elements were too close to single arrow on save', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
@@ -1484,26 +1434,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
   });
-
-  // test('Case 55: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)', async () => {
-  //   /*
-  //    * Test case: https://github.com/epam/ketcher/issues/6947
-  //    * Bug: https://github.com/epam/Indigo/issues/2558
-  //    * Description: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)
-  //    * Scenario:
-  //    * 1. Go to Micro
-  //    * 2. Load from file
-  //    * 3. Export to CDX
-  //    * 4. Load exported file
-  //    * 5. Take screenshot
-  //    */
-  //   await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
-  //   await takeEditorScreenshot(page);
-  //   await verifyFileExport(page, 'CDX/4 mol-expected.cdx', FileType.CDX);
-  //   const fileContent = await readFileContent('CDX/4 mol-expected.cdx');
-  //   await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
-  //   await takeEditorScreenshot(page);
-  // });
 
   test('Case 56: Correct length of Multi-Tailed Arrow and Single arrow after loading from RDF', async () => {
     /*

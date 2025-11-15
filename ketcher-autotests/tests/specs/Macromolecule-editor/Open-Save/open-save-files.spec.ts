@@ -121,13 +121,6 @@ test.describe('Open/save file tests: ', () => {
   //   page = await cntxt.newPage();
   // }
 
-  // test(`Check the pop-up window appear in fullscreen mode after clicking the “Open” button`, async () => {
-  //   /*
-  //    *  Test case3: https://github.com/epam/ketcher/issues/4422 - Cases 33
-  //    *  Check the pop-up window appear in fullscreen mode after clicking the “Open” button
-  //    */
-  //   test.setTimeout(10000);
-
   //   await toggleFullScreenOn(page);
   //   await selectOpenTool(page);
   //   const openDialog = await page.getByRole('dialog');

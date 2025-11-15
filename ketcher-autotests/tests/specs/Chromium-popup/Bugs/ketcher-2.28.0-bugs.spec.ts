@@ -111,31 +111,6 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   });
 });
 
-// test(
-//   `Case 2: Exception when modifying a functional group after adding a ketcher editor subscription`,
-//
-//   async () => {
-//     /*
-//      * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 2
-//      * Bug: https://github.com/epam/ketcher/issues/5115
-//      * Description: Exception when modifying a functional group after adding a ketcher editor subscription
-//      * Scenario:
-//      * 1. Go to Micro mode
-//      * 2. Execute ketcher.editor.subscribe("change", () => console.log("hello")); in the console (or add any other change subscription)
-//      * 3. In the canvas, add a functional group such as "CF3"
-//      * 4. Click on another atom such as "Br" and click on the functional group
-//      * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
-//      */
-//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-//     const atomToolbar = RightToolbar(page);
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     let changeEventSubscriber: any;
-//     await page.evaluate(() => {
-//       changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-//         console.log('hello'),
-//       );
-//     });
-
 //     await selectFunctionalGroups(FunctionalGroups.CF3, page);
 //     await clickInTheMiddleOfTheScreen(page);
 //     await atomToolbar.clickAtom(Atom.Bromine);

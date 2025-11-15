@@ -790,39 +790,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
   });
 
-  // test(
-  //   `Case 25: Super G and Super T monomers can be load from a saved RXN V3000 file`,
-  //
-  //   async () => {
-  //     /*
-  //      * Test case: https://github.com/epam/ketcher/issues/6600
-  //      * Bug: https://github.com/epam/ketcher/issues/6291
-  //      * Description: Super G and Super T monomers can be load from a saved RXN V3000 file
-  //      * Scenario:
-  //      * 1. Open Ketcher in Micro mode
-  //      * 2. Load RXN V3000 file with Super G and Super T monomers
-  //      * 3. Take a screenshot
-  //      */
-  //     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  //     await openFileAndAddToCanvasAsNewProject(
-  //       page,
-  //       'KET/Chromium-popup/Bugs/super-g-and-super-t.ket',
-  //     );
-  //     await takeEditorScreenshot(page);
-  //     await verifyFileExport(
-  //       page,
-  //       'Rxn-V3000/Bugs/super-g-and-super-t-expected.rxn',
-  //       FileType.RXN,
-  //       RxnFileFormat.v3000,
-  //     );
-  //     await openFileAndAddToCanvasAsNewProject(
-  //       page,
-  //       'Rxn-V3000/Bugs/super-g-and-super-t-expected.rxn',
-  //     );
-  //     await takeEditorScreenshot(page);
-  //   },
-  // );
-
   test(`Case 26: Consistent zoom behavior when inserting a molecule via setMolecule and Paste from Clipboard/Open from File`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600

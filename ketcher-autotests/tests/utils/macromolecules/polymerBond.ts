@@ -297,6 +297,7 @@ export async function bondTwoMonomersPointToPoint(
   firstMonomerAttachmentPoint?: AttachmentPoint,
   secondMonomerAttachmentPoint?: AttachmentPoint,
   bondType?: MacroBondType,
+  // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
@@ -317,6 +318,7 @@ export async function bondTwoMonomersPointToPoint(
 
     if (firstAttachmentPointBoundingBox) {
       await page.mouse.move(
+        // if we click on the center of R5 connection point - it replace R5 connection point with R1
         // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
         firstAttachmentPointBoundingBox.x +
           firstAttachmentPointBoundingBox.width / 4,
@@ -341,6 +343,7 @@ export async function bondTwoMonomersPointToPoint(
 
     if (secondAttachmentPointBoundingBox) {
       await page.mouse.move(
+        // if we click on the center of R5 connection point - it replace R5 connection point with R1
         // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
         secondAttachmentPointBoundingBox.x +
           secondAttachmentPointBoundingBox.width / 4,

@@ -983,7 +983,6 @@ test.describe('Side chain connections', () => {
 
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
-    // await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();

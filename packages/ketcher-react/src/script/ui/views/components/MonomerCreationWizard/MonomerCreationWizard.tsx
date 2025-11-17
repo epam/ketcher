@@ -45,9 +45,9 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 
-const initialWizardState: WizardState = {
+const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
-    type: KetMonomerClass.CHEM,
+    type,
     symbol: '',
     name: '',
     naturalAnalogue: '',
@@ -55,6 +55,20 @@ const initialWizardState: WizardState = {
   },
   errors: {},
   notifications: new Map(),
+});
+
+const initialWizardState: WizardState = getInitialWizardState();
+
+const initialRnaPresetWizardState = {
+  base: getInitialWizardState(KetMonomerClass.Base),
+  sugar: getInitialWizardState(KetMonomerClass.Sugar),
+  phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
+  preset: {
+    name: '',
+    errors: {
+      name: null,
+    },
+  },
 };
 
 const wizardReducer = (
@@ -144,6 +158,36 @@ const wizardReducer = (
     default:
       return state;
   }
+};
+
+const rnaPresetWizardReducer = (
+  state: typeof initialRnaPresetWizardState,
+  action: WizardAction & {
+    rnaComponentKey: keyof typeof initialRnaPresetWizardState;
+  },
+) => {
+  const { rnaComponentKey, ...restAction } = action;
+
+  if (rnaComponentKey !== 'preset') {
+    return {
+      ...state,
+      [rnaComponentKey]: wizardReducer(state[rnaComponentKey], restAction),
+    };
+  }
+
+  if (restAction.type === 'SetFieldValue') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        [restAction.fieldId]: restAction.value,
+      },
+    };
+  }
+
+  return {
+    ...state,
+  };
 };
 
 const validateInputs = (values: WizardValues) => {
@@ -358,6 +402,10 @@ const MonomerCreationWizard = () => {
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
     initialWizardState,
+  );
+  const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
+    rnaPresetWizardReducer,
+    initialRnaPresetWizardState,
   );
 
   const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
@@ -656,7 +704,10 @@ const MonomerCreationWizard = () => {
             />
             <p className={styles.attributesTitle}>Attributes</p>
             {isPresetType ? (
-              <RnaPresetTabs />
+              <RnaPresetTabs
+                wizardState={rnaPresetWizardState}
+                wizardStateDispatch={rnaPresetWizardStateDispatch}
+              />
             ) : (
               <MonomerCreationWizardFields
                 wizardState={wizardState}

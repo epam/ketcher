@@ -39,6 +39,10 @@ export class CanvasLoad extends BaseOperation {
     this.data.struct = oldStruct;
   }
 
+  isInvertible(): boolean {
+    return false;
+  }
+
   invert() {
     const inverted = new CanvasLoad();
     inverted.data = this.data;

@@ -51,6 +51,10 @@ class BaseOperation {
     throw new Error('Operation.invert() is not implemented');
   }
 
+  isInvertible(): boolean {
+    return true;
+  }
+
   isDummy(_restruct: ReStruct): boolean {
     return false;
   }

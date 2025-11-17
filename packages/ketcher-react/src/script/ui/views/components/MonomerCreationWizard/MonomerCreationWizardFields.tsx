@@ -31,6 +31,7 @@ interface IMonomerCreationWizardFieldsProps {
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   onChangeModificationTypes: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: WizardFormFieldId, value: string) => void;
+  showNaturalAnalogue: boolean;
 }
 
 const MonomerCreationWizardFields = (
@@ -159,21 +160,23 @@ const MonomerCreationWizardFields = (
           required
           disabled={!type}
         />
-        <AttributeField
-          title="Natural analogue"
-          control={
-            <NaturalAnaloguePicker
-              monomerType={type}
-              value={naturalAnalogue}
-              onChange={(value) => {
-                onFieldChange('naturalAnalogue', value);
-              }}
-              error={errors.naturalAnalogue}
-            />
-          }
-          disabled={!isNaturalAnalogueRequired(type)}
-          required
-        />
+        {props.showNaturalAnalogue !== false && (
+          <AttributeField
+            title="Natural analogue"
+            control={
+              <NaturalAnaloguePicker
+                monomerType={type}
+                value={naturalAnalogue}
+                onChange={(value) => {
+                  onFieldChange('naturalAnalogue', value);
+                }}
+                error={errors.naturalAnalogue}
+              />
+            }
+            disabled={!isNaturalAnalogueRequired(type)}
+            required
+          />
+        )}
       </div>
 
       <div className={styles.divider} />

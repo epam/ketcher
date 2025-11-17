@@ -6,7 +6,8 @@ import { WizardFormFieldId, WizardState } from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { KetMonomerClass } from 'application/formatters';
 import clsx from 'clsx';
-import styles from './MonomerCreationWizard.module.less';
+import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
+import styles from './RnaPresetTabs.module.less';
 import AttributeField from './components/AttributeField/AttributeField';
 
 interface IRnaPresetTabsProps {
@@ -49,13 +50,33 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   return (
     <div>
-      <Tabs value={selectedTab} onChange={handleChange}>
-        <Tab label="Preset" icon={<Icon name="preset" />} />
-        <Tab label="Base" icon={<Icon name="base" />} />
-        <Tab label="Sugar" icon={<Icon name="sugar" />} />
-        <Tab label="Phosphate" icon={<Icon name="phosphate" />} />
+      <Tabs
+        className={styles.styledTabsWrapper}
+        value={selectedTab}
+        onChange={handleChange}
+      >
+        <Tab
+          className={styles.styledTab}
+          label={<div className={styles.tabLabel}>Preset</div>}
+          icon={<Icon name="preset" />}
+        />
+        <Tab
+          className={styles.styledTab}
+          label={<div className={styles.tabLabel}>Base</div>}
+          icon={<Icon name="base" />}
+        />
+        <Tab
+          className={styles.styledTab}
+          label={<div className={styles.tabLabel}>Sugar</div>}
+          icon={<Icon name="sugar" />}
+        />
+        <Tab
+          className={styles.styledTab}
+          label={<div className={styles.tabLabel}>Phosphate</div>}
+          icon={<Icon name="phosphate" />}
+        />
       </Tabs>
-      <div>
+      <div className={styles.tabsContentWrapper}>
         {selectedTab === 0 && (
           <AttributeField
             title="Name"
@@ -63,8 +84,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               <input
                 type="text"
                 className={clsx(
-                  styles.input,
-                  wizardState.preset.errors.name && styles.inputError,
+                  monomerCreationWizardStyles.input,
+                  wizardState.preset.errors.name &&
+                    monomerCreationWizardStyles.inputError,
                 )}
                 placeholder="e.g. Diethylene Glycol"
                 value={wizardState.preset.name}
@@ -83,6 +105,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               <MonomerCreationWizardFields
                 key={rnaComponentKey}
                 assignedAttachmentPoints={new Map()}
+                showNaturalAnalogue={rnaComponentKey === 'base'}
                 onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
                   handleFieldChange(fieldId, value, rnaComponentKey);
                 }}

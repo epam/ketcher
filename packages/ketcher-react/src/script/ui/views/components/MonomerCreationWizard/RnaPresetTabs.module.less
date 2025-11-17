@@ -1,0 +1,62 @@
+.styledTabsWrapper:global(.MuiTabs-root) {
+  min-height: 0;
+
+  :global(.MuiTabs-flexContainer) {
+    align-items: center;
+    gap: 0 8px;
+  }
+
+  :global(.MuiTabs-indicator) {
+    background: none;
+  }
+}
+
+.styledTab:global(.MuiTab-root) {
+  height: 32px;
+  min-width: auto;
+  min-height: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  font-size: 10px;
+  text-transform: none;
+  background: #fff;
+
+  .tabLabel {
+    color: #333333;
+    margin-left: 4px;
+  }
+
+  &:not(:global(.Mui-selected)) {
+    width: 24px;
+    height: 24px;
+
+    .tabLabel {
+      display: none;
+    }
+  }
+
+  &:global(.Mui-selected) {
+    padding: 6px;
+    flex-grow: 1;
+    justify-content: flex-start;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #B4B9D6;
+  }
+
+  :global(.MuiTab-iconWrapper) {
+    margin-bottom: 0;
+  }
+}
+
+.tabsContentWrapper {
+  background: #fff;
+  padding: 8px;
+}

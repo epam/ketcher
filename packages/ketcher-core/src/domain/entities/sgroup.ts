@@ -542,8 +542,7 @@ export class SGroup {
       attachmentPointsVBox && braketBox
         ? Box2Abs.union(braketBox, attachmentPointsVBox)
         : braketBox;
-    if (braketBox)
-      braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
+    if (braketBox) braketBox = braketBox.extend(PADDING_VECTOR, PADDING_VECTOR);
     sGroup.bracketBox = braketBox;
   }
 

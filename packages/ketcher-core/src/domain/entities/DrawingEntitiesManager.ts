@@ -293,7 +293,7 @@ export class DrawingEntitiesManager {
   public get allBondsToMonomers() {
     return [
       ...(this.polymerBonds as Map<number, PolymerBond>),
-      ...(this.monomerToAtomBonds as Map<number, MonomerToAtomBond>),
+      ...this.monomerToAtomBonds,
     ];
   }
 
@@ -1387,7 +1387,7 @@ export class DrawingEntitiesManager {
         const operation = new PolymerBondFinishCreationOperation(
           (polymerBond?: PolymerBond) =>
             this.finishPolymerBondCreationModelChange(
-              previousMonomer as BaseMonomer,
+              previousMonomer,
               monomer,
               attPointStart,
               attPointEnd,
@@ -1443,7 +1443,7 @@ export class DrawingEntitiesManager {
         const operation = new PolymerBondFinishCreationOperation(
           (polymerBond?: PolymerBond) =>
             this.finishPolymerBondCreationModelChange(
-              previousMonomer as BaseMonomer,
+              previousMonomer,
               monomer,
               attPointStart,
               attPointEnd,

@@ -359,9 +359,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-      this.hoverAreaElement
-    )) = this.rootElement
+    this.hoverAreaElement = this.rootElement
       ?.append('path')
       .attr('d', this.path)
       .attr('fill', 'none')

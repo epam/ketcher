@@ -326,7 +326,7 @@ class Editor implements KetcherEditor {
   }
 
   clear() {
-    this.struct();
+    this.struct(new Struct());
   }
 
   renderAndRecoordinateStruct(

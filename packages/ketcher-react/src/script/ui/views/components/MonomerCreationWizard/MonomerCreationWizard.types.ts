@@ -2,7 +2,7 @@ import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
 
 export type MonomerTypeSelectItem = {
-  value: KetMonomerClass;
+  value: KetMonomerClass | 'rnaPreset';
   label: string;
   iconName: IconName;
 };

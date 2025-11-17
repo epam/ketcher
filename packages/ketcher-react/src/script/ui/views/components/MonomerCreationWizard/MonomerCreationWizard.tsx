@@ -43,10 +43,11 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
 import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
+import { RnaPresetTabs } from './RnaPresetTabs';
 
 const initialWizardState: WizardState = {
   values: {
-    type: undefined,
+    type: KetMonomerClass.CHEM,
     symbol: '',
     name: '',
     naturalAnalogue: '',
@@ -427,11 +428,21 @@ const MonomerCreationWizard = () => {
         fieldId: 'type',
         value: value as KetMonomerClass,
       });
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId: 'aliasHELM',
-        value: '',
-      });
+
+      if (
+        (type === KetMonomerClass.RNA || value === KetMonomerClass.RNA) &&
+        type !== value
+      ) {
+        wizardStateDispatch({
+          type: 'ResetWizard',
+        });
+      } else {
+        wizardStateDispatch({
+          type: 'SetFieldValue',
+          fieldId: 'aliasHELM',
+          value: '',
+        });
+      }
     } else {
       wizardStateDispatch({
         type: 'SetFieldValue',
@@ -593,6 +604,7 @@ const MonomerCreationWizard = () => {
   );
   const displayEditDialog =
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
+  const isPresetType = type === 'rnaPreset';
 
   return (
     <div className={styles.monomerCreationWizard}>
@@ -619,7 +631,6 @@ const MonomerCreationWizard = () => {
 
       <div className={styles.rightColumn}>
         <div className={styles.attributesWindow}>
-          <p className={styles.attributesTitle}>Attributes</p>
           <div
             className={clsx(
               styles.attributesFields,
@@ -643,16 +654,21 @@ const MonomerCreationWizard = () => {
               }
               required
             />
-            <MonomerCreationWizardFields
-              wizardState={wizardState}
-              assignedAttachmentPoints={assignedAttachmentPoints}
-              onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
-                handleFieldChange(fieldId, value);
-              }}
-              onChangeModificationTypes={(modificationTypes: string[]) => {
-                setModificationTypes(modificationTypes);
-              }}
-            />
+            <p className={styles.attributesTitle}>Attributes</p>
+            {isPresetType ? (
+              <RnaPresetTabs />
+            ) : (
+              <MonomerCreationWizardFields
+                wizardState={wizardState}
+                assignedAttachmentPoints={assignedAttachmentPoints}
+                onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
+                  handleFieldChange(fieldId, value);
+                }}
+                onChangeModificationTypes={(modificationTypes: string[]) => {
+                  setModificationTypes(modificationTypes);
+                }}
+              />
+            )}
           </div>
         </div>
 

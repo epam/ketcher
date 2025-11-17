@@ -46,7 +46,6 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
-import options from 'ketcher-core/dist/application/render/options';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -149,9 +148,9 @@ test(`2. Check that the user can set few modification types for amino acids by c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    symbol: Peptide.Peptide2.alias,
+    name: 'Peptide2 Test monomer',
+    naturalAnalogue: AminoAcidNaturalAnalogue.D,
     modificationTypes: [
       {
         dropdown: ModificationTypeDropdown.First,
@@ -166,7 +165,7 @@ test(`2. Check that the user can set few modification types for amino acids by c
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
+  const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide2);
   await expect(monomerOnCanvas).toBeVisible();
 
   // shifting canvas to make tooltip appear fully
@@ -544,15 +543,15 @@ test(`10. Check that the user can set a HELM alias for amino acids by clicking o
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
+    symbol: Peptide.Peptide3.alias,
+    name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
   });
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
+  const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide3);
   await expect(monomerOnCanvas).toBeVisible();
 
   // shifting canvas to make tooltip appear fully

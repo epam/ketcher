@@ -44,7 +44,7 @@ import TemplatePreview from './templatePreview';
 
 export function getBondFlipSign(struct: Struct, bond: Bond): number {
   const xy0 = new Vec2();
-  const frid = struct.atoms.get(bond?.begin as number)?.fragment;
+  const frid = struct.atoms.get(bond.begin)?.fragment;
   const frIds = struct.getFragmentIds(frid as number);
   let count = 0;
 

@@ -51,7 +51,7 @@ class RxnArrowAdd extends Base {
       const index = struct.rxnArrows.add(item);
       this.data.id = index;
     } else {
-      struct.rxnArrows.set(this.data.id!, item);
+      struct.rxnArrows.set(this.data.id, item);
     }
 
     const itemId = this.data.id!;

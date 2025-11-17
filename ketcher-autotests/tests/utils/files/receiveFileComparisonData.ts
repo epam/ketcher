@@ -166,7 +166,7 @@ async function receiveFile({
 
   const methodName =
     fileExtension && fileExtension in GetFileMethod
-      ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
+      ? GetFileMethod[fileExtension]
       : GetFileMethod.ket;
 
   const pageData = fileFormat

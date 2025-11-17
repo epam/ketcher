@@ -24,6 +24,8 @@ export interface FieldProps {
   type?: string;
   value?: string | number | boolean;
   checked?: boolean;
+  multiple?: boolean;
+  onChange?: (value: unknown) => void;
 }
 
 export interface FieldWithModalProps extends FieldProps {

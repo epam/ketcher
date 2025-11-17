@@ -239,7 +239,7 @@ function CheckDialog(props: CheckDialogProps) {
                 type="checkbox"
                 disabled={!isStuctureChecking}
                 onChange={handleSettingsChange}
-                {...({ multiple: true } as any)}
+                multiple
               />
             </div>
           </div>

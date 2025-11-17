@@ -72,7 +72,7 @@ const MonomerPreview = ({ className }: Props) => {
       <Container
         className={className}
         data-testid="polymer-library-preview"
-        data-idtAliases={idtAliasesText ?? undefined}
+        data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
         data-modificationtype={

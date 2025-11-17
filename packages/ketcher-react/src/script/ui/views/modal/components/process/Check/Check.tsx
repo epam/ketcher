@@ -183,6 +183,7 @@ function CheckDialog(props: CheckDialogProps) {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
   const { result = checkState, moleculeErrors } = formState;
+  const formStateProps: Record<string, unknown> = { ...formState, result };
   const [isStuctureChecking, setIsStructureChecking] = useState(false);
   const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
@@ -224,12 +225,7 @@ function CheckDialog(props: CheckDialogProps) {
       withDivider
     >
       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <Form
-        schema={checkSchema}
-        init={checkState}
-        {...(formState as any)}
-        result={result}
-      >
+      <Form init={checkState} {...formStateProps}>
         <div className={style.wrapper}>
           <div className={style.settings}>
             <span className={style.sectionTitle}>Settings</span>

@@ -67,11 +67,6 @@ export const SelectedMonomersContextMenu = ({
 
   const menuItems = [
     {
-      name: 'layout_circular',
-      title: 'Create cyclic structure',
-      disabled: cyclicStructureFormationDisabled,
-    },
-    {
       name: 'copy',
       title: 'Copy',
       icon: <Icon name={'copyMenu' as IconName} />,
@@ -115,6 +110,11 @@ export const SelectedMonomersContextMenu = ({
       disabled: false,
       hidden: !modifyAminoAcidsMenuItems.length,
       subMenuItems: modifyAminoAcidsMenuItems,
+    },
+    {
+      name: 'layout_circular',
+      title: 'Arrange as a Ring',
+      disabled: cyclicStructureFormationDisabled,
     },
     {
       name: 'edit_attachment_points',

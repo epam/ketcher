@@ -422,7 +422,6 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: EDIT ABBREVIATION window appears after click by Template on expanded FG.
     After click Remove abbreviation in modal window user can add Template to structure.
    */
-    // let point: { x: number; y: number };
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',

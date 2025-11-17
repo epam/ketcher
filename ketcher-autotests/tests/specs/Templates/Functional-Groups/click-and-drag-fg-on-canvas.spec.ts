@@ -17,8 +17,6 @@ import {
   dragMouseAndMoveTo,
 } from '@utils';
 
-// const SHIFT = 50;
-
 test.describe('Click and drag FG on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

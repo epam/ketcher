@@ -102,9 +102,6 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     );
   }
   let point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
-  //   throw new Error('Unable to get boundingBox for bond');
-  //   x: bondBoundingBox.x + bondBoundingBox.width / 2,
-  //   y: bondBoundingBox.y + bondBoundingBox.height / 2,
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await clickOnCanvas(
     page,

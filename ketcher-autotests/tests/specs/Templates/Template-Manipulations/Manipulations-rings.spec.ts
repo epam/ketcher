@@ -114,9 +114,6 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await page.mouse.move(point.x - 1, point.y - 1);
 
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
-  //   throw new Error('Unable to get boundingBox for bond');
-  //   x: bondBoundingBox2.x + bondBoundingBox2.width / 2,
-  //   y: bondBoundingBox2.y + bondBoundingBox2.height / 2,
   await dragMouseTo(point.x, point.y, page);
 }
 

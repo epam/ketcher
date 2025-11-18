@@ -14,17 +14,89 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { FC, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
 import { checkOpts } from '../../../../../state/options';
-import { connect } from 'react-redux';
 import style from './Check.module.less';
-import { useEffect, useState } from 'react';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 
-const checkSchema = {
+interface MoleculeErrors {
+  [key: string]: string;
+}
+
+type CheckOption =
+  | 'valence'
+  | 'radicals'
+  | 'pseudoatoms'
+  | 'stereo'
+  | 'query'
+  | 'overlapping_atoms'
+  | 'overlapping_bonds'
+  | 'rgroups'
+  | 'chiral'
+  | '3d'
+  | 'chiral_flag';
+
+interface CheckSchema {
+  title: string;
+  type: string;
+  properties: {
+    checkOptions: {
+      title: string;
+      type: string;
+      items: {
+        type: string;
+        enum: CheckOption[];
+        enumNames: string[];
+      };
+    };
+  };
+}
+
+interface CheckState {
+  checkOptions: CheckOption[];
+}
+
+interface FormState {
+  result?: CheckState;
+  moleculeErrors: MoleculeErrors;
+  errors?: Record<string, unknown>;
+  valid?: boolean;
+}
+
+interface CheckDialogOwnProps {
+  onOk: (result: unknown) => void;
+  onCancel: () => void;
+}
+
+interface CheckDialogStateProps {
+  formState: FormState;
+  checkState: CheckState;
+}
+
+interface CheckDialogDispatchProps {
+  onCheck: (opts: CheckOption[]) => Promise<void>;
+  onApply: (res: CheckState) => void;
+}
+
+type CheckDialogProps = CheckDialogOwnProps &
+  CheckDialogStateProps &
+  CheckDialogDispatchProps;
+
+interface State {
+  modal: {
+    form: FormState;
+  };
+  options: {
+    check: CheckState;
+  };
+}
+
+const checkSchema: CheckSchema = {
   title: 'Check',
   type: 'object',
   properties: {
@@ -64,8 +136,8 @@ const checkSchema = {
   },
 };
 
-const getFormattedDateString = (date) => {
-  const getFixedString = (num) => (num + '').padStart(2, '0');
+const getFormattedDateString = (date: Date): string => {
+  const getFixedString = (num: number): string => (num + '').padStart(2, '0');
   return `${getFixedString(date.getHours())}:${getFixedString(
     date.getMinutes(),
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
@@ -75,7 +147,15 @@ const getFormattedDateString = (date) => {
   )}`;
 };
 
-const FooterContent = ({
+interface FooterContentProps {
+  handleCheck: () => void;
+  handleApply: () => void;
+  onCancel: () => void;
+  isStuctureChecking: boolean;
+  isCheckedWithNewSettings: boolean;
+}
+
+const FooterContent: FC<FooterContentProps> = ({
   handleCheck,
   handleApply,
   onCancel,
@@ -119,12 +199,12 @@ const FooterContent = ({
   );
 };
 
-function CheckDialog(props) {
+const CheckDialog: FC<CheckDialogProps> = (props) => {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
   const { result = checkState, moleculeErrors } = formState;
   const [isStuctureChecking, setIsStructureChecking] = useState(false);
-  const [lastCheckDate, setLastCheckDate] = useState(null);
+  const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 
@@ -143,6 +223,7 @@ function CheckDialog(props) {
 
   useEffect(() => {
     handleCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -166,6 +247,8 @@ function CheckDialog(props) {
         schema={checkSchema}
         init={checkState}
         {...formState}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - result prop is not in FormProps type definition but is accepted by the component
         result={result}
       >
         <div className={style.wrapper}>
@@ -177,6 +260,8 @@ function CheckDialog(props) {
               <Field
                 name="checkOptions"
                 labelPos={false}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore - multiple and onChange props are not in FieldProps type definition but are accepted by the component
                 multiple
                 type="checkbox"
                 disabled={!isStuctureChecking}
@@ -219,16 +304,20 @@ function CheckDialog(props) {
       </Form>
     </Dialog>
   );
-}
+};
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: State): CheckDialogStateProps => ({
   formState: state.modal.form,
   checkState: state.options.check,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
-  onApply: (res) => {
+const mapDispatchToProps = (
+  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  ownProps: CheckDialogOwnProps,
+): CheckDialogDispatchProps => ({
+  onCheck: (opts: CheckOption[]) =>
+    dispatch(check(opts)).catch(ownProps.onCancel),
+  onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);
   },

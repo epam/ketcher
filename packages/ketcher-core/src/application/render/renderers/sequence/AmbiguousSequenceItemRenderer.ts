@@ -4,15 +4,16 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
+    const ambiguousMonomer = this.node.monomer as AmbiguousMonomer;
+
     // Ambiguous CHEM and Sugar monomers should display @ symbol
     if (
-      this.node.monomer instanceof AmbiguousMonomer &&
-      (this.node.monomer.monomerClass === KetMonomerClass.CHEM ||
-        this.node.monomer.monomerClass === KetMonomerClass.Sugar)
+      ambiguousMonomer.monomerClass === KetMonomerClass.CHEM ||
+      ambiguousMonomer.monomerClass === KetMonomerClass.Sugar
     ) {
       return '@';
     }
-    return this.node.monomer.label;
+    return ambiguousMonomer.label;
   }
 
   protected drawModification() {}

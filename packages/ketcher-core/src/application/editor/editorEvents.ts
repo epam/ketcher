@@ -1,4 +1,4 @@
-import { Subscription } from 'subscription';
+import { Subscription, DOMSubscription } from 'subscription';
 import { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -36,7 +36,7 @@ export interface IEditorEvents {
   rightClickCanvas: Subscription;
   rightClickPolymerBond: Subscription;
   rightClickSelectedMonomers: Subscription;
-  keyDown: Subscription;
+  keyDown: DOMSubscription;
   editSequence: Subscription;
   startNewSequence: Subscription;
   establishHydrogenBond: Subscription;
@@ -112,7 +112,7 @@ export function resetEditorEvents() {
     rightClickCanvas: new Subscription(),
     rightClickPolymerBond: new Subscription(),
     rightClickSelectedMonomers: new Subscription(),
-    keyDown: new Subscription(),
+    keyDown: new DOMSubscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
     establishHydrogenBond: new Subscription(),

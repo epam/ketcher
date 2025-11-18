@@ -108,7 +108,6 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4722
       Description: Reagent 'NH3' displays above reaction arrow
       */
-    // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
     await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,

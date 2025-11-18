@@ -32,11 +32,19 @@ import { range } from 'lodash/fp';
 import { recognize } from '../../../../../state/server';
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
 import { Icon, StructRender } from 'components';
-import { ketcherProvider } from 'ketcher-core';
+import { ketcherProvider, Struct } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
-function isImage(file) {
-  return file?.type?.includes('image');
+function isImage(file: File | null): boolean {
+  return file?.type?.includes('image') ?? false;
+}
+
+interface FooterContentProps {
+  onImage: (file: File | null) => void;
+  structStr: string | Promise<unknown> | null;
+  openHandler: () => void;
+  copyHandler: () => void;
+  isAddToCanvasDisabled: boolean;
 }
 
 function FooterContent({
@@ -45,7 +53,7 @@ function FooterContent({
   openHandler,
   copyHandler,
   isAddToCanvasDisabled,
-}) {
+}: FooterContentProps) {
   return (
     <div className={classes.footerContent}>
       <OpenButton
@@ -78,7 +86,21 @@ function FooterContent({
   );
 }
 
-function RecognizeDialog(prop) {
+interface RecognizeDialogProps {
+  file: File | null;
+  structStr: string | Promise<unknown> | null;
+  fragment: boolean;
+  version: string;
+  imagoVersions: string[];
+  onOk: (result: unknown) => void;
+  onCancel: () => void;
+  onRecognize: (file: File | null, version: string) => void;
+  isFragment: (v: boolean) => void;
+  onImage: (file: File | null) => void;
+  onChangeImago: (version: string) => void;
+}
+
+function RecognizeDialog(prop: RecognizeDialogProps) {
   const {
     file,
     structStr,
@@ -110,7 +132,7 @@ function RecognizeDialog(prop) {
 
   useEffect(() => {
     onRecognize(file, version);
-  }, [file, version]);
+  }, [file, version, onRecognize]);
 
   const clearFile = useCallback(() => {
     onImage(null);
@@ -118,11 +140,11 @@ function RecognizeDialog(prop) {
   }, [onImage]);
 
   const copyHandler = () => {
-    onOk({ structStr, fragment: true });
+    onOk({ structStr: structStr as string, fragment: true });
   };
 
   const openHandler = () => {
-    onOk({ structStr, fragment: false });
+    onOk({ structStr: structStr as string, fragment: false });
   };
 
   return (
@@ -139,7 +161,9 @@ function RecognizeDialog(prop) {
           openHandler={openHandler}
           structStr={structStr}
           copyHandler={copyHandler}
-          isAddToCanvasDisabled={ketcher.editor.render.options.viewOnlyMode}
+          isAddToCanvasDisabled={
+            ketcher.editor.render.options.viewOnlyMode ?? false
+          }
         />
       }
       buttons={[]}
@@ -149,6 +173,7 @@ function RecognizeDialog(prop) {
           {/* eslint-disable jsx-a11y/label-has-associated-control */}
           Imago version
           <Input
+            type="text"
             schema={{
               enum: imagoVersions,
               enumNames: range(1, imagoVersions.length + 1).map(
@@ -199,7 +224,10 @@ function RecognizeDialog(prop) {
                 <LoadingCircles />
               </div>
             ) : (
-              <StructRender className={classes.struct} struct={structStr} />
+              <StructRender
+                className={classes.struct}
+                struct={structStr as unknown as Struct}
+              />
             ))}
         </div>
       </div>
@@ -207,13 +235,28 @@ function RecognizeDialog(prop) {
   );
 }
 
-function url(file) {
+function url(file: File | null): string | null {
   if (!file) return null;
-  const URL = window.URL || window.webkitURL;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const URL = window.URL || (window as any).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
-const mapStateToProps = (state) => ({
+interface RecognizeState {
+  options: {
+    app: {
+      imagoVersions: string[];
+    };
+    recognize: {
+      file: File | null;
+      structStr: string | Promise<unknown> | null;
+      fragment: boolean;
+      version: string | null;
+    };
+  };
+}
+
+const mapStateToProps = (state: RecognizeState) => ({
   imagoVersions: state.options.app.imagoVersions,
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
@@ -222,14 +265,17 @@ const mapStateToProps = (state) => ({
     state.options.recognize.version || state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  isFragment: (v) => dispatch(shouldFragment(v)),
-  onImage: (file) => dispatch(changeImage(file)),
-  onRecognize: (file, ver) => dispatch(recognize(file, ver)),
-  onChangeImago: (ver) => dispatch(changeVersion(ver)),
-  onOk: (res) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapDispatchToProps = (dispatch: any) => ({
+  isFragment: (v: boolean) => dispatch(shouldFragment(v)),
+  onImage: (file: File | null) => dispatch(changeImage(file)),
+  onRecognize: (file: File | null, ver: string) =>
+    dispatch(recognize(file, ver)),
+  onChangeImago: (ver: string) => dispatch(changeVersion(ver)),
+  onOk: (result: unknown) => {
+    const res = result as { structStr: string; fragment: boolean };
     dispatch(
-      load(res.structStr, {
+      load(res.structStr as unknown as Struct, {
         rescale: true,
         fragment: res.fragment,
       }),

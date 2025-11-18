@@ -762,7 +762,6 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-2960
     Description: Undo/Redo action should work correctly
     */
-    // const yDelta = 300;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();

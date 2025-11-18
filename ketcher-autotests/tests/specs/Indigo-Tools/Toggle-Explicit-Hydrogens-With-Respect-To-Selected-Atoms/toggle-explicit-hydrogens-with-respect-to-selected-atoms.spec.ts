@@ -40,7 +40,6 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 test.describe('1. User can expand hydrogens for ', () => {

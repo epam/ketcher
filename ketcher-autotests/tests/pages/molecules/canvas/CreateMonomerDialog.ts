@@ -20,6 +20,7 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { delay } from '@utils/canvas';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -53,6 +54,7 @@ type ModificationSectionLocators = {
 
 type AliasesSectionLocators = {
   helmAliasEditbox: Locator;
+  helmAliasEditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
@@ -211,6 +213,9 @@ export const CreateMonomerDialog = (page: Page) => {
     page.getByTestId('aliases-accordion'),
     {
       helmAliasEditbox: page.getByTestId('helm-alias-input'),
+      helmAliasEditboxClearButton: page
+        .getByTestId('helm-alias-input')
+        .getByTestId('CloseIcon'),
     },
   );
 
@@ -366,6 +371,7 @@ export const CreateMonomerDialog = (page: Page) => {
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
+      await aliasesSection.helmAliasEditbox.waitFor();
     },
 
     async collapseAliasesSection() {
@@ -438,10 +444,24 @@ export const CreateMonomerDialog = (page: Page) => {
       await deleteButton.click();
     },
 
-    async setHELM(helm: string) {
+    async clearHELMAlias() {
       await this.expandAliasesSection();
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
-      await helmAliasEditbox.fill(helm);
+      await helmAliasEditbox.click();
+      const clearButton = aliasesSection.helmAliasEditboxClearButton;
+      await clearButton.click();
+    },
+
+    async setHELMAlias(helmAlias: string) {
+      await this.expandAliasesSection();
+      await this.clearHELMAlias();
+      const helmAliasEditbox = aliasesSection.helmAliasEditbox;
+      await helmAliasEditbox.click();
+      await page.keyboard.type(helmAlias);
+      // to avoid helm alias lost on submit due to async validation
+      await this.collapseAliasesSection();
+      await this.expandAliasesSection();
+      await delay(0.3);
     },
 
     async submit({ ignoreWarning = false } = {}) {
@@ -476,7 +496,7 @@ export async function createMonomer(
           customModification: string;
         }
     )[];
-    HELM?: string;
+    HELMAlias?: string;
   },
   ignoreWarning = true,
 ) {
@@ -493,8 +513,8 @@ export async function createMonomer(
       options.modificationTypes,
     );
   }
-  if (options.HELM) {
-    await createMonomerDialog.setHELM(options.HELM);
+  if (options.HELMAlias) {
+    await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
   await createMonomerDialog.submit({ ignoreWarning });
 }

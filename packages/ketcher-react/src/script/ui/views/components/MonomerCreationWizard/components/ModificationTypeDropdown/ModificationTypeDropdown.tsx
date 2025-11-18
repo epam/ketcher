@@ -19,7 +19,7 @@ interface IModificationTypeDropdownProps {
 }
 
 export default function ModificationTypeDropdown(
-  props: IModificationTypeDropdownProps,
+  props: Readonly<IModificationTypeDropdownProps>,
 ) {
   const editor = CoreEditor.provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =

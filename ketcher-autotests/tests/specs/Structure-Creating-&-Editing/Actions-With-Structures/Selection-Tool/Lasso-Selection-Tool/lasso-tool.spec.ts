@@ -173,7 +173,6 @@ test.describe('Lasso Selection tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
-    // const aimAtomIndex = 7;
     await dragTo(
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),

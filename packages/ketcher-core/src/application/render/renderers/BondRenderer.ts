@@ -26,7 +26,6 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
-// const BOND_WIDTH_HOVER = 10;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -247,7 +246,6 @@ export class BondRenderer extends BaseRenderer {
     }
     if (this.bond.selected) {
       this.appendSelection();
-      // this.raiseElement();
     } else {
       this.removeSelection();
     }
@@ -428,8 +426,6 @@ export class BondRenderer extends BaseRenderer {
       startBottom,
     ] = this.getSelectionPoints();
 
-    // for a visual representation of the points
-    // please refer to: ketcher-core/docs/data/hover_selection_exp.png
     const pathString = `
       M ${startTop.x} ${startTop.y}
       L ${endTop.x} ${endTop.y}

@@ -384,7 +384,7 @@ export class SequenceViewModel {
           this.nodes.splice(nodeIndex, 0, {
             senseNode: new BackBoneSequenceNode(
               previousHandledSenseNode as SubChainNode,
-              nextConnectedSenseNode as SubChainNode,
+              nextConnectedSenseNode,
             ),
             senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
             antisenseNode: new EmptySequenceNode(),

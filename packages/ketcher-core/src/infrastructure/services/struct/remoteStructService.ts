@@ -28,6 +28,7 @@ import {
   CalculateResult,
   CheckData,
   CheckResult,
+  ChemicalMimeType,
   CleanData,
   CleanResult,
   ConvertData,
@@ -189,7 +190,7 @@ export class RemoteStructService implements StructService {
     )(
       {
         struct,
-        output_format: 'chemical/x-inchi',
+        output_format: ChemicalMimeType.InChIKey,
       },
       {},
     );

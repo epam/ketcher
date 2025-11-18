@@ -158,7 +158,7 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (!shiftKey && !modKey) {
-      this.startMoveIfNeeded(renderer as BaseRenderer);
+      this.startMoveIfNeeded(renderer);
       if (renderer.drawingEntity.selected) {
         return;
       }

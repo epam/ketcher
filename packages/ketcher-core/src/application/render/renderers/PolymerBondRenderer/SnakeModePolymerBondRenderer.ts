@@ -996,18 +996,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (this.isSnakeBond && !this.polymerBond.isHorizontal) ||
       this.isSideConnectionBondDrawn
     ) {
-      (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-        this.hoverAreaElement
-      )) = this.rootElement
+      this.hoverAreaElement = this.rootElement
         ?.append('path')
         .attr('stroke', 'transparent')
         .attr('d', this.path)
         .attr('fill-opacity', 0)
         .attr('stroke-width', '5');
     } else {
-      (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
-        this.hoverAreaElement
-      )) = this.rootElement
+      this.hoverAreaElement = this.rootElement
         ?.append('line')
         .attr('stroke', 'transparent')
         .attr('x1', this.scaledPosition.startPosition.x)

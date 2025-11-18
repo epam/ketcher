@@ -1,5 +1,5 @@
 import { ZoomTransform } from 'd3';
-import { memo, ReactElement, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { LayoutMode } from 'ketcher-core';
 
 import styles from './RulerArea.module.less';
@@ -69,7 +69,7 @@ const RulerScale = ({
   }, [layoutMode, transform]);
 
   const svgChildren = useMemo(() => {
-    const children: ReactElement[] = [];
+    const children: JSX.Element[] = [];
 
     positions.forEach((position, i) => {
       if (layoutMode === 'sequence-layout-mode') {
@@ -162,7 +162,7 @@ const RulerScale = ({
 
   return (
     <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale">
-      <>{svgChildren}</>
+      {svgChildren}
     </svg>
   );
 };

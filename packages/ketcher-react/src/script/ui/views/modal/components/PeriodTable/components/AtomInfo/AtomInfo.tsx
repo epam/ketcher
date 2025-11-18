@@ -14,17 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-function FrozenInput({ value, 'data-testid': dataTestId }) {
+import { ElementColor, type Element } from 'ketcher-core';
+import classes from './AtomInfo.module.less';
+import clsx from 'clsx';
+
+interface AtomInfoProps {
+  el: Element;
+  isInfo: boolean;
+}
+
+function AtomInfo({ el, isInfo }: AtomInfoProps) {
+  const numberStyle = {
+    color: ElementColor[el.label] || 'black',
+    fontSize: '12px',
+  };
+  const elemStyle = {
+    color: ElementColor[el.label] || 'black',
+    fontWeight: 'bold',
+    fontSize: '18px',
+  };
   return (
-    <input
-      data-testid={dataTestId}
-      type="text"
-      spellCheck={false}
-      value={value}
-      readOnly
-      onChange={(event) => event.preventDefault()}
-    />
+    <div className={clsx(classes.ket_atom_info, !isInfo && classes.none)}>
+      <div style={numberStyle}>{el.number}</div>
+      <span style={elemStyle}>{el.label}</span>
+      <br />
+      {el.title}
+      <br />
+      {el.mass}
+    </div>
   );
 }
 
-export default FrozenInput;
+export default AtomInfo;

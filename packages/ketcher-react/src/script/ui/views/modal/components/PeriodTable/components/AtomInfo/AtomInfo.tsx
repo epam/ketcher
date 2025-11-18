@@ -14,11 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor } from 'ketcher-core';
+import { ElementColor, type Element } from 'ketcher-core';
 import classes from './AtomInfo.module.less';
 import clsx from 'clsx';
 
-function AtomInfo({ el, isInfo }) {
+interface AtomInfoProps {
+  el: Element;
+  isInfo: boolean;
+}
+
+function AtomInfo({ el, isInfo }: AtomInfoProps) {
   const numberStyle = {
     color: ElementColor[el.label] || 'black',
     fontSize: '12px',

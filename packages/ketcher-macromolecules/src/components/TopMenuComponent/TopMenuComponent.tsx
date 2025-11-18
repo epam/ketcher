@@ -57,12 +57,11 @@ export function TopMenuComponent() {
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
+  const isFlexMode = layoutMode === 'flex-layout-mode';
 
   const cyclicStructureFormationDisabled =
-    layoutMode !== 'flex-layout-mode' ||
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
-      0 ||
-    !isCycleExistsForSelectedMonomers(selectedEntities);
+      0 || !isCycleExistsForSelectedMonomers(selectedEntities);
 
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
@@ -144,14 +143,16 @@ export function TopMenuComponent() {
           testId="redo"
         />
       </Menu.Group>
-      <Menu.Group isHorizontal={true} divider={true}>
-        <Menu.Item
-          itemId={'arrange-ring' as IconName}
-          title={`Arrange Ring (${hotkeysShortcuts.arrangeRing})`}
-          disabled={cyclicStructureFormationDisabled}
-          testId="arrange-ring"
-        />
-      </Menu.Group>
+      {isFlexMode && (
+        <Menu.Group isHorizontal={true} divider={true}>
+          <Menu.Item
+            itemId={'arrange-ring' as IconName}
+            title={`Arrange Ring (${hotkeysShortcuts.arrangeRing})`}
+            disabled={cyclicStructureFormationDisabled}
+            testId="arrange-ring"
+          />
+        </Menu.Group>
+      )}
       <Menu.Group isHorizontal={true}>
         <Menu.Submenu
           disabled={

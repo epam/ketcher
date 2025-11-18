@@ -4,18 +4,12 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { openFileAndAddToCanvasAsNewProjectMacro } from '@utils/files/readFile';
-import {
-  dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  takeElementScreenshot,
-} from '@utils/index';
+import { takeElementScreenshot } from '@utils/index';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -25,14 +19,6 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ FlexCanvas: _ }) => {});
-
-async function shiftCanvas(page: Page, xShift: number, yShift: number) {
-  await CommonLeftToolbar(page).handTool();
-  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-  await page.mouse.move(x, y);
-  await dragMouseTo(x + xShift, y + yShift, page);
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-}
 
 test(`1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)`, async ({
   SnakeCanvas: _,

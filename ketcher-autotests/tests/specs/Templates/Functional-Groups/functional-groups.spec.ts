@@ -261,7 +261,7 @@ test.describe('Functional Groups', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.expandedAndContractedFg,
+      await FILE_TEST_DATA.expandedAndContractedFg,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

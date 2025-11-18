@@ -1,6 +1,5 @@
 import assert from 'assert';
 import {
-  Bond,
   MonomerMicromolecule,
   SGroup,
   Struct,
@@ -67,7 +66,7 @@ function makeBonds(
   atomsIdMapping: Map<number, number>,
 ) {
   Array.from(existingStruct.bonds).forEach((value) => {
-    const [_, bond] = value as [number, Bond];
+    const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =
       sGroup.atoms.includes(bond.begin) || sGroup.atoms.includes(bond.end);

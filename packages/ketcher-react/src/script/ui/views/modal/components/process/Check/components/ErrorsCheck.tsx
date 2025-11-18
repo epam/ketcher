@@ -14,11 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-function ErrorsCheck(props) {
+interface CheckSchemaItem {
+  type: string;
+  enum: string[];
+  enumNames: string[];
+}
+
+interface CheckSchemaProperties {
+  checkOptions: {
+    title: string;
+    type: string;
+    items: CheckSchemaItem;
+  };
+}
+
+interface CheckSchema {
+  title: string;
+  type: string;
+  properties: CheckSchemaProperties;
+}
+
+interface MoleculeErrors {
+  [key: string]: string;
+}
+
+interface ErrorsCheckProps {
+  moleculeErrors: MoleculeErrors;
+  checkSchema: CheckSchema;
+}
+
+function ErrorsCheck(props: ErrorsCheckProps) {
   const { moleculeErrors, checkSchema } = props;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);
 
-  const getOptionName = (option) => {
+  const getOptionName = (option: string): string => {
     const { items } = checkSchema.properties.checkOptions;
     const nameIndex = items.enum.indexOf(option);
     return items.enumNames[nameIndex];

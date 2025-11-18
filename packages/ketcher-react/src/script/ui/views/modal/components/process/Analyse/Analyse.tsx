@@ -184,7 +184,8 @@ class AnalyseDialog extends Component<Props> {
                   <span>Decimal places</span>
                   <Select
                     options={selectOptions}
-                    value={round[item.round].toString()}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    value={round[item.round] as any}
                     onChange={(val) => {
                       if (item.round) {
                         onChangeRound(item.round, val);

@@ -23,6 +23,7 @@ import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
+  RnaPresetWizardAction,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
@@ -55,6 +56,7 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   },
   errors: {},
   notifications: new Map(),
+  structure: null,
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
@@ -162,11 +164,19 @@ const wizardReducer = (
 
 const rnaPresetWizardReducer = (
   state: typeof initialRnaPresetWizardState,
-  action: WizardAction & {
-    rnaComponentKey: keyof typeof initialRnaPresetWizardState;
-  },
+  action: RnaPresetWizardAction,
 ) => {
-  const { rnaComponentKey, ...restAction } = action;
+  const { rnaComponentKey, editor, ...restAction } = action;
+
+  if (restAction.type === 'SetRnaPresetComponentStructure') {
+    return {
+      ...state,
+      [rnaComponentKey]: {
+        ...state[rnaComponentKey],
+        structure: editor?.selection(),
+      },
+    };
+  }
 
   if (rnaComponentKey !== 'preset') {
     return {
@@ -707,6 +717,7 @@ const MonomerCreationWizard = () => {
               <RnaPresetTabs
                 wizardState={rnaPresetWizardState}
                 wizardStateDispatch={rnaPresetWizardStateDispatch}
+                editor={editor}
               />
             ) : (
               <MonomerCreationWizardFields

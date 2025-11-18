@@ -1,5 +1,8 @@
 import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
+import { Struct } from 'ketcher-core';
+import { Editor } from '../../../../editor';
+import { Selection } from '../../../../editor/Editor';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass | 'rnaPreset';
@@ -13,6 +16,12 @@ export type WizardFormFieldId =
   | 'name'
   | 'naturalAnalogue'
   | 'aliasHELM';
+
+export type RnaPresetWizardStateFieldId =
+  | 'base'
+  | 'sugar'
+  | 'phosphate'
+  | 'preset';
 
 export type StringWizardFormFieldId = Exclude<WizardFormFieldId, 'type'>;
 
@@ -63,6 +72,7 @@ export type WizardState = {
   values: WizardValues;
   errors: WizardErrors;
   notifications: WizardNotifications;
+  structure?: Selection | null;
 };
 
 export type WizardAction =
@@ -93,4 +103,15 @@ export type WizardAction =
     }
   | {
       type: 'ResetErrors';
+    };
+
+export type RnaPresetWizardAction =
+  | (WizardAction & {
+      rnaComponentKey: RnaPresetWizardStateFieldId;
+      editor: Editor;
+    })
+  | {
+      type: 'SetRnaPresetComponentStructure';
+      rnaComponentKey: RnaPresetWizardStateFieldId;
+      editor: Editor;
     };

@@ -9,6 +9,9 @@ import clsx from 'clsx';
 import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
 import styles from './RnaPresetTabs.module.less';
 import AttributeField from './components/AttributeField/AttributeField';
+import { selectionSelector } from '../../../state/editor/selectors';
+import { useSelector } from 'react-redux';
+import { Editor } from '../../../../editor';
 
 interface IRnaPresetTabsProps {
   wizardState: {
@@ -22,29 +25,60 @@ interface IRnaPresetTabsProps {
       };
     };
   };
+  editor: Editor;
 }
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const structureSelection = useSelector(selectionSelector);
+  const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
+  const { wizardState, wizardStateDispatch, editor } = props;
+  const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
+  type rnaComponentKeyType = typeof rnaComponentsKeys[number];
+
+  const highlightStructure = (activeTabState: WizardState) => {
+    editor.highlights.clear();
+
+    if (!activeTabState.structure) {
+      return;
+    }
+
+    editor.highlights.create({
+      atoms: activeTabState.structure.atoms || [],
+      bonds: activeTabState.structure.bonds || [],
+      rgroupAttachmentPoints: [],
+      color: '#CDF1FC',
+    });
+  };
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
+
+    const activeTabState =
+      wizardState[rnaComponentsKeys[newValue - 1] as rnaComponentKeyType];
+
+    highlightStructure(activeTabState);
   };
-
-  const { wizardState, wizardStateDispatch } = props;
-
-  const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
 
   const handleFieldChange = (
     fieldId: WizardFormFieldId,
     value: KetMonomerClass | string,
-    rnaComponentKey: typeof rnaComponentsKeys[number] | 'preset',
+    rnaComponentKey: rnaComponentKeyType | 'preset',
   ) => {
     wizardStateDispatch({
       type: 'SetFieldValue',
       fieldId,
       value,
       rnaComponentKey,
+      editor,
+    });
+  };
+
+  const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
+    wizardStateDispatch({
+      type: 'SetRnaPresetComponentStructure',
+      rnaComponentKey,
+      editor,
     });
   };
 
@@ -102,15 +136,35 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {rnaComponentsKeys.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
-              <MonomerCreationWizardFields
-                key={rnaComponentKey}
-                assignedAttachmentPoints={new Map()}
-                showNaturalAnalogue={rnaComponentKey === 'base'}
-                onFieldChange={(fieldId: WizardFormFieldId, value: string) => {
-                  handleFieldChange(fieldId, value, rnaComponentKey);
-                }}
-                wizardState={wizardState[rnaComponentKey]}
-              />
+              <>
+                <div className={styles.createComponentWrapper}>
+                  <div>
+                    Select all atoms that form this nucleotide component.
+                  </div>
+                  <button
+                    className={clsx(
+                      monomerCreationWizardStyles.buttonSubmit,
+                      styles.createComponentButton,
+                    )}
+                    disabled={!hasSelectedAtoms}
+                    onClick={() => handleClickCreateComponent(rnaComponentKey)}
+                  >
+                    Mark as {rnaComponentKey}
+                  </button>
+                </div>
+                <MonomerCreationWizardFields
+                  key={rnaComponentKey}
+                  assignedAttachmentPoints={new Map()}
+                  showNaturalAnalogue={rnaComponentKey === 'base'}
+                  onFieldChange={(
+                    fieldId: WizardFormFieldId,
+                    value: string,
+                  ) => {
+                    handleFieldChange(fieldId, value, rnaComponentKey);
+                  }}
+                  wizardState={wizardState[rnaComponentKey]}
+                />
+              </>
             )
           );
         })}

@@ -29,9 +29,9 @@ import { Autocomplete, TextField } from '@mui/material';
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
-  onChangeModificationTypes: (modificationTypes: string[]) => void;
+  onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: WizardFormFieldId, value: string) => void;
-  showNaturalAnalogue: boolean;
+  showNaturalAnalogue?: boolean;
 }
 
 const MonomerCreationWizardFields = (

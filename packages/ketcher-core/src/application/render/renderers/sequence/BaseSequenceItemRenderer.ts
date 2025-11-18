@@ -157,8 +157,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             acc +
             monomer.covalentBonds.filter(
               (bond) =>
-                bond instanceof PolymerBond &&
-                (bond as PolymerBond).isSideChainConnection,
+                bond instanceof PolymerBond && bond.isSideChainConnection,
             ).length,
           0,
         ),

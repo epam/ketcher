@@ -735,8 +735,6 @@ export class KetSerializer implements Serializer<Struct> {
     if (monomer.monomerItem.props.MonomerType !== 'CHEM') {
       fileContent[templateNameWithPrefix].naturalAnalogShort =
         monomer.monomerItem.props.MonomerNaturalAnalogCode;
-      fileContent[templateNameWithPrefix].naturalAnalog =
-        monomer.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
     }
 
     fileContent.root.templates.push(getKetRef(templateNameWithPrefix));

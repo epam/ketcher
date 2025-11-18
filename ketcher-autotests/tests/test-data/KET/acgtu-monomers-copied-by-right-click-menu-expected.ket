@@ -1116,6 +1116,7 @@
         "fullName": "Phosphate",
         "alias": "P",
         "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

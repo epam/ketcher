@@ -35,14 +35,13 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
       />
     </svg>
   </div>
-  <div
+  <button
     aria-label="Toggle favorite"
     class="star "
-    role="button"
-    tabindex="0"
+    type="button"
   >
     ★
-  </div>
+  </button>
 </div>
 `;
 
@@ -96,14 +95,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g9muag"
@@ -139,14 +137,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-u0kww"
@@ -182,14 +179,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g314pg"
@@ -225,14 +221,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g9muag"
@@ -268,14 +263,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -327,14 +321,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g9muag"
@@ -370,14 +363,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-u0kww"
@@ -413,14 +405,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g314pg"
@@ -456,14 +447,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g9muag"
@@ -499,14 +489,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -610,14 +599,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g9muag"
@@ -653,14 +641,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-u0kww"
@@ -696,14 +683,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g314pg"
@@ -739,14 +725,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
             class="css-1g9muag"
@@ -782,14 +767,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -836,14 +820,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g9muag"
@@ -879,14 +862,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-u0kww"
@@ -922,14 +904,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g314pg"
@@ -965,14 +946,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
           class="css-1g9muag"
@@ -1008,14 +988,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
       </div>
     </div>

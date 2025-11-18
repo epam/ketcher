@@ -104,11 +104,10 @@ test(
   },
 );
 
-test(
-  '2. Validate preview tooltip positions in relation to the center of the bond',
-  { tag: ['@IncorrectResultBecauseOfBug'] },
-  async ({ page }) => {
-    /* 
+test('2. Validate preview tooltip positions in relation to the center of the bond', async ({
+  page,
+}) => {
+  /* 
         Test task: https://github.com/epam/ketcher/issues/5553
         Description: 
             1. Validate that bond preview tooltip appear at in relation to the center of the bond and 
@@ -119,29 +118,23 @@ test(
             1. Load test canvas with target bonds to check tooltip against
             2. Hover mouse over each bond
             2. Take screenshot of the canvas to compare it with example
-        
-        IMPORTANT: Some tooltips are wrong because of bugs: 
-        https://github.com/epam/ketcher/issues/5407,
-        https://github.com/epam/ketcher/issues/5557, 
-        Will require to update screens after fix
         */
 
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',
-    );
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    page,
+    'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',
+  );
 
-    // count number of bonds on the page
-    const elements = await page.$$('g[pointer-events="stroke"]');
-    const numberOfBonds = elements.length;
+  // count number of bonds on the page
+  const elements = await page.$$('g[pointer-events="stroke"]');
+  const numberOfBonds = elements.length;
 
-    let bondNumber = 0;
-    for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
-      await hoverOverBond(page, bondNumber);
-      await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
-    }
-  },
-);
+  let bondNumber = 0;
+  for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
+    await hoverOverBond(page, bondNumber);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeEditorScreenshot(page);
+  }
+});

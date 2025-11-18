@@ -151,8 +151,6 @@ test.describe('Click and drag Atom on canvas', () => {
     await clickOnMiddleOfCanvas(page);
 
     for (const [atomId, direction] of directions.entries()) {
-      // await moveOnAtom(page, 'P', idx);
-
       const previousAtom = getAtomLocator(page, {
         atomLabel: 'P',
         atomId,

@@ -8,7 +8,7 @@ export class UnsplitNucleotideSequenceItemRenderer extends BaseSequenceItemRende
 
     return naturalAnalogue && naturalAnalogue !== NO_NATURAL_ANALOGUE
       ? naturalAnalogue
-      : '@';
+      : NO_NATURAL_ANALOGUE;
   }
 
   protected drawModification(): void {

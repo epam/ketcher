@@ -200,7 +200,7 @@ export class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
     this.writeHeader();
-    this.writeCTab2000(undefined);
+    this.writeCTab2000();
 
     return this.molfile;
   }

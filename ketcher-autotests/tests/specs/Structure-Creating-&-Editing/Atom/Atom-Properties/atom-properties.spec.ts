@@ -1564,7 +1564,6 @@ test.describe('Atom Properties', () => {
       QueryAtomOption.Connectivity,
     ];
 
-    // const anyAtom = 2;
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).hover();

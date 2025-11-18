@@ -1,6 +1,6 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
-import { takePageScreenshot } from '@utils';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -20,14 +20,13 @@ test.describe('API for switching between modes', () => {
      * Scenario:
      * 1. Add command through API
      */
-    await takePageScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page.evaluate(() => window.ketcher.switchToMacromoleculesMode());
-    await takePageScreenshot(page);
+    const macroCanvas = page.locator('[data-canvasmode="macromolecules-mode"]');
+    expect(macroCanvas).toBeVisible();
   });
 
-  test('Case 2: Check that API ketcher.switchToMoleculesMode() switching from molecules mode to macromolecules', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 2: Check that API ketcher.switchToMoleculesMode() switching from molecules mode to macromolecules', async () => {
     /*
      * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/7535
@@ -35,8 +34,9 @@ test.describe('API for switching between modes', () => {
      * Scenario:
      * 1. Add command through API
      */
-    await takePageScreenshot(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await page.evaluate(() => window.ketcher.switchToMoleculesMode());
-    await takePageScreenshot(page);
+    const microCanvas = page.locator('[data-canvasmode="molecules-mode"]');
+    expect(microCanvas).toBeVisible();
   });
 });

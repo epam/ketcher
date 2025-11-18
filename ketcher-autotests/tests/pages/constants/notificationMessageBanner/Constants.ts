@@ -6,6 +6,8 @@ export enum ErrorMessage {
   noAttachmentPoints = 'noAttachmentPoints',
   incorrectAttachmentPointsOrder = 'incorrectAttachmentPointsOrder',
   notMinimalViableStructure = 'notMinimalViableStructure',
+  invalidHELMAlias = 'invalidHELMAlias',
+  notUniqueHELMAlias = 'notUniqueHELMAlias',
 }
 
 export enum InfoMessage {

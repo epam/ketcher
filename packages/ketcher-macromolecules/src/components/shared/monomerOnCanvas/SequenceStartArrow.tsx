@@ -15,25 +15,18 @@
  ***************************************************************************/
 
 export const SequenceStartArrow = () => (
-  <>
-    <symbol
-      id="sequence-start-arrow"
-      viewBox="0 0 65 65"
-      width="65"
-      height="95"
+  <symbol id="sequence-start-arrow" viewBox="0 0 65 65" width="65" height="95">
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M10.2802 5.09664C10.9756 5.49813 10.9756 6.50187 10.2802 6.90336L2.56467 11.3579C1.86926 11.7594 1 11.2576 1 10.4546V1.54541C1 0.742426 1.86926 0.240558 2.56467 0.642053L10.2802 5.09664Z"
-          stroke="#7C7C7F"
-        />
-      </svg>
-    </symbol>
-  </>
+      <path
+        d="M10.2802 5.09664C10.9756 5.49813 10.9756 6.50187 10.2802 6.90336L2.56467 11.3579C1.86926 11.7594 1 11.2576 1 10.4546V1.54541C1 0.742426 1.86926 0.240558 2.56467 0.642053L10.2802 5.09664Z"
+        stroke="#7C7C7F"
+      />
+    </svg>
+  </symbol>
 );

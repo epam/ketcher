@@ -82,8 +82,7 @@ function ActionButton({
 
 function findActiveMenuItem(menuItems, status) {
   let activeMenuItem = null;
-  for (let index = 0; index < menuItems.length; index++) {
-    const current = menuItems[index];
+  for (const current of menuItems) {
     if (status[current]?.selected) {
       activeMenuItem = current;
       break;
@@ -152,7 +151,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
   return (
     <menu
       className={className}
-      role={role}
+      role={role || 'menu'}
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => (

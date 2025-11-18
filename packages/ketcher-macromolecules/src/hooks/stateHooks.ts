@@ -60,12 +60,9 @@ export function useLayoutMode() {
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     previousLayoutMode || fallbackMode,
   );
-  const onLayoutModeChange = useCallback(
-    (newLayoutMode: LayoutMode) => {
-      setLayoutMode(newLayoutMode);
-    },
-    [setLayoutMode],
-  );
+  const onLayoutModeChange = useCallback((newLayoutMode: LayoutMode) => {
+    setLayoutMode(newLayoutMode);
+  }, []);
 
   useEffect(() => {
     editor?.events.layoutModeChange.add(onLayoutModeChange);
@@ -73,7 +70,7 @@ export function useLayoutMode() {
     return () => {
       editor?.events.layoutModeChange.remove(onLayoutModeChange);
     };
-  }, [onLayoutModeChange, editor?.events.layoutModeChange]);
+  }, [onLayoutModeChange, editor]);
 
   return layoutMode;
 }
@@ -86,9 +83,9 @@ export function useSequenceEditInRNABuilderMode() {
   const [isSequenceEditInRNABuilderMode, setIsSequenceEditInRNABuilderMode] =
     useState(isSequenceEditInRNABuilderModeInitial);
 
-  const onSequenceEditInRNABuilderModeChange = (value: boolean) => {
+  const onSequenceEditInRNABuilderModeChange = useCallback((value: boolean) => {
     setIsSequenceEditInRNABuilderMode(value);
-  };
+  }, []);
 
   useEffect(() => {
     editor?.events.toggleSequenceEditInRNABuilderMode.add(
@@ -100,10 +97,7 @@ export function useSequenceEditInRNABuilderMode() {
         onSequenceEditInRNABuilderModeChange,
       );
     };
-  }, [
-    onSequenceEditInRNABuilderModeChange,
-    editor?.events.toggleSequenceEditInRNABuilderMode,
-  ]);
+  }, [onSequenceEditInRNABuilderModeChange, editor]);
 
   return isSequenceEditInRNABuilderMode;
 }

@@ -211,10 +211,10 @@ export class SGroup {
         [bba.p0.x, bba.p1.x].forEach((x) => {
           [bba.p0.y, bba.p1.y].forEach((y) => {
             const v = new Vec2(x, y);
-            bbb = !bbb ? new Box2Abs(v, v) : bbb!.include(v);
+            bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
           });
         });
-        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!);
+        contentBB = !contentBB ? bbb! : Box2Abs.union(contentBB, bbb!);
       });
 
       topLeftPoint = isBondContent ? contentBB!.centre() : contentBB!.p0;
@@ -224,7 +224,7 @@ export class SGroup {
 
     const sgroups = Array.from(struct.sgroups.values());
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups as [], topLeftPoint)) break;
+      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -530,7 +530,7 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba!);
+      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
     if (!render) render = window.ketcher!.editor.render;
     let attachmentPointsVBox =
@@ -741,7 +741,7 @@ export class SGroup {
     return c;
   }
 
-  static isAtomInContractedSGroup = (atom, sGroups) => {
+  static readonly isAtomInContractedSGroup = (atom, sGroups) => {
     const contractedSGroup: number[] = [];
 
     sGroups.forEach((sGroupOrReSGroup) => {

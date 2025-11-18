@@ -13,8 +13,8 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   private potentialLeavingAtoms: Set<number> = new Set();
 
   constructor(
-    private monomerCreationState: MonomerCreationState,
-    private atomId: number,
+    private readonly monomerCreationState: MonomerCreationState,
+    private readonly atomId: number,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_LGA);
   }

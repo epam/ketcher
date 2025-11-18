@@ -7,10 +7,10 @@ import { AttachmentPointName } from 'domain/types';
 export class ReassignLeavingAtomOperation extends BaseOperation {
   constructor(
     private monomerCreationState: MonomerCreationState,
-    private attachmentPointName: AttachmentPointName,
-    private attachmentAtomId: number,
-    private newLeavingAtomId: number,
-    private previousLeavingAtomId: number,
+    private readonly attachmentPointName: AttachmentPointName,
+    private readonly attachmentAtomId: number,
+    private readonly newLeavingAtomId: number,
+    private readonly previousLeavingAtomId: number,
   ) {
     super(OperationType.MONOMER_CREATION_REASSIGN_LGA);
   }

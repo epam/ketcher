@@ -19,7 +19,6 @@ import {
   MolFileFormat,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   getMonomerLocator,
   AttachmentPoint,
@@ -487,7 +486,7 @@ test.describe('Common connection rules: ', () => {
       .getByText('C', { exact: true })
       .first()
       .hover();
-    await waitForMonomerPreviewMicro(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
     await takeElementScreenshot(
       page,

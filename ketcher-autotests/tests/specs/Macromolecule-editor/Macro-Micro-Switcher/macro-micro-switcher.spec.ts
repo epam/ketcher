@@ -34,7 +34,6 @@ import {
 import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   FileType,
   verifyFileExport,
@@ -298,7 +297,7 @@ test.describe('Macro-Micro-Switcher', () => {
       .getByText('A6OH');
     await monomerOnTheCanvas.hover();
     await ContextMenu(page, monomerOnTheCanvas).open();
-    await waitForMonomerPreviewMicro(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -516,7 +515,7 @@ test.describe('Macro-Micro-Switcher', () => {
       .getByText(Chem.Test_6_Ch.alias);
     await test6Ch.hover();
     await ContextMenu(page, test6Ch).open();
-    await waitForMonomerPreviewMicro(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

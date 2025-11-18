@@ -179,16 +179,15 @@ const MonomerItem = ({
               </AutochainIconWrapper>
             </Tooltip>
           )}
-          <div
+          <button
             onClick={addFavorite}
             onKeyDown={handleFavoriteKeyDown}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            role="button"
-            tabIndex={0}
+            type="button"
             aria-label="Toggle favorite"
           >
             {FavoriteStarSymbol}
-          </div>
+          </button>
         </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

@@ -96,12 +96,12 @@ const FileDrop = ({
   };
 
   return (
-    <div
+    <button
       {...getRootProps({ style })}
       onClick={open}
       onKeyDown={handleKeyDown}
-      role="button"
-      tabIndex={disabled ? -1 : 0}
+      disabled={disabled}
+      type="button"
     >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
@@ -115,7 +115,7 @@ const FileDrop = ({
           <OpenOptionText>Open from file</OpenOptionText>
         </>
       )}
-    </div>
+    </button>
   );
 };
 

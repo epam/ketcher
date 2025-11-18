@@ -518,44 +518,12 @@ function getBracketParameters(
   const brackets: BracketParams[] = [];
   const bracketDirection = direction.rotateSC(1, 0);
 
-  if (crossBondsValues.length < 2) {
-    getBracketParamersWithCrossBondsLessThan2(
-      direction,
-      bracketDirection,
-      bracketBox,
-      brackets,
-    );
-  } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
-    getBracketParamersWithCrossBondsEquals2(
-      mol,
-      crossBondsValues,
-      id,
-      render,
-      attachmentPoints,
-      brackets,
-    );
-  } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 1) {
-    getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
-      crossBondsValues as [number, number],
-      mol,
-      attachmentPoints,
-      render,
-      brackets,
-    );
-  } else {
-    for (let i = 0; i < crossBondsValues.length; ++i) {
-      const bond = mol.bonds.get(Number(crossBondsValues[i]));
-      const center = bond?.getCenter(mol);
-      const direction = atomSet.has(bond?.begin)
-        ? bond?.getDir(mol)
-        : bond?.getDir(mol).negated();
-      if (center && direction) {
-        brackets.push(
-          new BracketParams(center, direction, 0.2, bracketBox.sz().y),
-        );
-      }
-    }
-  }
+  getBracketParamersWithCrossBondsLessThan2(
+    direction,
+    bracketDirection,
+    bracketBox,
+    brackets,
+  );
   return brackets;
 }
 

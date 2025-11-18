@@ -173,8 +173,8 @@ export class SGroupForest {
 
 export function checkOverlapping(
   struct: Struct,
-  atoms: number[] = [],
   sGroupType: 'queryComponent' | 'common',
+  atoms: number[] = [],
 ) {
   const searchFunction = {
     common: (sid: number) => {

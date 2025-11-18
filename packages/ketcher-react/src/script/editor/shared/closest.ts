@@ -581,8 +581,8 @@ function findClosestItem(
 function findCloseMerge(
   restruct: ReStruct,
   selected,
-  maps = ['atoms', 'bonds'],
   options,
+  maps = ['atoms', 'bonds'],
 ) {
   const pos = {
     atoms: new Map(), // aid -> position

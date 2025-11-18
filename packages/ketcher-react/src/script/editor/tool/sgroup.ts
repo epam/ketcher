@@ -538,7 +538,7 @@ class SGroupTool implements Tool {
         if (
           !isDataSGroup && // when data s-group separates
           !isQuerySGroup &&
-          checkOverlapping(struct, selection.atoms, 'common')
+          checkOverlapping(struct, 'common', selection.atoms)
         ) {
           editor.event.message.dispatch({
             error: 'Partial S-group overlapping is not allowed.',
@@ -599,7 +599,7 @@ function createQueryComponentSGroup(
     }
     selection = { atoms: sg.atoms || [] };
   }
-  if (checkOverlapping(struct, selection.atoms, 'queryComponent')) {
+  if (checkOverlapping(struct, 'queryComponent', selection.atoms)) {
     editor.errorHandler?.(
       'Cannot create a query component: one fragment can only be part of one query component',
     );

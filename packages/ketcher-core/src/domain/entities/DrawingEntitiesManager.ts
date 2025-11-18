@@ -3167,8 +3167,8 @@ export class DrawingEntitiesManager {
 
   public static createAntisenseNode(
     node: Nucleoside | Nucleotide,
-    needAddPhosphate = false,
     isDnaAntisense: boolean,
+    needAddPhosphate = false,
   ) {
     const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
       node.rnaBase,
@@ -3272,8 +3272,8 @@ export class DrawingEntitiesManager {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
               senseNode,
-              false,
               isDnaAntisense,
+              false,
             );
 
           if (!antisenseNodeCreationResult) {

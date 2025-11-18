@@ -18,35 +18,31 @@ import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
-  const object =
-    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
+  // Convert old circle data to ellipse format (circles have been migrated to ellipses)
+  let object;
+  if (ketItem.data.mode === 'circle') {
+    const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
+    const pos0 = ketItem.data.pos[0];
+    object = {
+      mode: SimpleObjectMode.ellipse,
+      pos: [
+        {
+          x: pos0.x - Math.abs(radius),
+          y: pos0.y - Math.abs(radius),
+          z: pos0.z - Math.abs(radius),
+        },
+        {
+          x: pos0.x + Math.abs(radius),
+          y: pos0.y + Math.abs(radius),
+          z: pos0.z + Math.abs(radius),
+        },
+      ],
+    };
+  } else {
+    object = ketItem.data;
+  }
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);
   struct.simpleObjects.add(simpleObject);
   return struct;
-}
-
-/**
- * @deprecated TODO to remove after release 2.3
- * As circle has been migrated to ellipses here is function for converting old files data with circles to ellipse type
- * @param ketItem
- */
-function circleToEllipse(ketItem) {
-  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
-  const pos0 = ketItem.data.pos[0];
-  return {
-    mode: SimpleObjectMode.ellipse,
-    pos: [
-      {
-        x: pos0.x - Math.abs(radius),
-        y: pos0.y - Math.abs(radius),
-        z: pos0.z - Math.abs(radius),
-      },
-      {
-        x: pos0.x + Math.abs(radius),
-        y: pos0.y + Math.abs(radius),
-        z: pos0.z + Math.abs(radius),
-      },
-    ],
-  };
 }

@@ -195,7 +195,7 @@ function RecognizeDialog(prop: RecognizeDialogProps) {
             <img
               alt=""
               id="pic"
-              src={url(file) || ''}
+              src={url(file) ?? ''}
               onError={() => {
                 setCanPreviewImage(false);
               }}
@@ -262,7 +262,7 @@ const mapStateToProps = (state: RecognizeState) => ({
   structStr: state.options.recognize.structStr,
   fragment: state.options.recognize.fragment,
   version:
-    state.options.recognize.version || state.options.app.imagoVersions[1],
+    state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

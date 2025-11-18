@@ -46,15 +46,7 @@ Smiles.prototype.isBondInRing = function (bid) {
   return this.inLoop[bid];
 };
 
-Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
-  // eslint-disable-line max-statements
-  let i, j, k;
-
-  if (!ignoreErrors) this.ignoreErrors = ignoreErrors;
-
-  // [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
-  // TODO the fix is temporary, still need to implement error handling/reporting
-  // BEGIN
+Smiles.prototype.prepareStructure = function (struct) {
   struct = struct.clone(
     undefined,
     undefined,
@@ -72,26 +64,27 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       try {
         SGroup.prepareMulForSaving(sg, struct);
       } catch (error) {
-        KetcherLogger.error('smiles.js::Smiles.prototype.saveMolecule', error);
+        KetcherLogger.error(
+          'smiles.js::Smiles.prototype.prepareStructure',
+          error,
+        );
         throw Error('Bad s-group (' + error.message + ')');
       }
     }
-    // 'SMILES data format doesn\'t support s-groups'
   });
-  // END
+  return struct;
+};
 
+Smiles.prototype.initializeAtoms = function (struct) {
   this.atoms = new Array(struct.atoms.size);
-
   struct.atoms.forEach((atom, aid) => {
     this.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
   });
+};
 
-  // From the SMILES specification:
-  // Please note that only atoms on the following list
-  // can be considered aromatic: C, N, O, P, S, As, Se, and * (wildcard).
+Smiles.prototype.detectAromaticBondsAndNeighbours = function (struct) {
   const allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As'];
 
-  // Detect atoms that have aromatic bonds and count neighbours
   struct.bonds.forEach((bond, bid) => {
     if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
       this.atoms[bond.begin].aromatic = true;
@@ -106,42 +99,31 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid });
     this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid });
   });
+};
 
-  this.inLoop = (function () {
-    struct.prepareLoopStructure();
-    let bondsInLoops = new Pile();
-    struct.loops.forEach((loop) => {
-      if (loop.hbs.length <= 6) {
-        const hbids = loop.hbs.map((hbid) => struct.halfBonds.get(hbid).bid);
-        bondsInLoops = bondsInLoops.union(new Pile(hbids));
-      }
-    });
-    const inLoop = {};
-    bondsInLoops.forEach((bid) => {
-      inLoop[bid] = 1;
-    });
-    return inLoop;
-  })();
+Smiles.prototype.detectLoops = function (struct) {
+  struct.prepareLoopStructure();
+  let bondsInLoops = new Pile();
+  struct.loops.forEach((loop) => {
+    if (loop.hbs.length <= 6) {
+      const hbids = loop.hbs.map((hbid) => struct.halfBonds.get(hbid).bid);
+      bondsInLoops = bondsInLoops.union(new Pile(hbids));
+    }
+  });
+  const inLoop = {};
+  bondsInLoops.forEach((bid) => {
+    inLoop[bid] = 1;
+  });
+  return inLoop;
+};
 
-  this.touchedCistransbonds = 0;
-  this.markCisTrans(struct);
+Smiles.prototype.buildNeighborLists = function (walk) {
+  let i, j, k;
 
-  const components = struct.getComponents();
-  const componentsAll = components.reactants.concat(components.products);
-
-  const walk = new Dfs(
-    struct,
-    this.atoms,
-    componentsAll,
-    components.reactants.length,
-  );
-
-  walk.walk();
   this.atoms.forEach((atom) => {
     atom.neighbours = [];
   });
 
-  // fill up neighbor lists for the stereocenters calculation
   for (i = 0; i < walk.v_seq.length; i++) {
     const seqEl = walk.v_seq[i];
     const vIdx = seqEl.idx;
@@ -150,7 +132,6 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
     if (eIdx >= 0) {
       const atom = this.atoms[vIdx];
-
       const openingCycles = walk.numOpeningCycles(eIdx);
 
       for (j = 0; j < openingCycles; j++) {
@@ -160,7 +141,6 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       if (walk.edgeClosingCycle(eIdx)) {
         for (k = 0; k < atom.neighbours.length; k++) {
           if (atom.neighbours[k].aid === -1) {
-            // eslint-disable-line max-depth
             atom.neighbours[k].aid = vPrevIdx;
             atom.neighbours[k].bid = eIdx;
             break;
@@ -176,9 +156,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       this.atoms[vPrevIdx].neighbours.push({ aid: vIdx, bid: eIdx });
     }
   }
+};
 
+Smiles.prototype.detectStereocenters = function (struct) {
   try {
-    // detect chiral configurations
     const stereocenters = new Stereocenters(
       struct,
       function (idx) {
@@ -189,217 +170,269 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     stereocenters.buildFromBonds(this.ignoreErrors);
 
     stereocenters.each((sc, atomIdx) => {
-      // eslint-disable-line max-statements
-      // if (sc.type < MoleculeStereocenters::ATOM_AND)
-      //    continue;
-
-      let implicitHIdx = -1;
-
-      if (sc.pyramid[3] === -1) implicitHIdx = 3;
-      /*
-			else for (j = 0; j < 4; j++)
-				if (ignored_vertices[pyramid[j]])
-				{
-					implicit_h_idx = j;
-					break;
-				}
-				*/
-
-      const pyramidMapping = [];
-      let counter = 0;
-
-      const atom = this.atoms[atomIdx];
-
-      if (atom.parent !== -1) {
-        for (k = 0; k < 4; k++) {
-          if (sc.pyramid[k] === atom.parent) {
-            pyramidMapping[counter++] = k;
-            break;
-          }
-        }
-      }
-
-      if (implicitHIdx !== -1) pyramidMapping[counter++] = implicitHIdx;
-
-      for (j = 0; j !== atom.neighbours.length; j++) {
-        if (atom.neighbours[j].aid === atom.parent) continue; // eslint-disable-line no-continue
-
-        for (k = 0; k < 4; k++) {
-          if (atom.neighbours[j].aid === sc.pyramid[k]) {
-            if (counter >= 4) throw new Error('internal: pyramid overflow');
-            pyramidMapping[counter++] = k;
-            break;
-          }
-        }
-      }
-
-      if (counter === 4) {
-        // move the 'from' atom to the end
-        counter = pyramidMapping[0];
-        pyramidMapping[0] = pyramidMapping[1];
-        pyramidMapping[1] = pyramidMapping[2];
-        pyramidMapping[2] = pyramidMapping[3];
-        pyramidMapping[3] = counter;
-      } else if (counter !== 3) {
-        throw new Error('cannot calculate chirality');
-      }
-
-      if (Stereocenters.isPyramidMappingRigid(pyramidMapping)) {
-        this.atoms[atomIdx].chirality = 1;
-      } else this.atoms[atomIdx].chirality = 2;
+      this.calculateChirality(sc, atomIdx);
     });
   } catch (e) {
-    KetcherLogger.error('smiles.js::Smiles.prototype.saveMolecule', e);
-    // TODO: add error handler call
+    KetcherLogger.error('smiles.js::Smiles.prototype.detectStereocenters', e);
+  }
+};
+
+Smiles.prototype.calculateChirality = function (sc, atomIdx) {
+  let j, k;
+  let implicitHIdx = -1;
+
+  if (sc.pyramid[3] === -1) implicitHIdx = 3;
+
+  const pyramidMapping = [];
+  let counter = 0;
+  const atom = this.atoms[atomIdx];
+
+  if (atom.parent !== -1) {
+    for (k = 0; k < 4; k++) {
+      if (sc.pyramid[k] === atom.parent) {
+        pyramidMapping[counter++] = k;
+        break;
+      }
+    }
   }
 
-  // write the SMILES itself
+  if (implicitHIdx !== -1) pyramidMapping[counter++] = implicitHIdx;
 
-  // cycle_numbers[i] == -1 means that the number is available
-  // cycle_numbers[i] == n means that the number is used by vertex n
-  const cycleNumbers = [];
+  for (j = 0; j !== atom.neighbours.length; j++) {
+    if (atom.neighbours[j].aid === atom.parent) continue; // eslint-disable-line no-continue
 
-  cycleNumbers.push(0); // never used
+    for (k = 0; k < 4; k++) {
+      if (atom.neighbours[j].aid === sc.pyramid[k]) {
+        if (counter >= 4) throw new Error('internal: pyramid overflow');
+        pyramidMapping[counter++] = k;
+        break;
+      }
+    }
+  }
 
-  let firstComponent = true;
+  if (counter === 4) {
+    counter = pyramidMapping[0];
+    pyramidMapping[0] = pyramidMapping[1];
+    pyramidMapping[1] = pyramidMapping[2];
+    pyramidMapping[2] = pyramidMapping[3];
+    pyramidMapping[3] = counter;
+  } else if (counter !== 3) {
+    throw new Error('cannot calculate chirality');
+  }
+
+  if (Stereocenters.isPyramidMappingRigid(pyramidMapping)) {
+    this.atoms[atomIdx].chirality = 1;
+  } else {
+    this.atoms[atomIdx].chirality = 2;
+  }
+};
+
+Smiles.prototype.writeOpeningCycles = function (
+  openingCycles,
+  cycleNumbers,
+  vPrevIdx,
+) {
+  let j, k;
+
+  for (j = 0; j < openingCycles; j++) {
+    for (k = 1; k < cycleNumbers.length; k++) {
+      if (cycleNumbers[k] === -1) {
+        break;
+      }
+    }
+    if (k === cycleNumbers.length) cycleNumbers.push(vPrevIdx);
+    else cycleNumbers[k] = vPrevIdx;
+
+    this.writeCycleNumber(k);
+  }
+};
+
+Smiles.prototype.handleBranching = function (walk, vPrevIdx, eIdx) {
+  const branches = walk.numBranches(vPrevIdx);
+
+  if (branches > 1 && this.atoms[vPrevIdx].branch_cnt < branches - 1) {
+    if (walk.edgeClosingCycle(eIdx)) {
+      this.atoms[vPrevIdx].paren_written = false;
+    } else {
+      this.smiles += '(';
+      this.atoms[vPrevIdx].paren_written = true;
+    }
+  }
+
+  this.atoms[vPrevIdx].branch_cnt++;
+
+  if (this.atoms[vPrevIdx].branch_cnt > branches) {
+    throw new Error('unexpected branch');
+  }
+};
+
+Smiles.prototype.writeBondSymbol = function (
+  struct,
+  bond,
+  eIdx,
+  vIdx,
+  vPrevIdx,
+) {
+  let dir = 0;
+
+  if (bond.type === Bond.PATTERN.TYPE.SINGLE) {
+    dir = this.calcBondDirection(struct, eIdx, vPrevIdx);
+  }
+
+  if ((dir === 1 && vIdx === bond.end) || (dir === 2 && vIdx === bond.begin)) {
+    this.smiles += '/';
+  } else if (
+    (dir === 2 && vIdx === bond.end) ||
+    (dir === 1 && vIdx === bond.begin)
+  ) {
+    this.smiles += '\\';
+  } else if (bond.type === Bond.PATTERN.TYPE.ANY) {
+    this.smiles += '~';
+  } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) {
+    this.smiles += '=';
+  } else if (bond.type === Bond.PATTERN.TYPE.TRIPLE) {
+    this.smiles += '#';
+  } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
+    this.smiles += '-,:';
+  } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
+    this.smiles += '=,:';
+  } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE) {
+    this.smiles += '-,=';
+  } else if (
+    bond.type === Bond.PATTERN.TYPE.AROMATIC &&
+    (!this.atoms[bond.begin].lowercase ||
+      !this.atoms[bond.end].lowercase ||
+      !this.isBondInRing(eIdx))
+  ) {
+    this.smiles += ':';
+  } else if (
+    bond.type === Bond.PATTERN.TYPE.SINGLE &&
+    this.atoms[bond.begin].aromatic &&
+    this.atoms[bond.end].aromatic
+  ) {
+    this.smiles += '-';
+  }
+};
+
+Smiles.prototype.handleClosingCycle = function (cycleNumbers, vIdx) {
+  let j;
+
+  for (j = 1; j < cycleNumbers.length; j++) {
+    if (cycleNumbers[j] === vIdx) break;
+  }
+
+  if (j === cycleNumbers.length) {
+    throw new Error('cycle number not found');
+  }
+
+  this.writeCycleNumber(j);
+  cycleNumbers[j] = -1;
+};
+
+Smiles.prototype.processSequenceElement = function (
+  struct,
+  walk,
+  seqEl,
+  cycleNumbers,
+  firstComponent,
+) {
+  const vIdx = seqEl.idx;
+  const eIdx = seqEl.parent_edge;
+  const vPrevIdx = seqEl.parent_vertex;
+  let writeAtom = true;
+
+  if (vPrevIdx >= 0) {
+    if (walk.numBranches(vPrevIdx) > 1) {
+      if (
+        this.atoms[vPrevIdx].branch_cnt > 0 &&
+        this.atoms[vPrevIdx].paren_written
+      ) {
+        this.smiles += ')';
+      }
+    }
+
+    const openingCycles = walk.numOpeningCycles(eIdx);
+    this.writeOpeningCycles(openingCycles, cycleNumbers, vPrevIdx);
+
+    if (vPrevIdx >= 0) {
+      this.handleBranching(walk, vPrevIdx, eIdx);
+    }
+
+    const bond = struct.bonds.get(eIdx);
+    this.writeBondSymbol(struct, bond, eIdx, vIdx, vPrevIdx);
+
+    if (walk.edgeClosingCycle(eIdx)) {
+      this.handleClosingCycle(cycleNumbers, vIdx);
+      writeAtom = false;
+    }
+  } else {
+    if (!firstComponent.value) {
+      this.smiles +=
+        this.writtenComponents === walk.nComponentsInReactants &&
+        walk.nReactants !== 0
+          ? '>>'
+          : '.';
+    }
+    firstComponent.value = false;
+    this.writtenComponents++;
+  }
+
+  if (writeAtom) {
+    this.writeAtom(
+      struct,
+      vIdx,
+      this.atoms[vIdx].aromatic,
+      this.atoms[vIdx].lowercase,
+      this.atoms[vIdx].chirality,
+    );
+    this.writtenAtoms.push(seqEl.idx);
+  }
+};
+
+Smiles.prototype.writeSmilesString = function (struct, walk) {
+  let i;
+  const cycleNumbers = [0]; // never used
+  const firstComponent = { value: true };
 
   for (i = 0; i < walk.v_seq.length; i++) {
     const seqEl = walk.v_seq[i];
-    const vIdx = seqEl.idx;
-    const eIdx = seqEl.parent_edge;
-    const vPrevIdx = seqEl.parent_vertex;
-    let writeAtom = true;
-
-    if (vPrevIdx >= 0) {
-      if (walk.numBranches(vPrevIdx) > 1) {
-        if (
-          this.atoms[vPrevIdx].branch_cnt > 0 &&
-          this.atoms[vPrevIdx].paren_written
-        ) {
-          this.smiles += ')';
-        }
-      }
-
-      const openingCycles = walk.numOpeningCycles(eIdx);
-
-      for (j = 0; j < openingCycles; j++) {
-        for (k = 1; k < cycleNumbers.length; k++) {
-          if (cycleNumbers[k] === -1) {
-            // eslint-disable-line max-depth
-            break;
-          }
-        }
-        if (k === cycleNumbers.length) cycleNumbers.push(vPrevIdx);
-        else cycleNumbers[k] = vPrevIdx;
-
-        this.writeCycleNumber(k);
-      }
-
-      if (vPrevIdx >= 0) {
-        const branches = walk.numBranches(vPrevIdx);
-
-        if (branches > 1 && this.atoms[vPrevIdx].branch_cnt < branches - 1) {
-          if (walk.edgeClosingCycle(eIdx)) {
-            // eslint-disable-line max-depth
-            this.atoms[vPrevIdx].paren_written = false;
-          } else {
-            this.smiles += '(';
-            this.atoms[vPrevIdx].paren_written = true;
-          }
-        }
-
-        this.atoms[vPrevIdx].branch_cnt++;
-
-        if (this.atoms[vPrevIdx].branch_cnt > branches) {
-          throw new Error('unexpected branch');
-        }
-      }
-
-      const bond = struct.bonds.get(eIdx);
-
-      let dir = 0;
-
-      if (bond.type === Bond.PATTERN.TYPE.SINGLE) {
-        dir = this.calcBondDirection(struct, eIdx, vPrevIdx);
-      }
-
-      if (
-        (dir === 1 && vIdx === bond.end) ||
-        (dir === 2 && vIdx === bond.begin)
-      ) {
-        this.smiles += '/';
-      } else if (
-        (dir === 2 && vIdx === bond.end) ||
-        (dir === 1 && vIdx === bond.begin)
-      ) {
-        this.smiles += '\\';
-      } else if (bond.type === Bond.PATTERN.TYPE.ANY) {
-        this.smiles += '~';
-      } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) {
-        this.smiles += '=';
-      } else if (bond.type === Bond.PATTERN.TYPE.TRIPLE) {
-        this.smiles += '#';
-      } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
-        this.smiles += '-,:';
-      } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
-        this.smiles += '=,:';
-      } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE) {
-        this.smiles += '-,=';
-      } else if (
-        bond.type === Bond.PATTERN.TYPE.AROMATIC &&
-        (!this.atoms[bond.begin].lowercase ||
-          !this.atoms[bond.end].lowercase ||
-          !this.isBondInRing(eIdx))
-      ) {
-        this.smiles += ':';
-      }
-      // TODO: Check if this : is needed
-      else if (
-        bond.type === Bond.PATTERN.TYPE.SINGLE &&
-        this.atoms[bond.begin].aromatic &&
-        this.atoms[bond.end].aromatic
-      ) {
-        this.smiles += '-';
-      }
-
-      if (walk.edgeClosingCycle(eIdx)) {
-        for (j = 1; j < cycleNumbers.length; j++) {
-          if (cycleNumbers[j] === vIdx) break;
-        }
-
-        if (j === cycleNumbers.length)
-          throw new Error('cycle number not found');
-
-        this.writeCycleNumber(j);
-
-        cycleNumbers[j] = -1;
-        writeAtom = false;
-      }
-    } else {
-      if (!firstComponent) {
-        this.smiles +=
-          this.writtenComponents === walk.nComponentsInReactants &&
-          walk.nReactants !== 0
-            ? '>>'
-            : '.'; // when walk.nReactants === 0 - not reaction
-      }
-      firstComponent = false;
-      this.writtenComponents++;
-    }
-    if (writeAtom) {
-      this.writeAtom(
-        struct,
-        vIdx,
-        this.atoms[vIdx].aromatic,
-        this.atoms[vIdx].lowercase,
-        this.atoms[vIdx].chirality,
-      );
-      this.writtenAtoms.push(seqEl.idx);
-    }
+    this.processSequenceElement(
+      struct,
+      walk,
+      seqEl,
+      cycleNumbers,
+      firstComponent,
+    );
   }
+};
+
+Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
+  if (!ignoreErrors) this.ignoreErrors = ignoreErrors;
+
+  struct = this.prepareStructure(struct);
+  this.initializeAtoms(struct);
+  this.detectAromaticBondsAndNeighbours(struct);
+  this.inLoop = this.detectLoops(struct);
+
+  this.touchedCistransbonds = 0;
+  this.markCisTrans(struct);
+
+  const components = struct.getComponents();
+  const componentsAll = components.reactants.concat(components.products);
+
+  const walk = new Dfs(
+    struct,
+    this.atoms,
+    componentsAll,
+    components.reactants.length,
+  );
+
+  walk.walk();
+  this.buildNeighborLists(walk);
+  this.detectStereocenters(struct);
+  this.writeSmilesString(struct, walk);
 
   this.comma = false;
-
   this.writeRadicals(struct);
 
   if (this.comma) this.smiles += '|';

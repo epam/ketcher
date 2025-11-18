@@ -77,10 +77,9 @@ test.describe('Common connection rules: ', () => {
     const cntxt = page.context();
     await page.close();
     await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
+    browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   async function dragBondFromMonomerCenterAwayTo(
@@ -523,12 +522,7 @@ test.describe('Common connection rules: ', () => {
         leftMonomer: attachmentPoint,
         rightMonomer: attachmentPoint,
       });
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
-      //   });
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
-      //   });
+      await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
     }
 
     await AttachmentPointsDialog(page).cancel();

@@ -403,6 +403,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "V"
     },
     "monomer1": {

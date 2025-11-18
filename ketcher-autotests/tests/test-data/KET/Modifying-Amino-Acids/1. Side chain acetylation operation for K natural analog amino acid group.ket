@@ -515,6 +515,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Side chain acetylation"
+        ],
         "naturalAnalogShort": "K"
     },
     "monomer1": {

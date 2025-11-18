@@ -391,6 +391,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Phosphorylation"
+        ],
         "naturalAnalogShort": "T"
     },
     "monomer1": {

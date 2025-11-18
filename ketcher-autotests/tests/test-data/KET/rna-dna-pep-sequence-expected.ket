@@ -911,6 +911,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "P"
     },
     "monomer21": {

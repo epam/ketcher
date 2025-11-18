@@ -128,7 +128,7 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-export let page: Page;
+let page: Page;
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();

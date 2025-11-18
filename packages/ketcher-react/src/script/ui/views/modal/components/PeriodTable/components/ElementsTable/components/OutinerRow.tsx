@@ -16,6 +16,17 @@
 
 import Atom from '../../../../../../../component/view/Atom';
 import clsx from 'clsx';
+import { Element } from 'ketcher-core';
+
+interface OutinerRowProps {
+  row: Element[];
+  caption: string;
+  onAtomSelect: (label: string) => void;
+  onDoubleClick: () => void;
+  currentEvents: (element: Element) => Record<string, unknown>;
+  atomClassNames: (element: Element) => string[];
+  className?: string;
+}
 
 function OutinerRow({
   row,
@@ -25,17 +36,19 @@ function OutinerRow({
   currentEvents,
   atomClassNames,
   className,
-}) {
+}: OutinerRowProps) {
   return (
     <tbody>
       <tr>
-        <th colSpan="3" className={className}>
+        <th colSpan={3} className={className}>
           {caption}
         </th>
         {row.map((element) => (
           <td key={element.label}>
             <Atom
               el={element}
+              shortcut={undefined}
+              selected={undefined}
               className={clsx(...atomClassNames(element))}
               onClick={() => onAtomSelect(element.label)}
               onDoubleClick={() => onDoubleClick()}

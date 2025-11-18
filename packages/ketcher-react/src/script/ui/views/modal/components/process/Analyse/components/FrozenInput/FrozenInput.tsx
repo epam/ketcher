@@ -14,7 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-function FrozenInput({ value, 'data-testid': dataTestId }) {
+export type FrozenInputProps = {
+  value: string | number;
+  'data-testid'?: string;
+};
+
+const FrozenInput = ({
+  value,
+  'data-testid': dataTestId,
+}: FrozenInputProps) => {
   return (
     <input
       data-testid={dataTestId}
@@ -25,6 +33,6 @@ function FrozenInput({ value, 'data-testid': dataTestId }) {
       onChange={(event) => event.preventDefault()}
     />
   );
-}
+};
 
 export default FrozenInput;

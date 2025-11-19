@@ -59,9 +59,13 @@ export function TopMenuComponent() {
   );
   const isFlexMode = layoutMode === 'flex-layout-mode';
 
+  const selectedMonomers = selectedEntities.filter(
+    (entity) => entity && typeof entity.forEachBond === 'function',
+  );
+
   const cyclicStructureFormationDisabled =
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
-      0 || !isCycleExistsForSelectedMonomers(selectedEntities);
+      0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {

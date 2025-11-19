@@ -191,9 +191,9 @@ export class Ketcher {
       : SupportedFormat.smiles;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -216,9 +216,9 @@ export class Ketcher {
 
     const molfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
 
@@ -228,9 +228,9 @@ export class Ketcher {
   getIdt(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.idt,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.idt,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -238,9 +238,9 @@ export class Ketcher {
   getAxoLabs(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.axoLabs,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.axoLabs,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -260,9 +260,9 @@ export class Ketcher {
         : SupportedFormat.rxn;
     const rxnfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
 
     return rxnfile;
@@ -271,12 +271,12 @@ export class Ketcher {
   getKet(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
         ? this.editor.struct()
         : CoreEditor.provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+      SupportedFormat.ket,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
         ? undefined
@@ -288,9 +288,9 @@ export class Ketcher {
   getFasta(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.fasta,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.fasta,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -329,11 +329,11 @@ export class Ketcher {
 
     return getStructure(
       this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
       format === '3-letter'
         ? SupportedFormat.sequence3Letter
         : SupportedFormat.sequence,
-      this.#formatterFactory,
-      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -344,9 +344,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.smarts,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.smarts,
     );
   }
 
@@ -356,9 +356,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cml,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cml,
     );
   }
 
@@ -372,9 +372,9 @@ export class Ketcher {
         : SupportedFormat.sdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -388,9 +388,9 @@ export class Ketcher {
         : SupportedFormat.rdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -400,9 +400,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdxml,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cdxml,
     );
   }
 
@@ -412,27 +412,27 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdx,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cdx,
     );
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
       this.id,
-      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.editor.struct(),
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
     );
   }
 
   async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.ket,
     );
 
     return this.structService.getInChIKey(struct);

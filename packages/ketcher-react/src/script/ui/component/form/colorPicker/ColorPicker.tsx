@@ -102,18 +102,11 @@ const ColorPicker = (props: Props) => {
   };
 
   return (
-    <button
+    <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
       onKeyDown={handleWrapperKeyDown}
-      style={{
-        border: 'none',
-        background: 'none',
-        padding: 0,
-        font: 'inherit',
-        cursor: 'pointer',
-      }}
     >
       <button
         className={clsx({
@@ -188,7 +181,7 @@ const ColorPicker = (props: Props) => {
           )}
         </div>
       )}
-    </button>
+    </div>
   );
 };
 

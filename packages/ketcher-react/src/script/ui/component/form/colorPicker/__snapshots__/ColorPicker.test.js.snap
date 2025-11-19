@@ -5,13 +5,10 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
-    role="button"
-    tabindex="0"
   >
-    <div
+    <button
       class="colorPickerInput"
-      role="button"
-      tabindex="0"
+      style="background: none; padding: 0px; cursor: pointer;"
     >
       <div
         class="colorPickerPreview"
@@ -21,7 +18,7 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
       <icon-chevron.svg
         class="expandIcon turnedIcon"
       />
-    </div>
+    </button>
   </div>
 </DocumentFragment>
 `;

@@ -258,13 +258,20 @@ const Atom: FC<Props> = (props: Props) => {
 
             return (
               <div key={groupName} data-testid={`${groupName}-section`}>
-                <div
+                <button
                   onClick={handleAccordionChange(groupName)}
                   onKeyDown={handleAccordionKeyDown(groupName)}
                   className={classes.accordionSummaryWrapper}
                   aria-disabled={isCustomQuery || isDisabled}
-                  role="button"
-                  tabIndex={isCustomQuery || isDisabled ? -1 : 0}
+                  disabled={isCustomQuery || isDisabled}
+                  style={{
+                    border: 'none',
+                    background: 'none',
+                    padding: 0,
+                    font: 'inherit',
+                    cursor:
+                      isCustomQuery || isDisabled ? 'not-allowed' : 'pointer',
+                  }}
                 >
                   <div className={classes.accordionSummary}>
                     <span>{groupName}</span>
@@ -276,7 +283,7 @@ const Atom: FC<Props> = (props: Props) => {
                       name="chevron"
                     />
                   </div>
-                </div>
+                </button>
                 <div
                   className={clsx({
                     [classes.accordionDetailsWrapper]: true,

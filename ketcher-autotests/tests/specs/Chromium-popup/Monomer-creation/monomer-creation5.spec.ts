@@ -26,7 +26,10 @@ import {
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -1099,5 +1102,128 @@ test(`21. Check that the HELM alias section in the attributes panel can be expan
     page,
     createMonomerDialog.aliasesSection.locator('..'),
   );
+  await createMonomerDialog.discard();
+});
+
+test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: 1. Check that hovering over R1 for sugars give 5' on the tooltip preview
+   *              2. Check that hovering over R2 for sugars give 3' on the tooltip preview
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press Create Monomer button
+   *      4. Set type in Create Monomer dialog to Sugar
+   *      5. Hover over R1 in the structure preview
+   *      6. Take screenshot to validate that 5' is shown in the tooltip
+   *      7. Hover over R2 in the structure preview
+   *      8. Take screenshot to validate that 3' is shown in the tooltip
+   *
+   * IMPORTANT NOTE: Screenshots are incorrect due to bug: https://github.com/epam/ketcher/issues/8584
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await LeftToolbar(page).createMonomer();
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await createMonomerDialog.selectType(MonomerType.Sugar);
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await attachmentPointR1.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  await attachmentPointR2.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
+  await createMonomerDialog.discard();
+});
+
+test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip preview`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: 1. Check that hovering over R1 for phosphates give 5' on the tooltip preview
+   *              2. Check that hovering over R2 for phosphates give 3' on the tooltip preview
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press Create Monomer button
+   *      4. Set type in Create Monomer dialog to Phosphate
+   *      5. Hover over R1 in the structure preview
+   *      6. Take screenshot to validate that 5' is shown in the tooltip
+   *      7. Hover over R2 in the structure preview
+   *      8. Take screenshot to validate that 3' is shown in the tooltip
+   *
+   * IMPORTANT NOTE: Screenshots are incorrect due to bug: https://github.com/epam/ketcher/issues/8584
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await LeftToolbar(page).createMonomer();
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await createMonomerDialog.selectType(MonomerType.Phosphate);
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await attachmentPointR1.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  await attachmentPointR2.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
+  await createMonomerDialog.discard();
+});
+
+test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip preview`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: 1. Check that hovering over R1 for nucleotides give 5' on the tooltip preview
+   *              2. Check that hovering over R2 for nucleotides give 3' on the tooltip preview
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press Create Monomer button
+   *      4. Set type in Create Monomer dialog to Nucleotide
+   *      5. Hover over R1 in the structure preview
+   *      6. Take screenshot to validate that 5' is shown in the tooltip
+   *      7. Hover over R2 in the structure preview
+   *      8. Take screenshot to validate that 3' is shown in the tooltip
+   *
+   * IMPORTANT NOTE: Screenshots are incorrect due to bug: https://github.com/epam/ketcher/issues/8584
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await LeftToolbar(page).createMonomer();
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await attachmentPointR1.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  await attachmentPointR2.hover({ force: true });
+  await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });

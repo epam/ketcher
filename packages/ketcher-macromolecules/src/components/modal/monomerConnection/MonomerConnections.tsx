@@ -298,7 +298,7 @@ function AttachmentPointSelectionPanel({
                 }
                 disabled={disabled}
                 data-testid={`${position}-${attachmentPoint}`}
-                data-isactive={attachmentPoint === selectedAttachmentPoint}
+                data-isActive={attachmentPoint === selectedAttachmentPoint}
               />
               <AttachmentPointNameComponent
                 data-testid={`leaving-group-value`}

@@ -96,7 +96,11 @@ const FileDrop = ({
   };
 
   const rootProps = getRootProps({ style });
-  const { role, tabIndex, ...buttonProps } = rootProps as typeof rootProps & {
+  const {
+    role: _role,
+    tabIndex: _tabIndex,
+    ...buttonProps
+  } = rootProps as typeof rootProps & {
     role?: string;
     tabIndex?: number;
   };

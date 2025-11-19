@@ -602,7 +602,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
   const paper = render.paper;
   const set = paper.set();
 
-  SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
+  SGroup.getAtoms(restruct.molecule, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid);
     if (atom) {
       const p = Scale.modelToCanvas(atom.a.pp, options);

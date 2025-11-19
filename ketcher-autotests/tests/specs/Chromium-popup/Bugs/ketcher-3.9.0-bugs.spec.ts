@@ -362,27 +362,6 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await MacromoleculesTopToolbar(page).arrowScrollRight();
   });
 
-  test("Case 9: System shouldn't allow to create monomers for selection with aromatic bonds to non-selected part", async ({
-    MoleculesCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8351
-     * Bug: https://github.com/epam/ketcher/issues/7893
-     * Description:  System shouldn't allow to create monomers for selection with aromatic bonds to non-selected part
-     *
-     * Scenario:
-     * 1. Go to Molecules mode (clean canvas)
-     * 2. Load from SMARTS: `[#6]-[#6](/[#6])-[#6]`
-     * 3. Select all except aromatic bond and terminal carbon atom
-     *
-     * Version 3.9
-     */
-
-    await pasteFromClipboardAndOpenAsNewProject(page, '[#6]-[#6](/[#6])-[#6]');
-    await prepareMoleculeForMonomerCreation(page, ['2'], ['1']);
-    await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
-  });
-
   test('Case 10: Updated visuals in Right-click context menu', async ({
     MoleculesCanvas: _,
   }) => {

@@ -615,15 +615,21 @@ export class SGroup {
     return brackets;
   }
 
-  static getObjBBox(atoms, mol, useCollapsedSgroupsPosition = false): Box2Abs {
-    const a0 = mol.atoms.get(atoms[0]).pp;
+  static getObjBBox(
+    atoms: number[],
+    mol: Struct,
+    useCollapsedSgroupsPosition = false,
+  ): Box2Abs {
+    const a0 = mol.atoms.get(atoms[0])?.pp;
+    assert(a0);
     let bb = new Box2Abs(a0, a0);
     for (const aid of atoms.slice(1)) {
       const atom = mol.atoms.get(aid);
+      assert(atom);
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.expanded
+        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -631,12 +637,16 @@ export class SGroup {
     return bb;
   }
 
-  static getAtoms(mol, sg): Array<any> {
-    if (!sg.allAtoms) return sg.atoms;
-    const atoms: Array<any> = [];
+  static getAtoms(mol: Struct, sg: SGroup | undefined) {
+    if (sg && !sg.allAtoms) {
+      return sg.atoms as number[];
+    }
+
+    const atoms: number[] = [];
     mol.atoms.forEach((_atom, aid) => {
       atoms.push(aid);
     });
+
     return atoms;
   }
 

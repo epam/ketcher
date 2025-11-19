@@ -56,41 +56,104 @@ Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
   this.parent_edge = parEdge; // edge to parent vertex
 };
 
+Dfs.prototype._findNextUnvisitedVertex = function (cid, component) {
+  let selected = -1;
+
+  while (cid.value < this.components.length && selected === -1) {
+    selected = this.components[cid.value].find((aid) => {
+      if (this.vertices[aid].dfs_state === 0) {
+        selected = aid;
+        return true;
+      }
+      return false;
+    });
+    if (selected === null) {
+      selected = -1;
+      cid.value++;
+    }
+    if (cid.value === this.nReactants) {
+      this.nComponentsInReactants = component;
+    }
+  }
+  if (selected < -1) {
+    this.molecule.atoms.find((aid) => {
+      if (this.vertices[aid].dfs_state === 0) {
+        selected = aid;
+        return true;
+      }
+      return false;
+    });
+  }
+  return selected;
+};
+
+Dfs.prototype._processClosedCycle = function (vIdx, neiIdx, edgeIdx) {
+  this.edges[edgeIdx].closing_cycle = 1;
+
+  let j = vIdx;
+  while (j !== -1 && this.vertices[j].parent_vertex !== neiIdx) {
+    j = this.vertices[j].parent_vertex;
+  }
+
+  if (j === -1) throw new Error('cycle unwind error');
+
+  this.edges[this.vertices[j].parent_edge].opening_cycles++;
+  this.vertices[vIdx].branches++;
+
+  const seqElem = new Dfs.SeqElem(neiIdx, vIdx, edgeIdx);
+  this.v_seq.push(seqElem);
+};
+
+Dfs.prototype._processOpenVertex = function (vIdx, neiIdx, edgeIdx, vStack) {
+  if (this.vertices[neiIdx].dfs_state === 1) {
+    const j = vStack.indexOf(neiIdx);
+
+    if (j === -1) {
+      throw new Error('internal: removing vertex from stack');
+    }
+
+    vStack.splice(j, 1);
+
+    const parent = this.vertices[neiIdx].parent_vertex;
+
+    if (parent >= 0) {
+      this.vertices[parent].branches--;
+    }
+  }
+
+  this.vertices[vIdx].branches++;
+  this.vertices[neiIdx].parent_vertex = vIdx;
+  this.vertices[neiIdx].parent_edge = edgeIdx;
+  this.vertices[neiIdx].dfs_state = 1;
+  vStack.push(neiIdx);
+};
+
+Dfs.prototype._processNeighbors = function (vIdx, parentVertex, vStack) {
+  const atomD = this.atom_data[vIdx];
+
+  for (let i = 0; i < atomD.neighbours.length; i++) {
+    const neiIdx = atomD.neighbours[i].aid;
+    const edgeIdx = atomD.neighbours[i].bid;
+
+    if (neiIdx === parentVertex) continue; // eslint-disable-line no-continue
+
+    if (this.vertices[neiIdx].dfs_state === 2) {
+      this._processClosedCycle(vIdx, neiIdx, edgeIdx);
+    } else {
+      this._processOpenVertex(vIdx, neiIdx, edgeIdx, vStack);
+    }
+  }
+};
+
 Dfs.prototype.walk = function () {
-  // eslint-disable-line max-statements
   const vStack = [];
-  let i, j;
-  let cid = 0;
+  const cid = { value: 0 };
   let component = 0;
 
   while (true) {
     // eslint-disable-line no-constant-condition
     if (vStack.length < 1) {
-      let selected = -1;
-
-      while (cid < this.components.length && selected === -1) {
-        selected = this.components[cid].find((aid) => {
-          if (this.vertices[aid].dfs_state === 0) {
-            selected = aid;
-            return true;
-          }
-          return false;
-        });
-        if (selected === null) {
-          selected = -1;
-          cid++;
-        }
-        if (cid === this.nReactants) this.nComponentsInReactants = component;
-      }
-      if (selected < -1) {
-        this.molecule.atoms.find((aid) => {
-          if (this.vertices[aid].dfs_state === 0) {
-            selected = aid;
-            return true;
-          }
-          return false;
-        });
-      }
+      const selected = this._findNextUnvisitedVertex(cid, component);
       if (selected === -1) break;
       this.vertices[selected].parent_vertex = -1;
       this.vertices[selected].parent_edge = -1;
@@ -101,7 +164,7 @@ Dfs.prototype.walk = function () {
     const vIdx = vStack.pop();
     const parentVertex = this.vertices[vIdx].parent_vertex;
 
-    let seqElem = new Dfs.SeqElem(
+    const seqElem = new Dfs.SeqElem(
       vIdx,
       parentVertex,
       this.vertices[vIdx].parent_edge,
@@ -110,56 +173,7 @@ Dfs.prototype.walk = function () {
 
     this.vertices[vIdx].dfs_state = 2;
 
-    const atomD = this.atom_data[vIdx];
-
-    for (i = 0; i < atomD.neighbours.length; i++) {
-      const neiIdx = atomD.neighbours[i].aid;
-      const edgeIdx = atomD.neighbours[i].bid;
-
-      if (neiIdx === parentVertex) continue; // eslint-disable-line no-continue
-
-      if (this.vertices[neiIdx].dfs_state === 2) {
-        this.edges[edgeIdx].closing_cycle = 1;
-
-        j = vIdx;
-
-        while (j !== -1 && this.vertices[j].parent_vertex !== neiIdx) {
-          j = this.vertices[j].parent_vertex;
-        }
-
-        if (j === -1) throw new Error('cycle unwind error');
-
-        this.edges[this.vertices[j].parent_edge].opening_cycles++;
-        this.vertices[vIdx].branches++;
-
-        seqElem = new Dfs.SeqElem(neiIdx, vIdx, edgeIdx);
-        this.v_seq.push(seqElem);
-      } else {
-        if (this.vertices[neiIdx].dfs_state === 1) {
-          j = vStack.indexOf(neiIdx);
-
-          if (j === -1) {
-            // eslint-disable-line max-depth
-            throw new Error('internal: removing vertex from stack');
-          }
-
-          vStack.splice(j, 1);
-
-          const parent = this.vertices[neiIdx].parent_vertex;
-
-          if (parent >= 0) {
-            // eslint-disable-line max-depth
-            this.vertices[parent].branches--;
-          }
-        }
-
-        this.vertices[vIdx].branches++;
-        this.vertices[neiIdx].parent_vertex = vIdx;
-        this.vertices[neiIdx].parent_edge = edgeIdx;
-        this.vertices[neiIdx].dfs_state = 1;
-        vStack.push(neiIdx);
-      }
-    }
+    this._processNeighbors(vIdx, parentVertex, vStack);
   }
 };
 

@@ -12,7 +12,6 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
-  FILE_TEST_DATA,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
@@ -263,10 +262,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/functional-groups-expanded-contracted.mol')),
     );
     await takeEditorScreenshot(page);
   });
@@ -279,10 +275,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/unknown-superatom-expanded-contracted.mol')),
     );
     await takeEditorScreenshot(page);
   });
@@ -296,10 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomContractedV2000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/one-unknown-superatom-contracted.mol')),
     );
 
     await takeEditorScreenshot(page);
@@ -319,10 +309,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomExpandedV2000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/one-unknown-superatom-expanded.mol')),
     );
     await takeEditorScreenshot(page);
 
@@ -343,10 +330,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneFunctionalGroupContractedV2000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/one-functional-group-contracted.mol')),
     );
 
     await takeEditorScreenshot(page);
@@ -366,7 +350,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV2000),
+        await setMolecule(page, await readFileContent('Molfiles-V2000/one-functional-group-expanded.mol')),
     );
     await takeEditorScreenshot(page);
 
@@ -387,10 +371,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/functional-groups-expanded-contracted.mol')),
     );
     await takeEditorScreenshot(page);
   });
@@ -403,10 +384,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/unknown-superatom-expanded-contracted.mol')),
     );
     await takeEditorScreenshot(page);
   });
@@ -420,10 +398,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomContractedV3000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/one-unknown-superatom-contracted.mol')),
     );
 
     await takeEditorScreenshot(page);
@@ -444,10 +419,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomExpandedV3000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/one-unknown-superatom-expanded.mol')),
     );
     await takeEditorScreenshot(page);
 
@@ -468,10 +440,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneFunctionalGroupContractedV3000,
-        ),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/one-functional-group-contracted.mol')),
     );
 
     await takeEditorScreenshot(page);
@@ -492,7 +461,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000),
+        await setMolecule(page, await readFileContent('Molfiles-V3000/one-functional-group-expanded.mol')),
     );
 
     await takeEditorScreenshot(page);
@@ -513,10 +482,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
-        ),
+        await setMolecule(page, await readFileContent('KET/functional-groups-expanded-contracted.ket')),
     );
     await takeEditorScreenshot(page);
   });
@@ -529,10 +495,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
-        ),
+        await setMolecule(page, await readFileContent('KET/unknown-superatom-expanded-contracted.ket')),
     );
     await takeEditorScreenshot(page);
   });
@@ -546,10 +509,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomContractedKet,
-        ),
+        await setMolecule(page, await readFileContent('KET/one-unknown-superatom-contracted.ket')),
     );
 
     await takeEditorScreenshot(page);
@@ -570,7 +530,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedKet),
+        await setMolecule(page, await readFileContent('KET/one-unknown-superatom-expanded.ket')),
     );
 
     await takeEditorScreenshot(page);
@@ -592,7 +552,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedKet),
+        await setMolecule(page, await readFileContent('KET/one-functional-group-contracted.ket')),
     );
 
     await takeEditorScreenshot(page);
@@ -613,7 +573,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedKet),
+        await setMolecule(page, await readFileContent('KET/one-functional-group-expanded.ket')),
     );
 
     await takeEditorScreenshot(page);
@@ -634,10 +594,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
-        ),
+        await setMolecule(page, await readFileContent('CML/functional-groups-expanded-contracted.cml')),
     );
     await takeEditorScreenshot(page);
   });
@@ -651,7 +608,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedCml),
+        await setMolecule(page, await readFileContent('CML/one-functional-group-contracted.cml')),
     );
 
     await takeEditorScreenshot(page);
@@ -671,10 +628,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
-        ),
+        await setMolecule(page, await readFileContent('CML/unknown-superatom-expanded-contracted.cml')),
     );
     await takeEditorScreenshot(page);
   });
@@ -688,10 +642,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.oneUnknownSuperatomContractedCml,
-        ),
+        await setMolecule(page, await readFileContent('CML/one-unknown-superatom-contracted.cml')),
     );
 
     await takeEditorScreenshot(page);

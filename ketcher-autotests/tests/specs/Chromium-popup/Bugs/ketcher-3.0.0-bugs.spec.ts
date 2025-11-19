@@ -21,10 +21,10 @@ import {
   selectPartOfMolecules,
   clickOnCanvas,
   setMolecule,
-  FILE_TEST_DATA,
   moveMouseAway,
   MolFileFormat,
   SequenceFileFormat,
+  readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
@@ -843,9 +843,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
+    const fileContent = await readFileContent('Molfiles-V3000/macromol.mol');
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, FILE_TEST_DATA.macromol),
+      async () => await setMolecule(page, fileContent),
     );
     await takeEditorScreenshot(page);
   });

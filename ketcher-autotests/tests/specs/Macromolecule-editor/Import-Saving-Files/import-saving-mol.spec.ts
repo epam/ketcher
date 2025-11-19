@@ -769,12 +769,6 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     (Sugar) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',

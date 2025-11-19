@@ -29,7 +29,7 @@ import {
   KetcherLogger,
   Atom,
   isClipboardAPIAvailable,
-  legacyCopy,
+  Struct,
   Struct,
 } from 'ketcher-core';
 
@@ -515,10 +515,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       if (isClipboardAPIAvailable()) {
         navigator.clipboard.writeText(structStr || '');
       } else {
-        legacyCopy(event.clipboardData, {
-          'text/plain': structStr,
-        });
-        event.preventDefault();
+        // Legacy copy requires a clipboard event handler
+        // This path should not be reached with the current UI implementation
+        throw new Error('Clipboard API not available');
       }
     } catch (e) {
       KetcherLogger.error('copyAs.js::copyAs', e);

@@ -13,11 +13,11 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  FILE_TEST_DATA,
   resetZoomLevelToDefault,
   clickOnCanvas,
   setMolecule,
   MolFileFormat,
+  readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
@@ -714,24 +714,17 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    const fileContent = await readFileContent(
+      'RDF-V3000/molecule-with-specific-coordinates.rdf',
+    );
     await waitForSpinnerFinishedWork(
       page,
-      async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
-          { x: 10, y: 10 },
-        ),
+      async () => await setMolecule(page, fileContent, { x: 10, y: 10 }),
     );
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
-      async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
-          { x: 10, y: 10 },
-        ),
+      async () => await setMolecule(page, fileContent, { x: 10, y: 10 }),
     );
     await takeEditorScreenshot(page);
   });

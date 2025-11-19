@@ -7,7 +7,6 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, expect, test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
   MolFileFormat,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
@@ -427,8 +426,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
     await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      page.oneFunctionalGroupExpandedKet,
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -443,8 +441,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      MacroFileType.MOLv3000,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      MacroFileType.MOLv3000.functionalGroupsExpandedContractedV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -782,8 +779,7 @@ test.describe('Macro-Micro-Switcher', () => {
         y: 100,
       };
       await pasteFromClipboardAndAddToCanvas(
-        page,
-        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+        page.oneFunctionalGroupExpandedKet,
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
         from: 'pageTopLeft',
@@ -810,8 +806,7 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
-        MacroFileType.MOLv3000,
-        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        MacroFileType.MOLv3000.functionalGroupsExpandedContractedV3000,
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
         from: 'pageTopLeft',

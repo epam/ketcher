@@ -12,9 +12,9 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
 
   constructor(
-    private monomerCreationState: MonomerCreationState,
-    private attachmentPointName: AttachmentPointName,
-    private potentialLeavingAtoms?: Set<number>,
+    private readonly monomerCreationState: MonomerCreationState,
+    private readonly attachmentPointName: AttachmentPointName,
+    private readonly potentialLeavingAtoms?: Set<number>,
   ) {
     super(OperationType.MONOMER_CREATION_REMOVE_AP);
 

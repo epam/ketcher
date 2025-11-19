@@ -12,9 +12,9 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointName: AttachmentPointName | null = null;
 
   constructor(
-    private monomerCreationState: MonomerCreationState,
-    private attachmentAtomId: number,
-    private leavingAtomId: number,
+    private readonly monomerCreationState: MonomerCreationState,
+    private readonly attachmentAtomId: number,
+    private readonly leavingAtomId: number,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_AA);
   }

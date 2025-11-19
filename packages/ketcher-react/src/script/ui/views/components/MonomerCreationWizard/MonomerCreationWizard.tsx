@@ -587,15 +587,20 @@ const MonomerCreationWizard = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
-    const monomersToSave =
-      type === 'rnaPreset'
-        ? [
-            rnaPresetWizardState.base,
-            rnaPresetWizardState.sugar,
-            rnaPresetWizardState.phosphate,
-          ]
-        : [wizardState];
+    const isRnaPresetType = type === 'rnaPreset';
+    const monomersToSave = isRnaPresetType
+      ? [
+          rnaPresetWizardState.base,
+          rnaPresetWizardState.sugar,
+          rnaPresetWizardState.phosphate,
+        ]
+      : [wizardState];
     const monomersData = [];
+
+    if (isRnaPresetType) {
+    }
+
+    // validation
     let needSaveMonomers = true;
 
     monomersToSave.forEach((monomerToSave) => {
@@ -669,19 +674,9 @@ const MonomerCreationWizard = () => {
       }
     });
 
+    // save
     if (needSaveMonomers) {
       monomersToSave.forEach((monomerToSave) => {
-        // const structure = editor.struct();
-        // structure.atoms.forEach((_, atomId) => {
-        //   if (!monomerToSave.structure.atoms.includes(atomId)) {
-        //     structure.atoms.delete(atomId);
-        //   }
-        // });
-        // structure.bonds.forEach((_, bondId) => {
-        //   if (!monomerToSave.structure.bonds.includes(bondId)) {
-        //     structure.bonds.delete(bondId);
-        //   }
-        // });
         const atomIdMap = new Map<number, number>();
         const bondIdMap = new Map<number, number>();
         const structure = editor.structSelected(
@@ -722,7 +717,10 @@ const MonomerCreationWizard = () => {
         monomersData.push(result);
       });
 
-      editor.finishNewMonomersCreation(monomersData);
+      editor.finishNewMonomersCreation(
+        monomersData,
+        rnaPresetWizardState.preset.name,
+      );
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();

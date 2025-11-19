@@ -67,6 +67,11 @@ import {
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
   AssignAttachmentAtomOperation,
+  IKetMonomerGroupTemplate,
+  getMonomerTemplateRefFromMonomerItem,
+  getKetRef,
+  setMonomerGroupTemplatePrefix,
+  KetMonomerClass,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -91,7 +96,6 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
-import { KetMonomerClass } from 'ketcher-core/dist/application/formatters/types';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -1323,10 +1327,13 @@ class Editor implements KetcherEditor {
     };
   }
 
-  finishNewMonomersCreation(monomersData) {
+  finishNewMonomersCreation(monomersData, rnaPresetName?: string) {
     this.closeMonomerCreationWizard();
 
-    monomersData.forEach((monomerData) => {
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    const isRnaType = Boolean(rnaPresetName);
+
+    const libraryItems = monomersData.map((monomerData) => {
       const { monomer, monomerTemplate, monomerRef } = monomerData;
 
       this.originalSelection.atoms?.forEach((atomId) => {
@@ -1374,20 +1381,59 @@ class Editor implements KetcherEditor {
       this.update(action);
 
       const { root: templateRoot, ...templateData } = monomerTemplate;
-      const libraryItem = JSON.stringify({
+      const libraryItem = {
         root: {
           ...templateRoot,
         },
         [monomerRef]: {
           ...templateData,
         },
-      });
+      };
 
-      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
-      ketcher.updateMonomersLibrary(libraryItem, {
-        format: 'ket',
-        shouldPersist: true,
-      });
+      return libraryItem;
+    });
+
+    let ket = {
+      root: {
+        templates: libraryItems.map((libraryItem) => {
+          return libraryItem.root.templates[0];
+        }),
+      },
+    };
+
+    libraryItems.forEach((libraryItem) => {
+      ket = { ...libraryItem, ...ket };
+    });
+
+    if (isRnaType) {
+      const templateId = monomersData
+        .map((monomerData) => monomerData.monomerTemplate.id)
+        .join('_');
+      const templateRef = setMonomerGroupTemplatePrefix(templateId);
+      const libraryItem = {
+        root: {
+          templates: [getKetRef(templateRef)],
+        },
+        [templateRef]: {
+          type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+          class: KetMonomerClass.RNA,
+          name: rnaPresetName,
+          id: templateId,
+          templates: [
+            ...monomersData.map((monomerData) => {
+              return getKetRef(monomerData.monomerRef);
+            }),
+          ],
+        },
+      };
+
+      ket.root.templates.push(getKetRef(templateRef));
+      ket[templateRef] = libraryItem[templateRef];
+    }
+
+    ketcher.updateMonomersLibrary(JSON.stringify(ket), {
+      format: 'ket',
+      shouldPersist: true,
     });
   }
 

@@ -509,6 +509,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Hydroxylation"
+        ],
         "naturalAnalogShort": "K"
     },
     "monomer1": {

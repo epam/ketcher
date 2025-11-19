@@ -494,6 +494,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "K"
     },
     "monomer1": {

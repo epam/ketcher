@@ -34,7 +34,6 @@ import {
 import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   FileType,
   verifyFileExport,
@@ -108,6 +107,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 const topLeftCorner = {
   x: -325,
@@ -128,7 +128,7 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-export let page: Page;
+let page: Page;
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
@@ -292,13 +292,10 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    const monomerOnTheCanvas = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('A6OH');
+    const monomerOnTheCanvas = getAbbreviationLocator(page, { name: 'A6OH' });
     await monomerOnTheCanvas.hover();
     await ContextMenu(page, monomerOnTheCanvas).open();
-    await waitForMonomerPreviewMicro(page);
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -511,12 +508,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    const test6Ch = page
-      .getByTestId(KETCHER_CANVAS)
-      .getByText(Chem.Test_6_Ch.alias);
+    const test6Ch = getAbbreviationLocator(page, {
+      name: Chem.Test_6_Ch.alias,
+    });
     await test6Ch.hover();
     await ContextMenu(page, test6Ch).open();
-    await waitForMonomerPreviewMicro(page);
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

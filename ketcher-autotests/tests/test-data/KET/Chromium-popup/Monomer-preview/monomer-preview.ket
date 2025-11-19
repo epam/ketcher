@@ -1,0 +1,118 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-test___test"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 9.074038105676658,
+            "y": -10.25
+        },
+        "alias": "test",
+        "templateId": "test___test",
+        "expanded": true
+    },
+    "monomerTemplate-test___test": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -1.299,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.433,
+                    -0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.433,
+                    0.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.299,
+                    -0.25,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "test___test",
+        "fullName": "test",
+        "alias": "test",
+        "aliasHELM": "test_HELM",
+        "aliasAxoLabs": "test_AxoLabs",
+        "idtAliases": {
+            "base": "test_IDT"
+        },
+	"modificationTypes": ["Natural amino acid", "Inversion", "N-methylation", "Side chain acetylation", "Custom modidication"],
+       "attachmentPoints": [
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    }
+}

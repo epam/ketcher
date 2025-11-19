@@ -710,6 +710,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "Y"
     },
     "monomer1": {

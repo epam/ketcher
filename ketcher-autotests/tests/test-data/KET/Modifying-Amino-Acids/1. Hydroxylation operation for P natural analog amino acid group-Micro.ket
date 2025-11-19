@@ -476,6 +476,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Hydroxylation"
+        ],
         "naturalAnalogShort": "P"
     },
     "monomer1": {

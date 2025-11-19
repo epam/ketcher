@@ -39,6 +39,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -562,8 +564,7 @@ test('20. Verify export/import of structures containing the star atom in the PNG
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  // Commeted out due to the issue with PNG export: https://github.com/epam/Indigo/issues/3079
-  // await verifyPNGExport(page);
+  await verifyPNGExport(page);
 });
 
 test('21. Verify export/import of structures containing the star atom in the SVG format', async () => {
@@ -581,8 +582,7 @@ test('21. Verify export/import of structures containing the star atom in the SVG
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  // Commeted out due to the issue with SVG export: https://github.com/epam/Indigo/issues/3079
-  // await verifySVGExport(page);
+  await verifySVGExport(page);
 });
 
 test('22. Verify the star atom remains visible and functional after switching between modes', async () => {

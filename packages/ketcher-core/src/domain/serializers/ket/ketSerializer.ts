@@ -726,9 +726,11 @@ export class KetSerializer implements Serializer<Struct> {
       fullName: monomer.monomerItem.props.Name,
       alias: monomer.monomerItem.label,
       aliasHELM: monomer.monomerItem.props.aliasHELM,
+      aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
+      modificationTypes: monomer.monomerItem.props.modificationTypes,
     };
     // CHEMs do not have natural analog
     if (monomer.monomerItem.props.MonomerType !== 'CHEM') {

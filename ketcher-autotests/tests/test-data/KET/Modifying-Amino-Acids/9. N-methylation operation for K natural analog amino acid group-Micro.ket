@@ -509,6 +509,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "N-methylation"
+        ],
         "naturalAnalogShort": "K"
     },
     "monomer1": {

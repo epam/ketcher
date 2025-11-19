@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -224,10 +223,10 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+    const fileContent = await readFileContent(
+      'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

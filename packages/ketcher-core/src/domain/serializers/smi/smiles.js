@@ -414,6 +414,80 @@ Smiles.prototype.writeCycleNumber = function (n) {
   else throw new Error('bad cycle number: ' + n);
 };
 
+Smiles.prototype._isCommonOrganicAtom = function (label) {
+  // eslint-disable-line no-underscore-dangle
+  const commonAtoms = ['C', 'P', 'N', 'S', 'O', 'Cl', 'F', 'Br', 'B', 'I'];
+  return commonAtoms.includes(label);
+};
+
+Smiles.prototype._shouldCalculateHydrogen = function (
+  // eslint-disable-line no-underscore-dangle
+  atom,
+  aromatic,
+  chirality,
+  idx,
+) {
+  if (atom.explicitValence >= 0 || atom.radical !== 0 || chirality > 0) {
+    return true;
+  }
+  if (aromatic && atom.label !== 'C' && atom.label !== 'O') {
+    return true;
+  }
+  if (
+    aromatic &&
+    atom.label === 'C' &&
+    this.atoms[idx].neighbours.length < 3 &&
+    this.atoms[idx].h_count === 0
+  ) {
+    return true;
+  }
+  return false;
+};
+
+Smiles.prototype._getAtomLabel = function (atom) {
+  // eslint-disable-line no-underscore-dangle
+  if (atom.atomList && !atom.atomList.notList) {
+    return { label: atom.atomList.label(), skipBrackets: true };
+  }
+  if (atom.isPseudo() || atom.atomList?.notList) {
+    return { label: '*', skipBrackets: true };
+  }
+  return { label: atom.label, skipBrackets: false };
+};
+
+Smiles.prototype._appendChiralityMarker = function (chirality, atom) {
+  // eslint-disable-line no-underscore-dangle
+  if (chirality > 0) {
+    this.smiles += chirality === 1 ? '@' : '@@';
+    if (atom.implicitH > 1) {
+      throw new Error(atom.implicitH + ' implicit H near stereocenter');
+    }
+  }
+};
+
+Smiles.prototype._appendHydrogenCount = function (
+  // eslint-disable-line no-underscore-dangle
+  atom,
+  hydro,
+  needBrackets,
+) {
+  if (atom.label !== 'H') {
+    if (hydro > 1 || (hydro === 0 && !needBrackets)) {
+      this.smiles += 'H' + hydro;
+    } else if (hydro === 1) {
+      this.smiles += 'H';
+    }
+  }
+};
+
+Smiles.prototype._appendChargeMarker = function (charge) {
+  // eslint-disable-line no-underscore-dangle
+  if (charge > 1) this.smiles += '+' + charge;
+  else if (charge < -1) this.smiles += charge;
+  else if (charge === 1) this.smiles += '+';
+  else if (charge === -1) this.smiles += '-';
+};
+
 Smiles.prototype.writeAtom = function (
   mol,
   idx,
@@ -423,34 +497,8 @@ Smiles.prototype.writeAtom = function (
 ) {
   // eslint-disable-line max-params, max-statements
   const atom = mol.atoms.get(idx);
-  let needBrackets = false;
-  let hydro = -1;
-  let aam = 0;
 
-  /*
-	if (mol.haveQueryAtoms())
-	{
-	  query_atom = &mol.getQueryAtom(idx);
-
-	  if (query_atom->type == QUERY_ATOM_RGROUP)
-	  {
-		 if (mol.getRGroups()->isRGroupAtom(idx))
-		 {
-			const Array<int> &rg = mol.getRGroups()->getSiteRGroups(idx);
-
-			if (rg.length != 1)
-			   throw Error("rgroup count %d", rg.length);
-
-			_output.printf("[&%d]", rg[0] + 1);
-		 }
-		 else
-			_output.printf("[&%d]", 1);
-
-		 return;
-	  }
-	}
-	*/
-
+  // Handle special atom labels that don't need further processing
   if (atom.label === 'A') {
     this.smiles += '*';
     return;
@@ -461,47 +509,20 @@ Smiles.prototype.writeAtom = function (
     return;
   }
 
-  // KETCHER-598 (Ketcher does not save AAM into reaction SMILES)
-  // BEGIN
-  //    if (this.atom_atom_mapping)
-  //        aam = atom_atom_mapping[idx];
-  aam = atom.aam;
-  // END
+  const aam = atom.aam;
+  let needBrackets = !this._isCommonOrganicAtom(atom.label);
+  let hydro = -1;
 
-  if (
-    atom.label !== 'C' &&
-    atom.label !== 'P' &&
-    atom.label !== 'N' &&
-    atom.label !== 'S' &&
-    atom.label !== 'O' &&
-    atom.label !== 'Cl' &&
-    atom.label !== 'F' &&
-    atom.label !== 'Br' &&
-    atom.label !== 'B' &&
-    atom.label !== 'I'
-  ) {
-    needBrackets = true;
-  }
-
-  if (
-    atom.explicitValence >= 0 ||
-    atom.radical !== 0 ||
-    chirality > 0 ||
-    (aromatic && atom.label !== 'C' && atom.label !== 'O') ||
-    (aromatic &&
-      atom.label === 'C' &&
-      this.atoms[idx].neighbours.length < 3 &&
-      this.atoms[idx].h_count === 0)
-  ) {
+  // Determine if hydrogen count should be calculated
+  if (this._shouldCalculateHydrogen(atom, aromatic, chirality, idx)) {
     hydro = this.atoms[idx].h_count;
   }
 
-  let label = atom.label;
-  if (atom.atomList && !atom.atomList.notList) {
-    label = atom.atomList.label();
-    needBrackets = false; // atom list label already has brackets
-  } else if (atom.isPseudo() || atom.atomList?.notList) {
-    label = '*';
+  // Get the appropriate label and determine if brackets should be skipped
+  const labelInfo = this._getAtomLabel(atom);
+  const label = labelInfo.label;
+
+  if (labelInfo.skipBrackets) {
     needBrackets = false;
   } else if (
     chirality ||
@@ -513,6 +534,7 @@ Smiles.prototype.writeAtom = function (
     needBrackets = true;
   }
 
+  // Start writing the atom
   if (needBrackets) {
     if (hydro === -1) hydro = this.atoms[idx].h_count;
     this.smiles += '[';
@@ -520,52 +542,15 @@ Smiles.prototype.writeAtom = function (
 
   if (atom.isotope > 0) this.smiles += atom.isotope;
 
-  if (lowercase) this.smiles += label.toLowerCase();
-  else this.smiles += label;
+  this.smiles += lowercase ? label.toLowerCase() : label;
 
-  if (chirality > 0) {
-    if (chirality === 1) this.smiles += '@';
-    // chirality == 2
-    else this.smiles += '@@';
-
-    if (atom.implicitH > 1) {
-      throw new Error(atom.implicitH + ' implicit H near stereocenter');
-    }
-  }
-
-  if (atom.label !== 'H') {
-    if (hydro > 1 || (hydro === 0 && !needBrackets)) this.smiles += 'H' + hydro;
-    else if (hydro === 1) this.smiles += 'H';
-  }
-
-  if (atom.charge > 1) this.smiles += '+' + atom.charge;
-  else if (atom.charge < -1) this.smiles += atom.charge;
-  else if (atom.charge === 1) this.smiles += '+';
-  else if (atom.charge === -1) this.smiles += '-';
+  this._appendChiralityMarker(chirality, atom);
+  this._appendHydrogenCount(atom, hydro, needBrackets);
+  this._appendChargeMarker(atom.charge);
 
   if (aam > 0) this.smiles += ':' + aam;
 
   if (needBrackets) this.smiles += ']';
-
-  /*
-	if (mol.getRGroupFragment() != 0)
-	{
-	  for (i = 0; i < 2; i++)
-	  {
-		 int j;
-
-		 for (j = 0; mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1; j++)
-			if (idx == mol.getRGroupFragment()->getAttachmentPoint(i, j))
-			{
-			   _output.printf("([*])");
-			   break;
-			}
-
-		 if (mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1)
-			break;
-	  }
-	}
-	*/
 };
 
 Smiles.prototype.markCisTrans = function (mol) {

@@ -46,15 +46,15 @@ function getPanelPosition(
 ): CursorPosition {
   const width = 140;
   const height = 40;
-  
+
   // Convert viewport coordinates to canvas-relative coordinates
   const canvasRelativeX = position.x - canvasOffset.x;
   const canvasRelativeY = position.y - canvasOffset.y;
-  
+
   // adjust position to keep inside canvas area
   const viewportRightLimit = render?.clientArea?.clientWidth - width / 2;
   const viewportBottomLimit = render?.clientArea?.clientHeight - height;
-  
+
   let adjustedX = canvasRelativeX - tooltipOffset.x;
   let adjustedY = canvasRelativeY - tooltipOffset.y;
 
@@ -123,7 +123,9 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
 
   // Get canvas offset from viewport
   const canvasRect = render?.clientArea?.getBoundingClientRect();
-  const canvasOffset = canvasRect ? { x: canvasRect.left, y: canvasRect.top } : { x: 0, y: 0 };
+  const canvasOffset = canvasRect
+    ? { x: canvasRect.left, y: canvasRect.top }
+    : { x: 0, y: 0 };
 
   const shiftedPosition = getPanelPosition(position, render, canvasOffset);
   const isSmall = ["5'", "3'"].includes((tooltip || '').trim());

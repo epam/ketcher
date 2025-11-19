@@ -50,13 +50,18 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
 
   return (
     <div className={styles.optionsContainer}>
-      <div
+      <button
         onClick={selectClipboard}
         onKeyDown={handleKeyDown}
         className={styles.dropContainer}
         data-testid="paste-from-clipboard-button"
-        role="button"
-        tabIndex={0}
+        style={{
+          border: 'none',
+          background: 'none',
+          padding: 0,
+          font: 'inherit',
+          cursor: 'pointer',
+        }}
       >
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />
@@ -67,7 +72,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         <div className={styles.buttonLabelWrapper}>
           <p className={styles.buttonLabel}>Paste from clipboard</p>
         </div>
-      </div>
+      </button>
 
       <FileDrop
         onDropAccepted={fileLoadHandler}

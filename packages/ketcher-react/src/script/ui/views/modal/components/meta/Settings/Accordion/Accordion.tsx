@@ -48,13 +48,18 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
         const shouldGroupBeRended = expandedAccordions.includes(label);
         return (
           <div key={key}>
-            <div
+            <button
               onClick={handleAccordionChange(label)}
               onKeyDown={handleAccordionKeyDown(label)}
               className={classes.accordionSummaryWrapper}
               data-testid={`${label}-accordion`}
-              role="button"
-              tabIndex={0}
+              style={{
+                border: 'none',
+                background: 'none',
+                padding: 0,
+                font: 'inherit',
+                cursor: 'pointer',
+              }}
             >
               <div className={classes.accordionSummary}>
                 <Icon
@@ -72,7 +77,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
                   <span className={classes.changeMarker}></span>
                 )}
               </div>
-            </div>
+            </button>
             <div
               className={clsx({
                 [classes.accordionDetailsWrapper]: true,

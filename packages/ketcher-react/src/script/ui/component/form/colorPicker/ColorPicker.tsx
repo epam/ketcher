@@ -102,23 +102,33 @@ const ColorPicker = (props: Props) => {
   };
 
   return (
-    <div
+    <button
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
       onKeyDown={handleWrapperKeyDown}
-      role="button"
-      tabIndex={0}
+      style={{
+        border: 'none',
+        background: 'none',
+        padding: 0,
+        font: 'inherit',
+        cursor: 'pointer',
+      }}
     >
-      <div
+      <button
         className={clsx({
           [classes.colorPickerInput]: true,
           [classes.selectedInput]: isOpen,
         })}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        role="button"
-        tabIndex={0}
+        style={{
+          border: 'none',
+          background: 'none',
+          padding: 0,
+          font: 'inherit',
+          cursor: 'pointer',
+        }}
       >
         <div
           className={classes.colorPickerPreview}
@@ -133,7 +143,7 @@ const ColorPicker = (props: Props) => {
           })}
           name="chevron"
         />
-      </div>
+      </button>
       {isOpen && (
         <div
           className={clsx(
@@ -178,7 +188,7 @@ const ColorPicker = (props: Props) => {
           )}
         </div>
       )}
-    </div>
+    </button>
   );
 };
 

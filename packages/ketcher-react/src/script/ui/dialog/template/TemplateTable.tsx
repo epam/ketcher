@@ -90,7 +90,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {templates.map((tmpl, i) => {
         return (
-          <div
+          <button
             className={
               tmpl.struct !== selected?.struct
                 ? classes.td
@@ -104,8 +104,13 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             }
             onClick={() => onSelect(tmpl)}
             onKeyDown={handleKeyDown(tmpl)}
-            role="button"
-            tabIndex={0}
+            style={{
+              border: 'none',
+              background: 'none',
+              padding: 0,
+              font: 'inherit',
+              cursor: 'pointer',
+            }}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -148,7 +153,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   <Icon name="edit" />
                 </button>
               )}
-          </div>
+          </button>
         );
       })}
     </div>

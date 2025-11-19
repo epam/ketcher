@@ -2,6 +2,7 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
+  Atom,
   AttachmentPointClickData,
   AttachmentPointName,
   CoreEditor,
@@ -11,6 +12,7 @@ import {
   ketcherProvider,
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
+  Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { useEffect, useMemo, useReducer, useState } from 'react';
@@ -45,6 +47,7 @@ import { createPortal } from 'react-dom';
 import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
+import { isNumber } from 'lodash';
 
 const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
@@ -318,9 +321,9 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
   return { notifications, problematicAttachmentPoints };
 };
 
-const validateStructure = (editor: Editor) => {
+const validateStructure = (structure: Struct, editor: Editor) => {
   const notifications = new Map<WizardNotificationId, WizardNotification>();
-  const isStructureImpure = Editor.isStructureImpure(editor.struct());
+  const isStructureImpure = Editor.isStructureImpure(structure);
   if (isStructureImpure) {
     notifications.set('impureStructure', {
       type: 'error',
@@ -328,7 +331,10 @@ const validateStructure = (editor: Editor) => {
     });
   }
 
-  const isMinimalViableStructure = editor.isMinimalViableStructure();
+  const isMinimalViableStructure = Editor.isMinimalViableStructure(
+    structure,
+    editor.monomerCreationState,
+  );
   if (!isMinimalViableStructure) {
     notifications.set('notMinimalViableStructure', {
       type: 'error',
@@ -337,7 +343,7 @@ const validateStructure = (editor: Editor) => {
     return notifications;
   }
 
-  const isStructureContinuous = Editor.isStructureContinuous(editor.struct());
+  const isStructureContinuous = Editor.isStructureContinuous(structure);
   if (!isStructureContinuous) {
     notifications.set('incontinuousStructure', {
       type: 'error',
@@ -581,80 +587,146 @@ const MonomerCreationWizard = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
-    const { errors: inputsErrors, notifications: inputsNotifications } =
-      validateInputs(values);
-    if (Object.keys(inputsErrors).length > 0) {
-      wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
-      wizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: inputsNotifications,
-      });
-      return;
-    }
+    const monomersToSave =
+      type === 'rnaPreset'
+        ? [
+            rnaPresetWizardState.base,
+            rnaPresetWizardState.sugar,
+            rnaPresetWizardState.phosphate,
+          ]
+        : [wizardState];
+    const monomersData = [];
+    let needSaveMonomers = true;
 
-    const {
-      notifications: attachmentPointsNotifications,
-      problematicAttachmentPoints,
-    } = validateAttachmentPoints(Array.from(assignedAttachmentPoints.keys()));
-    if (attachmentPointsNotifications.size > 0) {
-      wizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: attachmentPointsNotifications,
-      });
-      editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-      return;
-    }
-
-    const {
-      errors: modificationTypesErrors,
-      notifications: modificationTypesNotifications,
-    } = validateModificationTypes(modificationTypes, naturalAnalogue);
-    if (Object.keys(modificationTypesErrors).length > 0) {
-      wizardStateDispatch({
-        type: 'SetErrors',
-        errors: modificationTypesErrors,
-      });
-      wizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: modificationTypesNotifications,
-      });
-      return;
-    }
-
-    const structureNotifications = validateStructure(editor);
-    if (structureNotifications.size > 0) {
-      wizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: structureNotifications,
-      });
-      return;
-    }
-
-    if (type) {
-      const leavingGroupNotifications = validateMonomerLeavingGroups(
-        editor,
-        type,
-        assignedAttachmentPoints,
-      );
-      if (leavingGroupNotifications.size > 0) {
-        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
-          .message;
-        setLeavingGroupDialogMessage(firstMessage);
+    monomersToSave.forEach((monomerToSave) => {
+      const structure = editor.structSelected(monomerToSave.structure);
+      const { values: valuesToSave } = monomerToSave;
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToSave);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+        });
         return;
       }
-    }
 
-    editor.saveNewMonomer({
-      type,
-      symbol,
-      name,
-      naturalAnalogue,
-      modificationTypes,
-      aliasHELM,
+      const {
+        notifications: attachmentPointsNotifications,
+        problematicAttachmentPoints,
+      } = validateAttachmentPoints(Array.from(assignedAttachmentPoints.keys()));
+      if (attachmentPointsNotifications.size > 0) {
+        needSaveMonomers = false;
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: attachmentPointsNotifications,
+        });
+        editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
+        return;
+      }
+
+      const {
+        errors: modificationTypesErrors,
+        notifications: modificationTypesNotifications,
+      } = validateModificationTypes(modificationTypes, naturalAnalogue);
+      if (Object.keys(modificationTypesErrors).length > 0) {
+        needSaveMonomers = false;
+        wizardStateDispatch({
+          type: 'SetErrors',
+          errors: modificationTypesErrors,
+        });
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: modificationTypesNotifications,
+        });
+        return;
+      }
+
+      const structureNotifications = validateStructure(structure, editor);
+      if (structureNotifications.size > 0) {
+        needSaveMonomers = false;
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: structureNotifications,
+        });
+        return;
+      }
+
+      if (type) {
+        const leavingGroupNotifications = validateMonomerLeavingGroups(
+          editor,
+          type,
+          assignedAttachmentPoints,
+        );
+        if (leavingGroupNotifications.size > 0) {
+          needSaveMonomers = false;
+          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+            .message;
+          setLeavingGroupDialogMessage(firstMessage);
+        }
+      }
     });
 
-    dispatch(onAction(selectRectangleAction));
-    resetWizard();
+    if (needSaveMonomers) {
+      monomersToSave.forEach((monomerToSave) => {
+        // const structure = editor.struct();
+        // structure.atoms.forEach((_, atomId) => {
+        //   if (!monomerToSave.structure.atoms.includes(atomId)) {
+        //     structure.atoms.delete(atomId);
+        //   }
+        // });
+        // structure.bonds.forEach((_, bondId) => {
+        //   if (!monomerToSave.structure.bonds.includes(bondId)) {
+        //     structure.bonds.delete(bondId);
+        //   }
+        // });
+        const atomIdMap = new Map<number, number>();
+        const bondIdMap = new Map<number, number>();
+        const structure = editor.structSelected(
+          monomerToSave.structure,
+          atomIdMap,
+          bondIdMap,
+        );
+        const attachmentPoints = new Map<
+          AttachmentPointName,
+          [number, number]
+        >();
+
+        assignedAttachmentPoints.forEach(
+          ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
+            if (
+              isNumber(atomIdMap.get(attachmentAtomId)) ||
+              isNumber(atomIdMap.get(leavingGroupAtomId))
+            ) {
+              attachmentPoints.set(attachmentPointKey, [
+                atomIdMap.get(attachmentAtomId),
+                atomIdMap.get(leavingGroupAtomId),
+              ]);
+            }
+          },
+        );
+
+        const result = editor.saveNewMonomer({
+          type: monomerToSave.values.type,
+          symbol: monomerToSave.values.symbol,
+          name: monomerToSave.values.name,
+          naturalAnalogue: monomerToSave.values.naturalAnalogue,
+          modificationTypes,
+          aliasHELM: monomerToSave.values.aliasHELM,
+          structure,
+          attachmentPoints,
+        });
+
+        monomersData.push(result);
+      });
+
+      editor.finishNewMonomersCreation(monomersData);
+
+      dispatch(onAction(selectRectangleAction));
+      resetWizard();
+    }
   };
 
   const ketcherEditorRootElement = document.querySelector(

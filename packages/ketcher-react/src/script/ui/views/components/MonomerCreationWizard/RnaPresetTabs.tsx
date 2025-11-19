@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { WizardFormFieldId, WizardState } from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { KetMonomerClass } from 'application/formatters';
@@ -35,6 +35,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const { wizardState, wizardStateDispatch, editor } = props;
   const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
   type rnaComponentKeyType = typeof rnaComponentsKeys[number];
+  const currentTabState =
+    wizardState[rnaComponentsKeys[selectedTab - 1] as rnaComponentKeyType];
 
   const highlightStructure = (activeTabState: WizardState) => {
     editor.highlights.clear();
@@ -81,6 +83,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       editor,
     });
   };
+
+  useEffect(() => {
+    if (!currentTabState) {
+      return;
+    }
+
+    highlightStructure(currentTabState);
+    editor.selection(null);
+  }, [currentTabState?.structure]);
 
   return (
     <div>

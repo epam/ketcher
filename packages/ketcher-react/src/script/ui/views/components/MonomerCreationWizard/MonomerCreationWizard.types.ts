@@ -26,7 +26,7 @@ export type RnaPresetWizardStateFieldId =
 export type StringWizardFormFieldId = Exclude<WizardFormFieldId, 'type'>;
 
 export type WizardValues = {
-  type: KetMonomerClass | undefined;
+  type: KetMonomerClass | 'rnaPreset' | undefined;
 } & {
   [key in StringWizardFormFieldId]: string;
 };

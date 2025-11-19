@@ -3,10 +3,10 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
   moveMouseAway,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -79,10 +79,10 @@ test.describe('Reagents CML format', () => {
       Description: Reagents 'NH3' displays above reaction arrow and HF below.
       results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
+    const fileContent = await readFileContent(
+      'CML/reagents-below-and-above-arrow.cml',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

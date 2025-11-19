@@ -4,8 +4,8 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
-  FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -51,10 +51,10 @@ test.describe('Reagents CDX format', () => {
       Test case: EPMLSOPKET-4710
       Description: Reagents 'NH3' displays above reaction arrow and HCl below.
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCdx,
+    const fileContent = await readFileContent(
+      'CDX/reagents-below-and-above-arrow.cdx',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

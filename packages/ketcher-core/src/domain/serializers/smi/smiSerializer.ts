@@ -16,7 +16,7 @@
 
 import { Serializer } from '../serializers.types';
 import { SmiSerializerOptions } from './smi.types';
-import { Smiles } from './smiles';
+import { saveMoleculeToSmiles } from './smiles';
 import { Struct } from 'domain/entities';
 
 export class SmiSerializer implements Serializer<Struct> {
@@ -35,6 +35,6 @@ export class SmiSerializer implements Serializer<Struct> {
   }
 
   serialize(struct: Struct): string {
-    return new Smiles().saveMolecule(struct, this.options.ignoreErrors);
+    return saveMoleculeToSmiles(struct, this.options.ignoreErrors);
   }
 }

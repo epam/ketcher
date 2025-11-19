@@ -19,7 +19,15 @@ struct.atoms.add(new Atom({ label: 'C' }));
 describe('Smiles.writeAtom method', () => {
   beforeEach(() => {
     smiles = new Smiles();
-    smiles.saveMolecule(struct, true);
+    // Calculate implicit hydrogens first
+    struct.initHalfBonds();
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+    // Initialize atoms array for testing writeAtom method
+    smiles.atoms = new Array(struct.atoms.size);
+    struct.atoms.forEach((atom, aid) => {
+      smiles.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
+    });
     smiles.smiles = '';
   });
 

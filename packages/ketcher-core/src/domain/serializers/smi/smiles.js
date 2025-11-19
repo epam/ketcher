@@ -633,65 +633,135 @@ Smiles.prototype.markCisTrans = function (mol) {
   });
 };
 
+Smiles.prototype._isBondOrientationMatching = function (
+  sidebondIdx,
+  targetAtom,
+  expectedSaved1,
+  expectedSaved2,
+  mol,
+) {
+  const dbond = this.dbonds[sidebondIdx];
+  const bond = mol.bonds.get(sidebondIdx);
+
+  return (
+    (dbond.saved === expectedSaved1 && bond.begin === targetAtom) ||
+    (dbond.saved === expectedSaved2 && bond.end === targetAtom)
+  );
+};
+
+Smiles.prototype._countBondOrientations = function (
+  sidebondIdx,
+  targetAtom,
+  expectedSaved1,
+  expectedSaved2,
+  mol,
+) {
+  if (sidebondIdx === -1 || this.dbonds[sidebondIdx].saved === 0) {
+    return { match: 0, noMatch: 0 };
+  }
+
+  const isMatching = this._isBondOrientationMatching(
+    sidebondIdx,
+    targetAtom,
+    expectedSaved1,
+    expectedSaved2,
+    mol,
+  );
+
+  return isMatching ? { match: 1, noMatch: 0 } : { match: 0, noMatch: 1 };
+};
+
+Smiles.prototype._setSideBondValue = function (
+  sidebondIdx,
+  targetAtom,
+  value1,
+  value2,
+  mol,
+) {
+  if (sidebondIdx === -1) return;
+
+  this.dbonds[sidebondIdx].saved =
+    mol.bonds.get(sidebondIdx).begin === targetAtom ? value1 : value2;
+};
+
+Smiles.prototype._setSideBondsForConfiguration = function (
+  sidebonds,
+  bond,
+  parity,
+  isN1Configuration,
+  mol,
+) {
+  const beginValue1 = isN1Configuration ? 1 : 2;
+  const beginValue2 = isN1Configuration ? 2 : 1;
+
+  this._setSideBondValue(
+    sidebonds[0],
+    bond.begin,
+    beginValue1,
+    beginValue2,
+    mol,
+  );
+  this._setSideBondValue(
+    sidebonds[1],
+    bond.begin,
+    beginValue2,
+    beginValue1,
+    mol,
+  );
+
+  const isCis = parity === CisTrans.PARITY.CIS;
+  const endValue1 = isCis === isN1Configuration ? 1 : 2;
+  const endValue2 = isCis === isN1Configuration ? 2 : 1;
+
+  this._setSideBondValue(sidebonds[2], bond.end, endValue1, endValue2, mol);
+  this._setSideBondValue(sidebonds[3], bond.end, endValue2, endValue1, mol);
+};
+
 Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
-  // eslint-disable-line max-statements
   const bond = mol.bonds.get(bondIdx);
   const subst = this.cis_trans.getSubstituents(bondIdx);
   const parity = this.cis_trans.getParity(bondIdx);
 
-  const sidebonds = [-1, -1, -1, -1];
+  const sidebonds = [
+    mol.findBondId(subst[0], bond.begin),
+    subst[1] !== -1 ? mol.findBondId(subst[1], bond.begin) : -1,
+    mol.findBondId(subst[2], bond.end),
+    subst[3] !== -1 ? mol.findBondId(subst[3], bond.end) : -1,
+  ];
 
-  sidebonds[0] = mol.findBondId(subst[0], bond.begin);
-  if (subst[1] !== -1) sidebonds[1] = mol.findBondId(subst[1], bond.begin);
+  const counts0 = this._countBondOrientations(
+    sidebonds[0],
+    bond.begin,
+    1,
+    2,
+    mol,
+  );
+  const counts1 = this._countBondOrientations(
+    sidebonds[1],
+    bond.begin,
+    2,
+    1,
+    mol,
+  );
+  const counts2 = this._countBondOrientations(
+    sidebonds[2],
+    bond.end,
+    1,
+    2,
+    mol,
+  );
+  const counts3 = this._countBondOrientations(
+    sidebonds[3],
+    bond.end,
+    2,
+    1,
+    mol,
+  );
 
-  sidebonds[2] = mol.findBondId(subst[2], bond.end);
-  if (subst[3] !== -1) sidebonds[3] = mol.findBondId(subst[3], bond.end);
-
-  let n1 = 0;
-  let n2 = 0;
-  let n3 = 0;
-  let n4 = 0;
-
-  if (this.dbonds[sidebonds[0]].saved !== 0) {
-    if (
-      (this.dbonds[sidebonds[0]].saved === 1 &&
-        mol.bonds.get(sidebonds[0]).begin === bond.begin) ||
-      (this.dbonds[sidebonds[0]].saved === 2 &&
-        mol.bonds.get(sidebonds[0]).end === bond.begin)
-    ) {
-      n1++;
-    } else n2++;
-  }
-  if (sidebonds[1] !== -1 && this.dbonds[sidebonds[1]].saved !== 0) {
-    if (
-      (this.dbonds[sidebonds[1]].saved === 2 &&
-        mol.bonds.get(sidebonds[1]).begin === bond.begin) ||
-      (this.dbonds[sidebonds[1]].saved === 1 &&
-        mol.bonds.get(sidebonds[1]).end === bond.begin)
-    ) {
-      n1++;
-    } else n2++;
-  }
-  if (this.dbonds[sidebonds[2]].saved !== 0) {
-    if (
-      (this.dbonds[sidebonds[2]].saved === 1 &&
-        mol.bonds.get(sidebonds[2]).begin === bond.end) ||
-      (this.dbonds[sidebonds[2]].saved === 2 &&
-        mol.bonds.get(sidebonds[2]).end === bond.end)
-    ) {
-      n3++;
-    } else n4++;
-  }
-  if (sidebonds[3] !== -1 && this.dbonds[sidebonds[3]].saved !== 0) {
-    if (
-      (this.dbonds[sidebonds[3]].saved === 2 &&
-        mol.bonds.get(sidebonds[3]).begin === bond.end) ||
-      (this.dbonds[sidebonds[3]].saved === 1 &&
-        mol.bonds.get(sidebonds[3]).end === bond.end)
-    ) {
-      n3++;
-    } else n4++;
-  }
+  let n1 = counts0.match + counts1.match;
+  let n2 = counts0.noMatch + counts1.noMatch;
+  const n3 = counts2.match + counts3.match;
+  const n4 = counts2.noMatch + counts3.noMatch;
 
   if (parity === CisTrans.PARITY.CIS) {
     n1 += n3;
@@ -706,46 +776,10 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
   if (n1 === 0 && n2 === 0) return false;
 
   if (n1 > 0) {
-    this.dbonds[sidebonds[0]].saved =
-      mol.bonds.get(sidebonds[0]).begin === bond.begin ? 1 : 2;
-    if (sidebonds[1] !== -1) {
-      this.dbonds[sidebonds[1]].saved =
-        mol.bonds.get(sidebonds[1]).begin === bond.begin ? 2 : 1;
-    }
-
-    this.dbonds[sidebonds[2]].saved =
-      (mol.bonds.get(sidebonds[2]).begin === bond.end) ===
-      (parity === CisTrans.PARITY.CIS)
-        ? 1
-        : 2;
-    if (sidebonds[3] !== -1) {
-      this.dbonds[sidebonds[3]].saved =
-        (mol.bonds.get(sidebonds[3]).begin === bond.end) ===
-        (parity === CisTrans.PARITY.CIS)
-          ? 2
-          : 1;
-    }
+    this._setSideBondsForConfiguration(sidebonds, bond, parity, true, mol);
   }
   if (n2 > 0) {
-    this.dbonds[sidebonds[0]].saved =
-      mol.bonds.get(sidebonds[0]).begin === bond.begin ? 2 : 1;
-    if (sidebonds[1] !== -1) {
-      this.dbonds[sidebonds[1]].saved =
-        mol.bonds.get(sidebonds[1]).begin === bond.begin ? 1 : 2;
-    }
-
-    this.dbonds[sidebonds[2]].saved =
-      (mol.bonds.get(sidebonds[2]).begin === bond.end) ===
-      (parity === CisTrans.PARITY.CIS)
-        ? 2
-        : 1;
-    if (sidebonds[3] !== -1) {
-      this.dbonds[sidebonds[3]].saved =
-        (mol.bonds.get(sidebonds[3]).begin === bond.end) ===
-        (parity === CisTrans.PARITY.CIS)
-          ? 1
-          : 2;
-    }
+    this._setSideBondsForConfiguration(sidebonds, bond, parity, false, mol);
   }
 
   return true;

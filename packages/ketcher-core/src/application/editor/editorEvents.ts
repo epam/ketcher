@@ -318,4 +318,10 @@ export const hotkeysConfiguration = {
       editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
     },
   },
+  arrangeRing: {
+    shortcut: ['Shift+Alt+c'],
+    handler: (editor: CoreEditor) => {
+      editor.events.layoutCircular.dispatch();
+    },
+  },
 };

@@ -49,7 +49,7 @@ test.describe('Import-Saving .fasta Files', () => {
     SequenceMonomerType.DNA,
     SequenceMonomerType.RNA,
     SequenceMonomerType.Peptide,
-  ] as const;
+  ];
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async () => {

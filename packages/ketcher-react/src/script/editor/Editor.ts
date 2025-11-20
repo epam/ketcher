@@ -1350,7 +1350,7 @@ class Editor implements KetcherEditor {
         atomIdMap,
       } = monomerData;
       const monomerOriginalAtomIds = monomerStructureInWizard.atoms.map(
-        (atomId) => this.selectedToOriginalAtomsIdMap.get(atomId),
+        (atomId) => this.selectedToOriginalAtomsIdMap.get(atomId) ?? atomId,
       );
       const monomerAtomIdToOriginalAtomIdMap = new Map();
 

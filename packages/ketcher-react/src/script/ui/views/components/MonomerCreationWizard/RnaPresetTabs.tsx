@@ -46,7 +46,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const highlightStructure = (activeTabState: WizardState) => {
     editor.highlights.clear();
 
-    if (!activeTabState.structure) {
+    if (!activeTabState?.structure) {
       return;
     }
 

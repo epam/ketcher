@@ -30,7 +30,6 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import {
   AttachmentPoint,
   getMonomerLocator,
-  moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

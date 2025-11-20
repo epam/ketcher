@@ -15,6 +15,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentAtomId: number,
     private readonly leavingAtomId: number,
+    private readonly _attachmentPointName?: AttachmentPointName,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_AA);
   }
@@ -25,9 +26,9 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     const { assignedAttachmentPoints, potentialAttachmentPoints } =
       this.monomerCreationState;
 
-    this.attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
-    );
+    this.attachmentPointName =
+      this._attachmentPointName ||
+      getNextFreeAttachmentPoint(Array.from(assignedAttachmentPoints.keys()));
 
     assignedAttachmentPoints.set(this.attachmentPointName, [
       this.attachmentAtomId,

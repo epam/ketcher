@@ -598,6 +598,70 @@ const MonomerCreationWizard = () => {
     const monomersData = [];
 
     if (isRnaPresetType) {
+      // fill attachment points between RNA preset components
+      const struct = editor.struct();
+      const baseStructure = rnaPresetWizardState.base.structure;
+      const sugarStructure = rnaPresetWizardState.sugar.structure;
+      const phosphateStructure = rnaPresetWizardState.phosphate.structure;
+
+      const bondsBetweenSugarAndBase = struct.bonds.filter((_, bond) => {
+        return (
+          (baseStructure?.atoms?.includes(bond.begin) &&
+            sugarStructure?.atoms?.includes(bond.end)) ||
+          (baseStructure?.atoms?.includes(bond.end) &&
+            sugarStructure?.atoms?.includes(bond.begin))
+        );
+      });
+      const bondsBetweenSugarAndPhosphate = struct.bonds.filter((_, bond) => {
+        return (
+          (phosphateStructure?.atoms?.includes(bond.begin) &&
+            sugarStructure?.atoms?.includes(bond.end)) ||
+          (phosphateStructure?.atoms?.includes(bond.end) &&
+            sugarStructure?.atoms?.includes(bond.begin))
+        );
+      });
+
+      const bondBetweenSugarAndBase = [...bondsBetweenSugarAndBase.values()][0];
+      const bondBetweenSugarAndPhosphate = [
+        ...bondsBetweenSugarAndPhosphate.values(),
+      ][0];
+
+      const sugarR3AttachmentPointAtom = sugarStructure?.atoms?.includes(
+        bondBetweenSugarAndBase.begin,
+      )
+        ? bondBetweenSugarAndBase.begin
+        : bondBetweenSugarAndBase.end;
+      const sugarR2AttachmentPointAtom = sugarStructure?.atoms?.includes(
+        bondBetweenSugarAndPhosphate.begin,
+      )
+        ? bondBetweenSugarAndPhosphate.begin
+        : bondBetweenSugarAndPhosphate.end;
+      const baseR1AttachmentPointAtom = baseStructure?.atoms?.includes(
+        bondBetweenSugarAndBase.begin,
+      )
+        ? bondBetweenSugarAndBase.begin
+        : bondBetweenSugarAndBase.end;
+      const phosphateR1AttachmentPointAtom =
+        phosphateStructure?.atoms?.includes(bondBetweenSugarAndPhosphate.begin)
+          ? bondBetweenSugarAndPhosphate.begin
+          : bondBetweenSugarAndPhosphate.end;
+
+      editor.assignConnectionPointAtom(
+        baseR1AttachmentPointAtom,
+        AttachmentPointName.R1,
+      );
+      editor.assignConnectionPointAtom(
+        sugarR2AttachmentPointAtom,
+        AttachmentPointName.R2,
+      );
+      editor.assignConnectionPointAtom(
+        sugarR3AttachmentPointAtom,
+        AttachmentPointName.R3,
+      );
+      editor.assignConnectionPointAtom(
+        phosphateR1AttachmentPointAtom,
+        AttachmentPointName.R1,
+      );
     }
 
     // validation

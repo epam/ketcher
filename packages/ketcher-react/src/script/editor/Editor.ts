@@ -1126,7 +1126,10 @@ class Editor implements KetcherEditor {
     this.update(action);
   }
 
-  assignConnectionPointAtom(atomId: number) {
+  assignConnectionPointAtom(
+    atomId: number,
+    attachmentPointName?: AttachmentPointName,
+  ) {
     assert(this.monomerCreationState);
 
     const potentialLeavingAtoms =
@@ -1173,6 +1176,7 @@ class Editor implements KetcherEditor {
         this.monomerCreationState,
         atomId,
         leavingAtomId,
+        attachmentPointName,
       ),
     ]).perform(this.render.ctab);
 

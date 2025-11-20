@@ -1129,6 +1129,10 @@ class Editor implements KetcherEditor {
   assignConnectionPointAtom(
     atomId: number,
     attachmentPointName?: AttachmentPointName,
+    assignedAttachmentPointsByMonomer?: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
   ) {
     assert(this.monomerCreationState);
 
@@ -1177,6 +1181,7 @@ class Editor implements KetcherEditor {
         atomId,
         leavingAtomId,
         attachmentPointName,
+        assignedAttachmentPointsByMonomer,
       ),
     ]).perform(this.render.ctab);
 

@@ -596,7 +596,39 @@ const MonomerCreationWizard = () => {
         ]
       : [wizardState];
     const monomersData = [];
+    const assignedAttachmentPointsByMonomer = new Map();
 
+    // separate attachment points by preset components
+    if (isRnaPresetType) {
+      monomersToSave.forEach((componentWizardState) => {
+        const assignedAttachmentPointsForComponent = new Map();
+
+        assignedAttachmentPoints.forEach(
+          ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
+            if (
+              componentWizardState.structure?.atoms?.includes(attachmentAtomId)
+            ) {
+              assignedAttachmentPointsForComponent.set(attachmentPointName, [
+                attachmentAtomId,
+                leavingGroupAtomId,
+              ]);
+            }
+          },
+        );
+
+        assignedAttachmentPointsByMonomer.set(
+          componentWizardState,
+          assignedAttachmentPointsForComponent,
+        );
+      });
+    } else {
+      assignedAttachmentPointsByMonomer.set(
+        wizardState,
+        assignedAttachmentPoints,
+      );
+    }
+
+    // fill attachment points between preset components
     if (isRnaPresetType) {
       // fill attachment points between RNA preset components
       const struct = editor.struct();
@@ -649,18 +681,22 @@ const MonomerCreationWizard = () => {
       editor.assignConnectionPointAtom(
         baseR1AttachmentPointAtom,
         AttachmentPointName.R1,
+        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
       );
       editor.assignConnectionPointAtom(
         sugarR2AttachmentPointAtom,
         AttachmentPointName.R2,
+        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
       );
       editor.assignConnectionPointAtom(
         sugarR3AttachmentPointAtom,
         AttachmentPointName.R3,
+        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
       );
       editor.assignConnectionPointAtom(
         phosphateR1AttachmentPointAtom,
         AttachmentPointName.R1,
+        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
       );
     }
 
@@ -669,6 +705,8 @@ const MonomerCreationWizard = () => {
 
     monomersToSave.forEach((monomerToSave) => {
       const structure = editor.structSelected(monomerToSave.structure);
+      const monomerAssignedAttachmentPoints =
+        assignedAttachmentPointsByMonomer.get(monomerToSave);
       const { values: valuesToSave } = monomerToSave;
       const { errors: inputsErrors, notifications: inputsNotifications } =
         validateInputs(valuesToSave);
@@ -685,7 +723,9 @@ const MonomerCreationWizard = () => {
       const {
         notifications: attachmentPointsNotifications,
         problematicAttachmentPoints,
-      } = validateAttachmentPoints(Array.from(assignedAttachmentPoints.keys()));
+      } = validateAttachmentPoints(
+        Array.from(monomerAssignedAttachmentPoints.keys()),
+      );
       if (attachmentPointsNotifications.size > 0) {
         needSaveMonomers = false;
         wizardStateDispatch({
@@ -727,7 +767,7 @@ const MonomerCreationWizard = () => {
         const leavingGroupNotifications = validateMonomerLeavingGroups(
           editor,
           type,
-          assignedAttachmentPoints,
+          monomerAssignedAttachmentPoints,
         );
         if (leavingGroupNotifications.size > 0) {
           needSaveMonomers = false;
@@ -748,22 +788,15 @@ const MonomerCreationWizard = () => {
           atomIdMap,
           bondIdMap,
         );
-        const attachmentPoints = new Map<
-          AttachmentPointName,
-          [number, number]
-        >();
+        const monomerAssignedAttachmentPoints =
+          assignedAttachmentPointsByMonomer.get(monomerToSave);
 
-        assignedAttachmentPoints.forEach(
+        monomerAssignedAttachmentPoints.forEach(
           ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
-            if (
-              isNumber(atomIdMap.get(attachmentAtomId)) ||
-              isNumber(atomIdMap.get(leavingGroupAtomId))
-            ) {
-              attachmentPoints.set(attachmentPointKey, [
-                atomIdMap.get(attachmentAtomId),
-                atomIdMap.get(leavingGroupAtomId),
-              ]);
-            }
+            monomerAssignedAttachmentPoints.set(attachmentPointKey, [
+              atomIdMap.get(attachmentAtomId),
+              atomIdMap.get(leavingGroupAtomId),
+            ]);
           },
         );
 
@@ -775,7 +808,7 @@ const MonomerCreationWizard = () => {
           modificationTypes,
           aliasHELM: monomerToSave.values.aliasHELM,
           structure,
-          attachmentPoints,
+          attachmentPoints: monomerAssignedAttachmentPoints,
         });
 
         monomersData.push(result);

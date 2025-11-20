@@ -426,7 +426,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
     await pasteFromClipboardAndAddToCanvas(
-      page.oneFunctionalGroupExpandedKet,
+      page,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -441,7 +442,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      MacroFileType.MOLv3000.functionalGroupsExpandedContractedV3000,
+      MacroFileType.MOLv3000,
+      'Molfiles-V3000/functional-groups-expanded-contracted.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -779,7 +781,8 @@ test.describe('Macro-Micro-Switcher', () => {
         y: 100,
       };
       await pasteFromClipboardAndAddToCanvas(
-        page.oneFunctionalGroupExpandedKet,
+        page,
+        await readFileContent('KET/one-functional-group-expanded.ket'),
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
         from: 'pageTopLeft',
@@ -806,7 +809,8 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
-        MacroFileType.MOLv3000.functionalGroupsExpandedContractedV3000,
+        MacroFileType.MOLv3000,
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
         from: 'pageTopLeft',

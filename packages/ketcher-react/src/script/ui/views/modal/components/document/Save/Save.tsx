@@ -29,6 +29,7 @@ import {
   KetcherLogger,
   Atom,
   isClipboardAPIAvailable,
+  legacyCopy,
   Struct,
 } from 'ketcher-core';
 
@@ -93,7 +94,8 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  handleCopy: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleCopy: (event: any) => void;
 }
 
 interface FormState {
@@ -505,16 +507,18 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  handleCopy = (): void => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleCopy = (event: any): void => {
     const { structStr } = this.state;
 
     try {
       if (isClipboardAPIAvailable()) {
         navigator.clipboard.writeText(structStr || '');
       } else {
-        // Legacy copy requires a clipboard event handler
-        // This path should not be reached with the current UI implementation
-        throw new Error('Clipboard API not available');
+        legacyCopy(event.clipboardData, {
+          'text/plain': structStr,
+        });
+        event.preventDefault();
       }
     } catch (e) {
       KetcherLogger.error('copyAs.js::copyAs', e);

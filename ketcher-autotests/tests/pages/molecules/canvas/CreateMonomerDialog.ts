@@ -97,6 +97,7 @@ type CreateMonomerDialogLocators = {
   r8DeleteButton: Locator;
   modificationSection: Locator & ModificationSectionLocators;
   aliasesSection: Locator & AliasesSectionLocators;
+  terminalIndicatorTooltip: Locator;
   submitButton: Locator;
   discardButton: Locator;
 };
@@ -259,6 +260,7 @@ export const CreateMonomerDialog = (page: Page) => {
     r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
     modificationSection,
     aliasesSection,
+    terminalIndicatorTooltip: page.getByTestId('atom-info-tooltip'),
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };
@@ -462,6 +464,12 @@ export const CreateMonomerDialog = (page: Page) => {
       await this.collapseAliasesSection();
       await this.expandAliasesSection();
       await delay(0.3);
+    },
+
+    async waitForTerminalIndicatorTooltip(
+      options: { state?: 'visible' | 'hidden' } = {},
+    ) {
+      await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
     async submit({ ignoreWarning = false } = {}) {

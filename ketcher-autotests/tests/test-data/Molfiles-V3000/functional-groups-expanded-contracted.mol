@@ -1,4 +1,4 @@
-"
+
   -INDIGO-05212314582D
 
   0  0  0  0  0  0  0  0  0  0  0 V3000
@@ -40,4 +40,3 @@ M  V30 ) LABEL=CCl3 ESTATE=E
 M  V30 END SGROUP
 M  V30 END CTAB
 M  END
-"

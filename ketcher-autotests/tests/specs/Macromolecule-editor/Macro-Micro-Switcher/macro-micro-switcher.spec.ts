@@ -443,7 +443,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
-      'Molfiles-V3000/functional-groups-expanded-contracted.mol',
+      await readFileContent(
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
+      ),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

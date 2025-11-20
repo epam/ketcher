@@ -598,6 +598,13 @@ const MonomerCreationWizard = () => {
     const monomersData = [];
     const assignedAttachmentPointsByMonomer = new Map();
 
+    if (!isRnaPresetType) {
+      wizardState.structure = {
+        atoms: [...editor.render.ctab.molecule.atoms.keys()],
+        bonds: [...editor.render.ctab.molecule.bonds.keys()],
+      };
+    }
+
     // separate attachment points by preset components
     if (isRnaPresetType) {
       monomersToSave.forEach((componentWizardState) => {
@@ -628,7 +635,6 @@ const MonomerCreationWizard = () => {
       );
     }
 
-    // fill attachment points between preset components
     if (isRnaPresetType) {
       // fill attachment points between RNA preset components
       const struct = editor.struct();
@@ -811,7 +817,11 @@ const MonomerCreationWizard = () => {
           attachmentPoints: monomerAssignedAttachmentPoints,
         });
 
-        monomersData.push(result);
+        monomersData.push({
+          ...result,
+          monomerStructureInWizard: monomerToSave.structure,
+          atomIdMap,
+        });
       });
 
       editor.finishNewMonomersCreation(

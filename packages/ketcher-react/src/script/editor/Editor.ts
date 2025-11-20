@@ -1313,9 +1313,11 @@ class Editor implements KetcherEditor {
     const monomerItem =
       ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
     const [Monomer] = monomerFactory(monomerItem);
+    const monomerBBox = data.structure.getCoordBoundingBoxObj();
+    console.log(monomerBBox);
     const monomerPosition = new Vec2(
-      (this.selectionBBox.min.x + this.selectionBBox.max.x) / 2,
-      (this.selectionBBox.min.y + this.selectionBBox.max.y) / 2,
+      (monomerBBox.min.x + monomerBBox.max.x) / 2,
+      (monomerBBox.min.y + monomerBBox.max.y) / 2,
     );
     const monomer = new Monomer(monomerItem, monomerPosition);
 
@@ -1343,7 +1345,26 @@ class Editor implements KetcherEditor {
     const isRnaType = Boolean(rnaPresetName);
 
     const libraryItems = monomersData.map((monomerData) => {
-      const { monomer, monomerTemplate, monomerRef } = monomerData;
+      const {
+        monomer,
+        monomerTemplate,
+        monomerRef,
+        monomerStructureInWizard,
+        atomIdMap,
+      } = monomerData;
+      const monomerOriginalAtomIds = monomerStructureInWizard.atoms.map(
+        (atomId) => this.selectedToOriginalAtomsIdMap.get(atomId),
+      );
+      const monomerAtomIdToOriginalAtomIdMap = new Map();
+
+      atomIdMap.forEach(
+        (atomIdAfterAddingMonomer, atomIdBeforeAddingMonomer) => {
+          monomerAtomIdToOriginalAtomIdMap.set(
+            atomIdAfterAddingMonomer,
+            this.selectedToOriginalAtomsIdMap.get(atomIdBeforeAddingMonomer),
+          );
+        },
+      );
 
       this.originalSelection.atoms?.forEach((atomId) => {
         const atom = this.render.ctab.molecule.atoms.get(atomId);
@@ -1355,17 +1376,21 @@ class Editor implements KetcherEditor {
       const sGroupAttachmentPoints =
         MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
           monomer,
-          this.selectedToOriginalAtomsIdMap,
+          monomerAtomIdToOriginalAtomIdMap,
         );
 
       sGroupAttachmentPoints.forEach((ap) => {
         this.render.ctab.molecule.bonds.forEach((bond) => {
           if (
-            (bond.begin === ap.atomId || bond.end === ap.atomId) &&
-            (!this.originalSelection.atoms?.includes(bond.begin) ||
-              !this.originalSelection.atoms?.includes(bond.end))
+            !monomerOriginalAtomIds?.includes(bond.begin) ||
+            !monomerOriginalAtomIds?.includes(bond.end)
           ) {
-            bond.beginSuperatomAttachmentPointNumber = ap.attachmentPointNumber;
+            if (bond.begin === ap.atomId) {
+              bond.beginSuperatomAttachmentPointNumber =
+                ap.attachmentPointNumber;
+            } else if (bond.end === ap.atomId) {
+              bond.endSuperatomAttachmentPointNumber = ap.attachmentPointNumber;
+            }
           }
         });
       });
@@ -1373,7 +1398,7 @@ class Editor implements KetcherEditor {
       const action = fromSgroupAddition(
         this.render.ctab,
         SGroup.TYPES.SUP,
-        this.originalSelection.atoms,
+        monomerOriginalAtomIds,
         { expanded: true },
         this.render.ctab.molecule.sgroups.newId(),
         sGroupAttachmentPoints,

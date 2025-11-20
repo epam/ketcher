@@ -259,7 +259,9 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2892
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
-    const fileContent = await readFileContent('KET/expanded-and-contracted-fg.ket');
+    const fileContent = await readFileContent(
+      'KET/expanded-and-contracted-fg.ket',
+    );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

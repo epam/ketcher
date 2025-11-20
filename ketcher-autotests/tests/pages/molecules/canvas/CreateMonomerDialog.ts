@@ -466,8 +466,10 @@ export const CreateMonomerDialog = (page: Page) => {
       await delay(0.3);
     },
 
-    async waitForTerminalIndicatorTooltip() {
-      await locators.terminalIndicatorTooltip.waitFor({ state: 'visible' });
+    async waitForTerminalIndicatorTooltip(
+      options: { state?: 'visible' | 'hidden' } = {},
+    ) {
+      await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
     async submit({ ignoreWarning = false } = {}) {

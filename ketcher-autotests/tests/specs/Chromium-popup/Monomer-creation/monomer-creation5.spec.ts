@@ -12,6 +12,7 @@ import {
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  moveMouseAway,
 } from '@utils/index';
 import {
   createMonomer,
@@ -29,6 +30,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import {
   AttachmentPoint,
   getMonomerLocator,
+  moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -1139,11 +1141,19 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  await moveMouseAway(page);
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'hidden',
+  });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });
@@ -1182,11 +1192,19 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  await moveMouseAway(page);
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'hidden',
+  });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });
@@ -1225,11 +1243,19 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
+  await moveMouseAway(page);
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'hidden',
+  });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
-  await createMonomerDialog.waitForTerminalIndicatorTooltip();
+  await createMonomerDialog.waitForTerminalIndicatorTooltip({
+    state: 'visible',
+  });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });

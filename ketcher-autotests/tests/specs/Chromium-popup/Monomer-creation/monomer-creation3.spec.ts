@@ -1334,7 +1334,6 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   await CreateMonomerDialog(page).setName('Sugar Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
-  await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Sugar.Sugar);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();

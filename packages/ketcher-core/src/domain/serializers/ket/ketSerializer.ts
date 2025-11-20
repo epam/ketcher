@@ -304,6 +304,7 @@ export class KetSerializer implements Serializer<Struct> {
       deserializedContent?.drawingEntitiesManager,
       struct,
     );
+
     return struct;
   }
 
@@ -730,6 +731,7 @@ export class KetSerializer implements Serializer<Struct> {
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
+      modificationTypes: monomer.monomerItem.props.modificationTypes,
     };
     // CHEMs do not have natural analog
     if (monomer.monomerItem.props.MonomerType !== 'CHEM') {

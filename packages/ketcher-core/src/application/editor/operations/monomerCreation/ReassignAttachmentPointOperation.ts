@@ -23,9 +23,9 @@ import Restruct from 'application/render/restruct/restruct';
 
 export class ReassignAttachmentPointOperation extends BaseOperation {
   constructor(
-    private monomerCreationState: MonomerCreationState,
-    private currentName: AttachmentPointName,
-    private newName: AttachmentPointName,
+    private readonly monomerCreationState: MonomerCreationState,
+    private readonly currentName: AttachmentPointName,
+    private readonly newName: AttachmentPointName,
   ) {
     super(OperationType.MONOMER_CREATION_REASSIGN_AP);
 

@@ -19,8 +19,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     _editingNodeIndexOverall: number,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
-    _previousRowsWithAntisense = 0,
     _twoStrandedNode: ITwoStrandedChainItem,
+    _previousRowsWithAntisense = 0,
   ) {
     super(
       node,
@@ -32,8 +32,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
       _editingNodeIndexOverall,
       monomerSize,
       scaledMonomerPosition,
-      _previousRowsWithAntisense,
       _twoStrandedNode,
+      _previousRowsWithAntisense,
     );
   }
 

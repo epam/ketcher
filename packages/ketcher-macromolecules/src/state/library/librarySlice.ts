@@ -347,10 +347,10 @@ export const selectFilteredMonomers = createSelector(
     const normalizedSearchFilter = searchFilter.toLowerCase();
 
     const checkMonomerMatch = (
-      name = '',
-      fullName = '',
       idtAliases: IKetIdtAliases | undefined,
       searchFilter: string,
+      name = '',
+      fullName = '',
       helmAlias: string | undefined = '',
       axoLabsAlias: string | undefined = '',
       modificationTypes: string[] | undefined = [],
@@ -487,10 +487,10 @@ export const selectFilteredMonomers = createSelector(
           } = item as AmbiguousMonomerType;
 
           const matchesMonomer = checkMonomerMatch(
-            label,
-            id,
             idtAliases,
             normalizedSearchFilter,
+            label,
+            id,
           );
 
           return (
@@ -506,10 +506,10 @@ export const selectFilteredMonomers = createSelector(
               } = monomer.monomerItem.props;
 
               return checkMonomerMatch(
-                Name,
-                MonomerName,
                 idtAliases,
                 normalizedSearchFilter,
+                Name,
+                MonomerName,
                 aliasHELM,
                 aliasAxoLabs,
                 modificationTypes,
@@ -527,10 +527,10 @@ export const selectFilteredMonomers = createSelector(
           } = (item as MonomerItemType).props;
 
           return checkMonomerMatch(
-            Name,
-            MonomerName,
             idtAliases,
             normalizedSearchFilter,
+            Name,
+            MonomerName,
             aliasHELM,
             aliasAxoLabs,
             modificationTypes,

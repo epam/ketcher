@@ -42,7 +42,7 @@ interface TableProps {
 
 const Table = (props: TableProps) => {
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? props.label || null : null,
+    props.pseudo ? props.label ?? null : null,
   );
 
   const selected = (label: string): boolean => value === label;

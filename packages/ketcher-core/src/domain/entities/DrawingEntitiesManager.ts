@@ -3167,8 +3167,8 @@ export class DrawingEntitiesManager {
 
   public static createAntisenseNode(
     node: Nucleoside | Nucleotide,
-    needAddPhosphate = false,
     isDnaAntisense: boolean,
+    needAddPhosphate = false,
   ) {
     const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
       node.rnaBase,
@@ -3250,7 +3250,7 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer: BaseMonomer | undefined;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
-      selectedPiece.reverse().forEach((nodeToHandle) => {
+      [...selectedPiece].reverse().forEach((nodeToHandle) => {
         const senseNode =
           nodeToHandle instanceof Nucleotide &&
           nodeToHandle.phosphate.selected &&
@@ -3272,8 +3272,8 @@ export class DrawingEntitiesManager {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
               senseNode,
-              false,
               isDnaAntisense,
+              false,
             );
 
           if (!antisenseNodeCreationResult) {
@@ -3346,7 +3346,7 @@ export class DrawingEntitiesManager {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          senseNode.monomers.reverse().forEach((monomer) => {
+          [...senseNode.monomers].reverse().forEach((monomer) => {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;

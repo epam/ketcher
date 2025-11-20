@@ -67,8 +67,6 @@ import {
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
   AssignAttachmentAtomOperation,
-  IKetMonomerGroupTemplate,
-  getMonomerTemplateRefFromMonomerItem,
   getKetRef,
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
@@ -582,7 +580,9 @@ class Editor implements KetcherEditor {
     this.render.monomerCreationState = state;
   }
 
-  public setMonomerCreationSelectedType(type: KetMonomerClass | undefined) {
+  public setMonomerCreationSelectedType(
+    type: KetMonomerClass | 'rnaPreset' | undefined,
+  ) {
     const currentState = this.render.monomerCreationState;
     if (!currentState) return;
     this.render.monomerCreationState = {
@@ -863,7 +863,6 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
 
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
-  private selectionBBox;
 
   private changeEventSubscriber: any = null;
 
@@ -876,8 +875,6 @@ class Editor implements KetcherEditor {
 
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);
-
-    this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
 
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one

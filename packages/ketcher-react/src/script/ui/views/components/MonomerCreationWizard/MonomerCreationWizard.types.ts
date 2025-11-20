@@ -1,6 +1,5 @@
 import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
-import { Struct } from 'ketcher-core';
 import { Editor } from '../../../../editor';
 import { Selection } from '../../../../editor/Editor';
 
@@ -72,7 +71,7 @@ export type WizardState = {
   values: WizardValues;
   errors: WizardErrors;
   notifications: WizardNotifications;
-  structure?: Selection | null;
+  structure?: Selection;
 };
 
 export type WizardAction =

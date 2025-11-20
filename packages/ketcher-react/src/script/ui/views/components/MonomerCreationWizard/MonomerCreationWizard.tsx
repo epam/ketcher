@@ -2,13 +2,15 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
-  Atom,
   AttachmentPointClickData,
   AttachmentPointName,
+  BaseMonomer,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
+  IKetMonomerTemplate,
+  KetcherLogger,
   ketcherProvider,
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
@@ -47,7 +49,7 @@ import { createPortal } from 'react-dom';
 import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
-import { isNumber } from 'lodash';
+import { Selection } from '../../../../editor/Editor';
 
 const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
@@ -59,7 +61,7 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   },
   errors: {},
   notifications: new Map(),
-  structure: null,
+  structure: undefined,
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
@@ -595,7 +597,13 @@ const MonomerCreationWizard = () => {
           rnaPresetWizardState.phosphate,
         ]
       : [wizardState];
-    const monomersData = [];
+    const monomersData: Array<{
+      atomIdMap: Map<number, number>;
+      monomerStructureInWizard: Selection | null | undefined;
+      monomer: BaseMonomer;
+      monomerTemplate: IKetMonomerTemplate;
+      monomerRef: string;
+    }> = [];
     const assignedAttachmentPointsByMonomer = new Map();
 
     if (!isRnaPresetType) {
@@ -643,19 +651,19 @@ const MonomerCreationWizard = () => {
       const phosphateStructure = rnaPresetWizardState.phosphate.structure;
 
       const bondsBetweenSugarAndBase = struct.bonds.filter((_, bond) => {
-        return (
+        return Boolean(
           (baseStructure?.atoms?.includes(bond.begin) &&
             sugarStructure?.atoms?.includes(bond.end)) ||
-          (baseStructure?.atoms?.includes(bond.end) &&
-            sugarStructure?.atoms?.includes(bond.begin))
+            (baseStructure?.atoms?.includes(bond.end) &&
+              sugarStructure?.atoms?.includes(bond.begin)),
         );
       });
       const bondsBetweenSugarAndPhosphate = struct.bonds.filter((_, bond) => {
-        return (
+        return Boolean(
           (phosphateStructure?.atoms?.includes(bond.begin) &&
             sugarStructure?.atoms?.includes(bond.end)) ||
-          (phosphateStructure?.atoms?.includes(bond.end) &&
-            sugarStructure?.atoms?.includes(bond.begin))
+            (phosphateStructure?.atoms?.includes(bond.end) &&
+              sugarStructure?.atoms?.includes(bond.begin)),
         );
       });
 
@@ -710,6 +718,12 @@ const MonomerCreationWizard = () => {
     let needSaveMonomers = true;
 
     monomersToSave.forEach((monomerToSave) => {
+      if (!monomerToSave.structure) {
+        KetcherLogger.error('Monomer structure is undefined');
+
+        return;
+      }
+
       const structure = editor.structSelected(monomerToSave.structure);
       const monomerAssignedAttachmentPoints =
         assignedAttachmentPointsByMonomer.get(monomerToSave);

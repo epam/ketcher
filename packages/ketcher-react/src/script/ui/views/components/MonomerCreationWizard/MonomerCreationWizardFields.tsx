@@ -14,7 +14,10 @@ import NaturalAnaloguePicker, {
 import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import AttributeField from './components/AttributeField/AttributeField';
-import { WizardFormFieldId, WizardState } from './MonomerCreationWizard.types';
+import {
+  StringWizardFormFieldId,
+  WizardState,
+} from './MonomerCreationWizard.types';
 import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
@@ -30,7 +33,7 @@ interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
-  onFieldChange: (fieldId: WizardFormFieldId, value: string) => void;
+  onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
   showNaturalAnalogue?: boolean;
 }
 
@@ -63,7 +66,7 @@ const MonomerCreationWizardFields = (
     );
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes);
   };
 
   const handleAddModificationType = () => {
@@ -73,7 +76,7 @@ const MonomerCreationWizardFields = (
         : [...modificationTypes, ''];
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes);
   };
 
   const deleteModificationType = (indexToDelete: number) => {
@@ -82,7 +85,7 @@ const MonomerCreationWizardFields = (
     );
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes);
   };
 
   const handleAttachmentPointNameChange = (
@@ -117,7 +120,7 @@ const MonomerCreationWizardFields = (
       KetMonomerClass.Base,
       KetMonomerClass.Sugar,
       KetMonomerClass.Phosphate,
-    ].includes(type);
+    ].includes(type as KetMonomerClass);
 
   return (
     <div>

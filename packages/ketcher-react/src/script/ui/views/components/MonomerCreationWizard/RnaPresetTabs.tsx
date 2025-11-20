@@ -2,9 +2,13 @@ import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { WizardFormFieldId, WizardState } from './MonomerCreationWizard.types';
+import {
+  RnaPresetWizardAction,
+  StringWizardFormFieldId,
+  WizardState,
+} from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'ketcher-core';
 import clsx from 'clsx';
 import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
 import styles from './RnaPresetTabs.module.less';
@@ -26,6 +30,7 @@ interface IRnaPresetTabsProps {
     };
   };
   editor: Editor;
+  wizardStateDispatch: (action: RnaPresetWizardAction) => void;
 }
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
@@ -63,7 +68,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const handleFieldChange = (
-    fieldId: WizardFormFieldId,
+    fieldId: StringWizardFormFieldId,
     value: KetMonomerClass | string,
     rnaComponentKey: rnaComponentKeyType | 'preset',
   ) => {
@@ -168,7 +173,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   onFieldChange={(
-                    fieldId: WizardFormFieldId,
+                    fieldId: StringWizardFormFieldId,
                     value: string,
                   ) => {
                     handleFieldChange(fieldId, value, rnaComponentKey);

@@ -84,7 +84,7 @@ interface ElementsTableProps {
   };
   selected: (label: string) => boolean;
   onAtomSelect: (label: string) => void;
-  onDoubleClick: () => void;
+  onDoubleClick: (label?: string) => void;
 }
 
 class ElementsTable extends Component<ElementsTableProps> {

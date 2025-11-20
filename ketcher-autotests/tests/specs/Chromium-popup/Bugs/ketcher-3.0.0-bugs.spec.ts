@@ -175,13 +175,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Chromium-popup/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {

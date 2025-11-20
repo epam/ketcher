@@ -4,7 +4,7 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { openFileAndAddToCanvasAsNewProjectMacro } from '@utils/files/readFile';
-import { takeElementScreenshot } from '@utils/index';
+import { shiftCanvas, takeElementScreenshot } from '@utils/index';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -163,6 +163,7 @@ test(`4. Check that the properties arranged in the order`, async () => {
     'KET/Chromium-popup/Monomer-preview/monomer-preview.ket',
   );
 
+  await shiftCanvas(page, 0, 100);
   const monomer = getMonomerLocator(page, { monomerAlias: 'test' });
   await monomer.hover();
 

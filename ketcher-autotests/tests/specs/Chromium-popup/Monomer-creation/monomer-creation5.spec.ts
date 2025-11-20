@@ -8,12 +8,7 @@ import {
   selectAllStructuresOnCanvas,
   takeElementScreenshot,
 } from '@utils/canvas';
-import {
-  clickOnCanvas,
-  dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  moveMouseAway,
-} from '@utils/index';
+import { clickOnCanvas, moveMouseAway, shiftCanvas } from '@utils/index';
 import {
   createMonomer,
   CreateMonomerDialog,
@@ -32,8 +27,6 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
@@ -59,14 +52,6 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-
-async function shiftCanvas(page: Page, xShift: number, yShift: number) {
-  await CommonLeftToolbar(page).handTool();
-  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-  await page.mouse.move(x, y);
-  await dragMouseTo(x + xShift, y + yShift, page);
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-}
 
 test(`1. Check that the user can set one modification type for amino acids by clicking on + Add modification type in the attributes window`, async () => {
   /*

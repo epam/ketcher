@@ -7,7 +7,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,

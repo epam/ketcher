@@ -133,6 +133,7 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
   return (
     <div
       id="atomInfoTooltip"
+      data-testid="atom-info-tooltip"
       role="tooltip"
       style={{
         left: shiftedPosition.x + 'px',

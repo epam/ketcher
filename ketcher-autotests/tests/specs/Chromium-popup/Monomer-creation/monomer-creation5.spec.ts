@@ -1107,7 +1107,7 @@ test(`21. Check that the HELM alias section in the attributes panel can be expan
 
 test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Test task: https://github.com/epam/ketcher/issues/8583
    * Description: 1. Check that hovering over R1 for sugars give 5' on the tooltip preview
    *              2. Check that hovering over R2 for sugars give 3' on the tooltip preview
    *
@@ -1139,16 +1139,18 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });
 
 test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip preview`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Test task: https://github.com/epam/ketcher/issues/8583
    * Description: 1. Check that hovering over R1 for phosphates give 5' on the tooltip preview
    *              2. Check that hovering over R2 for phosphates give 3' on the tooltip preview
    *
@@ -1180,16 +1182,18 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });
 
 test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip preview`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Test task: https://github.com/epam/ketcher/issues/8583
    * Description: 1. Check that hovering over R1 for nucleotides give 5' on the tooltip preview
    *              2. Check that hovering over R2 for nucleotides give 3' on the tooltip preview
    *
@@ -1221,9 +1225,11 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await attachmentPointR1.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR1, { padding: 50 });
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
   await attachmentPointR2.hover({ force: true });
+  await page.getByTestId('atom-info-tooltip').waitFor({ state: 'visible' });
   await takeElementScreenshot(page, attachmentPointR2, { padding: 50 });
   await createMonomerDialog.discard();
 });

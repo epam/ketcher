@@ -1,4 +1,4 @@
-"
+
   -INDIGO-05212315032D
 
   0  0  0  0  0  0  0  0  0  0  0 V3000
@@ -36,4 +36,3 @@ M  V30 000 0.000000) LABEL="Some Name" ESTATE=E
 M  V30 END SGROUP
 M  V30 END CTAB
 M  END
-"

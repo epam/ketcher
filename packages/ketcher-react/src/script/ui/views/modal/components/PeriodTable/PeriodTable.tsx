@@ -118,14 +118,14 @@ class Table extends Component<TableProps, TableState> {
       : Array.isArray(value) && value.includes(label);
   };
 
-  onAtomSelect = (label: string, activateImmediately = false) => {
+  onAtomSelect = (label?: string, activateImmediately = false) => {
     if (activateImmediately) {
       const result = this.result();
       const { type } = this.state;
       if (result && type === 'atom') {
         this.props.onOk(this.result());
       }
-    } else {
+    } else if (label) {
       const { type, value } = this.state;
       this.setState({
         value:

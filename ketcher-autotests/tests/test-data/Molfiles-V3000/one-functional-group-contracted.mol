@@ -1,4 +1,4 @@
-"
+
   -INDIGO-05212315042D
 
   0  0  0  0  0  0  0  0  0  0  0 V3000
@@ -29,4 +29,3 @@ M  V30 0000) LABEL=Boc
 M  V30 END SGROUP
 M  V30 END CTAB
 M  END
-"

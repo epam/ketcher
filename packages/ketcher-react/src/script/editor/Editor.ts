@@ -671,6 +671,34 @@ class Editor implements KetcherEditor {
       return atom.rglabel !== null && atom.neighbors.length === 1;
     });
 
+    // Validate bonds connected to terminal R-group atoms
+    const hasInvalidRGroupBonds = terminalRGroupAtoms.some((atomId) => {
+      const atom = currentStruct.atoms.get(atomId);
+      assert(atom);
+
+      // Get the bond connecting this R-group atom to its neighbor
+      const neighborHalfBondId = atom.neighbors[0];
+      const bondId = currentStruct.bonds.find((_, bond) => {
+        return (
+          bond.hb1 === neighborHalfBondId || bond.hb2 === neighborHalfBondId
+        );
+      });
+
+      if (bondId === null) {
+        return true; // Invalid if bond not found
+      }
+
+      const bond = currentStruct.bonds.get(bondId);
+      assert(bond);
+
+      // Check if the bond is suitable for attachment point
+      return !Editor.isBondSuitableForAttachmentPoint(bond);
+    });
+
+    if (hasInvalidRGroupBonds) {
+      return false;
+    }
+
     const selectionAtoms = new Set(selection.atoms);
     const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
       return (

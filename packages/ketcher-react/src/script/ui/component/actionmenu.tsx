@@ -20,7 +20,7 @@ import action from '../action';
 import clsx from 'clsx';
 import { hiddenAncestor } from '../state/toolbar';
 import { shortcutStr } from 'ketcher-core';
-import { Icon, IconName } from 'components';
+import { Icon, getIconName } from 'components';
 import { Tools, UiAction, UiActionAction } from '../action/action.types';
 
 interface ItemStatus {
@@ -128,7 +128,7 @@ function ActionButton({
       onClick={onClick}
       title={shortcut ? `${action.title} (${shortcut})` : action.title}
     >
-      <Icon name={name as IconName} />
+      <Icon name={getIconName(name) || 'logo'} />
       <kbd>{shortcut}</kbd>
     </button>
   );
@@ -248,9 +248,10 @@ function ActionMenu({
             tabIndex={0}
           >
             {showMenuOrButton(action, item, props.status[itemKey], props)}
-            {itemObj.id !== itemKey &&
+            {typeof item !== 'string' &&
+              item.menu &&
               props.opened &&
-              renderActiveMenuItem(itemObj as MenuItem, props)}
+              renderActiveMenuItem(item, props)}
             {typeof item !== 'string' && item.menu && <Icon name="dropdown" />}
           </li>
         );
@@ -285,11 +286,10 @@ function toolMargin(
     const tools: string[] = [];
     menu.forEach((item) => {
       if (typeof item !== 'string' && item.menu) {
-        tools.push(
-          ...(item.menu.map((subItem) =>
-            typeof subItem === 'string' ? subItem : subItem.id,
-          ) as string[]),
+        const menuItems = item.menu.map((subItem) =>
+          typeof subItem === 'string' ? subItem : subItem.id,
         );
+        tools.push(...menuItems);
       }
     });
 

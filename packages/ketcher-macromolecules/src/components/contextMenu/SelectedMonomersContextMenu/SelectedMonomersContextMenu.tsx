@@ -1,4 +1,4 @@
-import { ItemParams } from 'react-contexify';
+import { ItemParams, contextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import {
@@ -142,6 +142,7 @@ export const SelectedMonomersContextMenu = ({
     switch (true) {
       case menuItemId === 'layout_circular':
         editor?.events.layoutCircular.dispatch();
+        contextMenu.hideAll();
         break;
       case menuItemId === 'copy':
         editor?.events.copySelectedStructure.dispatch();

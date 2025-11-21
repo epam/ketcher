@@ -19,10 +19,7 @@ import { connect } from 'react-redux';
 import { initClipboard } from '../state/hotkeys';
 
 const AppClipArea = connect(null, (dispatch) => dispatch(initClipboard as any))(
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ClipArea,
+  ClipArea as any,
 );
 
 export default AppClipArea;

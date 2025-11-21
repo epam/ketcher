@@ -21,7 +21,8 @@ interface Schema {
   enumNames?: string[];
 }
 
-interface SelectListProps extends React.HTMLAttributes<HTMLUListElement> {
+interface SelectListProps
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onSelect'> {
   schema: Schema;
   value: string;
   onSelect: (opt: string, index: number) => void;

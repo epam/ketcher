@@ -5,15 +5,17 @@ import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { clickOnCanvas } from '@utils/index';
-import { createMonomer } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { clickOnCanvas, shiftCanvas } from '@utils/index';
+import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   AminoAcidNaturalAnalogue,
   MonomerType,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { Peptide } from '@tests/pages/constants/monomers/Peptides';
-import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { WarningMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/WarningDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -34,37 +36,39 @@ test(`1. Check warning messages on Amino acid monomer if R1 attachment point wit
    *      2. Load molecule on canvas
    *      3. Press Create Monomer button
    *      4. Set mandatory fields in Create Monomer dialog for amino acid monomer
-   *      5. Set modification type by clicking on + Add modification type and selecting Citrullination type from dropdown
+   *      5. Set R1 and R2 attachment point with a leaving group not equal H (e.g. O atom)
    *      6. Press Submit button
-   *      7. Switch to Macromolecules mode
-   *      8. Verify that the created monomer is present on the canvas
-   *      9. Hover the monomer and open the tooltip
-   *     10. Verify that the modification type is displayed in the tooltip
+   *      7. Verify that warning message dialog is opened
+   *      8. Verify that the correct warning message is displayed in the dialog
    *
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(
     page,
-    'C%91%92C.[*:2]%91.[*:1]%92 |$;;_R2;_R1$|',
+    '[*:1]CCC%91.[*:2]%91 |$_R1;;;;_R2$|',
   );
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
 
-  await createMonomer(
-    page,
-    {
-      type: MonomerType.AminoAcid,
-      symbol: Peptide.Peptide.alias,
-      name: 'Peptide Test monomer',
-      naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    },
-    false,
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+
+  const createMonomerDialog = CreateMonomerDialog(page);
+  await createMonomerDialog.selectType(MonomerType.AminoAcid);
+  await createMonomerDialog.setSymbol('Temp AminoAcid1');
+  await createMonomerDialog.setName('Temp AminoAcid1');
+  await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
+
+  await RightToolbar(page).clickAtom(Atom.Oxygen);
+
+  await getAtomLocator(page, { atomLabel: 'H' }).first().click({ force: true });
+  await getAtomLocator(page, { atomLabel: 'H' }).first().click({ force: true });
+
+  await createMonomerDialog.submit();
+
+  expect(WarningMessageDialog(page).window).toBeVisible();
+  expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
+    'Amino acid monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?',
   );
-
-  expect(
-    await NotificationMessageBanner(
-      page,
-      ErrorMessage.notUniqueHELMAlias,
-    ).getNotificationMessage(),
-  ).toEqual('The HELM alias must be unique amongst peptide or RNA monomers.');
 });

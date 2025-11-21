@@ -95,134 +95,205 @@ const shortcutKeys = [
   '-',
 ];
 
-/* HotKeys */
-function keyHandle(dispatch, getState, hotKeys, event) {
-  const state = getState();
+function shouldIgnoreKeyEvent(state, event): boolean {
+  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+    return true;
+  }
+  return event.target.nodeName === 'INPUT';
+}
 
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) return;
+function shouldShowAbbreviationLookup(key: string, state): boolean {
+  const currentlyPressedKeys = selectAbbreviationLookupValue(state);
+  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
+  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+}
 
-  const { editor } = state;
+function handleAbbreviationLookup(key: string, state, dispatch, event) {
+  if (shouldShowAbbreviationLookup(key, state)) {
+    dispatch(showAbbreviationLookup(event.key));
+    clearTimeout(abbreviationLookupTimeoutId);
+    abbreviationLookupTimeoutId = undefined;
 
-  // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
-  // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
-  // Ideally x2 – create a common event interception layer for both micro and macro editors
-  const isInput = event.target.nodeName === 'INPUT';
-  if (isInput) {
+    const resetAction = SettingsManager.getSettings().selectionTool;
+    dispatch(onAction(resetAction));
+
+    event.preventDefault();
+    return true;
+  }
+
+  abbreviationLookupTimeoutId = window.setTimeout(() => {
+    dispatch(closeAbbreviationLookup());
+    abbreviationLookupTimeoutId = undefined;
+  }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
+
+  dispatch(initAbbreviationLookup(event.key));
+  return false;
+}
+
+function handleSlashKey(
+  hoveredItem: Record<string, number> | null,
+  editor,
+  dispatch,
+  event,
+) {
+  const hotkeyDialogTypes = {
+    atoms: actions['atom-props'].action,
+    bonds: actions['bond-props'].action,
+  };
+
+  if (!hoveredItem) {
     return;
   }
 
-  const { render } = editor;
-  const actionState = state.actionState;
-  const actionTool = actionState.activeTool;
-
-  const key = keyNorm(event);
-
-  let group: any = null;
-
-  const hoveredItem = getHoveredItem(render.ctab);
-
-  if (key && key.length === 1 && !hoveredItem) {
-    const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-    const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
-    const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-    const isAbbreviationLookupShown =
-      (!isTheSameKey || !isShortcutKey) && currentlyPressedKeys;
-    if (isAbbreviationLookupShown) {
-      dispatch(showAbbreviationLookup(event.key));
-      clearTimeout(abbreviationLookupTimeoutId);
-      abbreviationLookupTimeoutId = undefined;
-
-      const resetAction = SettingsManager.getSettings().selectionTool;
-      dispatch(onAction(resetAction));
-
-      event.preventDefault();
-      return;
-    } else {
-      abbreviationLookupTimeoutId = window.setTimeout(() => {
-        dispatch(closeAbbreviationLookup());
-        abbreviationLookupTimeoutId = undefined;
-      }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
-
-      dispatch(initAbbreviationLookup(event.key));
-    }
+  const dialogType = Object.keys(hoveredItem)[0];
+  if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
+    handleHotkeyOverItem({
+      hoveredItem,
+      newAction: hotkeyDialogTypes[dialogType],
+      editor,
+      dispatch,
+    });
   }
 
-  if (key === 'Slash') {
-    const hotkeyDialogTypes = {
-      atoms: actions['atom-props'].action,
-      bonds: actions['bond-props'].action,
-    };
+  event.preventDefault();
+}
 
-    if (!hoveredItem) {
-      return;
-    }
-    const dialogType = Object.keys(hoveredItem)[0];
+function handleRotateEscape(editor) {
+  editor.rotateController.revert();
+}
 
-    if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
-      handleHotkeyOverItem({
-        hoveredItem,
-        newAction: hotkeyDialogTypes[dialogType],
-        editor,
-        dispatch,
-      });
-    }
+function isActionDisabledOrHidden(actionState, actName): boolean {
+  return (
+    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.hidden === true
+  );
+}
 
+function getNextAction(actName) {
+  return ['zoom-in', 'zoom-out'].includes(actName)
+    ? actions[actName].action()
+    : actions[actName].action;
+}
+
+function shouldHandleItemDirectly(
+  hoveredItem: Record<string, number> | null,
+  newAction,
+): boolean {
+  return Boolean(
+    hoveredItem &&
+      newAction.tool !== 'select' &&
+      newAction.dialog !== 'templates',
+  );
+}
+
+function handleSelectTool(newAction, key: string, index: number) {
+  if (key === 'Escape') {
+    return SettingsManager.getSettings().selectionTool;
+  }
+  if (index === -1) {
+    return {};
+  }
+  return newAction;
+}
+
+function handleHotkeyGroup(
+  group,
+  actionTool,
+  actionState,
+  key: string,
+  editor,
+  render,
+  dispatch,
+  event,
+) {
+  const index = checkGroupOnTool(group, actionTool);
+  const groupLength = group !== null ? group.length : 1;
+  const newIndex = (index + 1) % groupLength;
+  const actName = group[newIndex];
+
+  if (isActionDisabledOrHidden(actionState, actName)) {
     event.preventDefault();
-  } else if (editor.rotateController.isRotating && key === 'Escape') {
-    editor.rotateController.revert();
-  } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
-    const index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
-    const groupLength = group !== null ? group.length : 1;
-    const newIndex = (index + 1) % groupLength;
+    return;
+  }
 
-    const actName = group[newIndex];
-    if (
-      (actionState[actName] && actionState[actName].disabled === true) ||
-      actionState[actName]?.hidden === true
-    ) {
-      event.preventDefault();
-      return;
-    }
-    // Removing from what should be saved - structure, which was added to paste tool,
-    // but not yet rendered on canvas
-    removeNotRenderedStruct(actionTool, group, dispatch);
+  removeNotRenderedStruct(actionTool, group, dispatch);
 
-    if (clipArea.actions.indexOf(actName) === -1) {
-      let newAction = ['zoom-in', 'zoom-out'].includes(actName)
-        ? actions[actName].action()
-        : actions[actName].action;
-      const hoveredItem = getHoveredItem(render.ctab);
-      // check if atom is currently hovered over
-      // in this case we do not want to activate the corresponding tool
-      // and just insert the atom directly
-      if (
-        hoveredItem &&
-        newAction.tool !== 'select' &&
-        newAction.dialog !== 'templates'
-      ) {
-        newAction = getCurrentAction(group[index]) || newAction;
+  if (clipArea.actions.indexOf(actName) === -1) {
+    let newAction = getNextAction(actName);
+    const hoveredItem = getHoveredItem(render.ctab);
+
+    if (shouldHandleItemDirectly(hoveredItem, newAction)) {
+      newAction = getCurrentAction(group[index]) || newAction;
+      if (hoveredItem) {
         handleHotkeyOverItem({
           hoveredItem,
           newAction,
           editor,
           dispatch,
         });
-      } else {
-        if (newAction.tool === 'select') {
-          if (key === 'Escape') {
-            newAction = SettingsManager.getSettings().selectionTool;
-          } else if (index === -1) {
-            newAction = {};
-          }
-        }
-        dispatch(onAction(newAction));
       }
-
-      event.preventDefault();
-    } else if (isIE) {
-      clipArea.exec(event);
+    } else {
+      if (newAction.tool === 'select') {
+        newAction = handleSelectTool(newAction, key, index);
+      }
+      dispatch(onAction(newAction));
     }
-  } else if (isArrowKey(event.key)) {
+
+    event.preventDefault();
+  } else if (isIE) {
+    clipArea.exec(event);
+  }
+}
+
+/* HotKeys */
+function keyHandle(dispatch, getState, hotKeys, event) {
+  const state = getState();
+
+  if (shouldIgnoreKeyEvent(state, event)) {
+    return;
+  }
+
+  const { editor } = state;
+  const { render } = editor;
+  const actionState = state.actionState;
+  const actionTool = actionState.activeTool;
+  const key = keyNorm(event);
+  const hoveredItem = getHoveredItem(render.ctab);
+
+  if (key && key.length === 1 && !hoveredItem) {
+    const handled = handleAbbreviationLookup(key, state, dispatch, event);
+    if (handled) {
+      return;
+    }
+  }
+
+  if (key === 'Slash') {
+    handleSlashKey(hoveredItem, editor, dispatch, event);
+    return;
+  }
+
+  if (editor.rotateController.isRotating && key === 'Escape') {
+    handleRotateEscape(editor);
+    return;
+  }
+
+  const group = keyNorm.lookup(hotKeys, event);
+  if (group !== undefined) {
+    handleHotkeyGroup(
+      group,
+      actionTool,
+      actionState,
+      key,
+      editor,
+      render,
+      dispatch,
+      event,
+    );
+    return;
+  }
+
+  if (isArrowKey(event.key)) {
     moveSelectedItems(editor, event.key, event.shiftKey);
   }
 }

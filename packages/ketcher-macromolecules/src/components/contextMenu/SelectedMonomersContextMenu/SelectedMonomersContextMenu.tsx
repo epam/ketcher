@@ -133,8 +133,7 @@ export const SelectedMonomersContextMenu = ({
       name: 'delete',
       title: 'Delete',
       icon: <Icon name={'deleteMenu' as IconName} />,
-      disabled: ({ props = {} }) =>
-        isBondContext(props) || isCanvasContext(props),
+      disabled: ({ props = {} }) => isCanvasContext(props),
     },
   ];
 

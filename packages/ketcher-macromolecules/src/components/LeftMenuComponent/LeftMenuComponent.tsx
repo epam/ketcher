@@ -46,7 +46,7 @@ export function LeftMenuComponent() {
           <Menu.Submenu
             testId="select-drop-down-button"
             subMenuId={SELECT_SUBMENU_ID}
-            needOpenByMenuItemClick={false}
+            needOpenByMenuItemClick={true}
           >
             <Menu.Item
               itemId="select-rectangle"

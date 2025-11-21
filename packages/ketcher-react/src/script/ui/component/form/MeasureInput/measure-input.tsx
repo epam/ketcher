@@ -27,11 +27,41 @@ const selectOptions = getSelectOptionsFromSchema({
   enum: Object.values(MeasurementUnits),
 });
 
+interface Schema {
+  title?: string;
+  properties?: {
+    [key: string]: {
+      title?: string;
+    };
+  };
+}
+
+interface MeasureInputProps
+  extends Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    'onChange' | 'title' | 'value'
+  > {
+  schema?: Schema;
+  extraSchema?: Schema;
+  value: number | string;
+  extraValue?: string;
+  onChange: (value: number) => void;
+  onExtraChange?: (value: string) => void;
+  name?: string;
+  className?: string;
+  title?: string;
+}
+
+interface FloatResult {
+  isNewFloat: boolean;
+  float?: string;
+}
+
 /**
- * @param {string} value
- * @returns {isNewFloat: boolean, float: string}
+ * @param value
+ * @returns {isNewFloat: boolean, float?: string}
  * */
-const getNewFloat = (value) => {
+const getNewFloat = (value: string): FloatResult => {
   const [int, float] = value.split('.');
   const isNewFloat = float?.length > 1;
 
@@ -42,11 +72,14 @@ const getNewFloat = (value) => {
 };
 
 /**
- * @param {string} prevValue
- * @param {string} endorcedValue
+ * @param prevValue
+ * @param endorcedValue
  * @returns {string}
  * */
-const getNewInternalValue = (prevValue, endorcedValue) => {
+const getNewInternalValue = (
+  prevValue: string,
+  endorcedValue: string,
+): string => {
   const newValueEndsWithDot = endorcedValue?.endsWith('.');
   const prevValueHasDot = prevValue?.includes('.');
   const isDotDeleted = prevValueHasDot && newValueEndsWithDot;
@@ -62,7 +95,7 @@ const getNewInternalValue = (prevValue, endorcedValue) => {
 
   const { isNewFloat, float } = getNewFloat(endorcedValue);
 
-  if (isNewFloat) {
+  if (isNewFloat && float) {
     return float;
   }
 
@@ -79,7 +112,7 @@ const MeasureInput = ({
   name,
   className,
   ...rest
-}) => {
+}: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
 
   // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
@@ -106,9 +139,9 @@ const MeasureInput = ({
         onChange(parseFloat(internalValue));
       }
     }
-  }, [internalValue]);
+  }, [internalValue, value, onChange]);
 
-  const handleChange = (value) => {
+  const handleChange = (value: string | number | boolean) => {
     const stringifiedValue = String(value);
     const startsWithZero =
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');
@@ -118,7 +151,7 @@ const MeasureInput = ({
       startsWithZero && !zeroWithDot
         ? stringifiedValue.replace(/^0/, '')
         : stringifiedValue || '0';
-    const isNumber = !isNaN(endorcedValue);
+    const isNumber = !isNaN(Number(endorcedValue));
 
     if (isNumber) {
       setInternalValue((prevValue) =>
@@ -127,24 +160,30 @@ const MeasureInput = ({
     }
   };
 
-  const desc = schema || schema.properties[name];
+  const desc = schema?.properties?.[name || ''] || schema;
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc.title}</span>
+      <span>{rest.title || desc?.title}</span>
       <div style={{ display: 'flex' }}>
         <Input
           schema={schema}
           value={internalValue}
           onChange={handleChange}
-          data-testid={`${desc.title}-value-input`}
+          type="text"
+          data-testid={`${desc?.title}-value-input`}
         />
         <Select
-          onChange={onExtraChange}
+          onChange={
+            onExtraChange ??
+            (() => {
+              // noop
+            })
+          }
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc.title}-measure-input`}
+          data-testid={`${desc?.title}-measure-input`}
         />
       </div>
     </div>

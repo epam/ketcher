@@ -73,33 +73,33 @@ const getNewFloat = (value: string): FloatResult => {
 
 /**
  * @param prevValue
- * @param endorcedValue
+ * @param enforcedValue
  * @returns {string}
  * */
 const getNewInternalValue = (
   prevValue: string,
-  endorcedValue: string,
+  enforcedValue: string,
 ): string => {
-  const newValueEndsWithDot = endorcedValue?.endsWith('.');
+  const newValueEndsWithDot = enforcedValue?.endsWith('.');
   const prevValueHasDot = prevValue?.includes('.');
   const isDotDeleted = prevValueHasDot && newValueEndsWithDot;
   const isDotAdded = !prevValueHasDot && newValueEndsWithDot;
 
   if (isDotDeleted) {
-    return endorcedValue.replace(/\.$/, '');
+    return enforcedValue.replace(/\.$/, '');
   }
 
   if (isDotAdded) {
-    return endorcedValue + '0';
+    return enforcedValue + '0';
   }
 
-  const { isNewFloat, float } = getNewFloat(endorcedValue);
+  const { isNewFloat, float } = getNewFloat(enforcedValue);
 
   if (isNewFloat && float) {
     return float;
   }
 
-  return endorcedValue;
+  return enforcedValue;
 };
 
 const MeasureInput = ({
@@ -115,7 +115,7 @@ const MeasureInput = ({
 }: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
 
-  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
+  // NOTE: onChange handler in the Input component (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
   // is mapped to the internal function via constructor
   // therefore the referencies to the MeasureInput's state are not updated
   // so we need to sync the props and the internal value through useEffects and use callbacks with
@@ -147,15 +147,15 @@ const MeasureInput = ({
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');
     const zeroWithDot = startsWithZero && stringifiedValue.includes('.');
 
-    const endorcedValue =
+    const enforcedValue =
       startsWithZero && !zeroWithDot
         ? stringifiedValue.replace(/^0/, '')
         : stringifiedValue || '0';
-    const isNumber = !isNaN(Number(endorcedValue));
+    const isNumber = !isNaN(Number(enforcedValue));
 
     if (isNumber) {
       setInternalValue((prevValue) =>
-        getNewInternalValue(prevValue, endorcedValue),
+        getNewInternalValue(prevValue, enforcedValue),
       );
     }
   };

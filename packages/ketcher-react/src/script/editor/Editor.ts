@@ -1310,6 +1310,59 @@ class Editor implements KetcherEditor {
         ),
     );
 
+    // Apply all modifications from wizard structure back to originalStruct
+    const wizardStruct = this.render.ctab.molecule;
+
+    // Update atom properties
+    wizardStruct.atoms.forEach((wizardAtom, wizardAtomId) => {
+      const originalAtomId =
+        this.selectedToOriginalAtomsIdMap.get(wizardAtomId);
+      if (originalAtomId !== undefined) {
+        const originalAtom = this.originalStruct.atoms.get(originalAtomId);
+        if (originalAtom && wizardAtom) {
+          originalAtom.label = wizardAtom.label;
+          originalAtom.charge = wizardAtom.charge;
+          originalAtom.isotope = wizardAtom.isotope;
+          originalAtom.radical = wizardAtom.radical;
+          originalAtom.explicitValence = wizardAtom.explicitValence;
+          originalAtom.implicitH = wizardAtom.implicitH;
+        }
+      }
+    });
+
+    // Add new bonds from wizard structure to original structure
+    wizardStruct.bonds.forEach((wizardBond) => {
+      const originalBeginId = this.selectedToOriginalAtomsIdMap.get(
+        wizardBond.begin,
+      );
+      const originalEndId = this.selectedToOriginalAtomsIdMap.get(
+        wizardBond.end,
+      );
+
+      if (originalBeginId !== undefined && originalEndId !== undefined) {
+        // Check if this bond already exists in originalStruct
+        const bondExists = this.originalStruct.bonds.find(
+          (_, originalBond) =>
+            (originalBond.begin === originalBeginId &&
+              originalBond.end === originalEndId) ||
+            (originalBond.begin === originalEndId &&
+              originalBond.end === originalBeginId),
+        );
+
+        // Add new bond if it doesn't exist
+        if (bondExists === undefined) {
+          this.originalStruct.bonds.add(
+            wizardBond.clone(
+              new Map([
+                [wizardBond.begin, originalBeginId],
+                [wizardBond.end, originalEndId],
+              ]),
+            ),
+          );
+        }
+      }
+    });
+
     this.closeMonomerCreationWizard();
 
     this.originalSelection.atoms?.forEach((atomId) => {

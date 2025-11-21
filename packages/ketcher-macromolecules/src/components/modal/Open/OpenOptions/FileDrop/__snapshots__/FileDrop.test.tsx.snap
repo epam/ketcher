@@ -5,10 +5,10 @@ Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
-        role="button"
+      <button
         style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
         tabindex="0"
+        type="button"
       >
         <input
           autocomplete="off"
@@ -41,14 +41,14 @@ Object {
         >
           Open from file
         </p>
-      </div>
+      </button>
     </div>
   </body>,
   "container": <div>
-    <div
-      role="button"
+    <button
       style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
       tabindex="0"
+      type="button"
     >
       <input
         autocomplete="off"
@@ -81,7 +81,7 @@ Object {
       >
         Open from file
       </p>
-    </div>
+    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

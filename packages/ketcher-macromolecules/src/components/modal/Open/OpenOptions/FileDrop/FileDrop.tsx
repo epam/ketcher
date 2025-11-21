@@ -95,13 +95,19 @@ const FileDrop = ({
     }
   };
 
+  const rootProps = getRootProps({ style }) as Omit<
+    ReturnType<typeof getRootProps>,
+    'role'
+  > & { role?: string };
+  const { role: _role, ...rootPropsWithoutRole } = rootProps;
+
   return (
-    <div
-      {...getRootProps({ style })}
+    <button
+      {...rootPropsWithoutRole}
       onClick={open}
       onKeyDown={handleKeyDown}
-      role="button"
       tabIndex={disabled ? -1 : 0}
+      type="button"
     >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
@@ -115,7 +121,7 @@ const FileDrop = ({
           <OpenOptionText>Open from file</OpenOptionText>
         </>
       )}
-    </div>
+    </button>
   );
 };
 

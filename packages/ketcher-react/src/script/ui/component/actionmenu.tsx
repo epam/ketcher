@@ -107,6 +107,8 @@ export function showMenuOrButton(
   props: SharedActionProps,
 ): JSX.Element {
   if (typeof item !== 'object') {
+    // item is a string key from the action object, which is typed as Tools
+    // All keys in Tools are valid IconNames
     return (
       <ActionButton
         name={item as IconName}
@@ -216,6 +218,8 @@ function renderActiveMenuItem(
   return (
     activeMenuItem && (
       <ActionButton
+        // activeMenuItem comes from menu items which are action object keys
+        // All keys in the action object (Tools type) are valid IconNames
         name={activeMenuItem as IconName}
         action={action[activeMenuItem]}
         status={status[activeMenuItem]}
@@ -237,7 +241,8 @@ function ActionMenu({
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = props.status[itemKey];
-    if (!status?.hidden) {
+    // Items without status or with hidden !== true should be visible
+    if (status?.hidden !== true) {
       items.push(item);
     }
 
@@ -261,11 +266,10 @@ function ActionMenu({
     >
       {visibleMenu.map((item) => {
         const itemKey = getItemKey(item);
-        const itemId = typeof item === 'string' ? item : item.id;
         return (
           <li
             key={itemKey}
-            id={itemId}
+            id={itemKey}
             className={clsx(props.status[itemKey], {
               opened: isMenuItemWithMenu(item) && item.id === props.opened,
             })}

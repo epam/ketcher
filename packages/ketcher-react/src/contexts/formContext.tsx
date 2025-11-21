@@ -16,6 +16,6 @@
 
 import React from 'react';
 
-const formContext = React.createContext(null);
+const formContext = React.createContext<any>(null);
 
 export default formContext;

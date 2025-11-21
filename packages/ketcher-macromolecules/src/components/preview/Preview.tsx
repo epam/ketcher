@@ -58,6 +58,7 @@ export const Preview = () => {
       const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
         .node()
         ?.getBoundingClientRect();
+      const canvasWrapperTop = canvasWrapperBoundingClientRect?.top || 0;
       const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
       const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
       const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
@@ -75,15 +76,22 @@ export const Preview = () => {
 
       const topPreviewPosition =
         targetTop - previewHeight - PREVIEW_OFFSET - ketcherRootOffsetY;
-      const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
+      const bottomPreviewPosition =
+        targetBottom + PREVIEW_OFFSET - ketcherRootOffsetY;
       const leftPreviewPosition =
         targetLeft + targetWidth / 2 - previewWidth / 2 - ketcherRootOffsetX;
 
-      if (targetTop > previewHeight + PREVIEW_OFFSET) {
+      // Check if tooltip would be visible when positioned above
+      const wouldBeVisibleAbove =
+        targetTop - ketcherRootOffsetY >= previewHeight + PREVIEW_OFFSET &&
+        topPreviewPosition >= canvasWrapperTop - ketcherRootOffsetY;
+
+      if (wouldBeVisibleAbove) {
         previewRef.current.style.top = `${topPreviewPosition}px`;
       } else if (
         targetBottom + previewHeight > canvasWrapperBottom &&
-        targetBottom > canvasWrapperBottom / 2
+        targetBottom > canvasWrapperBottom / 2 &&
+        topPreviewPosition >= canvasWrapperTop - ketcherRootOffsetY
       ) {
         previewRef.current.style.top = `${topPreviewPosition}px`;
       } else {

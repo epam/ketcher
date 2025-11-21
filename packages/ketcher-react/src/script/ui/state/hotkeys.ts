@@ -99,6 +99,9 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   if (state.modal || selectIsAbbreviationLookupOpen(state)) {
     return true;
   }
+  // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
+  // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
+  // Ideally x2 – create a common event interception layer for both micro and macro editors
   return event.target.nodeName === 'INPUT';
 }
 
@@ -179,7 +182,7 @@ function getNextAction(actName) {
 function shouldHandleItemDirectly(
   hoveredItem: Record<string, number> | null,
   newAction,
-): boolean {
+): hoveredItem is Record<string, number> {
   return Boolean(
     hoveredItem &&
       newAction.tool !== 'select' &&
@@ -225,14 +228,12 @@ function handleHotkeyGroup(
 
     if (shouldHandleItemDirectly(hoveredItem, newAction)) {
       newAction = getCurrentAction(group[index]) || newAction;
-      if (hoveredItem) {
-        handleHotkeyOverItem({
-          hoveredItem,
-          newAction,
-          editor,
-          dispatch,
-        });
-      }
+      handleHotkeyOverItem({
+        hoveredItem,
+        newAction,
+        editor,
+        dispatch,
+      });
     } else {
       if (newAction.tool === 'select') {
         newAction = handleSelectTool(newAction, key, index);
@@ -262,8 +263,13 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const hoveredItem = getHoveredItem(render.ctab);
 
   if (key && key.length === 1 && !hoveredItem) {
-    const handled = handleAbbreviationLookup(key, state, dispatch, event);
-    if (handled) {
+    const abbreviationLookupHandled = handleAbbreviationLookup(
+      key,
+      state,
+      dispatch,
+      event,
+    );
+    if (abbreviationLookupHandled) {
       return;
     }
   }

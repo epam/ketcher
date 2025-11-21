@@ -447,8 +447,8 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   private calcGroup2Valence(
-    connectionCount: number,
     radicalCount: number,
+    connectionCount: number,
     absCharge: number,
   ): { valence: number; hydrogenCount: number } {
     const totalConnections = connectionCount + radicalCount + absCharge;
@@ -980,7 +980,7 @@ export class Atom extends BaseMicromoleculeEntity {
           absCharge,
         );
       case 2:
-        return this.calcGroup2Valence(connectionCount, radicalCount, absCharge);
+        return this.calcGroup2Valence(radicalCount, connectionCount, absCharge);
       case 3:
         return this.calcGroup3Valence(
           label,

@@ -51,8 +51,12 @@ class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
       | React.ChangeEvent<HTMLInputElement>,
   ) {
     const target = event.target as HTMLButtonElement | HTMLInputElement;
-    const value =
-      (target as HTMLInputElement).value || target.textContent || '';
+    let value = '';
+    if (target instanceof HTMLInputElement) {
+      value = target.value || '';
+    } else if (target.textContent) {
+      value = target.textContent;
+    }
     this.setState({ suggestsHidden: true });
     this.props.onChange(value);
   }
@@ -97,9 +101,7 @@ class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
           <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
-        ) : (
-          ''
-        )}
+        ) : null}
       </div>
     );
   }

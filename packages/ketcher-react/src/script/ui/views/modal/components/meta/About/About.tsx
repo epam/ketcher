@@ -32,7 +32,7 @@ interface AboutDialogProps {
   onOk: (result?: unknown) => void;
 }
 
-function AboutDialog(props: AboutDialogProps) {
+function AboutDialog(props: Readonly<AboutDialogProps>) {
   const indigoInfo = props.indigoVersion?.split('.r') || []; // Indigo version and build info
 
   const dialogParams: DialogParams = {

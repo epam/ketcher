@@ -17,13 +17,29 @@
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
-const typeSchema = [
+// AtomTypeValue includes 'gen' for compatibility with PeriodTable.tsx,
+// even though it's not displayed as an option in the UI
+type AtomTypeValue = 'atom' | 'list' | 'not-list' | 'gen';
+
+interface TypeSchemaItem {
+  title: string;
+  value: AtomTypeValue;
+  testId: string;
+}
+
+const typeSchema: TypeSchemaItem[] = [
   { title: 'Single', value: 'atom', testId: 'single-radio-button' },
   { title: 'List', value: 'list', testId: 'list-radio-button' },
   { title: 'Not List', value: 'not-list', testId: 'not-list-radio-button' },
 ];
 
-function TypeChoice({ value, onChange, disabled, ...props }) {
+interface TypeChoiceProps {
+  value: AtomTypeValue;
+  onChange: (value: AtomTypeValue) => void;
+  disabled?: boolean;
+}
+
+function TypeChoice({ value, onChange, disabled }: TypeChoiceProps) {
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (
@@ -36,7 +52,10 @@ function TypeChoice({ value, onChange, disabled, ...props }) {
             checked={type.value === value}
             onChange={() => onChange(type.value)}
             disabled={disabled}
-            {...props}
+            // Note: schema and innerRef are required by GenericInput's Props type
+            // definition in Input.tsx, though they are optional in the implementation
+            schema={undefined}
+            innerRef={undefined}
           />
           {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}

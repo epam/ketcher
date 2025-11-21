@@ -81,17 +81,20 @@ export const Preview = () => {
       const leftPreviewPosition =
         targetLeft + targetWidth / 2 - previewWidth / 2 - ketcherRootOffsetX;
 
+      // Calculate the minimum allowed top position to keep tooltip within viewport
+      const minAllowedTopPosition = canvasWrapperTop - ketcherRootOffsetY;
+
       // Check if tooltip would be visible when positioned above
       const wouldBeVisibleAbove =
         targetTop - ketcherRootOffsetY >= previewHeight + PREVIEW_OFFSET &&
-        topPreviewPosition >= canvasWrapperTop - ketcherRootOffsetY;
+        topPreviewPosition >= minAllowedTopPosition;
 
       if (wouldBeVisibleAbove) {
         previewRef.current.style.top = `${topPreviewPosition}px`;
       } else if (
         targetBottom + previewHeight > canvasWrapperBottom &&
         targetBottom > canvasWrapperBottom / 2 &&
-        topPreviewPosition >= canvasWrapperTop - ketcherRootOffsetY
+        topPreviewPosition >= minAllowedTopPosition
       ) {
         previewRef.current.style.top = `${topPreviewPosition}px`;
       } else {

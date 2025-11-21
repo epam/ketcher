@@ -25,8 +25,10 @@ import {
   notifyCopyCut,
 } from 'ketcher-core';
 
-const ieCb: any =
-  typeof window !== 'undefined' ? (window as any).clipboardData : {};
+const ieCb: DataTransfer | undefined =
+  typeof window !== 'undefined'
+    ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
+    : undefined;
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
@@ -366,9 +368,12 @@ export function exec(action: string): boolean {
   let enabled = document.queryCommandSupported(action);
   if (enabled) {
     try {
+      const windowWithClipboardEvent = window as Window & {
+        ClipboardEvent?: typeof ClipboardEvent;
+      };
       enabled =
         document.execCommand(action) ||
-        Boolean((window as any).ClipboardEvent) ||
+        Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
     } catch (e) {
       // FF < 41

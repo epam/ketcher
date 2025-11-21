@@ -16,8 +16,32 @@
 
 import { xor } from 'lodash/fp';
 
-function oneOrMore(multipl, values, item) {
-  if (multipl) return xor(values, [item]);
+interface Schema {
+  items: {
+    enum: string[];
+    enumNames: string[];
+  };
+}
+
+interface ButtonListProps {
+  value: string[];
+  onChange: (value: string[]) => void;
+  schema: Schema;
+  disabledIds: string[];
+  multiple: boolean;
+  classes: {
+    selected?: string;
+    [key: string]: string | undefined;
+  };
+  testId?: string;
+}
+
+function oneOrMore(
+  multiple: boolean,
+  values: string[],
+  item: string,
+): string[] {
+  if (multiple) return xor(values, [item]);
   return xor(values, values.concat([item]));
 }
 
@@ -29,8 +53,8 @@ function ButtonList({
   multiple,
   classes,
   testId,
-}) {
-  let className;
+}: ButtonListProps) {
+  let className: string;
   const selected = classes.selected || 'selected';
   return (
     <ul>

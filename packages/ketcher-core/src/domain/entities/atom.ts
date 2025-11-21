@@ -918,6 +918,12 @@ export class Atom extends BaseMicromoleculeEntity {
 
     const element = Elements.get(label);
     const groupno = element?.group;
+
+    if (groupno === undefined && label !== 'D' && label !== 'T') {
+      this.implicitH = 0;
+      return true;
+    }
+
     const radicalCount = radicalElectrons(this.radical);
     const absCharge = Math.abs(charge);
 

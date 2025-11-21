@@ -254,7 +254,6 @@ const Atom: FC<Props> = (props: Props) => {
                 <button
                   onClick={handleAccordionChange(groupName)}
                   className={classes.accordionSummaryWrapper}
-                  aria-disabled={isCustomQuery || isDisabled}
                   disabled={isCustomQuery || isDisabled}
                   type="button"
                 >

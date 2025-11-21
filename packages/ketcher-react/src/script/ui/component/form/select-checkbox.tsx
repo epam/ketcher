@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ComponentType } from 'react';
+import React, { ComponentType } from 'react';
 import Input from './Input/Input';
 
 interface BooleanSchema {
@@ -45,15 +45,22 @@ interface SelectCheckboxProps {
   multiple?: boolean;
 }
 
+function isBooleanSchema(schema: Schema): schema is BooleanSchema {
+  return 'type' in schema && schema.type === 'boolean';
+}
+
 function SelectCheckbox({ schema, ...props }: SelectCheckboxProps) {
-  let currentSchema: EnumSchema = schema as EnumSchema;
-  if ('type' in schema && schema.type === 'boolean') {
+  let currentSchema: EnumSchema;
+
+  if (isBooleanSchema(schema)) {
     currentSchema = {
       title: schema.title,
       enum: [true, false],
       enumNames: ['on', 'off'],
       default: schema.default,
     };
+  } else {
+    currentSchema = schema;
   }
 
   return <Input schema={currentSchema} {...props} />;

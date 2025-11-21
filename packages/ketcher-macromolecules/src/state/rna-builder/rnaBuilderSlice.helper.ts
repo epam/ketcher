@@ -28,5 +28,5 @@ export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
     });
   }
 
-  return rnaLabeledPreset as IRnaLabeledPreset;
+  return rnaLabeledPreset;
 };

@@ -366,9 +366,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('stroke', 'transparent')
       .attr('stroke-width', '10');
 
-    (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
-      this.hoverCircleAreaElement
-    )) = this.rootElement
+    this.hoverCircleAreaElement = this.rootElement
       ?.append('circle')
       .attr('cursor', 'pointer')
       .attr('r', '1')

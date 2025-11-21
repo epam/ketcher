@@ -517,9 +517,7 @@ export class SequenceMode extends BaseMode {
       this.mousemoveCounter > 1
     ) {
       const editor = CoreEditor.provideEditorInstance();
-      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
-        eventData as BaseSequenceItemRenderer,
-      );
+      SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
 
       let startCaretPosition = this.selectionStartCaretPosition;
       let endCaretPosition = SequenceRenderer.caretPosition;

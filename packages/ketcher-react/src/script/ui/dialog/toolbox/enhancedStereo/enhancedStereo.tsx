@@ -200,6 +200,6 @@ function maxOfOrs(stereLabels): number {
 }
 
 export default connect((state) => ({
-  formState: (state as any).modal.form || { result: {}, valid: false },
-  struct: (state as any).editor.struct(),
+  formState: state.modal.form || { result: {}, valid: false },
+  struct: state.editor.struct(),
 }))(EnhancedStereo);

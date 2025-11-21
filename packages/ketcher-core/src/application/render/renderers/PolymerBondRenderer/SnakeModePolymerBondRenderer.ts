@@ -1012,9 +1012,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '10');
 
-      (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
-        this.hoverCircleAreaElement
-      )) = this.rootElement
+      this.hoverCircleAreaElement = this.rootElement
         ?.append('circle')
         .attr('cursor', 'pointer')
         .attr('r', '1')

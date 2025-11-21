@@ -1311,6 +1311,7 @@ class Editor implements KetcherEditor {
     );
 
     // Apply all modifications from wizard structure back to originalStruct
+    // This prevents the wizard closure from reverting changes that should be preserved
     const wizardStruct = this.render.ctab.molecule;
 
     // Update atom properties
@@ -1319,7 +1320,7 @@ class Editor implements KetcherEditor {
         this.selectedToOriginalAtomsIdMap.get(wizardAtomId);
       if (originalAtomId !== undefined) {
         const originalAtom = this.originalStruct.atoms.get(originalAtomId);
-        if (originalAtom && wizardAtom) {
+        if (originalAtom) {
           originalAtom.label = wizardAtom.label;
           originalAtom.charge = wizardAtom.charge;
           originalAtom.isotope = wizardAtom.isotope;

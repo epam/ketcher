@@ -18,8 +18,23 @@ import { Component } from 'react';
 
 import classes from './combobox.module.less';
 
-class ComboBox extends Component {
-  constructor(props) {
+interface Schema {
+  enumNames: string[];
+}
+
+interface ComboBoxProps {
+  value: string;
+  type?: string;
+  schema: Schema;
+  onChange: (value: string) => void;
+}
+
+interface ComboBoxState {
+  suggestsHidden: boolean;
+}
+
+class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
+  constructor(props: ComboBoxProps) {
     super(props);
     this.state = {
       suggestsHidden: true,
@@ -30,8 +45,18 @@ class ComboBox extends Component {
     this.updateInput = this.updateInput.bind(this);
   }
 
-  updateInput(event) {
-    const value = event.target.value || event.target.textContent;
+  updateInput(
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const target = event.target as HTMLButtonElement | HTMLInputElement;
+    let value = '';
+    if (target instanceof HTMLInputElement) {
+      value = target.value || '';
+    } else if (target.textContent) {
+      value = target.textContent;
+    }
     this.setState({ suggestsHidden: true });
     this.props.onChange(value);
   }
@@ -76,9 +101,7 @@ class ComboBox extends Component {
           <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
-        ) : (
-          ''
-        )}
+        ) : null}
       </div>
     );
   }

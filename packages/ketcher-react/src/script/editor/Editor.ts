@@ -683,7 +683,9 @@ class Editor implements KetcherEditor {
       });
 
       if (bondId === null) {
-        return true; // Invalid if bond not found
+        // Terminal R-group atoms should always have exactly one bond
+        // If bond is not found, the structure is invalid
+        return true;
       }
 
       const bond = currentStruct.bonds.get(bondId);

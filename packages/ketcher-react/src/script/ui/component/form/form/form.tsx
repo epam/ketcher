@@ -333,7 +333,9 @@ function Field(props: FieldProps) {
     stateStore.field(name, onChange, extraName);
 
   const getExtraSchema = () => {
-    return rest.extraSchema || schema.properties?.[extraName!];
+    return extraName
+      ? rest.extraSchema || schema.properties?.[extraName]
+      : undefined;
   };
 
   const Component = component as ComponentType<any>;

@@ -28,7 +28,8 @@ interface ItemStatus {
   selected?: boolean;
   disabled?: boolean;
   hidden?: boolean;
-  [key: string]: any;
+  // Additional CSS class names or status properties
+  [key: string]: boolean | string | undefined;
 }
 
 interface StatusMap {
@@ -45,6 +46,7 @@ interface MenuItemWithMenu {
 }
 
 interface MenuItemWithComponent {
+  id: string;
   component: (props: SharedActionProps) => JSX.Element;
 }
 
@@ -92,11 +94,10 @@ function isMenuOpened(currentNode: HTMLElement | null): boolean {
 }
 
 function getItemKey(item: MenuItem): string {
-  return typeof item === 'string'
-    ? item
-    : isMenuItemWithMenu(item)
-      ? item.id
-      : '';
+  if (typeof item === 'string') {
+    return item;
+  }
+  return item.id;
 }
 
 export function showMenuOrButton(
@@ -191,16 +192,21 @@ function renderActiveMenuItem(
   let activeMenuItem: string | null = null;
   if (isOpened(item, opened)) {
     if (isLeaf(menu)) {
-      activeMenuItem =
-        findActiveMenuItem(menu as string[], status) || (menu[0] as string);
-    } else {
-      const subMenuItems = (menu as MenuItemWithMenu[]).reduce(
-        (acc: string[], curr) => {
-          acc.push(...(curr.menu as string[]));
-          return acc;
-        },
-        [],
+      // All items are strings, safe to filter
+      const stringItems = menu.filter(
+        (item): item is string => typeof item === 'string',
       );
+      activeMenuItem = findActiveMenuItem(stringItems, status) || stringItems[0];
+    } else {
+      // Nested menu structure
+      const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
+      const subMenuItems = menuWithMenuItems.reduce((acc: string[], curr) => {
+        const stringItems = curr.menu.filter(
+          (item): item is string => typeof item === 'string',
+        );
+        acc.push(...stringItems);
+        return acc;
+      }, []);
 
       activeMenuItem =
         findActiveMenuItem(subMenuItems, status) || subMenuItems[0];
@@ -255,12 +261,7 @@ function ActionMenu({
     >
       {visibleMenu.map((item) => {
         const itemKey = getItemKey(item);
-        const itemId =
-          typeof item === 'string'
-            ? item
-            : isMenuItemWithMenu(item)
-              ? item.id
-              : undefined;
+        const itemId = typeof item === 'string' ? item : item.id;
         return (
           <li
             key={itemKey}
@@ -294,13 +295,21 @@ function toolMargin(
   // now not found better way
   const iconHeight =
     window.innerHeight <= 600 || window.innerWidth <= 1040 ? 32 : 40;
-  let index = (menu as string[]).indexOf(visibleTools[menuName]); // first level
+  
+  // First level: check if menu is flat (all strings)
+  const flatMenu = menu.filter((item): item is string => typeof item === 'string');
+  let index = flatMenu.indexOf(visibleTools[menuName]);
 
+  // Second level: check nested menus
   if (index === -1) {
-    let tools: string[] = [];
+    const tools: string[] = [];
     menu.forEach((item) => {
       if (isMenuItemWithMenu(item)) {
-        tools = tools.concat(item.menu as string[]);
+        // Recursively flatten nested menu items
+        const nestedStrings = item.menu.filter(
+          (nestedItem): nestedItem is string => typeof nestedItem === 'string',
+        );
+        tools.push(...nestedStrings);
       }
     });
 

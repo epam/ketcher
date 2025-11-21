@@ -163,19 +163,15 @@ function renderActiveMenuItem(
     if (isLeaf(menu)) {
       activeMenuItem = findActiveMenuItem(menu, status) || (menu[0] as string);
     } else {
-      const subMenuItems = menu.reduce<string[]>((acc, curr) => {
+      const subMenuItems = menu.reduce<MenuItemOrString[]>((acc, curr) => {
         if (typeof curr !== 'string' && curr.menu) {
-          acc.push(
-            ...(curr.menu.filter(
-              (item) => typeof item === 'string',
-            ) as string[]),
-          );
+          acc.push(...curr.menu);
         }
         return acc;
       }, []);
 
       activeMenuItem =
-        findActiveMenuItem(subMenuItems, status) || subMenuItems[0];
+        findActiveMenuItem(subMenuItems, status) || (subMenuItems[0] as string);
     }
   }
 

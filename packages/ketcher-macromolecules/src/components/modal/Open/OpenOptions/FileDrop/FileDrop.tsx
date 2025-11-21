@@ -91,7 +91,7 @@ const FileDrop = ({
     [isDragActive],
   ) as React.CSSProperties;
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       if (!disabled) {
@@ -100,10 +100,10 @@ const FileDrop = ({
     }
   };
 
-  const { role: _role, ...rootProps } = getRootProps({ style }) as Record<
-    string,
-    unknown
-  >;
+  const { role: _role, ...rootProps } = getRootProps({ style }) as {
+    role?: string;
+    [key: string]: unknown;
+  };
 
   return (
     <button

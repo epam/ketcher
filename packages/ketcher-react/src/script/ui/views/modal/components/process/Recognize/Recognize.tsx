@@ -53,7 +53,7 @@ function FooterContent({
   openHandler,
   copyHandler,
   isAddToCanvasDisabled,
-}: FooterContentProps) {
+}: Readonly<FooterContentProps>) {
   return (
     <div className={classes.footerContent}>
       <OpenButton
@@ -100,7 +100,7 @@ interface RecognizeDialogProps {
   onChangeImago: (version: string) => void;
 }
 
-function RecognizeDialog(prop: RecognizeDialogProps) {
+function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   const {
     file,
     structStr,

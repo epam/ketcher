@@ -43,7 +43,7 @@ interface ErrorsCheckProps {
   checkSchema: CheckSchema;
 }
 
-function ErrorsCheck(props: ErrorsCheckProps) {
+function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
   const { moleculeErrors, checkSchema } = props;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);
 

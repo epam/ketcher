@@ -253,7 +253,7 @@ const mapDispatchToProps = (
       if (!result) return;
       const hasType = 'type' in result;
       if (!hasType) {
-        dispatch(addAtoms((result as AtomResult).label));
+        dispatch(addAtoms(result.label));
       }
       if (!ownProps.isNestedModal) {
         dispatch(

@@ -2,7 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -11,6 +10,7 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
+  readFileContent,
 } from '@utils';
 import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
@@ -238,10 +238,10 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-1844
       Description: MolFile is pasted to canvas
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+    const fileContent = await readFileContent(
+      'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

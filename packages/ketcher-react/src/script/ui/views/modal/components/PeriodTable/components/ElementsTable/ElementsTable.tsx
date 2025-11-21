@@ -17,7 +17,7 @@
 import { Header, MainRow, OutinerRow } from './components';
 import { Component } from 'react';
 
-import { Elements } from 'ketcher-core';
+import { Elements, Element } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
 
 const metalPrefix = [
@@ -33,7 +33,7 @@ const atomClassNames = {
   button: 'button',
   selected: 'selected',
 };
-const beforeSpan = {
+const beforeSpan: Record<string, number> = {
   He: 16,
   B: 10,
   Al: 10,
@@ -42,7 +42,11 @@ const beforeSpan = {
 };
 const ACTINIDE = 'actinide';
 const LANTHANIDE = 'lanthanide';
-const main = rowPartition(
+
+type RowElement = Element | number;
+type Row = RowElement[];
+
+const main: Row[] = rowPartition(
   Elements.filter(
     (item) =>
       item &&
@@ -52,15 +56,15 @@ const main = rowPartition(
       item.number !== 57,
   ),
 );
-const lanthanides = Elements.filter(
+const lanthanides: Element[] = Elements.filter(
   (item) => item && (item.type === LANTHANIDE || item.number === 57),
 );
-const actinides = Elements.filter(
+const actinides: Element[] = Elements.filter(
   (item) => item && (item.type === ACTINIDE || item.number === 89),
 );
 
-function rowPartition(elements) {
-  return elements.reduce((result, item) => {
+function rowPartition(elements: Element[]): Row[] {
+  return elements.reduce((result: Row[], item: Element) => {
     const row = result[item.period - 1];
     if (!row) {
       result.push([item]);
@@ -72,16 +76,26 @@ function rowPartition(elements) {
   }, []);
 }
 
-class ElementsTable extends Component {
-  // eslint-disable-line
-  shouldComponentUpdate(nextProps) {
+interface ElementsTableProps {
+  value: string | string[] | null;
+  currentEvents: (element: Element) => {
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+  };
+  selected: (label: string) => boolean;
+  onAtomSelect: (label: string) => void;
+  onDoubleClick: (label?: string) => void;
+}
+
+class ElementsTable extends Component<ElementsTableProps> {
+  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
     return nextProps.value !== this.props.value;
   }
 
-  getAtomClassNames = (item) => {
+  getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
-    const type = metalPrefix.includes(item.type)
+    const type = metalPrefix.includes(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
       : item.type || atomClassNames.unknownProps;
 
@@ -94,11 +108,11 @@ class ElementsTable extends Component {
     ];
 
     return classes.map((className) => {
-      return styles[className];
+      return styles[className as keyof typeof styles];
     });
   };
 
-  render() {
+  render(): JSX.Element {
     const { currentEvents, onAtomSelect, onDoubleClick } = this.props;
     const callbacks = { currentEvents, onAtomSelect, onDoubleClick };
     return (
@@ -114,7 +128,9 @@ class ElementsTable extends Component {
             key={index}
             row={row}
             caption={index + 1}
-            refer={(element) => element === 1 && (index === 5 ? '*' : '**')}
+            refer={(element: number) =>
+              element === 1 && (index === 5 ? '*' : '**')
+            }
             {...callbacks}
           />
         ))}

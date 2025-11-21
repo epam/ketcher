@@ -7,7 +7,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -21,10 +20,10 @@ import {
   selectPartOfMolecules,
   clickOnCanvas,
   setMolecule,
-  FILE_TEST_DATA,
   moveMouseAway,
   MolFileFormat,
   SequenceFileFormat,
+  readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
@@ -175,13 +174,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Chromium-popup/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {
@@ -843,9 +845,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
+    const fileContent = await readFileContent('Molfiles-V3000/macromol.mol');
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, FILE_TEST_DATA.macromol),
+      async () => await setMolecule(page, fileContent),
     );
     await takeEditorScreenshot(page);
   });

@@ -7,7 +7,6 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, expect, test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
   MolFileFormat,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
@@ -428,7 +427,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -444,7 +443,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      await readFileContent(
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
+      ),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -783,7 +784,7 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToCanvas(
         page,
-        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+        await readFileContent('KET/one-functional-group-expanded.ket'),
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
         from: 'pageTopLeft',
@@ -811,7 +812,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.MOLv3000,
-        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
         from: 'pageTopLeft',

@@ -151,7 +151,7 @@ export function TopMenuComponent() {
         <Menu.Group isHorizontal={true} divider={true}>
           <Menu.Item
             itemId={'arrange-ring' as IconName}
-            title={`Arrange Ring (${hotkeysShortcuts.arrangeRing})`}
+            title={`Arrange as a Ring (${hotkeysShortcuts.arrangeRing})`}
             disabled={cyclicStructureFormationDisabled}
             testId="arrange-ring"
           />

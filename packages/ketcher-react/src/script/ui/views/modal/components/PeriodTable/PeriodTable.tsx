@@ -19,7 +19,7 @@ import { fromElement, toElement } from '../../../../data/convert/structconv';
 
 import { Component } from 'react';
 import { Dialog } from '../../../components';
-import { Elements } from 'ketcher-core';
+import { Element, Elements } from 'ketcher-core';
 import { addAtoms } from '../../../../state/toolbar';
 import classes from './PeriodTable.module.less';
 import { connect } from 'react-redux';
@@ -27,18 +27,70 @@ import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
 
-class Table extends Component {
-  constructor(props) {
+type AtomType = 'atom' | 'gen' | 'list' | 'not-list';
+
+interface AtomResult {
+  label: string;
+  pseudo: string | null;
+}
+
+interface GenResult {
+  type: 'gen';
+  label: string;
+  pseudo: string;
+}
+
+interface ListResult {
+  type: 'list' | 'not-list';
+  values: string[];
+}
+
+type PeriodTableResult = AtomResult | GenResult | ListResult | null;
+
+interface TableOwnProps {
+  type?: AtomType;
+  values?: string[];
+  label?: string;
+  pseudo?: string;
+  isNestedModal?: boolean;
+  onOk: (result: PeriodTableResult) => void;
+  onCancel: () => void;
+}
+
+interface TableStateProps {
+  isMonomerCreationWizardActive: boolean;
+  type?: AtomType;
+  values?: string[];
+  label?: string;
+  pseudo?: string;
+}
+
+interface TableDispatchProps {
+  onOk: (result: PeriodTableResult) => void;
+}
+
+type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
+
+interface TableState {
+  type: AtomType;
+  value: string | string[] | null;
+  current: Element;
+  isInfo: boolean;
+}
+
+class Table extends Component<TableProps, TableState> {
+  constructor(props: TableProps) {
     super(props);
+    const heliumElement = Elements.get(2);
     this.state = {
       type: props.type || 'atom',
       value: props.values || (!props.pseudo ? props.label : null) || null,
-      current: Elements.get(2),
+      current: heliumElement || ({} as Element),
       isInfo: false,
     };
   }
 
-  changeType = (type) => {
+  changeType = (type: AtomType) => {
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
     const currentChoice = type === 'list' || type === 'not-list';
@@ -59,42 +111,45 @@ class Table extends Component {
     </div>
   );
 
-  selected = (label) => {
+  selected = (label: string): boolean => {
     const { type, value } = this.state;
     return type === 'atom' || type === 'gen'
       ? value === label
-      : value.includes(label);
+      : Array.isArray(value) && value.includes(label);
   };
 
-  onAtomSelect = (label, activateImmediately = false) => {
+  onAtomSelect = (label?: string, activateImmediately = false) => {
     if (activateImmediately) {
       const result = this.result();
       const { type } = this.state;
       if (result && type === 'atom') {
         this.props.onOk(this.result());
       }
-    } else {
+    } else if (label) {
       const { type, value } = this.state;
       this.setState({
-        value: type === 'atom' || type === 'gen' ? label : xor([label], value),
+        value:
+          type === 'atom' || type === 'gen'
+            ? label
+            : xor([label], Array.isArray(value) ? value : []),
       });
     }
   };
 
-  result = () => {
+  result = (): PeriodTableResult => {
     const { type, value } = this.state;
-    if (!value?.length) {
+    if (!value || (Array.isArray(value) && !value.length)) {
       return null;
     }
     if (type === 'atom') {
-      return { label: value, pseudo: null };
+      return { label: value as string, pseudo: null };
     } else if (type === 'gen') {
-      return { type, label: value, pseudo: value };
+      return { type, label: value as string, pseudo: value as string };
     }
-    return { type, values: value };
+    return { type, values: value as string[] };
   };
 
-  currentEvents = (element) => {
+  currentEvents = (element: Element) => {
     return {
       onMouseEnter: () => this.setState({ current: element, isInfo: true }),
       onMouseLeave: () => this.setState({ isInfo: false }),
@@ -105,11 +160,19 @@ class Table extends Component {
     const { value } = this.state;
     const HeaderContent = this.headerContent;
 
+    // Cast props to satisfy the Dialog component's expectations
+    // The Dialog component expects a looser type for onOk
+    const dialogParams = this.props as unknown as {
+      onCancel: () => void;
+      onOk: (result: unknown) => void;
+      isNestedModal?: boolean;
+    };
+
     return (
       <Dialog
         headerContent={<HeaderContent />}
         className={classes.elementsTable}
-        params={this.props}
+        params={dialogParams}
         result={this.result}
         buttons={['Cancel', 'OK']}
         buttonsNameMap={{ OK: 'Add' }}
@@ -121,7 +184,7 @@ class Table extends Component {
               onChange={this.changeType}
               disabled={this.props.isMonomerCreationWizardActive}
             />
-          ) : null
+          ) : undefined
         }
       >
         <div className={classes.periodTable}>
@@ -139,7 +202,15 @@ class Table extends Component {
   }
 }
 
-function mapSelectionToProps(editor) {
+interface RootState {
+  editor: {
+    isMonomerCreationWizardActive: boolean;
+  };
+}
+
+function mapSelectionToProps(
+  editor: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+): Partial<TableStateProps> {
   const selection = editor.selection();
 
   if (
@@ -156,11 +227,13 @@ function mapSelectionToProps(editor) {
   return {};
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const result = {};
-
-  result.isMonomerCreationWizardActive =
-    state.editor.isMonomerCreationWizardActive;
+const mapStateToProps = (
+  state: RootState,
+  ownProps: TableOwnProps,
+): TableStateProps => {
+  const result: TableStateProps = {
+    isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
+  };
 
   if (ownProps.values || ownProps.label) {
     return result;
@@ -171,11 +244,16 @@ const mapStateToProps = (state, ownProps) => {
   return { ...selectionProps, ...result };
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (
+  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  ownProps: TableOwnProps,
+): TableDispatchProps => {
   return {
-    onOk: (result) => {
-      if (!result.type || result.type === 'atom') {
-        dispatch(addAtoms(result.label));
+    onOk: (result: PeriodTableResult) => {
+      if (!result) return;
+      const hasType = 'type' in result;
+      if (!hasType) {
+        dispatch(addAtoms((result as AtomResult).label));
       }
       if (!ownProps.isNestedModal) {
         dispatch(
@@ -190,6 +268,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   };
 };
 
-const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table);
+const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export default PeriodTable;

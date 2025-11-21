@@ -100,9 +100,14 @@ const FileDrop = ({
     }
   };
 
+  const { role: _role, ...rootProps } = getRootProps({ style }) as Record<
+    string,
+    unknown
+  >;
+
   return (
     <button
-      {...getRootProps({ style })}
+      {...rootProps}
       onClick={open}
       onKeyDown={handleKeyDown}
       tabIndex={disabled ? -1 : 0}

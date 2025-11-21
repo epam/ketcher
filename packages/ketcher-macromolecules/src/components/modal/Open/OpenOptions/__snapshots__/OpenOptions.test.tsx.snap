@@ -45,7 +45,6 @@ Object {
           data-testid="open-from-file-button"
         >
           <button
-            role="button"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between; background: none; padding: 0px; cursor: pointer;"
             tabindex="0"
             type="button"
@@ -93,7 +92,6 @@ Object {
         >
           <button
             disabled=""
-            role="button"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between; background: none; padding: 0px; cursor: pointer;"
             tabindex="-1"
             type="button"
@@ -185,7 +183,6 @@ Object {
         data-testid="open-from-file-button"
       >
         <button
-          role="button"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between; background: none; padding: 0px; cursor: pointer;"
           tabindex="0"
           type="button"
@@ -233,7 +230,6 @@ Object {
       >
         <button
           disabled=""
-          role="button"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between; background: none; padding: 0px; cursor: pointer;"
           tabindex="-1"
           type="button"

@@ -36,8 +36,12 @@ interface ButtonListProps {
   testId?: string;
 }
 
-function oneOrMore(multipl: boolean, values: string[], item: string): string[] {
-  if (multipl) return xor(values, [item]);
+function oneOrMore(
+  multiple: boolean,
+  values: string[],
+  item: string,
+): string[] {
+  if (multiple) return xor(values, [item]);
   return xor(values, values.concat([item]));
 }
 

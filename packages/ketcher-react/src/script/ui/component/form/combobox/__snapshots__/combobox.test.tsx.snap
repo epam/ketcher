@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ComboBox component should be rendered correctly should render combobox with suggestions 1`] = `
+<DocumentFragment>
+  <div>
+    <input
+      autocomplete="off"
+      type="text"
+      value="Option1"
+    />
+    <ul
+      class="suggestList"
+      style="display: none;"
+    >
+      <li>
+        <button
+          class="suggestButton"
+          type="button"
+        >
+          Option2
+        </button>
+      </li>
+      <li>
+        <button
+          class="suggestButton"
+          type="button"
+        >
+          Option3
+        </button>
+      </li>
+    </ul>
+  </div>
+</DocumentFragment>
+`;

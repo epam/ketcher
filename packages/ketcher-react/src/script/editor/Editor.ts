@@ -1350,7 +1350,7 @@ class Editor implements KetcherEditor {
         );
 
         // Add new bond if it doesn't exist
-        if (bondExists === undefined) {
+        if (bondExists === null) {
           this.originalStruct.bonds.add(
             wizardBond.clone(
               new Map([

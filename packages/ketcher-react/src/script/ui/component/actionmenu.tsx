@@ -45,8 +45,7 @@ interface MenuItemWithMenu {
 }
 
 interface MenuItemWithComponent {
-  id?: string;
-  component: (props: any) => JSX.Element;
+  component: (props: SharedActionProps) => JSX.Element;
 }
 
 type MenuItem = string | MenuItemWithMenu | MenuItemWithComponent;
@@ -90,6 +89,14 @@ interface ActionMenuProps extends SharedActionProps {
 function isMenuOpened(currentNode: HTMLElement | null): boolean {
   const parentNode = hiddenAncestor(currentNode);
   return parentNode?.classList.contains('opened') || false;
+}
+
+function getItemKey(item: MenuItem): string {
+  return typeof item === 'string'
+    ? item
+    : isMenuItemWithMenu(item)
+      ? item.id
+      : '';
 }
 
 export function showMenuOrButton(
@@ -222,12 +229,7 @@ function ActionMenu({
   ...props
 }: ActionMenuProps) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
-    const itemKey =
-      typeof item === 'string'
-        ? item
-        : isMenuItemWithMenu(item)
-          ? item.id
-          : item.id || '';
+    const itemKey = getItemKey(item);
     const status = props.status[itemKey];
     if (!status?.hidden) {
       items.push(item);
@@ -241,7 +243,7 @@ function ActionMenu({
   const handleMenuItemKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      openHandle(event as any, props.onOpen);
+      openHandle(event, props.onOpen);
     }
   };
 
@@ -252,18 +254,13 @@ function ActionMenu({
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => {
-        const itemKey =
-          typeof item === 'string'
-            ? item
-            : isMenuItemWithMenu(item)
-              ? item.id
-              : item.id || '';
+        const itemKey = getItemKey(item);
         const itemId =
           typeof item === 'string'
             ? item
             : isMenuItemWithMenu(item)
               ? item.id
-              : item.id;
+              : undefined;
         return (
           <li
             key={itemKey}
@@ -302,7 +299,7 @@ function toolMargin(
   if (index === -1) {
     let tools: string[] = [];
     menu.forEach((item) => {
-      if (typeof item === 'object' && 'menu' in item && item.menu) {
+      if (isMenuItemWithMenu(item)) {
         tools = tools.concat(item.menu as string[]);
       }
     });
@@ -317,10 +314,9 @@ function openHandle(
   event: React.MouseEvent | React.KeyboardEvent,
   onOpen: (id: string | undefined, isSelected: boolean) => void,
 ): void {
-  const hiddenEl = hiddenAncestor(event.currentTarget as HTMLElement);
-  const isSelected =
-    (event.currentTarget as HTMLElement)?.classList.contains('selected') ||
-    false;
+  const currentTarget = event.currentTarget as HTMLElement;
+  const hiddenEl = hiddenAncestor(currentTarget);
+  const isSelected = currentTarget?.classList.contains('selected') || false;
 
   onOpen(hiddenEl?.id, isSelected);
   event.stopPropagation();

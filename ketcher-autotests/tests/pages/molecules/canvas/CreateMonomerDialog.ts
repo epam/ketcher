@@ -20,6 +20,7 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { InfoMessageDialog } from './InfoMessageDialog';
 import { delay } from '@utils/canvas';
 
 export enum ModificationTypeDropdown {
@@ -478,6 +479,8 @@ export const CreateMonomerDialog = (page: Page) => {
         if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
           await WarningMessageDialog(page).ok();
         }
+        // Close success message if it appears to avoid overlay blocking next steps
+        await InfoMessageDialog(page).ok();
       });
     },
 

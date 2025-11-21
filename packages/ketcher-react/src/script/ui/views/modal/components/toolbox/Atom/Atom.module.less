@@ -72,8 +72,15 @@
   padding-left: @padding-container;
   border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
+  width: 100%;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 
-  &[aria-disabled='true'] {
+  &:disabled {
     cursor: not-allowed;
     box-shadow: none;
     opacity: 0.6;

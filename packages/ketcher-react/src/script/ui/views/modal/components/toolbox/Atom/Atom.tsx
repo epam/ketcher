@@ -119,13 +119,6 @@ const Atom: FC<Props> = (props: Props) => {
     );
   };
 
-  const handleAccordionKeyDown = (accordion) => (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleAccordionChange(accordion)();
-    }
-  };
-
   const handleCustomQueryCheckBoxChange = (
     value: boolean,
     formState,
@@ -258,13 +251,11 @@ const Atom: FC<Props> = (props: Props) => {
 
             return (
               <div key={groupName} data-testid={`${groupName}-section`}>
-                <div
+                <button
                   onClick={handleAccordionChange(groupName)}
-                  onKeyDown={handleAccordionKeyDown(groupName)}
                   className={classes.accordionSummaryWrapper}
-                  aria-disabled={isCustomQuery || isDisabled}
-                  role="button"
-                  tabIndex={isCustomQuery || isDisabled ? -1 : 0}
+                  disabled={isCustomQuery || isDisabled}
+                  type="button"
                 >
                   <div className={classes.accordionSummary}>
                     <span>{groupName}</span>
@@ -276,7 +267,7 @@ const Atom: FC<Props> = (props: Props) => {
                       name="chevron"
                     />
                   </div>
-                </div>
+                </button>
                 <div
                   className={clsx({
                     [classes.accordionDetailsWrapper]: true,

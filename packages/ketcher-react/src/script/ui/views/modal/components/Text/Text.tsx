@@ -176,12 +176,11 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div
+      <button
+        type="button"
         className={classes.controlPanel}
         onClick={setFocusInEditor}
         onKeyDown={handleKeyDown}
-        role="button"
-        tabIndex={0}
       >
         {buttons.map((button) => {
           return (
@@ -204,7 +203,7 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={styles}
         />
-      </div>
+      </button>
       <span>Text:</span>
       <Editor
         keyBindingFn={keyBindingFn}

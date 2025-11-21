@@ -215,6 +215,7 @@ class ClipArea extends Component<ClipAreaProps> {
               this.props.onPaste(data, true);
             }
           } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (window as any).ketcher?.editor?.errorHandler?.(
               "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
             );
@@ -297,7 +298,9 @@ async function copy(data: ClipboardData): Promise<void> {
 
     // Chrome: clipboardItem.presentationStyle is undefined
     if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (clipboardItem as any).presentationStyle &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (clipboardItem as any).presentationStyle === 'unspecified'
     ) {
       if (navigator.clipboard.writeText) {

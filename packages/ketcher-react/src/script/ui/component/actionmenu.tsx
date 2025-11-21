@@ -16,13 +16,13 @@
 
 import React, { useRef } from 'react';
 
-import action from '../action';
+import action, { Tools, UiAction, UiActionAction } from '../action';
 import clsx from 'clsx';
 import { hiddenAncestor } from '../state/toolbar';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
-import { IconName } from 'components/Icon/types';
-import { Tools, UiAction, UiActionAction } from '../action';
+
+type IconName = React.ComponentProps<typeof Icon>['name'];
 
 interface ItemStatus {
   selected?: boolean;
@@ -40,9 +40,14 @@ interface VisibleToolsMap {
   [key: string]: string;
 }
 
-interface MenuItemWithMenu {
-  id: string;
-  menu: MenuItem[];
+interface SharedActionProps {
+  status: StatusMap;
+  onOpen: (id: string | undefined, isSelected: boolean) => void;
+  onAction: (action: UiActionAction) => void;
+  opened?: string;
+  visibleTools: VisibleToolsMap;
+  disableableButtons?: string[];
+  indigoVerification?: boolean;
 }
 
 interface MenuItemWithComponent {
@@ -50,17 +55,12 @@ interface MenuItemWithComponent {
   component: (props: SharedActionProps) => JSX.Element;
 }
 
+interface MenuItemWithMenu {
+  id: string;
+  menu: Array<string | MenuItemWithMenu | MenuItemWithComponent>;
+}
+
 type MenuItem = string | MenuItemWithMenu | MenuItemWithComponent;
-
-function isMenuItemWithMenu(item: MenuItem): item is MenuItemWithMenu {
-  return typeof item === 'object' && 'menu' in item;
-}
-
-function isMenuItemWithComponent(
-  item: MenuItem,
-): item is MenuItemWithComponent {
-  return typeof item === 'object' && 'component' in item;
-}
 
 interface ActionButtonProps {
   name: IconName;
@@ -86,6 +86,26 @@ interface ActionMenuProps extends SharedActionProps {
   menu: MenuItem[];
   className?: string;
   role?: string;
+}
+
+function isMenuItemWithMenu(item: MenuItem): item is MenuItemWithMenu {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'menu' in item &&
+    Array.isArray((item as MenuItemWithMenu).menu)
+  );
+}
+
+function isMenuItemWithComponent(
+  item: MenuItem,
+): item is MenuItemWithComponent {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'component' in item &&
+    typeof (item as MenuItemWithComponent).component === 'function'
+  );
 }
 
 function isMenuOpened(currentNode: HTMLElement | null): boolean {
@@ -198,7 +218,8 @@ function renderActiveMenuItem(
       const stringItems = menu.filter(
         (item): item is string => typeof item === 'string',
       );
-      activeMenuItem = findActiveMenuItem(stringItems, status) || stringItems[0];
+      activeMenuItem =
+        findActiveMenuItem(stringItems, status) || stringItems[0];
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
@@ -215,20 +236,18 @@ function renderActiveMenuItem(
     }
   }
 
-  return (
-    activeMenuItem && (
-      <ActionButton
-        // activeMenuItem comes from menu items which are action object keys
-        // All keys in the action object (Tools type) are valid IconNames
-        name={activeMenuItem as IconName}
-        action={action[activeMenuItem]}
-        status={status[activeMenuItem]}
-        onAction={props.onAction}
-        disableableButtons={props.disableableButtons}
-        indigoVerification={props.indigoVerification}
-      />
-    )
-  );
+  return activeMenuItem ? (
+    <ActionButton
+      // activeMenuItem comes from menu items which are action object keys
+      // All keys in the action object (Tools type) are valid IconNames
+      name={activeMenuItem as IconName}
+      action={action[activeMenuItem]}
+      status={status[activeMenuItem]}
+      onAction={props.onAction}
+      disableableButtons={props.disableableButtons}
+      indigoVerification={props.indigoVerification}
+    />
+  ) : null;
 }
 
 function ActionMenu({
@@ -299,9 +318,11 @@ function toolMargin(
   // now not found better way
   const iconHeight =
     window.innerHeight <= 600 || window.innerWidth <= 1040 ? 32 : 40;
-  
+
   // First level: check if menu is flat (all strings)
-  const flatMenu = menu.filter((item): item is string => typeof item === 'string');
+  const flatMenu = menu.filter(
+    (item): item is string => typeof item === 'string',
+  );
   let index = flatMenu.indexOf(visibleTools[menuName]);
 
   // Second level: check nested menus

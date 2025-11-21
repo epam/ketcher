@@ -7,10 +7,7 @@ import {
   waitForRender,
   takeEditorScreenshot,
   clickOnAtom,
-  clickOnBond,
-  BondType,
   openFileAndAddToCanvasAsNewProject,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
@@ -29,7 +26,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
@@ -39,6 +35,7 @@ import {
   SaltsAndSolventsTabItems,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,9 +45,7 @@ test.describe('Hot keys', () => {
   test('select last chosen selected tool when user press ESC', async ({
     page,
   }) => {
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
@@ -78,7 +73,7 @@ test.describe('Hot keys', () => {
       Expected: Atom copied and moves to a new place.
       */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0);
@@ -98,12 +93,12 @@ test.describe('Hot keys', () => {
       Expected: Atom and bond copied and moves to a new place.
       */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await page.keyboard.up('Shift');
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
@@ -124,7 +119,7 @@ test.describe('Hot keys', () => {
       */
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0);
@@ -149,7 +144,7 @@ test.describe('Hot keys', () => {
       'KET/benzene-ring-with-two-attachment-points.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0);
@@ -176,13 +171,17 @@ test.describe('Hot keys', () => {
       'KET/benzene-ring-with-two-attachment-points.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -203,7 +202,7 @@ test.describe('Hot keys', () => {
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await selectPartOfMolecules(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0, { x: 250, y: 250 });
@@ -226,7 +225,7 @@ test.describe('Hot keys', () => {
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await copyStructureByCtrlMove(page, 'C', 0, { x: 245, y: 245 });
@@ -246,12 +245,12 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
@@ -274,12 +273,12 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Functional group structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await expandAbbreviation(
@@ -304,12 +303,12 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
@@ -332,12 +331,12 @@ test.describe('Hot keys', () => {
       3. Press Ctrl key and move structure.
       Expected: Salts and solvents structure copied and moves to a new place.
       */
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await expandAbbreviation(
@@ -366,7 +365,7 @@ test.describe('Hot keys', () => {
       page,
       'KET/reaction-with-catalyst.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -391,7 +390,7 @@ test.describe('Hot keys', () => {
       page,
       'KET/two-benzene-and-elliptical-arrow.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -416,7 +415,7 @@ test.describe('Hot keys', () => {
       page,
       'KET/two-benzene-valence-alias-text-plus.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -442,7 +441,7 @@ test.describe('Hot keys', () => {
       page,
       'KET/two-benzene-valence-alias-text-plus.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -466,7 +465,7 @@ test.describe('Hot keys', () => {
       Expected: Layout works after moving by ctrl.
       */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -491,7 +490,7 @@ test.describe('Hot keys', () => {
       Expected: Add/remove explicit hydrogen works after moving by ctrl.
       */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -521,7 +520,7 @@ test.describe('Hot keys', () => {
       page,
       'KET/two-benzene-valence-alias-text-plus.ket',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -556,7 +555,7 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);

@@ -10,8 +10,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   clickOnAtom,
-  clickOnBond,
-  BondType,
   MolFileFormat,
   deleteByKeyboard,
   keyboardPressOnCanvas,
@@ -20,6 +18,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const DELTA = 200;
 
@@ -43,9 +42,7 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickOnAtom(page, 'C', 0);
     await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
@@ -66,12 +63,11 @@ test.describe('Chain Tool verification', () => {
 
   test('Chain tool - edit saved file', async ({ page }) => {
     // Moving and deleting part of the chain on the canvas
-    const bondNumber = 3;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/chains-expected-file.mol',
     );
-    await clickOnBond(page, BondType.SINGLE, bondNumber);
+    await getBondLocator(page, { bondId: 34 }).click({ force: true });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -88,9 +84,7 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
     await clickOnAtom(page, 'C', bondNumber);

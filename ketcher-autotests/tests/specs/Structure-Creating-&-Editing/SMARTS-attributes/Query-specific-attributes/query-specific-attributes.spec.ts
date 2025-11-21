@@ -2,12 +2,10 @@
 import { Page, test, expect } from '@fixtures';
 import {
   doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { checkSmartsValue, checkSmartsWarnings } from '../utils';
-import { drawStructure } from '@utils/canvas/drawStructures';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Aromaticity,
@@ -21,6 +19,10 @@ import {
   SubstitutionCount,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
 
 async function drawStructureAndDoubleClickOnAtom(
   page: Page,
@@ -28,10 +30,9 @@ async function drawStructureAndDoubleClickOnAtom(
   numberOfAtom: number,
 ) {
   await waitForPageInit(page);
-  await drawStructure(page);
-  await page.keyboard.press('Escape');
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
   await doubleClickOnAtom(page, atomType, numberOfAtom);
-  await waitForAtomPropsModal(page);
+  await expect(AtomPropertiesDialog(page).window).toBeVisible();
 }
 
 test.describe('Checking query specific attributes in SMARTS format', () => {
@@ -45,7 +46,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { RingBondCount: RingBondCount.Two },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x2])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;x2])-[#6]');
   });
 
   test('Setting ring bond count - As drawn', async ({ page }) => {
@@ -53,7 +54,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x0])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;x0])-[#6]');
   });
 
   test('Setting H count', async ({ page }) => {
@@ -61,7 +62,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { HCount: HCount.Three },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;H3])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;H3])-[#6]');
   });
 
   test('Setting substitution count', async ({ page }) => {
@@ -69,7 +70,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Four },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;D4])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;D4])-[#6]');
   });
 
   test('Setting unsaturated', async ({ page }) => {
@@ -79,11 +80,11 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await verifySMARTSExport(
       page,
       '[#6](-[#6])(-[#6;$([*,#1]=,#,:[*,#1])])-[#6]',
     );
-    await checkSmartsWarnings(page);
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting aromacity - aromatic', async ({ page }) => {
@@ -91,7 +92,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { Aromaticity: Aromaticity.Aromatic },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-c)-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-c)-[#6]');
   });
 
   test('Setting aromacity - aliphatic', async ({ page }) => {
@@ -99,7 +100,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { Aromaticity: Aromaticity.Aliphatic },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-C)-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-C)-[#6]');
   });
 
   test('Setting implicit H count', async ({ page }) => {
@@ -107,7 +108,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { ImplicitHCount: ImplicitHCount.Five },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;h5])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;h5])-[#6]');
   });
 
   test('Setting ring membership', async ({ page }) => {
@@ -115,7 +116,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { RingMembership: RingMembership.Six },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;R6])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;R6])-[#6]');
   });
 
   test('Setting ring size', async ({ page }) => {
@@ -123,7 +124,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { RingSize: RingSize.Seven },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;r7])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;r7])-[#6]');
   });
 
   test('Setting connectivity', async ({ page }) => {
@@ -131,7 +132,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { Connectivity: Connectivity.Eight },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;X8])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;X8])-[#6]');
   });
 
   test('Setting chirality - anticlockwise', async ({ page }) => {
@@ -139,7 +140,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { Chirality: Chirality.Anticlockwise },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;@])-[#6]');
   });
 
   test('Setting chirality - clockwise', async ({ page }) => {
@@ -147,7 +148,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       QuerySpecificProperties: { Chirality: Chirality.Clockwise },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@@])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;@@])-[#6]');
   });
 
   test('Setting implicit H count, aromacity and connectivity', async ({
@@ -166,7 +167,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
+    await verifySMARTSExport(page, expectedSmarts);
     const isErrorMessageVisible = await ErrorMessageDialog(page).isVisible();
     expect(isErrorMessageVisible).toBeFalsy();
   });

@@ -44,14 +44,14 @@ test.describe('Templates - Template Library', () => {
     );
 
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
     );
     await clickOnCanvas(page, x - offsetX, y, { from: 'pageTopLeft' });
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
@@ -64,7 +64,7 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-4265
     // Overview Templates Library structure
 
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -86,7 +86,7 @@ test.describe('Templates - Template Library', () => {
     const deltaY = 220;
     const anyX = 638;
     const anyY = 524;
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
       await page.mouse.move(anyX, anyY);
@@ -98,7 +98,7 @@ test.describe('Templates - Template Library', () => {
   test('Functional groups tab', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Verify Functional Group tab
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).switchToFunctionalGroupTab();
     await takeEditorScreenshot(page);
   });
@@ -106,7 +106,7 @@ test.describe('Templates - Template Library', () => {
   test('Functional groups - adding structure', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Add structure from Functional Group into canvas
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
@@ -118,7 +118,7 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
     const inputText = '   ';
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
@@ -140,7 +140,7 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
@@ -151,7 +151,7 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates - name field with no character', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,
@@ -164,7 +164,7 @@ test.describe('Templates - Template Library', () => {
     const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
-    await BottomToolbar(page).StructureLibrary();
+    await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.BetaDSugars,
       BetaDSugarsTemplate.BetaDAllopyranose,

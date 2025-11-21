@@ -4,8 +4,8 @@ import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit, waitForRender } from '@utils/common/loaders';
@@ -51,7 +51,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-// import { pageReload } from '@utils/common/helpers';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 
 let page: Page;
 
@@ -637,8 +637,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 4,
-      box.y + box.height / 2 - 4,
+      box.x + box.width / 2 + 4,
+      box.y + box.height / 2 + 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1037,7 +1037,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1076,7 +1076,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1542,8 +1542,9 @@ for (const monomer of monomerToDrag) {
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
      * 3. Add target monomer to Favorites
-     * 4. Press Calculate Properties button
-     * 5. Take screenshot to validate it is visible
+     * 4. Drop monomer on the canvas
+     * 5. Press Calculate Properties button
+     * 6. Take screenshot to validate it is visible
      *
      * Version 3.6
      */
@@ -1551,7 +1552,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    expect(await CalculateVariablesPanel(page).isVisible()).toBeTruthy();
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 }

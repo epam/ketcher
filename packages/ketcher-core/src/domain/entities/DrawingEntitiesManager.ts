@@ -214,6 +214,17 @@ export class DrawingEntitiesManager {
     return this.monomersArray.filter((monomer) => monomer.selected);
   }
 
+  public get selectedMicromoleculeEntities() {
+    return this.selectedEntitiesArr.filter(
+      (entity) =>
+        !(
+          entity instanceof BaseMonomer ||
+          entity instanceof PolymerBond ||
+          entity instanceof HydrogenBond
+        ),
+    );
+  }
+
   public get externalConnectionsToSelection() {
     const connectedMonomers: MonomerConnectedToSelection[] = [];
 
@@ -282,7 +293,7 @@ export class DrawingEntitiesManager {
   public get allBondsToMonomers() {
     return [
       ...(this.polymerBonds as Map<number, PolymerBond>),
-      ...(this.monomerToAtomBonds as Map<number, MonomerToAtomBond>),
+      ...this.monomerToAtomBonds,
     ];
   }
 
@@ -1376,7 +1387,7 @@ export class DrawingEntitiesManager {
         const operation = new PolymerBondFinishCreationOperation(
           (polymerBond?: PolymerBond) =>
             this.finishPolymerBondCreationModelChange(
-              previousMonomer as BaseMonomer,
+              previousMonomer,
               monomer,
               attPointStart,
               attPointEnd,
@@ -1432,7 +1443,7 @@ export class DrawingEntitiesManager {
         const operation = new PolymerBondFinishCreationOperation(
           (polymerBond?: PolymerBond) =>
             this.finishPolymerBondCreationModelChange(
-              previousMonomer as BaseMonomer,
+              previousMonomer,
               monomer,
               attPointStart,
               attPointEnd,
@@ -3156,8 +3167,8 @@ export class DrawingEntitiesManager {
 
   public static createAntisenseNode(
     node: Nucleoside | Nucleotide,
-    needAddPhosphate = false,
     isDnaAntisense: boolean,
+    needAddPhosphate = false,
   ) {
     const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
       node.rnaBase,
@@ -3239,7 +3250,7 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer: BaseMonomer | undefined;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
-      selectedPiece.reverse().forEach((nodeToHandle) => {
+      [...selectedPiece].reverse().forEach((nodeToHandle) => {
         const senseNode =
           nodeToHandle instanceof Nucleotide &&
           nodeToHandle.phosphate.selected &&
@@ -3261,8 +3272,8 @@ export class DrawingEntitiesManager {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
               senseNode,
-              false,
               isDnaAntisense,
+              false,
             );
 
           if (!antisenseNodeCreationResult) {
@@ -3335,7 +3346,7 @@ export class DrawingEntitiesManager {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          senseNode.monomers.reverse().forEach((monomer) => {
+          [...senseNode.monomers].reverse().forEach((monomer) => {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;

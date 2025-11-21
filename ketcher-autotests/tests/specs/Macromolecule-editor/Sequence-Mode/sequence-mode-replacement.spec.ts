@@ -14,10 +14,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import {
-  pressCancelInConfirmYourActionDialog,
-  pressYesInConfirmYourActionDialog,
-} from '@utils/macromolecules/sequence';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -37,6 +33,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -501,11 +498,9 @@ function filterBugsInTests(
       item.TestNameContains === undefined ||
       item.TestNameContains.some((substring) => testName.includes(substring));
     const sequenceIdMatch =
-      // item.SequenceId === undefined || item.SequenceId === sequenceId;
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
       item.ReplaceMonomerId === undefined ||
-      // item.ReplaceMonomerId === replaceMonomerId;
       item.ReplaceMonomerId === undefined ||
       item.ReplaceMonomerId.includes(replaceMonomerId);
 
@@ -592,7 +587,7 @@ async function selectAndReplaceSymbol(
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -633,7 +628,7 @@ async function selectAndReplaceAllSymbols(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -690,7 +685,7 @@ async function selectAndReplaceAllSymbolsInEditMode(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -732,7 +727,7 @@ async function selectAndReplaceSymbolInEditMode(
   }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
   await moveMouseToTheMiddleOfTheScreen(page);
   await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
@@ -1404,11 +1399,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
-      // const title = test.info().title;
-      // // If (for some reasons) on random test ErrorMessage doesn't work - use that dirty hack - page reload helps
-      // if (title.includes('Case 15-1-17.')) {
-      //   await pageReload(page);
-      // }
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(
@@ -1967,12 +1957,9 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -2031,12 +2018,9 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

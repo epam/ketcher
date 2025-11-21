@@ -2,7 +2,6 @@ import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  pressButton,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -16,7 +15,6 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   addTextBoxToCanvas,
@@ -24,6 +22,7 @@ import {
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -84,9 +83,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/text-object-for-test.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, { text: 'TEXT' }).click();
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
@@ -101,11 +98,11 @@ test.describe('Text tools test cases', () => {
   }) => {
     await openFileAndAddToCanvas(page, 'KET/test-text-object.ket');
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
-    await pressButton(page, 'Cancel');
+    await TextEditorDialog(page).cancel();
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
     await TextEditorDialog(page).selectAllText();
     await deleteByKeyboard(page);
-    await pressButton(page, 'Apply');
+    await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -201,9 +198,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getTextLabelLocator(page, {
       text: 'Ketcher is a cool tool',
     }).click();
@@ -228,9 +223,7 @@ test.describe('Text tools test cases', () => {
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await deleteByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
@@ -279,14 +272,12 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('OneTwoThree');
     await TextEditorDialog(page).apply();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await waitForRender(page, async () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await moveStructureToNewPosition(page);
     await takeEditorScreenshot(page);

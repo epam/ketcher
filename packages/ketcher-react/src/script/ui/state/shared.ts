@@ -32,6 +32,7 @@ import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
 import { isNumber } from 'lodash';
+import assert from 'assert';
 
 export function onAction(action) {
   if (action?.dialog) {
@@ -181,6 +182,56 @@ export function load(struct: Struct, options?) {
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
           SGroup.bracketPos(sg, parsedStruct);
           if (offset) sg.updateOffset(offset);
+        });
+      }
+
+      if (
+        method === 'toggleExplicitHydrogens' &&
+        editor.isMonomerCreationWizardActive
+      ) {
+        assert(editor.monomerCreationState);
+
+        // If toggle explicit hydrogen is called, we should not apply it for marked leaving group atoms in monomer creation wizard
+        const { assignedAttachmentPoints } = editor.monomerCreationState;
+
+        // Find leaving group atoms in new struct
+        const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
+          Array.from(assignedAttachmentPoints.values()).some(
+            ([, leavingAtomId]) => leavingAtomId === atomId,
+          ),
+        );
+
+        const currentStruct = editor.struct();
+
+        // Find outgoing bonds to explicit hydrogens from leaving group atoms (they are not present in old struct)
+        const newBondsToLeavingGroupAtoms = parsedStruct.bonds.filter(
+          (_, bond) =>
+            (leavingGroupAtoms.has(bond.begin) &&
+              !currentStruct.atoms.has(bond.end)) ||
+            (leavingGroupAtoms.has(bond.end) &&
+              !currentStruct.atoms.has(bond.begin)),
+        );
+
+        // Find explicit hydrogen atoms
+        const explicitHydrogenAtomsForLeavingGroupAtoms = new Set(
+          Array.from(newBondsToLeavingGroupAtoms.values()).map((bond) =>
+            leavingGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
+          ),
+        );
+
+        // Filter out explicit hydrogen atoms for leaving atoms and bonds to these hydrogens from leaving group atoms
+        parsedStruct.atoms = parsedStruct.atoms.filter(
+          (atomId) => !explicitHydrogenAtomsForLeavingGroupAtoms.has(atomId),
+        );
+        parsedStruct.bonds = parsedStruct.bonds.filter(
+          (bondId) => !newBondsToLeavingGroupAtoms.has(bondId),
+        );
+
+        // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count
+        leavingGroupAtoms.forEach((_, atomId) => {
+          const originalAtom = currentStruct.atoms.get(atomId);
+          assert(originalAtom);
+          parsedStruct.atoms.set(atomId, originalAtom);
         });
       }
 

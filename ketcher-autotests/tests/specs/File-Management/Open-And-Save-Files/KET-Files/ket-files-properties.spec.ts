@@ -46,13 +46,15 @@ test('Open KET file with properties and check properties are saved in struct', a
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
-  const [firstFragmentProperties] = firstFragment.properties! as any;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
-  const [secondFragmentProperties] = secondFragment.properties! as any;
+  const [firstFragmentProperties] = firstFragment.properties;
+  const [secondFragmentProperties] = secondFragment.properties;
 
-  const [firstFragmentPropKey] = Object.keys(firstFragmentProperties);
-  const [secondFragmentPropKey] = Object.keys(secondFragmentProperties);
+  const [firstFragmentPropKey] = Object.keys(
+    firstFragmentProperties,
+  ) as (keyof typeof firstFragmentProperties)[];
+  const [secondFragmentPropKey] = Object.keys(
+    secondFragmentProperties,
+  ) as (keyof typeof secondFragmentProperties)[];
 
   const firstFragmentPropValue = firstFragmentProperties[firstFragmentPropKey];
   const secondFragmentPropValue =

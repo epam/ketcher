@@ -14,10 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-  IconButton,
-} from 'ketcher-react';
+import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -71,10 +68,7 @@ const ButtonContainer = styled.div`
 export const FullscreenButton = (props) => {
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
   const toggleFullscreen = () => {
-    // TODO: add selector / ref prop when will be shared component
-    const fullscreenElement: HTMLElement =
-      document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ||
-      document.documentElement;
+    const fullscreenElement = getFullscreenElement();
     fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
     setFullScreenMode(!fullScreenMode);
   };

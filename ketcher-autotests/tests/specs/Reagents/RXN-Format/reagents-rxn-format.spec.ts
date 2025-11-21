@@ -3,11 +3,11 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  FILE_TEST_DATA,
   waitForPageInit,
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
   RxnFileFormat,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -144,10 +144,10 @@ test.describe('Reagents RXN format', () => {
       Test case: EPMLSOPKET-4677
       Description: Reagent 'Cl' displays below reaction arrow
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+    const fileContent = await readFileContent(
+      'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -159,10 +159,10 @@ test.describe('Reagents RXN format', () => {
       Description: Reagent 'Cl' displays below reaction arrow
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
+    const fileContent = await readFileContent(
+      'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

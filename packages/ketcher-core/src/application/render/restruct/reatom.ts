@@ -744,7 +744,13 @@ class ReAtom extends ReObject {
           const leavingGroupPos = leavingGroupAtom.pp;
           const direction = leavingGroupPos.sub(attachmentPos).normalized();
 
-          const labelPos = ps.addScaled(direction, 35);
+          // Use getShiftedSegmentPosition to account for atom label extent
+          const shiftedPos = this.getShiftedSegmentPosition(
+            render.options,
+            direction,
+            leavingGroupPos,
+          );
+          const labelPos = shiftedPos.addScaled(direction, 8);
 
           const isProblematic =
             problematicAttachmentPoints.has(attachmentPointName);
@@ -1352,7 +1358,7 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
-    atom.queryProperties.customQuery ||
+    atom.queryProperties.customQuery ??
     getAtomCustomQuery(
       {
         ...atom,

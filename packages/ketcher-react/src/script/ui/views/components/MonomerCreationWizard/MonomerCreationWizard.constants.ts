@@ -23,6 +23,8 @@ export const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
   { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
 ];
 
+export const MAX_MODIFICATION_TYPES = 5;
+
 export const NotificationMessages: WizardNotificationMessageMap = {
   defaultAttachmentPoints:
     'Attachment points are set by default with hydrogens as leaving groups.',
@@ -37,13 +39,18 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
   creationSuccessful: 'The monomer was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
-  notUniqueModificationTypes: 'Modification types must be unique.',
+  notUniqueModificationTypes:
+    'Only one amino acid within a natural analogue can have the same modification type.',
   modificationTypeExists:
     'Only one amino acid within a natural analogue can have the same modification type.',
   notMinimalViableStructure:
     'Minimal monomer structure is two atoms connected via a single bond.',
   impureStructure:
     'Monomer structure cannot contain S-groups, R-groups, special atoms, or any other query properties.',
+  invalidHELMAlias:
+    'The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  notUniqueHELMAlias:
+    'The HELM alias must be unique amongst peptide or RNA monomers.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -60,6 +67,8 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   modificationTypeExists: 'error',
   notMinimalViableStructure: 'error',
   impureStructure: 'error',
+  invalidHELMAlias: 'error',
+  notUniqueHELMAlias: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

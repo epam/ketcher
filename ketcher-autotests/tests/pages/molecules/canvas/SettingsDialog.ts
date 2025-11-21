@@ -26,7 +26,6 @@ import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type GeneralSectionLocators = {
-  generalSection: Locator;
   resetToSelectToolCombobox: Locator;
   rotationStepEditbox: Locator;
   showValenceWarningsSwitcher: Locator;
@@ -42,7 +41,6 @@ type GeneralSectionLocators = {
 };
 
 type StereochemistrySectionLocators = {
-  stereochemistrySection: Locator;
   showTheStereoFlagsSwitcher: Locator;
   labelDisplayAtStereogenicCentersCombobox: Locator;
   absoluteCenterColorColorpicker: Locator;
@@ -58,7 +56,6 @@ type StereochemistrySectionLocators = {
 };
 
 type AtomsSectionLocators = {
-  atomsSection: Locator;
   displayCarbonExplicitlySwitcher: Locator;
   displayChargeSwitcher: Locator;
   displayValenceSwitcher: Locator;
@@ -66,7 +63,6 @@ type AtomsSectionLocators = {
 };
 
 type BondsSectionLocators = {
-  bondsSection: Locator;
   aromaticBondsAsCircleSwitcher: Locator;
   bondLengthEditbox: Locator;
   bondLengthUnitsCombobox: Locator;
@@ -80,7 +76,6 @@ type BondsSectionLocators = {
 };
 
 type ServerSectionLocators = {
-  serverSection: Locator;
   smartLayoutSwitcher: Locator;
   ignoreStereochemistryErrorsSwitcher: Locator;
   ignorePseudoatomsAtMassSwitcher: Locator;
@@ -89,14 +84,12 @@ type ServerSectionLocators = {
 };
 
 type ThreeDViewerSectionLocators = {
-  threeDViewerSection: Locator;
   displayModeCombobox: Locator;
   backgroundColorCombobox: Locator;
   labelColoringCombobox: Locator;
 };
 
 type OptionsForDebuggingSectionLocators = {
-  optionsForDebuggingSection: Locator;
   showAtomIdsSwitcher: Locator;
   showBondsIdsSwitcher: Locator;
   showHalfBondsIdsSwitcher: Locator;
@@ -104,17 +97,18 @@ type OptionsForDebuggingSectionLocators = {
 };
 
 type SettingsDialogLocators = {
+  window: Locator;
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
   closeWindowButton: Locator;
-  generalSection: Locator & GeneralSectionLocators;
-  stereochemistrySection: Locator & StereochemistrySectionLocators;
-  atomsSection: Locator & AtomsSectionLocators;
-  bondsSection: Locator & BondsSectionLocators;
-  serverSection: Locator & ServerSectionLocators;
-  threeDViewerSection: Locator & ThreeDViewerSectionLocators;
-  optionsForDebuggingSection: Locator & OptionsForDebuggingSectionLocators;
+  generalSection: Locator;
+  stereochemistrySection: Locator;
+  atomsSection: Locator;
+  bondsSection: Locator;
+  serverSection: Locator;
+  threeDViewerSection: Locator;
+  optionsForDebuggingSection: Locator;
   setACSSettingsButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -124,170 +118,187 @@ export const SettingsDialog = (page: Page) => {
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 
-  const generalSection: GeneralSectionLocators = {
-    generalSection: page.getByTestId(SettingsSection.General),
-    resetToSelectToolCombobox: page.getByTestId(
-      GeneralSetting.ResetToSelectTool,
-    ),
-    rotationStepEditbox: page.getByTestId(GeneralSetting.RotationStep),
-    showValenceWarningsSwitcher: page.getByTestId(
-      GeneralSetting.ShowValenceWarnings,
-    ),
-    atomColoringSwitcher: page.getByTestId(GeneralSetting.AtomColoring),
-    fontCombobox: page.getByTestId(GeneralSetting.Font),
-    fontSizeEditbox: page.getByTestId(GeneralSetting.FontSize),
-    fontSizeUnitsCombobox: page.getByTestId(GeneralSetting.FontSizeUnits),
-    subFontSizeEditbox: page.getByTestId(GeneralSetting.SubFontSize),
-    subFontSizeUnitsCombobox: page.getByTestId(GeneralSetting.SubFontSizeUnits),
-    reactionComponentMarginSizeEditbox: page.getByTestId(
-      GeneralSetting.ReactionComponentMarginSize,
-    ),
-    reactionComponentMarginSizeCombobox: page.getByTestId(
-      GeneralSetting.ReactionComponentMarginSizeUnits,
-    ),
-    imageResolutionCombobox: page.getByTestId(GeneralSetting.ImageResolution),
-  };
+  const generalSection: Locator & GeneralSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.General),
+    {
+      resetToSelectToolCombobox: page.getByTestId(
+        GeneralSetting.ResetToSelectTool,
+      ),
+      rotationStepEditbox: page.getByTestId(GeneralSetting.RotationStep),
+      showValenceWarningsSwitcher: page.getByTestId(
+        GeneralSetting.ShowValenceWarnings,
+      ),
+      atomColoringSwitcher: page.getByTestId(GeneralSetting.AtomColoring),
+      fontCombobox: page.getByTestId(GeneralSetting.Font),
+      fontSizeEditbox: page.getByTestId(GeneralSetting.FontSize),
+      fontSizeUnitsCombobox: page.getByTestId(GeneralSetting.FontSizeUnits),
+      subFontSizeEditbox: page.getByTestId(GeneralSetting.SubFontSize),
+      subFontSizeUnitsCombobox: page.getByTestId(
+        GeneralSetting.SubFontSizeUnits,
+      ),
+      reactionComponentMarginSizeEditbox: page.getByTestId(
+        GeneralSetting.ReactionComponentMarginSize,
+      ),
+      reactionComponentMarginSizeCombobox: page.getByTestId(
+        GeneralSetting.ReactionComponentMarginSizeUnits,
+      ),
+      imageResolutionCombobox: page.getByTestId(GeneralSetting.ImageResolution),
+    },
+  );
 
-  const stereochemistrySection: StereochemistrySectionLocators = {
-    stereochemistrySection: page.getByTestId(SettingsSection.Stereochemistry),
-    showTheStereoFlagsSwitcher: page.getByTestId(
-      StereochemistrySetting.ShowTheStereoFlags,
-    ),
-    labelDisplayAtStereogenicCentersCombobox: page.getByTestId(
-      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
-    ),
-    absoluteCenterColorColorpicker: page.getByTestId(
-      StereochemistrySetting.AbsoluteCenterColor,
-    ),
-    andCentersColorColorpicker: page.getByTestId(
-      StereochemistrySetting.ANDCentersColor,
-    ),
-    orCentersColorColorpicker: page.getByTestId(
-      StereochemistrySetting.ORCentersColor,
-    ),
-    colorStereogenicCentersCombobox: page.getByTestId(
-      StereochemistrySetting.ColorStereogenicCenters,
-    ),
-    autoFadeAndOrCenterLabelsSwitcher: page.getByTestId(
-      StereochemistrySetting.AutoFadeAndOrCenterLabels,
-    ),
-    textOfAbsoluteFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfAbsoluteFlag,
-    ),
-    textOfANDFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfANDFlag,
-    ),
-    textOfORFlagEditbox: page.getByTestId(StereochemistrySetting.TextOfORFlag),
-    textOfMixedFlagEditbox: page.getByTestId(
-      StereochemistrySetting.TextOfMixedFlag,
-    ),
-    ignoreTheChiralFlagSwitcher: page.getByTestId(
-      StereochemistrySetting.IgnoreTheChiralFlag,
-    ),
-  };
+  const stereochemistrySection: Locator & StereochemistrySectionLocators =
+    Object.assign(page.getByTestId(SettingsSection.Stereochemistry), {
+      showTheStereoFlagsSwitcher: page.getByTestId(
+        StereochemistrySetting.ShowTheStereoFlags,
+      ),
+      labelDisplayAtStereogenicCentersCombobox: page.getByTestId(
+        StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+      ),
+      absoluteCenterColorColorpicker: page.getByTestId(
+        StereochemistrySetting.AbsoluteCenterColor,
+      ),
+      andCentersColorColorpicker: page.getByTestId(
+        StereochemistrySetting.ANDCentersColor,
+      ),
+      orCentersColorColorpicker: page.getByTestId(
+        StereochemistrySetting.ORCentersColor,
+      ),
+      colorStereogenicCentersCombobox: page.getByTestId(
+        StereochemistrySetting.ColorStereogenicCenters,
+      ),
+      autoFadeAndOrCenterLabelsSwitcher: page.getByTestId(
+        StereochemistrySetting.AutoFadeAndOrCenterLabels,
+      ),
+      textOfAbsoluteFlagEditbox: page.getByTestId(
+        StereochemistrySetting.TextOfAbsoluteFlag,
+      ),
+      textOfANDFlagEditbox: page.getByTestId(
+        StereochemistrySetting.TextOfANDFlag,
+      ),
+      textOfORFlagEditbox: page.getByTestId(
+        StereochemistrySetting.TextOfORFlag,
+      ),
+      textOfMixedFlagEditbox: page.getByTestId(
+        StereochemistrySetting.TextOfMixedFlag,
+      ),
+      ignoreTheChiralFlagSwitcher: page.getByTestId(
+        StereochemistrySetting.IgnoreTheChiralFlag,
+      ),
+    });
 
-  const atomsSection: AtomsSectionLocators = {
-    atomsSection: page.getByTestId(SettingsSection.Atoms),
-    displayCarbonExplicitlySwitcher: page.getByTestId(
-      AtomsSetting.DisplayCarbonExplicitly,
-    ),
-    displayChargeSwitcher: page.getByTestId(AtomsSetting.DisplayCharge),
-    displayValenceSwitcher: page.getByTestId(AtomsSetting.DisplayValence),
-    showHydrogenLabelsCombobox: page.getByTestId(
-      AtomsSetting.ShowHydrogenLabels,
-    ),
-  };
+  const atomsSection: Locator & AtomsSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.Atoms),
+    {
+      displayCarbonExplicitlySwitcher: page.getByTestId(
+        AtomsSetting.DisplayCarbonExplicitly,
+      ),
+      displayChargeSwitcher: page.getByTestId(AtomsSetting.DisplayCharge),
+      displayValenceSwitcher: page.getByTestId(AtomsSetting.DisplayValence),
+      showHydrogenLabelsCombobox: page.getByTestId(
+        AtomsSetting.ShowHydrogenLabels,
+      ),
+    },
+  );
 
-  const bondsSection: BondsSectionLocators = {
-    bondsSection: page.getByTestId(SettingsSection.Bonds),
-    aromaticBondsAsCircleSwitcher: page.getByTestId(
-      BondsSetting.AromaticBondsAsCircle,
-    ),
-    bondLengthEditbox: page.getByTestId(BondsSetting.BondLength),
-    bondLengthUnitsCombobox: page.getByTestId(BondsSetting.BondLengthUnits),
-    bondSpacingEditbox: page.getByTestId(BondsSetting.BondSpacing),
-    bondThicknessEditbox: page.getByTestId(BondsSetting.BondThickness),
-    bondThicknessUnitsCombobox: page.getByTestId(
-      BondsSetting.BondThicknessUnits,
-    ),
-    stereoWedgeBondWidthEditbox: page.getByTestId(
-      BondsSetting.StereoWedgeBondWidth,
-    ),
-    stereoWedgeBondWidthUnitsCombobox: page.getByTestId(
-      BondsSetting.StereoWedgeBondWidthUnits,
-    ),
-    hashSpacingEditbox: page.getByTestId(BondsSetting.HashSpacing),
-    hashSpacingUnitsCombobox: page.getByTestId(BondsSetting.HashSpacingUnits),
-  };
+  const bondsSection: Locator & BondsSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.Bonds),
+    {
+      aromaticBondsAsCircleSwitcher: page.getByTestId(
+        BondsSetting.AromaticBondsAsCircle,
+      ),
+      bondLengthEditbox: page.getByTestId(BondsSetting.BondLength),
+      bondLengthUnitsCombobox: page.getByTestId(BondsSetting.BondLengthUnits),
+      bondSpacingEditbox: page.getByTestId(BondsSetting.BondSpacing),
+      bondThicknessEditbox: page.getByTestId(BondsSetting.BondThickness),
+      bondThicknessUnitsCombobox: page.getByTestId(
+        BondsSetting.BondThicknessUnits,
+      ),
+      stereoWedgeBondWidthEditbox: page.getByTestId(
+        BondsSetting.StereoWedgeBondWidth,
+      ),
+      stereoWedgeBondWidthUnitsCombobox: page.getByTestId(
+        BondsSetting.StereoWedgeBondWidthUnits,
+      ),
+      hashSpacingEditbox: page.getByTestId(BondsSetting.HashSpacing),
+      hashSpacingUnitsCombobox: page.getByTestId(BondsSetting.HashSpacingUnits),
+    },
+  );
 
-  const serverSection: ServerSectionLocators = {
-    serverSection: page.getByTestId(SettingsSection.Server),
-    smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
-    ignoreStereochemistryErrorsSwitcher: page.getByTestId(
-      ServerSetting.IgnoreStereochemistryErrors,
-    ),
-    ignorePseudoatomsAtMassSwitcher: page.getByTestId(
-      ServerSetting.IgnorePseudoatomsAtMass,
-    ),
-    addRsitesAtMassCalculationSwitcher: page.getByTestId(
-      ServerSetting.AddRsitesAtMassCalculation,
-    ),
-    addIsotopesAtMassCalculationSwitcher: page.getByTestId(
-      ServerSetting.AddIsotopesAtMassCalculation,
-    ),
-  };
+  const serverSection: Locator & ServerSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.Server),
+    {
+      smartLayoutSwitcher: page.getByTestId(ServerSetting.SmartLayout),
+      ignoreStereochemistryErrorsSwitcher: page.getByTestId(
+        ServerSetting.IgnoreStereochemistryErrors,
+      ),
+      ignorePseudoatomsAtMassSwitcher: page.getByTestId(
+        ServerSetting.IgnorePseudoatomsAtMass,
+      ),
+      addRsitesAtMassCalculationSwitcher: page.getByTestId(
+        ServerSetting.AddRsitesAtMassCalculation,
+      ),
+      addIsotopesAtMassCalculationSwitcher: page.getByTestId(
+        ServerSetting.AddIsotopesAtMassCalculation,
+      ),
+    },
+  );
 
-  const threeDViewerSection: ThreeDViewerSectionLocators = {
-    threeDViewerSection: page.getByTestId(SettingsSection.ThreeDViewer),
-    displayModeCombobox: page.getByTestId(ThreeDViewerSetting.DisplayMode),
-    backgroundColorCombobox: page.getByTestId(
-      ThreeDViewerSetting.BackgroundColor,
-    ),
-    labelColoringCombobox: page.getByTestId(ThreeDViewerSetting.LabelColoring),
-  };
+  const threeDViewerSection: Locator & ThreeDViewerSectionLocators =
+    Object.assign(page.getByTestId(SettingsSection.ThreeDViewer), {
+      displayModeCombobox: page.getByTestId(ThreeDViewerSetting.DisplayMode),
+      backgroundColorCombobox: page.getByTestId(
+        ThreeDViewerSetting.BackgroundColor,
+      ),
+      labelColoringCombobox: page.getByTestId(
+        ThreeDViewerSetting.LabelColoring,
+      ),
+    });
 
-  const optionsForDebuggingSection: OptionsForDebuggingSectionLocators = {
-    optionsForDebuggingSection: page.getByTestId(
-      SettingsSection.OptionsForDebugging,
-    ),
-    showAtomIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowAtomIds,
-    ),
-    showBondsIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowBondsIds,
-    ),
-    showHalfBondsIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowHalfBondsIds,
-    ),
-    showLoopIdsSwitcher: page.getByTestId(
-      OptionsForDebuggingSetting.ShowLoopIds,
-    ),
-  };
+  const optionsForDebuggingSection: Locator &
+    OptionsForDebuggingSectionLocators = Object.assign(
+    page.getByTestId(SettingsSection.OptionsForDebugging),
+    {
+      showAtomIdsSwitcher: page.getByTestId(
+        OptionsForDebuggingSetting.ShowAtomIds,
+      ),
+      showBondsIdsSwitcher: page.getByTestId(
+        OptionsForDebuggingSetting.ShowBondsIds,
+      ),
+      showHalfBondsIdsSwitcher: page.getByTestId(
+        OptionsForDebuggingSetting.ShowHalfBondsIds,
+      ),
+      showLoopIdsSwitcher: page.getByTestId(
+        OptionsForDebuggingSetting.ShowLoopIds,
+      ),
+    },
+  );
 
   const locators: SettingsDialogLocators = {
+    window: page.getByTestId('settings-dialog'),
     openFromFileButton: page.getByTestId('open-settings-from-file-button'),
     saveToFileButton: page.getByTestId('save-settings-to-file-button'),
     resetButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
-    generalSection: page.getByTestId('General-accordion') as Locator &
-      typeof generalSection,
-    stereochemistrySection: page.getByTestId(
-      'Stereochemistry-accordion',
-    ) as Locator & typeof stereochemistrySection,
-    atomsSection: page.getByTestId('Atoms-accordion') as Locator &
-      typeof atomsSection,
-    bondsSection: page.getByTestId('Bonds-accordion') as Locator &
-      typeof bondsSection,
-    serverSection: page.getByTestId('Server-accordion') as Locator &
-      typeof serverSection,
-    threeDViewerSection: page.getByTestId('3D Viewer-accordion') as Locator &
-      typeof threeDViewerSection,
-    optionsForDebuggingSection: page.getByTestId(
-      'Options for Debugging-accordion',
-    ) as Locator & typeof optionsForDebuggingSection,
+    generalSection,
+    stereochemistrySection,
+    atomsSection,
+    bondsSection,
+    serverSection,
+    threeDViewerSection,
+    optionsForDebuggingSection,
     setACSSettingsButton: page.getByTestId('acs-style-button'),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
+  };
+
+  const sectionLocators: Record<SettingsSection, Locator> = {
+    [SettingsSection.General]: locators.generalSection,
+    [SettingsSection.Stereochemistry]: locators.stereochemistrySection,
+    [SettingsSection.Atoms]: locators.atomsSection,
+    [SettingsSection.Bonds]: locators.bondsSection,
+    [SettingsSection.Server]: locators.serverSection,
+    [SettingsSection.ThreeDViewer]: locators.threeDViewerSection,
+    [SettingsSection.OptionsForDebugging]: locators.optionsForDebuggingSection,
   };
 
   return {
@@ -295,6 +306,12 @@ export const SettingsDialog = (page: Page) => {
 
     async close() {
       await locators.closeWindowButton.click();
+    },
+
+    getSectionLocator(option: AllSettingsOptions): Locator {
+      const section =
+        createOptionToSectionMap().get(option) ?? SettingsSection.General;
+      return sectionLocators[section];
     },
 
     async apply() {
@@ -502,6 +519,9 @@ export async function resetSettingsValuesToDefault(page: Page) {
   await TopRightToolbar(page).Settings();
   await SettingsDialog(page).reset();
   await SettingsDialog(page).apply();
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
+  }
 }
 
 export type SettingsDialogLocatorsType = ReturnType<typeof SettingsDialog>;

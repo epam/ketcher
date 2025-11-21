@@ -459,6 +459,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "P"
     },
     "monomer1": {

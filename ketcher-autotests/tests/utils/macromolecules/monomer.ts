@@ -24,9 +24,7 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
   await dragMouseTo(x, y, page);
 }
@@ -38,9 +36,7 @@ export async function moveMonomerOnMicro(
   y: number,
 ) {
   await CommonLeftToolbar(page).handTool();
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await waitForRender(page, async () => {
     await monomer.click();
   });
@@ -52,7 +48,7 @@ export async function connectMonomersWithBonds(
   monomerNames: string[],
   bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await CommonLeftToolbar(page).selectBondTool(bondType);
+  await CommonLeftToolbar(page).bondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];
@@ -67,38 +63,6 @@ export async function connectMonomersWithBonds(
       .hover();
     await page.mouse.up();
   }
-}
-
-export async function getMonomerIDsByAlias(
-  page: Page,
-  name: string,
-): Promise<number[]> {
-  const monomerIDs = await page
-    .locator('[data-testid="monomer"]')
-    .evaluateAll((elements, alias) => {
-      return elements
-        .filter(
-          (element) => element.getAttribute('data-monomeralias') === alias,
-        )
-        .map((element) => {
-          const monomerId = element.getAttribute('data-monomerid');
-          return monomerId ? parseInt(monomerId, 10) : null;
-        })
-        .filter((id) => id !== null);
-    }, name);
-  return monomerIDs as number[];
-}
-
-export function getMonomerLocatorByAlias(page: Page, monomerAlias: string) {
-  return page.locator(
-    `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
-  );
-}
-
-export function getMonomerLocatorById(page: Page, id: number | string) {
-  return page
-    .locator(`[data-testid="monomer"][data-monomerid="${id}"]`)
-    .first();
 }
 
 export type MonomerLocatorOptions = {
@@ -198,7 +162,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
     attributes['data-monomertype'] = options.monomerType;
-    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;

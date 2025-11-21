@@ -211,10 +211,10 @@ export class SGroup {
         [bba.p0.x, bba.p1.x].forEach((x) => {
           [bba.p0.y, bba.p1.y].forEach((y) => {
             const v = new Vec2(x, y);
-            bbb = !bbb ? new Box2Abs(v, v) : bbb!.include(v);
+            bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
           });
         });
-        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!);
+        contentBB = !contentBB ? bbb! : Box2Abs.union(contentBB, bbb!);
       });
 
       topLeftPoint = isBondContent ? contentBB!.centre() : contentBB!.p0;
@@ -224,7 +224,7 @@ export class SGroup {
 
     const sgroups = Array.from(struct.sgroups.values());
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups as [], topLeftPoint)) break;
+      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -530,7 +530,7 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba!);
+      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
     if (!render) render = window.ketcher!.editor.render;
     let attachmentPointsVBox =
@@ -542,8 +542,7 @@ export class SGroup {
       attachmentPointsVBox && braketBox
         ? Box2Abs.union(braketBox, attachmentPointsVBox)
         : braketBox;
-    if (braketBox)
-      braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
+    if (braketBox) braketBox = braketBox.extend(PADDING_VECTOR, PADDING_VECTOR);
     sGroup.bracketBox = braketBox;
   }
 
@@ -616,15 +615,21 @@ export class SGroup {
     return brackets;
   }
 
-  static getObjBBox(atoms, mol, useCollapsedSgroupsPosition = false): Box2Abs {
-    const a0 = mol.atoms.get(atoms[0]).pp;
+  static getObjBBox(
+    atoms: number[],
+    mol: Struct,
+    useCollapsedSgroupsPosition = false,
+  ): Box2Abs {
+    const a0 = mol.atoms.get(atoms[0])?.pp;
+    assert(a0);
     let bb = new Box2Abs(a0, a0);
     for (const aid of atoms.slice(1)) {
       const atom = mol.atoms.get(aid);
+      assert(atom);
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.expanded
+        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -632,12 +637,16 @@ export class SGroup {
     return bb;
   }
 
-  static getAtoms(mol, sg): Array<any> {
-    if (!sg.allAtoms) return sg.atoms;
-    const atoms: Array<any> = [];
+  static getAtoms(mol: Struct, sg: SGroup | undefined) {
+    if (sg && !sg.allAtoms) {
+      return sg.atoms as number[];
+    }
+
+    const atoms: number[] = [];
     mol.atoms.forEach((_atom, aid) => {
       atoms.push(aid);
     });
+
     return atoms;
   }
 
@@ -741,7 +750,7 @@ export class SGroup {
     return c;
   }
 
-  static isAtomInContractedSGroup = (atom, sGroups) => {
+  static readonly isAtomInContractedSGroup = (atom, sGroups) => {
     const contractedSGroup: number[] = [];
 
     sGroups.forEach((sGroupOrReSGroup) => {

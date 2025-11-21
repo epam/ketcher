@@ -102,9 +102,9 @@ test.describe('Indigo Tools - Layout', () => {
 
   test('Layout action on part of structure with S-Group', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1812
-    Description: The Layout action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1812
+     * Description: The Layout action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/distorted-Sgroups.mol');
     await selectPartOfMolecules(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -115,9 +115,9 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1813
-    Description: The Layout action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1813
+     * Description: The Layout action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/distorted-r-group-labels.mol',
@@ -131,9 +131,9 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1815
-    Description: The action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1815
+     * Description: The action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/distorted-structure-attachment-points.mol',
@@ -163,10 +163,10 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1822
-    Description: Layout action is correct for the selected part.
-    Non-selected part is invariable.
-    */
+     * Test case: EPMLSOPKET-1822
+     * Description: Layout action is correct for the selected part.
+     * Non-selected part is invariable.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereobonds.mol',
@@ -212,22 +212,20 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Layout action on part of structure with different properties',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
-    Test case: EPMLSOPKET-1823
-    Description: Layout action is implemented for the whole canvas.
-    Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
-    */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/clean-different-properties.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1823
+     * Description: Layout action is implemented for the whole canvas.
+     * Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/clean-different-properties.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 });

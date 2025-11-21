@@ -52,6 +52,7 @@ interface DialogProps {
     [key in string]: string;
   };
   focusable?: boolean;
+  primaryButtons?: string[];
 }
 
 interface DialogCallProps {
@@ -76,6 +77,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     needMargin = true,
     withDivider = false,
     focusable = true,
+    primaryButtons,
     ...rest
   } = props;
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return button === 'OK' || button === 'Save';
   };
 
+  const isPrimary = (button) => {
+    if (primaryButtons && primaryButtons.length > 0) {
+      return primaryButtons.includes(button);
+    }
+    return isButtonOk(button);
+  };
+
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
@@ -117,11 +126,11 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       ref={dialogRef}
       role="dialog"
       data-testid={'info-modal-window'}
-      onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params.className)}
@@ -160,7 +169,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   key={button}
                   type="button"
                   className={clsx(
-                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
                   value={buttonsNameMap?.[button] ?? button}

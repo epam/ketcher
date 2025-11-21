@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Menu } from 'components/menu';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectLastSelectedSelectionMenuItem,
   selectEditor,
@@ -32,6 +32,7 @@ import {
   hasOnlyRiboseSugars,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
+  isCycleExistsForSelectedMonomers,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { useEffect, useState } from 'react';
 import { IconName } from 'ketcher-react';
@@ -42,6 +43,7 @@ export function TopMenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
+  const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
@@ -55,6 +57,15 @@ export function TopMenuComponent() {
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
+  const isFlexMode = layoutMode === 'flex-layout-mode';
+
+  const selectedMonomers = selectedEntities.filter(
+    (entity) => entity && typeof entity.forEachBond === 'function',
+  );
+
+  const cyclicStructureFormationDisabled =
+    (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
+      0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
@@ -97,6 +108,8 @@ export function TopMenuComponent() {
       editor?.events.createAntisenseChain.dispatch(
         name === 'antisenseDnaStrand',
       );
+    } else if (name === 'arrange-ring') {
+      editor?.events.layoutCircular.dispatch();
     }
   };
 
@@ -134,6 +147,16 @@ export function TopMenuComponent() {
           testId="redo"
         />
       </Menu.Group>
+      {isFlexMode && (
+        <Menu.Group isHorizontal={true} divider={true}>
+          <Menu.Item
+            itemId={'arrange-ring' as IconName}
+            title={`Arrange as a Ring (${hotkeysShortcuts.arrangeRing})`}
+            disabled={cyclicStructureFormationDisabled}
+            testId="arrange-ring"
+          />
+        </Menu.Group>
+      )}
       <Menu.Group isHorizontal={true}>
         <Menu.Submenu
           disabled={

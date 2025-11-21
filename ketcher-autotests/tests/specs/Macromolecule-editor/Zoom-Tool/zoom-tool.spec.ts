@@ -1,7 +1,6 @@
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
@@ -25,6 +24,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
 
@@ -58,25 +58,15 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 const ZOOM_STEP = 200;
 test.describe('Zoom Tool', () => {
   const deltas = { x: 0, y: 200 };
-  const peptideCoordinates = { x: 320, y: 320 };
   let peptide: Locator;
   test.beforeEach(async () => {
-    await Library(page).switchToPeptidesTab();
-    // First monomer at the center of the screen
-    peptide = await addSingleMonomerToCanvas(
-      page,
-      Peptide.C,
-      peptideCoordinates.x,
-      peptideCoordinates.y,
-      0,
-    );
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, { x: 320, y: 320 });
+    peptide = getMonomerLocator(page, Peptide.C).nth(0);
   });
 
   test('Zoom In & Out monomer with menu buttons', async () => {
@@ -111,6 +101,7 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
+    await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.down('Control');
     await page.mouse.wheel(deltas.x, deltas.y);
     await takeEditorScreenshot(page);
@@ -131,7 +122,7 @@ test.describe('Zoom Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -151,9 +142,10 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
+    await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.down('Control');
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -178,7 +170,7 @@ test.describe('Zoom Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -202,10 +194,11 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
+    await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.down('Control');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -235,7 +228,7 @@ test.describe('Zoom Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectRectangleArea(
@@ -276,7 +269,7 @@ test.describe('Zoom Tool', () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 800, y: 800 };
     await zoomWithMouseWheel(page, ZOOM_STEP);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectRectangleArea(

@@ -52,7 +52,6 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 test(`1. Verify context menu in Snake and Flex modes when right-clicking a monomer (Copy and Delete (Paste disabled))`, async () => {

@@ -44,6 +44,7 @@ import { SnakeModePolymerBondRenderer } from 'application/render/renderers/Polym
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
+  NodeSelection,
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -55,6 +56,7 @@ import {
   Phosphate,
   SequenceType,
   Struct,
+  SubChainNode,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -190,7 +192,6 @@ export class CoreEditor {
 
   public theme;
   public zoomTool: ZoomTool;
-  // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
 
   public get selectedTool(): Tool | BaseTool | undefined {
@@ -596,19 +597,38 @@ export class CoreEditor {
         event.clientX <= canvasBoundingClientRect.right &&
         event.clientY >= canvasBoundingClientRect.top &&
         event.clientY <= canvasBoundingClientRect.bottom;
-      const sequenceSelections = SequenceRenderer.selections.map(
-        (selectionRange) =>
-          selectionRange.map((twoStrandedNodeSelection) => {
-            return {
-              ...twoStrandedNodeSelection,
-              node: twoStrandedNodeSelection.node.senseNode,
-              twoStrandedNode: twoStrandedNodeSelection.node,
-            };
+      const sequenceSelections: NodesSelection =
+        SequenceRenderer.selections.map((selectionRange) =>
+          selectionRange.flatMap((twoStrandedNodeSelection) => {
+            const result: NodeSelection[] = [];
+            const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
+
+            // Add sense node if it's selected
+            if (senseNode?.monomer.selected && senseNode) {
+              result.push({
+                ...twoStrandedNodeSelection,
+                node: senseNode as SubChainNode,
+                twoStrandedNode: twoStrandedNodeSelection.node,
+              });
+            }
+
+            // Add antisense node if it's selected
+            if (antisenseNode?.monomer.selected && antisenseNode) {
+              result.push({
+                ...twoStrandedNodeSelection,
+                node: antisenseNode as SubChainNode,
+                twoStrandedNode: twoStrandedNodeSelection.node,
+              });
+            }
+
+            return result;
           }),
-      ) as NodesSelection;
+        );
       const selectedMonomers = this.drawingEntitiesManager.selectedEntities
         .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
         .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
+      const hasSelectedEntities =
+        this.drawingEntitiesManager.selectedEntitiesArr.length > 0;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([event, sequenceSelections]);
@@ -622,6 +642,13 @@ export class CoreEditor {
         eventData instanceof BaseMonomerRenderer &&
         eventData.monomer.selected
       ) {
+        this.events.rightClickSelectedMonomers.dispatch([event]);
+        this.events.rightClickSelectedMonomers.dispatch([
+          event,
+          selectedMonomers,
+        ]);
+      } else if (hasSelectedEntities && eventData?.drawingEntity?.selected) {
+        // Handle right-click on selected microstructures (atoms, bonds, arrows, etc.)
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,
@@ -643,7 +670,14 @@ export class CoreEditor {
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
+  private onLayoutCircular() {
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+
+    ketcher.circularLayoutMonomers();
+  }
+
   private subscribeEvents() {
+    this.events.layoutCircular.add(() => this.onLayoutCircular());
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add(([tool, options]) =>
@@ -1681,15 +1715,6 @@ export class CoreEditor {
           return true;
         }
 
-        // if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
-        //   // to complete drag actions
-        //   if (!event.target || event.target.nodeName === 'DIV') {
-        //     // click on scroll
-        //     this.hover(null);
-        //     return true;
-        //   }
-        // }
-
         this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
         if (isToolUsed) {
@@ -1721,11 +1746,9 @@ export class CoreEditor {
     if (!editorTool) {
       return false;
     }
-    // this.lastEvent = event;
     const conditions = [
       eventHandlerName in editorTool,
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
-      // isContextMenuClosed(editor.contextMenu),
     ];
 
     if (conditions.every((condition) => condition)) {

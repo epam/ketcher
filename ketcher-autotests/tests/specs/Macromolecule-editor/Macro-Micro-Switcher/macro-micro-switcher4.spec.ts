@@ -593,9 +593,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -641,9 +639,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },

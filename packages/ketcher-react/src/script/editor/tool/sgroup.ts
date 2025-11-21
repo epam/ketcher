@@ -507,6 +507,13 @@ class SGroupTool implements Tool {
     const selection = editor.selection() || {};
     const sg = id !== null ? struct.sgroups.get(id) : null;
 
+    // Prevent opening S-Group properties for expanded monomers
+    // Editing S-Group properties of expanded monomers can cause data corruption
+    // when switching between Molecules and Macromolecules canvas
+    if (sg?.isMonomer) {
+      return Promise.resolve();
+    }
+
     let attrs;
     if (sg) {
       attrs = sg.getAttrs();
@@ -523,7 +530,7 @@ class SGroupTool implements Tool {
       attrs,
     });
 
-    Promise.resolve(res)
+    return Promise.resolve(res)
       .then((newSg) => {
         // TODO: check before signal
         const isQuerySGroup = SGroup.isQuerySGroup(newSg);
@@ -531,7 +538,7 @@ class SGroupTool implements Tool {
         if (
           !isDataSGroup && // when data s-group separates
           !isQuerySGroup &&
-          checkOverlapping(struct, selection.atoms, 'common')
+          checkOverlapping(struct, 'common', selection.atoms)
         ) {
           editor.event.message.dispatch({
             error: 'Partial S-group overlapping is not allowed.',
@@ -592,7 +599,7 @@ function createQueryComponentSGroup(
     }
     selection = { atoms: sg.atoms || [] };
   }
-  if (checkOverlapping(struct, selection.atoms, 'queryComponent')) {
+  if (checkOverlapping(struct, 'queryComponent', selection.atoms)) {
     editor.errorHandler?.(
       'Cannot create a query component: one fragment can only be part of one query component',
     );

@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
@@ -24,8 +23,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  moveMouseToTheMiddleOfTheScreen,
-  copyToClipboardByIcon,
   moveMouseAway,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -39,8 +36,8 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -67,6 +64,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setACSSettings,
   setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
@@ -192,13 +190,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
     const applyButton = MiewDialog(page).applyButton;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await MiewDialog(page).closeByX();
+    await MiewDialog(page).closeWindow();
     await disableViewOnlyModeBySetOptions(page);
   });
 
@@ -217,10 +217,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/equilibrium-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -619,14 +616,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to "View Only" mode. ketcher.editor.options({ viewOnlyMode: true })
      * 4. Change the selection mode.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
     await disableViewOnlyModeBySetOptions(page);
   });
@@ -687,7 +680,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Bond tooltip preview placed wrong in on edge cases.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -721,7 +714,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         MultiTailedArrowOption.AddNewTail,
       );
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -987,10 +980,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/error with cat and arr.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1258,10 +1248,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1605,10 +1592,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1633,8 +1617,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

@@ -21,8 +21,6 @@ import {
   pasteFromClipboardByKeyboard,
   takeEditorScreenshot,
   takePageScreenshot,
-  typePeptideAlphabet,
-  typeRNADNAAlphabet,
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -52,7 +50,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
-  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
 }
 
@@ -104,13 +102,13 @@ test.describe('Sequence edit mode', () => {
 
   test('Add/edit sequence', async ({ page }) => {
     test.slow();
-    await typeRNADNAAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ATGCU');
     await MacromoleculesTopToolbar(page).dna();
-    await typeRNADNAAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ATGCU');
     await MacromoleculesTopToolbar(page).peptides();
-    await typePeptideAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
     await keyboardPressOnCanvas(page, 'Enter');
-    await typePeptideAlphabet(page);
+    await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -1020,7 +1018,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugar.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1052,7 +1050,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugar.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

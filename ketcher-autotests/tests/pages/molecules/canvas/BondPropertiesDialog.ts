@@ -7,6 +7,7 @@ import {
 import { waitForRender } from '@utils/common';
 
 type BondPropertiesDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   bondDialog: Locator;
   bondTypeDropdown: Locator;
@@ -20,6 +21,7 @@ type BondPropertiesDialogLocators = {
 
 export const BondPropertiesDialog = (page: Page) => {
   const locators: BondPropertiesDialogLocators = {
+    window: page.getByTestId('bondProps-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     bondDialog: page.getByTestId('bondProps-dialog'),
     bondTypeDropdown: page.getByTestId('type-input-span'),
@@ -64,6 +66,10 @@ export const BondPropertiesDialog = (page: Page) => {
         );
       }
       await locators.bondCustomQueryText.fill(text);
+    },
+
+    async getCustomQueryText(): Promise<string> {
+      return await locators.bondCustomQueryText.inputValue();
     },
 
     async apply() {

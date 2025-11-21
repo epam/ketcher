@@ -52,7 +52,11 @@ export class NewSequenceButton {
       void
     >;
 
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement.attr('opacity', '0');
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement
       .append('rect')
       .attr('x', '16')

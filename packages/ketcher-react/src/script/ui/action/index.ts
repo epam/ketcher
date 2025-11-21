@@ -28,7 +28,7 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
-import { GetActionState, Tools, UiAction } from './action.types';
+import { Tools, UiAction } from './action.types';
 import Editor from '../../editor/Editor';
 
 export * from './action.types';
@@ -40,7 +40,7 @@ const updateConfigItem = (item: UiAction): UiAction => {
   if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
     return item;
   } else if (typeof item.disabled === 'function') {
-    const originalDisabled = item.disabled as GetActionState;
+    const originalDisabled = item.disabled;
     return {
       ...item,
       disabled: (...props) =>
@@ -105,8 +105,7 @@ const config: Record<string, UiAction> = {
         editor.undo();
       },
     },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive || editor.historySize().undo === 0,
+    disabled: (editor) => editor.historySize().undo === 0,
     hidden: (options) => isHidden(options, 'undo'),
   },
   redo: {
@@ -118,8 +117,7 @@ const config: Record<string, UiAction> = {
         editor.redo();
       },
     },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive || editor.historySize().redo === 0,
+    disabled: (editor) => editor.historySize().redo === 0,
     hidden: (options) => isHidden(options, 'redo'),
   },
   cut: {

@@ -50,9 +50,9 @@ export { ketcherProvider };
 
 export function getStructure(
   ketcherId: string,
-  structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
   struct: Struct,
+  structureFormat = SupportedFormat.rxn,
   drawingEntitiesManager?: DrawingEntitiesManager,
   selection?: EditorSelection,
 ): Promise<string> {
@@ -108,12 +108,15 @@ export function parseStruct(
 export function deleteAllEntitiesOnCanvas() {
   const editor = CoreEditor.provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+
+  new EditorHistory(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
 }
 
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
+  mergeWithLatestHistoryCommand = false,
 ) {
   const editor = CoreEditor.provideEditorInstance();
   const ketSerializer = new KetSerializer();
@@ -135,6 +138,6 @@ export async function parseAndAddMacromoleculesOnCanvas(
       editor.drawingEntitiesManager,
     );
 
-  new EditorHistory(editor).update(modelChanges);
+  new EditorHistory(editor).update(modelChanges, mergeWithLatestHistoryCommand);
   editor.renderersContainer.update(modelChanges);
 }

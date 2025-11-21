@@ -41,6 +41,7 @@ import {
   SettingsManager,
   getSvgFromDrawnStructures,
   KetcherLogger,
+  ensureString,
 } from 'utilities';
 import {
   deleteAllEntitiesOnCanvas,
@@ -63,6 +64,7 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
+  needZoom?: boolean;
 };
 
 const allowedApiSettings = {
@@ -71,6 +73,12 @@ const allowedApiSettings = {
   disableQueryElements: 'disableQueryElements',
   bondThickness: 'bondThickness',
 };
+
+const MONOMER_LIBRARY_FORMAT_OPTIONS = {
+  inputFormat: ChemicalMimeType.MonomerLibrary,
+  outputFormat: ChemicalMimeType.MonomerLibrary,
+  outputContentType: ChemicalMimeType.MonomerLibrary,
+} as const;
 
 export class Ketcher {
   _id: string;
@@ -166,6 +174,11 @@ export class Ketcher {
       SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
     }
 
+    if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
+      SettingsManager.persistMonomerLibraryUpdates =
+        !!settings.persistMonomerLibraryUpdates;
+    }
+
     return this.editor.setOptions(JSON.stringify(options));
   }
 
@@ -178,9 +191,9 @@ export class Ketcher {
       : SupportedFormat.smiles;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -203,9 +216,9 @@ export class Ketcher {
 
     const molfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
 
@@ -215,9 +228,9 @@ export class Ketcher {
   getIdt(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.idt,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.idt,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -225,9 +238,9 @@ export class Ketcher {
   getAxoLabs(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.axoLabs,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.axoLabs,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -247,9 +260,9 @@ export class Ketcher {
         : SupportedFormat.rxn;
     const rxnfile = await getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
 
     return rxnfile;
@@ -258,12 +271,12 @@ export class Ketcher {
   getKet(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
         ? this.editor.struct()
         : CoreEditor.provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+      SupportedFormat.ket,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
         ? undefined
@@ -275,9 +288,9 @@ export class Ketcher {
   getFasta(): Promise<string> {
     return getStructure(
       this.id,
-      SupportedFormat.fasta,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.fasta,
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -316,11 +329,11 @@ export class Ketcher {
 
     return getStructure(
       this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
       format === '3-letter'
         ? SupportedFormat.sequence3Letter
         : SupportedFormat.sequence,
-      this.#formatterFactory,
-      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -331,9 +344,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.smarts,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.smarts,
     );
   }
 
@@ -343,9 +356,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cml,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cml,
     );
   }
 
@@ -359,9 +372,9 @@ export class Ketcher {
         : SupportedFormat.sdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -375,9 +388,9 @@ export class Ketcher {
         : SupportedFormat.rdfV3000;
     return getStructure(
       this.id,
-      format,
       this.#formatterFactory,
       this.editor.struct(),
+      format,
     );
   }
 
@@ -387,9 +400,9 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdxml,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cdxml,
     );
   }
 
@@ -399,27 +412,27 @@ export class Ketcher {
     }
     return getStructure(
       this.id,
-      SupportedFormat.cdx,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.cdx,
     );
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
       this.id,
-      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.editor.struct(),
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
     );
   }
 
   async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       this.id,
-      SupportedFormat.ket,
       this.#formatterFactory,
       this.editor.struct(),
+      SupportedFormat.ket,
     );
 
     return this.structService.getInChIKey(struct);
@@ -480,8 +493,11 @@ export class Ketcher {
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
-        macromoleculesEditor?.zoomToStructuresIfNeeded();
-        macromoleculesEditor.mode.initialize();
+
+        if (options?.needZoom !== false) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+          macromoleculesEditor.mode.initialize();
+        }
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
@@ -552,6 +568,40 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+      }
+    }, this.eventBus);
+  }
+
+  async circularLayoutMonomers() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    await runAsyncAction<void>(async () => {
+      if (window.isPolymerEditorTurnedOn) {
+        const ketSerializer = new KetSerializer();
+        const serializedKet = ketSerializer.serialize(
+          new Struct(),
+          editor.drawingEntitiesManager,
+          undefined,
+          false,
+          true,
+        );
+
+        const result = await this.structService.layout(
+          {
+            struct: serializedKet,
+            output_format: ChemicalMimeType.KET,
+          },
+          {
+            'smart-layout': false,
+          },
+        );
+
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(
+          result.struct,
+          this.structService,
+          true,
+        );
       }
     }, this.eventBus);
   }
@@ -670,28 +720,52 @@ export class Ketcher {
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
   ) {
-    const rawMonomersDataString =
-      typeof rawMonomersData !== 'string'
-        ? JSON.stringify(rawMonomersData)
-        : rawMonomersData;
+    const serverSettings = this.editor.serverSettings;
+    const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
-      params?.format || identifyStructFormat(rawMonomersDataString);
-
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
     let dataInKetFormat: string | JSON;
 
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.indigo.convert(rawMonomersDataString, {
-        inputFormat: ChemicalMimeType.MonomerLibrary,
-        outputFormat: ChemicalMimeType.MonomerLibrary,
-        outputContentType: ChemicalMimeType.MonomerLibrary,
-      });
+      const convertResult = await this.structService.convert(
+        {
+          struct: rawMonomersDataString,
+          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+        },
+        {
+          ...serverSettings,
+          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+        },
+      );
 
       dataInKetFormat = convertResult.struct;
     }
 
     return dataInKetFormat;
+  }
+
+  public async ensureMonomersLibraryDataInSdfFormat(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const rawMonomersDataString = ensureString(rawMonomersData);
+    const format =
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
+
+    if (format === SupportedFormat.sdf || format === SupportedFormat.sdfV3000) {
+      return rawMonomersDataString;
+    }
+
+    const convertResult = await this.indigo.convert(rawMonomersDataString, {
+      ...MONOMER_LIBRARY_FORMAT_OPTIONS,
+      monomerLibrarySavingMode: 'sdf',
+      molfileSavingSkipDate: 'true',
+    });
+
+    return convertResult.struct;
   }
 
   public async updateMonomersLibrary(
@@ -713,8 +787,17 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
+      const updateString = ensureString(dataInKetFormat);
+      SettingsManager.addMonomerLibraryUpdate(updateString);
+    }
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
   }
 
   public async replaceMonomersLibrary(
@@ -736,9 +819,14 @@ export class Ketcher {
       params,
     );
 
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(editor.monomersLibrary);
+    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     editor.events.updateMonomersLibrary.dispatch();
   }
 

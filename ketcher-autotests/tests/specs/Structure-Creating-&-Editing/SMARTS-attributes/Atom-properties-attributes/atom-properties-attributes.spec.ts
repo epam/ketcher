@@ -1,36 +1,27 @@
-import { Page, test, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { checkSmartsValue, checkSmartsWarnings } from '../utils';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Radical,
   Valence,
 } from '@tests/pages/constants/atomProperties/Constants';
-
-async function drawStructure(page: Page, numberOfClicks: number) {
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-  for (let i = 0; i < numberOfClicks; i++) {
-    await clickInTheMiddleOfTheScreen(page);
-  }
-}
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
-    const numberOfBondsAtStructure = 3;
     await waitForPageInit(page);
-    await drawStructure(page, numberOfBondsAtStructure);
-    await page.keyboard.press('Escape');
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting atom label and checking the atom number', async ({ page }) => {
@@ -38,7 +29,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Label: 'Cr' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[Cr])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[Cr])-[#6]');
   });
 
   test('Setting charge to zero', async ({ page }) => {
@@ -51,7 +42,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Charge: '0' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;+0])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;+0])-[#6]');
   });
 
   test('Setting positive charge', async ({ page }) => {
@@ -59,7 +50,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Charge: '10' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;+10])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;+10])-[#6]');
   });
 
   test('Setting negative charge', async ({ page }) => {
@@ -67,7 +58,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Charge: '-15' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;-15])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;-15])-[#6]');
   });
 
   test('Setting atomic mass', async ({ page }) => {
@@ -75,7 +66,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Isotope: '30' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;30])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;30])-[#6]');
   });
 
   test('Setting isotope (atomic mass) to zero', async ({ page }) => {
@@ -88,7 +79,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Isotope: '0' },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;0])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;0])-[#6]');
   });
 
   test('Setting valence', async ({ page }) => {
@@ -99,7 +90,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Valence: Valence.Four },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;v4])-[#6]');
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;v4])-[#6]');
   });
 
   test('Setting radical', async ({ page }) => {
@@ -111,8 +102,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       GeneralProperties: { Radical: Radical.Monoradical },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6])-[#6]');
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Check that cannot add Charge more than -15', async ({ page }) => {

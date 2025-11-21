@@ -46,8 +46,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private readonly editingNodeIndexOverall: number,
     public readonly monomerSize: { width: number; height: number },
     public readonly scaledMonomerPosition: Vec2,
-    private readonly previousRowsWithAntisense = 0,
     public readonly twoStrandedNode: ITwoStrandedChainItem,
+    private readonly previousRowsWithAntisense = 0,
   ) {
     super(node.monomer);
     this.editorEvents = editorEvents;
@@ -157,8 +157,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             acc +
             monomer.covalentBonds.filter(
               (bond) =>
-                bond instanceof PolymerBond &&
-                (bond as PolymerBond).isSideChainConnection,
+                bond instanceof PolymerBond && bond.isSideChainConnection,
             ).length,
           0,
         ),

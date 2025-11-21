@@ -79,7 +79,7 @@ class SGroupCreate extends BaseOperation {
     struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      sgroup!.pp = new Vec2(pp);
+      sgroup.pp = new Vec2(pp);
     }
 
     if (expanded) {
@@ -148,7 +148,7 @@ class SGroupDelete extends BaseOperation {
     ) {
       let relatedFGroupId;
       this.data.name = sgroup.item.data.name;
-      this.data.expanded = (sgroup.item as SGroup).isExpanded();
+      this.data.expanded = sgroup.item.isExpanded();
       restruct.molecule.functionalGroups.forEach((fg, fgid) => {
         if (fg.relatedSGroupId === sgid) {
           relatedFGroupId = fgid;

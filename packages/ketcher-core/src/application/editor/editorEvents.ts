@@ -75,6 +75,7 @@ export interface IEditorEvents {
   removeAutochainPreview: Subscription;
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
+  layoutCircular: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -150,6 +151,7 @@ export function resetEditorEvents() {
     removeAutochainPreview: new Subscription(),
     switchToMacromoleculesMode: new Subscription(),
     switchToMoleculesMode: new Subscription(),
+    layoutCircular: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -314,6 +316,12 @@ export const hotkeysConfiguration = {
     shortcut: 'Alt+c',
     handler: (editor: CoreEditor) => {
       editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
+    },
+  },
+  arrangeRing: {
+    shortcut: ['Shift+Alt+c'],
+    handler: (editor: CoreEditor) => {
+      editor.events.layoutCircular.dispatch();
     },
   },
 };

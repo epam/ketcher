@@ -12,7 +12,6 @@ import {
   dragMouseTo,
   waitForRender,
   moveOnAtom,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnCanvas,
@@ -60,6 +59,14 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await ExtendedTableDialog(page).isVisible()) {
+      await ExtendedTableDialog(page).closeWindow();
+    }
+    if (await PeriodicTableDialog(page).isVisible()) {
+      await PeriodicTableDialog(page).close();
+    }
+  });
 
   test('Periodic table dialog', async () => {
     /*
@@ -130,7 +137,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -148,7 +155,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +171,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -182,7 +189,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -227,7 +234,11 @@ test.describe('Atom Tool', () => {
     );
     await CommonLeftToolbar(page).erase();
     await page.getByText('AH').click();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -242,7 +253,11 @@ test.describe('Atom Tool', () => {
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).erase();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -312,7 +327,7 @@ test.describe('Atom Tool', () => {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
@@ -569,7 +584,7 @@ test.describe('Atom Tool', () => {
 
     for (const labelKey of atomShortcuts) {
       await CommonTopLeftToolbar(page).clearCanvas();
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
       await clickOnCanvas(page, 0, 0);
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
@@ -623,7 +638,7 @@ test.describe('Atom Tool', () => {
       await drawBenzeneRing(page);
       await atomToolbar.clickAtom(atomName);
       await clickOnAtom(page, 'C', anyAtom);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
       await takeEditorScreenshot(page);
     });
   }
@@ -637,7 +652,7 @@ test.describe('Atom Tool', () => {
       */
       const anyAtom = 2;
       await drawBenzeneRing(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
       await clickOnAtom(page, 'C', anyAtom);
       await page.keyboard.press(atomName);
       await takeEditorScreenshot(page);

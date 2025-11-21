@@ -27,6 +27,7 @@ import {
   GeneralSetting,
   MeasurementUnit,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -36,6 +37,12 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+test.afterEach(async () => {
+  if (await InfoMessageDialog(page).isVisible()) {
+    await InfoMessageDialog(page).ok();
+  }
+});
+
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test('Paste CDXML', async () => {
     /**

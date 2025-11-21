@@ -69,7 +69,20 @@ const MonomerPreview = ({ className }: Props) => {
 
   return (
     (monomer.struct || isUnresolved) && (
-      <Container className={className} data-testid="polymer-library-preview">
+      <Container
+        className={className}
+        data-testid="polymer-library-preview"
+        data-idtAliases={idtAliasesText ?? undefined}
+        data-axolabs={axoLabsAlias ?? undefined}
+        data-helm={aliasHelm ?? undefined}
+        data-modificationtype={
+          modificationTypes
+            ? Array.isArray(modificationTypes)
+              ? modificationTypes.join(', ')
+              : modificationTypes
+            : undefined
+        }
+      >
         {monomerName && (
           <MonomerName data-testid="preview-tooltip-title">
             {monomerName}

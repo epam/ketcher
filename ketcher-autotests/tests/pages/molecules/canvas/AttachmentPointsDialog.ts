@@ -26,7 +26,7 @@ export const AttachmentPointsDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

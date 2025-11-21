@@ -10,23 +10,48 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { BondType } from '@utils/canvas/types';
+import {
+  BondAttributes,
+  BondType,
+  BondXy,
+  SORT_TYPE,
+} from '@utils/canvas/types';
 import {
   getBondByIndex,
+  getBondsCoordinatesByAttributes,
   getLeftBondByAttributes,
-  getRightBondByAttributes,
 } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+
+/**
+ * Get right bond by attributes.
+ * If there are no bonds after filtering throws error.
+ * @param page - playwright page object
+ * @param attributes - Bond attributes like type, angle, begin etc.
+ * See BondAttributes in @utils/canvas/types.ts for full list
+ * @param index - number to search, starting from 0
+ * @returns {BondXy} - searched Bond right object + x, y coordinates
+ * returned example {type: 1, x: 123, y: 432 }
+ */
+async function getRightBondByAttributes(
+  page: Page,
+  attributes: BondAttributes,
+): Promise<BondXy> {
+  const result = await getBondsCoordinatesByAttributes(
+    page,
+    attributes,
+    SORT_TYPE.DESC_X,
+  );
+
+  return result[0];
+}
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];
@@ -77,9 +102,7 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     );
   }
   let point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await clickOnCanvas(
     page,
     point.x + selectionRange,
@@ -89,6 +112,7 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);
+
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
   await dragMouseTo(point.x, point.y, page);
 }
@@ -127,7 +151,7 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await takeEditorScreenshot(page);
   await CommonTopLeftToolbar(page).clearCanvas();
 
-  await selectRingButton(page, type);
+  await BottomToolbar(page).clickRing(type);
   await clickInTheMiddleOfTheScreen(page);
   await deleteRightBondInRing(page);
   await moveMouseAway(page);

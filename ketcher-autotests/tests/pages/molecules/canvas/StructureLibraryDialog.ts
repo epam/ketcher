@@ -25,6 +25,7 @@ type TemplateLibraryTabLocators = {
 };
 
 type StructureLibraryDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   searchEditBox: Locator;
   templateLibraryTab: Locator & TemplateLibraryTabLocators;
@@ -39,7 +40,7 @@ export const StructureLibraryDialog = (page: Page) => {
     page.getByTestId(dataTestId);
 
   const templateLibraryTab: Locator & TemplateLibraryTabLocators =
-    Object.assign(page.getByTestId(TabSection.TemplateLibraryTab), {
+    Object.assign(page.getByTestId(TabSection.TemplateLibrary), {
       alphaDSugarsSection: page.getByTestId(TemplateLibraryTab.AlphaDSugars),
       aromaticsSection: page.getByTestId(TemplateLibraryTab.Aromatics),
       betaDSugarsSection: page.getByTestId(TemplateLibraryTab.BetaDSugars),
@@ -63,11 +64,12 @@ export const StructureLibraryDialog = (page: Page) => {
     });
 
   const locators: StructureLibraryDialogLocators = {
+    window: page.getByTestId('attach-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     searchEditBox: page.getByTestId('template-search-input'),
     templateLibraryTab,
-    functionalGroupTab: page.getByTestId(TabSection.FunctionalGroupsTab),
-    saltsAndSalventsTab: page.getByTestId(TabSection.SaltsAndSolventsTab),
+    functionalGroupTab: page.getByTestId(TabSection.FunctionalGroups),
+    saltsAndSalventsTab: page.getByTestId(TabSection.SaltsAndSolvents),
     saveToSdfButton: page.getByTestId('save-to-sdf-button'),
     deleteTemplateButton: page.getByTestId('delete-template-button'),
   };
@@ -75,7 +77,7 @@ export const StructureLibraryDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
@@ -100,6 +102,9 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async openSection(sectionName: TemplateLibraryTab) {
+      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
+        await this.switchToTemplateLibraryTab();
+      }
       if (!(await this.isSectionOpened(sectionName))) {
         await getElement(sectionName).click();
       }
@@ -114,21 +119,21 @@ export const StructureLibraryDialog = (page: Page) => {
     async switchToTemplateLibraryTab() {
       await this.switchToTab(
         locators.templateLibraryTab,
-        TabSection.TemplateLibraryTab,
+        TabSection.TemplateLibrary,
       );
     },
 
     async switchToFunctionalGroupTab() {
       await this.switchToTab(
         locators.functionalGroupTab,
-        TabSection.FunctionalGroupsTab,
+        TabSection.FunctionalGroups,
       );
     },
 
     async switchToSaltsAndSolventsTab() {
       await this.switchToTab(
         locators.saltsAndSalventsTab,
-        TabSection.SaltsAndSolventsTab,
+        TabSection.SaltsAndSolvents,
       );
     },
 
@@ -150,7 +155,7 @@ export const StructureLibraryDialog = (page: Page) => {
       sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate,
     ) {
-      if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
+      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
         await this.switchToTemplateLibraryTab();
       }
       if (!(await this.isSectionOpened(sectionName))) {
@@ -163,7 +168,7 @@ export const StructureLibraryDialog = (page: Page) => {
       sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate,
     ) {
-      if (!(await this.isTabOpened(TabSection.TemplateLibraryTab))) {
+      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
         await this.switchToTemplateLibraryTab();
       }
       await this.openTemplateLibrarySection(sectionName);
@@ -179,20 +184,20 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async addFunctionalGroup(cardName: FunctionalGroupsTabItems) {
-      if (!(await this.isTabOpened(TabSection.FunctionalGroupsTab))) {
+      if (!(await this.isTabOpened(TabSection.FunctionalGroups))) {
         await this.switchToFunctionalGroupTab();
       }
       await page.getByTestId(cardName).click();
     },
 
     async addSaltsAndSolvents(cardName: SaltsAndSolventsTabItems) {
-      if (!(await this.isTabOpened(TabSection.SaltsAndSolventsTab))) {
+      if (!(await this.isTabOpened(TabSection.SaltsAndSolvents))) {
         await this.switchToSaltsAndSolventsTab();
       }
       await page.getByTestId(cardName).click();
     },
 
-    async clickSaveToSdfButton() {
+    async saveToSdf() {
       await locators.saveToSdfButton.click();
     },
   };

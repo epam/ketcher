@@ -37,9 +37,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  // await resetZoomLevelToDefault(page);
   await CommonTopLeftToolbar(page).clearCanvas();
-  // await resetZoomLevelToDefault(page)
 });
 
 test.afterAll(async ({ browser }) => {
@@ -461,7 +459,7 @@ test.describe('Monomer APs checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,

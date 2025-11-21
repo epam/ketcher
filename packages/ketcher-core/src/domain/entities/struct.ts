@@ -45,6 +45,7 @@ import {
   flipPointByCenter,
   rotateDelta,
 } from 'application/editor/shared/utils';
+import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 
 export type Neighbor = {
   aid: number;
@@ -109,7 +110,7 @@ export class Struct {
 
   hasRxnProps(): boolean {
     return !!(
-      this.atoms.find((_aid, atom) => atom.hasRxnProps()) ||
+      this.atoms.find((_aid, atom) => atom.hasRxnProps()) ??
       this.bonds.find((_bid, bond) => bond.hasRxnProps())
     );
   }
@@ -240,28 +241,29 @@ export class Struct {
     multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
-    atomSet = atomSet ?? new Pile<number>(this.atoms.keys());
-    bondSet = bondSet ?? new Pile<number>(this.bonds.keys());
-    simpleObjectsSet =
+    const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
+    let bonds: Pile<number> = bondSet ?? new Pile<number>(this.bonds.keys());
+    const simpleObjects: Pile<number> =
       simpleObjectsSet ?? new Pile<number>(this.simpleObjects.keys());
-    textsSet = textsSet ?? new Pile<number>(this.texts.keys());
-    imagesSet = imagesSet ?? new Pile<number>(this.images.keys());
-    multitailArrowsSet =
+    const texts: Pile<number> = textsSet ?? new Pile<number>(this.texts.keys());
+    const images: Pile<number> =
+      imagesSet ?? new Pile<number>(this.images.keys());
+    const multitailArrows: Pile<number> =
       multitailArrowsSet ?? new Pile<number>(this.multitailArrows.keys());
-    rgroupAttachmentPointSet =
+    const rgroupAttachmentPoints: Pile<number> =
       rgroupAttachmentPointSet ??
       new Pile<number>(this.rgroupAttachmentPoints.keys());
-    aidMap = aidMap ?? new Map();
+    const aids: Map<number, number> = aidMap ?? new Map();
     const bidMap = bidMapEntity ?? new Map();
 
-    bondSet = bondSet.filter((bid) => {
+    bonds = bonds.filter((bid) => {
       const bond = this.bonds.get(bid)!;
-      return atomSet!.has(bond.begin) && atomSet!.has(bond.end);
+      return atoms.has(bond.begin) && atoms.has(bond.end);
     });
 
     const fidMask = new Pile();
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid)) fidMask.add(atom.fragment);
+      if (atoms.has(aid)) fidMask.add(atom.fragment);
     });
 
     const fidMap = new Map();
@@ -293,14 +295,14 @@ export class Struct {
     });
     // atoms in not RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
-        aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)));
+      if (atoms.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
+        aids.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });
     // atoms in RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
-        aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)));
+      if (atoms.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
+        aids.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
     });
 
@@ -309,23 +311,23 @@ export class Struct {
 
       // TODO: delete type check
       if (fragment && fragment instanceof Fragment) {
-        cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aidMap!)); // clone Fragments
+        cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aids)); // clone Fragments
       }
     });
 
     this.bonds.forEach((bond, bid) => {
-      if (bondSet!.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aidMap!)));
+      if (bonds.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aids)));
     });
 
     const sgroupIdMap = {};
     this.sgroups.forEach((sg, sgroupId) => {
-      if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
+      if (sg.atoms.some((aid) => !atoms.has(aid))) return;
       const oldSgroup = sg;
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup, aidMap!)
-          : SGroup.clone(sg, aidMap!);
+          ? MonomerMicromolecule.clone(oldSgroup, aids)
+          : SGroup.clone(sg, aids);
 
       const id = cp.sgroups.add(sg);
       sg.id = id;
@@ -344,7 +346,7 @@ export class Struct {
     });
 
     this.functionalGroups.forEach((fg) => {
-      if (fg.relatedSGroup.atoms.some((aid) => !atomSet!.has(aid))) return;
+      if (fg.relatedSGroup.atoms.some((aid) => !atoms.has(aid))) return;
       const sgroup = cp.sgroups.get(sgroupIdMap[fg.relatedSGroupId]);
       // It is possible that there is no sgroup in case of templates library rendering
       // Sgroup is deleteing before render to show templates without brackets (see RenderStruct.prepareStruct method)
@@ -352,26 +354,26 @@ export class Struct {
       cp.functionalGroups.add(fg);
     });
 
-    simpleObjectsSet.forEach((soid) => {
+    simpleObjects.forEach((soid) => {
       cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone());
     });
 
-    textsSet.forEach((id) => {
+    texts.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
     });
 
-    imagesSet.forEach((id) => {
+    images.forEach((id) => {
       cp.images.add(this.images.get(id)!.clone());
     });
 
-    multitailArrowsSet.forEach((id) => {
+    multitailArrows.forEach((id) => {
       cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
     });
 
-    rgroupAttachmentPointSet.forEach((id) => {
+    rgroupAttachmentPoints.forEach((id) => {
       const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
       assert(rgroupAttachmentPoint != null);
-      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aidMap));
+      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aids));
     });
 
     if (!dropRxnSymbols) {
@@ -445,7 +447,7 @@ export class Struct {
     return [conn, false];
   }
 
-  findBondId(begin, end) {
+  findBondId(begin: number, end: number) {
     return this.bonds.find(
       (_bid, bond) =>
         (bond.begin === begin && bond.end === end) ||
@@ -690,7 +692,7 @@ export class Struct {
     const global = !atomSet || atomSet.size === 0;
 
     this.atoms.forEach((atom, aid) => {
-      if (global || atomSet!.has(aid)) extend(atom.pp);
+      if (global || atomSet.has(aid)) extend(atom.pp);
     });
     if (global) {
       this.rxnPluses.forEach((item) => {
@@ -1482,5 +1484,150 @@ export class Struct {
         });
       }
     });
+  }
+
+  public applyStereoBondsToExpandedMonomers() {
+    const expandedMonomers: MonomerMicromolecule[] = [];
+    this.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()) {
+        expandedMonomers.push(sgroup);
+      }
+    });
+
+    if (expandedMonomers.length < 2) {
+      return;
+    }
+
+    for (let i = 0; i < expandedMonomers.length; i++) {
+      const firstMonomer = expandedMonomers[i];
+      const firstMonomerAtoms = new Set(SGroup.getAtoms(this, firstMonomer));
+      const firstMonomerAttachmentPoints = firstMonomer.getAttachmentPoints();
+
+      for (let j = i + 1; j < expandedMonomers.length; j++) {
+        const secondMonomer = expandedMonomers[j];
+        const secondMonomerAtoms = new Set(
+          SGroup.getAtoms(this, secondMonomer),
+        );
+        const secondMonomerAttachmentPoints =
+          secondMonomer.getAttachmentPoints();
+
+        this.bonds.forEach((bond, bondId) => {
+          const firstMonomerHasBondBegin = firstMonomerAtoms.has(bond.begin);
+          const firstMonomerHasBondEnd = firstMonomerAtoms.has(bond.end);
+          const secondMonomerHasBondBegin = secondMonomerAtoms.has(bond.begin);
+          const secondMonomerHasBondEnd = secondMonomerAtoms.has(bond.end);
+
+          const isBondConnectinBothMonomers =
+            (firstMonomerHasBondBegin && secondMonomerHasBondEnd) ||
+            (firstMonomerHasBondEnd && secondMonomerHasBondBegin);
+
+          if (!isBondConnectinBothMonomers) {
+            return;
+          }
+
+          const firstMonomerAtom = firstMonomerHasBondBegin
+            ? bond.begin
+            : bond.end;
+          const secondMonomerAtom = secondMonomerHasBondBegin
+            ? bond.begin
+            : bond.end;
+
+          const firstMonomerAttachmentPointInConnection =
+            firstMonomerAttachmentPoints.find(
+              (attachmentPoint) => attachmentPoint.atomId === firstMonomerAtom,
+            );
+          const secondMonomerAttachmentPointInConnection =
+            secondMonomerAttachmentPoints.find(
+              (attachmentPoint) => attachmentPoint.atomId === secondMonomerAtom,
+            );
+
+          if (
+            !firstMonomerAttachmentPointInConnection ||
+            !secondMonomerAttachmentPointInConnection
+          ) {
+            return;
+          }
+
+          const firstMonomerAttachmentPointBondStereo =
+            getAttachmentPointStereoBond(
+              firstMonomer,
+              firstMonomerAttachmentPointInConnection,
+            );
+          const secondMonomerAttachmentPointBondStereo =
+            getAttachmentPointStereoBond(
+              secondMonomer,
+              secondMonomerAttachmentPointInConnection,
+            );
+
+          const firstMonomerHasStereoBondOnAttachmentPoint =
+            firstMonomerAttachmentPointBondStereo !== null &&
+            firstMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
+          const secondMonomerHasStereoBondOnAttachmentPoint =
+            secondMonomerAttachmentPointBondStereo !== null &&
+            secondMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
+
+          if (
+            firstMonomerHasStereoBondOnAttachmentPoint &&
+            !secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            if (bond.begin !== firstMonomerAtom) {
+              this.flipBondAndSetStereo(
+                bondId,
+                bond,
+                firstMonomerAttachmentPointBondStereo,
+              );
+            } else {
+              bond.stereo = firstMonomerAttachmentPointBondStereo;
+            }
+          } else if (
+            !firstMonomerHasStereoBondOnAttachmentPoint &&
+            secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            if (bond.begin !== secondMonomerAtom) {
+              this.flipBondAndSetStereo(
+                bondId,
+                bond,
+                secondMonomerAttachmentPointBondStereo,
+              );
+            } else {
+              bond.stereo = secondMonomerAttachmentPointBondStereo;
+            }
+          } else if (
+            firstMonomerHasStereoBondOnAttachmentPoint &&
+            secondMonomerHasStereoBondOnAttachmentPoint
+          ) {
+            bond.stereo = Bond.PATTERN.STEREO.NONE;
+          }
+        });
+      }
+    }
+  }
+
+  private flipBondAndSetStereo(
+    bondId: number,
+    bond: Bond,
+    stereo: number,
+  ): void {
+    this.bonds.delete(bondId);
+
+    const newBond = new Bond({
+      ...bond,
+      begin: bond.end,
+      end: bond.begin,
+      stereo,
+      beginSuperatomAttachmentPointNumber:
+        bond.endSuperatomAttachmentPointNumber,
+      endSuperatomAttachmentPointNumber:
+        bond.beginSuperatomAttachmentPointNumber,
+    });
+
+    this.bonds.set(bondId, newBond);
+
+    this.bondInitHalfBonds(bondId);
+    const newBondObj = this.bonds.get(bondId);
+    if (newBondObj?.hb1 && newBondObj?.hb2) {
+      this.atomAddNeighbor(newBondObj.hb1);
+      this.atomAddNeighbor(newBondObj.hb2);
+    }
   }
 }

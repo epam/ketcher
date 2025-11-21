@@ -14,6 +14,7 @@ import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import {
   FileType,
+  verifyFASTAExport,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
@@ -26,10 +27,6 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-
-// function removeNotComparableData(file: string) {
-//   return file.replaceAll('\r', '');
-// }
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -52,7 +49,7 @@ test.describe('Import-Saving .fasta Files', () => {
     SequenceMonomerType.DNA,
     SequenceMonomerType.RNA,
     SequenceMonomerType.Peptide,
-  ] as const;
+  ];
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async () => {
@@ -86,19 +83,6 @@ test.describe('Import-Saving .fasta Files', () => {
     await openFile(page, 'FASTA/fasta-empty.fasta');
     await expect(addToCanvasButton).toBeDisabled();
   });
-
-  // Fail while performance issue on Indigo side
-  // test('Check that system does not let uploading corrupted .fasta file', async ({
-  //   page,
-  // }) => {
-  //   await CommonTopLeftToolbar(page).openFile();
-  //
-  //   const filename = 'FASTA/fasta-corrupted.fasta';
-  //   await openFile(page, filename);
-  //   await selectOptionInDropdown(filename, page);
-  //   await pressButton(page, 'Add to Canvas');
-  //   await takeEditorScreenshot(page);
-  // });
 
   test('Validate correct displaying of snake viewed RNA chain loaded from .fasta file format', async () => {
     await openFileAndAddToCanvasMacro(
@@ -341,11 +325,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
-      );
-      await takeEditorScreenshot(page);
+      await verifyFASTAExport(page, '>Sequence1\nCCCAAATTT');
     },
   );
 
@@ -407,13 +387,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
-      );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifyFASTAExport(page, '>Sequence1\nXXXX');
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -437,13 +411,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.FASTA,
-    );
-    await takeEditorScreenshot(page);
-
-    await SaveStructureDialog(page).cancel();
+    await verifyFASTAExport(page, '>Sequence1\nXXX');
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -469,13 +437,10 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.FASTA,
+      await verifyFASTAExport(
+        page,
+        '>Sequence1\nXXXXXXXXXX\n>Sequence2\nXXXXXXXXXX',
       );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );

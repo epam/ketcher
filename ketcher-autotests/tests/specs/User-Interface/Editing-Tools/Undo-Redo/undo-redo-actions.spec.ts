@@ -1,25 +1,20 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@fixtures';
+import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  pressButton,
   doubleClickOnAtom,
-  doubleClickOnBond,
-  BondType,
   moveOnAtom,
   dragMouseTo,
-  screenshotBetweenUndoRedo,
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
   waitForPageInit,
-  waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectUndoByKeyboard,
-  selectRedoByKeyboard,
+  undoByKeyboard,
+  redoByKeyboard,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
   dragTo,
@@ -38,7 +33,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
@@ -58,27 +52,18 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import {
+  BondReactingCenterOption,
+  BondTopologyOption,
+  BondTypeOption,
+} from '@tests/pages/constants/bondProperties/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function selectBondProperties(
-  page: Page,
-  bondType: string,
-  bondTopology: string,
-  bondReactingCenter: string,
-  finalizationButton: string,
-) {
-  await page.getByTestId('type-input-span').click();
-  await page.getByRole('option', { name: bondType, exact: true }).click();
-  await page.getByTestId('topology-input-span').click();
-  await page.getByRole('option', { name: bondTopology }).click();
-  await page.getByTestId('reacting-center-input-span').click();
-  await page
-    .getByRole('option', { name: bondReactingCenter, exact: true })
-    .click();
-  await pressButton(page, finalizationButton);
-}
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
@@ -92,13 +77,17 @@ test.describe('Undo/Redo Actions', () => {
     for the Undo action the deleted object is restored.
     after Redo it is deleted again.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).erase();
 
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -111,13 +100,17 @@ test.describe('Undo/Redo Actions', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Chlorine);
 
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -128,9 +121,9 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the property mark is removed.
     Redo: the property mark is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
@@ -141,7 +134,11 @@ test.describe('Undo/Redo Actions', () => {
       },
     });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -152,16 +149,24 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the property mark is removed.
     Redo: the property mark is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
-    await doubleClickOnBond(page, BondType.SINGLE, 0);
-    await selectBondProperties(page, 'Double', 'Ring', 'Center', 'Apply');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+      topology: BondTopologyOption.Ring,
+      reactingCenter: BondReactingCenterOption.Center,
+    });
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -172,13 +177,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single bond is removed;
     Redo: the Single bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -189,12 +198,16 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double bond is removed;
     Redo: the Double bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -205,12 +218,16 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Triple bond is removed;
     Redo: the Triple bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -223,14 +240,18 @@ test.describe('Undo/Redo Actions', () => {
     */
     const x = 300;
     const y = 300;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).chain();
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -241,13 +262,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Up stereobond is removed;
     Redo: the Single Up stereobond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -258,13 +283,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Down stereobond is removed;
     Redo: the Single Down stereobond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -277,13 +306,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Up/Down stereobond is removed;
     Redo: the Single Up/Down stereobond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUpDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -296,13 +329,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double Cis/Trans stereobond is removed;
     Redo: the Double Cis/Trans stereobond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleCisTrans);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -313,13 +350,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Any Query Bond is removed;
     Redo: the Any Query Bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Any);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -330,13 +371,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Aromatic Query Bond is removed;
     Redo: the Aromatic Query Bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -349,13 +394,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single/Double Query Bond is removed;
     Redo: the Single/Double Query Bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDouble);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -368,13 +417,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single/Aromatic Query Bond is removed;
     Redo: the Single/Aromatic Query Bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -387,13 +440,17 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double/Aromatic Query Bond is removed;
     Redo: the Double/Aromatic Query Bond is restored.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
     await clickOnAtom(page, 'C', 0);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -408,10 +465,12 @@ test.describe('Undo/Redo Actions', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+    await ReactionAutoMappingDialog(page).apply();
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -432,7 +491,11 @@ test.describe('Undo/Redo Actions', () => {
       FieldValue: '33',
       PropertyLabelType: PropertyLabelType.Absolute,
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -450,7 +513,11 @@ test.describe('Undo/Redo Actions', () => {
       Type: TypeOption.MultipleGroup,
       RepeatCount: '88',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -469,7 +536,11 @@ test.describe('Undo/Redo Actions', () => {
       PolymerLabel: 'A',
       RepeatPattern: RepeatPatternOption.HeadToTail,
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -487,7 +558,11 @@ test.describe('Undo/Redo Actions', () => {
       Type: TypeOption.Superatom,
       Name: 'Test@!#$%12345',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -498,7 +573,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the R-Group Label tool is removed;
     Redo: the R-Group Label tool is restored;
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -506,7 +581,11 @@ test.describe('Undo/Redo Actions', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -517,7 +596,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the R-Group Fragment tool is removed;
     Redo: the R-Group Fragment tool is restored;
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -525,7 +604,11 @@ test.describe('Undo/Redo Actions', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -542,7 +625,11 @@ test.describe('Undo/Redo Actions', () => {
       { label: 'C', index: 3 },
       { primary: true, secondary: true },
     );
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -594,7 +681,11 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -613,7 +704,11 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
       from: 'pageTopLeft',
     });
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -629,11 +724,11 @@ test.describe('Undo/Redo Actions', () => {
       { primary: true, secondary: true },
     );
     for (let i = 0; i < 2; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectRedoByKeyboard(page);
+      await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -651,11 +746,11 @@ test.describe('Undo/Redo Actions', () => {
     );
     await ZoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectRedoByKeyboard(page);
+      await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     await ZoomInByKeyboard(page, { repeat: 5 });
@@ -667,7 +762,6 @@ test.describe('Undo/Redo Actions', () => {
     Test case: EPMLSOPKET-2960
     Description: Undo/Redo action should work correctly
     */
-    // const yDelta = 300;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -714,7 +808,7 @@ test.describe('Undo/Redo Actions', () => {
     After one action is performed on the canvas and then the Undo button is pressed, the Redo button 
     becomes enabled and the Undo button becomes disabled.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).undo();
     await expect(page).toHaveScreenshot();
@@ -730,13 +824,13 @@ test.describe('Undo/Redo Actions', () => {
     Draw any bonds on Benzene atoms
     Hover mouse cursor over of 'Benzene' and press CTRL+Z (Undo)
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -754,12 +848,12 @@ test.describe('Undo/Redo Actions', () => {
       GeneralSetting.ResetToSelectTool,
       ResetToSelectToolOption.Off,
     );
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await selectUndoByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
+    await undoByKeyboard(page);
   });
 });

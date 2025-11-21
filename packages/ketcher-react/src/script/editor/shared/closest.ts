@@ -272,8 +272,7 @@ function findClosestEnhancedFlag(
   restruct.enhancedFlags.forEach((_item, id) => {
     const fragment = restruct.molecule.frags.get(id);
 
-    if (!fragment || !fragment.enhancedStereoFlag || !options.showStereoFlags)
-      return;
+    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) return;
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
@@ -516,7 +515,7 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
     if (reSGroupId === skipId) continue;
 
     const { startX, startY, width, height } =
-      reSGroup.getTextHighlightDimensions(0, restruct.render);
+      reSGroup.getTextHighlightDimensions(restruct.render, 0);
     const { x, y } = Scale.modelToCanvas(pos, restruct.render.options);
     if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;
@@ -565,7 +564,7 @@ function findClosestItem(
     return res;
   }, null);
 
-  return priorityItem || closestItem;
+  return priorityItem ?? closestItem;
 }
 
 /**
@@ -582,8 +581,8 @@ function findClosestItem(
 function findCloseMerge(
   restruct: ReStruct,
   selected,
-  maps = ['atoms', 'bonds'],
   options,
+  maps = ['atoms', 'bonds'],
 ) {
   const pos = {
     atoms: new Map(), // aid -> position

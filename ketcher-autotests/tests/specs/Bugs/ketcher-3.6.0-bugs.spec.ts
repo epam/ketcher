@@ -41,6 +41,7 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -51,6 +52,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -175,7 +177,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -315,9 +317,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('210');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -337,9 +342,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('1000');
-    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -364,10 +372,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await Library(page).switchToCHEMTab();
     await Library(page).hoverMonomer(Chem.SS3);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(
-      page,
-      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-    );
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {
@@ -808,15 +813,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/Export (and import) of sequence of nucleosides to HELM works wrong.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
+    await verifyHELMExport(
+      page,
+      'RNA1{[5R6Rm5cEt](A).[5R6Rm5cEt](A).[5R6Rm5cEt](A)}$$$$V2.0',
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await SaveStructureDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

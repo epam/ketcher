@@ -14,7 +14,6 @@ import {
   type ConnectionDirectionInDegrees,
   type ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
@@ -61,7 +60,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
-    super(polymerBond as DrawingEntity);
+    super(polymerBond);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
     this.calculateIsSnakeBond();
@@ -997,18 +996,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (this.isSnakeBond && !this.polymerBond.isHorizontal) ||
       this.isSideConnectionBondDrawn
     ) {
-      (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-        this.hoverAreaElement
-      )) = this.rootElement
+      this.hoverAreaElement = this.rootElement
         ?.append('path')
         .attr('stroke', 'transparent')
         .attr('d', this.path)
         .attr('fill-opacity', 0)
         .attr('stroke-width', '5');
     } else {
-      (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
-        this.hoverAreaElement
-      )) = this.rootElement
+      this.hoverAreaElement = this.rootElement
         ?.append('line')
         .attr('stroke', 'transparent')
         .attr('x1', this.scaledPosition.startPosition.x)

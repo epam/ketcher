@@ -18,18 +18,26 @@ export const ConfirmationDialog = ({
   return (
     <Modal
       isOpen={isModalOpen}
-      title={title || 'Confirm your action'}
+      title={title ?? 'Confirm your action'}
       onClose={onClose}
+      testId="confirmation-dialog"
     >
       <Modal.Content>
-        <ConfirmationText>{confirmationText}</ConfirmationText>
+        <ConfirmationText data-testid="confirmation-text">
+          {confirmationText}
+        </ConfirmationText>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton label="Cancel" clickHandler={onClose} />
+        <ActionButton
+          label="Cancel"
+          clickHandler={onClose}
+          data-testid="cancel-button"
+        />
         <ActionButton
           label="Yes"
           clickHandler={handleConfirm}
           styleType="secondary"
+          data-testid="yes-button"
         />
       </Modal.Footer>
     </Modal>

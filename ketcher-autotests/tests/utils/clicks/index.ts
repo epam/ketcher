@@ -2,8 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType } from '..';
 import { AtomLabelType, MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
@@ -12,6 +10,8 @@ import {
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 type BoundingBox = {
   width: number;
@@ -19,8 +19,6 @@ type BoundingBox = {
   y: number;
   x: number;
 };
-
-const HALF_DIVIDER = 2;
 
 let cachedBodyCenter: { x: number; y: number } | null = null;
 
@@ -34,8 +32,8 @@ export async function getCachedBodyCenter(page: Page) {
   }
 
   cachedBodyCenter = {
-    x: box.x + box.width / HALF_DIVIDER,
-    y: box.y + box.height / HALF_DIVIDER,
+    x: box.x + box.width / 2,
+    y: box.y + box.height / 2,
   };
 
   return cachedBodyCenter;
@@ -131,8 +129,8 @@ export async function clickOnCanvas(
           case 'canvasCenter': {
             const canvasBox = (await canvas.boundingBox()) as BoundingBox;
             return {
-              x: canvasBox.x + canvasBox.width / HALF_DIVIDER,
-              y: canvasBox.y + canvasBox.height / HALF_DIVIDER,
+              x: canvasBox.x + canvasBox.width / 2,
+              y: canvasBox.y + canvasBox.height / 2,
             };
           }
           default:
@@ -172,36 +170,14 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
     throw new Error('Unable to get boundingBox for canvas');
   }
   return {
-    x: box.width / HALF_DIVIDER,
-    y: box.height / HALF_DIVIDER,
+    x: box.width / 2,
+    y: box.height / 2,
   };
 }
 
 export async function clickOnMiddleOfCanvas(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
   await clickOnCanvas(page, x, y);
-}
-
-/* Usage: await pressButton(page, 'Add to Canvas')
-  Click on specified button in Open Structure dialog
-*/
-export function pressButton(page: Page, name = '') {
-  return page.getByRole('button', { name }).click();
-}
-
-export function selectOption(page: Page, name = '') {
-  return page.getByRole('option', { name }).click();
-}
-
-export function selectOptionByText(page: Page, text = '') {
-  return page.getByText(text, { exact: true }).click();
-}
-
-/* Usage: await pressTab(page, 'Functional Groups')
-  Click on specified Tab in Templates dialog
-*/
-export function pressTab(page: Page, name = '') {
-  return page.getByRole('tab', { name }).click();
 }
 
 export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
@@ -246,21 +222,16 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   await dragMouseTo(coordinatesWithShift, y, page);
 }
 
-export async function clickByLink(page: Page, url: string) {
-  await page.locator(`a[href="${url}"]`).first().click();
+export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
+  await CommonLeftToolbar(page).handTool();
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(x, y);
+  await dragMouseTo(x + xShift, y + yShift, page);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 }
 
-export async function clickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
+export async function clickByLink(page: Page, url: string) {
+  await page.locator(`a[href="${url}"]`).first().click();
 }
 
 export async function clickOnAtom(
@@ -299,15 +270,16 @@ export async function doubleClickOnAtom(
   });
 }
 
-export async function doubleClickOnBond(
+export async function longClickOnAtom(
   page: Page,
-  bondType: BondType,
-  bondNumber: number,
+  atomLabel: string,
+  atomNumber: number,
+  timeout = 2000,
 ) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.dblclick(point.x, point.y);
-  });
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
+  await page.mouse.move(point.x, point.y);
+  await page.mouse.down();
+  await page.waitForTimeout(timeout);
 }
 
 export async function moveOnAtom(

@@ -360,7 +360,7 @@ function trimRight(str) {
 
 function identityMap(array) {
   const map = {};
-  for (let i = 0; i < array.length; ++i) map[array[i]] = array[i];
+  for (const item of array) map[item] = item;
   return map;
 }
 

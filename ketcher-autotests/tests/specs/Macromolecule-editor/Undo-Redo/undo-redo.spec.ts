@@ -6,7 +6,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Locator, test } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
   dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
@@ -17,7 +16,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   getControlModifier,
   MacroFileType,
 } from '@utils';
@@ -30,7 +29,6 @@ import {
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -47,21 +45,22 @@ test.describe('Undo Redo', () => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    await Library(page).switchToPeptidesTab();
-    peptide1 = await addSingleMonomerToCanvas(page, Peptide.Tza, 300, 300, 0);
-    peptide2 = await addSingleMonomerToCanvas(page, Peptide.Tza, 400, 300, 1);
-    const peptide3 = await addSingleMonomerToCanvas(
-      page,
-      Peptide.Tza,
-      500,
-      300,
-      2,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 300,
+    });
+    peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 400,
+      y: 300,
+    });
+    peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 500,
+      y: 300,
+    });
+    const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
 
-    // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-
-    // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
     await bondTwoMonomers(page, peptide3, peptide2);
 
@@ -282,7 +281,7 @@ test.describe('Undo-Redo tests', () => {
     const numberOfPress = 6;
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectUndoByKeyboard(page);
+      await undoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
 
@@ -452,7 +451,7 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);
@@ -496,7 +495,7 @@ test.describe('Undo-Redo tests', () => {
       fromCenter: true,
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await zoomWithMouseWheel(page, -600);

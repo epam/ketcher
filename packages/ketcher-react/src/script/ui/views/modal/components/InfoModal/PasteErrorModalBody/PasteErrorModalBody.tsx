@@ -4,7 +4,10 @@ import styles from './PasteErrorModalBody.module.less';
 
 export const PasteErrorModalBody = (): JSX.Element => {
   return (
-    <div className={styles.pasteErrorModalBody}>
+    <div
+      className={styles.pasteErrorModalBody}
+      data-testid="error-message-body"
+    >
       <div>{pasteErrorText}</div>
       <div className={styles.shortcutsBlock}>
         <div className={styles.shortcuts}>

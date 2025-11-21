@@ -3,24 +3,38 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
-import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
+import {
+  openFileAndAddToCanvasAsNewProject,
+  pasteFromClipboardAndOpenAsNewProject,
+} from '@utils/files/readFile';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
   takeElementScreenshot,
+  takeLeftToolbarScreenshot,
+  takeTopToolbarScreenshot,
 } from '@utils/canvas';
-import { clickOnCanvas, dragMouseTo } from '@utils/index';
+import { clickOnAtom, clickOnCanvas, dragMouseTo } from '@utils/index';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
-import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  CreateMonomerDialog,
+  prepareMoleculeForMonomerCreation,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -123,7 +137,7 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
    *      4. Press Create Monomer button
    *      5. r-click on a potential LGA on canvas
    *      6. Verify that context menu contains option "Mark as leaving group"
-   *      7. Repeat steps 5-6 for every atom in the structure that has one and only one simple-single bond
+   *      7. Repeat steps 5-6 for every atom in the structure that has one and only one either simple-single or stereo (up or down) bond
    *         to another atom in the structure, and is not already an LGA
    *
    * Version 3.9
@@ -131,7 +145,7 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
-    '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',
+    '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',
   );
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
@@ -305,7 +319,7 @@ test(`7. Check that right clicking on a non potential AA on canvas, not shows an
 
   await expect(
     page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-  ).not.toBeVisible();
+  ).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
 });
@@ -658,7 +672,7 @@ test(`15. Check that when editing the LGA, the user should see all possible LGAs
   await takeElementScreenshot(page, targetAtom, { padding: 80 });
 
   await CreateMonomerDialog(page)
-    .getAttachmentPointAtomCombobox(AttachmentPointName.R1)
+    .getAttachmentPointAtomCombobox(AttachmentPointOption.R1)
     .click();
   await expect(page.getByTestId(AttachmentPointAtom.H)).toBeVisible();
   await expect(page.getByTestId(AttachmentPointAtom.CH3)).toBeVisible();
@@ -782,7 +796,9 @@ test(`18. Check that from the attributes panel, the user can delete an already s
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await expect(attachmentPointR1).toBeVisible();
 
-  await CreateMonomerDialog(page).deleteAttachmentPoint(AttachmentPointName.R1);
+  await CreateMonomerDialog(page).deleteAttachmentPoint(
+    AttachmentPointOption.R1,
+  );
 
   await expect(attachmentPointR1).not.toBeVisible();
 
@@ -829,5 +845,385 @@ test(`19. Verify that hovering an AP on the attributes panel highlights the corr
 
   await takeElementScreenshot(page, targetAtom, { padding: 60 });
 
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`20. Check that the monomer creation wizard enabled when no selection is made`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Check that the monomer creation wizard enabled when no selection is made
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Check that Create Monomer button is enabled when no selection is made
+   *
+   * Version 3.10
+   */
+
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await takeLeftToolbarScreenshot(page);
+});
+
+test(`21. Check if a selection is made, the minimum is one atom wizard become disabled`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Check if a selection is made, the minimum is one atom wizard become disabled
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add Benzene ring to canvas
+   *      3. Select one atom on the canvas
+   *      4. Check that Create Monomer button is disabled
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await clickOnAtom(page, 'C', 0);
+  await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
+});
+
+test(`22. Check that the Create Monomer icon disabled if the selection is improper (for example, contains query atoms)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Check that the Create Monomer icon disabled if the selection is improper (for example, contains query atoms)
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add Benzene ring to canvas with one query atom
+   *      3. Select all
+   *      4. Check that Create Monomer button is disabled
+   *
+   * Version 3.10
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/benzene-with-query-atom.ket',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
+});
+
+test(`23. Verify that on the top toolbar are now enabled buttons when opened wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: On the top toolbar, Copy, Paste, Cut, Aromatize, Dearomatize, Calculate CIP, Check structure,
+   *  Calculated values, and Add/Remove explicit hydrogens are now enabled
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add Benzene ring to canvas
+   *      3. Select all
+   *      4. Check that on the top toolbar are now enabled buttons when opened wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  await selectAllStructuresOnCanvas(page);
+  await takeTopToolbarScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Remove explicit hydrogens
+   *      6. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`25. Verify that Copy button copies the selected structure fragment and Paste pasted to Wizard canvas`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Copy button copies the selected structure fragment and Paste pasted to Wizard canvas
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Select all structures on canvas
+   *      6. Click on Copy button
+   *      7. Paste in Wizard canvas
+   *      8. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page);
+  await MoleculesTopToolbar(page).copy();
+  await pasteFromClipboardByKeyboard(page);
+  await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`26. Verify that Cut button removes selected structure and stores it in the clipboard and can be pasted to Wizard canvas`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Cut button removes selected structure and stores it in the clipboard and can be pasted to Wizard canvas
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Select all structures on canvas
+   *      6. Click on Cut button
+   *      7. Paste in Wizard canvas
+   *      8. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page);
+  await MoleculesTopToolbar(page).cut();
+  await pasteFromClipboardByKeyboard(page);
+  await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`27. Verify that Aromatize button converts selected rings into aromatic form and Dearomatize button converts selected aromatic rings into Kekule form`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Aromatize button converts selected rings into aromatic form and Dearomatize button converts selected aromatic rings into Kekule form
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Aromatize button
+   *      6. Click on Dearomatize button
+   *      7. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1.C(C)C');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).aromatize();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).dearomatize();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`28. Verify that Calculate CIP button assigns correct R/S configuration labels`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Calculate CIP button assigns correct R/S configuration labels
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Calculate CIP button
+   *      6. Close the wizard
+   *
+   * Version 3.10
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'Molfiles-V2000/structure-with-stereo-bonds.mol',
+  );
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).calculateCIP();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`29. Verify that Check structure button performs validation and not shows errors`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Check structure button performs validation and not shows errors
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Check structure button
+   *      6. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).checkStructure();
+  await takeEditorScreenshot(page, {
+    mask: [StructureCheckDialog(page).lastCheckInfo],
+  });
+  await StructureCheckDialog(page).cancel();
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`30. Verify that Calculated values button displays modal with molecular properties`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Calculated values button displays modal with molecular properties
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Calculated values button
+   *      6. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).calculatedValues();
+  await takeEditorScreenshot(page);
+  await CalculatedValuesDialog(page).close();
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`31. Verify that Add explicit hydrogens button adds hydrogens to all eligible atoms and Remove explicit hydrogens button removes added hydrogens from structure`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that Add explicit hydrogens button adds hydrogens to all eligible atoms and
+   * Remove explicit hydrogens button removes added hydrogens from structure
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Add explicit hydrogens button
+   *      6. Click on Remove explicit hydrogens button
+   *      7. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
+
+test(`32. Verify that multiple toolbar actions can be used consecutively without errors`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Verify that multiple toolbar actions can be used consecutively without errors
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Add explicit hydrogens button
+   *      6. Click on Remove explicit hydrogens button
+   *      7. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
+  await selectAllStructuresOnCanvas(page);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).aromatize();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).dearomatize();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).calculateCIP();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).checkStructure();
+  await takeEditorScreenshot(page, {
+    mask: [StructureCheckDialog(page).lastCheckInfo],
+  });
+  await StructureCheckDialog(page).cancel();
+  await IndigoFunctionsToolbar(page).calculatedValues();
+  await takeEditorScreenshot(page);
+  await CalculatedValuesDialog(page).close();
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
 });

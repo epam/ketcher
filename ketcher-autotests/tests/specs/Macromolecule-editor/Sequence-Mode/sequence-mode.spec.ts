@@ -7,7 +7,7 @@ import {
   zoomWithMouseWheel,
   scrollDown,
   moveMouseAway,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
@@ -237,7 +237,7 @@ test.describe('Sequence Mode', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

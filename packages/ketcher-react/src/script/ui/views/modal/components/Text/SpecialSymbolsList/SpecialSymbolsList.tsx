@@ -69,11 +69,11 @@ const SpecialSymbolsList = ({ select }) => {
   ];
   return (
     <div className={classes.window}>
-      {symbols.map((symbol, id) => {
+      {symbols.map((symbol) => {
         return (
           <button
             className={classes.button}
-            key={`symbol-${id}`}
+            key={symbol}
             value={symbol}
             onMouseDown={(event) => {
               select(event, symbol);

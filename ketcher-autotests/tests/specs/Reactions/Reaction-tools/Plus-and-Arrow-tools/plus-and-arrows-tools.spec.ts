@@ -127,7 +127,7 @@ test.describe('Plus and Arrows tools ', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 100, y + 100, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
@@ -206,7 +206,7 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -260,17 +260,6 @@ test.describe('Plus and Arrows tools ', () => {
         );
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        // await TopToolbar(page).cut();
-        // await waitForSpinnerFinishedWork(
-        //   page,
-        //   async () => await TopToolbar(page).cut(),
-        // );
-
-        // await pasteFromClipboardByKeyboard(page);
-        // await waitForSpinnerFinishedWork(
-        //   page,
-        //   async () => await pasteFromClipboardByKeyboard(page);
-        // );
 
         await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
       },
@@ -313,7 +302,7 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -401,7 +390,7 @@ test.describe('Plus and Arrows tools ', () => {
       );
       await clickOnCanvas(page, -40, 0, { from: 'pageCenter' });
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
     }
@@ -720,7 +709,7 @@ test.describe('Plus and Arrows tools ', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickInTheMiddleOfTheScreen(page);

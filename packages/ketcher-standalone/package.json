@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.9.0-rc.2",
+  "version": "3.10.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
-    "indigo-ketcher": "1.37.0-rc.2",
+    "indigo-ketcher": "1.38.0-rc.2",
     "ketcher-core": "*"
   },
   "devDependencies": {
@@ -81,7 +81,8 @@
   "exports": {
     ".": {
       "import": "./dist/main.js",
-      "require": "./dist/cjs/main.js"
+      "require": "./dist/cjs/main.js",
+      "types": "./dist/index.d.ts"
     },
     "./dist/binaryWasm": {
       "import": "./dist/binaryWasm/main.js",

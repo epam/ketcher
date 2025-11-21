@@ -118,7 +118,7 @@ export class MacromoleculesConverter {
     return {
       globalAttachmentAtomId:
         isNumber(attachmentPointAtomId) &&
-        atomIdMap?.get(attachmentPointAtomId as number),
+        atomIdMap?.get(attachmentPointAtomId),
       attachmentAtomId:
         isNumber(attachmentPointAtomId) && attachmentPointAtomId,
       attachmentPointNumber,
@@ -354,6 +354,7 @@ export class MacromoleculesConverter {
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
     struct.setStereoLabelsToAtoms();
+    struct.applyStereoBondsToExpandedMonomers();
     struct.markFragments();
 
     return { struct, reStruct, conversionErrorMessage };
@@ -514,7 +515,7 @@ export class MacromoleculesConverter {
       const atomsMap = new Map<number, Atom>();
 
       _fragment.forEach((fragmentId) => {
-        fragmentIdToMonomer.set(fragmentId as number, monomer);
+        fragmentIdToMonomer.set(fragmentId, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
       });
       command.merge(monomerAddCommand);

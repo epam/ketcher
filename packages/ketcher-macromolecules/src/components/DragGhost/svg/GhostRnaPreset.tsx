@@ -55,6 +55,38 @@ export const GhostRnaPreset = ({ preset }: Props) => {
     phosphateSize ? phosphateY + phosphateSize.height : 0,
     baseSize ? baseY + baseSize.height : 0,
   );
+  const inset = 2;
+  const sugarScaleX = (sugarSize.width - inset * 2) / sugarSize.width;
+  const sugarScaleY = (sugarSize.height - inset * 2) / sugarSize.height;
+  const sugarScale = Math.min(sugarScaleX, sugarScaleY);
+  const sugarDx = (sugarSize.width - sugarSize.width * sugarScale) / 2;
+  const sugarDy = (sugarSize.height - sugarSize.height * sugarScale) / 2;
+  const phosphateScale = phosphateSize
+    ? Math.min(
+        (phosphateSize.width - inset * 2) / phosphateSize.width,
+        (phosphateSize.height - inset * 2) / phosphateSize.height,
+      )
+    : 1;
+  const phosphateDx = phosphateSize
+    ? (phosphateSize.width - phosphateSize.width * phosphateScale) / 2
+    : 0;
+  const phosphateDy = phosphateSize
+    ? (phosphateSize.height - phosphateSize.height * phosphateScale) / 2
+    : 0;
+  const baseScale = baseSize
+    ? Math.min(
+        (baseSize.width - inset * 2) / baseSize.width,
+        (baseSize.height - inset * 2) / baseSize.height,
+      )
+    : 1;
+  const baseDx = baseSize
+    ? (baseSize.width - baseSize.width * baseScale) / 2
+    : 0;
+  const baseDy = baseSize
+    ? (baseSize.height - baseSize.height * baseScale) / 2
+    : 0;
+  const connectorGreyWidth = 4;
+  const connectorOutlineWidth = 6;
 
   return (
     <svg
@@ -69,30 +101,13 @@ export const GhostRnaPreset = ({ preset }: Props) => {
           filter: 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.4))',
         }}
       >
-        {phosphateSize && (
-          <line
-            x1={sugarX + sugarSize.width}
-            y1={sugarY + sugarSize.height / 2}
-            x2={phosphateX}
-            y2={phosphateY + phosphateSize.height / 2}
-            stroke="#CAD3DD"
-            strokeWidth="3"
-          />
-        )}
-
-        {baseSize && (
-          <line
-            x1={sugarX + sugarSize.width / 2}
-            y1={sugarY + sugarSize.height}
-            x2={baseX + baseSize.width / 2}
-            y2={baseY}
-            stroke="#CAD3DD"
-            strokeWidth="3"
-          />
-        )}
-
         <g transform={`translate(${sugarX}, ${sugarY})`}>
-          <use href={sugarRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+          <use href={sugarRenderer.monomerSymbolElementId} fill="white" />
+          <g
+            transform={`translate(${sugarDx}, ${sugarDy}) scale(${sugarScale})`}
+          >
+            <use href={sugarRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+          </g>
           <text
             x={sugarSize.width / 2}
             y={sugarSize.height / 2}
@@ -109,10 +124,15 @@ export const GhostRnaPreset = ({ preset }: Props) => {
 
         {phosphateSize && (
           <g transform={`translate(${phosphateX}, ${phosphateY})`}>
-            <use
-              href={phosphateRenderer.monomerSymbolElementId}
-              fill="#CAD3DD"
-            />
+            <use href={phosphateRenderer.monomerSymbolElementId} fill="white" />
+            <g
+              transform={`translate(${phosphateDx}, ${phosphateDy}) scale(${phosphateScale})`}
+            >
+              <use
+                href={phosphateRenderer.monomerSymbolElementId}
+                fill="#CAD3DD"
+              />
+            </g>
             <text
               x={phosphateSize.width / 2}
               y={phosphateSize.height / 2}
@@ -130,7 +150,12 @@ export const GhostRnaPreset = ({ preset }: Props) => {
 
         {baseSize && (
           <g transform={`translate(${baseX}, ${baseY})`}>
-            <use href={baseRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+            <use href={baseRenderer.monomerSymbolElementId} fill="white" />
+            <g
+              transform={`translate(${baseDx}, ${baseDy}) scale(${baseScale})`}
+            >
+              <use href={baseRenderer.monomerSymbolElementId} fill="#CAD3DD" />
+            </g>
             <text
               x={baseSize.width / 2}
               y={baseSize.height / 2}
@@ -143,6 +168,53 @@ export const GhostRnaPreset = ({ preset }: Props) => {
             >
               {base?.label}
             </text>
+          </g>
+        )}
+
+        {/* draw connectors on top for higher stacking */}
+        {phosphateSize && (
+          <g>
+            <line
+              x1={sugarX + sugarSize.width}
+              y1={sugarY + sugarSize.height / 2}
+              x2={phosphateX + connectorOutlineWidth / 3}
+              y2={phosphateY + phosphateSize.height / 2}
+              stroke="white"
+              strokeWidth={7}
+              strokeLinecap="butt"
+            />
+            <line
+              x1={sugarX + sugarSize.width - connectorOutlineWidth / 2}
+              y1={sugarY + sugarSize.height / 2}
+              x2={phosphateX + connectorOutlineWidth / 2}
+              y2={phosphateY + phosphateSize.height / 2}
+              stroke="#CAD3DD"
+              strokeWidth={connectorGreyWidth}
+              strokeLinecap="round"
+            />
+          </g>
+        )}
+
+        {baseSize && (
+          <g>
+            <line
+              x1={sugarX + sugarSize.width / 2}
+              y1={sugarY + sugarSize.height}
+              x2={baseX + baseSize.width / 2}
+              y2={baseY + connectorOutlineWidth / 2}
+              stroke="white"
+              strokeWidth={7}
+              strokeLinecap="butt"
+            />
+            <line
+              x1={sugarX + sugarSize.width / 2}
+              y1={sugarY + sugarSize.height - connectorOutlineWidth / 2}
+              x2={baseX + baseSize.width / 2}
+              y2={baseY + connectorOutlineWidth / 2}
+              stroke="#CAD3DD"
+              strokeWidth={connectorGreyWidth}
+              strokeLinecap="round"
+            />
           </g>
         )}
       </g>

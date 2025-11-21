@@ -8,13 +8,13 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectUndoByKeyboard,
-  selectRedoByKeyboard,
+  undoByKeyboard,
+  redoByKeyboard,
   clearCanvasByKeyboard,
   deleteByKeyboard,
+  keyboardTypeOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { typeAllEnglishAlphabet } from '@utils/canvas/tools/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -56,9 +56,9 @@ test.describe('Hotkeys', () => {
      */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
     await clearCanvasByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await selectRedoByKeyboard(page);
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -69,10 +69,10 @@ test.describe('Hotkeys', () => {
      */
     await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
     await clearCanvasByKeyboard(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await selectRedoByKeyboard(page);
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -85,7 +85,7 @@ test.describe('Hotkeys', () => {
     */
     await deleteByKeyboard(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');
@@ -197,7 +197,7 @@ test.describe('Hotkeys', () => {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Sequence,
         );
-        await typeAllEnglishAlphabet(page);
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });

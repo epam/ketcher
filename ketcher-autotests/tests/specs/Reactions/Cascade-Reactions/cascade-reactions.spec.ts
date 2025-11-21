@@ -6,10 +6,8 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   openFile,
-  pressButton,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   moveOnAtom,
   dragMouseTo,
@@ -33,13 +31,13 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
 import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -863,7 +861,11 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -898,7 +900,11 @@ test.describe('Cascade Reactions', () => {
       await selectPartOfMolecules(page);
       await CommonLeftToolbar(page).erase();
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -934,7 +940,11 @@ test.describe('Cascade Reactions', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -970,7 +980,11 @@ test.describe('Cascade Reactions', () => {
       await cutAndPaste(page);
       await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -1006,7 +1020,11 @@ test.describe('Cascade Reactions', () => {
       await moveOnAtom(page, 'C', 2);
       await dragMouseTo(300, 600, page);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -1801,9 +1819,9 @@ test.describe('Cascade Reactions', () => {
 
             await openFileAndAddToCanvas(page, rdfFile);
             await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-            await selectRingButton(page, RingButton.Benzene);
+            await BottomToolbar(page).clickRing(RingButton.Benzene);
             await clickOnCanvas(page, 200, 600, { from: 'pageTopLeft' });
-            await CommonLeftToolbar(page).selectAreaSelectionTool(
+            await CommonLeftToolbar(page).areaSelectionTool(
               SelectionToolType.Rectangle,
             );
             await addTail(page, 482, 464);
@@ -2722,14 +2740,12 @@ test.describe('Cascade Reactions', () => {
               470,
               360,
             );
-            await pressButton(page, 'Apply');
             await addTextToCanvas(
               page,
               'abcde FGHIJKLMNOP!@##$%^^^&*',
               700,
               360,
             );
-            await pressButton(page, 'Apply');
             await takeEditorScreenshot(page);
             await verifyFileExport(
               page,

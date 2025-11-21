@@ -7,7 +7,7 @@ import {
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
 type AttachmentPointsDialogLocators = {
-  attachmentPointsDialogWindow: Locator;
+  window: Locator;
   closeButton: Locator;
   expandWindowButton: Locator;
   leftMonomerOverview: Locator;
@@ -19,7 +19,7 @@ type AttachmentPointsDialogLocators = {
 
 export const AttachmentPointsDialog = (page: Page) => {
   const locators: AttachmentPointsDialogLocators = {
-    attachmentPointsDialogWindow: page.getByTestId('monomer-connection-modal'),
+    window: page.getByTestId('monomer-connection-modal'),
     closeButton: page.getByTestId('close-window-button'),
     expandWindowButton: page.getByTestId('expand-window-button'),
     leftMonomerOverview: page.getByTestId(MonomerOverview.LeftMonomer),
@@ -33,7 +33,7 @@ export const AttachmentPointsDialog = (page: Page) => {
     ...locators,
 
     async isVisible() {
-      return await locators.attachmentPointsDialogWindow.isVisible();
+      return await locators.window.isVisible();
     },
 
     async close() {
@@ -49,7 +49,7 @@ export const AttachmentPointsDialog = (page: Page) => {
       leftMonomer?: AttachmentPoint;
       rightMonomer?: AttachmentPoint;
     }) {
-      await this.attachmentPointsDialogWindow.waitFor({ state: 'visible' });
+      await this.window.waitFor({ state: 'visible' });
       const leftAttachmentPointButton = buttons.leftMonomer
         ? LeftMonomerAttachmentPointButton[buttons.leftMonomer]
         : null;

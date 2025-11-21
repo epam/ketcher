@@ -135,11 +135,6 @@ export class Atom extends DrawingEntity {
     const charge = this.properties.charge ?? 0;
     const label = this.label;
     const element = Elements.get(this.label);
-    // if (!element) {
-    //   // query atom, skip
-    //   this.implicitH = 0;
-    //   return 0;
-    // }
 
     const elementGroupNumber = element?.group;
     const radicalAmount = this.radicalAmount;
@@ -233,9 +228,6 @@ export class Atom extends DrawingEntity {
       if (label === AtomLabel.D || label === AtomLabel.T) {
         valence = 1;
         hydrogenAmount = 1 - radicalAmount - connectionAmount - absCharge;
-      } else {
-        // this.implicitH = 0;
-        // return true;
       }
     } else if (elementGroupNumber === 1) {
       if (
@@ -461,21 +453,22 @@ export class Atom extends DrawingEntity {
         }
       }
     } else if (elementGroupNumber === 8) {
-      if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-      else hydrogenAmount = -1;
+      // Special handling for Platinum (Pt) - accepts valences 2 and 4
+      if (label === AtomLabel.Pt) {
+        if (connectionAmount + radicalAmount + absCharge <= 2) {
+          valence = 2;
+          hydrogenAmount = 2 - radicalAmount - connectionAmount - absCharge;
+        } else if (connectionAmount + radicalAmount + absCharge <= 4) {
+          valence = 4;
+          hydrogenAmount = 4 - radicalAmount - connectionAmount - absCharge;
+        } else {
+          hydrogenAmount = -1;
+        }
+      } else {
+        if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
+        else hydrogenAmount = -1;
+      }
     }
-
-    // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
-    //   hydrogenAmount = this.implicitHCount;
-    // }
-    // this.valence = valence;
-    // this.implicitH = hydrogenAmount;
-    // if (this.implicitH < 0) {
-    //   this.valence = connectionAmount;
-    //   this.implicitH = 0;
-    //   this.badConn = true;
-    //   return false;
-    // }
 
     return {
       valence,

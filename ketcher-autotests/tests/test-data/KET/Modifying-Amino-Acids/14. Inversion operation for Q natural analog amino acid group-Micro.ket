@@ -274,6 +274,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "Q"
     },
     "monomer1": {

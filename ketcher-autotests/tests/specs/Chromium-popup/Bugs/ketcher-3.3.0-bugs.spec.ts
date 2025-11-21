@@ -32,7 +32,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
@@ -106,7 +106,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Sugar.fR, centerOfTheCanvas);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Sugar.fR).first().hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     // Screenshot suppression is not used on purpose, as it’s required for the test
@@ -149,7 +149,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._2Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -176,7 +176,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -228,7 +228,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
     );
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
@@ -806,7 +806,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, centerOfTheCanvas);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -817,7 +817,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       .getByTestId(KETCHER_CANVAS)
       .getByText(Peptide._1Nal.alias, { exact: true });
     await expandMonomer(page, peptide1Nal);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

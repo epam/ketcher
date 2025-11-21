@@ -2,16 +2,13 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
   waitForPageInit,
   waitForRender,
-  clickOnBond,
   clickOnAtom,
   clickOnCanvas,
-  screenshotBetweenUndoRedo,
   resetZoomLevelToDefault,
   takeElementScreenshot,
   pasteFromClipboardAndOpenAsNewProject,
@@ -43,6 +40,15 @@ import {
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import {
+  ContextOption,
+  PropertyLabelType,
+  TypeOption,
+} from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -134,7 +140,7 @@ test.describe('Right-click menu', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', 1);
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -227,9 +233,9 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'N' },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -336,7 +342,6 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-8926
     Description: Only selected atoms and bonds are deleted. No error is thrown.
     */
-    // let point: { x: number; y: number };
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-stereo-and-atoms.ket',
@@ -413,11 +418,13 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await ContextMenu(page, point).click(MicroBondOption.AttachSGroup);
-    await page.getByPlaceholder('Enter name').click();
-    await page.getByPlaceholder('Enter name').fill('A!@#$$$test');
-    await page.getByPlaceholder('Enter value').click();
-    await page.getByPlaceholder('Enter value').fill('Test!@#$%');
-    await pressButton(page, 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Bond,
+      FieldName: 'A!@#$$$test',
+      FieldValue: 'Test!@#$%',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -426,7 +433,6 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-15496
     Description: Three selected Carbon atoms changed to Nitrogen atoms.
     */
-    // let point: { x: number; y: number };
     await openFileAndAddToCanvasAsNewProject(page, 'KET/chain.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await page.keyboard.down('Shift');
@@ -438,9 +444,9 @@ test.describe('Right-click menu', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
     ).click(MicroAtomOption.Edit);
-    await page.getByLabel('Label').click();
-    await page.getByLabel('Label').fill('N');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'N' },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -537,11 +543,11 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
-    await clickOnBond(page, BondType.DOUBLE, 1);
+    await getBondLocator(page, { bondId: 2 }).click({ force: true });
     await clickOnAtom(page, 'C', 2);
     await page.keyboard.up('Shift');
     await ContextMenu(
@@ -585,7 +591,7 @@ test.describe('Right-click menu', () => {
     */
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const colors = [
@@ -621,7 +627,7 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const colors = [
@@ -697,7 +703,11 @@ test.describe('Right-click menu', () => {
     ).click([MicroBondOption.Highlight, HighlightOption.Blue]);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

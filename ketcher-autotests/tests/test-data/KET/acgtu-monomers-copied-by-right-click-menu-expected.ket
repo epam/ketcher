@@ -570,7 +570,7 @@
                     1,
                     7
                 ],
-                "stereo": 1
+                "stereo": 6
             },
             {
                 "type": 1,
@@ -1116,6 +1116,7 @@
         "fullName": "Phosphate",
         "alias": "P",
         "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -1,7 +1,8 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
 import styles from './ModificationTypeDropdown.module.less';
-import { CoreEditor } from 'ketcher-core';
+import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
+import { CoreEditor, compareByTitleWithNaturalFirst } from 'ketcher-core';
 
 interface IOptionType {
   title: string;
@@ -14,10 +15,11 @@ interface IModificationTypeDropdownProps {
   value: string | null;
   error?: string | null;
   onChange: (value: string) => void;
+  testId?: string;
 }
 
 export default function ModificationTypeDropdown(
-  props: IModificationTypeDropdownProps,
+  props: Readonly<IModificationTypeDropdownProps>,
 ) {
   const editor = CoreEditor.provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
@@ -36,12 +38,12 @@ export default function ModificationTypeDropdown(
     ),
   ];
 
-  const options = modificationTypesOthersFromCurrentNaturalAnalogue.map(
-    (modificationType) => {
+  const options = modificationTypesOthersFromCurrentNaturalAnalogue
+    .map((modificationType) => {
       return { title: modificationType };
-    },
-  );
-  const value = props.value || '';
+    })
+    .sort(compareByTitleWithNaturalFirst);
+  const value = props.value ?? '';
 
   const onValueChange = (newValue) => {
     if (props.onChange) {
@@ -97,6 +99,7 @@ export default function ModificationTypeDropdown(
           <li
             key={key}
             {...optionProps}
+            data-testid={`modification-type-option-${option.title}`}
             className={clsx(
               props.className,
               styles.option,
@@ -123,8 +126,12 @@ export default function ModificationTypeDropdown(
           {...params}
           variant="standard"
           error={Boolean(props.error)}
-          className={clsx(styles.inputField, props.error && styles.error)}
+          className={clsx(
+            monomerWizardStyles.inputField,
+            props.error && monomerWizardStyles.error,
+          )}
           placeholder="..."
+          data-testid={props.testId}
         />
       )}
     />

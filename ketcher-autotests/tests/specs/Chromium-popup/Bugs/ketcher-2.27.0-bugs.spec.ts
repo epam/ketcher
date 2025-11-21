@@ -9,7 +9,6 @@ import {
   MacroFileType,
   resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProjectMacro,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   takeMonomerLibraryScreenshot,
@@ -150,7 +149,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -174,7 +173,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Benzene ring.ket',
     );
-    await takePageScreenshot(page, {
+    await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });

@@ -138,7 +138,7 @@ const ContextMenu: React.FC = () => {
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector(
           '.contexify:last-of-type',
-        ) as HTMLDivElement | null;
+        ) as HTMLElement | null;
         const submenuElements = document.querySelectorAll(
           '.contexify_submenu',
         ) as NodeListOf<HTMLElement>;

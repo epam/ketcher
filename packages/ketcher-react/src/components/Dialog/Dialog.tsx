@@ -80,7 +80,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useLayoutEffect(() => {
     if (focusable) {
@@ -114,7 +114,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const keyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
     const { key } = event;
     const active = document.activeElement;
     const activeTextarea = active?.tagName === 'TEXTAREA';
@@ -126,10 +126,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <div
+    <dialog
       ref={dialogRef}
-      role="dialog"
       data-testid={'info-modal-window'}
       onKeyDown={keyDown}
       tabIndex={-1}
@@ -181,6 +179,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-    </div>
+    </dialog>
   );
 };

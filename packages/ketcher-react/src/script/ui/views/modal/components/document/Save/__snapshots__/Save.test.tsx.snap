@@ -9,10 +9,9 @@ Object {
     <div
       aria-hidden="true"
     >
-      <div
+      <dialog
         class="dialog dialog"
         data-testid="info-modal-window"
-        role="dialog"
         tabindex="-1"
         testid="save-structure-dialog"
       >
@@ -182,7 +181,7 @@ Object {
             Save
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
     <div
       class="MuiPopover-root MuiMenu-root dropdownList MuiModal-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
@@ -420,10 +419,9 @@ Object {
   "container": <div
     aria-hidden="true"
   >
-    <div
+    <dialog
       class="dialog dialog"
       data-testid="info-modal-window"
-      role="dialog"
       tabindex="-1"
       testid="save-structure-dialog"
     >
@@ -593,7 +591,7 @@ Object {
           Save
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

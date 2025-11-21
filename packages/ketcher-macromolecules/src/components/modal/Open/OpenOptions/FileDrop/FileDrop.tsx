@@ -86,7 +86,7 @@ const FileDrop = ({
     [isDragActive],
   ) as React.CSSProperties;
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       if (!disabled) {
@@ -95,11 +95,11 @@ const FileDrop = ({
     }
   };
 
-  const rootProps = getRootProps({ style }) as Omit<
-    ReturnType<typeof getRootProps>,
-    'role'
-  > & { role?: string };
-  const { role: _role, ...rootPropsWithoutRole } = rootProps;
+  const rootProps = getRootProps({ style });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { role, ...rootPropsWithoutRole } = rootProps as typeof rootProps & {
+    role?: string;
+  };
 
   return (
     <button

@@ -17,6 +17,8 @@
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
+// AtomTypeValue includes 'gen' for compatibility with PeriodTable.tsx,
+// even though it's not displayed as an option in the UI
 type AtomTypeValue = 'atom' | 'list' | 'not-list' | 'gen';
 
 interface TypeSchemaItem {
@@ -50,6 +52,8 @@ function TypeChoice({ value, onChange, disabled }: TypeChoiceProps) {
             checked={type.value === value}
             onChange={() => onChange(type.value)}
             disabled={disabled}
+            // Note: schema and innerRef are required by GenericInput's Props type
+            // definition in Input.tsx, though they are optional in the implementation
             schema={undefined}
             innerRef={undefined}
           />

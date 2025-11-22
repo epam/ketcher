@@ -96,4 +96,11 @@ describe('FileDrop component', () => {
       expect(mockProps.onDropAccepted).toBeCalled();
     });
   });
+
+  it('should use semantic button element instead of div with role', () => {
+    render(withThemeProvider(<FileDrop {...mockProps} />));
+
+    const button = screen.getByRole('button');
+    expect(button.tagName).toBe('BUTTON');
+  });
 });

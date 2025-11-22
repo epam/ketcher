@@ -9,6 +9,10 @@ import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
 
+// Tolerance for detecting straight bond angles (180 degrees)
+// 5 degrees in radians to account for minor variations
+const STRAIGHT_BOND_ANGLE_TOLERANCE_RADIANS = Math.PI / 36;
+
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -206,9 +210,9 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     // Check if the angle is close to 180 degrees (PI radians)
-    // Using a tolerance of ~0.087 radians (~5 degrees) to account for minor variations
-    const tolerance = Math.PI / 36; // 5 degrees
-    return Math.abs(angleDiff - Math.PI) < tolerance;
+    return (
+      Math.abs(angleDiff - Math.PI) < STRAIGHT_BOND_ANGLE_TOLERANCE_RADIANS
+    );
   }
 
   public get isLabelVisible() {

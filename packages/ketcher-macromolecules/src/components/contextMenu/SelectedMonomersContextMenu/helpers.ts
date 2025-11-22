@@ -2,11 +2,14 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
+  ChainsCollection,
   CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
   KetAmbiguousMonomerTemplateSubType,
+  Nucleoside,
+  Nucleotide,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
@@ -91,21 +94,50 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
-  return selectedMonomers?.some((selectedMonomer: BaseMonomer) => {
-    const rnaBaseForSugar =
-      selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
+  // Group selected monomers into chains
+  const chainsCollection = ChainsCollection.fromMonomers(selectedMonomers);
 
-    return (
-      (selectedMonomer instanceof RNABase &&
-        (selectedMonomer.hydrogenBonds.length > 0 ||
-          selectedMonomer.covalentBonds.length > 1)) ||
-      (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
-        !isSenseBase(selectedMonomer)) ||
-      (rnaBaseForSugar &&
-        (rnaBaseForSugar.hydrogenBonds.length > 0 ||
-          !isSenseBase(rnaBaseForSugar)))
+  // Check if at least one chain has eligible nodes for antisense creation
+  const hasEligibleChain = chainsCollection.chains.some((chain) => {
+    return chain.subChains.some((subChain) =>
+      subChain.nodes.some((node) => {
+        // Check if node is a Nucleotide or Nucleoside with a valid antisense base
+        if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+          return false;
+        }
+
+        const rnaBase = node.rnaBase;
+
+        // Check if the base is selected
+        const isBaseSelected = node.monomers.some(
+          (monomer) => monomer.selected,
+        );
+
+        if (!isBaseSelected) {
+          return false;
+        }
+
+        // Check if base has hydrogen bonds or too many covalent bonds
+        if (
+          rnaBase instanceof RNABase &&
+          (rnaBase.hydrogenBonds.length > 0 || rnaBase.covalentBonds.length > 1)
+        ) {
+          return false;
+        }
+
+        // Check if base is a sense base (can be converted to antisense)
+        if (isRnaBaseOrAmbiguousRnaBase(rnaBase) && !isSenseBase(rnaBase)) {
+          return false;
+        }
+
+        // All checks passed - this node is eligible for antisense creation
+        return true;
+      }),
     );
   });
+
+  // Disable if no eligible chains found
+  return !hasEligibleChain;
 };
 export const hasOnlyDeoxyriboseSugars = (selectedMonomers: BaseMonomer[]) => {
   return selectedMonomers?.every((selectedMonomer: BaseMonomer) =>

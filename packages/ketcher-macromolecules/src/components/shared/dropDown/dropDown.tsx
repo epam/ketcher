@@ -63,7 +63,6 @@ const DropDownSelect = styled(Select)`
 `;
 
 const stylesForExpanded: CSSProperties = {
-  width: '120px',
   backgroundColor: 'white',
   border: '1px solid #5B6077',
   borderTopWidth: '0',

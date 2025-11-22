@@ -24,7 +24,7 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
-import { MONOMER_CONST } from 'ketcher-core';
+import { KetMonomerClass } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
@@ -47,7 +47,7 @@ const PresetPreview = ({ className }: Props) => {
 
   // Check if this is a CHEM chain (all monomers are CHEMs)
   const isChemChain = monomers.every(
-    (monomer) => monomer?.props.MonomerClass === MONOMER_CONST.CHEM,
+    (monomer) => monomer?.props.MonomerClass === KetMonomerClass.CHEM,
   );
 
   const [, baseMonomer] = monomers;

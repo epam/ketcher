@@ -204,7 +204,7 @@ export class AtomRenderer extends BaseRenderer {
     // Calculate the difference between the two angles
     let angleDiff = Math.abs(angle1 - angle2);
 
-    // Normalize the angle difference to be between 0 and PI
+    // Take the smaller angle difference (0 to PI) by considering both directions around the circle
     if (angleDiff > Math.PI) {
       angleDiff = 2 * Math.PI - angleDiff;
     }

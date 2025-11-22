@@ -382,24 +382,23 @@ function createRGroupAttachmentPointsFromAtoms(struct) {
     }
 
     const attachmentPoints = atom.attachmentPoints;
-    const rgroupAttachmentPoints = [];
 
     if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
-      rgroupAttachmentPoints.push(new RGroupAttachmentPoint(atomId, 'primary'));
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'primary'),
+      );
     } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
-      rgroupAttachmentPoints.push(
+      struct.rgroupAttachmentPoints.add(
         new RGroupAttachmentPoint(atomId, 'secondary'),
       );
     } else if (attachmentPoints === AttachmentPoints.BothSides) {
-      rgroupAttachmentPoints.push(new RGroupAttachmentPoint(atomId, 'primary'));
-      rgroupAttachmentPoints.push(
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'primary'),
+      );
+      struct.rgroupAttachmentPoints.add(
         new RGroupAttachmentPoint(atomId, 'secondary'),
       );
     }
-
-    rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
-      struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
-    });
   });
 }
 

@@ -174,6 +174,24 @@ const isValidStructure = (struct: string): boolean => {
   }
 };
 
+const isValidMolStructure = (struct: string): boolean => {
+  if (!struct || !struct.trim()) {
+    return false;
+  }
+
+  // Simple validation for MOL V3000 format - check if it has any atoms
+  // MOL V3000 format has "M  V30 COUNTS <atoms> <bonds> ..." line
+  const countsMatch = struct.match(/M\s+V30\s+COUNTS\s+(\d+)/);
+  if (countsMatch) {
+    const atomCount = parseInt(countsMatch[1], 10);
+    return atomCount > 0;
+  }
+
+  // For MOL V2000 and other formats, we assume valid if there's content
+  // The actual validation will happen during conversion
+  return true;
+};
+
 const addToCanvas = ({
   ketSerializer,
   editor,
@@ -368,12 +386,16 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     if (formatSelection === KET) {
       const isValid = isValidStructure(structStr);
       setHasValidStructure(isValid);
+    } else if (formatSelection === 'mol') {
+      // For MOL format, we can do simple validation by checking atom count
+      const isValid = isValidMolStructure(structStr);
+      setHasValidStructure(isValid);
     } else {
-      // For other formats (mol, seq, fasta, etc.), validation would require
+      // For other formats (seq, fasta, idt, etc.), validation would require
       // async conversion via Indigo service. We assume valid if there's content
       // and let the actual validation happen when user clicks the button.
-      // This provides immediate feedback for KET while maintaining backward
-      // compatibility for other formats.
+      // This provides immediate feedback for KET and MOL while maintaining
+      // backward compatibility for other formats.
       setHasValidStructure(true);
     }
   }, [structStr, formatSelection]);

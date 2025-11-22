@@ -86,19 +86,21 @@ class ChargeTool implements Tool {
       }
     }
 
-    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
-    if (atom && ci && this.isChargeableAtom(atom)) {
-      this.editor.hover(ci);
-      this.editor.update(
-        fromAtomsAttrs(
-          rnd.ctab,
-          ci.id,
-          {
-            charge: (atom.charge ?? 0) + this.charge,
-          },
-          null,
-        ),
-      );
+    if (ci && ci.map === 'atoms') {
+      const atom = molecule.atoms.get(ci.id);
+      if (atom && this.isChargeableAtom(atom)) {
+        this.editor.hover(ci);
+        this.editor.update(
+          fromAtomsAttrs(
+            rnd.ctab,
+            ci.id,
+            {
+              charge: (atom.charge ?? 0) + this.charge,
+            },
+            null,
+          ),
+        );
+      }
     }
     return true;
   }

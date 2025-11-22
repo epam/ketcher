@@ -74,9 +74,13 @@ export class AtomRenderer extends BaseRenderer {
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
     ) {
+      // Calculate selection radius based on macroModeScale to match micro mode behavior
+      const macroModeScale = this.editorSettings.macroModeScale || 40;
+      const selectionRadius = Math.ceil(1.9 * (macroModeScale / 6));
+
       return this.rootElement
         ?.insert('circle', ':first-child')
-        .attr('r', 10)
+        .attr('r', selectionRadius)
         .attr('cx', 0)
         .attr('cy', 0);
     } else {

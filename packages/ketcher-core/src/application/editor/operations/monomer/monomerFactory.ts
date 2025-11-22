@@ -71,7 +71,7 @@ export const monomerFactory = (
   } else if (monomer.props.unresolved) {
     Monomer = UnresolvedMonomer;
     MonomerRenderer = UnresolvedMonomerRenderer;
-    ketMonomerClass = KetMonomerClass.CHEM;
+    ketMonomerClass = monomer.props.MonomerClass || KetMonomerClass.CHEM;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA

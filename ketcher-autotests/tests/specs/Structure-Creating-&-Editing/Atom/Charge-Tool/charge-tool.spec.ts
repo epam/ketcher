@@ -113,9 +113,11 @@ test.describe('Charge tool', () => {
       '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
     );
     await LeftToolbar(page).chargePlus();
+    // Click on the first star atom twice to test multiple charge increments
     await clickOnAtom(page, '*', anyAtom);
     await clickOnAtom(page, '*', anyAtom);
     await LeftToolbar(page).chargeMinus();
+    // Click on the second star atom to test charge decrement
     await clickOnAtom(page, '*', 1);
     await takeEditorScreenshot(page);
   });

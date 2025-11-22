@@ -106,8 +106,9 @@ class ChargeTool implements Tool {
   }
 
   private isChargeableAtom(atom: Atom): boolean {
-    // An atom can have a charge if it's a regular element or a pseudo atom (like star atoms)
-    // Exclude atom lists and R-group labels
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
     return !atom.atomList && !atom.rglabel;
   }
 }

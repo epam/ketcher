@@ -75,7 +75,8 @@ export class AtomRenderer extends BaseRenderer {
       !this.atom.hasCharge
     ) {
       // Calculate selection radius based on macroModeScale to match micro mode behavior
-      const macroModeScale = this.editorSettings.macroModeScale || 40;
+      // Using the same formula as micro mode: Math.ceil(1.9 * (scale / 6))
+      const macroModeScale = this.editorSettings.macroModeScale;
       const selectionRadius = Math.ceil(1.9 * (macroModeScale / 6));
 
       return this.rootElement

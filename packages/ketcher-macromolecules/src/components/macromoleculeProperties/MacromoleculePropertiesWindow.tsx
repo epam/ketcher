@@ -357,17 +357,31 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
   const naturalAnaloguesArray = props.isPeptide
     ? peptideNaturalAnalogues
     : rnaDnaNaturalAnalogues;
-  const countsEntries: [string, number][] = naturalAnaloguesArray.map(
+
+  // Filter out O and U for peptides as they should be counted as "Other"
+  const excludedPeptides = ['O', 'U'];
+  const displayedAnalogues = props.isPeptide
+    ? naturalAnaloguesArray.filter(
+        (analog) => !excludedPeptides.includes(analog),
+      )
+    : naturalAnaloguesArray;
+
+  const countsEntries: [string, number][] = displayedAnalogues.map(
     (peptideNaturalAnalogues) => [
       peptideNaturalAnalogues,
       props.monomerCount[peptideNaturalAnalogues] || 0,
     ],
   );
 
-  countsEntries.push([
-    OTHER_MONOMER_COUNT_NAME,
-    props.monomerCount[OTHER_MONOMER_COUNT_NAME] || 0,
-  ]);
+  // Calculate "Other" count including O and U for peptides
+  let otherCount = props.monomerCount[OTHER_MONOMER_COUNT_NAME] || 0;
+  if (props.isPeptide) {
+    excludedPeptides.forEach((excluded) => {
+      otherCount += props.monomerCount[excluded] || 0;
+    });
+  }
+
+  countsEntries.push([OTHER_MONOMER_COUNT_NAME, otherCount]);
   countsEntries.sort((a, b) => {
     return a[0] === OTHER_MONOMER_COUNT_NAME ? 1 : a[0].localeCompare(b[0]);
   });

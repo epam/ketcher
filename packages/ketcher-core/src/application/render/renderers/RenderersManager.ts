@@ -322,9 +322,17 @@ export class RenderersManager {
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
+  private redrawAtomLabels() {
+    // Redraw labels for all atoms to reflect updated bond angles
+    this.atoms.forEach((atomRenderer) => {
+      atomRenderer.redrawLabel();
+    });
+  }
+
   public update(modelChanges?: Command) {
     this.reinitializeViewModel();
     modelChanges?.execute(this);
+    this.redrawAtomLabels();
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

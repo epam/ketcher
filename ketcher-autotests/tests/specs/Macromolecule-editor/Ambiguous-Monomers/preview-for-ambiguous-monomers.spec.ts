@@ -7,6 +7,10 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   waitForRender,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  takeElementScreenshot,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -19,6 +23,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
 
@@ -42,13 +47,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function hoverMouseOverMicroMonomer(
-  page: Page,
-  monomerLocatorIndex: number,
-) {
-  await page.locator('tspan').nth(monomerLocatorIndex).hover({ force: true });
-}
 
 async function hoverMouseOverSequenceModeMonomer(page: Page) {
   await page.locator('text').first().hover();
@@ -497,27 +495,27 @@ test.describe('Preview tooltips checks: ', () => {
             3. Hover mouse over monomer, wait for preview tooltip
             4. Take screenshot of the canvas to compare it with example
         */
-      test.slow();
-      await pageReload(page);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
+      // if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
       );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      await pasteFromClipboardAndOpenAsNewProjectMacro(
         page,
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await waitForRender(page, async () => {
-        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        id: ambiguousMonomer.monomerLocatorIndexOnMicro,
       });
-      await hoverMouseOverMicroMonomer(
-        page,
-        ambiguousMonomer.monomerLocatorIndexOnMicro,
-      );
+      await monomerOnMicro.hover({ force: true });
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
       // Test should be skipped if related bug exists

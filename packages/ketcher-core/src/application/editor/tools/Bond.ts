@@ -566,6 +566,17 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
+  private isRnaMonomer(monomer: BaseMonomer): boolean {
+    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
+    return (
+      !!rnaMonomerClasses.find((RNAClass) => monomer instanceof RNAClass) ||
+      (monomer instanceof AmbiguousMonomer &&
+        (monomer.monomerClass === KetMonomerClass.Sugar ||
+          monomer.monomerClass === KetMonomerClass.Phosphate ||
+          monomer.monomerClass === KetMonomerClass.Base))
+    );
+  }
+
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
@@ -625,19 +636,8 @@ class PolymerBond implements BaseTool {
     }
 
     // Modal: One monomer is Peptide and another is RNA monomer
-    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-    const firstMonomerIsRNA =
-      rnaMonomerClasses.find((RNAClass) => firstMonomer instanceof RNAClass) ||
-      (firstMonomer instanceof AmbiguousMonomer &&
-        (firstMonomer.monomerClass === KetMonomerClass.Sugar ||
-          firstMonomer.monomerClass === KetMonomerClass.Phosphate ||
-          firstMonomer.monomerClass === KetMonomerClass.Base));
-    const secondMonomerIsRNA =
-      rnaMonomerClasses.find((RNAClass) => secondMonomer instanceof RNAClass) ||
-      (secondMonomer instanceof AmbiguousMonomer &&
-        (secondMonomer.monomerClass === KetMonomerClass.Sugar ||
-          secondMonomer.monomerClass === KetMonomerClass.Phosphate ||
-          secondMonomer.monomerClass === KetMonomerClass.Base));
+    const firstMonomerIsRNA = this.isRnaMonomer(firstMonomer);
+    const secondMonomerIsRNA = this.isRnaMonomer(secondMonomer);
     if (
       (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
       (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||

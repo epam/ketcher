@@ -26,10 +26,9 @@ interface InfoModalProps {
 const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
   return (
     <div className={styles.infoModalOverlay}>
-      <div
+      <dialog
+        open
         className={styles.infoModalWindow}
-        role="dialog"
-        aria-modal="true"
         aria-labelledby="dialog-label"
         aria-describedby="dialog-content"
         data-testid="info-modal-window"
@@ -51,7 +50,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
             {error.close}
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
   );
 };

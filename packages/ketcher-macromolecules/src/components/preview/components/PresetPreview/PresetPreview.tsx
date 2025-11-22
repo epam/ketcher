@@ -24,12 +24,13 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
+import { MONOMER_CONST } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState } from 'state';
 
-const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
+const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'>[] = [
   'sugar',
   'base',
   'phosphate',
@@ -43,6 +44,11 @@ const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
   const { monomers, name, position, idtAliases } = preview;
+
+  // Check if this is a CHEM chain (all monomers are CHEMs)
+  const isChemChain = monomers.every(
+    (monomer) => monomer?.props.MonomerClass === MONOMER_CONST.CHEM,
+  );
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
@@ -66,7 +72,7 @@ const PresetPreview = ({ className }: Props) => {
       {monomers.map((monomer, index) =>
         monomer ? (
           <PresetMonomerRow key={monomer.props.id}>
-            <PresetIcon name={icons[index]} />
+            <PresetIcon name={isChemChain ? 'chem' : icons[index]} />
             <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
             <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
           </PresetMonomerRow>

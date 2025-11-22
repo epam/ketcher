@@ -626,12 +626,18 @@ class PolymerBond implements BaseTool {
 
     // Modal: One monomer is Peptide and another is RNA monomer
     const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-    const firstMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => firstMonomer instanceof RNAClass,
-    );
-    const secondMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => secondMonomer instanceof RNAClass,
-    );
+    const firstMonomerIsRNA =
+      rnaMonomerClasses.find((RNAClass) => firstMonomer instanceof RNAClass) ||
+      (firstMonomer instanceof AmbiguousMonomer &&
+        (firstMonomer.monomerClass === KetMonomerClass.Sugar ||
+          firstMonomer.monomerClass === KetMonomerClass.Phosphate ||
+          firstMonomer.monomerClass === KetMonomerClass.Base));
+    const secondMonomerIsRNA =
+      rnaMonomerClasses.find((RNAClass) => secondMonomer instanceof RNAClass) ||
+      (secondMonomer instanceof AmbiguousMonomer &&
+        (secondMonomer.monomerClass === KetMonomerClass.Sugar ||
+          secondMonomer.monomerClass === KetMonomerClass.Phosphate ||
+          secondMonomer.monomerClass === KetMonomerClass.Base));
     if (
       (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
       (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||

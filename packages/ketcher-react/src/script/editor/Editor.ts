@@ -406,6 +406,7 @@ class Editor implements KetcherEditor {
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
     const result = this.render.updateOptions(opts);
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
+    this.render.update(true);
     return result;
   }
 

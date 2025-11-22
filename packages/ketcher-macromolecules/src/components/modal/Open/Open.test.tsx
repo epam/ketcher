@@ -76,4 +76,26 @@ describe('Open component', () => {
     expect(clipboardTextarea).toBeInTheDocument();
     expect(clipboardTextarea).toHaveValue(mockTypedText);
   });
+
+  it('should disable Add to Canvas button for empty KET structure', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    const emptyKetStructure =
+      '{"root":{"nodes":[]},"mol0":{"type":"molecule","atoms":[],"bonds":[]}}';
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, {
+      target: { value: emptyKetStructure },
+    });
+
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+    expect(addToCanvasButton).toBeDisabled();
+  });
 });

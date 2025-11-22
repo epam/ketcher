@@ -152,6 +152,27 @@ export const MODAL_STATES = {
 export type MODAL_STATES_VALUES =
   typeof MODAL_STATES[keyof typeof MODAL_STATES];
 
+const isValidStructure = (struct: string): boolean => {
+  if (!struct || !struct.trim()) {
+    return false;
+  }
+
+  try {
+    const ketSerializer = new KetSerializer();
+    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+
+    if (!deserialisedKet) {
+      return false;
+    }
+
+    return deserialisedKet.drawingEntitiesManager.hasDrawingEntities;
+  } catch {
+    // If parsing fails, we still return true to allow the user to try
+    // The actual error will be shown when they click Add to Canvas
+    return true;
+  }
+};
+
 const addToCanvas = ({
   ketSerializer,
   editor,
@@ -167,6 +188,10 @@ const addToCanvas = ({
 
   if (!deserialisedKet) {
     throw new Error('Error during parsing file');
+  }
+
+  if (!deserialisedKet.drawingEntitiesManager.hasDrawingEntities) {
+    throw new Error('The structure is empty');
   }
 
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
@@ -312,6 +337,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [additionalSelection, setAdditionalSelection] = useState(RNA);
   const [peptideLettersFormatSelection, setPeptideLettersFormatSelection] =
     useState(ONE_LETTER);
+  const [hasValidStructure, setHasValidStructure] = useState(false);
 
   useEffect(() => {
     const splittedFilenameByDot = fileName?.split('.');
@@ -331,11 +357,29 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!structStr || !structStr.trim()) {
+      setHasValidStructure(false);
+      return;
+    }
+
+    // For KET format, we can validate directly
+    if (formatSelection === KET) {
+      const isValid = isValidStructure(structStr);
+      setHasValidStructure(isValid);
+    } else {
+      // For other formats, we assume valid if there's content
+      // The actual validation will happen when user clicks the button
+      setHasValidStructure(true);
+    }
+  }, [structStr, formatSelection]);
+
   const onCloseCallback = useCallback(() => {
     setCurrentState(MODAL_STATES.openOptions);
     setStructStr('');
     setFormatSelection(KET);
     setAdditionalSelection(RNA);
+    setHasValidStructure(false);
     onClose();
   }, [onClose]);
 
@@ -414,7 +458,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <FooterButtonContainer>
         <FooterButton
           key="openButton"
-          disabled={!structStr}
+          disabled={!structStr || !hasValidStructure}
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
@@ -422,7 +466,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         />
         <FooterButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr || !hasValidStructure}
           clickHandler={addToCanvasHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"

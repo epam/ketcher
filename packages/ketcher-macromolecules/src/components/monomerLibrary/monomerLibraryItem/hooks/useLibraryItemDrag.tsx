@@ -23,7 +23,7 @@ export const useLibraryItemDrag = (
         editor.isLibraryItemDragCancelled =
           editor.mode.modeName === 'sequence-layout-mode';
         if (!editor.isLibraryItemDragCancelled) {
-          document.body.style.cursor = 'grabbing';
+          document.body.style.setProperty('cursor', 'grabbing', 'important');
         }
       })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -65,7 +65,7 @@ export const useLibraryItemDrag = (
 
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
-        document.body.style.cursor = '';
+        document.body.style.removeProperty('cursor');
       });
 
     itemElement.call(dragBehavior);

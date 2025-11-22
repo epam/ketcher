@@ -167,8 +167,9 @@ const isValidStructure = (struct: string): boolean => {
 
     return deserialisedKet.drawingEntitiesManager.hasDrawingEntities;
   } catch {
-    // If parsing fails, we still return true to allow the user to try
-    // The actual error will be shown when they click Add to Canvas
+    // If parsing fails with an error, we return true to allow the user to proceed.
+    // This handles cases where the structure might be valid but has minor parsing issues.
+    // The actual error will be shown when they click Add to Canvas/Open as New.
     return true;
   }
 };
@@ -363,13 +364,16 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       return;
     }
 
-    // For KET format, we can validate directly
+    // For KET format, we can validate directly without async conversion
     if (formatSelection === KET) {
       const isValid = isValidStructure(structStr);
       setHasValidStructure(isValid);
     } else {
-      // For other formats, we assume valid if there's content
-      // The actual validation will happen when user clicks the button
+      // For other formats (mol, seq, fasta, etc.), validation would require
+      // async conversion via Indigo service. We assume valid if there's content
+      // and let the actual validation happen when user clicks the button.
+      // This provides immediate feedback for KET while maintaining backward
+      // compatibility for other formats.
       setHasValidStructure(true);
     }
   }, [structStr, formatSelection]);

@@ -183,6 +183,34 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  private get hasBondsAt180Degrees() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
+
+    // Only check for 2 bonds
+    if (atomNeighborsHalfEdges?.length !== 2) {
+      return false;
+    }
+
+    // Get the angles of the two bonds
+    const angle1 = atomNeighborsHalfEdges[0].angle;
+    const angle2 = atomNeighborsHalfEdges[1].angle;
+
+    // Calculate the difference between the two angles
+    let angleDiff = Math.abs(angle1 - angle2);
+
+    // Normalize the angle difference to be between 0 and PI
+    if (angleDiff > Math.PI) {
+      angleDiff = 2 * Math.PI - angleDiff;
+    }
+
+    // Check if the angle is close to 180 degrees (PI radians)
+    // Using a tolerance of ~0.087 radians (~5 degrees) to account for minor variations
+    const tolerance = Math.PI / 36; // 5 degrees
+    return Math.abs(angleDiff - Math.PI) < tolerance;
+  }
+
   public get isLabelVisible() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
@@ -196,6 +224,7 @@ export class AtomRenderer extends BaseRenderer {
     const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
+    const hasStraightBonds = this.hasBondsAt180Degrees;
 
     if (
       isCarbon &&
@@ -204,7 +233,8 @@ export class AtomRenderer extends BaseRenderer {
       !hasRadical &&
       !hasAlias &&
       !hasExplicitValence &&
-      !hasExplicitIsotope
+      !hasExplicitIsotope &&
+      !hasStraightBonds
     ) {
       return false;
     }

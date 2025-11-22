@@ -62,12 +62,9 @@ describe('FileDrop component', () => {
   });
 
   it('should upload file', async () => {
-    const { container } = render(
-      withThemeProvider(<FileDrop {...mockProps} />),
-    );
-    const input = container.querySelector(
-      'input[type=file]',
-    ) as HTMLInputElement;
+    render(withThemeProvider(<FileDrop {...mockProps} />));
+
+    const input = screen.getByTestId('file-drop-input') as HTMLInputElement;
 
     userEvent.upload(input, mockFile);
 
@@ -83,12 +80,8 @@ describe('FileDrop component', () => {
   });
 
   it('accepted file callback should be called after file is uploaded', async () => {
-    const { container } = render(
-      withThemeProvider(<FileDrop {...mockProps} />),
-    );
-    const input = container.querySelector(
-      'input[type=file]',
-    ) as HTMLInputElement;
+    render(withThemeProvider(<FileDrop {...mockProps} />));
+    const input = screen.getByTestId('file-drop-input') as HTMLInputElement;
 
     userEvent.upload(input, mockFile);
 

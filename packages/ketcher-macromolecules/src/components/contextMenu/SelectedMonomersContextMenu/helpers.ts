@@ -108,6 +108,11 @@ export const isAntisenseCreationDisabled = (
 
         const rnaBase = node.rnaBase;
 
+        // Defensive check for rnaBase existence
+        if (!rnaBase) {
+          return false;
+        }
+
         // Check if the base is selected
         const isBaseSelected = node.monomers.some(
           (monomer) => monomer.selected,
@@ -118,6 +123,7 @@ export const isAntisenseCreationDisabled = (
         }
 
         // Check if base has hydrogen bonds or too many covalent bonds
+        // Note: This only applies to concrete RNABase instances, not ambiguous bases
         if (
           rnaBase instanceof RNABase &&
           (rnaBase.hydrogenBonds.length > 0 || rnaBase.covalentBonds.length > 1)
@@ -126,6 +132,7 @@ export const isAntisenseCreationDisabled = (
         }
 
         // Check if base is a sense base (can be converted to antisense)
+        // Note: isRnaBaseOrAmbiguousRnaBase handles both RNABase and AmbiguousMonomer types
         if (isRnaBaseOrAmbiguousRnaBase(rnaBase) && !isSenseBase(rnaBase)) {
           return false;
         }

@@ -39,10 +39,21 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
     return false;
   }
 
+  // Only RNA/DNA bases can be sense bases, not peptides or other monomers
+  if (!isRnaBaseOrAmbiguousRnaBase(monomer)) {
+    return false;
+  }
+
   if (
     (monomer as AmbiguousMonomer).subtype ===
     KetAmbiguousMonomerTemplateSubType.MIXTURE
   ) {
+    return false;
+  }
+
+  const ambiguousMonomer = monomer as AmbiguousMonomer;
+  // Safety check: ensure monomers array exists
+  if (!ambiguousMonomer.monomers || !Array.isArray(ambiguousMonomer.monomers)) {
     return false;
   }
 
@@ -84,7 +95,7 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
     S,
     V,
   ];
-  const code = getMonomersCode((monomer as AmbiguousMonomer).monomers);
+  const code = getMonomersCode(ambiguousMonomer.monomers);
   return ambigues.some((v) => v === code);
 };
 

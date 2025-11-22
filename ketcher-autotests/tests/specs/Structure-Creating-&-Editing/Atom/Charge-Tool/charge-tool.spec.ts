@@ -8,6 +8,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -98,6 +99,24 @@ test.describe('Charge tool', () => {
     await page.keyboard.press('-');
     await page.mouse.move(x, y);
     await page.keyboard.press('-');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Charge Plus tool works on star atoms', async ({ page }) => {
+    /*
+    Test case: Fix for star atom charge issue
+    Description: Charge Plus and Charge Minus are applied to star atoms.
+    */
+    const anyAtom = 0;
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
+    );
+    await LeftToolbar(page).chargePlus();
+    await clickOnAtom(page, '*', anyAtom);
+    await clickOnAtom(page, '*', anyAtom);
+    await LeftToolbar(page).chargeMinus();
+    await clickOnAtom(page, '*', 1);
     await takeEditorScreenshot(page);
   });
 });

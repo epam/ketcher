@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 
@@ -32,11 +32,8 @@ class ChargeTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
-    ) {
+    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
       this.editor.hover(null, null, event);
@@ -89,24 +86,27 @@ class ChargeTool implements Tool {
       }
     }
 
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as string | number)
-    ) {
+    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    if (atom && ci && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
       this.editor.update(
         fromAtomsAttrs(
           rnd.ctab,
           ci.id,
           {
-            charge: molecule.atoms.get(ci.id)?.charge + this.charge,
+            charge: (atom.charge ?? 0) + this.charge,
           },
           null,
         ),
       );
     }
     return true;
+  }
+
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's a regular element or a pseudo atom (like star atoms)
+    // Exclude atom lists and R-group labels
+    return !atom.atomList && !atom.rglabel;
   }
 }
 

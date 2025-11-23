@@ -1858,6 +1858,8 @@ export class SequenceMode extends BaseMode {
     const hasNextNodeInChain =
       selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2;
 
+    const numberOfMonomersToReplace = selectedNode.monomers.length;
+
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -1867,65 +1869,83 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
-      monomerItem,
-      position,
-    );
-    const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-    const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+    // Add the same number of monomers as were deleted
+    let lastAddedNode: SequenceNode =
+      previousSelectionNode ?? new EmptySequenceNode();
+    for (let i = 0; i < numberOfMonomersToReplace; i++) {
+      const currentPosition = position.add(new Vec2(i, 0));
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        currentPosition,
+      );
+      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
-    modelChanges.merge(monomerAddCommand);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newMonomerSequenceNode,
-        nextNode?.senseNode ?? null,
-        previousSelectionNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-      ),
-    );
+      modelChanges.merge(monomerAddCommand);
 
-    // TODO: Check for multiple side chain connections in Linkers
-    sideChainConnections?.forEach((sideConnectionData) => {
-      const {
-        firstMonomerAttachmentPointName,
-        secondMonomer,
-        secondMonomerAttachmentPointName,
-      } = sideConnectionData;
-      if (
-        !this.isConnectionPossible(
-          newMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomer,
-          secondMonomerAttachmentPointName,
-        )
-      ) {
-        return;
+      const isFirstMonomer = i === 0;
+      const isLastMonomer = i === numberOfMonomersToReplace - 1;
+
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newMonomerSequenceNode,
+          isLastMonomer ? nextNode?.senseNode ?? null : null,
+          isFirstMonomer ? previousSelectionNode : lastAddedNode,
+          isFirstMonomer ? Boolean(hasPreviousNodeInChain) : true,
+          isLastMonomer ? Boolean(hasNextNodeInChain) : false,
+        ),
+      );
+
+      lastAddedNode = newMonomerSequenceNode;
+
+      // TODO: Check for multiple side chain connections in Linkers
+      if (isFirstMonomer) {
+        sideChainConnections?.forEach((sideConnectionData) => {
+          const {
+            firstMonomerAttachmentPointName,
+            secondMonomer,
+            secondMonomerAttachmentPointName,
+          } = sideConnectionData;
+          if (
+            !this.isConnectionPossible(
+              newMonomer,
+              firstMonomerAttachmentPointName,
+              secondMonomer,
+              secondMonomerAttachmentPointName,
+            )
+          ) {
+            return;
+          }
+
+          modelChanges.merge(
+            editor.drawingEntitiesManager.createPolymerBond(
+              newMonomer,
+              secondMonomer,
+              firstMonomerAttachmentPointName,
+              secondMonomerAttachmentPointName,
+            ),
+          );
+        });
       }
 
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
-          secondMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomerAttachmentPointName,
-        ),
-      );
-    });
+      preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
+        // Only restore hydrogen bonds from the corresponding monomer position
+        const monomerIndex = selectedNode.monomers.indexOf(fromMonomer);
+        if (monomerIndex === i) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.createPolymerBond(
+              newMonomer,
+              toMonomer,
+              AttachmentPointName.HYDROGEN,
+              AttachmentPointName.HYDROGEN,
+              MACROMOLECULES_BOND_TYPES.HYDROGEN,
+            ),
+          );
+        }
+      });
+    }
 
-    preservedHydrodenBonds.forEach(({ toMonomer }) => {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
-          toMonomer,
-          AttachmentPointName.HYDROGEN,
-          AttachmentPointName.HYDROGEN,
-          MACROMOLECULES_BOND_TYPES.HYDROGEN,
-        ),
-      );
-    });
-
-    return newMonomerSequenceNode;
+    return lastAddedNode;
   }
 
   private replaceSelectionsWithMonomer(
@@ -2314,6 +2334,8 @@ export class SequenceMode extends BaseMode {
       [] as PreservedHydrogenBonds[],
     );
 
+    const numberOfMonomersToReplace = selectedNode.monomers.length;
+
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -2323,96 +2345,116 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const newPresetNode = this.createRnaPresetNode(preset, position);
+    // Add the same number of presets as monomers were deleted
+    let lastAddedNode: SequenceNode =
+      previousSelectionNode ?? new EmptySequenceNode();
+    for (let i = 0; i < numberOfMonomersToReplace; i++) {
+      const currentPosition = position.add(new Vec2(i, 0));
+      const newPresetNode = this.createRnaPresetNode(preset, currentPosition);
 
-    assert(newPresetNode);
+      assert(newPresetNode);
 
-    const rnaPresetAddModelChanges =
-      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+      const rnaPresetAddModelChanges =
+        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
 
-    modelChanges.merge(rnaPresetAddModelChanges);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newPresetNode,
-        nextNode?.senseNode ?? null,
-        previousSelectionNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-        false,
-      ),
-    );
+      modelChanges.merge(rnaPresetAddModelChanges);
 
-    // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
-    let monomerForSideConnections = newPresetNode.monomer;
+      const isFirstMonomer = i === 0;
+      const isLastMonomer = i === numberOfMonomersToReplace - 1;
 
-    if (newPresetNode instanceof Nucleotide) {
-      monomerForSideConnections = newPresetNode.phosphate;
-    } else if (newPresetNode instanceof Nucleoside) {
-      monomerForSideConnections = newPresetNode.sugar;
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNode,
+          isLastMonomer ? nextNode?.senseNode ?? null : null,
+          isFirstMonomer ? previousSelectionNode : lastAddedNode,
+          isFirstMonomer ? Boolean(hasPreviousNodeInChain) : true,
+          isLastMonomer ? Boolean(hasNextNodeInChain) : false,
+          false,
+        ),
+      );
+
+      lastAddedNode = newPresetNode;
+
+      // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
+      let monomerForSideConnections = newPresetNode.monomer;
+
+      if (newPresetNode instanceof Nucleotide) {
+        monomerForSideConnections = newPresetNode.phosphate;
+      } else if (newPresetNode instanceof Nucleoside) {
+        monomerForSideConnections = newPresetNode.sugar;
+      }
+
+      if (isFirstMonomer) {
+        sideChainConnections?.forEach((sideConnectionData) => {
+          const {
+            firstMonomerAttachmentPointName,
+            secondMonomer,
+            secondMonomerAttachmentPointName,
+          } = sideConnectionData;
+          if (
+            !this.isConnectionPossible(
+              monomerForSideConnections,
+              firstMonomerAttachmentPointName,
+              secondMonomer,
+              secondMonomerAttachmentPointName,
+            )
+          ) {
+            return;
+          }
+
+          modelChanges.merge(
+            editor.drawingEntitiesManager.createPolymerBond(
+              monomerForSideConnections,
+              secondMonomer,
+              firstMonomerAttachmentPointName,
+              secondMonomerAttachmentPointName,
+            ),
+          );
+        });
+      }
+
+      preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
+        // Only restore hydrogen bonds from the corresponding monomer position
+        const monomerIndex = selectedNode.monomers.indexOf(fromMonomer);
+        if (monomerIndex !== i) {
+          return;
+        }
+
+        let monomerForHydrogenBond: BaseMonomer | undefined;
+
+        if (
+          newPresetNode instanceof Nucleotide ||
+          newPresetNode instanceof Nucleoside
+        ) {
+          if (fromMonomer instanceof RNABase) {
+            monomerForHydrogenBond = newPresetNode.rnaBase;
+          } else if (fromMonomer instanceof Sugar) {
+            monomerForHydrogenBond = newPresetNode.sugar;
+          } else if (
+            newPresetNode instanceof Nucleotide &&
+            fromMonomer instanceof Phosphate
+          ) {
+            monomerForHydrogenBond = newPresetNode.phosphate;
+          }
+        }
+
+        if (!monomerForHydrogenBond) {
+          return;
+        }
+
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            monomerForHydrogenBond,
+            toMonomer,
+            AttachmentPointName.HYDROGEN,
+            AttachmentPointName.HYDROGEN,
+            MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          ),
+        );
+      });
     }
 
-    sideChainConnections?.forEach((sideConnectionData) => {
-      const {
-        firstMonomerAttachmentPointName,
-        secondMonomer,
-        secondMonomerAttachmentPointName,
-      } = sideConnectionData;
-      if (
-        !this.isConnectionPossible(
-          monomerForSideConnections,
-          firstMonomerAttachmentPointName,
-          secondMonomer,
-          secondMonomerAttachmentPointName,
-        )
-      ) {
-        return;
-      }
-
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          monomerForSideConnections,
-          secondMonomer,
-          firstMonomerAttachmentPointName,
-          secondMonomerAttachmentPointName,
-        ),
-      );
-    });
-
-    preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
-      let monomerForHydrogenBond: BaseMonomer | undefined;
-
-      if (
-        newPresetNode instanceof Nucleotide ||
-        newPresetNode instanceof Nucleoside
-      ) {
-        if (fromMonomer instanceof RNABase) {
-          monomerForHydrogenBond = newPresetNode.rnaBase;
-        } else if (fromMonomer instanceof Sugar) {
-          monomerForHydrogenBond = newPresetNode.sugar;
-        } else if (
-          newPresetNode instanceof Nucleotide &&
-          fromMonomer instanceof Phosphate
-        ) {
-          monomerForHydrogenBond = newPresetNode.phosphate;
-        }
-      }
-
-      if (!monomerForHydrogenBond) {
-        return;
-      }
-
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          monomerForHydrogenBond,
-          toMonomer,
-          AttachmentPointName.HYDROGEN,
-          AttachmentPointName.HYDROGEN,
-          MACROMOLECULES_BOND_TYPES.HYDROGEN,
-        ),
-      );
-    });
-
-    return newPresetNode;
+    return lastAddedNode;
   }
 
   private replaceSelectionsWithPreset(

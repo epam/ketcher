@@ -1874,10 +1874,9 @@ export class SequenceMode extends BaseMode {
     const newMonomers: BaseMonomer[] = [];
 
     for (let i = 0; i < numberOfMonomersToReplace; i++) {
-      const currentPosition = position.add(new Vec2(i, 0));
       const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
         monomerItem,
-        currentPosition,
+        position,
       );
       const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
       const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
@@ -2351,8 +2350,7 @@ export class SequenceMode extends BaseMode {
       [];
 
     for (let i = 0; i < numberOfMonomersToReplace; i++) {
-      const currentPosition = position.add(new Vec2(i, 0));
-      const newPresetNode = this.createRnaPresetNode(preset, currentPosition);
+      const newPresetNode = this.createRnaPresetNode(preset, position);
 
       assert(newPresetNode);
 

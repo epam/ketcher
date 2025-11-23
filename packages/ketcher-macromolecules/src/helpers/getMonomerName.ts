@@ -1,7 +1,5 @@
 import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
-
-const DNA_TEMPLATE_NAME_PART = 'thymine';
-const RNA_TEMPLATE_NAME_PART = 'uracil';
+import { DNA_TEMPLATE_NAME_PART, RNA_TEMPLATE_NAME_PART } from '../constants';
 
 const getMonomerName = (monomer: BaseMonomer) => {
   if (monomer instanceof AmbiguousMonomer) {
@@ -27,20 +25,30 @@ const getMonomerName = (monomer: BaseMonomer) => {
         option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
       );
 
-      if (isDNA && label === 'N') {
+      // DNA-specific labels (only if it's DNA and not RNA)
+      if (isDNA && !isRNA && label === 'N') {
         return 'Any DNA base';
       }
-      if (isDNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
+      if (isDNA && !isRNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
         return 'Ambiguous DNA Base';
       }
-      if (isRNA && label === 'N') {
+
+      // RNA-specific labels (only if it's RNA and not DNA)
+      if (isRNA && !isDNA && label === 'N') {
         return 'Any RNA Base';
       }
-      if (isRNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
+      if (isRNA && !isDNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
         return 'Ambiguous RNA Base';
       }
-      // For generic bases (neither DNA nor RNA specific)
+
+      // For generic bases (neither DNA nor RNA specific, or both)
       if (['M', 'R', 'S', 'V'].includes(label)) {
+        return 'Ambiguous Base';
+      }
+
+      // For mixed DNA/RNA or other ambiguous cases with N, B, D, H, K, W, Y
+      if (['N', 'B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
+        // If both DNA and RNA, or neither, fall back to generic label
         return 'Ambiguous Base';
       }
     }

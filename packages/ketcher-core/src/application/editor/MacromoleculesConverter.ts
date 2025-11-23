@@ -759,9 +759,17 @@ export class MacromoleculesConverter {
       command.merge(rxnPlusAddCommand);
     });
 
-    // All entities have been converted, so clear hidden entities
-    // to prevent duplicates when switching back to micro mode
-    drawingEntitiesManager.clearMicromoleculesHiddenEntities();
+    // Store only unconverted entities (simpleObjects, texts, images, etc.)
+    // Don't merge atoms/bonds/sgroups as they've all been converted
+    const unconvertedStruct = new Struct();
+    unconvertedStruct.simpleObjects = struct.simpleObjects;
+    unconvertedStruct.texts = struct.texts;
+    unconvertedStruct.images = struct.images;
+    unconvertedStruct.highlights = struct.highlights;
+    unconvertedStruct.loops = struct.loops;
+    unconvertedStruct.rgroups = struct.rgroups;
+    unconvertedStruct.rgroupAttachmentPoints = struct.rgroupAttachmentPoints;
+    drawingEntitiesManager.setMicromoleculesHiddenEntities(unconvertedStruct);
     drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
     if (editor) {

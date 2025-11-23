@@ -13,6 +13,7 @@ import {
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -114,11 +115,11 @@ test.describe('Charge tool', () => {
     );
     await LeftToolbar(page).chargePlus();
     // Click on the first star atom twice to test multiple charge increments
-    await clickOnAtom(page, '*', anyAtom);
-    await clickOnAtom(page, '*', anyAtom);
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
     await LeftToolbar(page).chargeMinus();
     // Click on the second star atom to test charge decrement
-    await clickOnAtom(page, '*', 1);
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
     await takeEditorScreenshot(page);
   });
 });

@@ -165,6 +165,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
           // Check if the attachment point is occupied (has bonds to atoms outside the sgroup)
           let isOccupied = false;
           struct.bonds.forEach((bond) => {
+            if (isOccupied) return; // Early exit optimization
             const isAttached =
               bond.begin === attachmentAtomId || bond.end === attachmentAtomId;
             if (!isAttached) return;

@@ -741,6 +741,17 @@ export class Struct {
     let totalLength = 0;
     let cnt = 0;
     this.bonds.forEach((bond) => {
+      // Skip bonds within MonomerMicromolecule sgroups to avoid incorrect rescaling
+      const beginAtomSgroup = this.getGroupFromAtomId(bond.begin);
+      const endAtomSgroup = this.getGroupFromAtomId(bond.end);
+      if (
+        beginAtomSgroup instanceof MonomerMicromolecule &&
+        endAtomSgroup instanceof MonomerMicromolecule &&
+        beginAtomSgroup === endAtomSgroup
+      ) {
+        return;
+      }
+
       totalLength += Vec2.dist(
         this.atoms.get(bond.begin)!.pp,
         this.atoms.get(bond.end)!.pp,

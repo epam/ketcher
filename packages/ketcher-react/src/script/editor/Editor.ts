@@ -935,18 +935,29 @@ class Editor implements KetcherEditor {
         assert(selectedStructLeavingAtom.rglabel);
 
         let attachmentPointName: AttachmentPointName;
-        if (
+        const assignedAttachmentPointNames = Array.from(
+          assignedAttachmentPoints.keys(),
+        );
+
+        // Check if this is R1 or R2 and if it's already assigned
+        const isR1OrR2 =
           attachmentPointLabel === AttachmentPointName.R1 ||
-          attachmentPointLabel === AttachmentPointName.R2 ||
-          sideAttachmentPointsNames.includes(
-            attachmentPointLabel as AttachmentPointName,
-          )
+          attachmentPointLabel === AttachmentPointName.R2;
+        const isAlreadyAssigned = assignedAttachmentPointNames.includes(
+          attachmentPointLabel as AttachmentPointName,
+        );
+
+        if (
+          (isR1OrR2 && !isAlreadyAssigned) ||
+          (!isR1OrR2 &&
+            sideAttachmentPointsNames.includes(
+              attachmentPointLabel as AttachmentPointName,
+            ))
         ) {
           attachmentPointName = attachmentPointLabel as AttachmentPointName;
         } else {
-          const assignedAttachmentPointNames = Array.from(
-            assignedAttachmentPoints.keys(),
-          );
+          // For duplicate R1/R2 or other cases, assign to smallest available Rn (n>2)
+          // or fall back to R1/R2 if no side attachment points are available
           attachmentPointName = getNextFreeAttachmentPoint(
             assignedAttachmentPointNames,
             assignedAttachmentPointNames.length <

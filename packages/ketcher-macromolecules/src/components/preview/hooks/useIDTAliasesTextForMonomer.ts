@@ -1,10 +1,4 @@
-import {
-  AttachmentPointsToBonds,
-  IKetIdtAliases,
-  KetMonomerClass,
-  Sugar,
-  MonomerToAtomBond,
-} from 'ketcher-core';
+import { AttachmentPointsToBonds, IKetIdtAliases } from 'ketcher-core';
 import { useMemo } from 'react';
 
 import { removeSlashesFromIdtAlias } from 'helpers';
@@ -12,13 +6,12 @@ import { removeSlashesFromIdtAlias } from 'helpers';
 type Props = {
   idtAliases: IKetIdtAliases | undefined;
   attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
-  monomerClass: KetMonomerClass | undefined;
+  monomerClass?: string | undefined;
 };
 
 const useIDTAliasesTextForMonomer = ({
   idtAliases,
   attachmentPointsToBonds,
-  monomerClass,
 }: Props) => {
   return useMemo(() => {
     if (!idtAliases) {
@@ -35,16 +28,6 @@ const useIDTAliasesTextForMonomer = ({
     // For preview on canvas
     if (attachmentPointsToBonds) {
       const { R1, R2 } = attachmentPointsToBonds;
-      // Handle phosphate exclusively
-      if (monomerClass === KetMonomerClass.Phosphate) {
-        if (
-          R1 &&
-          !(R1 instanceof MonomerToAtomBond) &&
-          R1.firstMonomer instanceof Sugar
-        ) {
-          return null;
-        }
-      }
 
       if (R1 !== null && R2 === null) {
         return removeSlashesFromIdtAlias(endpoint3 ?? internal);
@@ -84,7 +67,7 @@ const useIDTAliasesTextForMonomer = ({
         return `(${positions.join(', ')})${base}`;
       })
       .join(', ');
-  }, [idtAliases, attachmentPointsToBonds, monomerClass]);
+  }, [idtAliases, attachmentPointsToBonds]);
 };
 
 export default useIDTAliasesTextForMonomer;

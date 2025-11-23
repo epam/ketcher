@@ -12,6 +12,7 @@ type Props = {
 const useIDTAliasesTextForMonomer = ({
   idtAliases,
   attachmentPointsToBonds,
+  monomerClass: _monomerClass,
 }: Props) => {
   return useMemo(() => {
     if (!idtAliases) {

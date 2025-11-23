@@ -963,7 +963,9 @@ class Editor implements KetcherEditor {
           const assignedAttachmentPointNames = Array.from(
             assignedAttachmentPoints.keys(),
           );
-          // For duplicate R1/R2, always prefer R3+ over R1/R2 (requirement 2.6)
+          // Skip R1/R2 when:
+          // 1. Processing a duplicate R1/R2 label (requirement 2.6: prefer R3+)
+          // 2. Processing other labels when we haven't assigned all expected side attachments yet
           const shouldSkipR1AndR2 =
             isR1OrR2 ||
             assignedAttachmentPointNames.length <

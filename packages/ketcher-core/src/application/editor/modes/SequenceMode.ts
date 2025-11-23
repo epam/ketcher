@@ -1884,6 +1884,19 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(monomerAddCommand);
       chain.addNode(newMonomerSequenceNode);
       newMonomers.push(newMonomer);
+
+      // Connect to previous monomer in the chain
+      if (i > 0) {
+        const previousMonomer = newMonomers[i - 1];
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousMonomer,
+            newMonomer,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
     }
 
     const chainsCollection = new ChainsCollection().add(chain);
@@ -2360,6 +2373,19 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(rnaPresetAddModelChanges);
       chain.addNode(newPresetNode);
       newPresetNodes.push(newPresetNode);
+
+      // Connect to previous preset node in the chain
+      if (i > 0) {
+        const previousPresetNode = newPresetNodes[i - 1];
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousPresetNode.lastMonomerInNode,
+            newPresetNode.firstMonomerInNode,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
     }
 
     const chainsCollection = new ChainsCollection().add(chain);

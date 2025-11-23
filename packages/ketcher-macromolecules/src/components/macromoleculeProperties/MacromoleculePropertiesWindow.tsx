@@ -452,8 +452,8 @@ const sortGrossFormulaParts = (parts: string[]): string[] => {
   // 2. Hydrogen (H) second
   // 3. All other elements alphabetically
   return parts.sort((a, b) => {
-    const elementA = a.match(/^([A-Za-z]+)/)?.[1] || '';
-    const elementB = b.match(/^([A-Za-z]+)/)?.[1] || '';
+    const elementA = a.match(/^([A-Z][a-z]?)/)?.[1] || '';
+    const elementB = b.match(/^([A-Z][a-z]?)/)?.[1] || '';
 
     if (elementA === elementB) return 0;
 
@@ -470,9 +470,9 @@ const sortGrossFormulaParts = (parts: string[]): string[] => {
   });
 };
 
-const GrossFormulaPart = ({ part }) => {
-  const match = part.match(/^([A-Za-z]+)(\d+)$/);
-  if (!match) return part;
+const GrossFormulaPart = ({ part }: { part: string }): JSX.Element => {
+  const match = part.match(/^([A-Z][a-z]?)(\d+)$/);
+  if (!match) return <span>{part}</span>;
 
   const [_, element, count] = match;
   return (

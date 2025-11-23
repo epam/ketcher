@@ -34,6 +34,10 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
     visibility: visible;
   }
 
+  &.dragging .dots {
+    pointer-events: none;
+  }
+
   > .star {
     right: 0;
     left: calc(50% - 7px);

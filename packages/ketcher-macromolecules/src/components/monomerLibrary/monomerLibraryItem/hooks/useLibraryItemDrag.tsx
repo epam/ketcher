@@ -23,6 +23,7 @@ export const useLibraryItemDrag = (
         editor.isLibraryItemDragCancelled =
           editor.mode.modeName === 'sequence-layout-mode';
         if (!editor.isLibraryItemDragCancelled) {
+          itemRef.current?.classList.add('dragging');
           document.body.style.cursor = 'grabbing';
         }
       })
@@ -65,6 +66,7 @@ export const useLibraryItemDrag = (
 
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
+        itemRef.current?.classList.remove('dragging');
         document.body.style.cursor = '';
       });
 

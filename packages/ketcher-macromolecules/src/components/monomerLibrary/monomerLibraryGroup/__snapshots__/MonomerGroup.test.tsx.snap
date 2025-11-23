@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-1k0tx2a"
+  class="css-1ok9w6r"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -63,7 +63,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1g314pg"
+            class="css-1sgt19h"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -106,7 +106,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-ar4861"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -149,7 +149,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-u0kww"
+            class="css-ksib30"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -192,7 +192,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g314pg"
+            class="css-1sgt19h"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -235,7 +235,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-ar4861"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -294,7 +294,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1g314pg"
+          class="css-1sgt19h"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -337,7 +337,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-ar4861"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -380,7 +380,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-u0kww"
+          class="css-ksib30"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -423,7 +423,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g314pg"
+          class="css-1sgt19h"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -466,7 +466,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-ar4861"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -577,7 +577,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1g314pg"
+            class="css-1sgt19h"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -620,7 +620,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-ar4861"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -663,7 +663,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-u0kww"
+            class="css-ksib30"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -706,7 +706,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g314pg"
+            class="css-1sgt19h"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -749,7 +749,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-ar4861"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -803,7 +803,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1g314pg"
+          class="css-1sgt19h"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -846,7 +846,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-ar4861"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -889,7 +889,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-u0kww"
+          class="css-ksib30"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -932,7 +932,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g314pg"
+          class="css-1sgt19h"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -975,7 +975,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-ar4861"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >

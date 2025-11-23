@@ -27,7 +27,7 @@ export const Card = styled.div<{
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'grab')};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;
@@ -56,6 +56,15 @@ export const Card = styled.div<{
     .autochain {
       visibility: visible;
       opacity: 1;
+    }
+  }
+
+  &.dragging {
+    cursor: grabbing !important;
+
+    > .star,
+    .autochain {
+      pointer-events: none;
     }
   }
   &::after {

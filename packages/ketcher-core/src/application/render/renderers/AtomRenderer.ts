@@ -10,6 +10,9 @@ import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
 
+// Threshold for detecting 180-degree angle between bonds (linear configuration)
+const LINEAR_BOND_THRESHOLD = 0.2;
+
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -214,14 +217,15 @@ export class AtomRenderer extends BaseRenderer {
         const bond1 = halfEdge1.bond;
         const bond2 = halfEdge2.bond;
 
-        const sameNotStereo =
+        const bondsAreSameTypeWithoutStereo =
           bond1.type === bond2.type &&
           bond1.stereo === BondStereo.None &&
           bond2.stereo === BondStereo.None;
 
         if (
-          sameNotStereo &&
-          Math.abs(Vec2.cross(halfEdge1.direction, halfEdge2.direction)) < 0.2
+          bondsAreSameTypeWithoutStereo &&
+          Math.abs(Vec2.cross(halfEdge1.direction, halfEdge2.direction)) <
+            LINEAR_BOND_THRESHOLD
         ) {
           return true;
         }

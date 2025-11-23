@@ -10,6 +10,7 @@ import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
+  cutToClipboardByKeyboard,
   MacroFileType,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -108,6 +109,40 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   await clickInTheMiddleOfTheScreen(page);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 1a: Cut-Paste functionality for microstructures in Macro mode`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 1 (Cut variation)
+   * Bug: https://github.com/epam/ketcher/issues/4526
+   * Description: Cut-Paste functionality not working for microstructures in Macro mode
+   * Scenario:
+   * 1. Add Benzene ring in Micro mode
+   * 2. Switch to Macro -> Flex
+   * 3. Try cut/paste actions
+   * 4. Take a screenshot to validate that cut removes the original and paste adds it back
+   */
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
+  await clickInTheMiddleOfTheScreen(page);
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+
+  await clickInTheMiddleOfTheScreen(page);
+  await selectAllStructuresOnCanvas(page);
+  await cutToClipboardByKeyboard(page);
+  // After cut, the structure should be removed
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  // Paste it back
   await pasteFromClipboardByKeyboard(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

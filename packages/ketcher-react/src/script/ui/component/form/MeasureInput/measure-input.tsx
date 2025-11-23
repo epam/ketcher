@@ -18,20 +18,25 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
-import Select from '../Select';
+import Select, { Option } from '../Select';
 import styles from './measure-input.module.less';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 
-const selectOptions = getSelectOptionsFromSchema({
+const selectOptions: Array<Option> = getSelectOptionsFromSchema({
   enum: Object.values(MeasurementUnits),
 });
 
+interface FloatResult {
+  isNewFloat: boolean;
+  float?: string;
+}
+
 /**
  * @param {string} value
- * @returns {isNewFloat: boolean, float: string}
+ * @returns {FloatResult}
  * */
-const getNewFloat = (value) => {
+const getNewFloat = (value: string): FloatResult => {
   const [int, float] = value.split('.');
   const isNewFloat = float?.length > 1;
 
@@ -46,7 +51,10 @@ const getNewFloat = (value) => {
  * @param {string} endorcedValue
  * @returns {string}
  * */
-const getNewInternalValue = (prevValue, endorcedValue) => {
+const getNewInternalValue = (
+  prevValue: string,
+  endorcedValue: string,
+): string => {
   const newValueEndsWithDot = endorcedValue?.endsWith('.');
   const prevValueHasDot = prevValue?.includes('.');
   const isDotDeleted = prevValueHasDot && newValueEndsWithDot;
@@ -62,12 +70,40 @@ const getNewInternalValue = (prevValue, endorcedValue) => {
 
   const { isNewFloat, float } = getNewFloat(endorcedValue);
 
-  if (isNewFloat) {
+  if (isNewFloat && float) {
     return float;
   }
 
   return endorcedValue;
 };
+
+interface SchemaProperties {
+  [key: string]: {
+    title?: string;
+    type?: string;
+    [key: string]: unknown;
+  };
+}
+
+interface Schema {
+  title?: string;
+  type?: string;
+  properties?: SchemaProperties;
+  [key: string]: unknown;
+}
+
+interface MeasureInputProps {
+  schema?: Schema;
+  extraSchema?: Schema;
+  value: number | string;
+  extraValue: string;
+  onChange: (value: number) => void;
+  onExtraChange: (value: string) => void;
+  name: string;
+  className?: string;
+  title?: string;
+  'data-testid'?: string;
+}
 
 const MeasureInput = ({
   schema,
@@ -79,7 +115,7 @@ const MeasureInput = ({
   name,
   className,
   ...rest
-}) => {
+}: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
 
   // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
@@ -106,9 +142,10 @@ const MeasureInput = ({
         onChange(parseFloat(internalValue));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [internalValue]);
 
-  const handleChange = (value) => {
+  const handleChange = (value: number | string | boolean) => {
     const stringifiedValue = String(value);
     const startsWithZero =
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');
@@ -118,7 +155,7 @@ const MeasureInput = ({
       startsWithZero && !zeroWithDot
         ? stringifiedValue.replace(/^0/, '')
         : stringifiedValue || '0';
-    const isNumber = !isNaN(endorcedValue);
+    const isNumber = !isNaN(Number(endorcedValue));
 
     if (isNumber) {
       setInternalValue((prevValue) =>
@@ -127,24 +164,25 @@ const MeasureInput = ({
     }
   };
 
-  const desc = schema || schema.properties[name];
+  const desc = schema;
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc.title}</span>
+      <span>{rest.title || desc?.title}</span>
       <div style={{ display: 'flex' }}>
         <Input
           schema={schema}
+          type="text"
           value={internalValue}
           onChange={handleChange}
-          data-testid={`${desc.title}-value-input`}
+          data-testid={`${desc?.title}-value-input`}
         />
         <Select
           onChange={onExtraChange}
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc.title}-measure-input`}
+          data-testid={`${desc?.title}-measure-input`}
         />
       </div>
     </div>

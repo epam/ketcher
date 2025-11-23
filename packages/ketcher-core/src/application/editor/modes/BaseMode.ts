@@ -119,6 +119,26 @@ export abstract class BaseMode {
     }
   }
 
+  onCut(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
+      return;
+    }
+    // First copy the selected items
+    this.onCopy(event);
+
+    // Then delete the selected items
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor.drawingEntitiesManager.selectedEntities.length > 0) {
+      const modelChanges =
+        editor.drawingEntitiesManager.deleteSelectedEntities();
+      modelChanges.merge(
+        editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
+      new EditorHistory(editor).update(modelChanges);
+      editor.renderersContainer.update(modelChanges);
+    }
+  }
+
   async onPaste(event?: ClipboardEvent) {
     if (event && this.checkIfTargetIsInput(event)) {
       return;

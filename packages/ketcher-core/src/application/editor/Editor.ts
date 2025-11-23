@@ -204,6 +204,7 @@ export class CoreEditor {
   private readonly micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
@@ -564,6 +565,14 @@ export class CoreEditor {
 
       this.mode.onCopy(event);
     };
+    this.cutEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
+      this.mode.onCut(event);
+    };
     this.pasteEventHandler = (event: ClipboardEvent) => {
       // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
       if (this._type === EditorType.Micromolecules) {
@@ -573,6 +582,7 @@ export class CoreEditor {
       this.mode.onPaste(event);
     };
     document.addEventListener('copy', this.copyEventHandler);
+    document.addEventListener('cut', this.cutEventHandler);
     document.addEventListener('paste', this.pasteEventHandler);
   }
 
@@ -729,6 +739,9 @@ export class CoreEditor {
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
+    });
+    this.events.cutSelectedStructure.add(() => {
+      this.mode.onCut();
     });
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
@@ -1620,6 +1633,7 @@ export class CoreEditor {
     }
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
+    document.removeEventListener('cut', this.cutEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);

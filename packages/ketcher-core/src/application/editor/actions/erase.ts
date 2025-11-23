@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  AtomAttr,
   AtomDelete,
   BondDelete,
   CalcImplicitH,
@@ -28,6 +29,7 @@ import {
   TextDelete,
 } from '../operations';
 import { RGroup } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
@@ -149,16 +151,58 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     const sgroup = struct.getGroupFromAtomId(atomId);
     if (sgroup?.isSuperatomWithoutLabel) {
       const attachmentPoints = sgroup.getAttachmentPoints();
+      const sgroupAtoms = sgroup.atoms;
+
       attachmentPoints.forEach((attachmentPoint) => {
         if (
           attachmentPoint.atomId === atomId &&
           isNumber(attachmentPoint.leaveAtomId) &&
           !selection.atoms.includes(attachmentPoint.leaveAtomId)
         ) {
-          action.addOp(
-            new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
-          );
-          action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
+          const leaveAtomId = attachmentPoint.leaveAtomId;
+          const attachmentAtomId = attachmentPoint.atomId;
+
+          // Check if the attachment point is occupied (has bonds to atoms outside the sgroup)
+          let isOccupied = false;
+          struct.bonds.forEach((bond) => {
+            const isAttached =
+              bond.begin === attachmentAtomId || bond.end === attachmentAtomId;
+            if (!isAttached) return;
+            const otherAtomId =
+              bond.begin === attachmentAtomId ? bond.end : bond.begin;
+            if (otherAtomId === leaveAtomId) return;
+            if (!sgroupAtoms.includes(otherAtomId)) {
+              isOccupied = true;
+            }
+          });
+
+          if (isOccupied) {
+            // If occupied, delete the leave atom and its bonds
+            struct.bonds.forEach((bond, bondId) => {
+              if (bond.begin === leaveAtomId || bond.end === leaveAtomId) {
+                action.addOp(new BondDelete(bondId));
+              }
+            });
+            action.addOp(new SGroupAtomRemove(sgroup.id, leaveAtomId));
+            action.addOp(new AtomDelete(leaveAtomId));
+          } else {
+            // If unoccupied, keep the leave atom and convert it to the proper cap
+            action.addOp(new SGroupAtomRemove(sgroup.id, leaveAtomId));
+
+            // For MonomerMicromolecule, use MonomerCaps to determine the proper label
+            if (sgroup instanceof MonomerMicromolecule) {
+              const monomerCaps =
+                sgroup.monomer?.monomerItem?.props?.MonomerCaps || {};
+              const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
+              const newLabel = monomerCaps[apLabel] || 'H';
+              action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
+              action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+            } else {
+              // For other superatoms, default to 'H'
+              action.addOp(new AtomAttr(leaveAtomId, 'label', 'H'));
+              action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+            }
+          }
         }
       });
     }

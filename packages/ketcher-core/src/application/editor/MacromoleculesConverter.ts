@@ -759,7 +759,9 @@ export class MacromoleculesConverter {
       command.merge(rxnPlusAddCommand);
     });
 
-    drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
+    // All entities have been converted, so clear hidden entities
+    // to prevent duplicates when switching back to micro mode
+    drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
     if (editor) {

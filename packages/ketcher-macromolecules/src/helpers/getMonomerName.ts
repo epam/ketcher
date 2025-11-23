@@ -1,8 +1,52 @@
-import { AmbiguousMonomer, BaseMonomer } from 'ketcher-core';
+import { AmbiguousMonomer, BaseMonomer, KetMonomerClass } from 'ketcher-core';
+
+const DNA_TEMPLATE_NAME_PART = 'thymine';
+const RNA_TEMPLATE_NAME_PART = 'uracil';
 
 const getMonomerName = (monomer: BaseMonomer) => {
   if (monomer instanceof AmbiguousMonomer) {
-    return `Ambiguous ${monomer.monomerClass}`;
+    const { label, monomerClass, variantMonomerItem } = monomer;
+
+    // For Amino Acids
+    if (monomerClass === KetMonomerClass.AminoAcid) {
+      if (label === 'X') {
+        return 'Any Amino acid';
+      }
+      if (['B', 'J', 'Z'].includes(label)) {
+        return 'Ambiguous Amino acid';
+      }
+    }
+
+    // For Bases (DNA/RNA)
+    if (monomerClass === KetMonomerClass.Base) {
+      // Check if it's DNA or RNA by checking the template IDs
+      const isDNA = variantMonomerItem.options.some((option) =>
+        option.templateId.toLowerCase().includes(DNA_TEMPLATE_NAME_PART),
+      );
+      const isRNA = variantMonomerItem.options.some((option) =>
+        option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
+      );
+
+      if (isDNA && label === 'N') {
+        return 'Any DNA base';
+      }
+      if (isDNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
+        return 'Ambiguous DNA Base';
+      }
+      if (isRNA && label === 'N') {
+        return 'Any RNA Base';
+      }
+      if (isRNA && ['B', 'D', 'H', 'K', 'W', 'Y'].includes(label)) {
+        return 'Ambiguous RNA Base';
+      }
+      // For generic bases (neither DNA nor RNA specific)
+      if (['M', 'R', 'S', 'V'].includes(label)) {
+        return 'Ambiguous Base';
+      }
+    }
+
+    // Default fallback
+    return `Ambiguous ${monomerClass}`;
   }
 
   return monomer.monomerItem.props.Name;

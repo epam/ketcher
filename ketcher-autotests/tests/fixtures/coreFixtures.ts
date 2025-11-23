@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 /* eslint-disable @typescript-eslint/ban-types */
 import { test as base, Page, TestInfoError } from '@playwright/test';
 import { waitForPageInit } from '@utils';
@@ -51,7 +52,7 @@ export const test = base.extend<CoreTestFixtures, CoreWorkerFixtures>({
   ],
 
   ketcher: [
-    async (_fixtures, use) => {
+    async ({}, use) => {
       await use({});
     },
     { scope: 'worker', auto: true },

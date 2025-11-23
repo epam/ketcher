@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { Page } from '@playwright/test';
 import { test as base } from './coreFixtures';
 import { clearLocalStorage } from '@utils/common/helpers';
@@ -9,15 +10,15 @@ export const test = base.extend<{
   resetZoomLevelToDefault: (page: Page) => Promise<void>;
   resetSettingsValuesToDefault: (page: Page) => Promise<void>;
 }>({
-  clearLocalStorage: async (_fixtures, use) => {
+  clearLocalStorage: async ({}, use) => {
     await use(clearLocalStorage);
   },
 
-  resetZoomLevelToDefault: async (_fixtures, use) => {
+  resetZoomLevelToDefault: async ({}, use) => {
     await use(resetZoomLevelToDefault);
   },
 
-  resetSettingsValuesToDefault: async (_fixtures, use) => {
+  resetSettingsValuesToDefault: async ({}, use) => {
     await use(resetSettingsValuesToDefault);
   },
 });

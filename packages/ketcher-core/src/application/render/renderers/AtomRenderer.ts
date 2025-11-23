@@ -1,5 +1,6 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { BondStereo } from 'domain/entities/CoreBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
@@ -206,6 +207,25 @@ export class AtomRenderer extends BaseRenderer {
       !hasExplicitValence &&
       !hasExplicitIsotope
     ) {
+      // Check for 180-degree angle case (linear bonds)
+      if (atomNeighborsHalfEdges?.length === 2) {
+        const halfEdge1 = atomNeighborsHalfEdges[0];
+        const halfEdge2 = atomNeighborsHalfEdges[1];
+        const bond1 = halfEdge1.bond;
+        const bond2 = halfEdge2.bond;
+
+        const sameNotStereo =
+          bond1.type === bond2.type &&
+          bond1.stereo === BondStereo.None &&
+          bond2.stereo === BondStereo.None;
+
+        if (
+          sameNotStereo &&
+          Math.abs(Vec2.cross(halfEdge1.direction, halfEdge2.direction)) < 0.2
+        ) {
+          return true;
+        }
+      }
       return false;
     }
 

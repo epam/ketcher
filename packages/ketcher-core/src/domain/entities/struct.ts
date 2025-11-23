@@ -741,7 +741,10 @@ export class Struct {
     let totalLength = 0;
     let cnt = 0;
     this.bonds.forEach((bond) => {
-      // Skip bonds within MonomerMicromolecule sgroups to avoid incorrect rescaling
+      // Skip bonds within MonomerMicromolecule sgroups to avoid incorrect rescaling.
+      // Monomer templates may have different bond lengths than the default, which would
+      // incorrectly affect the average bond length calculation and cause structures
+      // with marked nucleotide components to appear smaller after save/load cycles.
       const beginAtomSgroup = this.getGroupFromAtomId(bond.begin);
       const endAtomSgroup = this.getGroupFromAtomId(bond.end);
       if (

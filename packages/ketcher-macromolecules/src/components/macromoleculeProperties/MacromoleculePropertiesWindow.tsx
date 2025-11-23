@@ -446,6 +446,30 @@ const BasicProperty = (props: BasicPropertyProps) => {
   );
 };
 
+const sortGrossFormulaParts = (parts: string[]): string[] => {
+  // Sort formula parts according to Hill notation:
+  // 1. Carbon (C) first
+  // 2. Hydrogen (H) second
+  // 3. All other elements alphabetically
+  return parts.sort((a, b) => {
+    const elementA = a.match(/^([A-Za-z]+)/)?.[1] || '';
+    const elementB = b.match(/^([A-Za-z]+)/)?.[1] || '';
+
+    if (elementA === elementB) return 0;
+
+    // Carbon comes first
+    if (elementA === 'C') return -1;
+    if (elementB === 'C') return 1;
+
+    // Hydrogen comes second (after Carbon if present)
+    if (elementA === 'H') return -1;
+    if (elementB === 'H') return 1;
+
+    // All others alphabetically
+    return elementA.localeCompare(elementB);
+  });
+};
+
 const GrossFormulaPart = ({ part }) => {
   const match = part.match(/^([A-Za-z]+)(\d+)$/);
   if (!match) return part;
@@ -1053,16 +1077,17 @@ export const MacromoleculePropertiesWindow = () => {
       return null;
     }
 
+    const parts = firstMacromoleculesProperties.grossFormula.split(' ');
+    const sortedParts = sortGrossFormulaParts(parts);
+
     return (
       <GrossFormula data-testid="Gross-formula">
-        {firstMacromoleculesProperties?.grossFormula
-          .split(' ')
-          .map((atomNameWithAmount) => (
-            <GrossFormulaPart
-              part={atomNameWithAmount}
-              key={atomNameWithAmount}
-            />
-          ))}
+        {sortedParts.map((atomNameWithAmount) => (
+          <GrossFormulaPart
+            part={atomNameWithAmount}
+            key={atomNameWithAmount}
+          />
+        ))}
       </GrossFormula>
     );
   }, [firstMacromoleculesProperties?.grossFormula]);

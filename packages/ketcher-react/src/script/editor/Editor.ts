@@ -963,10 +963,14 @@ class Editor implements KetcherEditor {
           const assignedAttachmentPointNames = Array.from(
             assignedAttachmentPoints.keys(),
           );
+          // For duplicate R1/R2, always prefer R3+ over R1/R2 (requirement 2.6)
+          const shouldSkipR1AndR2 =
+            isR1OrR2 ||
+            assignedAttachmentPointNames.length <
+              sideAttachmentPointsNames.length;
           attachmentPointName = getNextFreeAttachmentPoint(
             assignedAttachmentPointNames,
-            assignedAttachmentPointNames.length <
-              sideAttachmentPointsNames.length,
+            shouldSkipR1AndR2,
           );
         }
 

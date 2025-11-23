@@ -417,6 +417,7 @@ class Editor implements KetcherEditor {
 
     const struct = this.render.ctab.molecule;
     const zoom = this.render.options.zoom;
+    const offset = this.render.options.offset;
     this.render.clientArea.innerHTML = '';
     const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
@@ -428,6 +429,7 @@ class Editor implements KetcherEditor {
     this.render.setMolecule(struct);
     this.struct(struct.clone());
     this.render.setZoom(zoom);
+    this.render.options.offset = offset;
     this.render.update();
     return this.render.options;
   }

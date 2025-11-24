@@ -414,7 +414,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <FooterButtonContainer>
         <FooterButton
           key="openButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
@@ -422,7 +422,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         />
         <FooterButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"

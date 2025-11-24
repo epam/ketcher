@@ -74,9 +74,15 @@ export class AtomRenderer extends BaseRenderer {
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
     ) {
+      // Calculate selection radius based on scale factor.
+      // This formula matches the one used in options.ts for calculating atomSelectionPlateRadius
+      // in micro mode: labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6))
+      const macroModeScale = this.editorSettings.macroModeScale;
+      const selectionRadius = Math.ceil(1.9 * (macroModeScale / 6));
+
       return this.rootElement
         ?.insert('circle', ':first-child')
-        .attr('r', 10)
+        .attr('r', selectionRadius)
         .attr('cx', 0)
         .attr('cy', 0);
     } else {

@@ -6,25 +6,24 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  waitForRender,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  takeElementScreenshot,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,
+  getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
-
-async function configureInitialState(page: Page) {
-  await Library(page).switchToRNATab();
-}
 
 test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
@@ -32,7 +31,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await configureInitialState(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test.afterEach(async () => {
@@ -43,21 +42,14 @@ test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
-async function hoverMouseOverMicroMonomer(
-  page: Page,
-  monomerLocatorIndex: number,
-) {
-  await page.locator('tspan').nth(monomerLocatorIndex).hover({ force: true });
-}
-
-async function hoverMouseOverSequenceModeMonomer(page: Page) {
-  await page.locator('text').first().hover();
-}
+type MonomerLocatorOptionsWithAlias = MonomerLocatorOptions & {
+  monomerAlias: string;
+};
 
 interface IHELMString {
   testDescription: string;
   HELMString: string;
-  monomerLocatorOptions: MonomerLocatorOptions;
+  monomerLocatorOptions: MonomerLocatorOptionsWithAlias;
   monomerLocatorIndexOnMicro: number;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
@@ -142,9 +134,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
     pageReloadNeeded: true,
   },
   {
@@ -155,9 +144,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
     pageReloadNeeded: true,
   },
   {
@@ -168,8 +154,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -182,8 +166,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -194,8 +176,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -208,8 +188,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Peptide,
     },
     monomerLocatorIndexOnMicro: 0,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -326,8 +304,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
   },
   {
     testDescription: '23. RNA Base % (mixture, no quantities)',
@@ -337,8 +313,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -359,9 +333,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
     pageReloadNeeded: true,
   },
   {
@@ -372,15 +343,10 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '27. DNA Base % (mixture, with quantities)',
     HELMString: 'RNA1{[dR](T:20+G:50+C:30)P}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5566',
     monomerLocatorOptions: {
       monomerAlias: '%',
       monomerType: MonomerType.Base,
@@ -395,9 +361,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
     pageReloadNeeded: true,
   },
   {
@@ -408,16 +371,11 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
     pageReloadNeeded: true,
   },
   {
     testDescription: '30. Base % (mixture, with quantities)',
     HELMString: 'RNA1{R(G:30+A:70)P}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5566',
     monomerLocatorOptions: {
       monomerAlias: '%',
       monomerType: MonomerType.Base,
@@ -434,8 +392,6 @@ const ambiguousMonomers: IHELMString[] = [
       monomerType: MonomerType.Base,
     },
     monomerLocatorIndexOnMicro: 1,
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
     pageReloadNeeded: true,
   },
   {
@@ -462,21 +418,19 @@ test.describe('Preview tooltips checks: ', () => {
             2. Hover mouse over monomer, wait for preview tooltip
             2. Take screenshot of the canvas to compare it with example
         */
-      test.setTimeout(30000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
+      await clickOnCanvas(page, 0, 0);
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,
       ).hover({ force: true });
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -497,27 +451,23 @@ test.describe('Preview tooltips checks: ', () => {
             3. Hover mouse over monomer, wait for preview tooltip
             4. Take screenshot of the canvas to compare it with example
         */
-      test.slow();
-      await pageReload(page);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Flex,
-      );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      await pasteFromClipboardAndOpenAsNewProjectMacro(
         page,
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await waitForRender(page, async () => {
-        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        id: ambiguousMonomer.monomerLocatorIndexOnMicro,
       });
-      await hoverMouseOverMicroMonomer(
-        page,
-        ambiguousMonomer.monomerLocatorIndexOnMicro,
-      );
+      await monomerOnMicro.hover({ force: true });
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
 
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
       // Test should be skipped if related bug exists
@@ -538,20 +488,21 @@ test.describe('Preview tooltips checks: ', () => {
             2. Hover mouse over monomer, wait for preview tooltip
             2. Take screenshot of the canvas to compare it with example
         */
-      test.setTimeout(20000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
-
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      await pasteFromClipboardAndOpenAsNewProjectMacro(
         page,
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await hoverMouseOverSequenceModeMonomer(page);
+
+      const monomerOnSequence = getSymbolLocator(page, {
+        symbolAlias: ambiguousMonomer.monomerLocatorOptions.monomerAlias,
+      });
+      await monomerOnSequence.hover({ force: true });
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
 
       // Test should be skipped if related bug exists
       test.fixme(

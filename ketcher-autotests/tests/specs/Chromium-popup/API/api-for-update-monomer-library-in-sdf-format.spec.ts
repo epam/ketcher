@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable camelcase */
 /* eslint-disable max-len */
 import { test } from '@fixtures';
@@ -17,9 +18,7 @@ test.describe('API for update Library', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
-  test.afterEach(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -304,9 +303,7 @@ test.describe('API for replace Library', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
-  test.afterEach(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });

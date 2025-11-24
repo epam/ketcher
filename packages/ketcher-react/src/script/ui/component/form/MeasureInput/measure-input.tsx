@@ -118,9 +118,9 @@ const MeasureInput = ({
 }: MeasureInputProps) => {
   const [internalValue, setInternalValue] = useState(String(value));
 
-  // NOTE: onChange handler in the Input component (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
+  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
   // is mapped to the internal function via constructor
-  // therefore the references to the MeasureInput's state are not updated
+  // therefore the referencies to the MeasureInput's state are not updated
   // so we need to sync the props and the internal value through useEffects and use callbacks with
   // previous state to have the latest value
 

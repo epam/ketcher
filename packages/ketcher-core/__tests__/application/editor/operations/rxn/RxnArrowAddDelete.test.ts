@@ -28,7 +28,10 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
     const addOp = new RxnArrowAdd(pos, mode, undefined, height);
     addOp.execute(restruct);
 
-    const arrowId = addOp.data.id!;
+    const arrowId = addOp.data.id;
+    if (arrowId == null) {
+      throw new Error('Arrow id was not generated');
+    }
     const addedArrow = restruct.molecule.rxnArrows.get(arrowId);
 
     // Verify height is preserved on add
@@ -63,7 +66,10 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
     const addOp = new RxnArrowAdd(pos, mode);
     addOp.execute(restruct);
 
-    const arrowId = addOp.data.id!;
+    const arrowId = addOp.data.id;
+    if (arrowId == null) {
+      throw new Error('Arrow id was not generated');
+    }
     const addedArrow = restruct.molecule.rxnArrows.get(arrowId);
 
     // Verify arrow is added correctly without height
@@ -99,7 +105,10 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
       const addOp = new RxnArrowAdd(pos, mode, undefined, height);
       addOp.execute(localRestruct);
 
-      const arrowId = addOp.data.id!;
+      const arrowId = addOp.data.id;
+      if (arrowId == null) {
+        throw new Error('Arrow id was not generated');
+      }
 
       // Delete arrow
       const deleteOp = new RxnArrowDelete(arrowId);

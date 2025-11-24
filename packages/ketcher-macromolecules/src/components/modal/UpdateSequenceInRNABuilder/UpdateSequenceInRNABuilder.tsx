@@ -71,10 +71,16 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
         <ActionButton
           key="cancel"
           clickHandler={cancelHandler}
+          title=""
           label="Cancel"
           styleType="secondary"
         />
-        <ActionButton key="update" clickHandler={updateHandler} label="Yes" />
+        <ActionButton
+          key="update"
+          clickHandler={updateHandler}
+          title=""
+          label="Yes"
+        />
       </Modal.Footer>
     </Modal>
   );

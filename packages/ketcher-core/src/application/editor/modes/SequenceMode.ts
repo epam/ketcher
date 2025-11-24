@@ -507,12 +507,11 @@ export class SequenceMode extends BaseMode {
   public mousemove(event: MouseEvent) {
     if (this.isEditInRNABuilderMode) return;
     const eventData = event.target?.__data__;
-    const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
     // this.mousemoveCounter > 1 used here to prevent selection of single monomer
     // when user just clicked on it during the mousemove event
     if (
       this.isEditMode &&
-      isEventOnSequenceItem &&
+      eventData instanceof BaseSequenceItemRenderer &&
       this.selectionStarted &&
       this.mousemoveCounter > 1
     ) {

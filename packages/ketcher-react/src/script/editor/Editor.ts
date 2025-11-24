@@ -1191,6 +1191,10 @@ class Editor implements KetcherEditor {
     this.struct(this.originalStruct, false);
 
     this.tool('select');
+
+    // Dispatch force change event to reset tool to select-rectangle in UI
+    this.event.change.dispatch('force');
+    ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
   }
 
   private cleanupAttachmentPoint(leavingAtomId: number) {

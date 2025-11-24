@@ -12,6 +12,7 @@ import {
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -35,7 +36,7 @@ test.describe('Macromolecules custom presets', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).hoverMonomer(Preset.MyRNA);
-
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).rnaBuilder.duplicateAndEdit();
@@ -43,7 +44,7 @@ test.describe('Macromolecules custom presets', () => {
     await Library(page).selectMonomers([Sugar._12ddR, Base.A, Phosphate.P]);
     await Library(page).rnaBuilder.save();
     await Library(page).hoverMonomer(Preset.MyRNA);
-
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 

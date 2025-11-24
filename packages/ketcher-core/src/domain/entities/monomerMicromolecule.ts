@@ -17,6 +17,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { isNumber } from 'lodash';
 
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer: BaseMonomer) {
@@ -50,6 +51,14 @@ export class MonomerMicromolecule extends SGroup {
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
     if (atomIdMap) {
+      const attachmentPoints = monomerMicromoleculeClone.getAttachmentPoints();
+
+      // case for ambiguous monomer
+      // need to check/fix behaviour for them and remove lines below
+      if (!isNumber(attachmentPoints[0]?.atomId)) {
+        return monomerMicromoleculeClone;
+      }
+
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
       );

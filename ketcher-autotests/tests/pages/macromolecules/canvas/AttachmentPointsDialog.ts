@@ -73,7 +73,7 @@ export const AttachmentPointsDialog = (page: Page) => {
 
     async isActive(button: string): Promise<boolean> {
       return (
-        (await page.getByTestId(button).getAttribute('data-isActive')) ===
+        (await page.getByTestId(button).getAttribute('data-isactive')) ===
         'true'
       );
     },

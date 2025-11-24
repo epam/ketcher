@@ -76,7 +76,7 @@ export const SequenceSyncEditModeButton = () => {
       isActive={isSequenceSyncEditMode}
       onClick={handleClick}
       data-testid="sync_sequence_edit_mode"
-      data-isActive={isSequenceSyncEditMode}
+      data-isactive={isSequenceSyncEditMode}
     >
       <svg
         width="24"

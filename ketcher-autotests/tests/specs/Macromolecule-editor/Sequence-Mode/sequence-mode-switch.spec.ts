@@ -33,10 +33,11 @@ test.describe('Sequence edit mode', () => {
       test(`should switch to ${type} mode and verify UI changes`, async ({
         page,
       }) => {
-        /* 
-        Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
-        Description: Verify that clicking on ${type} button switches to the correct typing mode and displays correct title.
-        */
+        /*
+         * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+         * Description: Verify that clicking on ${type} button switches to the correct typing mode and displays correct title.
+         * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+         */
 
         await takeTopToolbarScreenshot(page);
 

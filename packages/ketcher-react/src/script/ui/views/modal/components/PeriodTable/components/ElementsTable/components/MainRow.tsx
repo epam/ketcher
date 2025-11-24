@@ -49,11 +49,12 @@ const MainRow: FC<MainRowProps> = ({
         <td key={index}>
           <Atom
             el={element}
+            shortcut={undefined}
+            selected={undefined}
             className={clsx(...atomClassNames(element))}
             onClick={() => onAtomSelect(element.label)}
             onDoubleClick={() => onDoubleClick()}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            {...(currentEvents(element) as any)}
+            {...currentEvents(element)}
           />
         </td>
       );

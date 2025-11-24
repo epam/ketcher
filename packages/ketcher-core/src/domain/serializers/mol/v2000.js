@@ -19,9 +19,11 @@
 import {
   Atom,
   AtomList,
+  AttachmentPoints,
   Bond,
   Pool,
   RGroup,
+  RGroupAttachmentPoint,
   SGroup,
   StereoLabel,
   Struct,
@@ -368,6 +370,38 @@ function applyAtomProp(atoms, values, propId) {
   });
 }
 
+/**
+ * Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
+ * This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
+ * @param struct { Struct }
+ */
+function createRGroupAttachmentPointsFromAtoms(struct) {
+  struct.atoms.forEach((atom, atomId) => {
+    if (!atom.attachmentPoints) {
+      return;
+    }
+
+    const attachmentPoints = atom.attachmentPoints;
+
+    if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'primary'),
+      );
+    } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'secondary'),
+      );
+    } else if (attachmentPoints === AttachmentPoints.BothSides) {
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'primary'),
+      );
+      struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'secondary'),
+      );
+    }
+  });
+}
+
 function parseCTabV2000(
   ctabLines,
   countsSplit,
@@ -456,6 +490,10 @@ function parseCTabV2000(
     const rgid = parseInt(id, 10);
     ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]));
   }
+
+  // Create RGroupAttachmentPoint instances from atoms with attachmentPoints property
+  createRGroupAttachmentPointsFromAtoms(ctab);
+
   return ctab;
 }
 

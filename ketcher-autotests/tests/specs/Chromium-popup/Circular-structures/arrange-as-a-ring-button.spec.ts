@@ -51,6 +51,8 @@ test(`2. Check that after selecting the closed structure, the user able to acces
    * Case:
    *      1. Open Macromolecules canvas - flex mode
    *      2. Load cyclic peptide HELM 'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0' from clipboard as new project
+   *      3. Select the entire structure on the canvas
+   *      4. Verify that 'Arrange as a Ring' button is enabled
    *
    * Version 3.11
    */

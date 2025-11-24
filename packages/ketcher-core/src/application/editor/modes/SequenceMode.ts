@@ -38,8 +38,10 @@ import {
 } from 'domain/helpers/rna';
 import {
   peptideNaturalAnalogues,
+  peptideAmbiguousSymbols,
   RNA_DNA_NON_MODIFIED_PART,
   rnaDnaNaturalAnalogues,
+  rnaDnaAmbiguousSymbols,
   RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
 import {
@@ -70,7 +72,9 @@ import { KetMonomerClass } from 'application/formatters';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
+  ...rnaDnaAmbiguousSymbols,
   ...peptideNaturalAnalogues,
+  ...peptideAmbiguousSymbols,
 ]);
 
 enum Direction {
@@ -604,15 +608,14 @@ export class SequenceMode extends BaseMode {
     nextNodeToConnect?: SequenceNode | null,
     previousNodeToConnect?: SequenceNode,
   ) {
-    if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
-      return undefined;
-    }
-
     const modelChanges = new Command();
     const editor = CoreEditor.provideEditorInstance();
     const newPeptideLibraryItem = getPeptideLibraryItem(editor, enteredSymbol);
 
-    assert(newPeptideLibraryItem);
+    // If no library item found for the symbol, return undefined
+    if (!newPeptideLibraryItem) {
+      return undefined;
+    }
 
     const peptideAddCommand = editor.drawingEntitiesManager.addMonomer(
       newPeptideLibraryItem,
@@ -645,10 +648,6 @@ export class SequenceMode extends BaseMode {
     nextNodeToConnect?: SequenceNode | null,
     previousNodeToConnect?: SequenceNode,
   ) {
-    if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
-      return undefined;
-    }
-
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
@@ -667,6 +666,11 @@ export class SequenceMode extends BaseMode {
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
           );
+
+    // If creation failed (symbol not found in library), return undefined
+    if (!addedNodeModelChanges || !nodeToAdd) {
+      return undefined;
+    }
 
     modelChanges.merge(addedNodeModelChanges);
 

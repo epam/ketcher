@@ -5,30 +5,32 @@ import {
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 
-export const cardMouseOverHandler = (
+export const getAutochainErrorMessage = (
   editor: CoreEditor,
   libraryItem: MonomerOrAmbiguousType | IRnaPreset,
-  setAutochainErrorMessage: (message: string) => void,
-) => {
-  setAutochainErrorMessage('');
-
+): string => {
   const { selectedMonomersWithFreeR2, selectedMonomers } =
     editor.getDataForAutochain();
 
   if (selectedMonomers.length > 0 && selectedMonomersWithFreeR2.length !== 1) {
-    setAutochainErrorMessage(
-      'Select a monomer or a chain that has one R2 available.',
-    );
-
-    return;
+    return 'Select a monomer or a chain that has one R2 available.';
   }
 
   if (
     selectedMonomersWithFreeR2.length === 1 &&
     !libraryItemHasR1AttachmentPoint(libraryItem)
   ) {
-    setAutochainErrorMessage(
-      'This monomer cannot be added to a chain using this button, as it lacks R1.',
-    );
+    return 'This monomer cannot be added to a chain using this button, as it lacks R1.';
   }
+
+  return '';
+};
+
+export const cardMouseOverHandler = (
+  editor: CoreEditor,
+  libraryItem: MonomerOrAmbiguousType | IRnaPreset,
+  setAutochainErrorMessage: (message: string) => void,
+) => {
+  const errorMessage = getAutochainErrorMessage(editor, libraryItem);
+  setAutochainErrorMessage(errorMessage);
 };

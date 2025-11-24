@@ -17,6 +17,7 @@ import {
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { waitForPageInit } from '@utils/common';
@@ -282,6 +283,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Click on any monomer in the RNA Builder section
      * 4. Observe that the corresponding monomer in the library is highlighted
      */
+    const library = Library(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
@@ -289,19 +291,31 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       Base.C,
       Phosphate.Test_6_Ph,
     ]);
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Phosphate.Test_6_Ph),
+    );
     await Library(page).rnaBuilder.selectSugarSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Sugar.UNA),
+    );
     await Library(page).rnaBuilder.selectBaseSlot();
     // doubled selection of base slot to fix test behaviour after upgrate to react 19
     // need to be investigated and fixed
     await Library(page).rnaBuilder.selectBaseSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Base.C),
+    );
     // doubled selection of base slot to fix test behaviour after upgrate to react 19
     // need to be investigated and fixed
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).rnaBuilder.selectPhosphateSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Phosphate.Test_6_Ph),
+    );
   });
 
   test('Case 12: Able to delete multiple sequences at once via right-click menu in Sequence mode', async () => {

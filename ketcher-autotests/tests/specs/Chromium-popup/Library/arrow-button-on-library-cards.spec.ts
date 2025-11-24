@@ -14,6 +14,7 @@ import {
   selectAllStructuresOnCanvas,
   SequenceFileFormat,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
   takePresetsScreenshot,
 } from '@utils';
@@ -70,36 +71,31 @@ test.describe('Arrow button on Library cards', () => {
      * 3. Check that the star (☆) placed in the middle, and the three dots menu (⋮) stay on the right if it exists for
      * Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library
      */
-    await Library(page).hoverMonomer(Preset.A);
-    await takePresetsScreenshot(page);
-    await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomer(Peptide.A);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Library(page).switchToRNATab();
-    const rnaTests = [
-      [RNASection.Sugars, Sugar.R],
-      [RNASection.Bases, Base.A],
-      [RNASection.Phosphates, Phosphate.P],
-      [RNASection.Nucleotides, Nucleotide.AmMC6T],
-    ] as const;
+    const library = Library(page);
+    await library.hoverMonomer(Preset.A);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Preset.A),
+    );
+    await library.hoverMonomer(Peptide.A);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Peptide.A),
+    );
 
-    for (const [section, monomer] of rnaTests) {
-      await Library(page).openRNASection(section);
-      await Library(page).hoverMonomer(monomer);
-      await takeMonomerLibraryScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+    const rnaTests = [Sugar.R, Base.A, Phosphate.P, Nucleotide.AmMC6T];
+    for (const monomer of rnaTests) {
+      await library.hoverMonomer(monomer);
+      await takeElementScreenshot(
+        page,
+        library.getMonomerLibraryCardLocator(monomer),
+      );
     }
-    await Library(page).switchToCHEMTab();
-    await Library(page).hoverMonomer(Chem.A6OH);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await library.hoverMonomer(Chem.A6OH);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Chem.A6OH),
+    );
   });
 
   test('Case 2: Verify that a new symbol, an arrow (⇐), added to the left side of the card, and appear only on hover of the card in Flex mode for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library', async () => {
@@ -114,36 +110,36 @@ test.describe('Arrow button on Library cards', () => {
      * 3. Check that a new symbol, an arrow (⇐), added to the left side of the card, and appear only on hover of the card in Flex mode for
      * Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library
      */
-    await Library(page).hoverMonomer(Preset.G);
-    await takePresetsScreenshot(page);
-    await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomer(Peptide.Ala_al);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Library(page).switchToRNATab();
+    const library = Library(page);
+    await library.hoverMonomer(Preset.G);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Preset.G),
+    );
+    await library.hoverMonomer(Peptide.Ala_al);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Peptide.Ala_al),
+    );
     const rnaTests = [
-      [RNASection.Sugars, Sugar._12ddR],
-      [RNASection.Bases, Base.DNA_B],
-      [RNASection.Phosphates, Phosphate.Test_6_Ph],
-      [RNASection.Nucleotides, Nucleotide._2_damdA],
-    ] as const;
+      Sugar._12ddR,
+      Base.DNA_B,
+      Phosphate.Test_6_Ph,
+      Nucleotide._2_damdA,
+    ];
 
-    for (const [section, monomer] of rnaTests) {
-      await Library(page).openRNASection(section);
-      await Library(page).hoverMonomer(monomer);
-      await takeMonomerLibraryScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+    for (const monomer of rnaTests) {
+      await library.hoverMonomer(monomer);
+      await takeElementScreenshot(
+        page,
+        library.getMonomerLibraryCardLocator(monomer),
+      );
     }
-    await Library(page).switchToCHEMTab();
-    await Library(page).hoverMonomer(Chem.DOTA);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await library.hoverMonomer(Chem.DOTA);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Chem.DOTA),
+    );
   });
 
   test('Case 3: Verify that a new symbol, an arrow (⇐), added to the left side of the card, and appear only on hover of the card in Snake mode for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library', async ({
@@ -160,36 +156,31 @@ test.describe('Arrow button on Library cards', () => {
      * 3. Check that a new symbol, an arrow (⇐), added to the left side of the card, and appear only on hover of the card in Snake mode for
      * Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library
      */
-    await Library(page).hoverMonomer(Preset.MOE_A_P);
-    await takePresetsScreenshot(page);
-    await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomer(Peptide._1Nal);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Library(page).switchToRNATab();
-    const rnaTests = [
-      [RNASection.Sugars, Sugar._25R],
-      [RNASection.Bases, Base.baA],
-      [RNASection.Phosphates, Phosphate.bP],
-      [RNASection.Nucleotides, Nucleotide.Super_G],
-    ] as const;
+    const library = Library(page);
+    await library.hoverMonomer(Preset.MOE_A_P);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Preset.MOE_A_P),
+    );
+    await library.hoverMonomer(Peptide._1Nal);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Peptide._1Nal),
+    );
 
-    for (const [section, monomer] of rnaTests) {
-      await Library(page).openRNASection(section);
-      await Library(page).hoverMonomer(monomer);
-      await takeMonomerLibraryScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+    const rnaTests = [Sugar._25R, Base.baA, Phosphate.bP, Nucleotide.Super_G];
+    for (const monomer of rnaTests) {
+      await library.hoverMonomer(monomer);
+      await takeElementScreenshot(
+        page,
+        library.getMonomerLibraryCardLocator(monomer),
+      );
     }
-    await Library(page).switchToCHEMTab();
-    await Library(page).hoverMonomer(Chem._4FB);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await library.hoverMonomer(Chem._4FB);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Chem._4FB),
+    );
   });
 
   test('Case 4: Verify that the arrow symbol change appearance when it is being hovered for Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library', async () => {
@@ -203,36 +194,31 @@ test.describe('Arrow button on Library cards', () => {
      * 3. Check that the arrow symbol change appearance when it is being hovered for
      * Presets, Peptides, Sugars, Bases, Phosphates, Nucleotides and CHEMs in Library
      */
-    await Library(page).hoverMonomerAutochain(Preset.MOE_A_P);
-    await takePresetsScreenshot(page);
-    await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomerAutochain(Peptide._1Nal);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Library(page).switchToRNATab();
-    const rnaTests = [
-      [RNASection.Sugars, Sugar._25R],
-      [RNASection.Bases, Base.baA],
-      [RNASection.Phosphates, Phosphate.bP],
-      [RNASection.Nucleotides, Nucleotide.Super_G],
-    ] as const;
+    const library = Library(page);
+    await library.hoverMonomerAutochain(Preset.MOE_A_P);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Preset.MOE_A_P),
+    );
+    await library.hoverMonomerAutochain(Peptide._1Nal);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Peptide._1Nal),
+    );
+    const rnaTests = [Sugar._25R, Base.baA, Phosphate.bP, Nucleotide.Super_G];
 
-    for (const [section, monomer] of rnaTests) {
-      await Library(page).openRNASection(section);
-      await Library(page).hoverMonomerAutochain(monomer);
-      await takeMonomerLibraryScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+    for (const monomer of rnaTests) {
+      await library.hoverMonomerAutochain(monomer);
+      await takeElementScreenshot(
+        page,
+        library.getMonomerLibraryCardLocator(monomer),
+      );
     }
-    await Library(page).switchToCHEMTab();
-    await Library(page).hoverMonomerAutochain(Chem._4FB);
-    await takeMonomerLibraryScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await library.hoverMonomerAutochain(Chem._4FB);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Chem._4FB),
+    );
   });
 
   test(
@@ -698,32 +684,25 @@ test.describe('Arrow button on Library cards', () => {
      * 5. Check that if within a selection there are multiple monomers with a free R2,
      * when hovering over the arrow for a monomer/preset, a tooltip appear
      */
+    const library = Library(page);
+
     await openFileAndAddToCanvasAsNewProject(page, 'KET/two-peptide-a.ket');
     await selectAllStructuresOnCanvas(page);
-    await Library(page).switchToPeptidesTab();
-    await Library(page).hoverMonomerAutochain(Peptide._1Nal);
+    await library.hoverMonomerAutochain(Peptide._1Nal);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await Library(page).switchToRNATab();
-    const rnaTests = [
-      [RNASection.Sugars, Sugar._25R],
-      [RNASection.Bases, Base.baA],
-      [RNASection.Phosphates, Phosphate.bP],
-      [RNASection.Nucleotides, Nucleotide.Super_G],
-    ] as const;
+    const rnaTests = [Sugar._25R, Base.baA, Phosphate.bP, Nucleotide.Super_G];
 
-    for (const [section, monomer] of rnaTests) {
-      await Library(page).openRNASection(section);
-      await Library(page).hoverMonomerAutochain(monomer);
+    for (const monomer of rnaTests) {
+      await library.hoverMonomerAutochain(monomer);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
     }
-    await Library(page).switchToCHEMTab();
-    await Library(page).hoverMonomerAutochain(Chem._4FB);
+    await library.hoverMonomerAutochain(Chem._4FB);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

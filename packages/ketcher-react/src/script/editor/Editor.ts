@@ -70,6 +70,7 @@ import {
   getKetRef,
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
+  fromFragmentDeletion,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1130,6 +1131,7 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >,
+    monomerStructure?: Selection,
   ) {
     assert(this.monomerCreationState);
 
@@ -1161,7 +1163,7 @@ class Editor implements KetcherEditor {
 
       leavingAtomId = minimalAtomicNumberAtomId;
     } else {
-      const [bondAdditionAction, , endAtomId] = fromBondAddition(
+      const [bondAdditionAction, , endAtomId, newBondId] = fromBondAddition(
         this.render.ctab,
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         atomId,
@@ -1170,6 +1172,11 @@ class Editor implements KetcherEditor {
 
       additionalAction = bondAdditionAction;
       leavingAtomId = endAtomId;
+
+      if (monomerStructure) {
+        monomerStructure.atoms?.push(leavingAtomId);
+        monomerStructure.bonds?.push(newBondId);
+      }
     }
 
     let finalAction = new Action([
@@ -1201,33 +1208,7 @@ class Editor implements KetcherEditor {
     this.historyStack = this.originalHistoryStack;
     this.historyPtr = this.originalHistoryPointer;
 
-    this.struct(this.originalStruct, false);
-
     this.tool('select');
-  }
-
-  private cleanupAttachmentPoint(leavingAtomId: number) {
-    const leavingAtom = this.struct().atoms.get(leavingAtomId);
-    assert(leavingAtom);
-
-    const originalLeavingAtomId =
-      this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
-
-    if (!isNumber(originalLeavingAtomId)) {
-      // leaving atom didn't exist in original structure and was added in monomer creation wizard. No need to cleanup
-      return;
-    }
-
-    const originalLeavingAtom = this.originalStruct.atoms.get(
-      originalLeavingAtomId,
-    );
-    assert(originalLeavingAtom);
-
-    if (originalLeavingAtom.rglabel !== null) {
-      originalLeavingAtom.rglabel = null;
-      originalLeavingAtom.label = leavingAtom.label;
-      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
-    }
   }
 
   saveNewMonomer(data) {
@@ -1251,7 +1232,11 @@ class Editor implements KetcherEditor {
     } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
-    data.attachmentPoints.forEach(
+    const sortedAttachmentPointsData = new Map<string, [number, number]>(
+      [...data.attachmentPoints].sort(),
+    );
+
+    sortedAttachmentPointsData.forEach(
       ([attachmentAtomId, leavingAtomId], attachmentPointName) => {
         let attachmentPointType: 'left' | 'right' | 'side' = 'side';
         if (attachmentPointName === AttachmentPointName.R1) {
@@ -1311,22 +1296,11 @@ class Editor implements KetcherEditor {
       ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
     const [Monomer] = monomerFactory(monomerItem);
     const monomerBBox = data.structure.getCoordBoundingBoxObj();
-    console.log(monomerBBox);
     const monomerPosition = new Vec2(
       (monomerBBox.min.x + monomerBBox.max.x) / 2,
       (monomerBBox.min.y + monomerBBox.max.y) / 2,
     );
     const monomer = new Monomer(monomerItem, monomerPosition);
-
-    this.monomerCreationState.assignedAttachmentPoints.forEach(
-      ([, leavingAtomId]) => this.cleanupAttachmentPoint(leavingAtomId),
-    );
-    this.monomerCreationState.potentialAttachmentPoints.forEach(
-      (leavingAtomIds) =>
-        Array.from(leavingAtomIds.values()).forEach((leavingAtomId) =>
-          this.cleanupAttachmentPoint(leavingAtomId),
-        ),
-    );
 
     return {
       monomer,
@@ -1336,10 +1310,10 @@ class Editor implements KetcherEditor {
   }
 
   finishNewMonomersCreation(monomersData, rnaPresetName?: string) {
-    this.closeMonomerCreationWizard();
-
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
+
+    this.closeMonomerCreationWizard();
 
     const libraryItems = monomersData.map((monomerData) => {
       const {
@@ -1349,53 +1323,21 @@ class Editor implements KetcherEditor {
         monomerStructureInWizard,
         atomIdMap,
       } = monomerData;
-      const monomerOriginalAtomIds = monomerStructureInWizard.atoms.map(
-        (atomId) => this.selectedToOriginalAtomsIdMap.get(atomId) ?? atomId,
-      );
-      const monomerAtomIdToOriginalAtomIdMap = new Map();
+      const reversedAtomIdMap = new Map();
 
-      atomIdMap.forEach(
-        (atomIdAfterAddingMonomer, atomIdBeforeAddingMonomer) => {
-          monomerAtomIdToOriginalAtomIdMap.set(
-            atomIdAfterAddingMonomer,
-            this.selectedToOriginalAtomsIdMap.get(atomIdBeforeAddingMonomer),
-          );
-        },
-      );
-
-      this.originalSelection.atoms?.forEach((atomId) => {
-        const atom = this.render.ctab.molecule.atoms.get(atomId);
-        if (atom) {
-          atom.fragment = -1;
-        }
-      });
-
+      for (const [key, value] of atomIdMap.entries()) {
+        reversedAtomIdMap.set(value, key);
+      }
       const sGroupAttachmentPoints =
         MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
           monomer,
-          monomerAtomIdToOriginalAtomIdMap,
+          reversedAtomIdMap,
         );
-
-      sGroupAttachmentPoints.forEach((ap) => {
-        this.render.ctab.molecule.bonds.forEach((bond) => {
-          if (
-            !monomerOriginalAtomIds?.includes(bond.begin) ||
-            !monomerOriginalAtomIds?.includes(bond.end)
-          ) {
-            if (bond.begin === ap.atomId) {
-              bond.beginSuperatomAttachmentPointNumber =
-                ap.attachmentPointNumber;
-            } else if (bond.end === ap.atomId) {
-              bond.endSuperatomAttachmentPointNumber = ap.attachmentPointNumber;
-            }
-          }
-        });
-      });
 
       const action = fromSgroupAddition(
         this.render.ctab,
         SGroup.TYPES.SUP,
-        monomerOriginalAtomIds,
+        monomerStructureInWizard.atoms,
         { expanded: true },
         this.render.ctab.molecule.sgroups.newId(),
         sGroupAttachmentPoints,
@@ -1466,6 +1408,124 @@ class Editor implements KetcherEditor {
       format: 'ket',
       shouldPersist: true,
     });
+
+    // store external bonds
+    const externalBonds: Bond[] = [];
+
+    this.originalStruct.bonds.forEach((bond) => {
+      if (
+        this.originalSelection.atoms?.includes(bond.begin) &&
+        !this.originalSelection.atoms?.includes(bond.end)
+      ) {
+        externalBonds.push(bond);
+      }
+      if (
+        this.originalSelection.atoms?.includes(bond.end) &&
+        !this.originalSelection.atoms?.includes(bond.begin)
+      ) {
+        externalBonds.push(bond);
+      }
+    });
+
+    // rerendering the original structure to clean up any leftover atoms/bonds from the wizard
+    const newAction = new Action();
+    const structFromWizard = this.struct();
+
+    this.struct(this.originalStruct, false);
+
+    // this.struct(struct) uses setTimeout to defer some calculations,
+    // so we need to wait until they are done before applying further changes
+    setTimeout(() => {
+      newAction.mergeWith(
+        fromFragmentDeletion(this.render.ctab, this.originalSelection),
+      );
+
+      this.update(newAction);
+
+      const atomIdMap = new Map<number, number>();
+
+      structFromWizard.mergeInto(
+        this.struct(),
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        atomIdMap,
+      );
+
+      const originalToSelectedAtomsIdMap = new Map<number, number>();
+
+      this.selectedToOriginalAtomsIdMap.forEach(
+        (originalAtomId, selectedAtomId) => {
+          originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+        },
+      );
+
+      let struct = this.struct();
+
+      externalBonds.forEach((bond) => {
+        const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
+        const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
+        const newBegin =
+          isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
+        const newEnd = isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
+
+        if (
+          this.originalSelection.atoms?.includes(bond.begin) &&
+          !this.originalSelection.atoms?.includes(bond.end) &&
+          isNumber(beginIdInWizard) &&
+          isNumber(newBegin)
+        ) {
+          const newBond = bond.clone();
+
+          newBond.begin = newBegin;
+
+          struct.bonds.add(newBond);
+        }
+        if (
+          this.originalSelection.atoms?.includes(bond.end) &&
+          !this.originalSelection.atoms?.includes(bond.begin) &&
+          isNumber(endIdInWizard) &&
+          isNumber(newEnd)
+        ) {
+          const newBond = bond.clone();
+
+          newBond.end = newEnd;
+
+          struct.bonds.add(newBond);
+        }
+      });
+
+      // fully recreate canvas
+      this.struct(this.struct().clone());
+
+      struct = this.struct();
+
+      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
+      // between monomers created in wizard together
+      struct.bonds.forEach((bond) => {
+        const fromSgroup = struct.getGroupFromAtomId(bond.begin);
+        const toSgroup = struct.getGroupFromAtomId(bond.end);
+
+        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
+          fromSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+            if (attachmentPoint.atomId === bond.begin) {
+              bond.beginSuperatomAttachmentPointNumber =
+                attachmentPoint.attachmentPointNumber;
+            }
+          });
+        }
+
+        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
+          toSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+            if (attachmentPoint.atomId === bond.end) {
+              bond.endSuperatomAttachmentPointNumber =
+                attachmentPoint.attachmentPointNumber;
+            }
+          });
+        }
+      });
+    }, 0);
   }
 
   reassignAttachmentPointLeavingAtom(

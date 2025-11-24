@@ -10,9 +10,9 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     testId: "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",
   },
   _3A6: { alias: '3A6', testId: "3A6___6-amino-hexanol (3' end)" },
-  _3SS6: {
-    alias: '3SS6',
-    testId: "3SS6___Thiol Modifier 6 S-S (3' end)",
+  _3FAM: {
+    alias: '3FAM',
+    testId: "3FAM___6-FAM (3' end)",
   },
   _5A6: {
     alias: '5A6',

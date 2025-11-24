@@ -161,7 +161,8 @@ const validateInputs = (values: WizardValues) => {
     if (!value?.trim()) {
       if (
         (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
-        key !== 'aliasHELM'
+        key !== 'aliasHELM' &&
+        key !== 'name'
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
@@ -609,7 +610,7 @@ const MonomerCreationWizard = () => {
     editor.saveNewMonomer({
       type,
       symbol,
-      name,
+      name: name || symbol,
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
@@ -723,7 +724,6 @@ const MonomerCreationWizard = () => {
                   disabled={!type}
                 />
               }
-              required
               disabled={!type}
             />
             <AttributeField
@@ -937,7 +937,7 @@ const MonomerCreationWizard = () => {
                   editor.saveNewMonomer({
                     type,
                     symbol,
-                    name,
+                    name: name || symbol,
                     naturalAnalogue,
                     modificationTypes,
                     aliasHELM,

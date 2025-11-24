@@ -20,6 +20,9 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
+  await page.evaluate(async () => {
+    await window.ketcher.editor.subscribe('libraryUpdate', console.log);
+  });
 });
 test.afterAll(async ({ closePage }) => {
   await closePage();

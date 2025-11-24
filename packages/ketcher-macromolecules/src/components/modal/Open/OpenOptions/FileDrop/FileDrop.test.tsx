@@ -65,6 +65,7 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
+    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
@@ -86,14 +87,21 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
+    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
-
     userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(mockProps.onDropAccepted).toBeCalled();
     });
+  });
+
+  it('should use semantic button element instead of div with role', () => {
+    render(withThemeProvider(<FileDrop {...mockProps} />));
+
+    const button = screen.getByRole('button');
+    expect(button.tagName).toBe('BUTTON');
   });
 });

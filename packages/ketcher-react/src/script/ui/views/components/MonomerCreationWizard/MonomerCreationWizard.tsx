@@ -156,13 +156,13 @@ const validateInputs = (values: WizardValues) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const optionalFields = new Set(['aliasHELM', 'name']);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
-        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
-        key !== 'aliasHELM' &&
-        key !== 'name'
+        !optionalFields.has(key) &&
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {

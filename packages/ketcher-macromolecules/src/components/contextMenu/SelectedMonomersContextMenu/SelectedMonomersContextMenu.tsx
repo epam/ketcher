@@ -77,7 +77,7 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: ({ props = {} }) => !isCanvasContext(props),
+      disabled: false,
       separator: true,
     },
     {

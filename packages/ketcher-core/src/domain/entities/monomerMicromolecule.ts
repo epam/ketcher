@@ -51,8 +51,7 @@ export class MonomerMicromolecule extends SGroup {
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
     if (atomIdMap) {
-      const attachmentPoints = monomerMicromoleculeClone.getAttachmentPoints();
-
+      const attachmentPoints = monomerMicromolecule.getAttachmentPoints();
       // case for ambiguous monomer
       // need to check/fix behaviour for them and remove lines below
       if (!isNumber(attachmentPoints[0]?.atomId)) {

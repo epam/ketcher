@@ -29,6 +29,7 @@ type RxnArrowAddData = {
   id?: number;
   pos: Array<Vec2>;
   mode: RxnArrowMode;
+  height?: number;
 };
 
 class RxnArrowAdd extends Base {
@@ -38,14 +39,18 @@ class RxnArrowAdd extends Base {
     pos: Array<Vec2> = [],
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
     id?: number,
+    height?: number,
   ) {
     super(OperationType.RXN_ARROW_ADD);
-    this.data = { pos, mode, id };
+    this.data = { pos, mode, id, height };
   }
 
   execute(restruct: any): void {
     const struct = restruct.molecule;
-    const item = new RxnArrow({ mode: this.data.mode });
+    const item = new RxnArrow({
+      mode: this.data.mode,
+      height: this.data.height,
+    });
 
     if (this.data.id == null) {
       const index = struct.rxnArrows.add(item);
@@ -77,6 +82,7 @@ interface RxnArrowDeleteData {
   id: number;
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
+  height?: number;
 }
 
 class RxnArrowDelete extends Base {
@@ -97,6 +103,7 @@ class RxnArrowDelete extends Base {
 
     this.data.pos = item.pos;
     this.data.mode = item.mode;
+    this.data.height = item.height;
     this.performed = true;
 
     restruct.markItemRemoved();
@@ -112,7 +119,12 @@ class RxnArrowDelete extends Base {
   }
 
   invert(): Base {
-    return new RxnArrowAdd(this.data.pos, this.data.mode, this.data.id);
+    return new RxnArrowAdd(
+      this.data.pos,
+      this.data.mode,
+      this.data.id,
+      this.data.height,
+    );
   }
 }
 

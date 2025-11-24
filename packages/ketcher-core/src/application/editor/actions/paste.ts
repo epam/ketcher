@@ -191,6 +191,8 @@ export function fromPaste(
     const operation = new RxnArrowAdd(
       rxnArrow.pos.map((p) => p.add(offset)),
       rxnArrow.mode,
+      undefined,
+      rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
     items.rxnArrows.push(operation.data.id);

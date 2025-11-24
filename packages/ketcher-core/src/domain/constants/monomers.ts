@@ -35,7 +35,7 @@ export enum StandardAmbiguousPeptide {
   B = 'B', // Aspartic acid or Asparagine
   J = 'J', // Leucine or Isoleucine
   Z = 'Z', // Glutamic acid or Glutamine
-  X = 'X', // Any amino acid
+  X = 'X', // Any amino acid (note: also appears in unknownNaturalAnalogues for compatibility)
 }
 
 export const rnaDnaNaturalAnalogues = [

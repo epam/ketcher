@@ -614,6 +614,7 @@ export class SequenceMode extends BaseMode {
 
     // If no library item found for the symbol, return undefined
     if (!newPeptideLibraryItem) {
+      // Symbol not found in monomer library
       return undefined;
     }
 

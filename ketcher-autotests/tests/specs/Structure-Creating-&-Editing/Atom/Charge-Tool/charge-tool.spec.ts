@@ -8,10 +8,12 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -98,6 +100,26 @@ test.describe('Charge tool', () => {
     await page.keyboard.press('-');
     await page.mouse.move(x, y);
     await page.keyboard.press('-');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Charge Plus tool works on star atoms', async ({ page }) => {
+    /*
+    Test case: Fix for star atom charge issue
+    Description: Charge Plus and Charge Minus are applied to star atoms.
+    */
+    const anyAtom = 0;
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
+    );
+    await LeftToolbar(page).chargePlus();
+    // Click on the first star atom twice to test multiple charge increments
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
+    await LeftToolbar(page).chargeMinus();
+    // Click on the second star atom to test charge decrement
+    await getAtomLocator(page, { atomLabel: '*' }).nth(anyAtom).click();
     await takeEditorScreenshot(page);
   });
 });

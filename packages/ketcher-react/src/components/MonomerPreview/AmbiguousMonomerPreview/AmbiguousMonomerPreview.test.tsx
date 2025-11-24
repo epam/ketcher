@@ -85,6 +85,73 @@ describe('AmbiguousMonomerPreview', () => {
     expect(percentages).toEqual([43, 29, 14, 14]);
   });
 
+  it('should sort mixed monomers alphabetically when percentages are equal', () => {
+    const mockMonomer = {
+      id: 'test-monomer',
+      label: 'Test',
+      subtype: 'mixed' as const,
+      isAmbiguous: true as const,
+      monomers: [
+        {
+          label: 'U',
+          monomerItem: {
+            props: {
+              id: 'monomer3',
+              Name: 'Uracil',
+            },
+          },
+        },
+        {
+          label: 'G',
+          monomerItem: {
+            props: {
+              id: 'monomer2',
+              Name: 'Guanine',
+            },
+          },
+        },
+        {
+          label: 'C',
+          monomerItem: {
+            props: {
+              id: 'monomer1',
+              Name: 'Cytosine',
+            },
+          },
+        },
+      ],
+      options: [
+        { templateId: 'monomer1', ratio: 33 },
+        { templateId: 'monomer2', ratio: 33 },
+        { templateId: 'monomer3', ratio: 33 },
+      ],
+    };
+
+    const preview: AmbiguousMonomerPreviewState = {
+      type: PreviewType.AmbiguousMonomer,
+      monomer: mockMonomer as unknown as AmbiguousMonomerType,
+      presetMonomers: undefined,
+    };
+
+    const { container } = render(<AmbiguousMonomerPreview preview={preview} />);
+
+    const header = screen.getByTestId('preview-tooltip-title');
+    expect(header).toHaveTextContent('Mixed');
+
+    // Get the text content and extract monomer names
+    const containerText = container.textContent || '';
+    // Extract names after percentage values
+    const names = containerText
+      .replace('Mixed', '')
+      .split(/\d+%/)
+      .slice(1)
+      .map((name) => name.trim())
+      .filter((name) => name.length > 0);
+
+    // When percentages are equal (all 33%), should be sorted alphabetically
+    expect(names).toEqual(['Cytosine', 'Guanine', 'Uracil']);
+  });
+
   it('should sort alternatives alphabetically', () => {
     const mockMonomer = {
       id: 'test-monomer',

@@ -1,38 +1,43 @@
 import { Page, Locator } from '@playwright/test';
 
 type WarningMessageDialogLocators = {
-  warningMessageDialogWindow: Locator;
+  window: Locator;
+  closeWindowButton: Locator;
   warningMessageBody: Locator;
-  warningMessageOkButton: Locator;
-  warningMessageCancelButton: Locator;
+  okButton: Locator;
+  cancelButton: Locator;
 };
 
 export const WarningMessageDialog = (page: Page) => {
-  const warningMessageDialogWindow = page
+  const window = page
     .getByTestId('info-modal-window')
     .filter({ hasText: 'Non-typical attachment points' });
 
   const locators: WarningMessageDialogLocators = {
-    warningMessageDialogWindow,
-    warningMessageBody:
-      warningMessageDialogWindow.getByTestId('info-modal-body'),
-    warningMessageOkButton: warningMessageDialogWindow.getByTestId('OK'),
-    warningMessageCancelButton:
-      warningMessageDialogWindow.getByTestId('Cancel'),
+    window,
+    closeWindowButton: window.getByTestId('close-window-button'),
+    warningMessageBody: window.getByTestId('info-modal-body'),
+    okButton: window.getByTestId('OK'),
+    cancelButton: window.getByTestId('Cancel'),
   };
 
   return {
     ...locators,
     async isVisible() {
-      return await locators.warningMessageDialogWindow.isVisible();
+      return await locators.window.isVisible();
+    },
+
+    async closeWindow() {
+      await locators.closeWindowButton.click();
+      await locators.closeWindowButton.waitFor({ state: 'detached' });
     },
 
     async ok() {
-      await locators.warningMessageDialogWindow.waitFor({ state: 'visible' });
-      await locators.warningMessageOkButton.waitFor({ state: 'visible' });
+      await locators.window.waitFor({ state: 'visible' });
+      await locators.okButton.waitFor({ state: 'visible' });
       await Promise.all([
-        locators.warningMessageOkButton.click(),
-        locators.warningMessageDialogWindow.waitFor({ state: 'hidden' }),
+        locators.okButton.click(),
+        locators.window.waitFor({ state: 'hidden' }),
       ]);
     },
 
@@ -43,11 +48,11 @@ export const WarningMessageDialog = (page: Page) => {
     },
 
     async cancel() {
-      await locators.warningMessageDialogWindow.waitFor({ state: 'visible' });
-      await locators.warningMessageCancelButton.waitFor({ state: 'visible' });
+      await locators.window.waitFor({ state: 'visible' });
+      await locators.cancelButton.waitFor({ state: 'visible' });
       await Promise.all([
-        locators.warningMessageCancelButton.click(),
-        locators.warningMessageDialogWindow.waitFor({ state: 'hidden' }),
+        locators.cancelButton.click(),
+        locators.window.waitFor({ state: 'hidden' }),
       ]);
     },
 

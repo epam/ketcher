@@ -37,12 +37,12 @@ function calculateTextDistances(cursorPosition, bounds) {
   const { topX, topY, bottomX, bottomY } = bounds;
   const distances = [];
 
-  const withinHorizontalBounds =
+  const isCursorWithinHorizontalBounds =
     cursorPosition.x >= topX && cursorPosition.x <= bottomX;
-  const withinVerticalBounds =
+  const isCursorWithinVerticalBounds =
     cursorPosition.y >= topY && cursorPosition.y <= bottomY;
 
-  if (withinHorizontalBounds) {
+  if (isCursorWithinHorizontalBounds) {
     if (cursorPosition.y < topY) {
       distances.push(topY - cursorPosition.y);
     } else if (cursorPosition.y > bottomY) {
@@ -68,7 +68,7 @@ function calculateTextDistances(cursorPosition, bounds) {
     distances.push(Vec2.dist(new Vec2(bottomX, topY), cursorPosition));
   }
 
-  if (withinVerticalBounds) {
+  if (isCursorWithinVerticalBounds) {
     if (cursorPosition.x < topX) {
       distances.push(topX - cursorPosition.x);
     } else if (cursorPosition.x > bottomX) {

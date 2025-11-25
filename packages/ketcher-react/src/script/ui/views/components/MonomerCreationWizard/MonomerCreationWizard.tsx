@@ -497,6 +497,8 @@ const MonomerCreationWizard = () => {
     setAttachmentPointEditPopupData(null);
   };
 
+  const selectRectangleAction = tools['select-rectangle'].action;
+
   const handleAttachmentPointNameChange = (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
@@ -522,7 +524,7 @@ const MonomerCreationWizard = () => {
 
   const handleDiscard = () => {
     editor.closeMonomerCreationWizard();
-    dispatch(onAction(tools['select-rectangle'].action));
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
   };
 
@@ -619,7 +621,7 @@ const MonomerCreationWizard = () => {
       aliasHELM,
     });
 
-    dispatch(onAction(tools['select-rectangle'].action));
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
   };
 
@@ -947,7 +949,7 @@ const MonomerCreationWizard = () => {
                     modificationTypes,
                     aliasHELM,
                   });
-                  dispatch(onAction(tools['select-rectangle'].action));
+                  dispatch(onAction(selectRectangleAction));
                   resetWizard();
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),

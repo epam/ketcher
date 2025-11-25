@@ -31,7 +31,10 @@ import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import { selectEditor, selectIsSequenceMode } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
-import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
+import {
+  cardMouseOverHandler,
+  getAutochainErrorMessage,
+} from 'components/monomerLibrary/monomerLibraryItem/shared';
 
 export const AUTOCHAIN_ELEMENT_CLASSNAME = 'autochain';
 
@@ -91,13 +94,20 @@ const MonomerItem = ({
     (event) => {
       event.stopPropagation();
 
-      if (autochainErrorMessage) {
-        return;
+      // Validate before executing autochain to ensure validation runs even on consecutive clicks
+      if (editor) {
+        const errorMessage = getAutochainErrorMessage(editor, item);
+        setAutochainErrorMessage(errorMessage);
+
+        // If there's an error, don't proceed with autochain
+        if (errorMessage) {
+          return;
+        }
       }
 
       editor?.events.autochain.dispatch(item);
     },
-    [editor, autochainErrorMessage, item],
+    [editor, item],
   );
 
   const onMouseOver = useCallback(
@@ -107,12 +117,18 @@ const MonomerItem = ({
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
-    if (autochainErrorMessage) {
-      return;
+    // Re-validate on hover to ensure tooltip shows current validation state
+    if (editor) {
+      const errorMessage = getAutochainErrorMessage(editor, item);
+      setAutochainErrorMessage(errorMessage);
+
+      if (errorMessage) {
+        return;
+      }
     }
 
     editor?.events.previewAutochain.dispatch(item);
-  }, [autochainErrorMessage, editor, item]);
+  }, [editor, item]);
 
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(item);

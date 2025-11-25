@@ -44,10 +44,11 @@ Object {
           class="css-uve29d"
           data-testid="open-from-file-button"
         >
-          <div
-            role="button"
+          <button
+            class="css-1mbhme1"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="0"
+            type="button"
           >
             <input
               autocomplete="off"
@@ -84,16 +85,18 @@ Object {
             >
               Open from file
             </p>
-          </div>
+          </button>
         </div>
         <div
           class="css-uve29d"
           data-testid="open-from-image-button"
         >
-          <div
-            role="button"
+          <button
+            class="css-1mbhme1"
+            disabled=""
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
             tabindex="-1"
+            type="button"
           >
             <input
               accept="image/*"
@@ -136,7 +139,7 @@ Object {
             >
               Image Recognition service is not available
             </p>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -181,10 +184,11 @@ Object {
         class="css-uve29d"
         data-testid="open-from-file-button"
       >
-        <div
-          role="button"
+        <button
+          class="css-1mbhme1"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="0"
+          type="button"
         >
           <input
             autocomplete="off"
@@ -221,16 +225,18 @@ Object {
           >
             Open from file
           </p>
-        </div>
+        </button>
       </div>
       <div
         class="css-uve29d"
         data-testid="open-from-image-button"
       >
-        <div
-          role="button"
+        <button
+          class="css-1mbhme1"
+          disabled=""
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
           tabindex="-1"
+          type="button"
         >
           <input
             accept="image/*"
@@ -273,7 +279,7 @@ Object {
           >
             Image Recognition service is not available
           </p>
-        </div>
+        </button>
       </div>
     </div>
   </div>,

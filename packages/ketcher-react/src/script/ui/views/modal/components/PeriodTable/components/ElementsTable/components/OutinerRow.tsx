@@ -36,7 +36,7 @@ function OutinerRow({
   currentEvents,
   atomClassNames,
   className,
-}: OutinerRowProps) {
+}: Readonly<OutinerRowProps>) {
   return (
     <tbody>
       <tr>

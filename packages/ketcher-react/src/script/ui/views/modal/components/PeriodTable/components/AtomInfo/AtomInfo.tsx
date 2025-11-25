@@ -23,7 +23,7 @@ interface AtomInfoProps {
   isInfo: boolean;
 }
 
-function AtomInfo({ el, isInfo }: AtomInfoProps) {
+function AtomInfo({ el, isInfo }: Readonly<AtomInfoProps>) {
   const numberStyle = {
     color: ElementColor[el.label] || 'black',
     fontSize: '12px',

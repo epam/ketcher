@@ -114,7 +114,7 @@ test.describe('Support aliases from HELM', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{m(A).[3SS6].[fl2r](A).fl5pr2r(A).menoe2r(A).fl3pr2r(A).GalNAc3C62r(A).oheom2r(A).pyren1ylm2r(A).allyl2r(A).moe(A).prpargyl2r(A).e2noe2r(A).iprmnoe2r(A).guane2r(A).m2npr2r(A).m2nenc2r(A).ctfl3moe(A).n3r(A).me3fl2r(A).m3ALlna(A).moe3ana(A).25moe3r(A).s4r(A).5R6Rm5cEt(A).5R6Sm5cEt(A).5S6Rm5cEt(A).5S6Sm5cEt(A).Rm5ALlna(A).Sm5fl2r(A).Sm5ALlna(A).Svinyl5lna(A).Sm6fhna(A).Sm6ALlna(A).Diprglyol2r(A).Liprglyol2r(A).Rgna(A).Rm5fl2r(A).Rflclna(A).Rso2lna(A).RSpabCNA(A).Sgna(A).Sso2lna(A).SRpabCNA(A).Smn2cet(A).Rmn2cet(A).hna(A).afl2Nmc(A).Dlyspna(A).Llyspna(A).r(A).25r(A).tna(A).una(A).ALlna(A).ALmeclna(A).ALtrina1(A).ALtrina2(A)}$$$$V2.0',
+      'RNA1{m(A).[fl2r](A).fl5pr2r(A).menoe2r(A).fl3pr2r(A).GalNAc3C62r(A).oheom2r(A).pyren1ylm2r(A).allyl2r(A).moe(A).prpargyl2r(A).e2noe2r(A).iprmnoe2r(A).guane2r(A).m2npr2r(A).m2nenc2r(A).ctfl3moe(A).n3r(A).me3fl2r(A).m3ALlna(A).moe3ana(A).25moe3r(A).s4r(A).5R6Rm5cEt(A).5R6Sm5cEt(A).5S6Rm5cEt(A).5S6Sm5cEt(A).Rm5ALlna(A).Sm5fl2r(A).Sm5ALlna(A).Svinyl5lna(A).Sm6fhna(A).Sm6ALlna(A).Diprglyol2r(A).Liprglyol2r(A).Rgna(A).Rm5fl2r(A).Rflclna(A).Rso2lna(A).RSpabCNA(A).Sgna(A).Sso2lna(A).SRpabCNA(A).Smn2cet(A).Rmn2cet(A).hna(A).afl2Nmc(A).Dlyspna(A).Llyspna(A).r(A).25r(A).tna(A).una(A).ALlna(A).ALmeclna(A).ALtrina1(A).ALtrina2(A)}$$$$V2.0',
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -122,7 +122,7 @@ test.describe('Support aliases from HELM', () => {
     });
     await verifyHELMExport(
       page,
-      `RNA1{m(A).[36SS].[fl2r](A).[fl5pr2r](A).[menoe2r](A).[fl3pr2r](A).[GalNAc3C62r](A).[oheom2r](A).[pyren1ylm2r](A).[allyl2r](A).[moe](A).[prpargyl2r](A).[e2noe2r](A).[iprmnoe2r](A).[guane2r](A).[m2npr2r](A).[m2nenc2r](A).[ctfl3moe](A).[n3r](A).[me3fl2r](A).[m3ALlna](A).[moe3ana](A).[25moe3r](A).[s4r](A).[5R6Rm5cEt](A).[5R6Sm5cEt](A).[5S6Rm5cEt](A).[5S6Sm5cEt](A).[Rm5ALlna](A).[Sm5fl2r](A).[Sm5ALlna](A).[Svinyl5lna](A).[Sm6fhna](A).[Sm6ALlna](A).[Diprglyol2r](A).[Liprglyol2r](A).[Rgna](A).[Rm5fl2r](A).[Rflclna](A).[Rso2lna](A).[RSpabCNA](A).[Sgna](A).[Sso2lna](A).[SRpabCNA](A).[Smn2cet](A).[Rmn2cet](A).[hna](A).[afl2Nmc](A).[Dlyspna](A).[Llyspna](A).r(A).[25r](A).[tna](A).[una](A).[ALlna](A).[ALmeclna](A).[ALtrina1](A).[ALtrina2](A)}$$$$V2.0`,
+      `RNA1{m(A).[fl2r](A).[fl5pr2r](A).[menoe2r](A).[fl3pr2r](A).[GalNAc3C62r](A).[oheom2r](A).[pyren1ylm2r](A).[allyl2r](A).[moe](A).[prpargyl2r](A).[e2noe2r](A).[iprmnoe2r](A).[guane2r](A).[m2npr2r](A).[m2nenc2r](A).[ctfl3moe](A).[n3r](A).[me3fl2r](A).[m3ALlna](A).[moe3ana](A).[25moe3r](A).[s4r](A).[5R6Rm5cEt](A).[5R6Sm5cEt](A).[5S6Rm5cEt](A).[5S6Sm5cEt](A).[Rm5ALlna](A).[Sm5fl2r](A).[Sm5ALlna](A).[Svinyl5lna](A).[Sm6fhna](A).[Sm6ALlna](A).[Diprglyol2r](A).[Liprglyol2r](A).[Rgna](A).[Rm5fl2r](A).[Rflclna](A).[Rso2lna](A).[RSpabCNA](A).[Sgna](A).[Sso2lna](A).[SRpabCNA](A).[Smn2cet](A).[Rmn2cet](A).[hna](A).[afl2Nmc](A).[Dlyspna](A).[Llyspna](A).r(A).[25r](A).[tna](A).[una](A).[ALlna](A).[ALmeclna](A).[ALtrina1](A).[ALtrina2](A)}$$$$V2.0`,
     );
   });
 

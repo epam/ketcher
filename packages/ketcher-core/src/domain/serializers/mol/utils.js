@@ -137,8 +137,7 @@ const SHOULD_RESCALE_MOLECULES = true;
 
 function calculateAverageBondLength(mols) {
   const bondLengthData = { cnt: 0, totalLength: 0 };
-  for (let j = 0; j < mols.length; ++j) {
-    const mol = mols[j];
+  for (const mol of mols) {
     const bondLengthDataMol = mol.getBondLengthData();
     bondLengthData.cnt += bondLengthDataMol.cnt;
     bondLengthData.totalLength += bondLengthDataMol.totalLength;
@@ -151,8 +150,8 @@ function calculateAverageBondLength(mols) {
 function rescaleMolecules(mols) {
   const avgBondLength = calculateAverageBondLength(mols);
   const scaleFactor = 1 / avgBondLength;
-  for (let j = 0; j < mols.length; ++j) {
-    mols[j].scale(scaleFactor);
+  for (const mol of mols) {
+    mol.scale(scaleFactor);
   }
 }
 
@@ -244,9 +243,9 @@ function layoutReactionFragments(
 }
 
 function mergeWithoutLayout(ret, molReact, molAgent, molProd) {
-  for (let j = 0; j < molReact.length; ++j) molReact[j].mergeInto(ret);
-  for (let j = 0; j < molAgent.length; ++j) molAgent[j].mergeInto(ret);
-  for (let j = 0; j < molProd.length; ++j) molProd[j].mergeInto(ret);
+  for (const mol of molReact) mol.mergeInto(ret);
+  for (const mol of molAgent) mol.mergeInto(ret);
+  for (const mol of molProd) mol.mergeInto(ret);
 }
 
 function addPlusSigns(ret, boundingBoxes) {

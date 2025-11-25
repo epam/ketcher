@@ -26,16 +26,28 @@ const ErrorMessage = styled(Popover)`
   }
 `;
 
-export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
+interface ErrorPopoverProps {
+  error: string;
+  anchorEl: HTMLElement | null;
+  open?: boolean;
+  onClose?: () => void;
+}
+
+export const ErrorPopover = ({
+  error,
+  anchorEl,
+  open = true,
+  onClose,
+}: ErrorPopoverProps) => (
   <ErrorMessage
     id="form-error"
-    open={true}
+    open={open}
     anchorEl={anchorEl}
     disableAutoFocus
     sx={{
       pointerEvents: 'none',
     }}
-    onClose={handleClose}
+    onClose={onClose}
     anchorOrigin={{
       vertical: 'bottom',
       horizontal: 'center',

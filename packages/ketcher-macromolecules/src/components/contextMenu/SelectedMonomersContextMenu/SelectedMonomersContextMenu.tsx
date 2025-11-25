@@ -1,4 +1,4 @@
-import { ItemParams } from 'react-contexify';
+import { ItemParams, useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import {
@@ -32,6 +32,9 @@ export const SelectedMonomersContextMenu = ({
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
+  const { hideAll } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
+  });
   const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
     selectedMonomers,
     contextMenuEvent,
@@ -133,8 +136,7 @@ export const SelectedMonomersContextMenu = ({
       name: 'delete',
       title: 'Delete',
       icon: <Icon name={'deleteMenu' as IconName} />,
-      disabled: ({ props = {} }) =>
-        isBondContext(props) || isCanvasContext(props),
+      disabled: ({ props = {} }) => isCanvasContext(props),
     },
   ];
 
@@ -142,6 +144,7 @@ export const SelectedMonomersContextMenu = ({
     switch (true) {
       case menuItemId === 'layout_circular':
         editor?.events.layoutCircular.dispatch();
+        hideAll();
         break;
       case menuItemId === 'copy':
         editor?.events.copySelectedStructure.dispatch();

@@ -24,6 +24,7 @@ import {
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
+import { PeriodicTableDialog } from './PeriodicTableDialog';
 
 type GeneralProperties = {
   generalSection: Locator & {
@@ -256,12 +257,9 @@ export const AtomPropertiesDialog = (page: Page) => {
       await locators.generalSection.numberReadonlyInput.textContent();
     },
 
-    async selectAtomsList(value: {
-      AtomsList: PeriodicTableElement[];
-      SelectAtoms: (atomsList: PeriodicTableElement[]) => Promise<void>;
-    }) {
+    async selectAtomsList(value: { AtomsList: PeriodicTableElement[] }) {
       await this.openTable();
-      await value.SelectAtoms(value.AtomsList);
+      await PeriodicTableDialog(page).addElements(value.AtomsList);
     },
 
     async getList() {

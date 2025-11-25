@@ -1,4 +1,4 @@
-import { Page, test, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
@@ -13,6 +13,7 @@ import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
   Aromaticity,
+  AtomType,
   Chirality,
   Connectivity,
   HCount,
@@ -25,20 +26,6 @@ import {
 } from '@tests/pages/constants/atomProperties/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
-
-async function setListOfAtoms(page: Page, atomLabels: string[]) {
-  await selectAtomType(page, 'List');
-  await page.getByTestId('General-section').locator('button').click();
-  for (const label of atomLabels) {
-    await page.getByTestId(`${label}-button`).click();
-  }
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
-
-async function selectAtomType(page: Page, type: string) {
-  await page.locator('label').filter({ hasText: 'Atom Type' }).click();
-  await page.getByRole('option', { name: type, exact: true }).click();
-}
 
 test.describe('Checking if displaying atom attributes does not broke integrity of the structure', () => {
   test.beforeEach(async ({ page }) => {
@@ -96,8 +83,15 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying list of atoms near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    const atomLabels = ['Na', 'K', 'B', 'Er', 'Se'];
-    await setListOfAtoms(page, atomLabels);
+    const atomLabels = [
+      PeriodicTableElement.Na,
+      PeriodicTableElement.K,
+      PeriodicTableElement.B,
+      PeriodicTableElement.Er,
+      PeriodicTableElement.Se,
+    ];
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
     await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
@@ -146,23 +140,24 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
     const atomLabels = [
-      'Ca',
-      'Pm',
-      'Ag',
-      'Tc',
-      'He',
-      'Xe',
-      'Li',
-      'Ts',
-      'Nh',
-      'Am',
-      'V',
-      'Fe',
+      PeriodicTableElement.Ca,
+      PeriodicTableElement.Pm,
+      PeriodicTableElement.Ag,
+      PeriodicTableElement.Tc,
+      PeriodicTableElement.He,
+      PeriodicTableElement.Xe,
+      PeriodicTableElement.Li,
+      PeriodicTableElement.Ts,
+      PeriodicTableElement.Nh,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.V,
+      PeriodicTableElement.Fe,
     ];
     const point = await getAtomLocator(page, { atomLabel: 'C' })
       .first()
       .boundingBox();
-    await setListOfAtoms(page, atomLabels);
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
     await AtomPropertiesDialog(page).apply();
     if (point) {
       await waitForRender(page, async () => {
@@ -179,11 +174,12 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Test case: https://github.com/epam/ketcher/issues/3327
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
-    const atomLabels = ['Rb', 'Sm'];
+    const atomLabels = [PeriodicTableElement.Rb, PeriodicTableElement.Sm];
     const point = await getAtomLocator(page, { atomLabel: 'C' })
       .first()
       .boundingBox();
-    await setListOfAtoms(page, atomLabels);
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         Aromaticity: Aromaticity.Aromatic,

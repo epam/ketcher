@@ -1,34 +1,41 @@
 import { Page, Locator } from '@playwright/test';
 
 type WarningMessageDialogLocators = {
-  warningMessageDialogWindow: Locator;
+  window: Locator;
+  closeWindowButton: Locator;
   warningMessageBody: Locator;
-  warningMessageOkButton: Locator;
-  warningMessageCancelButton: Locator;
+  okButton: Locator;
+  cancelButton: Locator;
 };
 
 export const WarningMessageDialog = (page: Page) => {
   const locators: WarningMessageDialogLocators = {
-    warningMessageDialogWindow: page.getByTestId('info-modal-window'),
+    window: page.getByTestId('info-modal-window'),
+    closeWindowButton: page.getByTestId('close-window-button'),
     warningMessageBody: page.getByTestId('info-modal-body'),
-    warningMessageOkButton: page.getByTestId('OK'),
-    warningMessageCancelButton: page.getByTestId('Cancel'),
+    okButton: page.getByTestId('OK'),
+    cancelButton: page.getByTestId('Cancel'),
   };
 
   return {
     ...locators,
     async isVisible() {
-      return await locators.warningMessageDialogWindow.isVisible();
+      return await locators.window.isVisible();
+    },
+
+    async closeWindow() {
+      await locators.closeWindowButton.click();
+      await locators.closeWindowButton.waitFor({ state: 'detached' });
     },
 
     async ok() {
-      await locators.warningMessageOkButton.click();
-      await locators.warningMessageOkButton.waitFor({ state: 'detached' });
+      await locators.okButton.click();
+      await locators.okButton.waitFor({ state: 'detached' });
     },
 
     async cancel() {
-      await locators.warningMessageCancelButton.click();
-      await locators.warningMessageCancelButton.waitFor({ state: 'detached' });
+      await locators.cancelButton.click();
+      await locators.cancelButton.waitFor({ state: 'detached' });
     },
 
     async getWarningMessage() {

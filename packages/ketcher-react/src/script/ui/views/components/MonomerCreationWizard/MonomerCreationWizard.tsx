@@ -561,7 +561,8 @@ const MonomerCreationWizard = () => {
   };
 
   const handleDiscard = () => {
-    editor.closeMonomerCreationWizard();
+    editor.closeMonomerCreationWizard(true);
+
     dispatch(onAction(selectRectangleAction));
     resetWizard();
   };

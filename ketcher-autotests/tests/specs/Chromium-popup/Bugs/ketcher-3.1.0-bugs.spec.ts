@@ -4,7 +4,6 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
@@ -310,7 +309,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await keyboardTypeOnCanvas(page, 'Backspace');
 
     await MacromoleculesTopToolbar(page).expandSwitchLayoutModeDropdown();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
+      { padding: 20 },
+    );
   });
 
   test(`Case 11: System not shows Edit S-Group option for bond of molecule if it has attachment point`, async () => {

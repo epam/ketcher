@@ -20,7 +20,7 @@ import NaturalAnaloguePicker, {
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import { useSelector, useDispatch } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
-import { openSuccessModal } from '../../../state/shared';
+import { openSuccessModal, onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -51,6 +51,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { TextField, Autocomplete } from '@mui/material';
+import tools from '../../../action/tools';
 
 const initialWizardState: WizardState = {
   values: {
@@ -497,6 +498,8 @@ const MonomerCreationWizard = () => {
     setAttachmentPointEditPopupData(null);
   };
 
+  const selectRectangleAction = tools['select-rectangle'].action;
+
   const handleAttachmentPointNameChange = (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
@@ -522,6 +525,7 @@ const MonomerCreationWizard = () => {
 
   const handleDiscard = () => {
     editor.closeMonomerCreationWizard();
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
   };
 
@@ -618,6 +622,7 @@ const MonomerCreationWizard = () => {
       aliasHELM,
     });
 
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
     console.log(
       NotificationMessages.creationSuccessful,
@@ -958,6 +963,7 @@ const MonomerCreationWizard = () => {
                     modificationTypes,
                     aliasHELM,
                   });
+                  dispatch(onAction(selectRectangleAction));
                   resetWizard();
                   setTimeout(() => {
                     dispatch(

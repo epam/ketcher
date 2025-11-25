@@ -160,7 +160,6 @@ const MonomerCreationWizardFields = (
               disabled={!type}
             />
           }
-          required
           disabled={!type}
         />
         {props.showNaturalAnalogue !== false && (

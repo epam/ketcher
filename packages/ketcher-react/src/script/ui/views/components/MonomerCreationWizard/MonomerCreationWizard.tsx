@@ -209,12 +209,13 @@ const validateInputs = (values: WizardValues) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const optionalFields = new Set(['aliasHELM', 'name']);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
-        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
-        key !== 'aliasHELM'
+        !optionalFields.has(key) &&
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
@@ -827,7 +828,7 @@ const MonomerCreationWizard = () => {
         const result = editor.saveNewMonomer({
           type: monomerToSave.values.type,
           symbol: monomerToSave.values.symbol,
-          name: monomerToSave.values.name,
+          name: monomerToSave.values.name || monomerToSave.values.symbol,
           naturalAnalogue: monomerToSave.values.naturalAnalogue,
           modificationTypes,
           aliasHELM: monomerToSave.values.aliasHELM,
@@ -973,7 +974,7 @@ const MonomerCreationWizard = () => {
                   editor.saveNewMonomer({
                     type,
                     symbol,
-                    name,
+                    name: name || symbol,
                     naturalAnalogue,
                     modificationTypes,
                     aliasHELM,

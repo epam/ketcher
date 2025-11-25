@@ -136,12 +136,11 @@ const ContextMenu: React.FC = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (visible) {
         editor.hoverIcon.hide();
-        const contextMenuElement = document.querySelector(
+        const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',
-        ) as HTMLElement | null;
-        const submenuElements = document.querySelectorAll(
-          '.contexify_submenu',
-        ) as NodeListOf<HTMLElement>;
+        );
+        const submenuElements =
+          document.querySelectorAll<HTMLElement>('.contexify_submenu');
         if (contextMenuElement) {
           // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
           // Without timeout library overrides the position of the context menu which we set.

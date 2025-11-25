@@ -38,6 +38,7 @@ import {
   PolymerBond,
   HydrogenBond,
   BackBoneSequenceNode,
+  LinkerSequenceNode,
   ToolName,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
@@ -261,6 +262,24 @@ export const EditorEvents = () => {
       const isNucleotideOrNucleoside =
         sequenceNode instanceof Nucleotide ||
         sequenceNode instanceof Nucleoside;
+
+      // Check if this is a LinkerSequenceNode with multiple monomers (e.g., CHEM chain)
+      if (sequenceNode instanceof LinkerSequenceNode) {
+        const monomers = sequenceNode.monomers;
+
+        // If there are multiple monomers in the chain, show them all in a preset-style preview
+        if (monomers.length > 1) {
+          const chemChainPreviewData: PresetPreviewState = {
+            type: PreviewType.Preset,
+            monomers: monomers.map((m) => m.monomerItem),
+            position: PresetPosition.ChainMiddle,
+            target: e.target,
+          };
+
+          debouncedShowPreview(chemChainPreviewData);
+          return;
+        }
+      }
 
       if (isNucleotideOrNucleoside) {
         const monomers =

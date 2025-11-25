@@ -524,6 +524,46 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.attachmentPoints).toBe(2);
     });
 
+    it('should create RGroupAttachmentPoint instances from atom attachment points', () => {
+      const lines = [
+        '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
+        '   15.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
+        '   16.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
+        'M  APO  3   1   1   2   2   3   3',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(3));
+
+      // Verify atoms have attachmentPoints property set
+      expect(struct.atoms.get(0)!.attachmentPoints).toBe(1); // FirstSideOnly
+      expect(struct.atoms.get(1)!.attachmentPoints).toBe(2); // SecondSideOnly
+      expect(struct.atoms.get(2)!.attachmentPoints).toBe(3); // BothSides
+
+      // Verify RGroupAttachmentPoint instances are created
+      expect(struct.rgroupAttachmentPoints.size).toBe(4); // 1 + 1 + 2 = 4 total
+
+      // Get all attachment points
+      const attachmentPoints = Array.from(
+        struct.rgroupAttachmentPoints.values(),
+      );
+
+      // Atom 0 (FirstSideOnly) should have 1 primary attachment point
+      const atom0Points = attachmentPoints.filter((ap) => ap.atomId === 0);
+      expect(atom0Points.length).toBe(1);
+      expect(atom0Points[0].type).toBe('primary');
+
+      // Atom 1 (SecondSideOnly) should have 1 secondary attachment point
+      const atom1Points = attachmentPoints.filter((ap) => ap.atomId === 1);
+      expect(atom1Points.length).toBe(1);
+      expect(atom1Points[0].type).toBe('secondary');
+
+      // Atom 2 (BothSides) should have 2 attachment points (primary and secondary)
+      const atom2Points = attachmentPoints.filter((ap) => ap.atomId === 2);
+      expect(atom2Points.length).toBe(2);
+      expect(atom2Points.some((ap) => ap.type === 'primary')).toBe(true);
+      expect(atom2Points.some((ap) => ap.type === 'secondary')).toBe(true);
+    });
+
     it('should parse atom list', () => {
       const lines = [
         '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',

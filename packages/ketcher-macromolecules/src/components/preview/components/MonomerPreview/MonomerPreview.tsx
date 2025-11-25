@@ -63,7 +63,9 @@ const MonomerPreview = ({ className }: Props) => {
   }
 
   const isUnresolved = monomer.props.unresolved;
-  const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
+  const monomerName = isUnresolved
+    ? monomer.label
+    : monomer.struct?.name || monomer.label;
   const isMonomerPreviewPropertiesVisible =
     idtAliasesText || axoLabsAlias || aliasHelm || modificationTypes;
 

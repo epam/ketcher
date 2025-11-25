@@ -456,6 +456,8 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    // to remove flackiness
+    await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

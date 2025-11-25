@@ -293,15 +293,6 @@
             {
                 "connectionType": "hydrogen",
                 "endpoint1": {
-                    "monomerId": "monomer4"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer5"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
                     "monomerId": "monomer5"
                 },
                 "endpoint2": {
@@ -357,15 +348,6 @@
                 },
                 "endpoint2": {
                     "monomerId": "monomer12"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
-                    "monomerId": "monomer23"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer22"
                 }
             },
             {
@@ -446,15 +428,6 @@
                     "monomerId": "monomer23"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer4"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
-                    "monomerId": "monomer23"
-                },
-                "endpoint2": {
                     "monomerId": "monomer5"
                 }
             },
@@ -501,15 +474,6 @@
                 },
                 "endpoint2": {
                     "monomerId": "monomer18"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
-                    "monomerId": "monomer23"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer6"
                 }
             },
             {

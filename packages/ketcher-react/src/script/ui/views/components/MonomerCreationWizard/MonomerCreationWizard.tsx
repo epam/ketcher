@@ -18,8 +18,9 @@ import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
+import { onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -50,6 +51,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { TextField, Autocomplete } from '@mui/material';
+import tools from '../../../action/tools';
 
 const initialWizardState: WizardState = {
   values: {
@@ -360,6 +362,7 @@ const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
+  const dispatch = useDispatch();
 
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
@@ -520,6 +523,7 @@ const MonomerCreationWizard = () => {
 
   const handleDiscard = () => {
     editor.closeMonomerCreationWizard();
+    dispatch(onAction(tools['select-rectangle'].action));
     resetWizard();
   };
 
@@ -616,6 +620,7 @@ const MonomerCreationWizard = () => {
       aliasHELM,
     });
 
+    dispatch(onAction(tools['select-rectangle'].action));
     resetWizard();
   };
 
@@ -942,6 +947,7 @@ const MonomerCreationWizard = () => {
                     modificationTypes,
                     aliasHELM,
                   });
+                  dispatch(onAction(tools['select-rectangle'].action));
                   resetWizard();
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),

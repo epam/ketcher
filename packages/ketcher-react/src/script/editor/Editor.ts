@@ -1451,6 +1451,13 @@ class Editor implements KetcherEditor {
         undefined,
         undefined,
         atomIdMap,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true,
       );
 
       const originalToSelectedAtomsIdMap = new Map<number, number>();
@@ -1497,7 +1504,21 @@ class Editor implements KetcherEditor {
       });
 
       // fully recreate canvas
-      this.struct(this.struct().clone());
+      this.struct(
+        this.struct().clone(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        ),
+      );
 
       struct = this.struct();
 

@@ -32,9 +32,37 @@ test.beforeAll(async ({ initMoleculesCanvas }) => {
   });
 });
 test.afterAll(async ({ closePage }) => {
+  await page.evaluate(async () => {
+    window.ketcher.editor.unsubscribe('libraryUpdate', console.log);
+  });
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+const waitForLibraryUpdate = (page: Page, timeout = 10_000) =>
+  page.evaluate(
+    ({ timeout }) =>
+      new Promise<string>((resolve, reject) => {
+        const timer = window.setTimeout(() => {
+          cleanup();
+          reject(new Error('Timed out waiting for libraryUpdate'));
+        }, timeout);
+
+        const subscriber = window.ketcher.editor.subscribe(
+          'libraryUpdate',
+          (sdf: string) => {
+            cleanup();
+            resolve(sdf);
+          },
+        );
+
+        function cleanup() {
+          window.clearTimeout(timer);
+          window.ketcher.editor.unsubscribe('libraryUpdate', subscriber);
+        }
+      }),
+    { timeout },
+  );
 
 test(`1. Check that system sends update on peptide monomer creation`, async () => {
   /*
@@ -50,10 +78,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -92,6 +117,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
     HELMAlias: 'PeptTest',
   });
 
+  const libraryUpdateSDF = await libraryUpdatePromise;
   await verifyConsoleExport(
     libraryUpdateSDF,
     'SDF/Chromium-popup/Monomer-creation-event/Peptide-monomer-expected.sdf',
@@ -112,10 +138,7 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -131,6 +154,8 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseTest',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -152,10 +177,7 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -170,6 +192,8 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
     name: 'Sugar Test monomer',
     HELMAlias: 'SugarTest',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -191,10 +215,7 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -209,6 +230,8 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
     name: 'Phosphate Test monomer',
     HELMAlias: 'PhosphateTest',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -230,10 +253,7 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -248,6 +268,8 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -269,10 +291,7 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -286,6 +305,8 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
     symbol: Chem.CHEM.alias,
     name: 'CHEM Test monomer',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -307,10 +328,7 @@ test(`7. Check that system sends update on peptide monomer without modification 
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -326,6 +344,8 @@ test(`7. Check that system sends update on peptide monomer without modification 
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'PeptTest',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -347,10 +367,7 @@ test(`8. Check that system sends update on peptide monomer without modification 
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -365,6 +382,8 @@ test(`8. Check that system sends update on peptide monomer without modification 
     name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -386,10 +405,7 @@ test(`9. Check that system sends update on base monomer without HELM alias creat
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -404,6 +420,8 @@ test(`9. Check that system sends update on base monomer without HELM alias creat
     name: 'Base2 Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -425,10 +443,7 @@ test(`10. Check that system sends update on sugar monomer without HELM alias cre
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -442,6 +457,8 @@ test(`10. Check that system sends update on sugar monomer without HELM alias cre
     symbol: Sugar.Sugar2.alias,
     name: 'Sugar2 Test monomer',
   });
+
+  const libraryUpdateSDF = await libraryUpdatePromise;
 
   await verifyConsoleExport(
     libraryUpdateSDF,
@@ -463,10 +480,7 @@ test(`11. Check that system sends update on phosphate monomer without HELM alias
    *
    * Version 3.10
    */
-  let libraryUpdateSDF = '';
-  page.on('console', (msg) => {
-    libraryUpdateSDF = msg.text();
-  });
+  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -481,6 +495,7 @@ test(`11. Check that system sends update on phosphate monomer without HELM alias
     name: 'Phosphate2 Test monomer',
   });
 
+  const libraryUpdateSDF = await libraryUpdatePromise;
   await verifyConsoleExport(
     libraryUpdateSDF,
     'SDF/Chromium-popup/Monomer-creation-event/Phosphate2-monomer-expected.sdf',

@@ -1387,6 +1387,7 @@ class Editor implements KetcherEditor {
     ketcher.updateMonomersLibrary(libraryItem, {
       format: 'ket',
       shouldPersist: true,
+      needDispatchLibraryUpdateEvent: true,
     });
   }
 

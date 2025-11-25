@@ -1,14 +1,14 @@
+/* eslint-disable no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { takeEditorScreenshot } from '@utils/canvas';
+import { delay, takeElementScreenshot } from '@utils/canvas';
 import { openFileAndAddToCanvasMacro } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
@@ -22,10 +22,7 @@ test.describe('Monomer bond tool', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
-  test.afterEach(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.afterEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -42,17 +39,17 @@ test.describe('Monomer bond tool', () => {
      * Version 3.10
      */
     const bondLine = getBondLocator(page, {});
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasMacro(
       page,
       'KET/Chromium-popup/two-nucleotides.ket',
     );
     await ContextMenu(page, bondLine).open();
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-    });
+    await delay(0.2);
+    await takeElementScreenshot(
+      page,
+      ContextMenu(page, bondLine).contextMenuBody,
+      { padding: 1 },
+    );
   });
 
   test('Case 2: Check that "Edit Connection Points" dialogues have their title changed to "Edit Attachment Points" in opened context window', async () => {
@@ -68,9 +65,6 @@ test.describe('Monomer bond tool', () => {
      * Version 3.10
      */
     const bondLine = getBondLocator(page, {});
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasMacro(
       page,
       'KET/Chromium-popup/two-nucleotides.ket',
@@ -78,9 +72,7 @@ test.describe('Monomer bond tool', () => {
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditAttachmentPoints,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-    });
+    await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
   });
 
   test('Case 3: Check that "Select Connection Points" dialogues have their title changed to "Select Attachment Points" in opened context window', async () => {
@@ -101,7 +93,7 @@ test.describe('Monomer bond tool', () => {
       getMonomerLocator(page, Chem.Test_6_Ch),
       getMonomerLocator(page, Chem.A6OH),
     );
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
     await AttachmentPointsDialog(page).cancel();
   });
 });

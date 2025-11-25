@@ -60,6 +60,7 @@ export class MonomerMicromolecule extends SGroup {
 
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
+        false,
       );
     }
 

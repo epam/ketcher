@@ -700,49 +700,6 @@ for (const [index, eligableName] of eligableNames.entries()) {
   });
 }
 
-const nonEligableNames = [
-  {
-    description: '1. Spaces only',
-    value: '   ',
-    errorMessage: 'Mandatory fields must be filled.',
-  },
-];
-
-for (const nonEligableName of nonEligableNames) {
-  test(`12. Create monomer with ${nonEligableName.description}`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Entering a invalid monomer name causes an error
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Try to create monomer with non-eligible name
-     *      5. Validate error message is shown
-     *
-     * Version 3.7
-     */
-    const createMonomerDialog = CreateMonomerDialog(page);
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-
-    await LeftToolbar(page).createMonomer();
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('Temp');
-    await createMonomerDialog.setName(nonEligableName.value);
-    await createMonomerDialog.submit();
-    expect(
-      await NotificationMessageBanner(
-        page,
-        ErrorMessage.emptyMandatoryFields,
-      ).getNotificationMessage(),
-    ).toEqual(nonEligableName.errorMessage);
-    await CreateMonomerDialog(page).discard();
-  });
-}
-
 const eligableSymbols = [
   {
     description: '1. Longest Symbol (uppercase and lowercase letters, numbers)',

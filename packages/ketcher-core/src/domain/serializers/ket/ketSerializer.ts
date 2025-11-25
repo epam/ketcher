@@ -1065,7 +1065,7 @@ export class KetSerializer implements Serializer<Struct> {
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
           sgroup.removeAttachmentPoint(attachmentPointToDelete);
-          sgroup.addAttachmentPoint(attachmentPointToAdd);
+          sgroup.addAttachmentPoint(attachmentPointToAdd, false);
         },
       );
     });

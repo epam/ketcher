@@ -490,16 +490,7 @@ const MonomerCreationWizard = () => {
       setModificationTypes([]);
     }
     if (fieldId === 'type') {
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId: 'type',
-        value: value as KetMonomerClass,
-      });
-
-      if (
-        (type === KetMonomerClass.RNA || value === KetMonomerClass.RNA) &&
-        type !== value
-      ) {
+      if ((type === 'rnaPreset' || value === 'rnaPreset') && type !== value) {
         wizardStateDispatch({
           type: 'ResetWizard',
         });
@@ -510,6 +501,12 @@ const MonomerCreationWizard = () => {
           value: '',
         });
       }
+
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'type',
+        value: value as KetMonomerClass,
+      });
     } else {
       wizardStateDispatch({
         type: 'SetFieldValue',

@@ -33,55 +33,68 @@ const findMaps = {
   texts: findClosestText,
 };
 
+function calculateTextDistances(cursorPosition, bounds) {
+  const { topX, topY, bottomX, bottomY } = bounds;
+  const distances = [];
+
+  const withinHorizontalBounds =
+    cursorPosition.x >= topX && cursorPosition.x <= bottomX;
+  const withinVerticalBounds =
+    cursorPosition.y >= topY && cursorPosition.y <= bottomY;
+
+  if (withinHorizontalBounds) {
+    if (cursorPosition.y < topY) {
+      distances.push(topY - cursorPosition.y);
+    } else if (cursorPosition.y > bottomY) {
+      distances.push(cursorPosition.y - bottomY);
+    } else {
+      distances.push(cursorPosition.y - topY, bottomY - cursorPosition.y);
+    }
+  }
+
+  if (cursorPosition.x < topX && cursorPosition.y < topY) {
+    distances.push(Vec2.dist(new Vec2(topX, topY), cursorPosition));
+  }
+
+  if (cursorPosition.x > bottomX && cursorPosition.y > bottomY) {
+    distances.push(Vec2.dist(new Vec2(bottomX, bottomY), cursorPosition));
+  }
+
+  if (cursorPosition.x < topX && cursorPosition.y > bottomY) {
+    distances.push(Vec2.dist(new Vec2(topX, bottomY), cursorPosition));
+  }
+
+  if (cursorPosition.x > bottomX && cursorPosition.y < topY) {
+    distances.push(Vec2.dist(new Vec2(bottomX, topY), cursorPosition));
+  }
+
+  if (withinVerticalBounds) {
+    if (cursorPosition.x < topX) {
+      distances.push(topX - cursorPosition.x);
+    } else if (cursorPosition.x > bottomX) {
+      distances.push(cursorPosition.x - bottomX);
+    } else {
+      distances.push(SELECTION_WITHIN_TEXT);
+    }
+  }
+
+  return distances;
+}
+
 function findClosestText(restruct, cursorPosition) {
   let minDist = null;
   let ret = null;
 
   restruct.texts.forEach((text, id) => {
     const referencePoints = text.getReferencePoints(restruct);
-    const topX = referencePoints[0].x;
-    const topY = referencePoints[0].y;
-    const bottomX = referencePoints[2].x;
-    const bottomY = referencePoints[2].y;
+    const bounds = {
+      topX: referencePoints[0].x,
+      topY: referencePoints[0].y,
+      bottomX: referencePoints[2].x,
+      bottomY: referencePoints[2].y,
+    };
 
-    const distances = [];
-
-    if (cursorPosition.x >= topX && cursorPosition.x <= bottomX) {
-      if (cursorPosition.y < topY) {
-        distances.push(topY - cursorPosition.y);
-      } else if (cursorPosition.y > bottomY) {
-        distances.push(cursorPosition.y - bottomY);
-      } else {
-        distances.push(cursorPosition.y - topY, bottomY - cursorPosition.y);
-      }
-    }
-
-    if (cursorPosition.x < topX && cursorPosition.y < topY) {
-      distances.push(Vec2.dist(new Vec2(topX, topY), cursorPosition));
-    }
-
-    if (cursorPosition.x > bottomX && cursorPosition.y > bottomY) {
-      distances.push(Vec2.dist(new Vec2(bottomX, bottomY), cursorPosition));
-    }
-
-    if (cursorPosition.x < topX && cursorPosition.y > bottomY) {
-      distances.push(Vec2.dist(new Vec2(topX, bottomY), cursorPosition));
-    }
-
-    if (cursorPosition.x > bottomX && cursorPosition.y < topY) {
-      distances.push(Vec2.dist(new Vec2(bottomX, topY), cursorPosition));
-    }
-
-    if (cursorPosition.y >= topY && cursorPosition.y <= bottomY) {
-      if (cursorPosition.x < topX) {
-        distances.push(topX - cursorPosition.x);
-      } else if (cursorPosition.x > bottomX) {
-        distances.push(cursorPosition.x - bottomX);
-      } else {
-        distances.push(SELECTION_WITHIN_TEXT);
-      }
-    }
-
+    const distances = calculateTextDistances(cursorPosition, bounds);
     const dist = Math.min(...distances);
 
     if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {

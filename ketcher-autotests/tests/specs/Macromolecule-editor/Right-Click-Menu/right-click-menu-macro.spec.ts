@@ -87,7 +87,7 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
     ContextMenu(page, peptideA).contextMenuBody,
   );
   await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
+  await expect(pasteOption).toBeEnabled();
   await expect(deleteOption).toBeEnabled();
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -98,7 +98,7 @@ test(`1. Verify context menu in Snake and Flex modes when right-clicking a monom
     ContextMenu(page, peptideA).contextMenuBody,
   );
   await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
+  await expect(pasteOption).toBeEnabled();
   await expect(deleteOption).toBeEnabled();
 });
 
@@ -145,7 +145,7 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
     ContextMenu(page, peptideD).contextMenuBody,
   );
   await expect(copyOption).toBeEnabled();
-  await expect(pasteOption).toBeDisabled();
+  await expect(pasteOption).toBeEnabled();
   await expect(deleteOption).toBeEnabled();
 
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

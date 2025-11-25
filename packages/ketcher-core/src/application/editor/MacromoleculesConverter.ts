@@ -354,6 +354,7 @@ export class MacromoleculesConverter {
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
     struct.setStereoLabelsToAtoms();
+    struct.applyStereoBondsToExpandedMonomers();
     struct.markFragments();
 
     return { struct, reStruct, conversionErrorMessage };

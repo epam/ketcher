@@ -83,7 +83,7 @@ class TemplatePreview {
     this.hideFloatingPreview();
   }
 
-  private getPreviewTarget() {
+  private getPreviewTarget(event: PointerEvent) {
     const ci: ClosestItemType | null = this.editor.findItem(event, [
       'atoms',
       'bonds',
@@ -103,7 +103,7 @@ class TemplatePreview {
     );
 
     const struct = this.editor.struct();
-    const previewTarget = this.getPreviewTarget();
+    const previewTarget = this.getPreviewTarget(event);
     const isMouseAwayFromAtomsAndBonds = !previewTarget;
     const isPreviewTargetChanged =
       previewTarget && this.lastPreviewId !== getUniqueCiId(previewTarget);

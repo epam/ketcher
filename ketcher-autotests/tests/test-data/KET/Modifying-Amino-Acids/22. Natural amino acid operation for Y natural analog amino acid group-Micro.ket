@@ -719,6 +719,9 @@
                 "type": "side"
             }
         ],
+        "modificationTypes": [
+            "Natural amino acid"
+        ],
         "naturalAnalogShort": "Y"
     },
     "monomer1": {

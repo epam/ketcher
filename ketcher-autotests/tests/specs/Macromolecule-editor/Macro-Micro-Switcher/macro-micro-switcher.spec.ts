@@ -7,7 +7,6 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, expect, test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
   MolFileFormat,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
@@ -34,7 +33,6 @@ import {
 import { delay, MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   FileType,
   verifyFileExport,
@@ -108,6 +106,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 const topLeftCorner = {
   x: -325,
@@ -128,7 +127,7 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-export let page: Page;
+let page: Page;
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
@@ -292,13 +291,10 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    const monomerOnTheCanvas = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('A6OH');
+    const monomerOnTheCanvas = getAbbreviationLocator(page, { name: 'A6OH' });
     await monomerOnTheCanvas.hover();
     await ContextMenu(page, monomerOnTheCanvas).open();
-    await waitForMonomerPreviewMicro(page);
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -431,7 +427,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -447,7 +443,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      await readFileContent(
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
+      ),
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -511,12 +509,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
-    const test6Ch = page
-      .getByTestId(KETCHER_CANVAS)
-      .getByText(Chem.Test_6_Ch.alias);
+    const test6Ch = getAbbreviationLocator(page, {
+      name: Chem.Test_6_Ch.alias,
+    });
     await test6Ch.hover();
     await ContextMenu(page, test6Ch).open();
-    await waitForMonomerPreviewMicro(page);
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -786,7 +784,7 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToCanvas(
         page,
-        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+        await readFileContent('KET/one-functional-group-expanded.ket'),
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
         from: 'pageTopLeft',
@@ -814,7 +812,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.MOLv3000,
-        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
         from: 'pageTopLeft',

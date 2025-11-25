@@ -584,18 +584,11 @@ test.describe('Import modified .mol files from external editor', () => {
 
 test.describe('Base monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Base) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
-
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (Base) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '04 - (R1,R2) - R3 gap',
@@ -633,17 +626,11 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
 test.describe('CHEM monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (CHEM) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (CHEM) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -688,17 +675,11 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
 
 test.describe('Peptide monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Peptide) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (Peptide) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -738,17 +719,11 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
 
 test.describe('Phosphate monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Phosphate) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   * Test case: https://github.com/epam/ketcher/issues/3780
+   * Description: These bunch of tests validates that system correctly load every type of monomer
+   * (Phosphate) from .mol file, correctly show them on canvas (name, shape, color),
+   * shows correct number or connections and shows correct preview tooltip
+   */
 
   const fileNames = [
     '01 - (R1) - Left only',
@@ -793,12 +768,6 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     Description: These bunch of tests validates that system correctly load every type of monomer
     (Sugar) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
   */
   const fileNames = [
     '01 - (R1) - Left only',

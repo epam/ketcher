@@ -253,29 +253,6 @@ test.describe('Connection rules for Base monomers: ', () => {
     };
   }
 
-  /*
-  test(`temporary test for debug purposes1`, async () => {
-    await bondTwoMonomersPointToPoint(
-      page,
-      baseMonomers['(R1,R2,R3)'],
-      baseMonomers['(R1,R3,R4)'],
-      AttachmentPoint.R3,
-      AttachmentPoint.R1,
-      MacroBondType.Single,
-    );
-  });
-  test(`temporary test for debug purposes2`, async () => {
-    await bondTwoMonomersByPointToPoint(
-      page,
-      baseMonomers['(R1,R2,R3)'],
-      baseMonomers['(R1,R3,R4)'],
-      AttachmentPoint.R3,
-      AttachmentPoint.R4,
-      MacroBondType.Single,
-    );
-  });
-  */
-
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       Object.values(leftBase.attachmentPoints).forEach(

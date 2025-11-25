@@ -27,6 +27,8 @@ import {
   SGroupRemoveFromHierarchy,
   AtomDelete,
   BondDelete,
+  BondAttr,
+  BondAdd,
 } from '../operations';
 import {
   BaseMonomer,
@@ -35,6 +37,8 @@ import {
   SGroupAttachmentPoint,
   Vec2,
   BondAttributes,
+  Bond,
+  Struct,
 } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
@@ -50,6 +54,32 @@ import Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
+import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+
+const fromMonomerBondFlipWithNewStereo = (
+  struct: Struct,
+  bondId: number,
+  stereo: number,
+) => {
+  const bond = struct.bonds.get(bondId);
+  if (!bond) {
+    return;
+  }
+
+  const action = new Action();
+
+  const bondWithStereo = {
+    ...bond,
+    stereo,
+    beginSuperatomAttachmentPointNumber: bond.endSuperatomAttachmentPointNumber,
+    endSuperatomAttachmentPointNumber: bond.beginSuperatomAttachmentPointNumber,
+  };
+
+  action.addOp(new BondDelete(bondId));
+  action.addOp(new BondAdd(bond.end, bond.begin, bondWithStereo));
+
+  return action;
+};
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -109,9 +139,11 @@ export function setExpandSGroup(
     action.addOp(new SGroupAttr(sgid, key, attrs[key]));
   });
 
-  const sgroup = restruct.molecule.sgroups.get(sgid);
+  const struct = restruct.molecule;
+
+  const sgroup = struct.sgroups.get(sgid);
   assert(sgroup != null);
-  const atoms = SGroup.getAtoms(restruct, sgroup);
+  const atoms = SGroup.getAtoms(struct, sgroup);
 
   atoms.forEach((aid) => {
     action.mergeWith(
@@ -129,7 +161,9 @@ export function setExpandMonomerSGroup(
 ) {
   const action = new Action();
 
-  const sGroup = restruct.molecule.sgroups.get(sgid);
+  const struct = restruct.molecule;
+
+  const sGroup = struct.sgroups.get(sgid);
   assert(sGroup != null);
 
   if (attrs.expanded === sGroup.isExpanded()) {
@@ -140,12 +174,12 @@ export function setExpandMonomerSGroup(
     action.addOp(new SGroupAttr(sgid, key, attrs[key]));
   });
 
-  const sGroupAtoms = SGroup.getAtoms(restruct, sGroup);
+  const sGroupAtoms: Set<number> = new Set(SGroup.getAtoms(struct, sGroup));
   const attachmentPoints = sGroup.getAttachmentPoints();
-  const bondsToOutside = restruct.molecule.bonds.filter((_, bond) => {
+  const bondsToOutside = struct.bonds.filter((_, bond) => {
     return (
-      (sGroupAtoms.includes(bond.begin) && !sGroupAtoms.includes(bond.end)) ||
-      (sGroupAtoms.includes(bond.end) && !sGroupAtoms.includes(bond.begin))
+      (sGroupAtoms.has(bond.begin) && !sGroupAtoms.has(bond.end)) ||
+      (sGroupAtoms.has(bond.end) && !sGroupAtoms.has(bond.begin))
     );
   });
 
@@ -163,11 +197,103 @@ export function setExpandMonomerSGroup(
     }
   }
 
-  const sGroupBBox = SGroup.getObjBBox(sGroupAtoms, restruct.molecule);
+  bondsToOutside.forEach((bondToOutside, bondId) => {
+    const atomInsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
+      ? bondToOutside.begin
+      : bondToOutside.end;
+    const atomOutsideCurrentMonomer = sGroupAtoms.has(bondToOutside.begin)
+      ? bondToOutside.end
+      : bondToOutside.begin;
+
+    const outsideAtomSGroups = struct.atoms.get(atomOutsideCurrentMonomer)?.sgs;
+    if (!outsideAtomSGroups || outsideAtomSGroups.size === 0) {
+      return;
+    }
+
+    for (const otherSGroupId of outsideAtomSGroups.values()) {
+      const otherSGroup = struct.sgroups.get(otherSGroupId);
+      if (!otherSGroup || otherSGroupId === sgid) {
+        continue;
+      }
+
+      if (!attrs.expanded) {
+        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+        continue;
+      }
+
+      if (!otherSGroup.isExpanded()) {
+        continue;
+      }
+
+      const currentMonomerAP = attachmentPoints.find(
+        (ap) => ap.atomId === atomInsideCurrentMonomer,
+      );
+      if (!currentMonomerAP) {
+        continue;
+      }
+
+      const otherMonomerAPs = otherSGroup.getAttachmentPoints();
+      const otherMonomerAP = otherMonomerAPs.find(
+        (ap) => ap.atomId === atomOutsideCurrentMonomer,
+      );
+      if (!otherMonomerAP) {
+        continue;
+      }
+
+      const currentMonomerStereo = getAttachmentPointStereoBond(
+        sGroup,
+        currentMonomerAP,
+      );
+      const otherMonomerStereo = getAttachmentPointStereoBond(
+        otherSGroup,
+        otherMonomerAP,
+      );
+
+      const hasCurrentStereo =
+        currentMonomerStereo !== null &&
+        currentMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+      const hasOtherStereo =
+        otherMonomerStereo !== null &&
+        otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+
+      if (hasCurrentStereo && !hasOtherStereo) {
+        if (bondToOutside.begin !== atomInsideCurrentMonomer) {
+          action.mergeWith(
+            fromMonomerBondFlipWithNewStereo(
+              struct,
+              bondId,
+              currentMonomerStereo,
+            ),
+          );
+        } else {
+          action.addOp(new BondAttr(bondId, 'stereo', currentMonomerStereo));
+        }
+      } else if (!hasCurrentStereo && hasOtherStereo) {
+        if (bondToOutside.begin !== atomOutsideCurrentMonomer) {
+          action.mergeWith(
+            fromMonomerBondFlipWithNewStereo(
+              struct,
+              bondId,
+              otherMonomerStereo,
+            ),
+          );
+        } else {
+          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereo));
+        }
+      } else if (hasCurrentStereo && hasOtherStereo) {
+        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+      }
+    }
+  });
+
+  const sGroupBBox = SGroup.getObjBBox(
+    Array.from(sGroupAtoms.values()),
+    struct,
+  );
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
   const sGroupCenter = sGroup.isContracted()
-    ? sGroup.getContractedPosition(restruct.molecule).position
+    ? sGroup.getContractedPosition(struct).position
     : sGroup.pp;
 
   const visitedAtoms = new Set<number>();
@@ -191,7 +317,7 @@ export function setExpandMonomerSGroup(
         }
         visitedSGroups.add(anotherSGroupId);
 
-        const anotherSGroup = restruct.molecule.sgroups.get(anotherSGroupId);
+        const anotherSGroup = struct.sgroups.get(anotherSGroupId);
         if (!anotherSGroup) {
           continue;
         }
@@ -204,18 +330,14 @@ export function setExpandMonomerSGroup(
       }
     }
 
-    const atom = restruct.atoms.get(atomId);
+    const atom = struct.atoms.get(atomId);
     if (atom) {
       const previousArray = atomsToMove.get(subStructureKey) ?? [];
       atomsToMove.set(subStructureKey, previousArray.concat(atomId));
 
-      atom.a.neighbors.forEach((halfBondId) => {
-        const neighborAtomId =
-          restruct.molecule?.halfBonds?.get(halfBondId)?.end;
-        if (
-          neighborAtomId === undefined ||
-          sGroupAtoms.includes(neighborAtomId)
-        ) {
+      atom.neighbors.forEach((halfBondId) => {
+        const neighborAtomId = struct?.halfBonds?.get(halfBondId)?.end;
+        if (neighborAtomId === undefined || sGroupAtoms.has(neighborAtomId)) {
           return;
         }
 
@@ -234,13 +356,13 @@ export function setExpandMonomerSGroup(
 
   sGroupsToMove.forEach((sGroupIds) => {
     sGroupIds.forEach((sGroupId) => {
-      const movableSGroup = restruct.molecule.sgroups.get(sGroupId);
+      const movableSGroup = struct.sgroups.get(sGroupId);
       if (!movableSGroup) {
         return;
       }
 
       const movableSGroupCenter = movableSGroup.isContracted()
-        ? movableSGroup.getContractedPosition(restruct.molecule).position
+        ? movableSGroup.getContractedPosition(struct).position
         : movableSGroup?.pp;
       if (!sGroupCenter || !movableSGroupCenter) {
         return;
@@ -261,31 +383,33 @@ export function setExpandMonomerSGroup(
         movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
         movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD;
 
-      const movableSGroupAtoms = SGroup.getAtoms(restruct, movableSGroup);
-      const movableSGroupBondsToOutside = restruct.molecule.bonds.filter(
-        (_, bond) => {
-          return (
-            (movableSGroupAtoms.includes(bond.begin) &&
-              !movableSGroupAtoms.includes(bond.end)) ||
-            (movableSGroupAtoms.includes(bond.end) &&
-              !movableSGroupAtoms.includes(bond.begin))
-          );
-        },
+      const movableSGroupAtoms: Set<number> = new Set(
+        SGroup.getAtoms(struct, movableSGroup),
       );
+      const movableSGroupBondsToOutside = struct.bonds.filter((_, bond) => {
+        return (
+          (movableSGroupAtoms.has(bond.begin) &&
+            !movableSGroupAtoms.has(bond.end)) ||
+          (movableSGroupAtoms.has(bond.end) &&
+            !movableSGroupAtoms.has(bond.begin))
+        );
+      });
 
       const hasComplementaryBondToMainLine =
         movableSGroupBondsToOutside.size === 1 &&
         [...sameLine.values()].some((sGroupId) => {
-          const mainLineSGroup = restruct.molecule.sgroups.get(sGroupId);
+          const mainLineSGroup = struct.sgroups.get(sGroupId);
           if (!mainLineSGroup) {
             return false;
           }
 
-          const mainLineSGroupAtoms = SGroup.getAtoms(restruct, mainLineSGroup);
+          const mainLineSGroupAtoms: Set<number> = new Set(
+            SGroup.getAtoms(struct, mainLineSGroup),
+          );
           const bond = [...movableSGroupBondsToOutside.values()][0];
           return (
-            mainLineSGroupAtoms.includes(bond.begin) ||
-            mainLineSGroupAtoms.includes(bond.end)
+            mainLineSGroupAtoms.has(bond.begin) ||
+            mainLineSGroupAtoms.has(bond.end)
           );
         });
 
@@ -305,7 +429,7 @@ export function setExpandMonomerSGroup(
       return acc;
     }
 
-    const sGroupInLineAtoms = SGroup.getAtoms(restruct, sGroupInLine);
+    const sGroupInLineAtoms = SGroup.getAtoms(struct, sGroupInLine);
     const sGroupInLineBBox = SGroup.getObjBBox(
       sGroupInLineAtoms,
       restruct.molecule,
@@ -365,7 +489,7 @@ export function setExpandMonomerSGroup(
         ? moveVector
         : moveVector.negated();
 
-      const movableSGroupAtoms = SGroup.getAtoms(restruct, movableSGroup);
+      const movableSGroupAtoms = SGroup.getAtoms(struct, movableSGroup);
       movableSGroupAtoms.forEach((aid) => {
         action.addOp(new AtomMove(aid, finalMoveVector));
         handledAtoms.add(aid);

@@ -286,6 +286,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Inversion"
+        ],
         "naturalAnalogShort": "M"
     },
     "monomer1": {

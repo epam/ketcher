@@ -86,8 +86,9 @@ Object {
           >
             <button
               class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
+              data-testid="update-sequence-cancel-button"
               tabindex="0"
-              title="Cancel"
+              title=""
               type="button"
             >
               Cancel
@@ -97,8 +98,9 @@ Object {
             </button>
             <button
               class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
+              data-testid="update-sequence-yes-button"
               tabindex="0"
-              title="Yes"
+              title=""
               type="button"
             >
               Yes

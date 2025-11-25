@@ -10,6 +10,8 @@ import {
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 type BoundingBox = {
   width: number;
@@ -218,6 +220,14 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
   await dragMouseTo(coordinatesWithShift, y, page);
+}
+
+export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
+  await CommonLeftToolbar(page).handTool();
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(x, y);
+  await dragMouseTo(x + xShift, y + yShift, page);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 }
 
 export async function clickByLink(page: Page, url: string) {

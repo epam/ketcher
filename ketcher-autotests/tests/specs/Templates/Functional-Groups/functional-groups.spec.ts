@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  FILE_TEST_DATA,
   clickOnAtom,
   moveOnAtom,
   clickOnCanvas,
@@ -15,6 +14,7 @@ import {
   deleteByKeyboard,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
+  readFileContent,
 } from '@utils';
 import {
   copyAndPaste,
@@ -259,10 +259,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2892
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.expandedAndContractedFg,
+    const fileContent = await readFileContent(
+      'KET/expanded-and-contracted-fg.ket',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

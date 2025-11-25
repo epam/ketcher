@@ -47,10 +47,9 @@ test.describe('Open/save file tests: ', () => {
     const cntxt = page.context();
     await page.close();
     await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
+    browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   test(`Check that it is possible to select all text by CTRL+A and delete it in 'Paste from Clipboard modal window`, async () => {

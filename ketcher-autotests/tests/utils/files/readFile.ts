@@ -79,7 +79,7 @@ export async function openFileAndAddToCanvas(
 export async function openFileAndAddToCanvasMacro(
   page: Page,
   filename: string,
-  structureFormat = MacroFileType.KetFormat,
+  structureFormat: StructureFormat = MacroFileType.KetFormat,
   errorMessageExpected = false,
 ) {
   await CommonTopLeftToolbar(page).openFile();
@@ -199,7 +199,7 @@ async function setupStructureFormatComboboxes(
   page: Page,
   structureFormat: StructureFormat,
 ) {
-  let structureType: MacroFileType = MacroFileType.KetFormat;
+  let structureType = MacroFileType.KetFormat;
   let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
   let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
 

@@ -64,7 +64,7 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-export let page: Page;
+let page: Page;
 
 test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();

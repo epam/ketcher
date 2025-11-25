@@ -424,6 +424,9 @@
                 "type": "right"
             }
         ],
+        "modificationTypes": [
+            "Citrullination"
+        ],
         "naturalAnalogShort": "R"
     },
     "monomer1": {

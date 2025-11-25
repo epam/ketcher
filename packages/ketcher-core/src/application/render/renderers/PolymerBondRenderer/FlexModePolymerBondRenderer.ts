@@ -359,18 +359,14 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-      this.hoverAreaElement
-    )) = this.rootElement
+    this.hoverAreaElement = this.rootElement
       ?.append('path')
       .attr('d', this.path)
       .attr('fill', 'none')
       .attr('stroke', 'transparent')
       .attr('stroke-width', '10');
 
-    (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
-      this.hoverCircleAreaElement
-    )) = this.rootElement
+    this.hoverCircleAreaElement = this.rootElement
       ?.append('circle')
       .attr('cursor', 'pointer')
       .attr('r', '1')
@@ -378,7 +374,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none')
       .attr('stroke-width', '10')
       .attr('cx', this.scaledPosition.endPosition.x)
-      .attr('cy', this.scaledPosition.endPosition.y);
+      .attr('cy', this.scaledPosition.endPosition.y) as
+      | D3SvgElementSelection<SVGCircleElement | SVGGElement, void>
+      | undefined;
   }
 
   public appendHover(): void {

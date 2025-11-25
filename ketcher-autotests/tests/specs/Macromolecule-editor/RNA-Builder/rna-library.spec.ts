@@ -417,10 +417,10 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3SS6)', async () => {
+  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3FAM)', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas https://github.com/epam/ketcher/issues/3615
-    Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3SS6).
+    Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3FAM).
     Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
     // Reload the page to reset the state, as previous tests affects the RNA-bulder state
@@ -430,7 +430,7 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.selectSugarSlot();
-    await Library(page).selectMonomer(Sugar._3SS6);
+    await Library(page).selectMonomer(Sugar._3FAM);
     await Library(page).rnaBuilder.selectSugarSlot();
     await takeRNABuilderScreenshot(page);
   });
@@ -1622,95 +1622,67 @@ test.describe('RNA Library', () => {
     }
   });
 
-  test(
-    'Ambiguous Amino Acids section checks',
-    {
-      tag: ['@IncorrectResultBecauseOfBug'],
-    },
-    async () => {
-      /*
-   *Test task: https://github.com/epam/ketcher/issues/5558
-   *Cases:
-   *  1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
-      2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
-      3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
+  test('Ambiguous Amino Acids section checks', async () => {
+    /*
+     *Test task: https://github.com/epam/ketcher/issues/5558
+     *Cases:
+     *  1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
+     *  2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
+     *  3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
+     */
+    await pageReload(page);
 
-      IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5578 issue.
-      Locator and assert needs to be updated after fix
-   */
-      await pageReload(page);
+    const sectionTitle = page.getByText('Ambiguous Amino Acids');
+    await Library(page).selectMonomer(Peptide.X);
+    // 1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
+    await expect(sectionTitle).toContainText('Ambiguous Amino Acids');
 
-      // const sectionTitle = page.getByText('Ambiguous Amino acids');
-      // 1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
-      // await expect(sectionTitle).toHaveText('Ambiguous Amino acids');
+    // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
+    // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeMonomerLibraryScreenshot(page);
+  });
 
-      // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
-      // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
-      await Library(page).selectMonomer(Peptide.X);
-      await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeMonomerLibraryScreenshot(page);
+  test('Ambiguous Bases section checks', async () => {
+    /*
+     *Test task: https://github.com/epam/ketcher/issues/5558
+     *Cases:
+     *  4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and
+     *     "Ambiguous RNA Bases" subsection in the RNA tab of the library
+     *  5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),
+     *     followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
+     *  6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and
+     *     "Ambiguous RNA Bases" subsection are classified as "Alternatives"
+     *
+     */
+    await pageReload(page);
 
-      // Test should be skipped if related bug exists
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/5578 issue.`,
-      );
-    },
-  );
+    const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
+    const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
+    const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');
 
-  test(
-    'Ambiguous Bases section checks',
-    {
-      tag: ['@IncorrectResultBecauseOfBug'],
-    },
-    async () => {
-      /*
-   *Test task: https://github.com/epam/ketcher/issues/5558
-   *Cases:
-   *  4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and 
-         "Ambiguous RNA Bases" subsection in the RNA tab of the library
-      5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version), 
-         followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
-      6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and 
-         "Ambiguous RNA Bases" subsection are classified as "Alternatives"
+    // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
+    await Library(page).selectMonomer(Base.DNA_N);
+    await expect(sectionAmbiguousBases).toContainText('Ambiguous Bases');
+    await expect(sectionAmbiguousDNABases).toContainText('Ambiguous DNA Bases');
+    await expect(sectionAmbiguousRNABases).toContainText('Ambiguous RNA Bases');
 
-      IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5580 issue.
-      Screenshots needs to be updated after fix
-   */
-      await pageReload(page);
+    // 5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),
+    //    followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
+    // 6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and
+    //    "Ambiguous RNA Bases" subsection are classified as "Alternatives"
+    await Library(page).selectMonomer(Base.DNA_N);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeMonomerLibraryScreenshot(page);
 
-      // const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
-      // const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
-      // const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');
+    await Library(page).selectMonomer(Base.RNA_N);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeMonomerLibraryScreenshot(page);
 
-      // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
-      // await expect(sectionAmbiguousBases).toHaveText('Ambiguous Bases');
-      // await expect(sectionAmbiguousDNABases).toHaveText('Ambiguous DNA Bases');
-      // await expect(sectionAmbiguousRNABases).toHaveText('Ambiguous RNA Bases');
-
-      // 5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),
-      //    followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
-      // 6. Verify the class designation of ambiguous monomers as "Base" and ambiguous monomers in the "Ambiguous Bases", "Ambiguous DNA Bases" and
-      //    "Ambiguous RNA Bases" subsection are classified as "Alternatives"
-      await Library(page).selectMonomer(Base.DNA_N);
-      await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeMonomerLibraryScreenshot(page);
-
-      await Library(page).selectMonomer(Base.RNA_N);
-      await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeMonomerLibraryScreenshot(page);
-
-      await Library(page).selectMonomer(Base.M);
-      await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeMonomerLibraryScreenshot(page);
-
-      // Test should be skipped if related bug exists
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/5580 issue.`,
-      );
-    },
-  );
+    await Library(page).selectMonomer(Base.M);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeMonomerLibraryScreenshot(page);
+  });
 
   const AmbiguousMonomersSearchStrings: ISearchString[] = [
     {

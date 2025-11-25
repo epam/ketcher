@@ -230,6 +230,7 @@ import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
+import ArrangeRingIcon from '../../../assets/icons/files/arrange-ring.svg';
 import {
   CREATE_MONOMER_TOOL_NAME,
   IMAGE_KEY,
@@ -492,6 +493,7 @@ export const iconNameToIcon = {
   antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
+  'arrange-ring': ArrangeRingIcon,
   'monomer-autochain': MonomerAutochainIcon,
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerIcon,
   checkFilled: CheckFilledIcon,

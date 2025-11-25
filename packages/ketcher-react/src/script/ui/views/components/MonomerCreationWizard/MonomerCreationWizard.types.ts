@@ -24,6 +24,11 @@ export type RnaPresetWizardStateFieldId =
   | 'phosphate'
   | 'preset';
 
+export type RnaPresetWizardComponentStateFieldId = Exclude<
+  RnaPresetWizardStateFieldId,
+  'preset'
+>;
+
 export type StringWizardFormFieldId = Exclude<WizardFormFieldId, 'type'>;
 
 export type WizardValues = {
@@ -76,6 +81,21 @@ export type WizardState = {
   structure?: Selection;
 };
 
+export type RnaPresetWizardStatePresetFieldValue = {
+  name: string;
+  errors: {
+    name?: boolean;
+  };
+  notifications: WizardNotifications;
+};
+
+export type RnaPresetWizardState = {
+  base: WizardState;
+  sugar: WizardState;
+  phosphate: WizardState;
+  preset: RnaPresetWizardStatePresetFieldValue;
+};
+
 export type WizardAction =
   | { type: 'SetFieldValue'; fieldId: 'type'; value: KetMonomerClass }
   | {
@@ -115,6 +135,16 @@ export type RnaPresetWizardAction =
       type: 'SetRnaPresetComponentStructure';
       rnaComponentKey: RnaPresetWizardStateFieldId;
       editor: Editor;
+    }
+  | {
+      type: 'ResetErrors';
+    }
+  | {
+      type: 'SetErrors';
+      errors: {
+        name?: boolean;
+      };
+      rnaComponentKey: RnaPresetWizardStateFieldId;
     };
 
 export type AssignedAttachmentPointsByMonomerType = Map<

@@ -29,6 +29,7 @@ import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPoin
 import {
   AssignedAttachmentPointsByMonomerType,
   RnaPresetWizardAction,
+  RnaPresetWizardState,
   RnaPresetWizardStateFieldId,
   WizardAction,
   WizardFormFieldId,
@@ -69,15 +70,16 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
 
 const initialWizardState: WizardState = getInitialWizardState();
 
-const initialRnaPresetWizardState = {
+const initialRnaPresetWizardState: RnaPresetWizardState = {
   base: getInitialWizardState(KetMonomerClass.Base),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {
     name: '',
     errors: {
-      name: null,
+      name: undefined,
     },
+    notifications: new Map(),
   },
 };
 
@@ -171,17 +173,31 @@ const wizardReducer = (
 };
 
 const rnaPresetWizardReducer = (
-  state: typeof initialRnaPresetWizardState,
+  state: RnaPresetWizardState,
   action: RnaPresetWizardAction,
-) => {
-  const { rnaComponentKey, editor, ...restAction } = action;
+): RnaPresetWizardState => {
+  if (action.type === 'ResetErrors') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        errors: {},
+      },
+    };
+  }
+
+  if (!action.rnaComponentKey) {
+    return state;
+  }
+
+  const { rnaComponentKey, ...restAction } = action;
 
   if (restAction.type === 'SetRnaPresetComponentStructure') {
     return {
       ...state,
       [rnaComponentKey]: {
         ...state[rnaComponentKey],
-        structure: editor?.selection(),
+        structure: restAction.editor?.selection(),
       },
     };
   }
@@ -193,12 +209,29 @@ const rnaPresetWizardReducer = (
     };
   }
 
+  if (restAction.type === 'SetErrors') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        errors: {
+          ...state.preset.errors,
+          ...restAction.errors,
+        },
+      },
+    };
+  }
+
   if (restAction.type === 'SetFieldValue') {
     return {
       ...state,
       preset: {
         ...state.preset,
         [restAction.fieldId]: restAction.value,
+        errors: {
+          ...state.preset.errors,
+          [restAction.fieldId]: undefined,
+        },
       },
     };
   }
@@ -685,8 +718,6 @@ const MonomerCreationWizard = () => {
   const validateRnaPresetWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
   ) => {
-    // Validation is copy pasted from validateMonomerWizard and extended
-    // Need to move same part in separate method
     let needSaveMonomers = true;
     const componentsToValidate: Array<{
       name: Exclude<RnaPresetWizardStateFieldId, 'preset'>;
@@ -706,7 +737,35 @@ const MonomerCreationWizard = () => {
       },
     ];
 
+    if (!rnaPresetWizardState.preset.name?.trim()) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          name: true,
+        },
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'emptyMandatoryFields',
+            {
+              type: 'error',
+              message: NotificationMessages.emptyMandatoryFields,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
     componentsToValidate.forEach((componentToValidate) => {
+      // Next validation is copy pasted from validateMonomerWizard and extended
+      // Need to move same part in separate method
       const wizardState = componentToValidate.wizardState;
       const rnaComponentKey = componentToValidate.name;
 
@@ -746,45 +805,6 @@ const MonomerCreationWizard = () => {
         return;
       }
 
-      const {
-        notifications: attachmentPointsNotifications,
-        problematicAttachmentPoints,
-      } = validateAttachmentPoints(
-        Array.from(monomerAssignedAttachmentPoints.keys()),
-      );
-      if (attachmentPointsNotifications.size > 0) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: attachmentPointsNotifications,
-          rnaComponentKey,
-          editor,
-        });
-        editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-        return;
-      }
-
-      const {
-        errors: modificationTypesErrors,
-        notifications: modificationTypesNotifications,
-      } = validateModificationTypes(modificationTypes, naturalAnalogue);
-      if (Object.keys(modificationTypesErrors).length > 0) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: modificationTypesErrors,
-          rnaComponentKey,
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: modificationTypesNotifications,
-          rnaComponentKey,
-          editor,
-        });
-        return;
-      }
-
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {
         needSaveMonomers = false;
@@ -794,21 +814,6 @@ const MonomerCreationWizard = () => {
           rnaComponentKey,
           editor,
         });
-        return;
-      }
-
-      if (type) {
-        const leavingGroupNotifications = validateMonomerLeavingGroups(
-          editor,
-          type,
-          monomerAssignedAttachmentPoints,
-        );
-        if (leavingGroupNotifications.size > 0) {
-          needSaveMonomers = false;
-          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
-            .message;
-          setLeavingGroupDialogMessage(firstMessage);
-        }
       }
     });
 
@@ -827,6 +832,7 @@ const MonomerCreationWizard = () => {
 
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
+    rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
     const monomersToSave = isRnaPresetType

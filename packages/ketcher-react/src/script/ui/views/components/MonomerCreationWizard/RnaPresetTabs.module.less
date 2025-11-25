@@ -1,3 +1,5 @@
+@import '../../../../../style/variables.less';
+
 .styledTabsWrapper:global(.MuiTabs-root) {
   min-height: 0;
 
@@ -25,6 +27,11 @@
   text-transform: none;
   background: #fff;
   border-radius: 4px 4px 0 0;
+
+  &.errorTab {
+    border-color: @color-secondary-red !important;
+    background: #FDE0DF !important;
+  }
 
   .tabLabel {
     color: #333333;

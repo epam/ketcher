@@ -4,6 +4,8 @@ import Tabs from '@mui/material/Tabs';
 import { ChangeEvent, useEffect, useState } from 'react';
 import {
   RnaPresetWizardAction,
+  RnaPresetWizardState,
+  RnaPresetWizardStatePresetFieldValue,
   StringWizardFormFieldId,
   WizardState,
 } from './MonomerCreationWizard.types';
@@ -18,17 +20,7 @@ import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
 
 interface IRnaPresetTabsProps {
-  wizardState: {
-    base: WizardState;
-    sugar: WizardState;
-    phosphate: WizardState;
-    preset: {
-      name: string;
-      errors: {
-        name: string | null;
-      };
-    };
-  };
+  wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
 }
@@ -98,6 +90,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     editor.selection(null);
   }, [currentTabState?.structure]);
 
+  const hasErrorInTab = (
+    wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
+  ) => {
+    return Object.values(wizardState.errors).some((errorValue) =>
+      Boolean(errorValue),
+    );
+  };
+
   return (
     <div>
       <Tabs
@@ -106,22 +106,34 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         onChange={handleChange}
       >
         <Tab
-          className={styles.styledTab}
+          className={clsx(
+            styles.styledTab,
+            hasErrorInTab(wizardState.preset) && styles.errorTab,
+          )}
           label={<div className={styles.tabLabel}>Preset</div>}
           icon={<Icon name="preset" />}
         />
         <Tab
-          className={styles.styledTab}
+          className={clsx(
+            styles.styledTab,
+            hasErrorInTab(wizardState.base) && styles.errorTab,
+          )}
           label={<div className={styles.tabLabel}>Base</div>}
           icon={<Icon name="base" />}
         />
         <Tab
-          className={styles.styledTab}
+          className={clsx(
+            styles.styledTab,
+            hasErrorInTab(wizardState.sugar) && styles.errorTab,
+          )}
           label={<div className={styles.tabLabel}>Sugar</div>}
           icon={<Icon name="sugar" />}
         />
         <Tab
-          className={styles.styledTab}
+          className={clsx(
+            styles.styledTab,
+            hasErrorInTab(wizardState.phosphate) && styles.errorTab,
+          )}
           label={<div className={styles.tabLabel}>Phosphate</div>}
           icon={<Icon name="phosphate" />}
         />

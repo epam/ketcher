@@ -968,14 +968,38 @@ const MonomerCreationWizard = () => {
               params={{
                 onOk: () => {
                   setLeavingGroupDialogMessage('');
-                  editor.saveNewMonomer({
+
+                  wizardState.structure = {
+                    atoms: [...editor.render.ctab.molecule.atoms.keys()],
+                    bonds: [...editor.render.ctab.molecule.bonds.keys()],
+                  };
+
+                  const atomIdMap = new Map<number, number>();
+                  const bondIdMap = new Map<number, number>();
+                  const structure = editor.structSelected(
+                    wizardState.structure,
+                    atomIdMap,
+                    bondIdMap,
+                  );
+                  const monomerData = editor.saveNewMonomer({
                     type,
                     symbol,
                     name: name || symbol,
                     naturalAnalogue,
                     modificationTypes,
                     aliasHELM,
+                    attachmentPoints: assignedAttachmentPoints,
+                    structure,
                   });
+
+                  editor.finishNewMonomersCreation([
+                    {
+                      ...monomerData,
+                      monomerStructureInWizard: wizardState.structure,
+                      atomIdMap,
+                    },
+                  ]);
+
                   dispatch(onAction(selectRectangleAction));
                   resetWizard();
                 },

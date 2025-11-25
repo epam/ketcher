@@ -147,9 +147,10 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #3650
-    Description: After entering, only letters allowed for RNA are present on the canvas.
-    */
+     * Test case: #3650
+     * Description: After entering, only letters allowed for RNA are present on the canvas.
+     * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+     */
     await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
@@ -158,9 +159,10 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #3650
-    Description: After entering, only letters allowed for DNA are present on the canvas.
-    */
+     * Test case: #3650
+     * Description: After entering, only letters allowed for DNA are present on the canvas.
+     * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+     */
     await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
@@ -610,10 +612,11 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #5136
-    Description: Nothing happens. Monomer not added to canvas.
-    */
-    const sequenceSymbols = ['d', 'e', 'f'];
+     * Test case: #5136
+     * Description: Nothing happens. Monomer not added to canvas.
+     * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+     */
+    const sequenceSymbols = ['x', 'e', 'f'];
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
@@ -625,10 +628,10 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #5136
-    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
-    turning on "text edit" mode and placing of the caret after the first monomer.
-    */
+     * Test case: #5136
+     * Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence,
+     * turning on "text edit" mode and placing of the caret after the first monomer.
+     */
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
     await MacromoleculesTopToolbar(page).dna();
     for (const symbol of sequenceSymbols) {
@@ -642,10 +645,11 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #5136
-    Description: Nothing happens. Monomer not added to canvas.
-    */
-    const sequenceSymbols = ['d', 'e', 'f'];
+     * Test case: #5136
+     * Description: Nothing happens. Monomer not added to canvas.
+     * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+     */
+    const sequenceSymbols = ['x', 'e', 'f'];
     await MacromoleculesTopToolbar(page).dna();
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
@@ -658,12 +662,15 @@ test.describe('Sequence edit mode', () => {
     page,
   }) => {
     /*
-    Test case: #5136
-    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
-    turning on "text edit" mode and placing of the caret after the first monomer.
-    */
+     * Test case: #5136
+     * Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence,
+     * turning on "text edit" mode and placing of the caret after the first monomer.
+     *
+     * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+     */
     const sequenceSymbols = [
       'a',
+      'b',
       'c',
       'd',
       'e',
@@ -671,39 +678,28 @@ test.describe('Sequence edit mode', () => {
       'g',
       'h',
       'i',
+      'j',
       'k',
       'l',
       'm',
       'n',
+      'o',
       'p',
       'q',
       'r',
       's',
       't',
+      'u',
       'v',
       'w',
+      'x',
       'y',
+      'z',
     ];
     await MacromoleculesTopToolbar(page).peptides();
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-      await CommonTopLeftToolbar(page).clearCanvas();
-    }
-  });
-
-  test('Switch to Peptide mode, type any non-Peptide symbol  (i.e. any but A, C, D, E, F, G, H, I, K, L, M, N, O, P, Q, R, S, T, V, U, W, Y) Verify that nothing happens', async ({
-    page,
-  }) => {
-    /*
-    Test case: #5136
-    Description: Nothing happens. Monomer not added to canvas.
-    */
-    const sequenceSymbols = ['b', 'j', 'z'];
-    await MacromoleculesTopToolbar(page).peptides();
-    for (const symbol of sequenceSymbols) {
-      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     }

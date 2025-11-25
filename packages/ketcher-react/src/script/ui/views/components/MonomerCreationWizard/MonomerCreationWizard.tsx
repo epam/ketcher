@@ -768,6 +768,7 @@ const MonomerCreationWizard = () => {
       }
     }
 
+<<<<<<< HEAD
     return needSaveMonomers;
   };
 
@@ -832,6 +833,15 @@ const MonomerCreationWizard = () => {
       ) {
         bondsBetweenBaseAndPhosphate.push(bond);
       }
+=======
+    editor.saveNewMonomer({
+      type,
+      symbol,
+      name: name || symbol,
+      naturalAnalogue,
+      modificationTypes,
+      aliasHELM,
+>>>>>>> 62d7423258 (* Initial plan)
     });
 
     wizardStruct.atoms.forEach((atom, atomId) => {
@@ -1234,6 +1244,7 @@ const MonomerCreationWizard = () => {
               }
               required
             />
+<<<<<<< HEAD
             <p className={styles.attributesTitle}>Attributes</p>
             {isPresetType ? (
               <RnaPresetTabs
@@ -1252,6 +1263,99 @@ const MonomerCreationWizard = () => {
                   setModificationTypes(modificationTypes);
                 }}
               />
+=======
+            <AttributeField
+              title="Symbol"
+              control={
+                <input
+                  type="text"
+                  className={clsx(
+                    styles.input,
+                    errors.symbol && styles.inputError,
+                  )}
+                  placeholder="e.g. PEG-2"
+                  data-testid="symbol-input"
+                  value={symbol}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    handleFieldChange('symbol', event.target.value)
+                  }
+                  disabled={!type}
+                />
+              }
+              required
+              disabled={!type}
+            />
+            <AttributeField
+              title="Name"
+              control={
+                <input
+                  type="text"
+                  className={clsx(
+                    styles.input,
+                    errors.name && styles.inputError,
+                  )}
+                  placeholder="e.g. Diethylene Glycol"
+                  value={name}
+                  data-testid="name-input"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    handleFieldChange('name', event.target.value)
+                  }
+                  disabled={!type}
+                />
+              }
+              disabled={!type}
+            />
+            <AttributeField
+              title="Natural analogue"
+              control={
+                <NaturalAnaloguePicker
+                  monomerType={type}
+                  value={naturalAnalogue}
+                  onChange={(value) => {
+                    handleFieldChange('naturalAnalogue', value);
+                  }}
+                  error={errors.naturalAnalogue}
+                />
+              }
+              disabled={!isNaturalAnalogueRequired(type)}
+              required
+            />
+          </div>
+
+          <div className={styles.divider} />
+
+          <div
+            className={clsx(
+              styles.attributesFields,
+              selectStyles.selectContainer,
+            )}
+          >
+            <div className={styles.attachmentPointsHeader}>
+              <p className={styles.attachmentPointsTitle}>Attachment points</p>
+              <span
+                className={styles.attachmentPointInfoIcon}
+                title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                data-testid="attachment-point-info-icon"
+              >
+                <Icon name="about" />
+              </span>
+            </div>
+            {assignedAttachmentPoints.size > 0 && (
+              <div className={styles.attachmentPoints}>
+                {Array.from(assignedAttachmentPoints.entries()).map(
+                  ([name, atomPair]) => (
+                    <AttachmentPoint
+                      name={name}
+                      editor={editor}
+                      onNameChange={handleAttachmentPointNameChange}
+                      onLeavingAtomChange={handleLeavingAtomChange}
+                      onRemove={handleAttachmentPointRemove}
+                      key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                    />
+                  ),
+                )}
+              </div>
+>>>>>>> 62d7423258 (* Initial plan)
             )}
           </div>
         </div>

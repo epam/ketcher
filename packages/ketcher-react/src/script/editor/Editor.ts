@@ -1183,12 +1183,12 @@ class Editor implements KetcherEditor {
 
     this.unsubscribeFromChangeEventInMonomerCreationWizard();
 
-    this.monomerCreationState = null;
-
     this.historyStack = this.originalHistoryStack;
     this.historyPtr = this.originalHistoryPointer;
 
     this.struct(this.originalStruct, false);
+
+    this.monomerCreationState = null;
 
     this.tool('select');
   }

@@ -16,7 +16,6 @@ import {
   takeEditorScreenshot,
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
-  takePresetsScreenshot,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';

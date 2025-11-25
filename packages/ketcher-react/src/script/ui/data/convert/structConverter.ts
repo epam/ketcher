@@ -47,7 +47,8 @@ export function couldBeSaved(
     );
     const bondsHaveUnsupportedProperties = arrayOfBonds.some(
       (bond) =>
-        bond.reactingCenterStatus ||
+        // Using || intentionally: 0 (UNMARKED) should be falsy, so ?? would break this boolean check
+        bond.reactingCenterStatus || // NOSONAR
         bond.type === Bond.PATTERN.TYPE.DATIVE ||
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );

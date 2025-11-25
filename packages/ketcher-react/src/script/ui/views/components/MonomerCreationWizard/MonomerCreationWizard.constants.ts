@@ -56,6 +56,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   notUniqueHELMAlias:
     'The HELM alias must be unique amongst peptide or RNA monomers.',
+  invalidRnaPresetStructure:
+    'Structure of rna preset component contains issues. Please adjust the structure.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -74,6 +76,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   impureStructure: 'error',
   invalidHELMAlias: 'error',
   notUniqueHELMAlias: 'error',
+  invalidRnaPresetStructure: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

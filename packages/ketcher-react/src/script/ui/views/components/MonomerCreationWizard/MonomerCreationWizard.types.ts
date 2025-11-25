@@ -54,7 +54,8 @@ export type WizardNotificationId =
   | 'notMinimalViableStructure'
   | 'impureStructure'
   | 'notUniqueHELMAlias'
-  | 'invalidHELMAlias';
+  | 'invalidHELMAlias'
+  | 'invalidRnaPresetStructure';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -145,6 +146,10 @@ export type RnaPresetWizardAction =
         name?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
+    }
+  | {
+      type: 'RemoveNotification';
+      id: WizardNotificationId;
     };
 
 export type AssignedAttachmentPointsByMonomerType = Map<

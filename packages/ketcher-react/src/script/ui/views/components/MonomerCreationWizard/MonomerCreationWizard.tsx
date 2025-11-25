@@ -2,9 +2,11 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
+  Atom,
   AttachmentPointClickData,
   AttachmentPointName,
   BaseMonomer,
+  Bond,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
@@ -186,11 +188,53 @@ const rnaPresetWizardReducer = (
     };
   }
 
+  if (action.type === 'RemoveNotification') {
+    const presetNotifications = new Map(state.preset.notifications);
+    const baseNotifications = new Map(state.base.notifications);
+    const sugarNotifications = new Map(state.sugar.notifications);
+    const phosphateNotifications = new Map(state.phosphate.notifications);
+
+    presetNotifications.delete(action.id);
+    baseNotifications.delete(action.id);
+    sugarNotifications.delete(action.id);
+    phosphateNotifications.delete(action.id);
+
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        notifications: presetNotifications,
+      },
+      sugar: {
+        ...state.sugar,
+        notifications: sugarNotifications,
+      },
+      base: {
+        ...state.base,
+        notifications: baseNotifications,
+      },
+      phosphate: {
+        ...state.phosphate,
+        notifications: phosphateNotifications,
+      },
+    };
+  }
+
   if (!action.rnaComponentKey) {
     return state;
   }
 
   const { rnaComponentKey, ...restAction } = action;
+
+  if (action.type === 'SetNotifications') {
+    return {
+      ...state,
+      [action.rnaComponentKey]: {
+        ...state[action.rnaComponentKey],
+        notifications: action.notifications,
+      },
+    };
+  }
 
   if (restAction.type === 'SetRnaPresetComponentStructure') {
     return {
@@ -466,12 +510,24 @@ const MonomerCreationWizard = () => {
   const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
     useState<AttachmentPointClickData | null>(null);
 
-  const { values, notifications, errors } = wizardState;
+  const {
+    values,
+    notifications: monomerWizardNotifications,
+    errors,
+  } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
   const isRnaPresetType = type === 'rnaPreset';
+  const notifications = isRnaPresetType
+    ? new Map([
+        ...(rnaPresetWizardState.preset.notifications || []),
+        ...(rnaPresetWizardState.sugar.notifications || []),
+        ...(rnaPresetWizardState.base.notifications || []),
+        ...(rnaPresetWizardState.phosphate.notifications || []),
+      ])
+    : monomerWizardNotifications;
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -737,6 +793,92 @@ const MonomerCreationWizard = () => {
       },
     ];
 
+    // check structure
+    const wizardStruct = editor.struct();
+    const bondsBetweenSugarAndBase: Bond[] = [];
+    const bondsBetweenSugarAndPhosphate: Bond[] = [];
+    const bondsBetweenBaseAndPhosphate: Bond[] = [];
+    const atomsOutsideComponents: Atom[] = [];
+    let hasSameAtomsInSeveralComponents = false;
+
+    wizardStruct.bonds.forEach((bond) => {
+      if (
+        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
+          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
+        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
+          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end))
+      ) {
+        bondsBetweenSugarAndBase.push(bond);
+      }
+
+      if (
+        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
+          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
+        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
+          bond.begin,
+        ) ||
+          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
+      ) {
+        bondsBetweenSugarAndPhosphate.push(bond);
+      }
+
+      if (
+        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
+          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end)) &&
+        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
+          bond.begin,
+        ) ||
+          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
+      ) {
+        bondsBetweenBaseAndPhosphate.push(bond);
+      }
+    });
+
+    wizardStruct.atoms.forEach((atom, atomId) => {
+      if (
+        !rnaPresetWizardState.sugar.structure?.atoms?.includes(atomId) &&
+        !rnaPresetWizardState.base.structure?.atoms?.includes(atomId) &&
+        !rnaPresetWizardState.phosphate.structure?.atoms?.includes(atomId)
+      ) {
+        atomsOutsideComponents.push(atom);
+      }
+    });
+
+    const atomsArrayFromAllComponents = [
+      ...(rnaPresetWizardState.sugar.structure?.atoms || []),
+      ...(rnaPresetWizardState.base.structure?.atoms || []),
+      ...(rnaPresetWizardState.phosphate.structure?.atoms || []),
+    ];
+    const atomsSetFromAllComponents = new Set(atomsArrayFromAllComponents);
+
+    hasSameAtomsInSeveralComponents =
+      atomsSetFromAllComponents.size < atomsArrayFromAllComponents.length;
+
+    if (
+      hasSameAtomsInSeveralComponents ||
+      atomsOutsideComponents.length > 0 ||
+      bondsBetweenSugarAndBase.length !== 1 ||
+      bondsBetweenSugarAndPhosphate.length !== 1 ||
+      bondsBetweenBaseAndPhosphate.length !== 0
+    ) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'invalidRnaPresetStructure',
+            {
+              type: 'error',
+              message: NotificationMessages.invalidRnaPresetStructure,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
+    // check rna name
     if (!rnaPresetWizardState.preset.name?.trim()) {
       needSaveMonomers = false;
       rnaPresetWizardStateDispatch({
@@ -1056,7 +1198,11 @@ const MonomerCreationWizard = () => {
                 type={type}
                 message={message}
                 key={id}
-                wizardStateDispatch={wizardStateDispatch}
+                wizardStateDispatch={
+                  isRnaPresetType
+                    ? rnaPresetWizardStateDispatch
+                    : wizardStateDispatch
+                }
               />
             ),
           )}

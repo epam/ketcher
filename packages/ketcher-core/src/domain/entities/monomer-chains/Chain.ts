@@ -69,8 +69,8 @@ export class Chain {
     }
 
     if (monomer instanceof AmbiguousMonomer) {
-      // If this ambiguous monomer should be part of a linker group (displays @ and is connected to other linker-valid monomers),
-      // add it as a LinkerSequenceNode, otherwise add as AmbiguousMonomerSequenceNode
+      // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
+      // connected to other linker-valid monomers), add it as a LinkerSequenceNode
       if (LinkerSequenceNode.isPartOfLinker(monomer)) {
         this.lastSubChain.add(new LinkerSequenceNode(monomer));
       } else {

@@ -16,13 +16,13 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="248.372894 228.562500 274.587738 222.479874">
+    <page HeightPages="1" WidthPages="1" BoundingBox="258.281250 228.562500 263.157227 223.773178">
         <fragment id="4">
             <n id="10" NodeType="Fragment">
                 <fragment id="11">
-                    <n id="6" p="26.214838 13.582635"/>
+                    <n id="6" p="0.000000 12.289324"/>
                     <n id="12" NodeType="ExternalConnectionPoint"/>
-                    <n id="7" p="52.194843 -1.417365"/>
+                    <n id="7" p="25.980005 -2.710676"/>
                     <b id="8" B="6" E="7"/>
                     <b id="14" B="12" E="6"/>
                 </fragment>
@@ -30,7 +30,7 @@
                     <s>CHEM44</s>
                 </t>
             </n>
-            <n id="5" p="0.000000 -0.000000"/>
+            <n id="5" p="4.875984 -0.000000"/>
             <b id="13" B="5" E="10"/>
         </fragment>
     </page>

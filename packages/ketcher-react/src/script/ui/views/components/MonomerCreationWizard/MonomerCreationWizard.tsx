@@ -27,7 +27,9 @@ import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
 import {
+  AssignedAttachmentPointsByMonomerType,
   RnaPresetWizardAction,
+  RnaPresetWizardStateFieldId,
   WizardAction,
   WizardFormFieldId,
   WizardNotification,
@@ -50,6 +52,7 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { Selection } from '../../../../editor/Editor';
+import { isNumber } from 'lodash';
 
 const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
@@ -435,6 +438,7 @@ const MonomerCreationWizard = () => {
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
+  const isRnaPresetType = type === 'rnaPreset';
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -584,11 +588,247 @@ const MonomerCreationWizard = () => {
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
+  const validateMonomerWizard = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    let needSaveMonomers = true;
+
+    if (!wizardState.structure) {
+      KetcherLogger.error('Monomer structure is undefined');
+
+      return;
+    }
+
+    const monomerAssignedAttachmentPoints =
+      assignedAttachmentPointsByMonomer.get(wizardState);
+
+    if (!monomerAssignedAttachmentPoints) {
+      KetcherLogger.error('Monomer attachment points map is undefined');
+
+      return;
+    }
+
+    const structure = editor.structSelected(wizardState.structure);
+    const { values: valuesToSave } = wizardState;
+    const { errors: inputsErrors, notifications: inputsNotifications } =
+      validateInputs(valuesToSave);
+    if (Object.keys(inputsErrors).length > 0) {
+      needSaveMonomers = false;
+      wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: inputsNotifications,
+      });
+      return;
+    }
+
+    const {
+      notifications: attachmentPointsNotifications,
+      problematicAttachmentPoints,
+    } = validateAttachmentPoints(
+      Array.from(monomerAssignedAttachmentPoints.keys()),
+    );
+    if (attachmentPointsNotifications.size > 0) {
+      needSaveMonomers = false;
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: attachmentPointsNotifications,
+      });
+      editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
+      return;
+    }
+
+    const {
+      errors: modificationTypesErrors,
+      notifications: modificationTypesNotifications,
+    } = validateModificationTypes(modificationTypes, naturalAnalogue);
+    if (Object.keys(modificationTypesErrors).length > 0) {
+      needSaveMonomers = false;
+      wizardStateDispatch({
+        type: 'SetErrors',
+        errors: modificationTypesErrors,
+      });
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: modificationTypesNotifications,
+      });
+      return;
+    }
+
+    const structureNotifications = validateStructure(structure, editor);
+    if (structureNotifications.size > 0) {
+      needSaveMonomers = false;
+      wizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: structureNotifications,
+      });
+      return;
+    }
+
+    if (type) {
+      const leavingGroupNotifications = validateMonomerLeavingGroups(
+        editor,
+        type,
+        monomerAssignedAttachmentPoints,
+      );
+      if (leavingGroupNotifications.size > 0) {
+        needSaveMonomers = false;
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
+        setLeavingGroupDialogMessage(firstMessage);
+      }
+    }
+
+    return needSaveMonomers;
+  };
+
+  const validateRnaPresetWizard = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    // Validation is copy pasted from validateMonomerWizard and extended
+    // Need to move same part in separate method
+    let needSaveMonomers = true;
+    const componentsToValidate: Array<{
+      name: Exclude<RnaPresetWizardStateFieldId, 'preset'>;
+      wizardState: WizardState;
+    }> = [
+      {
+        name: 'base',
+        wizardState: rnaPresetWizardState.base,
+      },
+      {
+        name: 'phosphate',
+        wizardState: rnaPresetWizardState.phosphate,
+      },
+      {
+        name: 'sugar',
+        wizardState: rnaPresetWizardState.sugar,
+      },
+    ];
+
+    componentsToValidate.forEach((componentToValidate) => {
+      const wizardState = componentToValidate.wizardState;
+      const rnaComponentKey = componentToValidate.name;
+
+      if (!wizardState.structure) {
+        KetcherLogger.error('Monomer structure is undefined');
+
+        return;
+      }
+
+      const monomerAssignedAttachmentPoints =
+        assignedAttachmentPointsByMonomer.get(wizardState);
+
+      if (!monomerAssignedAttachmentPoints) {
+        KetcherLogger.error('Monomer attachment points map is undefined');
+
+        return;
+      }
+
+      const structure = editor.structSelected(wizardState.structure);
+      const { values: valuesToSave } = wizardState;
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToSave);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: inputsErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
+      }
+
+      const {
+        notifications: attachmentPointsNotifications,
+        problematicAttachmentPoints,
+      } = validateAttachmentPoints(
+        Array.from(monomerAssignedAttachmentPoints.keys()),
+      );
+      if (attachmentPointsNotifications.size > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: attachmentPointsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
+        return;
+      }
+
+      const {
+        errors: modificationTypesErrors,
+        notifications: modificationTypesNotifications,
+      } = validateModificationTypes(modificationTypes, naturalAnalogue);
+      if (Object.keys(modificationTypesErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: modificationTypesErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: modificationTypesNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
+      }
+
+      const structureNotifications = validateStructure(structure, editor);
+      if (structureNotifications.size > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: structureNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
+      }
+
+      if (type) {
+        const leavingGroupNotifications = validateMonomerLeavingGroups(
+          editor,
+          type,
+          monomerAssignedAttachmentPoints,
+        );
+        if (leavingGroupNotifications.size > 0) {
+          needSaveMonomers = false;
+          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+            .message;
+          setLeavingGroupDialogMessage(firstMessage);
+        }
+      }
+    });
+
+    return needSaveMonomers;
+  };
+
+  const validateOnSubmit = (
+    assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+  ) => {
+    if (isRnaPresetType) {
+      return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
+    } else {
+      return validateMonomerWizard(assignedAttachmentPointsByMonomer);
+    }
+  };
+
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
 
-    const isRnaPresetType = type === 'rnaPreset';
     const monomersToSave = isRnaPresetType
       ? [
           rnaPresetWizardState.base,
@@ -603,7 +843,8 @@ const MonomerCreationWizard = () => {
       monomerTemplate: IKetMonomerTemplate;
       monomerRef: string;
     }> = [];
-    const assignedAttachmentPointsByMonomer = new Map();
+    const assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType =
+      new Map();
 
     if (!isRnaPresetType) {
       wizardState.structure = {
@@ -642,167 +883,92 @@ const MonomerCreationWizard = () => {
       );
     }
 
-    if (isRnaPresetType) {
-      // fill attachment points between RNA preset components
-      const struct = editor.struct();
-      const baseStructure = rnaPresetWizardState.base.structure;
-      const sugarStructure = rnaPresetWizardState.sugar.structure;
-      const phosphateStructure = rnaPresetWizardState.phosphate.structure;
-
-      const bondsBetweenSugarAndBase = struct.bonds.filter((_, bond) => {
-        return Boolean(
-          (baseStructure?.atoms?.includes(bond.begin) &&
-            sugarStructure?.atoms?.includes(bond.end)) ||
-            (baseStructure?.atoms?.includes(bond.end) &&
-              sugarStructure?.atoms?.includes(bond.begin)),
-        );
-      });
-      const bondsBetweenSugarAndPhosphate = struct.bonds.filter((_, bond) => {
-        return Boolean(
-          (phosphateStructure?.atoms?.includes(bond.begin) &&
-            sugarStructure?.atoms?.includes(bond.end)) ||
-            (phosphateStructure?.atoms?.includes(bond.end) &&
-              sugarStructure?.atoms?.includes(bond.begin)),
-        );
-      });
-
-      const bondBetweenSugarAndBase = [...bondsBetweenSugarAndBase.values()][0];
-      const bondBetweenSugarAndPhosphate = [
-        ...bondsBetweenSugarAndPhosphate.values(),
-      ][0];
-
-      const sugarR3AttachmentPointAtom = sugarStructure?.atoms?.includes(
-        bondBetweenSugarAndBase.begin,
-      )
-        ? bondBetweenSugarAndBase.begin
-        : bondBetweenSugarAndBase.end;
-      const sugarR2AttachmentPointAtom = sugarStructure?.atoms?.includes(
-        bondBetweenSugarAndPhosphate.begin,
-      )
-        ? bondBetweenSugarAndPhosphate.begin
-        : bondBetweenSugarAndPhosphate.end;
-      const baseR1AttachmentPointAtom = baseStructure?.atoms?.includes(
-        bondBetweenSugarAndBase.begin,
-      )
-        ? bondBetweenSugarAndBase.begin
-        : bondBetweenSugarAndBase.end;
-      const phosphateR1AttachmentPointAtom =
-        phosphateStructure?.atoms?.includes(bondBetweenSugarAndPhosphate.begin)
-          ? bondBetweenSugarAndPhosphate.begin
-          : bondBetweenSugarAndPhosphate.end;
-
-      editor.assignConnectionPointAtom(
-        baseR1AttachmentPointAtom,
-        AttachmentPointName.R1,
-        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
-        rnaPresetWizardState.base.structure,
-      );
-      editor.assignConnectionPointAtom(
-        sugarR2AttachmentPointAtom,
-        AttachmentPointName.R2,
-        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
-        rnaPresetWizardState.sugar.structure,
-      );
-      editor.assignConnectionPointAtom(
-        sugarR3AttachmentPointAtom,
-        AttachmentPointName.R3,
-        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
-        rnaPresetWizardState.sugar.structure,
-      );
-      editor.assignConnectionPointAtom(
-        phosphateR1AttachmentPointAtom,
-        AttachmentPointName.R1,
-        assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
-        rnaPresetWizardState.phosphate.structure,
-      );
-    }
-
     // validation
-    let needSaveMonomers = true;
-
-    monomersToSave.forEach((monomerToSave) => {
-      if (!monomerToSave.structure) {
-        KetcherLogger.error('Monomer structure is undefined');
-
-        return;
-      }
-
-      const structure = editor.structSelected(monomerToSave.structure);
-      const monomerAssignedAttachmentPoints =
-        assignedAttachmentPointsByMonomer.get(monomerToSave);
-      const { values: valuesToSave } = monomerToSave;
-      const { errors: inputsErrors, notifications: inputsNotifications } =
-        validateInputs(valuesToSave);
-      if (Object.keys(inputsErrors).length > 0) {
-        needSaveMonomers = false;
-        wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: inputsNotifications,
-        });
-        return;
-      }
-
-      const {
-        notifications: attachmentPointsNotifications,
-        problematicAttachmentPoints,
-      } = validateAttachmentPoints(
-        Array.from(monomerAssignedAttachmentPoints.keys()),
-      );
-      if (attachmentPointsNotifications.size > 0) {
-        needSaveMonomers = false;
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: attachmentPointsNotifications,
-        });
-        editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-        return;
-      }
-
-      const {
-        errors: modificationTypesErrors,
-        notifications: modificationTypesNotifications,
-      } = validateModificationTypes(modificationTypes, naturalAnalogue);
-      if (Object.keys(modificationTypesErrors).length > 0) {
-        needSaveMonomers = false;
-        wizardStateDispatch({
-          type: 'SetErrors',
-          errors: modificationTypesErrors,
-        });
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: modificationTypesNotifications,
-        });
-        return;
-      }
-
-      const structureNotifications = validateStructure(structure, editor);
-      if (structureNotifications.size > 0) {
-        needSaveMonomers = false;
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: structureNotifications,
-        });
-        return;
-      }
-
-      if (type) {
-        const leavingGroupNotifications = validateMonomerLeavingGroups(
-          editor,
-          type,
-          monomerAssignedAttachmentPoints,
-        );
-        if (leavingGroupNotifications.size > 0) {
-          needSaveMonomers = false;
-          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
-            .message;
-          setLeavingGroupDialogMessage(firstMessage);
-        }
-      }
-    });
+    const needSaveMonomers = validateOnSubmit(
+      assignedAttachmentPointsByMonomer,
+    );
 
     // save
     if (needSaveMonomers) {
+      if (isRnaPresetType) {
+        // fill attachment points between RNA preset components
+        const struct = editor.struct();
+        const baseStructure = rnaPresetWizardState.base.structure;
+        const sugarStructure = rnaPresetWizardState.sugar.structure;
+        const phosphateStructure = rnaPresetWizardState.phosphate.structure;
+
+        const bondsBetweenSugarAndBase = struct.bonds.filter((_, bond) => {
+          return Boolean(
+            (baseStructure?.atoms?.includes(bond.begin) &&
+              sugarStructure?.atoms?.includes(bond.end)) ||
+              (baseStructure?.atoms?.includes(bond.end) &&
+                sugarStructure?.atoms?.includes(bond.begin)),
+          );
+        });
+        const bondsBetweenSugarAndPhosphate = struct.bonds.filter((_, bond) => {
+          return Boolean(
+            (phosphateStructure?.atoms?.includes(bond.begin) &&
+              sugarStructure?.atoms?.includes(bond.end)) ||
+              (phosphateStructure?.atoms?.includes(bond.end) &&
+                sugarStructure?.atoms?.includes(bond.begin)),
+          );
+        });
+
+        const bondBetweenSugarAndBase = [
+          ...bondsBetweenSugarAndBase.values(),
+        ][0];
+        const bondBetweenSugarAndPhosphate = [
+          ...bondsBetweenSugarAndPhosphate.values(),
+        ][0];
+
+        const sugarR3AttachmentPointAtom = sugarStructure?.atoms?.includes(
+          bondBetweenSugarAndBase.begin,
+        )
+          ? bondBetweenSugarAndBase.begin
+          : bondBetweenSugarAndBase.end;
+        const sugarR2AttachmentPointAtom = sugarStructure?.atoms?.includes(
+          bondBetweenSugarAndPhosphate.begin,
+        )
+          ? bondBetweenSugarAndPhosphate.begin
+          : bondBetweenSugarAndPhosphate.end;
+        const baseR1AttachmentPointAtom = baseStructure?.atoms?.includes(
+          bondBetweenSugarAndBase.begin,
+        )
+          ? bondBetweenSugarAndBase.begin
+          : bondBetweenSugarAndBase.end;
+        const phosphateR1AttachmentPointAtom =
+          phosphateStructure?.atoms?.includes(
+            bondBetweenSugarAndPhosphate.begin,
+          )
+            ? bondBetweenSugarAndPhosphate.begin
+            : bondBetweenSugarAndPhosphate.end;
+
+        editor.assignConnectionPointAtom(
+          baseR1AttachmentPointAtom,
+          AttachmentPointName.R1,
+          assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
+          rnaPresetWizardState.base.structure,
+        );
+        editor.assignConnectionPointAtom(
+          sugarR2AttachmentPointAtom,
+          AttachmentPointName.R2,
+          assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
+          rnaPresetWizardState.sugar.structure,
+        );
+        editor.assignConnectionPointAtom(
+          sugarR3AttachmentPointAtom,
+          AttachmentPointName.R3,
+          assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
+          rnaPresetWizardState.sugar.structure,
+        );
+        editor.assignConnectionPointAtom(
+          phosphateR1AttachmentPointAtom,
+          AttachmentPointName.R1,
+          assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
+          rnaPresetWizardState.phosphate.structure,
+        );
+      }
+
       monomersToSave.forEach((monomerToSave) => {
         const atomIdMap = new Map<number, number>();
         const bondIdMap = new Map<number, number>();
@@ -814,11 +980,21 @@ const MonomerCreationWizard = () => {
         const monomerAssignedAttachmentPoints =
           assignedAttachmentPointsByMonomer.get(monomerToSave);
 
-        monomerAssignedAttachmentPoints.forEach(
+        monomerAssignedAttachmentPoints?.forEach(
           ([attachmentAtomId, leavingGroupAtomId], attachmentPointKey) => {
+            const mappedAttachmentAtomId = atomIdMap.get(attachmentAtomId);
+            const mappedLeavingGroupAtomId = atomIdMap.get(leavingGroupAtomId);
+
+            if (
+              !isNumber(mappedAttachmentAtomId) ||
+              !isNumber(mappedLeavingGroupAtomId)
+            ) {
+              return;
+            }
+
             monomerAssignedAttachmentPoints.set(attachmentPointKey, [
-              atomIdMap.get(attachmentAtomId),
-              atomIdMap.get(leavingGroupAtomId),
+              mappedAttachmentAtomId,
+              mappedLeavingGroupAtomId,
             ]);
           },
         );

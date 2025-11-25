@@ -2,6 +2,8 @@ import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
 import { Editor } from '../../../../editor';
 import { Selection } from '../../../../editor/Editor';
+import { AttachmentPointName } from 'domain/types';
+import { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass | 'rnaPreset';
@@ -114,3 +116,16 @@ export type RnaPresetWizardAction =
       rnaComponentKey: RnaPresetWizardStateFieldId;
       editor: Editor;
     };
+
+export type AssignedAttachmentPointsByMonomerType = Map<
+  WizardState,
+  Map<AttachmentPointName, [number, number]>
+>;
+
+export function isDispatchActionForRnaPreset(
+  action:
+    | ActionDispatch<[WizardAction]>
+    | ActionDispatch<[RnaPresetWizardAction]>,
+): action is ActionDispatch<[RnaPresetWizardAction]> {
+  return 'rnaComponentKey' in action;
+}

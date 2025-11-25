@@ -10,11 +10,18 @@ import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointName: AttachmentPointName | null = null;
+  private assignedAttachmentPoints: Map<AttachmentPointName, [number, number]> =
+    new Map();
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentAtomId: number,
     private readonly leavingAtomId: number,
+    private readonly _attachmentPointName?: AttachmentPointName,
+    private readonly _assignedAttachmentPoints?: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_AA);
   }
@@ -22,14 +29,18 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const { potentialAttachmentPoints } = this.monomerCreationState;
+    this.assignedAttachmentPoints =
+      this._assignedAttachmentPoints ||
+      this.monomerCreationState.assignedAttachmentPoints;
 
-    this.attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
-    );
+    this.attachmentPointName =
+      this._attachmentPointName ||
+      getNextFreeAttachmentPoint(
+        Array.from(this.assignedAttachmentPoints.keys()),
+      );
 
-    assignedAttachmentPoints.set(this.attachmentPointName, [
+    this.assignedAttachmentPoints.set(this.attachmentPointName, [
       this.attachmentAtomId,
       this.leavingAtomId,
     ]);
@@ -45,6 +56,8 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,
       this.attachmentPointName,
+      undefined,
+      this.assignedAttachmentPoints,
     );
   }
 }

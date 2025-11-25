@@ -18,8 +18,9 @@ import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
 } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
+import { onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -50,6 +51,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { TextField, Autocomplete } from '@mui/material';
+import tools from '../../../action/tools';
 
 const initialWizardState: WizardState = {
   values: {
@@ -156,12 +158,13 @@ const validateInputs = (values: WizardValues) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
+  const optionalFields = new Set(['aliasHELM', 'name']);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
-        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type)) &&
-        key !== 'aliasHELM'
+        !optionalFields.has(key) &&
+        (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('emptyMandatoryFields', {
@@ -359,6 +362,7 @@ const MonomerCreationWizard = () => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
+  const dispatch = useDispatch();
 
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
@@ -494,6 +498,8 @@ const MonomerCreationWizard = () => {
     setAttachmentPointEditPopupData(null);
   };
 
+  const selectRectangleAction = tools['select-rectangle'].action;
+
   const handleAttachmentPointNameChange = (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
@@ -519,6 +525,7 @@ const MonomerCreationWizard = () => {
 
   const handleDiscard = () => {
     editor.closeMonomerCreationWizard();
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
   };
 
@@ -609,12 +616,13 @@ const MonomerCreationWizard = () => {
     editor.saveNewMonomer({
       type,
       symbol,
-      name,
+      name: name || symbol,
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
     });
 
+    dispatch(onAction(selectRectangleAction));
     resetWizard();
   };
 
@@ -723,7 +731,6 @@ const MonomerCreationWizard = () => {
                   disabled={!type}
                 />
               }
-              required
               disabled={!type}
             />
             <AttributeField
@@ -937,11 +944,12 @@ const MonomerCreationWizard = () => {
                   editor.saveNewMonomer({
                     type,
                     symbol,
-                    name,
+                    name: name || symbol,
                     naturalAnalogue,
                     modificationTypes,
                     aliasHELM,
                   });
+                  dispatch(onAction(selectRectangleAction));
                   resetWizard();
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),

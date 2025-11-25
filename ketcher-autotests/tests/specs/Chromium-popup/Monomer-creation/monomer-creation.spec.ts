@@ -597,13 +597,11 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
   await CreateMonomerDialog(page).discard();
 });
 
-test(`10. Check that if the monomer name is not entered error message occures`, async () => {
+test(`10. Check that monomer can be created with empty name using symbol as fallback`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
    * Description: 1. Verify that the "Monomer name" field is present in the monomer creation wizard
-   *              2. Check that if no name is entered, and the user clicks on Save/Finish in the wizard, an error
-   *                 message appears in the error/warning area: "Mandatory fields must be filled.", and the name
-   *                 input field is highlighted
+   *              2. Check that if no name is entered, the monomer is created successfully using the symbol value as name
    *
    * Case:
    *      1. Open Molecules canvas
@@ -611,28 +609,35 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
    *      5. Select Type - Amino acid
-   *      6 Validate that Name edit box is not filled
-   *      7. Press Submit button
-   *      8. Verify that the error message is displayed
-   *      9. Take screenshot to validate that Name drop-down is highlighted
+   *      6. Enter Symbol value
+   *      7. Leave Name field empty
+   *      8. Press Submit button
+   *      9. Verify that the monomer is created successfully
    *
    * Version 3.7
    */
+  const testSymbol = 'TestSymbol';
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
+  await CreateMonomerDialog(page).setSymbol(testSymbol);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
+  await CreateMonomerDialog(page).selectNaturalAnalogue(
+    AminoAcidNaturalAnalogue.A,
+  );
   await CreateMonomerDialog(page).submit();
-  expect(
-    await NotificationMessageBanner(
-      page,
-      ErrorMessage.emptyMandatoryFields,
-    ).getNotificationMessage(),
-  ).toEqual('Mandatory fields must be filled.');
-  await takeElementScreenshot(page, CreateMonomerDialog(page).nameEditbox);
-  await CreateMonomerDialog(page).discard();
+
+  // Verify monomer was created successfully by switching to macromolecules mode
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  const monomerOnMacro = getMonomerLocator(page, {
+    monomerAlias: testSymbol,
+  });
+  await expect(monomerOnMacro).toBeVisible();
+  await monomerOnMacro.hover();
+  await MonomerPreviewTooltip(page).waitForBecomeVisible();
+  expect(await MonomerPreviewTooltip(page).getTitleText()).toBe(testSymbol);
 });
 
 const eligableNames = [
@@ -693,49 +698,6 @@ for (const [index, eligableName] of eligableNames.entries()) {
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
     );
-  });
-}
-
-const nonEligableNames = [
-  {
-    description: '1. Spaces only',
-    value: '   ',
-    errorMessage: 'Mandatory fields must be filled.',
-  },
-];
-
-for (const nonEligableName of nonEligableNames) {
-  test(`12. Create monomer with ${nonEligableName.description}`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Entering a invalid monomer name causes an error
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Try to create monomer with non-eligible name
-     *      5. Validate error message is shown
-     *
-     * Version 3.7
-     */
-    const createMonomerDialog = CreateMonomerDialog(page);
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-
-    await LeftToolbar(page).createMonomer();
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('Temp');
-    await createMonomerDialog.setName(nonEligableName.value);
-    await createMonomerDialog.submit();
-    expect(
-      await NotificationMessageBanner(
-        page,
-        ErrorMessage.emptyMandatoryFields,
-      ).getNotificationMessage(),
-    ).toEqual(nonEligableName.errorMessage);
-    await CreateMonomerDialog(page).discard();
   });
 }
 

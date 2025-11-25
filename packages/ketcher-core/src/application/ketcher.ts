@@ -797,7 +797,9 @@ export class Ketcher {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
   }
 
   public async replaceMonomersLibrary(
@@ -826,7 +828,11 @@ export class Ketcher {
 
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
+
     editor.events.updateMonomersLibrary.dispatch();
   }
 

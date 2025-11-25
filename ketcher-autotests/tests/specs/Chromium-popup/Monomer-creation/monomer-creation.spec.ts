@@ -613,24 +613,30 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
    *      8. Press Submit button
    *      9. Verify that the monomer is created successfully
    *
-   * Version 3.10
+   * Version 3.7
    */
+  const testSymbol = 'TestSymbol';
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
-  await CreateMonomerDialog(page).fillSymbol('TST');
-  await CreateMonomerDialog(page).selectNaturalAnalogue(
-    AminoAcidNaturalAnalogue.Alanine,
-  );
+  await CreateMonomerDialog(page).setSymbol(testSymbol);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
+  await CreateMonomerDialog(page).selectNaturalAnalogue(
+    AminoAcidNaturalAnalogue.A,
+  );
   await CreateMonomerDialog(page).submit();
 
   // Verify monomer was created successfully by switching to macromolecules mode
-  await CommonTopLeftToolbar(page).clickOnMode('macromolecules-editor');
-  await Library(page).searchMonomer('TST');
-  await delay(1);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  const monomerOnMacro = getMonomerLocator(page, {
+    monomerAlias: testSymbol,
+  });
+  await expect(monomerOnMacro).toBeVisible();
+  await monomerOnMacro.hover();
+  await MonomerPreviewTooltip(page).waitForBecomeVisible();
+  expect(await MonomerPreviewTooltip(page).getTitleText()).toBe(testSymbol);
 });
 
 const eligableNames = [

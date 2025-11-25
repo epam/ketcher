@@ -1196,7 +1196,7 @@ class Editor implements KetcherEditor {
     this.update(finalAction);
   }
 
-  closeMonomerCreationWizard() {
+  closeMonomerCreationWizard(restoreOriginalStruct = false) {
     if (!this.isMonomerCreationWizardActive) {
       return;
     }
@@ -1207,6 +1207,10 @@ class Editor implements KetcherEditor {
 
     this.historyStack = this.originalHistoryStack;
     this.historyPtr = this.originalHistoryPointer;
+
+    if (restoreOriginalStruct) {
+      this.struct(this.originalStruct, false);
+    }
 
     this.tool('select');
   }

@@ -544,11 +544,11 @@ Depending on the size of the Ketcher window, the library might have a slightly d
 <img src=images/Compacted-Library-3.8..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
-In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, and the IDT alias(es) (if the monomer has IDT alias(es)):
+In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has HELM alias, modification type(s), AxoLabs and IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.8..png width = "600"/>
+<img src=images/Monomer-Preview-3.10..png width = "600"/>
 
-In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as IDT alias(es) (if the preset has IDT alias(es)):
+In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as AxoLabs and IDT alias(es) (if the preset has AxoLabs and IDT alias(es)):
 
 <img src=images/Preset-Preview-3.8..png width = "200"/>
 
@@ -598,7 +598,7 @@ A chemical structure can be loaded into the monomer creation wizard in molecules
 
 <img src=images/Monomer-Creation-Wizard-3.9..png width = "450"/>
 <img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
-<img src=images/Monomer-Creation-Wizard-2-3.9..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-2-3.10..png width = "450"/>
 
 The selected structure can contain bonds to non-selected parts of the structure and/or R-groups. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
 
@@ -606,11 +606,13 @@ Using the `Attributes` panel, the user is able to define following monomer prope
 - Monomer type (amino acid, sugar, base, phosphate, nucleotide or CHEM);
 - Monomer symbol (used on library cards, appears on canvas, and is used during HELM export if a different HELM alias is not specified);
 - Monomer name (appears on monomer preview);
-- Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides)
+- Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides);
+- Monomer modification type (optional property used for modifying amino acids);
+- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids).
 
-<img src=images/Monomer-Creation-Wizard-3-3.9..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-3-3.10..png width = "450"/>
 
-User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by replacing the atoms:
+User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by switching between the atoms:
 
 <img src=images/Monomer-Creation-Wizard-4-3.9..png width = "200"/>
 
@@ -626,7 +628,7 @@ or _Mark as a connection point_:
 
 The Attachment points section of the _Attributes_ panel allows the users to delete an already set attachment point, change the R-number, or change the leaving group atom(s):
 
-<img src=images/Monomer-Creation-Wizard-9-3.9..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-9-3.10..png width = "450"/>
 <img src=images/Monomer-Creation-Wizard-10-3.9..png width = "200"/>
 
 After _Submit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an appropriate shape and colour) in macromolecules mode, and that monomer in the library:
@@ -770,6 +772,16 @@ There are two differences between snake and flex modes:
 2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers and small molecules on canvas get layouted; when flex mode is entered, no layout is applied.
 
 ### Custom Chain Geometry
+
+#### Arrangement of monomers in a ring 
+
+After a selection of a circular structure is made, in _Flex layout mode_, a new option in the context menu exists: _Create cyclic structure_:
+
+<img src=images/Arrange-as-ring-3.10..png width = "500"/>
+
+When the option is chosen, the selected monomers get arranged in a regular n-agon where the monomers occupy the vertices:
+
+<img src=images/Arrange-as-ring-2-3.10..png width = "200"/>
 
 #### Monomer Snapping
 
@@ -955,7 +967,7 @@ Structures can be opened using the _Open..._ button on the main toolbars of both
 
 - _Paste From Clipboard_ allows pasting of the file contents (for both modes) and selecting of the format (only for macromolecules mode - in molecules mode the recondition of the format is possible unambiguously);
 
-<img src=images/Open-Structure-Macro-2-3.9..png width = "350"/>
+<img src=images/Open-Structure-Macro-2-3.10..png width = "350"/>
 
 - _Open from File_ allows browsing for a file. After the file is selected editable file contents are visible before the structure is added to the canvas;
 

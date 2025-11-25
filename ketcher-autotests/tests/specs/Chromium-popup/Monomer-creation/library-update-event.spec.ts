@@ -94,7 +94,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/Peptide-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/Peptide-monomer-expected.sdf',
   );
 });
 
@@ -134,7 +134,7 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/Base-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/Base-monomer-expected.sdf',
   );
 });
 
@@ -173,7 +173,7 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/Sugar-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/Sugar-monomer-expected.sdf',
   );
 });
 
@@ -212,7 +212,7 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/Phosphate-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/Phosphate-monomer-expected.sdf',
   );
 });
 
@@ -251,7 +251,7 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/Nucleotide-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/Nucleotide-monomer-expected.sdf',
   );
 });
 
@@ -289,6 +289,200 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
 
   await verifyConsoleExport(
     libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation/CHEM-monomer-expected.sdf',
+    'SDF/Chromium-popup/Monomer-creation-event/CHEM-monomer-expected.sdf',
+  );
+});
+
+test(`7. Check that system sends update on peptide monomer without modification types creation`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8717
+   * Description:
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Subscribe on libraryUpdate event
+   *      3. Load structure to the canvas
+   *      4. Create peptide monomer without modification types from structure on the canvas
+   *      5. Verify that event libraryUpdate was fired with correct sdf file in console
+   *
+   * Version 3.10
+   */
+  let libraryUpdateSDF = '';
+  page.on('console', (msg) => {
+    libraryUpdateSDF = msg.text();
+  });
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.AminoAcid,
+    symbol: Peptide.Peptide2.alias,
+    name: 'Peptide2 Test monomer',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    HELMAlias: 'PeptTest',
+  });
+
+  await verifyConsoleExport(
+    libraryUpdateSDF,
+    'SDF/Chromium-popup/Monomer-creation-event/Peptide2-monomer-expected.sdf',
+  );
+});
+
+test(`8. Check that system sends update on peptide monomer without modification types and HELM alias creation`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8717
+   * Description:
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Subscribe on libraryUpdate event
+   *      3. Load structure to the canvas
+   *      4. Create peptide monomer without modification types from structure on the canvas
+   *      5. Verify that event libraryUpdate was fired with correct sdf file in console
+   *
+   * Version 3.10
+   */
+  let libraryUpdateSDF = '';
+  page.on('console', (msg) => {
+    libraryUpdateSDF = msg.text();
+  });
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.AminoAcid,
+    symbol: Peptide.Peptide3.alias,
+    name: 'Peptide3 Test monomer',
+    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+  });
+
+  await verifyConsoleExport(
+    libraryUpdateSDF,
+    'SDF/Chromium-popup/Monomer-creation-event/Peptide3-monomer-expected.sdf',
+  );
+});
+
+test(`9. Check that system sends update on base monomer without HELM alias creation`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8717
+   * Description:
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Subscribe on libraryUpdate event
+   *      3. Load structure to the canvas
+   *      4. Create base monomer from structure on the canvas
+   *      5. Verify that event libraryUpdate was fired with correct sdf file in console
+   *
+   * Version 3.10
+   */
+  let libraryUpdateSDF = '';
+  page.on('console', (msg) => {
+    libraryUpdateSDF = msg.text();
+  });
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.Base,
+    symbol: Base.Base2.alias,
+    name: 'Base2 Test monomer',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  });
+
+  await verifyConsoleExport(
+    libraryUpdateSDF,
+    'SDF/Chromium-popup/Monomer-creation-event/Base2-monomer-expected.sdf',
+  );
+});
+
+test(`10. Check that system sends update on sugar monomer without HELM alias creation`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8717
+   * Description:
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Subscribe on libraryUpdate event
+   *      3. Load structure to the canvas
+   *      4. Create sugar monomer from structure on the canvas
+   *      5. Verify that event libraryUpdate was fired with correct sdf file in console
+   *
+   * Version 3.10
+   */
+  let libraryUpdateSDF = '';
+  page.on('console', (msg) => {
+    libraryUpdateSDF = msg.text();
+  });
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.Sugar,
+    symbol: Sugar.Sugar2.alias,
+    name: 'Sugar2 Test monomer',
+  });
+
+  await verifyConsoleExport(
+    libraryUpdateSDF,
+    'SDF/Chromium-popup/Monomer-creation-event/Sugar2-monomer-expected.sdf',
+  );
+});
+
+test(`11. Check that system sends update on phosphate monomer without HELM alias creation`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8717
+   * Description:
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Subscribe on libraryUpdate event
+   *      3. Load structure to the canvas
+   *      4. Create phosphate monomer from structure on the canvas
+   *      5. Verify that event libraryUpdate was fired with correct sdf file in console
+   *
+   * Version 3.10
+   */
+  let libraryUpdateSDF = '';
+  page.on('console', (msg) => {
+    libraryUpdateSDF = msg.text();
+  });
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+
+  await createMonomer(page, {
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate2.alias,
+    name: 'Phosphate2 Test monomer',
+  });
+
+  await verifyConsoleExport(
+    libraryUpdateSDF,
+    'SDF/Chromium-popup/Monomer-creation-event/Phosphate2-monomer-expected.sdf',
   );
 });

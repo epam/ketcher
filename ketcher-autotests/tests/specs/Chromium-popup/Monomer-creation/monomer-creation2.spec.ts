@@ -64,7 +64,7 @@ const monomersToCreate35 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide35',
     name: 'Nucleotide Test monomer for test 35',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -149,7 +149,7 @@ const monomersToCreate45 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide45',
     name: 'Nucleotide Test monomer for test 45',
     naturalAnalogue: NucleotideNaturalAnalogue.A,

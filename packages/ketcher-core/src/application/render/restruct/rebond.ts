@@ -35,6 +35,7 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
+import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -607,6 +608,55 @@ function checkStereoBold(bid0, bond, restruct) {
   bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
 }
 
+/**
+ * Checks if the stereo bond half-bonds should be swapped for rendering.
+ * For bonds between two expanded monomers, the stereo direction should be
+ * based on which monomer has the stereo attachment point. If only the end
+ * monomer has a stereo attachment point (and the begin monomer doesn't),
+ * the half-bonds should be swapped so the narrow end is at the correct atom.
+ */
+function shouldSwapStereoHalfBonds(struct: Struct, bond: ReBond): boolean {
+  const sgroup1 = struct.getGroupFromAtomId(bond.b.begin);
+  const sgroup2 = struct.getGroupFromAtomId(bond.b.end);
+
+  // Only check for bonds between two different expanded MonomerMicromolecules
+  if (
+    !(sgroup1 instanceof MonomerMicromolecule) ||
+    !(sgroup2 instanceof MonomerMicromolecule) ||
+    sgroup1 === sgroup2 ||
+    !sgroup1.isExpanded() ||
+    !sgroup2.isExpanded()
+  ) {
+    return false;
+  }
+
+  // Find the attachment points for each monomer that correspond to this bond
+  const beginAtomAttachmentPoint = sgroup1
+    .getAttachmentPoints()
+    .find((ap) => ap.atomId === bond.b.begin);
+  const endAtomAttachmentPoint = sgroup2
+    .getAttachmentPoints()
+    .find((ap) => ap.atomId === bond.b.end);
+
+  if (!beginAtomAttachmentPoint || !endAtomAttachmentPoint) {
+    return false;
+  }
+
+  // Get stereo information from attachment points
+  const beginStereo = getAttachmentPointStereoBond(
+    sgroup1,
+    beginAtomAttachmentPoint,
+  );
+  const endStereo = getAttachmentPointStereoBond(
+    sgroup2,
+    endAtomAttachmentPoint,
+  );
+
+  // If only the end monomer has stereo on its attachment point,
+  // we need to swap the half-bonds so the narrow end is at the end atom
+  return endStereo !== null && beginStereo === null;
+}
+
 function getBondPath(
   restruct: ReStruct,
   bond: ReBond,
@@ -623,15 +673,25 @@ function getBondPath(
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;
   switch (bond.b.type) {
-    case Bond.PATTERN.TYPE.SINGLE:
+    case Bond.PATTERN.TYPE.SINGLE: {
+      // For stereo bonds between expanded monomers, determine if half-bonds need swapping
+      const isStereoBond =
+        bond.b.stereo === Bond.PATTERN.STEREO.UP ||
+        bond.b.stereo === Bond.PATTERN.STEREO.DOWN ||
+        bond.b.stereo === Bond.PATTERN.STEREO.EITHER;
+      const shouldSwap =
+        isStereoBond && shouldSwapStereoHalfBonds(struct, bond);
+      const stereoHb1 = shouldSwap ? hb2 : hb1;
+      const stereoHb2 = shouldSwap ? hb1 : hb2;
+
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP:
-          findIncomingUpBonds(hb1.bid, bond, restruct);
+          findIncomingUpBonds(stereoHb1.bid, bond, restruct);
           if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
             path = getBondSingleStereoBoldPath(
               render,
-              hb1,
-              hb2,
+              stereoHb1,
+              stereoHb2,
               bond,
               struct,
               isSnapping,
@@ -639,8 +699,8 @@ function getBondPath(
           } else
             path = getBondSingleUpPath(
               render,
-              hb1,
-              hb2,
+              stereoHb1,
+              stereoHb2,
               bond,
               struct,
               isSnapping,
@@ -649,8 +709,8 @@ function getBondPath(
         case Bond.PATTERN.STEREO.DOWN:
           path = getBondSingleDownPath(
             render,
-            hb1,
-            hb2,
+            stereoHb1,
+            stereoHb2,
             bond,
             struct,
             isSnapping,
@@ -659,8 +719,8 @@ function getBondPath(
         case Bond.PATTERN.STEREO.EITHER:
           path = getBondSingleEitherPath(
             render,
-            hb1,
-            hb2,
+            stereoHb1,
+            stereoHb2,
             bond,
             struct,
             isSnapping,
@@ -678,6 +738,7 @@ function getBondPath(
           break;
       }
       break;
+    }
     case Bond.PATTERN.TYPE.DOUBLE:
       findIncomingUpBonds(hb1.bid, bond, restruct);
       if (

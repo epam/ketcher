@@ -14,17 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
+import React, { ComponentType } from 'react';
 import Input from './Input/Input';
 
-function SelectCheckbox({ schema, ...props }) {
-  let currentSchema = schema;
-  if (schema.type === 'boolean') {
+interface BooleanSchema {
+  type: 'boolean';
+  title?: string;
+  default?: boolean;
+}
+
+interface EnumSchema {
+  title?: string;
+  enum: unknown[];
+  enumNames?: string[];
+  default?: unknown;
+}
+
+type Schema = BooleanSchema | EnumSchema;
+
+interface SelectCheckboxProps {
+  schema: Schema;
+  type: string;
+  value: number | string | boolean;
+  onChange: (val: number | string | boolean) => void;
+  component?: ComponentType;
+  children?: React.ReactNode;
+  className?: string;
+  placeholder?: string;
+  isFocused?: boolean;
+  multiple?: boolean;
+}
+
+function isBooleanSchema(schema: Schema): schema is BooleanSchema {
+  return 'type' in schema && schema.type === 'boolean';
+}
+
+function SelectCheckbox({ schema, ...props }: SelectCheckboxProps) {
+  let currentSchema: EnumSchema;
+
+  if (isBooleanSchema(schema)) {
     currentSchema = {
       title: schema.title,
       enum: [true, false],
       enumNames: ['on', 'off'],
       default: schema.default,
     };
+  } else {
+    currentSchema = schema;
   }
 
   return <Input schema={currentSchema} {...props} />;

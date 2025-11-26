@@ -32,7 +32,7 @@ export const ErrorModal = () => {
         <ActionButton
           label="Close"
           clickHandler={onClose}
-          data-testId="info-modal-close"
+          data-testid="info-modal-close"
         />
       </Modal.Footer>
     </Modal>

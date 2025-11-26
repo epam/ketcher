@@ -4,6 +4,7 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
+  takeElementScreenshot,
   waitForPageInit,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -11,17 +12,12 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
-
-async function hoverOverBond(page: Page, bondNumber: number) {
-  await moveMouseAway(page);
-  const bondLine = page.locator('g[pointer-events="stroke"]').nth(bondNumber);
-  await bondLine.hover();
-}
 
 const fileNames: string[] = [
   'KET/Preview-For-Hovering-Over-Bond/Horizontal - Part1.ket',
@@ -89,14 +85,15 @@ test(
       await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs);
 
       // count number of bonds on the page
-      const elements = await page.$$('g[pointer-events="stroke"]');
-      const numberOfBonds = elements.length;
+      const bond = getBondLocator(page, {});
+      const numberOfBonds = await bond.count();
 
       let bondNumber = 0;
       for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
-        await hoverOverBond(page, bondNumber);
+        await bond.nth(bondNumber).hover({ force: true });
         await MonomerPreviewTooltip(page).waitForBecomeVisible();
-        await takeEditorScreenshot(page);
+        await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
+        await moveMouseAway(page);
       }
       await CommonTopLeftToolbar(page).clearCanvas();
     }
@@ -127,13 +124,14 @@ test('2. Validate preview tooltip positions in relation to the center of the bon
   );
 
   // count number of bonds on the page
-  const elements = await page.$$('g[pointer-events="stroke"]');
-  const numberOfBonds = elements.length;
+  const bond = getBondLocator(page, {});
+  const numberOfBonds = await bond.count();
 
   let bondNumber = 0;
   for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
-    await hoverOverBond(page, bondNumber);
+    await bond.nth(bondNumber).hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
+    await moveMouseAway(page);
   }
 });

@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectCheckbox component should be rendered correctly should render with boolean schema 1`] = `
+<DocumentFragment>
+  <select
+    class="select"
+  >
+    <option
+      value="true"
+    >
+      on
+    </option>
+    <option
+      value="false"
+    >
+      off
+    </option>
+  </select>
+</DocumentFragment>
+`;
+
+exports[`SelectCheckbox component should be rendered correctly should render with enum schema 1`] = `
+<DocumentFragment>
+  <fieldset>
+    <li
+      class="fieldSetItem"
+    >
+      <label
+        class="fieldSetLabel"
+      >
+        <input
+          class="input"
+          type="radio"
+          value="option1"
+        />
+        <span
+          class="radioButton"
+        />
+        Option 1
+      </label>
+    </li>
+    <li
+      class="fieldSetItem"
+    >
+      <label
+        class="fieldSetLabel"
+      >
+        <input
+          class="input"
+          type="radio"
+          value="option2"
+        />
+        <span
+          class="radioButton"
+        />
+        Option 2
+      </label>
+    </li>
+    <li
+      class="fieldSetItem"
+    >
+      <label
+        class="fieldSetLabel"
+      >
+        <input
+          class="input"
+          type="radio"
+          value="option3"
+        />
+        <span
+          class="radioButton"
+        />
+        Option 3
+      </label>
+    </li>
+  </fieldset>
+</DocumentFragment>
+`;

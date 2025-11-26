@@ -729,6 +729,16 @@ export class CoreEditor {
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
+
+      const hasSelectedEntities =
+        this.drawingEntitiesManager.selectedEntitiesArr.length > 0;
+
+      if (!(this.mode instanceof SequenceMode) && hasSelectedEntities) {
+        const modelChanges =
+          this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+        this.renderersContainer.update(modelChanges);
+      }
     });
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();

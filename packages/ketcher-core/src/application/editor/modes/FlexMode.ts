@@ -3,7 +3,6 @@ import { BaseMode } from 'application/editor/modes/internal';
 import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export class FlexMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -30,19 +29,11 @@ export class FlexMode extends BaseMode {
     return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
   }
 
-  applyAdditionalPasteOperations(
-    mergedDrawingEntities: DrawingEntitiesManager,
-  ) {
+  applyAdditionalPasteOperations() {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.recalculateAntisenseChains();
-
-    command.merge(
-      editor.drawingEntitiesManager.selectDrawingEntities(
-        mergedDrawingEntities.allEntitiesArray,
-      ),
-    );
 
     if (!editor.drawingEntitiesManager.hasAntisenseChains) {
       return command;

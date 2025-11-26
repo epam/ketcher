@@ -7,7 +7,6 @@ import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -68,18 +67,10 @@ export class SnakeMode extends BaseMode {
     }
   }
 
-  applyAdditionalPasteOperations(
-    mergedDrawingEntities: DrawingEntitiesManager,
-  ) {
+  applyAdditionalPasteOperations() {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
 
     command.addOperation(new ReinitializeModeOperation());
-    command.merge(
-      editor.drawingEntitiesManager.selectDrawingEntities(
-        mergedDrawingEntities.allEntitiesArray,
-      ),
-    );
 
     return command;
   }

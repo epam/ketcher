@@ -15,7 +15,7 @@ export const Row = styled.div({
 
 export const StyledDropdown = styled(DropDown)(({ theme }) => ({
   width: '230px',
-  height: '28px',
+  height: '24px',
   flexShrink: 0,
 
   '& .MuiOutlinedInput-root:hover:not(.Mui-disabled)': {

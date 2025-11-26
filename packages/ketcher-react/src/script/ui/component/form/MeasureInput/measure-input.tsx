@@ -164,7 +164,7 @@ const MeasureInput = ({
     }
   };
 
-  const desc = schema;
+  const desc = schema || schema.properties[name];
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>

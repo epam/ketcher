@@ -4,7 +4,7 @@ import { WizardNotification } from './MonomerCreationWizard.types';
 import { Editor } from 'src/script/editor/Editor';
 
 const getNotificationIdForMonomerType = (
-  monomerType: KetMonomerClass,
+  monomerType: KetMonomerClass | 'rnaPreset',
 ): string => {
   switch (monomerType) {
     case KetMonomerClass.AminoAcid:
@@ -24,7 +24,7 @@ const getNotificationIdForMonomerType = (
 
 export const validateMonomerLeavingGroups = (
   editor: Editor,
-  monomerType: KetMonomerClass,
+  monomerType: KetMonomerClass | 'rnaPreset',
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
 ): Map<string, WizardNotification> => {
   const notifications = new Map<string, WizardNotification>();

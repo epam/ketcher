@@ -464,7 +464,7 @@ export class CoreEditor {
 
   public checkIfMonomerSymbolClassPairExists(
     symbol: string,
-    monomerClass: KetMonomerClass | undefined,
+    monomerClass: KetMonomerClass | 'rnaPreset' | undefined,
   ) {
     if (!monomerClass) {
       return true;

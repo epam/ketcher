@@ -2,7 +2,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
-import { Bond as MoleculeBond } from 'domain/entities/bond';
+import { Bond as StructBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import { CoreEditor } from 'application/editor';
@@ -29,6 +29,9 @@ import util from 'application/render/util';
 const BOND_WIDTH = 2;
 const LINE_WIDTH = 1.3;
 const BOND_SPACE = 4.2;
+// Topology mark offset multipliers (controls position above bond)
+const TOPOLOGY_OFFSET_X_MULTIPLIER = 2;
+const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -636,7 +639,11 @@ export class BondRenderer extends BaseRenderer {
     this.appendReactingCenterMark(bondFromStruct);
   }
 
-  private appendTopologyMark(bondFromStruct: MoleculeBond) {
+  private appendTopologyMark(bondFromStruct: StructBond) {
+    if (!this.rootElement) {
+      return;
+    }
+
     let mark: string | null = null;
 
     if (bondFromStruct.customQuery) {
@@ -644,11 +651,9 @@ export class BondRenderer extends BaseRenderer {
       if (bondFromStruct.customQuery.length > 8) {
         mark = `${bondFromStruct.customQuery.substring(0, 8)}...`;
       }
-    } else if (bondFromStruct.topology === MoleculeBond.PATTERN.TOPOLOGY.RING) {
+    } else if (bondFromStruct.topology === StructBond.PATTERN.TOPOLOGY.RING) {
       mark = 'rng';
-    } else if (
-      bondFromStruct.topology === MoleculeBond.PATTERN.TOPOLOGY.CHAIN
-    ) {
+    } else if (bondFromStruct.topology === StructBond.PATTERN.TOPOLOGY.CHAIN) {
       mark = 'chn';
     }
 
@@ -692,8 +697,11 @@ export class BondRenderer extends BaseRenderer {
       fixed += BOND_SPACE / 2;
     }
 
-    const offset = new Vec2(2, 1).scaled(BOND_SPACE);
-    if (bondFromStruct.type === MoleculeBond.PATTERN.TYPE.TRIPLE) {
+    const offset = new Vec2(
+      TOPOLOGY_OFFSET_X_MULTIPLIER,
+      TOPOLOGY_OFFSET_Y_MULTIPLIER,
+    ).scaled(BOND_SPACE);
+    if (bondFromStruct.type === StructBond.PATTERN.TYPE.TRIPLE) {
       fixed += BOND_SPACE;
     }
 
@@ -702,33 +710,37 @@ export class BondRenderer extends BaseRenderer {
     );
 
     const topologyGroup = this.rootElement
-      ?.append('g')
-      ?.attr('id', this.topologyElementId);
+      .append('g')
+      .attr('id', this.topologyElementId);
 
     const topologyText = topologyGroup
-      ?.append('text')
+      .append('text')
       .text(mark)
       .attr('font-family', 'Arial')
       .attr('font-size', '10px')
       .attr('fill', '#000')
       .attr('pointer-events', 'none');
 
-    const textNode = topologyText?.node();
+    const textNode = topologyText.node();
     if (textNode) {
       const box = textNode.getBBox();
       topologyText
-        ?.attr('x', position.x - box.width / 2)
-        ?.attr('y', position.y + box.height / 4);
+        .attr('x', position.x - box.width / 2)
+        .attr('y', position.y + box.height / 4);
     }
   }
 
-  private appendReactingCenterMark(bondFromStruct: MoleculeBond) {
+  private appendReactingCenterMark(bondFromStruct: StructBond) {
+    if (!this.rootElement) {
+      return;
+    }
+
     const reactingCenterStatus = bondFromStruct.reactingCenterStatus;
 
     if (
       reactingCenterStatus === null ||
       reactingCenterStatus === undefined ||
-      reactingCenterStatus === MoleculeBond.PATTERN.REACTING_CENTER.UNMARKED
+      reactingCenterStatus === StructBond.PATTERN.REACTING_CENTER.UNMARKED
     ) {
       return;
     }
@@ -759,7 +771,7 @@ export class BondRenderer extends BaseRenderer {
     const points: Vec2[] = [];
 
     switch (reactingCenterStatus) {
-      case MoleculeBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -781,7 +793,7 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(direction, tiltTan * acrossSz),
         );
         break;
-      case MoleculeBond.PATTERN.REACTING_CENTER.CENTER: // #
+      case StructBond.PATTERN.REACTING_CENTER.CENTER: // #
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -819,7 +831,7 @@ export class BondRenderer extends BaseRenderer {
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
-      case MoleculeBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -841,11 +853,11 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
-      case MoleculeBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
+      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
         points.push(center.addScaled(normal, acrossSz));
         points.push(center.addScaled(normal, -acrossSz));
         break;
-      case MoleculeBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -888,7 +900,7 @@ export class BondRenderer extends BaseRenderer {
     }
 
     this.rootElement
-      ?.append('path')
+      .append('path')
       .attr('id', this.reactingCenterElementId)
       .attr('d', pathD)
       .attr('stroke', 'black')

@@ -552,10 +552,13 @@ test(`8. Check options from the drop-down menu Type`, async () => {
     expect(page.getByTestId(MonomerType.Sugar)).toContainText('Sugar'),
     expect(page.getByTestId(MonomerType.Base)).toContainText('Base'),
     expect(page.getByTestId(MonomerType.Phosphate)).toContainText('Phosphate'),
-    expect(page.getByTestId(MonomerType.NucleotideMonomer)).toContainText(
-      'Nucleotide',
+    expect(page.getByTestId(MonomerType.Nucleotide)).toContainText(
+      'Nucleotide (monomer)',
     ),
     expect(page.getByTestId(MonomerType.CHEM)).toContainText('CHEM'),
+    expect(page.getByTestId(MonomerType.NucleotidePreset)).toContainText(
+      'Nucleotide (preset)',
+    ),
   ]);
   await page.getByTestId(MonomerType.AminoAcid).click();
   await CreateMonomerDialog(page).discard();
@@ -592,7 +595,7 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
       ErrorMessage.emptyMandatoryFields,
     ).getNotificationMessage(),
   ).toEqual('Mandatory fields must be filled.');
-  await takeElementScreenshot(page, CreateMonomerDialog(page).typeCombobox);
+  await takeElementScreenshot(page, CreateMonomerDialog(page).symbolEditbox);
   await CreateMonomerDialog(page).discard();
 });
 

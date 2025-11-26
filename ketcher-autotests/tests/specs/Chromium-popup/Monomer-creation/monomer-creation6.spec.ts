@@ -437,7 +437,7 @@ test(`9. Check warning messages on Nucleotide monomer if R1 attachment point wit
   await shiftCanvas(page, -150, 50);
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -486,7 +486,7 @@ test(`10. Check warning messages on Nucleotide monomer if R2 attachment point wi
   await shiftCanvas(page, -150, 50);
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -531,7 +531,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await shiftCanvas(page, -150, 50);
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -577,7 +577,7 @@ test(`12. Verify that clicking on "Cancel" returns the user to the monomer creat
   await shiftCanvas(page, -150, 50);
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('TempNucleotide2');
   await createMonomerDialog.setName('TempNucleotide2');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -619,7 +619,7 @@ test(`13. Verify that Clicking on X returns the user to the monomer creation wiz
   await shiftCanvas(page, -150, 50);
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('TempNucleotide2');
   await createMonomerDialog.setName('TempNucleotide2');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);

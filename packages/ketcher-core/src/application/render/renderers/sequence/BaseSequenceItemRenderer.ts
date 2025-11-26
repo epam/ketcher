@@ -261,6 +261,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         (groups, node) => {
           if (
             node instanceof LinkerSequenceNode ||
+            node instanceof BackBoneSequenceNode ||
             node.monomer instanceof Phosphate ||
             this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
           ) {
@@ -304,6 +305,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       const linkerNodeIndex = subChain.nodes.findIndex(
         (node) => node instanceof LinkerSequenceNode,
       );
+      const backBoneNodeIndex = subChain.nodes.findIndex(
+        (node) => node instanceof BackBoneSequenceNode,
+      );
       const phosphateNodeIndex = subChain.nodes.findIndex(
         ({ monomer }) => monomer instanceof Phosphate,
       );
@@ -312,13 +316,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       );
       if (
         linkerNodeIndex !== -1 ||
+        backBoneNodeIndex !== -1 ||
         phosphateNodeIndex !== -1 ||
         ambiguousMonomerNonPeptideNodeIndex !== -1
       ) {
         if (
-          linkerNodeIndex < nodeIndex ||
-          phosphateNodeIndex < nodeIndex ||
-          ambiguousMonomerNonPeptideNodeIndex < nodeIndex
+          (linkerNodeIndex !== -1 && linkerNodeIndex < nodeIndex) ||
+          (backBoneNodeIndex !== -1 && backBoneNodeIndex < nodeIndex) ||
+          (phosphateNodeIndex !== -1 && phosphateNodeIndex < nodeIndex) ||
+          (ambiguousMonomerNonPeptideNodeIndex !== -1 &&
+            ambiguousMonomerNonPeptideNodeIndex < nodeIndex)
         ) {
           numberToDisplay = this.getNodeIndexInSubgroup();
         } else {
@@ -420,7 +427,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
-  // returns true if it is first node in subchain after LinkerSequenceNode
+  // returns true if it is first node in subchain after LinkerSequenceNode or BackBoneSequenceNode
   private get currentNodeNearBreakingNode() {
     return this.chain.subChains.some((subChain) => {
       if (
@@ -437,6 +444,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           subChain.nodes[nodeIndex - 1] instanceof LinkerSequenceNode) ||
         (nodeIndex < subChain.nodes.length - 1 &&
           subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode) ||
+        (nodeIndex > 0 &&
+          subChain.nodes[nodeIndex - 1] instanceof BackBoneSequenceNode) ||
+        (nodeIndex < subChain.nodes.length - 1 &&
+          subChain.nodes[nodeIndex + 1] instanceof BackBoneSequenceNode) ||
         (nodeIndex > 0 &&
           this.checkIfNodeIsAmbiguousMonomerNotPeptide(
             subChain.nodes[nodeIndex - 1],

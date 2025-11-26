@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page } from '@fixtures';
+import { test } from '@fixtures';
 import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,

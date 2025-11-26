@@ -6,4 +6,5 @@ export const preview = {
   heightForNucleotide: 105,
   widthForBond: 358,
   heightForBond: 268,
+  structureMinHeight: 230,
 } as const;

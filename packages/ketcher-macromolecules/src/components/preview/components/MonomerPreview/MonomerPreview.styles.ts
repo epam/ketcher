@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { StructRender } from 'ketcher-react';
+import { StructRender, preview } from 'ketcher-react';
 
 export const Container = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ export const MonomerName = styled.p`
 `;
 
 export const StyledStructRender = styled(StructRender)`
-  min-height: 230px;
+  min-height: ${preview.structureMinHeight}px;
   width: 100%;
   padding: 0 8px;
 `;

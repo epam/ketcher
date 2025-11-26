@@ -127,7 +127,7 @@ const MonomerPreview = ({ className }: Props) => {
 
 const StyledPreview = styled(MonomerPreview)`
   width: ${preview.width + 'px'};
-  height: ${preview.height + 'px'};
+  min-height: ${preview.height + 'px'};
 `;
 
 export default StyledPreview;

@@ -38,10 +38,12 @@ export const MonomerName = styled.p`
   text-align: left;
   margin: 0;
   white-space: pre-wrap;
+  max-height: 100px;
+  overflow-y: auto;
 `;
 
 export const StyledStructRender = styled(StructRender)`
-  height: 100%;
+  min-height: 230px;
   width: 100%;
   padding: 0 8px;
 `;

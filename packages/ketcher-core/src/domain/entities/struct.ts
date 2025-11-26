@@ -1615,6 +1615,24 @@ export class Struct {
     bond: Bond,
     stereo: number,
   ): void {
+    // Remove old half-bond neighbors before flipping
+    const oldHb1Id = bond.hb1;
+    const oldHb2Id = bond.hb2;
+    if (oldHb1Id !== undefined && oldHb2Id !== undefined) {
+      const beginAtom = this.atoms.get(bond.begin);
+      const endAtom = this.atoms.get(bond.end);
+      if (beginAtom) {
+        beginAtom.neighbors = beginAtom.neighbors.filter(
+          (hbId) => hbId !== oldHb1Id,
+        );
+      }
+      if (endAtom) {
+        endAtom.neighbors = endAtom.neighbors.filter(
+          (hbId) => hbId !== oldHb2Id,
+        );
+      }
+    }
+
     this.bonds.delete(bondId);
 
     const newBond = new Bond({

@@ -101,6 +101,8 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
+export const MAX_ALIAS_HELM_LENGTH = 22;
+
 function parseNode(node: any, struct: any) {
   const type = node.type;
   switch (type) {
@@ -1151,10 +1153,24 @@ export class KetSerializer implements Serializer<Struct> {
 
       switch (template.type) {
         case KetTemplateType.MONOMER_TEMPLATE: {
+          const monomerTemplate = template as IKetMonomerTemplate;
+
+          if (
+            monomerTemplate.aliasHELM &&
+            monomerTemplate.aliasHELM.length > MAX_ALIAS_HELM_LENGTH
+          ) {
+            KetcherLogger.error(
+              `Monomer '${
+                monomerTemplate.alias ?? monomerTemplate.id
+              }' has aliasHELM '${
+                monomerTemplate.aliasHELM
+              }' which exceeds the maximum allowed length of ${MAX_ALIAS_HELM_LENGTH} characters. The monomer was skipped.`,
+            );
+            return;
+          }
+
           library.push(
-            this.convertMonomerTemplateToLibraryItem(
-              template as IKetMonomerTemplate,
-            ),
+            this.convertMonomerTemplateToLibraryItem(monomerTemplate),
           );
 
           break;

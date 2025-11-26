@@ -27,42 +27,39 @@ import { Chem } from '@tests/pages/constants/monomers/Chem';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
-  await page.evaluate(async () => {
-    await window.ketcher.editor.subscribe('libraryUpdate', console.log);
-  });
+  // await page.evaluate(async () => {
+  //   await window.ketcher.editor.subscribe('libraryUpdate', console.log);
+  // });
 });
 test.afterAll(async ({ closePage }) => {
-  await page.evaluate(async () => {
-    window.ketcher.editor.unsubscribe('libraryUpdate', console.log);
-  });
+  // await page.evaluate(async () => {
+  //   window.ketcher.editor.unsubscribe('libraryUpdate', console.log);
+  // });
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-const waitForLibraryUpdate = (page: Page, timeout = 10_000) =>
-  page.evaluate(
-    ({ timeout }) =>
-      new Promise<string>((resolve, reject) => {
-        const timer = window.setTimeout(() => {
-          cleanup();
-          reject(new Error('Timed out waiting for libraryUpdate'));
+const waitForLibraryUpdate = async (page: Page, timeout = 10_000) => {
+  return await page.evaluate(
+    async ({ timeout }: { timeout: number }) => {
+      return new Promise<string>((resolve) => {
+        let resolved = false;
+
+        const handler = (sdf: string) => {
+          resolved = true;
+          resolve(sdf);
+        };
+
+        window.ketcher.editor.subscribe('libraryUpdate', handler);
+
+        setTimeout(() => {
+          if (!resolved) resolve('');
         }, timeout);
-
-        const subscriber = window.ketcher.editor.subscribe(
-          'libraryUpdate',
-          (sdf: string) => {
-            cleanup();
-            resolve(sdf);
-          },
-        );
-
-        function cleanup() {
-          window.clearTimeout(timer);
-          window.ketcher.editor.unsubscribe('libraryUpdate', subscriber);
-        }
-      }),
+      });
+    },
     { timeout },
   );
+};
 
 test(`1. Check that system sends update on peptide monomer creation`, async () => {
   /*
@@ -78,7 +75,6 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
 
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -86,6 +82,17 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
   );
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
+
+  waitForLibraryUpdate(page).then(async (sdf) => {
+    console.log('--------------');
+    console.log(sdf);
+    console.log('--------------');
+
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Peptide-monomer-expected.sdf',
+    );
+  });
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
@@ -116,12 +123,6 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
     ],
     HELMAlias: 'PeptTest',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Peptide-monomer-expected.sdf',
-  );
 });
 
 test(`2. Check that system sends update on base monomer creation`, async () => {

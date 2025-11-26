@@ -623,12 +623,12 @@ class Editor implements KetcherEditor {
 
     const currentStruct = this.struct();
     const selection = this.selection();
-    const hasSelection = selection !== null;
 
     // When there's no selection, use all atoms from the structure
-    const atomsToProcess = hasSelection
-      ? selection.atoms
-      : Array.from(currentStruct.atoms.keys());
+    const atomsToProcess =
+      selection !== null
+        ? selection.atoms
+        : Array.from(currentStruct.atoms.keys());
 
     if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;

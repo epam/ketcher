@@ -621,19 +621,20 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const selection = this.selection();
-
-    if (!selection) {
-      return true;
-    }
-
     const currentStruct = this.struct();
+    const selection = this.selection();
+    const hasSelection = selection !== null;
 
-    if (!selection.atoms || selection.atoms.length === 0) {
+    // When there's no selection, use all atoms from the structure
+    const atomsToProcess = hasSelection
+      ? selection.atoms
+      : Array.from(currentStruct.atoms.keys());
+
+    if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;
     }
 
-    const selectionInvalid = selection.atoms.some((atomId) => {
+    const selectionInvalid = atomsToProcess.some((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
       if (!atom) {
@@ -666,7 +667,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const terminalRGroupAtoms = selection.atoms.filter((atomId) => {
+    const terminalRGroupAtoms = atomsToProcess.filter((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
       if (!atom) {
@@ -676,11 +677,12 @@ class Editor implements KetcherEditor {
       return atom.rglabel !== null && atom.neighbors.length === 1;
     });
 
-    const selectionAtoms = new Set(selection.atoms);
+    const atomsToProcessSet = new Set(atomsToProcess);
     const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
       return (
-        (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
-        (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+        (atomsToProcessSet.has(bond.begin) &&
+          !atomsToProcessSet.has(bond.end)) ||
+        (atomsToProcessSet.has(bond.end) && !atomsToProcessSet.has(bond.begin))
       );
     });
 
@@ -694,12 +696,12 @@ class Editor implements KetcherEditor {
     const potentialLeavingAtomsForAutoAssignment: number[] = [];
     bondsToOutside.forEach((bond) => {
       potentialLeavingAtomsForAutoAssignment.push(
-        selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
+        atomsToProcessSet.has(bond.begin) ? bond.end : bond.begin,
       );
     });
 
     const potentialLeavingAtomForManualAssignment: number[] = [];
-    selectionAtoms.forEach((selectionAtomId) => {
+    atomsToProcessSet.forEach((selectionAtomId) => {
       const selectionAtom = currentStruct.atoms.get(selectionAtomId);
 
       assert(selectionAtom);

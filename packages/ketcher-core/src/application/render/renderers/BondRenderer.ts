@@ -27,6 +27,9 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
+// Constants for bond mark rendering (matching rebond.ts behavior)
+const CUSTOM_QUERY_MAX_LENGTH = 8;
+const TILT_TANGENT = 0.2; // Tangent of the tilt angle for reacting center symbols
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -674,8 +677,11 @@ export class BondRenderer extends BaseRenderer {
     let mark: string | null = null;
     if (bondFromStruct.customQuery) {
       mark = bondFromStruct.customQuery;
-      if (bondFromStruct.customQuery.length > 8) {
-        mark = `${bondFromStruct.customQuery.substring(0, 8)}...`;
+      if (bondFromStruct.customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+        mark = `${bondFromStruct.customQuery.substring(
+          0,
+          CUSTOM_QUERY_MAX_LENGTH,
+        )}...`;
       }
     } else if (bondFromStruct.topology === MoleculeBond.PATTERN.TOPOLOGY.RING) {
       mark = 'rng';
@@ -694,29 +700,31 @@ export class BondRenderer extends BaseRenderer {
     const direction = endPosition.sub(startPosition).normalized();
     const normal = direction.turnLeft();
 
-    // Scale factor based on editor settings
+    // Scale factors based on editor settings (matching rebond.ts calculations)
     const scaleFactor = this.editorSettings.macroModeScale;
     const lineWidth = scaleFactor / 20;
     const bondSpace = scaleFactor / 7;
 
-    // Calculate offset from bond center (similar to rebond.ts)
-    let offset = lineWidth;
+    // Calculate offset from bond center (matching rebond.ts: fixed + s.x/s.y with s = Vec2(2, 1).scaled(bondSpace))
+    let fixed = lineWidth;
     if (this.bond.type === BondType.Triple) {
-      offset += bondSpace;
+      fixed += bondSpace;
     }
 
-    const offsetVector = new Vec2(
-      normal.x * (bondSpace * 2 + offset),
-      normal.y * (bondSpace + offset),
-    );
-    const markPosition = center.add(offsetVector);
+    // Position the mark above the bond using the normal vector
+    // Using bondSpace * 2 for x and bondSpace for y matches the rebond.ts calculation
+    const offsetValue = bondSpace * 2 + fixed;
+    const markPosition = center.add(normal.scaled(offsetValue));
+
+    // Font size scaled relative to the scale factor
+    const fontSize = Math.max(10, scaleFactor / 4);
 
     // Create text element for the topology mark
     const markText = this.rootElement
       ?.append('text')
       .text(mark)
       .attr('font-family', 'Arial')
-      .attr('font-size', '10px')
+      .attr('font-size', `${fontSize}px`)
       .attr('fill', '#000')
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
@@ -751,18 +759,18 @@ export class BondRenderer extends BaseRenderer {
     const direction = endPosition.sub(startPosition).normalized();
     const normal = direction.turnLeft();
 
-    // Scale factor based on editor settings
+    // Scale factors based on editor settings (matching rebond.ts calculations)
     const scaleFactor = this.editorSettings.macroModeScale;
     const lineWidth = scaleFactor / 20;
-    const bondSpace = scaleFactor / 7 / 2;
+    // bondSpace / 2 is used in rebond.ts for reacting center calculations
+    const bondSpaceHalf = scaleFactor / 7 / 2;
 
-    // Constants matching rebond.ts
-    const alongIntRc = lineWidth;
-    const alongIntMadeBroken = 2 * lineWidth;
-    const alongSz = 1.5 * bondSpace;
-    const acrossInt = 1.5 * bondSpace;
-    const acrossSz = 3.0 * bondSpace;
-    const tiltTan = 0.2;
+    // Constants matching rebond.ts for reacting center symbol positioning
+    const alongIntRc = lineWidth; // half interval along for CENTER
+    const alongIntMadeBroken = 2 * lineWidth; // half interval between along for MADE_OR_BROKEN
+    const alongSz = 1.5 * bondSpaceHalf; // half size along for CENTER
+    const acrossInt = 1.5 * bondSpaceHalf; // half interval across for CENTER
+    const acrossSz = 3.0 * bondSpaceHalf; // half size across for all symbols
 
     const points: Vec2[] = [];
 
@@ -771,47 +779,47 @@ export class BondRenderer extends BaseRenderer {
         points.push(
           center
             .addScaled(normal, acrossSz)
-            .addScaled(direction, tiltTan * acrossSz),
+            .addScaled(direction, TILT_TANGENT * acrossSz),
         );
         points.push(
           center
             .addScaled(normal, -acrossSz)
-            .addScaled(direction, -tiltTan * acrossSz),
+            .addScaled(direction, -TILT_TANGENT * acrossSz),
         );
         points.push(
           center
             .addScaled(normal, acrossSz)
-            .addScaled(direction, -tiltTan * acrossSz),
+            .addScaled(direction, -TILT_TANGENT * acrossSz),
         );
         points.push(
           center
             .addScaled(normal, -acrossSz)
-            .addScaled(direction, tiltTan * acrossSz),
+            .addScaled(direction, TILT_TANGENT * acrossSz),
         );
         break;
       case MoleculeBond.PATTERN.REACTING_CENTER.CENTER: // #
         points.push(
           center
             .addScaled(normal, acrossSz)
-            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, TILT_TANGENT * acrossSz)
             .addScaled(direction, alongIntRc),
         );
         points.push(
           center
             .addScaled(normal, -acrossSz)
-            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, -TILT_TANGENT * acrossSz)
             .addScaled(direction, alongIntRc),
         );
         points.push(
           center
             .addScaled(normal, acrossSz)
-            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, TILT_TANGENT * acrossSz)
             .addScaled(direction, -alongIntRc),
         );
         points.push(
           center
             .addScaled(normal, -acrossSz)
-            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, -TILT_TANGENT * acrossSz)
             .addScaled(direction, -alongIntRc),
         );
         points.push(

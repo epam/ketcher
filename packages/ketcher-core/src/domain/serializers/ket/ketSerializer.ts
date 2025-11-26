@@ -19,7 +19,6 @@ import {
   Bond,
   SGroupAttachmentPoint,
   Struct,
-  UnresolvedMonomer,
   Vec2,
   RxnArrow as MicromoleculeRxnArrow,
   MultitailArrow as MicromoleculeMultitailArrow,
@@ -730,7 +729,7 @@ export class KetSerializer implements Serializer<Struct> {
       aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
-      unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
+      unresolved: monomer.monomerItem.props.unresolved ? true : undefined,
       modificationTypes: monomer.monomerItem.props.modificationTypes,
     };
     // CHEMs do not have natural analog

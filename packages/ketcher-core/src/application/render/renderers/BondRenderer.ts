@@ -2,6 +2,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import { Bond as MoleculeBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import { CoreEditor } from 'application/editor';
@@ -26,6 +27,8 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
+const LINE_WIDTH = 1.3;
+const BOND_SPACE = 4.2;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -611,7 +614,287 @@ export class BondRenderer extends BaseRenderer {
 
     this.createBondHoverablePath(bondSVGPaths);
 
+    this.appendBondProperties();
     this.appendStereochemistry();
+  }
+
+  private get topologyElementId() {
+    return `topology-bond-${this.bond.id}`;
+  }
+
+  private get reactingCenterElementId() {
+    return `reacting-center-bond-${this.bond.id}`;
+  }
+
+  private appendBondProperties() {
+    const bondFromStruct = this.getBondFromMoleculeStruct();
+    if (!bondFromStruct) {
+      return;
+    }
+
+    this.appendTopologyMark(bondFromStruct);
+    this.appendReactingCenterMark(bondFromStruct);
+  }
+
+  private appendTopologyMark(bondFromStruct: MoleculeBond) {
+    let mark: string | null = null;
+
+    if (bondFromStruct.customQuery) {
+      mark = bondFromStruct.customQuery;
+      if (bondFromStruct.customQuery.length > 8) {
+        mark = `${bondFromStruct.customQuery.substring(0, 8)}...`;
+      }
+    } else if (bondFromStruct.topology === MoleculeBond.PATTERN.TOPOLOGY.RING) {
+      mark = 'rng';
+    } else if (
+      bondFromStruct.topology === MoleculeBond.PATTERN.TOPOLOGY.CHAIN
+    ) {
+      mark = 'chn';
+    }
+
+    if (!mark) {
+      return;
+    }
+
+    const halfEdges = this.halfEdges;
+    const firstHalfEdge = halfEdges?.[0];
+    const secondHalfEdge = halfEdges?.[1];
+
+    if (!firstHalfEdge || !secondHalfEdge) {
+      return;
+    }
+
+    const bondVectors = this.bondVectors;
+    if (!bondVectors) {
+      return;
+    }
+
+    // Calculate center position in local coordinates
+    const center = bondVectors.endPosition
+      .add(bondVectors.startPosition)
+      .scaled(0.5);
+    const direction = bondVectors.endPosition
+      .sub(bondVectors.startPosition)
+      .normalized();
+    let normal = new Vec2(-direction.y, direction.x);
+
+    // Adjust position based on double bond shift
+    const doubleBondShift = this.getDoubleBondShift(
+      CoreEditor.provideEditorInstance().viewModel,
+      firstHalfEdge,
+      secondHalfEdge,
+    );
+
+    let fixed = LINE_WIDTH;
+    if (doubleBondShift > 0) {
+      normal = normal.scaled(-doubleBondShift);
+    } else if (doubleBondShift === 0) {
+      fixed += BOND_SPACE / 2;
+    }
+
+    const offset = new Vec2(2, 1).scaled(BOND_SPACE);
+    if (bondFromStruct.type === MoleculeBond.PATTERN.TYPE.TRIPLE) {
+      fixed += BOND_SPACE;
+    }
+
+    const position = center.add(
+      new Vec2(normal.x * (offset.x + fixed), normal.y * (offset.y + fixed)),
+    );
+
+    const topologyGroup = this.rootElement
+      ?.append('g')
+      ?.attr('id', this.topologyElementId);
+
+    const topologyText = topologyGroup
+      ?.append('text')
+      .text(mark)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '10px')
+      .attr('fill', '#000')
+      .attr('pointer-events', 'none');
+
+    const textNode = topologyText?.node();
+    if (textNode) {
+      const box = textNode.getBBox();
+      topologyText
+        ?.attr('x', position.x - box.width / 2)
+        ?.attr('y', position.y + box.height / 4);
+    }
+  }
+
+  private appendReactingCenterMark(bondFromStruct: MoleculeBond) {
+    const reactingCenterStatus = bondFromStruct.reactingCenterStatus;
+
+    if (
+      reactingCenterStatus === null ||
+      reactingCenterStatus === undefined ||
+      reactingCenterStatus === MoleculeBond.PATTERN.REACTING_CENTER.UNMARKED
+    ) {
+      return;
+    }
+
+    const bondVectors = this.bondVectors;
+    if (!bondVectors) {
+      return;
+    }
+
+    // Calculate center and direction in local coordinates
+    const center = bondVectors.endPosition
+      .add(bondVectors.startPosition)
+      .scaled(0.5);
+    const direction = bondVectors.endPosition
+      .sub(bondVectors.startPosition)
+      .normalized();
+    const normal = new Vec2(-direction.y, direction.x);
+
+    const lw = LINE_WIDTH;
+    const bs = BOND_SPACE / 2;
+    const alongIntRc = lw;
+    const alongIntMadeBroken = 2 * lw;
+    const alongSz = 1.5 * bs;
+    const acrossInt = 1.5 * bs;
+    const acrossSz = 3.0 * bs;
+    const tiltTan = 0.2;
+
+    const points: Vec2[] = [];
+
+    switch (reactingCenterStatus) {
+      case MoleculeBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, tiltTan * acrossSz),
+        );
+        break;
+      case MoleculeBond.PATTERN.REACTING_CENTER.CENTER: // #
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, -alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, -alongIntRc),
+        );
+        points.push(
+          center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
+        );
+        break;
+      case MoleculeBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        break;
+      case MoleculeBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
+        points.push(center.addScaled(normal, acrossSz));
+        points.push(center.addScaled(normal, -acrossSz));
+        break;
+      case MoleculeBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(center.addScaled(normal, acrossSz));
+        points.push(center.addScaled(normal, -acrossSz));
+        break;
+      default:
+        return;
+    }
+
+    if (points.length === 0) {
+      return;
+    }
+
+    // Build path from point pairs
+    let pathD = '';
+    for (let i = 0; i < points.length; i += 2) {
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      if (p1 && p2) {
+        pathD += `M${p1.x},${p1.y}L${p2.x},${p2.y}`;
+      }
+    }
+
+    this.rootElement
+      ?.append('path')
+      .attr('id', this.reactingCenterElementId)
+      .attr('d', pathD)
+      .attr('stroke', 'black')
+      .attr('stroke-width', LINE_WIDTH)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'none');
   }
 
   private appendStereochemistry() {

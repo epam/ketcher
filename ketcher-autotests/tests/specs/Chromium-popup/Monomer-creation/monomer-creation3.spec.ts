@@ -1369,7 +1369,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await page.mouse.move(600, 200);
   await dragMouseTo(425, 200, page);
 
-  await CreateMonomerDialog(page).selectType(MonomerType.Nucleotide);
+  await CreateMonomerDialog(page).selectType(MonomerType.NucleotideMonomer);
   await CreateMonomerDialog(page).setSymbol(Nucleotide.Nucleotide.alias);
   await CreateMonomerDialog(page).setName('Nucleotide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(

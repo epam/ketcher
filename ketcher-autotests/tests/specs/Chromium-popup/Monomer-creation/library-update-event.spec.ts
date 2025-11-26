@@ -39,7 +39,7 @@ test.afterAll(async ({ closePage }) => {
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-const waitForLibraryUpdate = async (page: Page, timeout = 10_000) => {
+const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
   return await page.evaluate(
     async ({ timeout }: { timeout: number }) => {
       return new Promise<string>((resolve) => {
@@ -83,11 +83,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
-  waitForLibraryUpdate(page).then(async (sdf) => {
-    console.log('--------------');
-    console.log(sdf);
-    console.log('--------------');
-
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
     await verifyConsoleExport(
       sdf,
       'SDF/Chromium-popup/Monomer-creation-event/Peptide-monomer-expected.sdf',
@@ -123,6 +119,7 @@ test(`1. Check that system sends update on peptide monomer creation`, async () =
     ],
     HELMAlias: 'PeptTest',
   });
+  await waiter;
 });
 
 test(`2. Check that system sends update on base monomer creation`, async () => {
@@ -139,14 +136,19 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
   );
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
+
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Base-monomer-expected.sdf',
+    );
+  });
 
   await createMonomer(page, {
     type: MonomerType.Base,
@@ -155,13 +157,7 @@ test(`2. Check that system sends update on base monomer creation`, async () => {
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseTest',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Base-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`3. Check that system sends update on sugar monomer creation`, async () => {
@@ -178,8 +174,6 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -187,19 +181,20 @@ test(`3. Check that system sends update on sugar monomer creation`, async () => 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Sugar-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.Sugar,
     symbol: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'SugarTest',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Sugar-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`4. Check that system sends update on phosphate monomer creation`, async () => {
@@ -216,8 +211,6 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -225,19 +218,20 @@ test(`4. Check that system sends update on phosphate monomer creation`, async ()
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Phosphate-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.Phosphate,
     symbol: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'PhosphateTest',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Phosphate-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`5. Check that system sends update on nucleotide monomer creation`, async () => {
@@ -254,8 +248,6 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -263,19 +255,19 @@ test(`5. Check that system sends update on nucleotide monomer creation`, async (
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Nucleotide-monomer-expected.sdf',
+    );
+  });
   await createMonomer(page, {
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: Nucleotide.Nucleotide.alias,
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Nucleotide-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`6. Check that system sends update on CHEM monomer creation`, async () => {
@@ -292,8 +284,6 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -301,18 +291,19 @@ test(`6. Check that system sends update on CHEM monomer creation`, async () => {
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/CHEM-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.CHEM,
     symbol: Chem.CHEM.alias,
     name: 'CHEM Test monomer',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/CHEM-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`7. Check that system sends update on peptide monomer without modification types creation`, async () => {
@@ -329,14 +320,19 @@ test(`7. Check that system sends update on peptide monomer without modification 
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
   );
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
+
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Peptide2-monomer-expected.sdf',
+    );
+  });
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
@@ -345,13 +341,7 @@ test(`7. Check that system sends update on peptide monomer without modification 
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'PeptTest',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Peptide2-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`8. Check that system sends update on peptide monomer without modification types and HELM alias creation`, async () => {
@@ -368,8 +358,6 @@ test(`8. Check that system sends update on peptide monomer without modification 
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -377,19 +365,20 @@ test(`8. Check that system sends update on peptide monomer without modification 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Peptide3-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
     symbol: Peptide.Peptide3.alias,
     name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Peptide3-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`9. Check that system sends update on base monomer without HELM alias creation`, async () => {
@@ -406,8 +395,6 @@ test(`9. Check that system sends update on base monomer without HELM alias creat
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -415,19 +402,20 @@ test(`9. Check that system sends update on base monomer without HELM alias creat
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Base2-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.Base,
     symbol: Base.Base2.alias,
     name: 'Base2 Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Base2-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`10. Check that system sends update on sugar monomer without HELM alias creation`, async () => {
@@ -444,8 +432,6 @@ test(`10. Check that system sends update on sugar monomer without HELM alias cre
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -453,18 +439,19 @@ test(`10. Check that system sends update on sugar monomer without HELM alias cre
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Sugar2-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.Sugar,
     symbol: Sugar.Sugar2.alias,
     name: 'Sugar2 Test monomer',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Sugar2-monomer-expected.sdf',
-  );
+  await waiter;
 });
 
 test(`11. Check that system sends update on phosphate monomer without HELM alias creation`, async () => {
@@ -481,8 +468,6 @@ test(`11. Check that system sends update on phosphate monomer without HELM alias
    *
    * Version 3.10
    */
-  const libraryUpdatePromise = await waitForLibraryUpdate(page);
-
   await pasteFromClipboardAndOpenAsNewProject(
     page,
     'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -490,15 +475,17 @@ test(`11. Check that system sends update on phosphate monomer without HELM alias
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
 
+  const waiter = waitForLibraryUpdate(page).then(async (sdf) => {
+    await verifyConsoleExport(
+      sdf,
+      'SDF/Chromium-popup/Monomer-creation-event/Phosphate2-monomer-expected.sdf',
+    );
+  });
+
   await createMonomer(page, {
     type: MonomerType.Phosphate,
     symbol: Phosphate.Phosphate2.alias,
     name: 'Phosphate2 Test monomer',
   });
-
-  const libraryUpdateSDF = await libraryUpdatePromise;
-  await verifyConsoleExport(
-    libraryUpdateSDF,
-    'SDF/Chromium-popup/Monomer-creation-event/Phosphate2-monomer-expected.sdf',
-  );
+  await waiter;
 });

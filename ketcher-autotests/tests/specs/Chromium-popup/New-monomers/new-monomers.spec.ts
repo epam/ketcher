@@ -544,7 +544,7 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
   await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
 
   for (const nucleotide of newNucleotides) {
     await createMonomerDialog.setSymbol(nucleotide.alias);

@@ -940,22 +940,39 @@ class Editor implements KetcherEditor {
         assert(selectedStructLeavingAtom.rglabel);
 
         let attachmentPointName: AttachmentPointName;
-        if (
+
+        // Check if this is R1 or R2 and if it's already assigned
+        const isR1OrR2 =
           attachmentPointLabel === AttachmentPointName.R1 ||
-          attachmentPointLabel === AttachmentPointName.R2 ||
-          sideAttachmentPointsNames.includes(
-            attachmentPointLabel as AttachmentPointName,
-          )
+          attachmentPointLabel === AttachmentPointName.R2;
+        const isAlreadyAssigned = assignedAttachmentPoints.has(
+          attachmentPointLabel as AttachmentPointName,
+        );
+
+        if (
+          (isR1OrR2 && !isAlreadyAssigned) ||
+          (!isR1OrR2 &&
+            sideAttachmentPointsNames.includes(
+              attachmentPointLabel as AttachmentPointName,
+            ))
         ) {
           attachmentPointName = attachmentPointLabel as AttachmentPointName;
         } else {
+          // For duplicate R1/R2 or other cases, assign to smallest available Rn (n>2)
+          // or fall back to R1/R2 if no side attachment points are available
           const assignedAttachmentPointNames = Array.from(
             assignedAttachmentPoints.keys(),
           );
+          // Skip R1/R2 when:
+          // 1. Processing a duplicate R1/R2 label (requirement 2.6: prefer R3+)
+          // 2. Processing other labels when we haven't assigned all expected side attachments yet
+          const shouldSkipR1AndR2 =
+            isR1OrR2 ||
+            assignedAttachmentPointNames.length <
+              sideAttachmentPointsNames.length;
           attachmentPointName = getNextFreeAttachmentPoint(
             assignedAttachmentPointNames,
-            assignedAttachmentPointNames.length <
-              sideAttachmentPointsNames.length,
+            shouldSkipR1AndR2,
           );
         }
 

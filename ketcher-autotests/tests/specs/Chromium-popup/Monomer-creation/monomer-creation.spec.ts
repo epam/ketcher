@@ -552,10 +552,9 @@ test(`8. Check options from the drop-down menu Type`, async () => {
     expect(page.getByTestId(MonomerType.Sugar)).toContainText('Sugar'),
     expect(page.getByTestId(MonomerType.Base)).toContainText('Base'),
     expect(page.getByTestId(MonomerType.Phosphate)).toContainText('Phosphate'),
-    expect(page.getByTestId(MonomerType.Nucleotide)).toContainText(
+    expect(page.getByTestId(MonomerType.NucleotideMonomer)).toContainText(
       'Nucleotide (monomer)',
     ),
-
     expect(page.getByTestId(MonomerType.CHEM)).toContainText('CHEM'),
     expect(page.getByTestId(MonomerType.NucleotidePreset)).toContainText(
       'Nucleotide (preset)',

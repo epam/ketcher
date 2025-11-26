@@ -210932,6 +210932,22 @@
           -1.25,
           0
         ]
+      },
+      {
+        "label": "H",
+        "location": [
+          1.732,
+          0.25,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          1.366,
+          -1.116,
+          0
+        ]
       }
     ],
     "bonds": [
@@ -210976,6 +210992,20 @@
           4,
           6
         ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          8
+        ]
       }
     ],
     "class": "Phosphate",
@@ -210998,7 +211028,9 @@
         "attachmentAtom": 0,
         "leavingGroup": {
           "atoms": [
-            2
+            2,
+            7,
+            8
           ]
         },
         "type": "right"

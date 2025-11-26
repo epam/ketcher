@@ -16,6 +16,10 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     alias: 'Base',
     testId: 'Base___Base Test monomer',
   },
+  Base2: {
+    alias: 'Base2',
+    testId: 'Base2___Base2 Test monomer',
+  },
   NoBase: {
     alias: 'No Base On The Canvas',
     testId: 'No Such Base In The Library',

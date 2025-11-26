@@ -3,7 +3,7 @@ export enum MonomerType {
   Sugar = 'Sugar-option',
   Base = 'Base-option',
   Phosphate = 'Phosphate-option',
-  Nucleotide = 'Nucleotide (monomer)-option',
+  NucleotideMonomer = 'Nucleotide (monomer)-option',
   CHEM = 'CHEM-option',
   NucleotidePreset = 'Nucleotide (preset)-option',
 }

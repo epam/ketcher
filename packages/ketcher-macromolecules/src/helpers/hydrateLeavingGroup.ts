@@ -1,7 +1,13 @@
 import { LeavingGroup } from 'ketcher-core';
 
 const hydrateLeavingGroup = (leavingGroup: LeavingGroup) => {
-  return leavingGroup === 'O' ? 'OH' : leavingGroup;
+  if (leavingGroup === 'O') {
+    return 'OH';
+  }
+  if (leavingGroup === 'N') {
+    return 'NH2';
+  }
+  return leavingGroup;
 };
 
 export default hydrateLeavingGroup;

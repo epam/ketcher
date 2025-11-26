@@ -80,7 +80,6 @@ test(
         IMPORTANT: Some tooltips are wrong because of bugs: 
         https://github.com/epam/ketcher/issues/5442, 
         https://github.com/epam/ketcher/issues/5443
-        https://github.com/epam/ketcher/issues/5445
         Will require to update screens after fix
         */
     test.setTimeout(240000);

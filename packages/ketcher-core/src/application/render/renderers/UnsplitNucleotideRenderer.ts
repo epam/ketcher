@@ -11,6 +11,7 @@ const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
 const NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].autochainPreview;
+const UNRESOLVED_MONOMER_COLOR = '#585858';
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
@@ -24,6 +25,13 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
+  }
+
+  protected getMonomerColor(theme) {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return UNRESOLVED_MONOMER_COLOR;
+    }
+    return super.getMonomerColor(theme);
   }
 
   protected appendBody(

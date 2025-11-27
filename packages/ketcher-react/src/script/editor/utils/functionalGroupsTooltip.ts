@@ -1,10 +1,5 @@
 import assert from 'assert';
-import {
-  MonomerMicromolecule,
-  SGroup,
-  Struct,
-  UnresolvedMonomer,
-} from 'ketcher-core';
+import { MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
 import Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -120,7 +115,7 @@ function showTooltip(editor: Editor, infoPanelData: InfoPanelData | null) {
 
   if (
     infoPanelData?.sGroup instanceof MonomerMicromolecule &&
-    infoPanelData.sGroup.monomer instanceof UnresolvedMonomer
+    infoPanelData.sGroup.monomer.monomerItem.props.unresolved
   ) {
     return;
   }

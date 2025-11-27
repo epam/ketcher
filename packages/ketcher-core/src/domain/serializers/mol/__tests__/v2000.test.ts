@@ -610,8 +610,8 @@ describe('parseCTabV2000', () => {
 
       expect(firstSGroup.type).toBe('GEN');
       expect(secondSGroup.type).toBe('SRU');
-      expect(firstSGroup.data.subtype).toBe('ALT');
-      expect(secondSGroup.data.subtype).toBe('RAN');
+      expect(firstSGroup.data.subtype).toBe('alt');
+      expect(secondSGroup.data.subtype).toBe('ran');
       expect(firstSGroup.data.label).toBe(1);
       expect(secondSGroup.data.label).toBe(2);
       expect((firstSGroup as any).parent).toBe(2);

@@ -158,7 +158,7 @@ export class Ketcher {
   }
 
   // TODO: create options type
-  setSettings(settings: Record<string, string>) {
+  setSettings(settings: Record<string, string | boolean>) {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');

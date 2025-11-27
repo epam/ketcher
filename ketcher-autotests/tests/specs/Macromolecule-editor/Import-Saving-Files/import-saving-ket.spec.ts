@@ -128,9 +128,6 @@ test.describe('Import-Saving .ket Files', () => {
       FileType.KET,
     );
 
-    const numberOfPressZoomOut = 7;
-    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

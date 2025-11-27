@@ -647,7 +647,8 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    *      1. Open Molecules canvas
    *      2. Set in local storage the flag explicitly enabling saving new monomers from creation wizard
    *      3. Create a new monomer
-   *      4. Reload the application
+   *      4. Verify that the created monomer is present in the monomer library
+   *      5. Reload the application
    *      6. Verify that the created monomer is present in the monomer library
    *
    * Version 3.10
@@ -685,8 +686,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    *
    * Case:
    *      1. Open Molecules canvas
-   *      2. Set in local storage the flag explicitly enabling saving new monomers from creation wizard
+   *      2. Set in local storage the flag explicitly disabling saving new monomers from creation wizard
    *      3. Create a new monomer
+   * 4. Verify that the created monomer is present in the monomer library
    *      4. Reload the application
    *      6. Verify that the created monomer is not present in the monomer library
    *

@@ -151,6 +151,7 @@ test.describe('Color of Nucleobases', () => {
      */
     await Library(page).switchToPeptidesTab();
     await Library(page).selectMonomer(Peptide._Am);
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

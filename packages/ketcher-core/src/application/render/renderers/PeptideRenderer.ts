@@ -10,6 +10,7 @@ const PEPTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
 const PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].autochainPreview;
+const UNRESOLVED_MONOMER_COLOR = '#585858';
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';
@@ -26,6 +27,9 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return undefined;
+    }
     return { backgroundId: '#modified-background', requiresFill: true };
   }
 
@@ -33,10 +37,17 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
-    const isPeptide = this.monomer.monomerItem.props?.MonomerType === 'PEPTIDE';
-    const color = isPeptide
-      ? this.getPeptideColor(theme)
-      : this.getMonomerColor(theme);
+    const isUnresolved = this.monomer.monomerItem.props.unresolved;
+    let color;
+    if (isUnresolved) {
+      color = UNRESOLVED_MONOMER_COLOR;
+    } else {
+      const isPeptide =
+        this.monomer.monomerItem.props?.MonomerType === 'PEPTIDE';
+      color = isPeptide
+        ? this.getPeptideColor(theme)
+        : this.getMonomerColor(theme);
+    }
     return rootElement
       .append('use')
       .data([this])
@@ -47,6 +58,10 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   public get textColor() {
     const LIGHT_COLOR = 'white';
     const DARK_COLOR = '#333333';
+
+    if (this.monomer.monomerItem.props.unresolved) {
+      return LIGHT_COLOR;
+    }
 
     const peptideColorsMap: { [key: string]: string } = {
       D: DARK_COLOR,

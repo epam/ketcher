@@ -14,6 +14,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -127,8 +128,7 @@ test.describe('Import-Saving .ket Files', () => {
       'KET/hundred-monomers-expected.ket',
       FileType.KET,
     );
-
-    const numberOfPressZoomOut = 7;
+    const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
@@ -162,7 +162,7 @@ test.describe('Import-Saving .ket Files', () => {
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Peptide.bAla).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {

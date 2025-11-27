@@ -14,6 +14,7 @@ import {
   waitForPageInit,
   MacroFileType,
   MolFileFormat,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -1576,13 +1577,11 @@ test.describe('Verify "Select/Edit Attachment Points" dialogues for ambiguous mo
       const bondLine = getBondLocator(page, {});
       await bondLine.hover({ force: true });
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
       await ContextMenu(page, bondLine).click(
         MacroBondOption.EditAttachmentPoints,
       );
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
       await AttachmentPointsDialog(page).cancel();
     });
   }

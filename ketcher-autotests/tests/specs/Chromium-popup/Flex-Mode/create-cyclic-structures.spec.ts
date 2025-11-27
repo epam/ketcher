@@ -143,7 +143,7 @@ test.describe('Cyclic structures', () => {
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2. Select structure on canvas
-     * 3. Press right-click and select Arrange As A Ring point
+     * 3. Press right-click and select Arrange As A Ring
      *
      * Version 3.10
      */
@@ -164,7 +164,7 @@ test.describe('Cyclic structures', () => {
      * Description: Arrange as a Ring option is not available in other layout modes(Snake, Sequence)
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2. Check top toolpar Arrange as a Ring button availability in Snake and Sequence layout modes
+     * 2. Check top toolbar Arrange as a Ring button availability in Snake and Sequence layout modes
      *
      * Version 3.10
      */

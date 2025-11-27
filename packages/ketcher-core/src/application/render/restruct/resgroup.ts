@@ -139,10 +139,10 @@ class ReSGroup extends ReObject {
         }
         case 'COP': {
           const connectivity: string = sgroup.data.connectivity || 'eu';
-          SGroupdrawBracketsOptions.upperIndexText = connectivity.toLowerCase();
+          SGroupdrawBracketsOptions.upperIndexText = connectivity;
           const subtype = sgroup.data.subtype;
           if (sgroup.data.subtype) {
-            SGroupdrawBracketsOptions.lowerIndexText = subtype.toLowerCase();
+            SGroupdrawBracketsOptions.lowerIndexText = subtype;
           }
           break;
         }

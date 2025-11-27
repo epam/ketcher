@@ -363,7 +363,7 @@ const sgroup = {
         type: { enum: ['COP'] },
         subtype: {
           title: 'Subtype',
-          enum: ['', 'RAN', 'BLO', 'ALT'],
+          enum: ['', 'ran', 'blo', 'alt'],
           enumNames: ['Not Specified', 'Random', 'Block', 'Alternating'],
         },
         connectivity: {

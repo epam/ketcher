@@ -463,7 +463,7 @@ export class Molfile {
         this.writeWhiteSpace(1);
         this.writePaddedNumber(sGroupIdInCTab, 3);
         this.writeWhiteSpace(1);
-        this.writePadded(sgroup.data.subtype, 3);
+        this.writePadded(sgroup.data.subtype.toUpperCase(), 3);
         this.writeCR();
       }
 
@@ -490,7 +490,7 @@ export class Molfile {
       if (['SRU', 'COP'].includes(sgroup.type) && sgroup.data.connectivity) {
         const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
-        ).padEnd(3)}`.toUpperCase();
+        ).padEnd(3)}`;
 
         this.write('M  SCN');
         this.writePaddedNumber(1, 3);

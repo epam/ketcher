@@ -124,6 +124,45 @@ export async function verifyFileExport(
   expect(filteredFile).toEqual(filteredFileExpected);
 }
 
+export async function verifyConsoleExport(
+  consoleContent: string,
+  expectedFilename: string,
+  metaDataIndexes: number[] = [],
+) {
+  const testDataDir = getTestDataDirectory();
+  const resolvedExpectedFilename = path.resolve(testDataDir, expectedFilename);
+
+  // This two lines for creating from scratch or for updating exampled files
+  // const expectedFileContent = await getFileContent(page, fileType, format);
+  await saveToFile(resolvedExpectedFilename, consoleContent);
+  // This line for filtering out example file content (named as fileExpected)
+  // and file content from memory (named as file) from unnessusary data
+  const fileExpected = (await readFileContent(expectedFilename)).split('\n');
+
+  // Function to filter lines
+  const filterLines = (lines: string[], indexes: number[]) => {
+    if (indexes.length === 0) {
+      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
+      return lines.filter(
+        (line) =>
+          !line.includes('-INDIGO-') &&
+          !line.includes('$DATM') &&
+          !line.includes('$MDL') &&
+          !line.includes('Ketcher'),
+      );
+    }
+    // If indexes are specified, filter lines by indexes
+    return filterByIndexes(lines, indexes);
+  };
+  const filteredConsoleContent = filterLines(
+    consoleContent.split('\n'),
+    metaDataIndexes,
+  );
+  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  // Compare the filtered files
+  expect(filteredConsoleContent).toEqual(filteredFileExpected);
+}
+
 const GetFileMethod: Record<string, keyof Ketcher> = {
   mol: 'getMolfile',
   rxn: 'getRxn',

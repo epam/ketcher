@@ -16,6 +16,28 @@
 
 // import classes from './select.module.less'
 
+interface Schema {
+  enum: string[];
+  enumNames?: string[];
+}
+
+interface SelectListProps
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onSelect'> {
+  schema: Schema;
+  value: string;
+  onSelect: (opt: string, index: number) => void;
+  splitIndexes?: number[];
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  selected?: string;
+  component?: React.ComponentType<unknown>;
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  classes: {
+    selected?: string;
+    split?: string;
+    [key: string]: string | undefined;
+  };
+}
+
 function SelectList({
   schema,
   value,
@@ -27,13 +49,15 @@ function SelectList({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
-}) {
-  const handleKeyDown = (opt, index) => (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      onSelect(opt, index);
-    }
-  };
+}: SelectListProps) {
+  const handleKeyDown =
+    (opt: string, index: number) =>
+    (event: React.KeyboardEvent<HTMLLIElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onSelect(opt, index);
+      }
+    };
 
   return (
     <ul {...props} role="listbox">
@@ -57,8 +81,8 @@ function SelectList({
   );
 }
 
-function isSplitIndex(index, splitIndexes) {
-  return index > 0 && splitIndexes?.includes(index);
+function isSplitIndex(index: number, splitIndexes?: number[]): boolean {
+  return index > 0 && splitIndexes?.includes(index) === true;
 }
 
 export default SelectList;

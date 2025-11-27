@@ -552,10 +552,13 @@ test(`8. Check options from the drop-down menu Type`, async () => {
     expect(page.getByTestId(MonomerType.Sugar)).toContainText('Sugar'),
     expect(page.getByTestId(MonomerType.Base)).toContainText('Base'),
     expect(page.getByTestId(MonomerType.Phosphate)).toContainText('Phosphate'),
-    expect(page.getByTestId(MonomerType.Nucleotide)).toContainText(
-      'Nucleotide',
+    expect(page.getByTestId(MonomerType.NucleotideMonomer)).toContainText(
+      'Nucleotide (monomer)',
     ),
     expect(page.getByTestId(MonomerType.CHEM)).toContainText('CHEM'),
+    expect(page.getByTestId(MonomerType.NucleotidePreset)).toContainText(
+      'Nucleotide (preset)',
+    ),
   ]);
   await page.getByTestId(MonomerType.AminoAcid).click();
   await CreateMonomerDialog(page).discard();
@@ -592,17 +595,15 @@ test(`9. Check that if the monomer type is not selected error message occures`, 
       ErrorMessage.emptyMandatoryFields,
     ).getNotificationMessage(),
   ).toEqual('Mandatory fields must be filled.');
-  await takeElementScreenshot(page, CreateMonomerDialog(page).typeCombobox);
+  await takeElementScreenshot(page, CreateMonomerDialog(page).symbolEditbox);
   await CreateMonomerDialog(page).discard();
 });
 
-test(`10. Check that if the monomer name is not entered error message occures`, async () => {
+test(`10. Check that monomer can be created with empty name using symbol as fallback`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
    * Description: 1. Verify that the "Monomer name" field is present in the monomer creation wizard
-   *              2. Check that if no name is entered, and the user clicks on Save/Finish in the wizard, an error
-   *                 message appears in the error/warning area: "Mandatory fields must be filled.", and the name
-   *                 input field is highlighted
+   *              2. Check that if no name is entered, the monomer is created successfully using the symbol value as name
    *
    * Case:
    *      1. Open Molecules canvas
@@ -610,28 +611,35 @@ test(`10. Check that if the monomer name is not entered error message occures`, 
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
    *      5. Select Type - Amino acid
-   *      6 Validate that Name edit box is not filled
-   *      7. Press Submit button
-   *      8. Verify that the error message is displayed
-   *      9. Take screenshot to validate that Name drop-down is highlighted
+   *      6. Enter Symbol value
+   *      7. Leave Name field empty
+   *      8. Press Submit button
+   *      9. Verify that the monomer is created successfully
    *
    * Version 3.7
    */
+  const testSymbol = 'TestSymbol';
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
+  await CreateMonomerDialog(page).setSymbol(testSymbol);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
+  await CreateMonomerDialog(page).selectNaturalAnalogue(
+    AminoAcidNaturalAnalogue.A,
+  );
   await CreateMonomerDialog(page).submit();
-  expect(
-    await NotificationMessageBanner(
-      page,
-      ErrorMessage.emptyMandatoryFields,
-    ).getNotificationMessage(),
-  ).toEqual('Mandatory fields must be filled.');
-  await takeElementScreenshot(page, CreateMonomerDialog(page).nameEditbox);
-  await CreateMonomerDialog(page).discard();
+
+  // Verify monomer was created successfully by switching to macromolecules mode
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  const monomerOnMacro = getMonomerLocator(page, {
+    monomerAlias: testSymbol,
+  });
+  await expect(monomerOnMacro).toBeVisible();
+  await monomerOnMacro.hover();
+  await MonomerPreviewTooltip(page).waitForBecomeVisible();
+  expect(await MonomerPreviewTooltip(page).getTitleText()).toBe(testSymbol);
 });
 
 const eligableNames = [
@@ -692,49 +700,6 @@ for (const [index, eligableName] of eligableNames.entries()) {
     expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
       eligableName.value,
     );
-  });
-}
-
-const nonEligableNames = [
-  {
-    description: '1. Spaces only',
-    value: '   ',
-    errorMessage: 'Mandatory fields must be filled.',
-  },
-];
-
-for (const nonEligableName of nonEligableNames) {
-  test(`12. Create monomer with ${nonEligableName.description}`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Entering a invalid monomer name causes an error
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Try to create monomer with non-eligible name
-     *      5. Validate error message is shown
-     *
-     * Version 3.7
-     */
-    const createMonomerDialog = CreateMonomerDialog(page);
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-
-    await LeftToolbar(page).createMonomer();
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('Temp');
-    await createMonomerDialog.setName(nonEligableName.value);
-    await createMonomerDialog.submit();
-    expect(
-      await NotificationMessageBanner(
-        page,
-        ErrorMessage.emptyMandatoryFields,
-      ).getNotificationMessage(),
-    ).toEqual(nonEligableName.errorMessage);
-    await CreateMonomerDialog(page).discard();
   });
 }
 
@@ -834,7 +799,7 @@ const nonEligableSymbols = [
   {
     description: '7. Non-unique for one HELM class (RNA-Nucleotides)',
     symbol: '3Puro',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     errorMessage:
       'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
   },
@@ -994,7 +959,7 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('Nucleotide');
   await createMonomerDialog.setName('Temp');
 
@@ -1101,7 +1066,7 @@ test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () =>
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('Base');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.naturalAnalogueCombobox.click();
@@ -1136,7 +1101,7 @@ test(`21. Check that if the user changes the monomer type after they've set a na
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('Base');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -1183,7 +1148,7 @@ const monomersToCreate = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide',
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1269,7 +1234,7 @@ test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, a
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await createMonomerDialog.setSymbol('Nucleotide');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
@@ -1406,7 +1371,7 @@ const monomersToCreate25 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide25',
     name: 'Nucleotide Test monomer for test 25',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1489,7 +1454,7 @@ const monomersToCreate26 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide26',
     name: 'Nucleotide Test monomer for test 26',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1569,7 +1534,7 @@ const monomersToCreate27 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide27',
     name: 'Nucleotide Test monomer for test 27',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1650,7 +1615,7 @@ const monomersToCreate28 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide28',
     name: 'Nucleotide Test monomer for test 28',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1732,7 +1697,7 @@ const monomersToCreate29 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide29',
     name: 'Nucleotide Test monomer for test 29',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1817,7 +1782,7 @@ const monomersToCreate30 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide30',
     name: 'Nucleotide Test monomer for test 30',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1902,7 +1867,7 @@ const monomersToCreate31 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide31',
     name: 'Nucleotide Test monomer for test 31',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -1982,7 +1947,7 @@ const monomersToCreate32 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide32',
     name: 'Nucleotide Test monomer for test 32',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2050,7 +2015,7 @@ const monomersToCreate33 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide33',
     name: 'Nucleotide Test monomer for test 33',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2118,7 +2083,7 @@ const monomersToCreate34 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide34',
     name: 'Nucleotide Test monomer for test 34',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2198,7 +2163,7 @@ const monomersToCreate36 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide36',
     name: 'Nucleotide Test monomer for test 36',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2279,7 +2244,7 @@ const monomersToCreate37 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide37',
     name: 'Nucleotide Test monomer for test 37',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2360,7 +2325,7 @@ const monomersToCreate38 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide38',
     name: 'Nucleotide Test monomer for test 38',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2443,7 +2408,7 @@ const monomersToCreate39 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide39',
     name: 'Nucleotide Test monomer for test 39',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2526,7 +2491,7 @@ const monomersToCreate40 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide40',
     name: 'Nucleotide Test monomer for test 40',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2609,7 +2574,7 @@ const monomersToCreate41 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide41',
     name: 'Nucleotide Test monomer for test 41',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2692,7 +2657,7 @@ const monomersToCreate42 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide42',
     name: 'Nucleotide Test monomer for test 42',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2762,7 +2727,7 @@ const monomersToCreate43 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide43',
     name: 'Nucleotide Test monomer for test 43',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2832,7 +2797,7 @@ const monomersToCreate44 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide44',
     name: 'Nucleotide Test monomer for test 44',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -2913,7 +2878,7 @@ const monomersToCreate46 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide46',
     name: 'Nucleotide Test monomer for test 46',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3001,7 +2966,7 @@ const monomersToCreate47 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide47',
     name: 'Nucleotide Test monomer for test 47',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3067,7 +3032,7 @@ const monomersToCreate48 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide48',
     name: 'Nucleotide Test monomer for test 48',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3120,7 +3085,7 @@ for (const monomerToCreate of monomersToCreate48) {
         ],
       );
     }
-    if (monomerToCreate.type === MonomerType.Nucleotide) {
+    if (monomerToCreate.type === MonomerType.NucleotideMonomer) {
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `Sequence/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.seq`,
@@ -3207,7 +3172,7 @@ const monomersToCreate50 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide50',
     name: 'Nucleotide Test monomer for test 50',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3256,7 +3221,7 @@ for (const monomerToCreate of monomersToCreate50) {
         [MacroFileType.FASTA, SequenceMonomerType.Peptide],
       );
     }
-    if (monomerToCreate.type === MonomerType.Nucleotide) {
+    if (monomerToCreate.type === MonomerType.NucleotideMonomer) {
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         `FASTA/Chromium-popup/Create-monomer/${monomerToCreate.description}-macro-expected.fasta`,
@@ -3300,7 +3265,7 @@ const monomersToCreate51 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide51',
     name: 'Nucleotide Test monomer for test 51',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3381,7 +3346,7 @@ const monomersToCreate52 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide52',
     name: 'Nucleotide Test monomer for test 52',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3457,7 +3422,7 @@ const monomersToCreate53 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide',
     name: 'Nucleotide Test monomer for test 53',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3546,7 +3511,7 @@ const monomersToCreate54 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide54',
     name: 'Nucleotide Test monomer for test 54',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3626,7 +3591,7 @@ const monomersToCreate55 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide55',
     name: 'Nucleotide Test monomer for test 55',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -3706,7 +3671,7 @@ const monomersToCreate56 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide56',
     name: 'Nucleotide Test monomer for test 56',
     naturalAnalogue: NucleotideNaturalAnalogue.A,

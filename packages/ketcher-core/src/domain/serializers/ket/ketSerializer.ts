@@ -767,7 +767,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     variantMonomer.monomers.forEach((monomer) => {
       const monomerTemplateId =
-        monomer.monomerItem.props.id ||
+        monomer.monomerItem.props.id ??
         getMonomerUniqueKey(monomer.monomerItem);
 
       this.serializeMonomerTemplate(monomerTemplateId, monomer, fileContent);
@@ -841,7 +841,7 @@ export class KetSerializer implements Serializer<Struct> {
                 '_' +
                 option.templateId +
                 '_' +
-                (option.probability || option.ratio || ''),
+                (option.probability ?? option.ratio ?? ''),
               '',
             );
         } else {
@@ -1065,7 +1065,7 @@ export class KetSerializer implements Serializer<Struct> {
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
           sgroup.removeAttachmentPoint(attachmentPointToDelete);
-          sgroup.addAttachmentPoint(attachmentPointToAdd);
+          sgroup.addAttachmentPoint(attachmentPointToAdd, false);
         },
       );
     });
@@ -1164,7 +1164,7 @@ export class KetSerializer implements Serializer<Struct> {
             template as IKetAmbiguousMonomerTemplate;
           const variantMonomerLibraryItem: AmbiguousMonomerType = {
             id: variantMonomerTemplate.id,
-            label: variantMonomerTemplate.alias || '%',
+            label: variantMonomerTemplate.alias ?? '%',
             idtAliases: variantMonomerTemplate.idtAliases,
             isAmbiguous: true,
             monomers: createMonomersForVariantMonomer(

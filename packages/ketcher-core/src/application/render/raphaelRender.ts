@@ -37,7 +37,7 @@ export type MonomerCreationState = {
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
   clickedAttachmentPoint?: AttachmentPointName | null;
-  selectedMonomerClass?: KetMonomerClass;
+  selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
 } | null;
 

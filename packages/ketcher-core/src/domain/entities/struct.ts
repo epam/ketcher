@@ -160,6 +160,7 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
+    needCloneAttachmentPoints = false,
   ): Struct {
     const cloneStruct = this.mergeInto(
       new Struct(),
@@ -174,6 +175,7 @@ export class Struct {
       imagesSet,
       multitailArrowsSet,
       bidMap,
+      needCloneAttachmentPoints,
     );
     cloneStruct.findConnectedComponents();
     cloneStruct.setImplicitHydrogen(undefined, true);
@@ -240,6 +242,7 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
+    needCloneAttachmentPoints = false,
   ): Struct {
     const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
     let bonds: Pile<number> = bondSet ?? new Pile<number>(this.bonds.keys());
@@ -326,7 +329,11 @@ export class Struct {
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup, aids)
+          ? MonomerMicromolecule.clone(
+              oldSgroup,
+              aids,
+              needCloneAttachmentPoints,
+            )
           : SGroup.clone(sg, aids);
 
       const id = cp.sgroups.add(sg);

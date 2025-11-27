@@ -98,7 +98,6 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { AttachmentPoint } from '@tests/pages/constants/attachmentPoint/Constants';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -749,10 +748,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await AttachmentPointsDialog(page).selectAttachmentPoints({
-      leftMonomer: AttachmentPoint.R2,
-      rightMonomer: AttachmentPoint.R1,
-    });
+    await AttachmentPointsDialog(page).selectAttachmentPoints({});
     await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditAttachmentPoints,

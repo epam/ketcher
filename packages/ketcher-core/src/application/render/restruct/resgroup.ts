@@ -208,6 +208,20 @@ class ReSGroup extends ReObject {
 
   getContractedSelectionContour(render: Render): any {
     const { paper, options } = render;
+    const sGroup = this.item;
+
+    // For MonomerMicromolecule, use a circle selection like in macromolecules mode
+    if (sGroup instanceof MonomerMicromolecule) {
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      if (position) {
+        const { x, y } = Scale.modelToCanvas(position, render.options);
+        const size = options.contractedFunctionalGroupSize || 28;
+        const selectionRadius = size / 2 + 5; // Match BaseMonomerRenderer.selectionCircleRadius style
+        return paper.circle(x, y, selectionRadius);
+      }
+    }
+
+    // For regular contracted functional groups, use rectangle
     const { fontszInPx, radiusScaleFactor } = options;
     const radius = fontszInPx * radiusScaleFactor * 2;
     const { startX, startY, width, height } = this.getTextHighlightDimensions(

@@ -5,6 +5,7 @@ export type ClickTarget = Locator | { x: number; y: number };
 export enum MonomerOption {
   Copy = 'copy',
   Paste = 'paste',
+  ArrangeAsARing = 'arrange-ring',
   CreateAntisenseRNAStrand = 'create_antisense_rna_chain',
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',

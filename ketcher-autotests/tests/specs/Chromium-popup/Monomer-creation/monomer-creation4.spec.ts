@@ -13,10 +13,14 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
-  takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils/canvas';
-import { clickOnAtom, clickOnCanvas, dragMouseTo } from '@utils/index';
+import {
+  clickOnAtom,
+  clickOnCanvas,
+  clickOnMiddleOfCanvas,
+  dragMouseTo,
+} from '@utils/index';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -35,6 +39,8 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -859,9 +865,9 @@ test(`20. Check that the monomer creation wizard enabled when no selection is ma
    *
    * Version 3.10
    */
-
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
+  await clickOnMiddleOfCanvas(page);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-  await takeLeftToolbarScreenshot(page);
 });
 
 test(`21. Check if a selection is made, the minimum is one atom wizard become disabled`, async () => {

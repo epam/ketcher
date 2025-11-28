@@ -1,4 +1,4 @@
-import { AttachmentPointName } from 'ketcher-core';
+import { AtomLabel, AttachmentPointName } from 'ketcher-core';
 import styles from './AttachmentPoint.module.less';
 
 import { useAttachmentPointSelectsData } from '../../hooks/useAttachmentPointSelectsData';
@@ -16,7 +16,7 @@ type Props = {
   ) => void;
   onLeavingAtomChange: (
     apName: AttachmentPointName,
-    newLeavingAtomId: number,
+    newLeavingAtomLabel: AtomLabel,
   ) => void;
   onRemove: (name: AttachmentPointName) => void;
 };
@@ -102,8 +102,8 @@ const AttachmentPoint = ({
     }
   };
 
-  const handleLeavingAtomChange = (newLeavingAtomId: number) => {
-    onLeavingAtomChange(name, newLeavingAtomId);
+  const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
+    onLeavingAtomChange(name, newLeavingAtomLabel);
   };
 
   const handleRemove = () => {

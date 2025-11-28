@@ -125,10 +125,9 @@ const MonomerCreationWizardFields = (
   const displayAliases =
     type &&
     [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
+      KetMonomerClass.CHEM,
       KetMonomerClass.Phosphate,
+      KetMonomerClass.RNA,
     ].includes(type as KetMonomerClass);
 
   return (

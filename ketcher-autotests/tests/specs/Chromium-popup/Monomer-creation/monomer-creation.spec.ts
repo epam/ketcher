@@ -764,7 +764,7 @@ const nonEligableSymbols = [
     symbol: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
     type: MonomerType.CHEM,
     errorMessage:
-      'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+      'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   },
   {
     description: '3. Non-unique for one HELM class (Peptides-Amino Acids)',
@@ -772,14 +772,14 @@ const nonEligableSymbols = [
     type: MonomerType.AminoAcid,
     naturalAnalogue: AminoAcidNaturalAnalogue.C,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '4. Non-unique for one HELM class (RNA-Sugars)',
     symbol: '12ddR',
     type: MonomerType.Sugar,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '5. Non-unique for one HELM class (RNA-Bases)',
@@ -787,28 +787,28 @@ const nonEligableSymbols = [
     type: MonomerType.Base,
     naturalAnalogue: NucleotideNaturalAnalogue.C,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '6. Non-unique for one HELM class (RNA-Phosphates)',
     symbol: 'AmC12',
     type: MonomerType.Phosphate,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '7. Non-unique for one HELM class (RNA-Nucleotides)',
     symbol: '3Puro',
     type: MonomerType.NucleotideMonomer,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '8. Non-unique for one HELM class (RNA-CHEM)',
     symbol: '2-Bio',
     type: MonomerType.CHEM,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '9. No symbol entered',

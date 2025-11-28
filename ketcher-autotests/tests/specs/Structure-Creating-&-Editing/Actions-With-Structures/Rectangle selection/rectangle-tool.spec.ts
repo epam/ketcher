@@ -1,6 +1,5 @@
 import { Page, test } from '@fixtures';
 import {
-  BondType,
   clickOnAtom,
   clickOnCanvas,
   deleteByKeyboard,
@@ -12,7 +11,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -146,18 +144,21 @@ test.describe('Rectangle selection tool', () => {
   test('Fusing bonds together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
 
-    const secondBondnumber = 8;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getBondLocator(page, { bondId: 21 }).click({ force: true });
-    const bondPoint = await getBondByIndex(
-      page,
-      { type: BondType.SINGLE },
-      secondBondnumber,
-    );
-    await dragMouseTo(bondPoint.x, bondPoint.y, page);
+
+    const bondLocator = getBondLocator(page, { bondId: 29 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
+    await dragMouseTo(centerX, centerY, page);
+
     await takeEditorScreenshot(page);
   });
 

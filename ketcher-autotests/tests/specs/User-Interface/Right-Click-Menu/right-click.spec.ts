@@ -70,7 +70,7 @@ test.describe('Right-click menu', () => {
      * Version 3.6
      */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).open();
     await takeElementScreenshot(page, ContextMenu(page, point).contextMenuBody);
   });
@@ -81,7 +81,7 @@ test.describe('Right-click menu', () => {
     Description: The menu has appeared and contains the list of Query Bonds.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).hover(MicroBondOption.QueryBonds);
     await takeEditorScreenshot(page);
   });
@@ -92,7 +92,7 @@ test.describe('Right-click menu', () => {
     Description: Single Bond changes on Double Bond.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.Edit);
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Double);
     await BondPropertiesDialog(page).apply();
@@ -105,7 +105,7 @@ test.describe('Right-click menu', () => {
     Description: Single Bond changes on Double Bond.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.Double);
     await takeEditorScreenshot(page);
   });
@@ -116,7 +116,7 @@ test.describe('Right-click menu', () => {
     Description: Bond is deleted
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.Delete);
     await takeEditorScreenshot(page);
   });
@@ -133,7 +133,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
-      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+      const point = await getBondLocator(page, { bondId: 6 });
       await ContextMenu(page, point).click(MicroBondOption.Double);
     });
 
@@ -403,7 +403,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
@@ -416,7 +416,7 @@ test.describe('Right-click menu', () => {
     Description: S-Group for Bond is attached.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.AttachSGroup);
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.Data,
@@ -455,18 +455,17 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-15497
     Description: Three selected Single Bonds changed to Double Bonds.
     */
-    let point: { x: number; y: number };
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+    await getBondLocator(page, { bondId: 7 });
     await page.keyboard.down('Shift');
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getBondLocator(page, { bondId: 7 }).click({ force: true });
+    await getBondLocator(page, { bondId: 8 });
+    await getBondLocator(page, { bondId: 8 }).click({ force: true });
+    await getBondLocator(page, { bondId: 9 });
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
     await page.keyboard.up('Shift');
 
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+    const point = await getBondLocator(page, { bondId: 7 });
     await ContextMenu(page, point).click(MicroBondOption.Double);
     await takeEditorScreenshot(page);
   });
@@ -524,7 +523,7 @@ test.describe('Right-click menu', () => {
       3. Observes the "Highlight" option
     */
     await drawBenzeneRing(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+    const point = await getBondLocator(page, { bondId: 11 });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
@@ -642,7 +641,7 @@ test.describe('Right-click menu', () => {
     ];
 
     for (const color of colors) {
-      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
+      const point = await getBondLocator(page, { bondId: 11 });
       await ContextMenu(page, point).click([MicroBondOption.Highlight, color]);
       await takeEditorScreenshot(page);
     }

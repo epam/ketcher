@@ -499,7 +499,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPositionBySequenceItemRenderer(
-    sequenceItemRenderer: BaseSequenceItemRenderer,
+    sequenceItemRenderer: object,
   ) {
     let newCaretPosition = -1;
 

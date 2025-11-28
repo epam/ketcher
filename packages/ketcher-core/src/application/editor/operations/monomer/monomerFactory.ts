@@ -75,10 +75,6 @@ export const monomerFactory = (
     Monomer = UnsplitNucleotide;
     MonomerRenderer = UnsplitNucleotideRenderer;
     ketMonomerClass = KetMonomerClass.RNA;
-  } else if (monomer.props.unresolved) {
-    Monomer = UnresolvedMonomer;
-    MonomerRenderer = UnresolvedMonomerRenderer;
-    ketMonomerClass = KetMonomerClass.CHEM;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
     monomer.props.MonomerType === MONOMER_CONST.PEPTIDE
@@ -112,6 +108,10 @@ export const monomerFactory = (
     Monomer = RNABase;
     MonomerRenderer = RNABaseRenderer;
     ketMonomerClass = KetMonomerClass.Base;
+  } else if (monomer.props.unresolved) {
+    Monomer = UnresolvedMonomer;
+    MonomerRenderer = UnresolvedMonomerRenderer;
+    ketMonomerClass = KetMonomerClass.CHEM;
   } else {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;

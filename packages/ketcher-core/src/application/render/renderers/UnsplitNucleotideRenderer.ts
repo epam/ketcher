@@ -2,7 +2,10 @@ import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { UnsplitNucleotide } from 'domain/entities';
 import { D3SvgElementSelection } from 'application/render/types';
-import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import {
+  MONOMER_SYMBOLS_IDS,
+  UNRESOLVED_MONOMER_COLOR,
+} from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
@@ -11,7 +14,6 @@ const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
 const NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].autochainPreview;
-const UNRESOLVED_MONOMER_COLOR = '#585858';
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';

@@ -443,7 +443,6 @@ export class Atom extends DrawingEntity {
           ) {
             if (radicalAmount === 1) {
               valence = connectionAmount;
-              hydrogenAmount = 0;
             } else {
               hydrogenAmount = -1; // will throw an error in the end
             }

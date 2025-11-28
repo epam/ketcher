@@ -650,7 +650,6 @@ export class Atom extends BaseMicromoleculeEntity {
           ) {
             if (radicalCount === 1) {
               valence = connectionCount;
-              hydrogenCount = 0;
             } else {
               hydrogenCount = -1; // will throw an error in the end
             }

@@ -184,14 +184,16 @@ class SelectTool implements Tool {
         bonds: rgroup.getBonds(rnd),
       };
     } else if (ci.map === 'sgroupData') {
-      if (isSelected(selection, ci)) return true;
+      if (isSelected(selection, ci, molecule, ctab)) return true;
     }
 
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(isSelected(selection, ci) ? selection : sel);
+      this.editor.selection(
+        isSelected(selection, ci, molecule, ctab) ? selection : sel,
+      );
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -667,8 +669,62 @@ function closestToSel(ci) {
   return res;
 }
 
-function isSelected(selection, item) {
-  return selection?.[item.map]?.includes(item.id) ?? false;
+function isSelected(selection, item, struct?, ctab?) {
+  // Direct check for the item in its map
+  if (selection?.[item.map]?.includes(item.id)) {
+    return true;
+  }
+
+  // For S-groups and functional groups, check if their atoms are in the selection
+  // This handles the case when multiple S-groups are selected via rectangle selection
+  // (where selection is stored as atoms/bonds, not sgroup IDs)
+  if (
+    (item.map === 'sgroups' || item.map === 'functionalGroups') &&
+    struct &&
+    ctab
+  ) {
+    const sgroups = ctab.sgroups.get(item.id);
+    if (sgroups?.item) {
+      const sgroupAtoms = SGroup.getAtoms(struct, sgroups.item);
+      // Check if any atom of this S-group is in the selection
+      if (
+        selection?.atoms?.length &&
+        sgroupAtoms.some((atomId) => selection.atoms.includes(atomId))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // For rgroups, check if their atoms are in the selection
+  if (item.map === 'rgroups' && ctab) {
+    const rgroup = ctab.rgroups.get(item.id);
+    if (rgroup) {
+      const rgroupAtoms = rgroup.getAtoms(ctab.render);
+      if (
+        selection?.atoms?.length &&
+        rgroupAtoms.some((atomId) => selection.atoms.includes(atomId))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // For frags (fragments), check if their atoms are in the selection
+  if (item.map === 'frags' && ctab) {
+    const frag = ctab.frags.get(item.id);
+    if (frag) {
+      const fragAtoms = frag.fragGetAtoms(ctab, item.id);
+      if (
+        selection?.atoms?.length &&
+        fragAtoms.some((atomId) => selection.atoms.includes(atomId))
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function preventSaltAndSolventsMerge(

@@ -25,6 +25,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
@@ -499,7 +500,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPositionBySequenceItemRenderer(
-    sequenceItemRenderer: object,
+    sequenceItemRenderer: IBaseRenderer,
   ) {
     let newCaretPosition = -1;
 

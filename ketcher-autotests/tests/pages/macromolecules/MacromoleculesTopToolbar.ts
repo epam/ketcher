@@ -10,6 +10,7 @@ import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalcula
 type MacromoleculesTopToolbarLocators = {
   createAntisenseStrandDropdownButton: Locator;
   createAntisenseStrandDropdownExpandButton: Locator;
+  arrangeAsARingButton: Locator;
   calculatePropertiesButton: Locator;
   syncSequenceEditModeButton: Locator;
   switchLayoutModeDropdownButton: Locator;
@@ -27,6 +28,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     createAntisenseStrandDropdownExpandButton: page
       .getByTestId('Create Antisense Strand')
       .getByTestId('dropdown-expand'),
+    arrangeAsARingButton: page.getByTestId('arrange-ring'),
     calculatePropertiesButton: page.getByTestId(
       'calculate-macromolecule-properties-button',
     ),
@@ -86,6 +88,12 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       await this.expandCreateAntisenseStrandDropdown();
       await waitForRender(page, async () => {
         await page.getByTestId(antisenseStrandType).first().click();
+      });
+    },
+
+    async arrangeAsARing() {
+      await waitForRender(page, async () => {
+        await locators.arrangeAsARingButton.click();
       });
     },
 

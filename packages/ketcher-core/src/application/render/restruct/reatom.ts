@@ -25,7 +25,16 @@ import {
   Struct,
   Vec2,
 } from 'domain/entities';
-import { ElementColor, Elements } from 'domain/constants';
+import {
+  ElementColor,
+  Elements,
+  monomerColorByNaturalAnalogCode,
+  peptideColors,
+  peptideTextColors,
+  sugarColor,
+  phosphateColor,
+  unresolvedMonomerColor,
+} from 'domain/constants';
 import {
   LayerMap,
   StereLabelStyleType,
@@ -51,6 +60,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import { KetMonomerClass } from 'application/formatters';
 
 interface ElemAttr {
   text: string;
@@ -436,6 +446,144 @@ class ReAtom extends ReObject {
     return Boolean(this.a.attachmentPoints);
   }
 
+  /**
+   * Draws a monomer as a colored shape with label and modification indicator.
+   * This replicates the appearance from macromolecules mode.
+   */
+  private drawMonomerShape(
+    restruct: ReStruct,
+    monomerSGroup: MonomerMicromolecule,
+    position: Vec2,
+    options: RenderOptions,
+  ): void {
+    const render = restruct.render;
+    const paper = render.paper;
+    const monomer = monomerSGroup.monomer;
+    const monomerItem = monomer.monomerItem;
+
+    // Determine monomer class and shape type
+    const monomerClass = monomerItem.props?.MonomerClass;
+    const isPeptide =
+      monomerClass === KetMonomerClass.AminoAcid ||
+      monomerItem.props?.MonomerType === 'PEPTIDE';
+    const isSugar = monomerClass === KetMonomerClass.Sugar;
+    const isPhosphate = monomerClass === KetMonomerClass.Phosphate;
+    const isBase = monomerClass === KetMonomerClass.Base;
+    const isChem = monomerClass === KetMonomerClass.CHEM;
+    const isUnresolved = monomerItem.props?.unresolved;
+
+    // Calculate size based on font size (similar to contractedFunctionalGroupSize)
+    const size = options.contractedFunctionalGroupSize || 28;
+
+    // Get monomer color
+    const naturalAnalogCode =
+      monomerItem.props?.MonomerNaturalAnalogCode || 'X';
+    let fillColor: string;
+    let textColor = '#333333';
+
+    if (isUnresolved) {
+      fillColor = unresolvedMonomerColor;
+      textColor = 'white';
+    } else if (isPeptide) {
+      const peptideColorScheme = peptideColors[naturalAnalogCode];
+      fillColor =
+        peptideColorScheme?.regular ||
+        monomerColorByNaturalAnalogCode[naturalAnalogCode]?.regular ||
+        monomerColorByNaturalAnalogCode.default.regular;
+      textColor = peptideTextColors[naturalAnalogCode] || '#333333';
+    } else if (isSugar) {
+      fillColor = sugarColor.regular;
+      textColor = 'white';
+    } else if (isPhosphate) {
+      fillColor = phosphateColor.regular;
+      textColor = 'white';
+    } else if (isBase) {
+      fillColor =
+        monomerColorByNaturalAnalogCode[naturalAnalogCode]?.regular ||
+        monomerColorByNaturalAnalogCode.default.regular;
+      textColor = 'white';
+    } else if (isChem) {
+      fillColor = monomerColorByNaturalAnalogCode.CHEM.regular;
+      textColor = 'white';
+    } else {
+      fillColor =
+        monomerColorByNaturalAnalogCode[naturalAnalogCode]?.regular ||
+        monomerColorByNaturalAnalogCode.default.regular;
+    }
+
+    // Draw shape based on monomer class
+    let shapeElement: any;
+
+    if (isPeptide) {
+      shapeElement = draw.peptideShape(paper, position, size, fillColor);
+    } else if (isSugar) {
+      shapeElement = draw.sugarShape(paper, position, size, fillColor);
+    } else if (isPhosphate) {
+      shapeElement = draw.phosphateShape(paper, position, size, fillColor);
+    } else if (isBase) {
+      shapeElement = draw.rnaBaseShape(paper, position, size, fillColor);
+    } else if (isChem) {
+      shapeElement = draw.chemShape(paper, position, size, fillColor);
+    } else {
+      // Default to peptide shape
+      shapeElement = draw.peptideShape(paper, position, size, fillColor);
+    }
+
+    // Add data attributes to shape element
+    if (shapeElement?.node) {
+      shapeElement.node.setAttribute('data-sgroup-id', monomerSGroup.id);
+      shapeElement.node.setAttribute('data-sgroup-name', monomer.label);
+      shapeElement.node.setAttribute('data-sgroup-type', monomerSGroup.type);
+      shapeElement.node.setAttribute('data-monomer-class', monomerClass || '');
+    }
+
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      shapeElement,
+      position,
+      true,
+    );
+
+    // Draw modification indicator if the monomer is modified
+    if (monomer.isModification && !isUnresolved) {
+      // Invert text color for modification indicator
+      const modFillColor = textColor === 'white' ? '#333333' : 'white';
+      const modIndicator = draw.modificationIndicator(
+        paper,
+        position,
+        size,
+        modFillColor,
+      );
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        modIndicator,
+        position,
+        true,
+      );
+      // Flip text color for modified monomers
+      textColor = textColor === 'white' ? '#333333' : 'white';
+    }
+
+    // Draw monomer label
+    const fontSize = Math.max(6, size * 0.21);
+    const labelElement = draw.monomerLabel(
+      paper,
+      position,
+      monomer.label,
+      textColor,
+      fontSize,
+    );
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      labelElement,
+      position,
+      true,
+    );
+  }
+
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const struct = restruct.molecule;
@@ -462,31 +610,38 @@ class ReAtom extends ReObject {
             : this.a.pp,
           render.options,
         );
-        const fontFamily = options.font.substr(
-          options.font.indexOf(' ') + 1,
-          options.font.length,
-        );
-        const sGroupName =
-          sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class] ?? '';
-        const path = render.paper
-          .text(position.x, position.y, sGroupName)
-          .attr({
-            'font-weight': 700,
-            'font-size': options.fontszInPx,
-            'font-family': fontFamily,
-          });
 
-        path.node?.setAttribute('data-sgroup-id', sgroup.id);
-        path.node?.setAttribute('data-sgroup-name', sGroupName);
-        path.node?.setAttribute('data-sgroup-type', sgroup.type);
+        // Check if this is a MonomerMicromolecule - if so, render as colored shape
+        if (sgroup instanceof MonomerMicromolecule) {
+          this.drawMonomerShape(restruct, sgroup, position, options);
+        } else {
+          // Render regular functional groups as text (original behavior)
+          const fontFamily = options.font.substr(
+            options.font.indexOf(' ') + 1,
+            options.font.length,
+          );
+          const sGroupName =
+            sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class] ?? '';
+          const path = render.paper
+            .text(position.x, position.y, sGroupName)
+            .attr({
+              'font-weight': 700,
+              'font-size': options.fontszInPx,
+              'font-family': fontFamily,
+            });
 
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          path,
-          position,
-          true,
-        );
+          path.node?.setAttribute('data-sgroup-id', sgroup.id);
+          path.node?.setAttribute('data-sgroup-name', sGroupName);
+          path.node?.setAttribute('data-sgroup-type', sgroup.type);
+
+          restruct.addReObjectPath(
+            LayerMap.data,
+            this.visel,
+            path,
+            position,
+            true,
+          );
+        }
       }
       return;
     }

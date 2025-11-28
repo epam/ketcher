@@ -1737,6 +1737,259 @@ function rgroupAttachmentPointLabel(
   return labelPath;
 }
 
+/**
+ * Draws a peptide/amino acid shape (hexagon)
+ * The shape is based on the macromolecule editor's peptide avatar
+ */
+function peptideShape(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  // Hexagon path scaled to the given size
+  // Original viewBox is 70x61, we scale to fit the size
+  const scale = size / 35; // Scaled to data-actual-width of 35
+  const halfWidth = 17.5 * scale;
+  const halfHeight = 15.25 * scale;
+
+  // Hexagon path - slightly wider than tall
+  const path =
+    `M${center.x - halfWidth * 0.95},${center.y}` +
+    `L${center.x - halfWidth * 0.55},${center.y - halfHeight}` +
+    `L${center.x + halfWidth * 0.55},${center.y - halfHeight}` +
+    `L${center.x + halfWidth * 0.95},${center.y}` +
+    `L${center.x + halfWidth * 0.55},${center.y + halfHeight}` +
+    `L${center.x - halfWidth * 0.55},${center.y + halfHeight}` +
+    `Z`;
+
+  return paper.path(path).attr({
+    fill: fillColor,
+    stroke: 'none',
+  });
+}
+
+/**
+ * Draws a sugar shape (rounded rectangle)
+ */
+function sugarShape(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  const halfSize = size / 2;
+  const cornerRadius = size / 5;
+
+  return paper
+    .rect(
+      center.x - halfSize,
+      center.y - halfSize,
+      size,
+      size,
+      cornerRadius,
+      cornerRadius,
+    )
+    .attr({
+      fill: fillColor,
+      stroke: 'none',
+    });
+}
+
+/**
+ * Draws a phosphate shape (circle)
+ */
+function phosphateShape(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  const radius = size / 2;
+  return paper.circle(center.x, center.y, radius).attr({
+    fill: fillColor,
+    stroke: 'none',
+  });
+}
+
+/**
+ * Draws an RNA base shape (diamond/rhombus)
+ */
+function rnaBaseShape(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  const halfSize = size / 2;
+
+  const path =
+    `M${center.x},${center.y - halfSize}` +
+    `L${center.x + halfSize},${center.y}` +
+    `L${center.x},${center.y + halfSize}` +
+    `L${center.x - halfSize},${center.y}` +
+    `Z`;
+
+  return paper.path(path).attr({
+    fill: fillColor,
+    stroke: 'none',
+  });
+}
+
+/**
+ * Draws a CHEM shape (rectangle with border)
+ */
+function chemShape(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  const halfWidth = size / 2;
+  const halfHeight = size / 2.5;
+
+  return paper
+    .rect(center.x - halfWidth, center.y - halfHeight, size, size / 1.25, 3, 3)
+    .attr({
+      fill: 'none',
+      stroke: fillColor,
+      'stroke-width': 2,
+    });
+}
+
+/**
+ * Draws a modification indicator line for modified monomers
+ */
+function modificationIndicator(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  fillColor: string,
+): Element {
+  const width = size * 0.8;
+  const yOffset = size * 0.35;
+
+  return paper
+    .rect(center.x - width / 2, center.y + yOffset, width, size * 0.25, 2, 2)
+    .attr({
+      fill: fillColor,
+      'fill-opacity': 0.6,
+      stroke: 'none',
+    });
+}
+
+/**
+ * Draws a monomer label text
+ */
+function monomerLabel(
+  paper: RaphaelPaper,
+  center: Vec2,
+  label: string,
+  textColor: string,
+  fontSize: number,
+): Element {
+  return paper.text(center.x, center.y, label).attr({
+    'font-weight': 700,
+    'font-size': fontSize,
+    fill: textColor,
+    'text-anchor': 'middle',
+    'dominant-baseline': 'central',
+  });
+}
+
+/**
+ * Draws a monomer hover/selection outline
+ */
+function monomerHoverOutline(
+  paper: RaphaelPaper,
+  center: Vec2,
+  size: number,
+  shapeType: 'peptide' | 'sugar' | 'phosphate' | 'rnaBase' | 'chem',
+): Element {
+  const hoverColor = '#0097A8';
+  const strokeWidth = 1.5;
+  const padding = 2;
+
+  const adjustedSize = size + padding * 2;
+  const halfWidth = (adjustedSize / 2) * 0.95;
+  const halfHeight = (adjustedSize / 2) * 0.87;
+
+  if (shapeType === 'peptide') {
+    // Hexagon hover outline
+    const path =
+      `M${center.x - halfWidth * 0.95},${center.y}` +
+      `L${center.x - halfWidth * 0.55},${center.y - halfHeight}` +
+      `L${center.x + halfWidth * 0.55},${center.y - halfHeight}` +
+      `L${center.x + halfWidth * 0.95},${center.y}` +
+      `L${center.x + halfWidth * 0.55},${center.y + halfHeight}` +
+      `L${center.x - halfWidth * 0.55},${center.y + halfHeight}` +
+      `Z`;
+    return paper.path(path).attr({
+      fill: 'none',
+      stroke: hoverColor,
+      'stroke-width': strokeWidth,
+    });
+  } else if (shapeType === 'sugar') {
+    // Rounded rectangle hover outline
+    const halfSize = adjustedSize / 2;
+    const cornerRadius = adjustedSize / 5;
+    return paper
+      .rect(
+        center.x - halfSize,
+        center.y - halfSize,
+        adjustedSize,
+        adjustedSize,
+        cornerRadius,
+        cornerRadius,
+      )
+      .attr({
+        fill: 'none',
+        stroke: hoverColor,
+        'stroke-width': strokeWidth,
+      });
+  } else if (shapeType === 'phosphate') {
+    // Circle hover outline
+    const radius = adjustedSize / 2;
+    return paper.circle(center.x, center.y, radius).attr({
+      fill: 'none',
+      stroke: hoverColor,
+      'stroke-width': strokeWidth,
+    });
+  } else if (shapeType === 'rnaBase') {
+    // Diamond hover outline
+    const halfSize = adjustedSize / 2;
+    const path =
+      `M${center.x},${center.y - halfSize}` +
+      `L${center.x + halfSize},${center.y}` +
+      `L${center.x},${center.y + halfSize}` +
+      `L${center.x - halfSize},${center.y}` +
+      `Z`;
+    return paper.path(path).attr({
+      fill: 'none',
+      stroke: hoverColor,
+      'stroke-width': strokeWidth,
+    });
+  } else {
+    // CHEM - rectangle hover outline
+    const halfWidth = adjustedSize / 2;
+    const halfHeight = adjustedSize / 2.5;
+    return paper
+      .rect(
+        center.x - halfWidth,
+        center.y - halfHeight,
+        adjustedSize,
+        adjustedSize / 1.25,
+        3,
+        3,
+      )
+      .attr({
+        fill: 'none',
+        stroke: hoverColor,
+        'stroke-width': strokeWidth,
+      });
+  }
+}
+
 export default {
   recenterText,
   arrow,
@@ -1770,4 +2023,13 @@ export default {
   line,
   rgroupAttachmentPoint,
   rgroupAttachmentPointLabel,
+  // Monomer shapes
+  peptideShape,
+  sugarShape,
+  phosphateShape,
+  rnaBaseShape,
+  chemShape,
+  modificationIndicator,
+  monomerLabel,
+  monomerHoverOutline,
 };

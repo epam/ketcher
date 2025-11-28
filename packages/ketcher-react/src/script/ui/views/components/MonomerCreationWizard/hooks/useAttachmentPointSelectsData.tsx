@@ -5,7 +5,6 @@ import {
 } from 'ketcher-core';
 import { Editor } from '../../../../../editor';
 import assert from 'assert';
-import { isNumber } from 'lodash';
 import { Option } from '../../../../component/form/Select';
 
 export type AttachmentPointSelectData = {
@@ -13,6 +12,28 @@ export type AttachmentPointSelectData = {
   leavingAtomOptions: Array<Option>;
   currentNameOption?: Option;
   currentLeavingAtomOption?: Option;
+};
+
+// Helper to get the display label with hydrogens for an atom type
+const getAtomTypeDisplayLabel = (
+  label: string,
+  implicitH: number,
+): React.ReactNode => {
+  if (implicitH > 0) {
+    return implicitH > 1 ? (
+      <>
+        {label}
+        {AtomLabel.H}
+        <sub>{implicitH}</sub>
+      </>
+    ) : (
+      <>
+        {label}
+        {AtomLabel.H}
+      </>
+    );
+  }
+  return label;
 };
 
 export const useAttachmentPointSelectsData = (
@@ -32,6 +53,9 @@ export const useAttachmentPointSelectsData = (
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
   assert(attachmentAtom);
 
+  const leavingAtom = editor.struct().atoms.get(leavingAtomId);
+  assert(leavingAtom);
+
   const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
@@ -47,50 +71,66 @@ export const useAttachmentPointSelectsData = (
     label: `R${i + 1}`,
   }));
 
-  let leavingAtomOptions: Option[] = editor
-    .findPotentialLeavingAtoms(attachmentAtomId)
-    .map((atom) => {
-      const atomId = editor.struct().atoms.keyOf(atom);
-      assert(isNumber(atomId));
+  // Build atom type options for leaving group
+  // According to requirements:
+  // - H and OH should always be shown (in that order)
+  // - If current LGA is different from H and OH, add it as third option
+  const currentLeavingAtomLabel = leavingAtom.label;
+  const currentLeavingAtomImplicitH = leavingAtom.implicitH;
 
-      const { label, implicitH } = atom;
+  const isCurrentH = currentLeavingAtomLabel === AtomLabel.H;
+  const isCurrentOH =
+    currentLeavingAtomLabel === AtomLabel.O &&
+    currentLeavingAtomImplicitH === 1;
 
-      const children = (
+  const leavingAtomOptions: Option[] = [
+    {
+      value: AtomLabel.H,
+      label: AtomLabel.H,
+      children: <>{AtomLabel.H}</>,
+    },
+    {
+      value: AtomLabel.O,
+      label: AtomLabel.O,
+      children: (
         <>
-          {label}
-          {implicitH > 0 &&
-            (implicitH > 1 ? (
-              <>
-                {AtomLabel.H}
-                <sub>{implicitH}</sub>
-              </>
-            ) : (
-              AtomLabel.H
-            ))}
+          {AtomLabel.O}
+          {AtomLabel.H}
         </>
-      );
+      ),
+    },
+  ];
 
-      return {
-        value: atomId.toString(),
-        label,
-        children,
-      };
-    });
-
-  if (attachmentAtom.implicitH > 0) {
-    leavingAtomOptions = leavingAtomOptions.concat({
-      value: '-1',
-      label: '',
-      children: <i>{AtomLabel.H}</i>,
+  // Add current atom type as third option if it's different from H and OH
+  if (!isCurrentH && !isCurrentOH) {
+    leavingAtomOptions.push({
+      value: currentLeavingAtomLabel,
+      label: currentLeavingAtomLabel,
+      children: (
+        <>
+          {getAtomTypeDisplayLabel(
+            currentLeavingAtomLabel,
+            currentLeavingAtomImplicitH,
+          )}
+        </>
+      ),
     });
   }
 
   const currentNameOption = nameOptions.find(
     (option) => option.value === attachmentPointName,
   );
-  const currentLeavingAtomOption = leavingAtomOptions.find(
-    (option) => option.value === leavingAtomId.toString(),
-  );
+
+  // Find current leaving atom option - match by label
+  const currentLeavingAtomOption = leavingAtomOptions.find((option) => {
+    if (option.value === AtomLabel.H) {
+      return isCurrentH;
+    }
+    if (option.value === AtomLabel.O) {
+      return isCurrentOH;
+    }
+    return option.value === currentLeavingAtomLabel;
+  });
 
   return {
     nameOptions,

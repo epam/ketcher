@@ -2,6 +2,7 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
 import {
+  AtomLabel,
   AttachmentPointName,
   ketcherProvider,
   KetMonomerClass,
@@ -97,9 +98,9 @@ const MonomerCreationWizardFields = (
 
   const handleLeavingAtomChange = (
     apName: AttachmentPointName,
-    newLeavingAtomId: number,
+    newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.reassignAttachmentPointLeavingAtom(apName, newLeavingAtomId);
+    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
   };
 
   const handleAttachmentPointRemove = (name: AttachmentPointName) => {

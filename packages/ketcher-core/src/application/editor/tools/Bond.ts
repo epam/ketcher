@@ -41,6 +41,7 @@ import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -481,6 +482,26 @@ class PolymerBond implements BaseTool {
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
       ) ?? monomer?.getValidSourcePoint();
+
+    // Check if atom already has a bond with this monomer
+    const atom = atomRenderer.atom;
+    const existingBondWithMonomer = atom.bonds.find(
+      (bond) => bond instanceof MonomerToAtomBond && bond.monomer === monomer,
+    );
+
+    if (existingBondWithMonomer) {
+      this.editor.events.error.dispatch(
+        'Only one connection between monomer and atom is allowed',
+      );
+      // Remove temporary Polymer Bond
+      this.editor.drawingEntitiesManager.deletePolymerBond(
+        this.bondRenderer?.polymerBond,
+      );
+      this.bondRenderer?.remove();
+      this.bondRenderer = undefined;
+      monomer.setChosenFirstAttachmentPoint(null);
+      return;
+    }
 
     // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(

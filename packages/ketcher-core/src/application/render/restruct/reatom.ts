@@ -461,8 +461,14 @@ class ReAtom extends ReObject {
     const monomer = monomerSGroup.monomer;
     const monomerItem = monomer.monomerItem;
 
+    // Helper to invert text color for contrast
+    const invertTextColor = (color: string): string =>
+      color === 'white' ? '#333333' : 'white';
+
     // Determine monomer class and shape type
     const monomerClass = monomerItem.props?.MonomerClass;
+    // Check both MonomerClass and MonomerType for peptide detection
+    // Some data sources may set one or both properties
     const isPeptide =
       monomerClass === KetMonomerClass.AminoAcid ||
       monomerItem.props?.MonomerType === 'PEPTIDE';
@@ -547,8 +553,7 @@ class ReAtom extends ReObject {
 
     // Draw modification indicator if the monomer is modified
     if (monomer.isModification && !isUnresolved) {
-      // Invert text color for modification indicator
-      const modFillColor = textColor === 'white' ? '#333333' : 'white';
+      const modFillColor = invertTextColor(textColor);
       const modIndicator = draw.modificationIndicator(
         paper,
         position,
@@ -562,8 +567,8 @@ class ReAtom extends ReObject {
         position,
         true,
       );
-      // Flip text color for modified monomers
-      textColor = textColor === 'white' ? '#333333' : 'white';
+      // Flip text color for modified monomers for better contrast
+      textColor = invertTextColor(textColor);
     }
 
     // Draw monomer label

@@ -1838,6 +1838,7 @@ function rnaBaseShape(
 
 /**
  * Draws a CHEM shape (rectangle with border)
+ * Uses a wider aspect ratio (1.25:1) to distinguish from sugar shapes
  */
 function chemShape(
   paper: RaphaelPaper,
@@ -1845,11 +1846,15 @@ function chemShape(
   size: number,
   fillColor: string,
 ): Element {
-  const halfWidth = size / 2;
-  const halfHeight = size / 2.5;
+  // CHEM uses a wider rectangle (aspect ratio 1.25:1)
+  const aspectRatio = 1.25;
+  const width = size;
+  const height = size / aspectRatio;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
 
   return paper
-    .rect(center.x - halfWidth, center.y - halfHeight, size, size / 1.25, 3, 3)
+    .rect(center.x - halfWidth, center.y - halfHeight, width, height, 3, 3)
     .attr({
       fill: 'none',
       stroke: fillColor,
@@ -1970,18 +1975,14 @@ function monomerHoverOutline(
       'stroke-width': strokeWidth,
     });
   } else {
-    // CHEM - rectangle hover outline
-    const halfWidth = adjustedSize / 2;
-    const halfHeight = adjustedSize / 2.5;
+    // CHEM - rectangle hover outline (aspect ratio 1.25:1)
+    const aspectRatio = 1.25;
+    const width = adjustedSize;
+    const height = adjustedSize / aspectRatio;
+    const halfWidth = width / 2;
+    const halfHeight = height / 2;
     return paper
-      .rect(
-        center.x - halfWidth,
-        center.y - halfHeight,
-        adjustedSize,
-        adjustedSize / 1.25,
-        3,
-        3,
-      )
+      .rect(center.x - halfWidth, center.y - halfHeight, width, height, 3, 3)
       .attr({
         fill: 'none',
         stroke: hoverColor,

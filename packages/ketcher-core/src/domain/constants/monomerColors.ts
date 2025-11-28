@@ -18,7 +18,11 @@ import { MonomerColorScheme } from 'domain/types';
 
 /**
  * Default color schemes for monomers.
- * These colors are used consistently across molecules and macromolecules modes.
+ * These colors are synced with macromolecules mode (ketcher-macromolecules/src/theming/defaultTheme)
+ * to ensure consistent appearance across molecules and macromolecules modes.
+ *
+ * Note: Some hover colors may differ significantly from regular colors (e.g., colorU)
+ * as this matches the existing macromolecules mode behavior.
  */
 export const monomerColors: Record<string, MonomerColorScheme> = {
   colorA: { regular: '#5ADC11', hover: '#4FC218' },
@@ -41,6 +45,8 @@ export const monomerColors: Record<string, MonomerColorScheme> = {
 
 /**
  * Color scheme for peptides based on natural analog code.
+ * All peptides use the same hover color (#0097A8) to maintain consistency
+ * with macromolecules mode. This is intentional per the original design.
  */
 export const peptideColors: Record<string, MonomerColorScheme> = {
   D: { regular: '#FF8C69', hover: '#0097A8' },

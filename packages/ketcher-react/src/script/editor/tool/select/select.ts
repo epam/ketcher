@@ -669,56 +669,51 @@ function closestToSel(ci) {
   return res;
 }
 
-function isSelected(selection, item, struct?, ctab?) {
+function isSelected(selection, item, molecule?, ctab?) {
   // Direct check for the item in its map
   if (selection?.[item.map]?.includes(item.id)) {
     return true;
   }
 
+  // Early return if no struct/ctab context provided or no atoms in selection
+  if (!ctab || !selection?.atoms?.length) {
+    return false;
+  }
+
+  // Convert selection atoms to Set for O(1) lookup performance
+  const selectedAtomsSet = new Set(selection.atoms);
+
   // For S-groups and functional groups, check if their atoms are in the selection
   // This handles the case when multiple S-groups are selected via rectangle selection
   // (where selection is stored as atoms/bonds, not sgroup IDs)
-  if (
-    (item.map === 'sgroups' || item.map === 'functionalGroups') &&
-    struct &&
-    ctab
-  ) {
+  if ((item.map === 'sgroups' || item.map === 'functionalGroups') && molecule) {
     const sgroups = ctab.sgroups.get(item.id);
     if (sgroups?.item) {
-      const sgroupAtoms = SGroup.getAtoms(struct, sgroups.item);
+      const sgroupAtoms = SGroup.getAtoms(molecule, sgroups.item);
       // Check if any atom of this S-group is in the selection
-      if (
-        selection?.atoms?.length &&
-        sgroupAtoms.some((atomId) => selection.atoms.includes(atomId))
-      ) {
+      if (sgroupAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
         return true;
       }
     }
   }
 
   // For rgroups, check if their atoms are in the selection
-  if (item.map === 'rgroups' && ctab) {
+  if (item.map === 'rgroups') {
     const rgroup = ctab.rgroups.get(item.id);
     if (rgroup) {
       const rgroupAtoms = rgroup.getAtoms(ctab.render);
-      if (
-        selection?.atoms?.length &&
-        rgroupAtoms.some((atomId) => selection.atoms.includes(atomId))
-      ) {
+      if (rgroupAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
         return true;
       }
     }
   }
 
   // For frags (fragments), check if their atoms are in the selection
-  if (item.map === 'frags' && ctab) {
+  if (item.map === 'frags') {
     const frag = ctab.frags.get(item.id);
     if (frag) {
       const fragAtoms = frag.fragGetAtoms(ctab, item.id);
-      if (
-        selection?.atoms?.length &&
-        fragAtoms.some((atomId) => selection.atoms.includes(atomId))
-      ) {
+      if (fragAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
         return true;
       }
     }

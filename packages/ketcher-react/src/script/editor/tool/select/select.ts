@@ -117,16 +117,20 @@ class SelectTool implements Tool {
     );
     const ci = this.editor.findItem(event, map, null);
 
-    const selected = {
-      ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
-      ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
-    };
-    const selectedSgroups = ci
-      ? getGroupIdsFromItemArrays(molecule, selected)
-      : [];
-    const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
-      this.editor.selection(newSelected);
+    const currentSelection = this.editor.selection();
+
+    // Only update selection for S-groups if the clicked item is not already selected
+    // This preserves the existing selection when dragging already-selected items
+    if (ci && !isSelected(currentSelection, ci, molecule, ctab)) {
+      const selected = {
+        ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
+        ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
+      };
+      const selectedSgroups = getGroupIdsFromItemArrays(molecule, selected);
+      const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
+      if (newSelected.atoms?.length || newSelected.bonds?.length) {
+        this.editor.selection(newSelected);
+      }
     }
     const currentPosition = CoordinateTransformation.pageToModel(
       event,

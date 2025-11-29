@@ -117,16 +117,20 @@ class SelectTool implements Tool {
     );
     const ci = this.editor.findItem(event, map, null);
 
-    const selected = {
-      ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
-      ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
-    };
-    const selectedSgroups = ci
-      ? getGroupIdsFromItemArrays(molecule, selected)
-      : [];
-    const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
-      this.editor.selection(newSelected);
+    const currentSelection = this.editor.selection();
+
+    // Only update selection for S-groups if the clicked item is not already selected
+    // This preserves the existing selection when dragging already-selected items
+    if (ci && !isSelected(currentSelection, ci, molecule, ctab)) {
+      const selected = {
+        ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
+        ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
+      };
+      const selectedSgroups = getGroupIdsFromItemArrays(molecule, selected);
+      const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
+      if (newSelected.atoms?.length || newSelected.bonds?.length) {
+        this.editor.selection(newSelected);
+      }
     }
     const currentPosition = CoordinateTransformation.pageToModel(
       event,
@@ -184,14 +188,16 @@ class SelectTool implements Tool {
         bonds: rgroup.getBonds(rnd),
       };
     } else if (ci.map === 'sgroupData') {
-      if (isSelected(selection, ci)) return true;
+      if (isSelected(selection, ci, molecule, ctab)) return true;
     }
 
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(isSelected(selection, ci) ? selection : sel);
+      this.editor.selection(
+        isSelected(selection, ci, molecule, ctab) ? selection : sel,
+      );
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -667,8 +673,83 @@ function closestToSel(ci) {
   return res;
 }
 
-function isSelected(selection, item) {
-  return selection?.[item.map]?.includes(item.id) ?? false;
+function isSelected(selection, item, molecule?, ctab?) {
+  // Direct check for the item in its map
+  if (selection?.[item.map]?.includes(item.id)) {
+    return true;
+  }
+
+  // Early return if no struct/ctab context provided
+  if (!ctab) {
+    return false;
+  }
+
+  // Convert selection atoms to Set for O(1) lookup performance
+  const selectedAtomsSet = selection?.atoms?.length
+    ? new Set(selection.atoms)
+    : new Set<number>();
+
+  // For bonds, check if the bond is in the selection OR if both its atoms are selected
+  // This handles the case when a bond belongs to a selected S-group
+  if (item.map === 'bonds' && molecule) {
+    const bond = molecule.bonds.get(item.id);
+    if (bond) {
+      // Check if both atoms of this bond are in the selection
+      if (selectedAtomsSet.has(bond.begin) && selectedAtomsSet.has(bond.end)) {
+        return true;
+      }
+    }
+  }
+
+  // For atoms, check if the atom is in the selection
+  if (item.map === 'atoms') {
+    if (selectedAtomsSet.has(item.id)) {
+      return true;
+    }
+  }
+
+  // Early return if no atoms in selection for remaining checks
+  if (!selectedAtomsSet.size) {
+    return false;
+  }
+
+  // For S-groups and functional groups, check if their atoms are in the selection
+  // This handles the case when multiple S-groups are selected via rectangle selection
+  // (where selection is stored as atoms/bonds, not sgroup IDs)
+  if ((item.map === 'sgroups' || item.map === 'functionalGroups') && molecule) {
+    const sgroups = ctab.sgroups.get(item.id);
+    if (sgroups?.item) {
+      const sgroupAtoms = SGroup.getAtoms(molecule, sgroups.item);
+      // Check if any atom of this S-group is in the selection
+      if (sgroupAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
+        return true;
+      }
+    }
+  }
+
+  // For rgroups, check if their atoms are in the selection
+  if (item.map === 'rgroups') {
+    const rgroup = ctab.rgroups.get(item.id);
+    if (rgroup) {
+      const rgroupAtoms = rgroup.getAtoms(ctab.render);
+      if (rgroupAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
+        return true;
+      }
+    }
+  }
+
+  // For frags (fragments), check if their atoms are in the selection
+  if (item.map === 'frags') {
+    const frag = ctab.frags.get(item.id);
+    if (frag) {
+      const fragAtoms = frag.fragGetAtoms(ctab, item.id);
+      if (fragAtoms.some((atomId) => selectedAtomsSet.has(atomId))) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function preventSaltAndSolventsMerge(

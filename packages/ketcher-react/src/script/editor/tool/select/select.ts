@@ -675,13 +675,39 @@ function isSelected(selection, item, molecule?, ctab?) {
     return true;
   }
 
-  // Early return if no struct/ctab context provided or no atoms in selection
-  if (!ctab || !selection?.atoms?.length) {
+  // Early return if no struct/ctab context provided
+  if (!ctab) {
     return false;
   }
 
   // Convert selection atoms to Set for O(1) lookup performance
-  const selectedAtomsSet = new Set(selection.atoms);
+  const selectedAtomsSet = selection?.atoms?.length
+    ? new Set(selection.atoms)
+    : new Set<number>();
+
+  // For bonds, check if the bond is in the selection OR if both its atoms are selected
+  // This handles the case when a bond belongs to a selected S-group
+  if (item.map === 'bonds' && molecule) {
+    const bond = molecule.bonds.get(item.id);
+    if (bond) {
+      // Check if both atoms of this bond are in the selection
+      if (selectedAtomsSet.has(bond.begin) && selectedAtomsSet.has(bond.end)) {
+        return true;
+      }
+    }
+  }
+
+  // For atoms, check if the atom is in the selection
+  if (item.map === 'atoms') {
+    if (selectedAtomsSet.has(item.id)) {
+      return true;
+    }
+  }
+
+  // Early return if no atoms in selection for remaining checks
+  if (!selectedAtomsSet.size) {
+    return false;
+  }
 
   // For S-groups and functional groups, check if their atoms are in the selection
   // This handles the case when multiple S-groups are selected via rectangle selection

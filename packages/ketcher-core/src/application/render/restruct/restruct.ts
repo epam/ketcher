@@ -547,6 +547,10 @@ class ReStruct {
       this.clearVisel(sgroup.visel);
       sgroup.hovering = null;
       sgroup.selectionPlate = null;
+      // Reset pp so it gets recalculated based on current atom positions
+      if (sgroup.item) {
+        sgroup.item.pp = null;
+      }
     });
 
     // TODO [RB] need to implement update-on-demand for fragments and r-groups

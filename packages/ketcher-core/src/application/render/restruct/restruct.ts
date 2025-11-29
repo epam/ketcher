@@ -26,6 +26,7 @@ import {
   Struct,
   Vec2,
 } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
@@ -548,7 +549,8 @@ class ReStruct {
       sgroup.hovering = null;
       sgroup.selectionPlate = null;
       // Reset pp so it gets recalculated based on current atom positions
-      if (sgroup.item) {
+      // Don't reset for MonomerMicromolecule as it manages its own pp
+      if (sgroup.item && !(sgroup.item instanceof MonomerMicromolecule)) {
         sgroup.item.pp = null;
       }
     });

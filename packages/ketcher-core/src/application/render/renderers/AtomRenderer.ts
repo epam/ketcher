@@ -624,5 +624,7 @@ export class AtomRenderer extends BaseRenderer {
 
   protected appendHoverAreaElement(): void {}
 
-  protected removeHover(): void {}
+  protected removeHover(): void {
+    this.hoverElement?.attr('opacity', '0');
+  }
 }

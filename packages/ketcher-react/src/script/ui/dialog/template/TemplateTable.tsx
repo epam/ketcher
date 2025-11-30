@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react';
+import { FC, KeyboardEvent } from 'react';
 import { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
@@ -61,6 +61,16 @@ function tmplName(tmpl: Template, i: number): string {
     return tmpl.props.abbreviation;
   }
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+}
+
+function createKeyDownHandler(callback: () => void) {
+  return (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      callback();
+    }
+  };
 }
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
@@ -127,13 +137,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   e.stopPropagation();
                   onDelete!(tmpl);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onDelete!(tmpl);
-                  }
-                }}
+                onKeyDown={createKeyDownHandler(() => onDelete!(tmpl))}
               >
                 <Icon name="delete" />
               </span>
@@ -149,13 +153,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                     e.stopPropagation();
                     onAttach!(tmpl);
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onAttach!(tmpl);
-                    }
-                  }}
+                  onKeyDown={createKeyDownHandler(() => onAttach!(tmpl))}
                 >
                   <Icon name="edit" />
                 </span>

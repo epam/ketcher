@@ -8,6 +8,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
+import { editorEvents } from 'application/editor/editorEvents';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -47,10 +48,12 @@ export class AtomRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     rootElement
-      ?.on('mouseover', () => {
+      ?.on('mouseover', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {

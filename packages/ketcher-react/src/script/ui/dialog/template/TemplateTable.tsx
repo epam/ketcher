@@ -74,13 +74,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     renderOptions,
   } = props;
 
-  const handleKeyDown = (tmpl) => (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      onSelect(tmpl);
-    }
-  };
-
   return (
     <div
       className={`${classes.tableContent} ${
@@ -90,7 +83,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {templates.map((tmpl, i) => {
         return (
-          <div
+          <button
+            type="button"
             className={
               tmpl.struct !== selected?.struct
                 ? classes.td
@@ -103,9 +97,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
-            onKeyDown={handleKeyDown(tmpl)}
-            role="button"
-            tabIndex={0}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -148,7 +139,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   <Icon name="edit" />
                 </button>
               )}
-          </div>
+          </button>
         );
       })}
     </div>

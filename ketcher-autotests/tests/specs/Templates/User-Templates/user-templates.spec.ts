@@ -96,30 +96,26 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-39948
       Description: delete user template validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const structureLibraryDialog = StructureLibraryDialog(page);
     const inputText = 'to_delete';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await structureLibraryDialog.addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
-      TemplateLibraryTab.UserTemplate,
-    );
-    await StructureLibraryDialog(page).setSearchValue('to_delete');
-    await StructureLibraryDialog(page).deleteMyTemplate();
-    await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).setSearchValue('to_delete');
+    await structureLibraryDialog.openSection(TemplateLibraryTab.UserTemplate);
+    await structureLibraryDialog.setSearchValue('to_delete');
+    await structureLibraryDialog.deleteMyTemplate();
+    await structureLibraryDialog.setSearchValue('to_delete');
     await takeEditorScreenshot(page);
   });
 

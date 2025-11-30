@@ -2283,8 +2283,24 @@ class Editor implements KetcherEditor {
   }
 
   unsubscribe(eventName: any, subscriber: any) {
-    // Only for event type - subscription
-    this.event[eventName].remove(subscriber.handler);
+    switch (eventName) {
+      case 'change': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .changeEvent.remove(subscriber.handler);
+        break;
+      }
+
+      case 'libraryUpdate': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .libraryUpdateEvent.remove(subscriber.handler);
+        break;
+      }
+
+      default:
+        this.event[eventName].remove(subscriber.handler);
+    }
   }
 
   findItem(event: any, maps: Array<string> | null, skip: any = null) {

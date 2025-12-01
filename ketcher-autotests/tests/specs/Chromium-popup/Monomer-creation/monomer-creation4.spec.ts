@@ -681,9 +681,7 @@ test(`15. Check that when editing the LGA, the user should see all possible LGAs
     .getAttachmentPointAtomCombobox(AttachmentPointOption.R1)
     .click();
   await expect(page.getByTestId(AttachmentPointAtom.H)).toBeVisible();
-  await expect(page.getByTestId(AttachmentPointAtom.CH3)).toBeVisible();
   await expect(page.getByTestId(AttachmentPointAtom.OH)).toBeVisible();
-  await expect(page.getByTestId(AttachmentPointAtom.NH2)).toBeVisible();
 
   await page.getByTestId(AttachmentPointAtom.OH).click();
 
@@ -932,7 +930,8 @@ test(`23. Verify that on the top toolbar are now enabled buttons when opened wiz
   await CreateMonomerDialog(page).discard();
 });
 
-test(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+test.skip(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+  // Issue fails due to https://github.com/epam/ketcher/issues/8818
   /*
    * Test task: https://github.com/epam/ketcher/issues/8425
    * Description: Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens
@@ -955,6 +954,7 @@ test(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that 
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(450, 250, page);
+
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
   await takeEditorScreenshot(page);

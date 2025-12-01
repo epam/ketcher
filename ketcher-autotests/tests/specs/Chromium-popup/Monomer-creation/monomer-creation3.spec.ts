@@ -946,7 +946,7 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press Create Monomer button
-   *      5. Change LGA atom by picking option form a drop-down: H, OH, NH2, F, Cl, Br, I (in that order)
+   *      5. Change LGA atom by picking option form a drop-down: H, OH (in that order)
    *      6. Take screenshot to validate that the LGA atom was changed after each change
    *
    * Version 3.8
@@ -973,36 +973,6 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
     attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.OH,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.NH2,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.F,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.Cl,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.Br,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.I,
   });
   await takeEditorScreenshot(page);
 

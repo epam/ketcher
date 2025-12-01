@@ -205,6 +205,7 @@ export const defaultTheme: EditorTheme = {
       Y: monomerColors.colorFY,
       G: monomerColors.colorGX,
       X: monomerColors.colorX,
+      Other: monomerColors.colorX,
       H: monomerColors.colorH,
       I: monomerColors.colorILV,
       L: monomerColors.colorILV,
@@ -244,6 +245,7 @@ export const defaultTheme: EditorTheme = {
       G: peptideColorScheme.G,
       M: peptideColorScheme.M,
       V: peptideColorScheme.V,
+      Other: monomerColors.colorX,
     },
   },
   border: {

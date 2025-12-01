@@ -3,6 +3,7 @@ import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
   Atom,
+  AtomLabel,
   AttachmentPointClickData,
   AttachmentPointName,
   BaseMonomer,
@@ -643,9 +644,9 @@ const MonomerCreationWizard = () => {
 
   const handleLeavingAtomChange = (
     apName: AttachmentPointName,
-    newLeavingAtomId: number,
+    newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.reassignAttachmentPointLeavingAtom(apName, newLeavingAtomId);
+    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
   };
 
   const handleAttachmentPointEditPopupClose = () => {

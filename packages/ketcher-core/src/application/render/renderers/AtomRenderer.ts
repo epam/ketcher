@@ -132,6 +132,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
+    if (this.hoverElement) {
+      return this.hoverElement;
+    }
+
     const selectionContourElement = this.appendSelectionContour();
 
     return (
@@ -144,7 +148,20 @@ export class AtomRenderer extends BaseRenderer {
         .attr('stroke-width', '1.2')
         .attr('fill', 'none')
         .attr('opacity', '0')
+        .attr('class', 'dynamic-element')
     );
+  }
+
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      this.showHover();
+    } else {
+      this.hideHover();
+    }
   }
 
   public showHover() {

@@ -136,10 +136,6 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
-    if (this.hoverElement) {
-      return this.hoverElement;
-    }
-
     const selectionContourElement = this.appendSelectionContour();
 
     return (
@@ -150,7 +146,7 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', '#CCFFDD')
+        .attr('fill', 'none')
         .attr('opacity', '0')
         .attr('class', 'dynamic-element')
     );

@@ -14,6 +14,7 @@ export class AtomRenderer extends BaseRenderer {
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
@@ -365,8 +366,11 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
+    this.badValenceElement?.remove();
+    this.badValenceElement = undefined;
     this.updateSelectionContour();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
   }
 
   public appendSelection() {
@@ -508,11 +512,37 @@ export class AtomRenderer extends BaseRenderer {
     this.appendExplicitValence();
   }
 
+  private appendBadValenceWarning() {
+    if (!this.atom.hasBadValence || !this.isLabelVisible) {
+      return;
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    if (!labelBbox) {
+      return;
+    }
+
+    const lineY = labelBbox.height / 2 + 2;
+    const lineStartX = labelBbox.x;
+    const lineEndX = labelBbox.x + labelBbox.width;
+
+    this.badValenceElement = this.rootElement
+      ?.append('line')
+      .attr('x1', lineStartX)
+      .attr('y1', lineY)
+      .attr('x2', lineEndX)
+      .attr('y2', lineY)
+      .attr('stroke', '#F00')
+      .attr('stroke-width', 1)
+      .attr('pointer-events', 'none');
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
     this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();

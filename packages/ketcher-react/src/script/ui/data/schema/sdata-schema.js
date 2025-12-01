@@ -355,11 +355,12 @@ function firstKeyOf(obj) {
  * pass schema only -> returns default context
  * pass schema & context -> returns default fieldName
  * pass schema & context & fieldName -> returns default fieldValue
+ * @param schema { object }
  * @param context? { string }
  * @param fieldName? { string }
  * @returns { string }
  */
-export function getSdataDefault(schema = sdataSchema, context, fieldName) {
+export function getSdataDefault(schema, context, fieldName) {
   if (schema.key === 'Custom') {
     return schema.properties[context]?.default;
   }

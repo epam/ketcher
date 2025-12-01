@@ -8,6 +8,10 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
+import {
+  BAD_VALENCE_WARNING_COLOR,
+  BAD_VALENCE_LINE_OFFSET,
+} from 'application/render/renderers/constants';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -522,7 +526,7 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const lineY = labelBbox.height / 2 + 2;
+    const lineY = labelBbox.height / 2 + BAD_VALENCE_LINE_OFFSET;
     const lineStartX = labelBbox.x;
     const lineEndX = labelBbox.x + labelBbox.width;
 
@@ -532,7 +536,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('y1', lineY)
       .attr('x2', lineEndX)
       .attr('y2', lineY)
-      .attr('stroke', '#F00')
+      .attr('stroke', BAD_VALENCE_WARNING_COLOR)
       .attr('stroke-width', 1)
       .attr('pointer-events', 'none');
   }

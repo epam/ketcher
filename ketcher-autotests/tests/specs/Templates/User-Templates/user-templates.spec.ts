@@ -29,11 +29,10 @@ const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function saveToTemplates(page: Page, shouldSave = true) {
-  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
   const inputText = 'My Template';
 
   await CommonTopLeftToolbar(page).saveFile();
-  await saveToTemplatesButton.click();
+  await SaveStructureDialog(page).saveToTemplates();
   await TemplateEditDialog(page).setMoleculeName(inputText);
   if (shouldSave) {
     await TemplateEditDialog(page).save();
@@ -67,8 +66,6 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-10073(3)
       Description: spaces in Molecule name field validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = ' name ';
 
     await BottomToolbar(page).structureLibrary();
@@ -79,7 +76,7 @@ test.describe('Click User Templates on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
@@ -96,30 +93,26 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-39948
       Description: delete user template validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const structureLibraryDialog = StructureLibraryDialog(page);
     const inputText = 'to_delete';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await structureLibraryDialog.addTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
-      TemplateLibraryTab.UserTemplate,
-    );
-    await StructureLibraryDialog(page).setSearchValue('to_delete');
-    await StructureLibraryDialog(page).deleteMyTemplate();
-    await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).setSearchValue('to_delete');
+    await structureLibraryDialog.openSection(TemplateLibraryTab.UserTemplate);
+    await structureLibraryDialog.setSearchValue('to_delete');
+    await structureLibraryDialog.deleteMyTemplate();
+    await structureLibraryDialog.setSearchValue('to_delete');
     await takeEditorScreenshot(page);
   });
 
@@ -128,8 +121,6 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-2941
     Description: Creating Template with Simple Objects validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'simple_object_template';
 
     await openFileAndAddToCanvas(
@@ -137,7 +128,7 @@ test.describe('Click User Templates on canvas', () => {
       'Molfiles-V2000/create-template-with-simple-objects.mol',
     );
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
@@ -154,8 +145,6 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'reaction_arrow_template';
 
     await openFileAndAddToCanvas(
@@ -163,7 +152,7 @@ test.describe('Click User Templates on canvas', () => {
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
     );
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -239,8 +228,6 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1722
       Description: saving user template validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
@@ -251,7 +238,7 @@ test.describe('Create and Save Templates', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
     await IndigoFunctionsToolbar(page).cleanUp();
@@ -356,8 +343,6 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-39948
       Description: warning message validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
@@ -367,12 +352,12 @@ test.describe('Templates field lenght validations', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
 
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
+    await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await getEditorScreenshot(page);
   });

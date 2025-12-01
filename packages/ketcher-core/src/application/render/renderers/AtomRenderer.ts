@@ -152,6 +152,13 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  /**
+   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+   * via showHover/hideHover, unlike other renderers that add/remove elements.
+   * When the model layer turns on hover (e.g., Fragment selection tool), we need
+   * to explicitly show the hover element after it's created/returned by appendHover.
+   */
   public redrawHover() {
     if (this.drawingEntity.hovered) {
       const hoverElement = this.appendHover();

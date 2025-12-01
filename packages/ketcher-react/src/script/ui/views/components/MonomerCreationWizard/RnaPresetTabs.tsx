@@ -32,8 +32,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const { wizardState, wizardStateDispatch, editor } = props;
   const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
   type rnaComponentKeyType = typeof rnaComponentsKeys[number];
-  const currentTabState =
-    wizardState[rnaComponentsKeys[selectedTab - 1] as rnaComponentKeyType];
+  const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
 
   const highlightStructure = (activeTabState: WizardState) => {
     editor.highlights.clear();
@@ -53,8 +52,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
 
-    const activeTabState =
-      wizardState[rnaComponentsKeys[newValue - 1] as rnaComponentKeyType];
+    const activeTabState = wizardState[rnaComponentsKeys[newValue - 1]];
 
     highlightStructure(activeTabState);
   };

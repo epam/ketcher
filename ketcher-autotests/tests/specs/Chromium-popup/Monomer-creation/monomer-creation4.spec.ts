@@ -930,39 +930,36 @@ test(`23. Verify that on the top toolbar are now enabled buttons when opened wiz
   await CreateMonomerDialog(page).discard();
 });
 
-test.fail(
-  `24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`,
-  async () => {
-    // Issue fails due to https://github.com/epam/ketcher/issues/8818
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/8425
-     * Description: Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Add structure to canvas
-     *      3. Make a proper selection
-     *      4. Open Create Monomer wizard
-     *      5. Click on Remove explicit hydrogens
-     *      6. Close the wizard
-     *
-     * Version 3.10
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
-    await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-    await LeftToolbar(page).createMonomer();
-    // to make molecule visible
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+test.skip(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+  // Issue fails due to https://github.com/epam/ketcher/issues/8818
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8425
+   * Description: Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Add structure to canvas
+   *      3. Make a proper selection
+   *      4. Open Create Monomer wizard
+   *      5. Click on Remove explicit hydrogens
+   *      6. Close the wizard
+   *
+   * Version 3.10
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
+  await LeftToolbar(page).createMonomer();
+  // to make molecule visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(450, 250, page);
 
-    await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-    await takeEditorScreenshot(page);
-    await CreateMonomerDialog(page).discard();
-  },
-);
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
+  await takeEditorScreenshot(page);
+  await CreateMonomerDialog(page).discard();
+});
 
 test(`25. Verify that Copy button copies the selected structure fragment and Paste pasted to Wizard canvas`, async () => {
   /*

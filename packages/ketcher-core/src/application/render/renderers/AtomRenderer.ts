@@ -139,7 +139,7 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', 'none')
+        .attr('fill', '#CCFFDD')
         .attr('opacity', '0')
     );
   }

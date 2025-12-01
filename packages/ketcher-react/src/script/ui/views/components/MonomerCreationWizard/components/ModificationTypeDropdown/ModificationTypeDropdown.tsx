@@ -17,6 +17,8 @@ const OptionsListbox = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
   },
 );
 
+OptionsListbox.displayName = 'OptionsListbox';
+
 interface IOptionType {
   title: string;
 }

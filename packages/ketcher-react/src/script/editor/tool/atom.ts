@@ -54,9 +54,10 @@ class AtomTool implements Tool {
       if (editorSelection.atoms) {
         const struct = editor.render.ctab;
         const action = new Action();
-        const selectedSGroupsId =
-          editorSelection &&
-          getGroupIdsFromItemArrays(struct.molecule, editorSelection);
+        const selectedSGroupsId = getGroupIdsFromItemArrays(
+          struct.molecule,
+          editorSelection,
+        );
         const sgroups = struct.molecule.functionalGroups;
         const atomsInFunctionalGroup = editorSelection.atoms
           .filter((atomId) => {

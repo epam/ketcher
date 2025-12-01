@@ -6,7 +6,7 @@ import {
   ketcherProvider,
   KetMonomerClass,
 } from 'ketcher-core';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -37,6 +37,11 @@ interface IMonomerCreationWizardFieldsProps {
   showNaturalAnalogue?: boolean;
 }
 
+interface ModificationTypeItem {
+  id: number;
+  value: string;
+}
+
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
 ) => {
@@ -51,41 +56,44 @@ const MonomerCreationWizardFields = (
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
-  const [modificationTypes, setModificationTypes] = useState<string[]>([]);
+  const [modificationTypes, setModificationTypes] = useState<
+    ModificationTypeItem[]
+  >([]);
+  const modificationTypeIdRef = useRef(0);
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
   }, [editor, values.type]);
 
-  const handleModificationTypeChange = (
-    indexToChange: number,
-    value: string,
-  ) => {
-    const newModificationTypes = modificationTypes.map((t, i) =>
-      i === indexToChange ? value : t,
+  const handleModificationTypeChange = (id: number, value: string) => {
+    const newModificationTypes = modificationTypes.map((item) =>
+      item.id === id ? { ...item, value } : item,
     );
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes?.(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes.map((item) => item.value));
   };
 
   const handleAddModificationType = () => {
     const newModificationTypes =
       modificationTypes.length >= MAX_MODIFICATION_TYPES
         ? modificationTypes
-        : [...modificationTypes, ''];
+        : [
+            ...modificationTypes,
+            { id: modificationTypeIdRef.current++, value: '' },
+          ];
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes?.(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes.map((item) => item.value));
   };
 
-  const deleteModificationType = (indexToDelete: number) => {
+  const deleteModificationType = (id: number) => {
     const newModificationTypes = modificationTypes.filter(
-      (_, i) => i !== indexToDelete,
+      (item) => item.id !== id,
     );
 
     setModificationTypes(newModificationTypes);
-    onChangeModificationTypes?.(newModificationTypes);
+    onChangeModificationTypes?.(newModificationTypes.map((item) => item.value));
   };
 
   const handleAttachmentPointNameChange = (
@@ -237,17 +245,20 @@ const MonomerCreationWizardFields = (
               </AccordionSummary>
               <AccordionDetails>
                 {modificationTypes.map((modificationType, idx) => (
-                  <div className={styles.modificationTypeRow} key={idx}>
+                  <div
+                    className={styles.modificationTypeRow}
+                    key={modificationType.id}
+                  >
                     <ModificationTypeDropdown
-                      value={modificationType}
+                      value={modificationType.value}
                       naturalAnalogue={naturalAnalogue}
                       error={
-                        errors[modificationType] ||
+                        errors[modificationType.value] ||
                         (errors.emptyModificationType &&
-                          !modificationType.trim())
+                          !modificationType.value.trim())
                       }
                       onChange={(value) =>
-                        handleModificationTypeChange(idx, value)
+                        handleModificationTypeChange(modificationType.id, value)
                       }
                       testId={`modification-type-dropdown-${idx}`}
                     />
@@ -256,7 +267,9 @@ const MonomerCreationWizardFields = (
                       iconName="delete"
                       className={styles.deleteModificationTypeButton}
                       title="Delete modification type"
-                      onClick={() => deleteModificationType(idx)}
+                      onClick={() =>
+                        deleteModificationType(modificationType.id)
+                      }
                       testId={`delete-modification-type-button-${idx}`}
                     />
                   </div>

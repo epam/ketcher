@@ -136,6 +136,10 @@ export class AtomRenderer extends BaseRenderer {
       return this.hoverElement;
     }
 
+    if (this.hoverElement) {
+      return this.hoverElement;
+    }
+
     const selectionContourElement = this.appendSelectionContour();
 
     return (

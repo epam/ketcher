@@ -13,7 +13,9 @@ function createSelectTool(editor: Editor, mode: SelectMode): Tool {
     : new SelectTool(editor, mode);
 }
 
-// Cast to ToolConstructorInterface to maintain compatibility with toolsMap
-// The function works correctly when called with 'new' as it returns a Tool instance
+// Cast to ToolConstructorInterface to maintain compatibility with toolsMap.
+// This is safe because in JavaScript, when a function called with 'new' returns
+// an object, that object becomes the result (rather than 'this'). Since
+// createSelectTool always returns a Tool instance, it works correctly as a constructor.
 export const SelectCommonTool =
   createSelectTool as unknown as ToolConstructorInterface;

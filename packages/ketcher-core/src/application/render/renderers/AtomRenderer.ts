@@ -52,10 +52,12 @@ export class AtomRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     rootElement
-      ?.on('mouseover', () => {
+      ?.on('mouseover', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {
@@ -134,6 +136,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
+    if (this.hoverElement) {
+      return this.hoverElement;
+    }
+
     const selectionContourElement = this.appendSelectionContour();
 
     return (
@@ -146,7 +152,27 @@ export class AtomRenderer extends BaseRenderer {
         .attr('stroke-width', '1.2')
         .attr('fill', '#CCFFDD')
         .attr('opacity', '0')
+        .attr('class', 'dynamic-element')
     );
+  }
+
+  /**
+   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+   * via showHover/hideHover, unlike other renderers that add/remove elements.
+   * When the model layer turns on hover (e.g., Fragment selection tool), we need
+   * to explicitly show the hover element after it's created/returned by appendHover.
+   */
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      this.showHover();
+    } else {
+      this.hideHover();
+    }
   }
 
   public showHover() {
@@ -655,5 +681,8 @@ export class AtomRenderer extends BaseRenderer {
 
   protected appendHoverAreaElement(): void {}
 
-  protected removeHover(): void {}
+  protected removeHover(): void {
+    this.hoverElement?.remove();
+    this.hoverElement = undefined;
+  }
 }

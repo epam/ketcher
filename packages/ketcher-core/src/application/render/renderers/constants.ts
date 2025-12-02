@@ -2,6 +2,9 @@ import { KetMonomerClass } from 'application/formatters';
 
 export const UNRESOLVED_MONOMER_COLOR = '#585858';
 
+export const BAD_VALENCE_WARNING_COLOR = '#F00';
+export const BAD_VALENCE_LINE_OFFSET = 2;
+
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {
     hover: '#peptide-hover',

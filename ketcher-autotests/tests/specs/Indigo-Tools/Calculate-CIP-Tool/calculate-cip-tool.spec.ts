@@ -13,6 +13,7 @@ import {
   clickOnCanvas,
   clickOnAtom,
   deleteByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -983,6 +984,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

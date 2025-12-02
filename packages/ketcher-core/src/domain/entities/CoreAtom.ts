@@ -119,6 +119,11 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  public get hasBadValence() {
+    const { hydrogenAmount } = this.calculateValence();
+    return hydrogenAmount < 0;
+  }
+
   private get radicalAmount() {
     switch (this.properties.radical) {
       case AtomRadical.Single:

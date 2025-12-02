@@ -31,7 +31,6 @@ import {
   isClipboardAPIAvailable,
   legacyCopy,
   Struct,
-  Struct,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';

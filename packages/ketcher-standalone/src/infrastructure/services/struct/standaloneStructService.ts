@@ -185,18 +185,10 @@ function mapCalculatedPropertyName(property: CalculateProps) {
 }
 
 function mapWarningGroup(property: string) {
-  let mappedProperty: string | undefined;
-  switch (property) {
-    case 'OVERLAP_BOND': {
-      mappedProperty = 'overlapping_bonds';
-      break;
-    }
-    default:
-      mappedProperty = property.toLowerCase();
-      break;
+  if (property === 'OVERLAP_BOND') {
+    return 'overlapping_bonds';
   }
-
-  return mappedProperty;
+  return property.toLowerCase();
 }
 
 const messageTypeToEventMapping: {

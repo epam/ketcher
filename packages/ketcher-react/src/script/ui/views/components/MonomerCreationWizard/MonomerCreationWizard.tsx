@@ -47,7 +47,10 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
-import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
+import {
+  validateMonomerLeavingGroups,
+  validateRnaPresetLeavingGroups,
+} from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
@@ -959,6 +962,31 @@ const MonomerCreationWizard = () => {
         });
       }
     });
+
+    // Validate leaving groups for RNA preset components (requirements 2.4.2, 2.4.3, 2.4.4)
+    if (needSaveMonomers) {
+      const sugarAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+        rnaPresetWizardState.sugar,
+      );
+      const phosphateAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+        rnaPresetWizardState.phosphate,
+      );
+
+      if (sugarAttachmentPoints && phosphateAttachmentPoints) {
+        const leavingGroupNotifications = validateRnaPresetLeavingGroups(
+          editor,
+          sugarAttachmentPoints,
+          phosphateAttachmentPoints,
+        );
+
+        if (leavingGroupNotifications.size > 0) {
+          needSaveMonomers = false;
+          const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+            .message;
+          setLeavingGroupDialogMessage(firstMessage);
+        }
+      }
+    }
 
     return needSaveMonomers;
   };

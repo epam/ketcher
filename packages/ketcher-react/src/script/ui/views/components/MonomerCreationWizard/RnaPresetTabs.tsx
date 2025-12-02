@@ -72,6 +72,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
+    // Get the current selection before dispatching the action
+    const selection = editor.selection();
+    const atomIds = selection?.atoms || [];
+
+    // Update the preset component atoms mapping for tooltips
+    editor.updatePresetComponentAtoms(rnaComponentKey, atomIds);
+
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',
       rnaComponentKey,

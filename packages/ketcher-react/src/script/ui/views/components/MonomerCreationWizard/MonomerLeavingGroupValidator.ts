@@ -105,6 +105,7 @@ export const validateRnaPresetLeavingGroups = (
   }
 
   // Check phosphate R2 - should have OH (O) as leaving group
+  // Note: 'O' represents hydroxyl (OH) in atom labels since H is implicit in chemistry notation
   const phosphateR2 = phosphateAttachmentPoints.get(
     RNA_PRESET_PHOSPHATE_R2_RULE.attachmentPoint,
   );

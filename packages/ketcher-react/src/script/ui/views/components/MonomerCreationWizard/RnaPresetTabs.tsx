@@ -76,8 +76,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     const selection = editor.selection();
     const atomIds = selection?.atoms || [];
 
-    // Update the preset component atoms mapping for tooltips
-    editor.updatePresetComponentAtoms(rnaComponentKey, atomIds);
+    // Only update the preset component atoms if there are atoms selected
+    if (atomIds.length > 0) {
+      // Update the preset component atoms mapping for tooltips
+      editor.updatePresetComponentAtoms(rnaComponentKey, atomIds);
+    }
 
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',

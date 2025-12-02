@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -38,20 +38,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   type rnaComponentKeyType = typeof rnaComponentsKeys[number];
   const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
 
-  const highlightStructure = (activeTabState: WizardState) => {
-    editor.highlights.clear();
+  const highlightStructure = useCallback(
+    (activeTabState: WizardState) => {
+      editor.highlights.clear();
 
-    if (!activeTabState?.structure) {
-      return;
-    }
+      if (!activeTabState?.structure) {
+        return;
+      }
 
-    editor.highlights.create({
-      atoms: activeTabState.structure.atoms || [],
-      bonds: activeTabState.structure.bonds || [],
-      rgroupAttachmentPoints: [],
-      color: '#CDF1FC',
-    });
-  };
+      editor.highlights.create({
+        atoms: activeTabState.structure.atoms || [],
+        bonds: activeTabState.structure.bonds || [],
+        rgroupAttachmentPoints: [],
+        color: '#CDF1FC',
+      });
+    },
+    [editor],
+  );
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
@@ -75,13 +78,16 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
-    wizardStateDispatch({
-      type: 'SetRnaPresetComponentStructure',
-      rnaComponentKey,
-      editor,
-    });
-  };
+  const handleClickCreateComponent = useCallback(
+    (rnaComponentKey: rnaComponentKeyType) => {
+      wizardStateDispatch({
+        type: 'SetRnaPresetComponentStructure',
+        rnaComponentKey,
+        editor,
+      });
+    },
+    [wizardStateDispatch, editor],
+  );
 
   useEffect(() => {
     if (!currentTabState) {
@@ -90,7 +96,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
     highlightStructure(currentTabState);
     editor.selection(null);
-  }, [currentTabState?.structure]);
+  }, [currentTabState?.structure, highlightStructure, editor]);
 
   useEffect(() => {
     const handleMarkAsComponent = (event: Event) => {
@@ -118,7 +124,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         handleMarkAsComponent,
       );
     };
-  }, [wizardState, editor, handleClickCreateComponent]);
+  }, [wizardState, handleClickCreateComponent, highlightStructure]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

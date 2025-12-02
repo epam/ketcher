@@ -169,7 +169,6 @@ Object {
           <button
             class="cancel"
             data-testid="cancel-button"
-            mode="onCancel"
             type="button"
           >
             Cancel
@@ -580,7 +579,6 @@ Object {
         <button
           class="cancel"
           data-testid="cancel-button"
-          mode="onCancel"
           type="button"
         >
           Cancel

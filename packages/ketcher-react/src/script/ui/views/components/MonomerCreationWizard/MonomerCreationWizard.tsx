@@ -520,6 +520,9 @@ const MonomerCreationWizard = () => {
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
+  const [pendingTypeChange, setPendingTypeChange] = useState<
+    KetMonomerClass | string | null
+  >(null);
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -584,6 +587,12 @@ const MonomerCreationWizard = () => {
       setModificationTypes([]);
     }
     if (fieldId === 'type') {
+      // Show confirmation dialog when changing from rnaPreset to another type
+      if (type === 'rnaPreset' && value !== 'rnaPreset') {
+        setPendingTypeChange(value);
+        return;
+      }
+
       if ((type === 'rnaPreset' || value === 'rnaPreset') && type !== value) {
         wizardStateDispatch({
           type: 'ResetWizard',
@@ -608,6 +617,24 @@ const MonomerCreationWizard = () => {
         value,
       });
     }
+  };
+
+  const handleConfirmTypeChange = () => {
+    if (pendingTypeChange) {
+      wizardStateDispatch({
+        type: 'ResetWizard',
+      });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'type',
+        value: pendingTypeChange as KetMonomerClass,
+      });
+      setPendingTypeChange(null);
+    }
+  };
+
+  const handleCancelTypeChange = () => {
+    setPendingTypeChange(null);
   };
 
   useEffect(() => {
@@ -1341,6 +1368,31 @@ const MonomerCreationWizard = () => {
             >
               <div className={styles.DialogMessage}>
                 {leavingGroupDialogMessage}
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
+      {pendingTypeChange !== null &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Confirm type change"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: handleConfirmTypeChange,
+                onCancel: handleCancelTypeChange,
+              }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              primaryButtons={['Cancel']}
+            >
+              <div className={styles.DialogMessage}>
+                Changing the type will result in a loss of inputted data. Do you
+                wish to proceed?
               </div>
             </Dialog>
           </div>,

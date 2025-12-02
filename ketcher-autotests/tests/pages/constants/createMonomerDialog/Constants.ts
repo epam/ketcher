@@ -4,8 +4,8 @@ export enum MonomerType {
   Base = 'Base-option',
   Phosphate = 'Phosphate-option',
   NucleotideMonomer = 'Nucleotide (monomer)-option',
-  CHEM = 'CHEM-option',
   NucleotidePreset = 'Nucleotide (preset)-option',
+  CHEM = 'CHEM-option',
 }
 
 export enum AminoAcidNaturalAnalogue {

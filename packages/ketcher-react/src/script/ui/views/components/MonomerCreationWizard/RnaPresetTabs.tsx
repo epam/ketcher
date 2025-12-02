@@ -18,6 +18,10 @@ import AttributeField from './components/AttributeField/AttributeField';
 import { selectionSelector } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
+import {
+  MonomerCreationMarkAsComponentAction,
+  RnaPresetComponentType,
+} from './MonomerCreationWizard.constants';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -87,6 +91,34 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     highlightStructure(currentTabState);
     editor.selection(null);
   }, [currentTabState?.structure]);
+
+  useEffect(() => {
+    const handleMarkAsComponent = (event: Event) => {
+      const componentType = (event as CustomEvent<RnaPresetComponentType>)
+        .detail;
+      const tabIndex = rnaComponentsKeys.indexOf(componentType) + 1;
+
+      // First, mark the structure as the component
+      handleClickCreateComponent(componentType);
+
+      // Then, switch to the appropriate tab
+      setSelectedTab(tabIndex);
+      const activeTabState = wizardState[componentType];
+      highlightStructure(activeTabState);
+    };
+
+    window.addEventListener(
+      MonomerCreationMarkAsComponentAction,
+      handleMarkAsComponent,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationMarkAsComponentAction,
+        handleMarkAsComponent,
+      );
+    };
+  }, [wizardState, editor, handleClickCreateComponent]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

@@ -588,11 +588,13 @@ const MonomerCreationWizard = () => {
     }
     if (fieldId === 'type') {
       // Show confirmation dialog when changing from rnaPreset to another type
+      // The actual type change happens in handleConfirmTypeChange after user confirms
       if (type === 'rnaPreset' && value !== 'rnaPreset') {
         setPendingTypeChange(value);
         return;
       }
 
+      // Handle: changing TO rnaPreset from another type, or between non-rnaPreset types
       if ((type === 'rnaPreset' || value === 'rnaPreset') && type !== value) {
         wizardStateDispatch({
           type: 'ResetWizard',

@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback, useMemo } from 'react';
+import { ChangeEvent, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -40,9 +40,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
 
-  const rnaComponentsKeys = useMemo(() => RNA_COMPONENT_KEYS, []);
-
-  const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
+  const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {
@@ -53,7 +51,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       }
 
       // Apply highlights for all components based on whether they're active or not
-      rnaComponentsKeys.forEach((componentKey, index) => {
+      RNA_COMPONENT_KEYS.forEach((componentKey, index) => {
         const componentState = wizardState[componentKey];
         if (!componentState?.structure) {
           return;
@@ -72,7 +70,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         });
       });
     },
-    [editor, wizardState, rnaComponentsKeys],
+    [editor, wizardState],
   );
 
   const handleChange = (_, newValue: number) => {
@@ -115,6 +113,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
     applyHighlights(selectedTab, isHighlightEnabled);
     editor.selection(null);
+    // We only want to reapply highlights when the structure changes, not on every render.
+    // Other dependencies (selectedTab, isHighlightEnabled, applyHighlights, editor) are
+    // handled by their respective handlers (handleChange, handleHighlightToggle).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTabState?.structure]);
 
@@ -189,7 +190,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             required
           />
         )}
-        {rnaComponentsKeys.map((rnaComponentKey, index) => {
+        {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
               <>

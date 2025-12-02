@@ -97,11 +97,20 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const handleClickCreateComponent = (rnaComponentKey: RnaComponentKeyType) => {
+    // Get the current selection from the editor
+    const selection = editor.selection();
+    const atomIds = selection?.atoms || [];
+    const bondIds = selection?.bonds || [];
+
+    // Update the wizard state
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',
       rnaComponentKey,
       editor,
     });
+
+    // Sync the component atoms with the Editor for auto-assignment tracking
+    editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
   };
 
   const currentTabStructure = currentTabState?.structure;

@@ -8,6 +8,7 @@ import {
   AttachmentPointName,
   BaseMonomer,
   Bond,
+  ComponentStructureUpdateData,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
@@ -17,6 +18,7 @@ import {
   ketcherProvider,
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
+  MonomerCreationComponentStructureUpdateEvent,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -32,6 +34,7 @@ import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPoin
 import {
   AssignedAttachmentPointsByMonomerType,
   RnaPresetWizardAction,
+  RnaPresetWizardComponentStateFieldId,
   RnaPresetWizardState,
   RnaPresetWizardStateFieldId,
   WizardAction,
@@ -245,6 +248,20 @@ const rnaPresetWizardReducer = (
 
   if (!action.rnaComponentKey) {
     return state;
+  }
+
+  // Handle UpdateRnaPresetComponentStructure action
+  if (action.type === 'UpdateRnaPresetComponentStructure') {
+    return {
+      ...state,
+      [action.rnaComponentKey]: {
+        ...state[action.rnaComponentKey],
+        structure: {
+          atoms: action.atomIds,
+          bonds: action.bondIds,
+        },
+      },
+    };
   }
 
   const { rnaComponentKey, ...restAction } = action;
@@ -753,6 +770,35 @@ const MonomerCreationWizard = () => {
       window.removeEventListener(
         MonomerCreationAttachmentPointClickEvent,
         attachmentPointClickHandler,
+      );
+    };
+  }, []);
+
+  // Listen for component structure updates from the Editor
+  // This handles auto-assignment of new atoms to components
+  useEffect(() => {
+    const componentStructureUpdateHandler = (event: Event) => {
+      const updateData = (event as CustomEvent<ComponentStructureUpdateData>)
+        .detail;
+      const { componentKey, atomIds, bondIds } = updateData;
+
+      rnaPresetWizardStateDispatch({
+        type: 'UpdateRnaPresetComponentStructure',
+        rnaComponentKey: componentKey as RnaPresetWizardComponentStateFieldId,
+        atomIds,
+        bondIds,
+      });
+    };
+
+    window.addEventListener(
+      MonomerCreationComponentStructureUpdateEvent,
+      componentStructureUpdateHandler,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationComponentStructureUpdateEvent,
+        componentStructureUpdateHandler,
       );
     };
   }, []);

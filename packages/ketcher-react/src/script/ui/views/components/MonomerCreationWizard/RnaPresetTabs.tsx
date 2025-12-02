@@ -166,7 +166,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         handleMarkAsComponent,
       );
     };
-  }, [wizardState, editor, handleClickCreateComponent]);
+  }, [wizardState, handleClickCreateComponent, highlightStructure]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

@@ -1,20 +1,24 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
-import { editorEvents } from 'application/editor/editorEvents';
+import {
+  BAD_VALENCE_WARNING_COLOR,
+  BAD_VALENCE_LINE_OFFSET,
+} from 'application/render/renderers/constants';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
@@ -392,8 +396,11 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
+    this.badValenceElement?.remove();
+    this.badValenceElement = undefined;
     this.updateSelectionContour();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
   }
 
   public appendSelection() {
@@ -535,11 +542,37 @@ export class AtomRenderer extends BaseRenderer {
     this.appendExplicitValence();
   }
 
+  private appendBadValenceWarning() {
+    if (!this.atom.hasBadValence || !this.isLabelVisible) {
+      return;
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    if (!labelBbox) {
+      return;
+    }
+
+    const lineY = labelBbox.height / 2 + BAD_VALENCE_LINE_OFFSET;
+    const lineStartX = labelBbox.x;
+    const lineEndX = labelBbox.x + labelBbox.width;
+
+    this.badValenceElement = this.rootElement
+      ?.append('line')
+      .attr('x1', lineStartX)
+      .attr('y1', lineY)
+      .attr('x2', lineEndX)
+      .attr('y2', lineY)
+      .attr('stroke', BAD_VALENCE_WARNING_COLOR)
+      .attr('stroke-width', 1)
+      .attr('pointer-events', 'none');
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
     this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();

@@ -777,14 +777,25 @@ const MonomerCreationWizard = () => {
   // Listen for component structure updates from the Editor
   // This handles auto-assignment of new atoms to components
   useEffect(() => {
+    const isValidRnaComponentKey = (
+      key: string,
+    ): key is RnaPresetWizardComponentStateFieldId => {
+      return key === 'base' || key === 'sugar' || key === 'phosphate';
+    };
+
     const componentStructureUpdateHandler = (event: Event) => {
       const updateData = (event as CustomEvent<ComponentStructureUpdateData>)
         .detail;
       const { componentKey, atomIds, bondIds } = updateData;
 
+      // Only handle updates for valid RNA component keys (not 'preset')
+      if (!isValidRnaComponentKey(componentKey)) {
+        return;
+      }
+
       rnaPresetWizardStateDispatch({
         type: 'UpdateRnaPresetComponentStructure',
-        rnaComponentKey: componentKey as RnaPresetWizardComponentStateFieldId,
+        rnaComponentKey: componentKey,
         atomIds,
         bondIds,
       });

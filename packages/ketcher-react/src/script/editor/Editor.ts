@@ -629,7 +629,7 @@ class Editor implements KetcherEditor {
     const currentStruct = this.struct();
 
     if (!selection.atoms || selection.atoms.length === 0) {
-      return false;
+      return true;
     }
 
     const selectionInvalid = selection.atoms.some((atomId) => {

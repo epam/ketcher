@@ -677,8 +677,11 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints, problematicAttachmentPoints } =
-        render.monomerCreationState;
+      const {
+        assignedAttachmentPoints,
+        problematicAttachmentPoints,
+        problematicPresetAtoms,
+      } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -706,7 +709,14 @@ class ReAtom extends ReObject {
         );
 
         let style: RenderOptionStyles | undefined;
-        if (attachmentAtoms.includes(aid)) {
+        // Check if the atom is problematic (unassigned or multi-assigned in preset)
+        if (problematicPresetAtoms?.has(aid)) {
+          style = {
+            fill: '#FDE0DF',
+            stroke: '#F40724',
+            'stroke-width': '2px',
+          };
+        } else if (attachmentAtoms.includes(aid)) {
           style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
         } else if (leavingGroups.includes(aid)) {
           style = {

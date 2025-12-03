@@ -58,6 +58,21 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'The HELM alias must be unique amongst peptide or RNA monomers.',
   invalidRnaPresetStructure:
     'Structure of rna preset component contains issues. Please adjust the structure.',
+  atomsNotAssigned:
+    'Every atom in the loaded structure must belong to a sugar, base, or a phosphate.',
+  atomsMultipleAssigned:
+    'Every atom in the loaded structure must belong only to one of the components (sugar, base, or phosphate).',
+  missingComponents:
+    'Every preset must contain at least two components, with sugar being a mandatory component.',
+  invalidSugarBaseBond:
+    'Sugar can only have one single bond with base and one single bond with phosphate.',
+  invalidSugarPhosphateBond:
+    'Sugar can only have one single bond with base and one single bond with phosphate.',
+  basePhosphateBond: "Phosphate and base mustn't have a bond.",
+  invalidSugarBaseAttachmentPoints:
+    'The bond between sugar and base must be established between R3 of the sugar and R1 of the base.',
+  invalidSugarPhosphateAttachmentPoints:
+    'The bond between sugar and phosphate must be established between R2 of the sugar and R1 of the phosphate.',
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -77,6 +92,14 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   invalidHELMAlias: 'error',
   notUniqueHELMAlias: 'error',
   invalidRnaPresetStructure: 'error',
+  atomsNotAssigned: 'error',
+  atomsMultipleAssigned: 'warning',
+  missingComponents: 'error',
+  invalidSugarBaseBond: 'error',
+  invalidSugarPhosphateBond: 'error',
+  basePhosphateBond: 'error',
+  invalidSugarBaseAttachmentPoints: 'error',
+  invalidSugarPhosphateAttachmentPoints: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

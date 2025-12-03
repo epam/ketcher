@@ -193,7 +193,20 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'connectivity',
-        source.data.connectivity.toUpperCase() || 'ht',
+        source.data.connectivity.toUpperCase() || 'HT',
+      );
+      break;
+    }
+    case 'COP': {
+      ifDef(
+        result,
+        'subtype',
+        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+      );
+      ifDef(
+        result,
+        'connectivity',
+        source.data.connectivity.toUpperCase() || 'HT',
       );
       break;
     }

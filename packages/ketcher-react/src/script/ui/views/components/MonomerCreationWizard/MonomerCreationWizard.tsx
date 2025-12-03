@@ -189,6 +189,10 @@ const rnaPresetWizardReducer = (
     };
   }
 
+  if (action.type === 'ResetWizard') {
+    return initialRnaPresetWizardState;
+  }
+
   if (action.type === 'RemoveNotification') {
     const presetNotifications = new Map(state.preset.notifications);
     const baseNotifications = new Map(state.base.notifications);
@@ -588,6 +592,9 @@ const MonomerCreationWizard = () => {
         wizardStateDispatch({
           type: 'ResetWizard',
         });
+        rnaPresetWizardStateDispatch({
+          type: 'ResetWizard',
+        });
       } else {
         wizardStateDispatch({
           type: 'SetFieldValue',
@@ -630,6 +637,7 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
+    rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
     setAttachmentPointEditPopupData(null);
   };
 

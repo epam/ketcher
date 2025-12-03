@@ -893,8 +893,9 @@ const MonomerCreationWizard = () => {
       });
     }
 
-    // check rna name
-    if (!rnaPresetWizardState.preset.name?.trim()) {
+    // check rna preset code
+    const presetCode = rnaPresetWizardState.preset.name?.trim();
+    if (!presetCode) {
       needSaveMonomers = false;
       rnaPresetWizardStateDispatch({
         type: 'SetErrors',
@@ -918,6 +919,62 @@ const MonomerCreationWizard = () => {
         rnaComponentKey: 'preset',
         editor,
       });
+    } else {
+      // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
+      const presetCodeRegex = /^[a-zA-Z0-9-_*]*$/;
+      if (!presetCodeRegex.test(presetCode)) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            name: true,
+          },
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidPresetCode',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidPresetCode,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
+      }
+
+      // Validate preset code uniqueness
+      const coreEditor = CoreEditor.provideEditorInstance();
+      if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            name: true,
+          },
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'notUniquePresetCode',
+              {
+                type: 'error',
+                message: NotificationMessages.notUniquePresetCode,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
+      }
     }
 
     componentsToValidate.forEach((componentToValidate) => {

@@ -957,10 +957,10 @@ const MonomerCreationWizard = () => {
           type: 'SetNotifications',
           notifications: new Map([
             [
-              'invalidSugarBaseBond',
+              'invalidSugarBond',
               {
                 type: 'error',
-                message: NotificationMessages.invalidSugarBaseBond,
+                message: NotificationMessages.invalidSugarBond,
               },
             ],
           ]),
@@ -982,10 +982,10 @@ const MonomerCreationWizard = () => {
           type: 'SetNotifications',
           notifications: new Map([
             [
-              'invalidSugarPhosphateBond',
+              'invalidSugarBond',
               {
                 type: 'error',
-                message: NotificationMessages.invalidSugarPhosphateBond,
+                message: NotificationMessages.invalidSugarBond,
               },
             ],
           ]),

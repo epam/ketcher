@@ -59,8 +59,7 @@ export type WizardNotificationId =
   | 'atomsNotAssigned'
   | 'atomsMultipleAssigned'
   | 'missingComponents'
-  | 'invalidSugarBaseBond'
-  | 'invalidSugarPhosphateBond'
+  | 'invalidSugarBond'
   | 'basePhosphateBond'
   | 'invalidSugarBaseAttachmentPoints'
   | 'invalidSugarPhosphateAttachmentPoints';

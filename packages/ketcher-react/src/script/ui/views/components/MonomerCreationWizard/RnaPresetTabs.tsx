@@ -96,31 +96,33 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     );
   };
 
+  // Helper function to check if a component has a structure defined
+  const hasStructure = (
+    componentKey: 'base' | 'sugar' | 'phosphate',
+  ): boolean => {
+    const componentState = wizardState[componentKey];
+    return (
+      !!componentState.structure?.atoms?.length ||
+      !!componentState.structure?.bonds?.length
+    );
+  };
+
   // Check if a component tab should show error due to missing components
   const hasMissingComponentError = (
     componentKey: 'base' | 'sugar' | 'phosphate',
   ): boolean => {
     // If there's a missingComponents notification, highlight tabs for components that are missing
     if (wizardState.preset.notifications.has('missingComponents')) {
-      const componentState = wizardState[componentKey];
-      const hasNoStructure =
-        !componentState.structure?.atoms?.length &&
-        !componentState.structure?.bonds?.length;
+      const hasNoStructure = !hasStructure(componentKey);
       // Sugar is mandatory, so always highlight it if missing
       // Base and phosphate should only be highlighted if we don't have at least 2 components
       if (componentKey === 'sugar') {
         return hasNoStructure;
       }
       // For base and phosphate, check if we have less than 2 components defined
-      const sugarHasStructure =
-        !!wizardState.sugar.structure?.atoms?.length ||
-        !!wizardState.sugar.structure?.bonds?.length;
-      const baseHasStructure =
-        !!wizardState.base.structure?.atoms?.length ||
-        !!wizardState.base.structure?.bonds?.length;
-      const phosphateHasStructure =
-        !!wizardState.phosphate.structure?.atoms?.length ||
-        !!wizardState.phosphate.structure?.bonds?.length;
+      const sugarHasStructure = hasStructure('sugar');
+      const baseHasStructure = hasStructure('base');
+      const phosphateHasStructure = hasStructure('phosphate');
       const definedCount = [
         sugarHasStructure,
         baseHasStructure,

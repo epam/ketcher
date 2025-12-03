@@ -64,9 +64,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Every atom in the loaded structure must belong only to one of the components (sugar, base, or phosphate).',
   missingComponents:
     'Every preset must contain at least two components, with sugar being a mandatory component.',
-  invalidSugarBaseBond:
-    'Sugar can only have one single bond with base and one single bond with phosphate.',
-  invalidSugarPhosphateBond:
+  invalidSugarBond:
     'Sugar can only have one single bond with base and one single bond with phosphate.',
   basePhosphateBond: "Phosphate and base mustn't have a bond.",
   invalidSugarBaseAttachmentPoints:
@@ -95,8 +93,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   atomsNotAssigned: 'error',
   atomsMultipleAssigned: 'warning',
   missingComponents: 'error',
-  invalidSugarBaseBond: 'error',
-  invalidSugarPhosphateBond: 'error',
+  invalidSugarBond: 'error',
   basePhosphateBond: 'error',
   invalidSugarBaseAttachmentPoints: 'error',
   invalidSugarPhosphateAttachmentPoints: 'error',

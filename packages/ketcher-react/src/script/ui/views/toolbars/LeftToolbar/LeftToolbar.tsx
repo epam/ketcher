@@ -38,7 +38,6 @@ import { ArrowScroll } from '../ArrowScroll';
 import { Bond } from './Bond';
 import { RGroup } from './RGroup';
 import { Shape } from './Shape';
-import { Tools } from '../../../action';
 import classes from './LeftToolbar.module.less';
 import clsx from 'clsx';
 import { useInView } from 'react-intersection-observer';
@@ -62,25 +61,21 @@ type ItemProps = {
 interface GroupProps {
   items?: ItemProps[];
   className?: string;
-  status: Tools;
   height?: number;
   rest: Omit<Props, 'className'>;
 }
 
-const Group = ({ items, className, status, height, rest }: GroupProps) => {
-  const visibleItems: ItemProps[] = [];
-  if (items) {
-    items.forEach((item) => {
-      let visible = true;
-      if (
+const Group = ({ items, className, height, rest }: GroupProps) => {
+  const { status } = rest;
+  const visibleItems =
+    items?.reduce<ItemProps[]>(
+      (acc, item) =>
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
-      ) {
-        visible = false;
-      }
-      if (visible) visibleItems.push(item);
-    });
-  }
+          ? acc
+          : acc.concat(item),
+      [],
+    ) ?? [];
 
   return visibleItems.length ? (
     <div className={clsx(classes.group, className)}>
@@ -141,8 +136,6 @@ const LeftToolbar = (props: Props) => {
     scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
   };
 
-  const status = rest.status;
-
   return (
     <div
       data-testid="left-toolbar"
@@ -162,7 +155,6 @@ const LeftToolbar = (props: Props) => {
               { id: 'select', options: selectOptions },
               { id: 'erase' },
             ]}
-            status={status}
             height={height}
             rest={rest}
           />
@@ -185,7 +177,6 @@ const LeftToolbar = (props: Props) => {
             { id: 'charge-plus' },
             { id: 'charge-minus' },
           ]}
-          status={status}
           height={height}
           rest={rest}
         />
@@ -197,7 +188,6 @@ const LeftToolbar = (props: Props) => {
               { id: 'rgroup', options: rGroupOptions },
               { id: CREATE_MONOMER_TOOL_NAME },
             ]}
-            status={status}
             height={height}
             rest={rest}
           />
@@ -213,7 +203,6 @@ const LeftToolbar = (props: Props) => {
               options: mappingOptions,
             },
           ]}
-          status={status}
           height={height}
           rest={rest}
         />
@@ -226,7 +215,6 @@ const LeftToolbar = (props: Props) => {
               { id: 'text' },
               { id: IMAGE_KEY },
             ]}
-            status={status}
             height={height}
             rest={rest}
           />

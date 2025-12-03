@@ -621,16 +621,15 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const selection = this.selection();
-
-    if (!selection) {
-      return true;
-    }
+    const selection = this.selection() ?? {
+      atoms: Array.from(this.struct().atoms.keys()),
+      bonds: Array.from(this.struct().bonds.keys()),
+    };
 
     const currentStruct = this.struct();
 
     if (!selection.atoms || selection.atoms.length === 0) {
-      return false;
+      return true;
     }
 
     const selectionInvalid = selection.atoms.some((atomId) => {

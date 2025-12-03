@@ -96,6 +96,43 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     );
   };
 
+  // Check if a component tab should show error due to missing components
+  const hasMissingComponentError = (
+    componentKey: 'base' | 'sugar' | 'phosphate',
+  ): boolean => {
+    // If there's a missingComponents notification, highlight tabs for components that are missing
+    if (wizardState.preset.notifications.has('missingComponents')) {
+      const componentState = wizardState[componentKey];
+      const hasNoStructure =
+        !componentState.structure?.atoms?.length &&
+        !componentState.structure?.bonds?.length;
+      // Sugar is mandatory, so always highlight it if missing
+      // Base and phosphate should only be highlighted if we don't have at least 2 components
+      if (componentKey === 'sugar') {
+        return hasNoStructure;
+      }
+      // For base and phosphate, check if we have less than 2 components defined
+      const sugarHasStructure =
+        !!wizardState.sugar.structure?.atoms?.length ||
+        !!wizardState.sugar.structure?.bonds?.length;
+      const baseHasStructure =
+        !!wizardState.base.structure?.atoms?.length ||
+        !!wizardState.base.structure?.bonds?.length;
+      const phosphateHasStructure =
+        !!wizardState.phosphate.structure?.atoms?.length ||
+        !!wizardState.phosphate.structure?.bonds?.length;
+      const definedCount = [
+        sugarHasStructure,
+        baseHasStructure,
+        phosphateHasStructure,
+      ].filter(Boolean).length;
+
+      // If we don't have sugar or don't have 2 components, highlight missing components
+      return hasNoStructure && (!sugarHasStructure || definedCount < 2);
+    }
+    return false;
+  };
+
   return (
     <div>
       <Tabs
@@ -114,7 +151,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.base) && styles.errorTab,
+            (hasErrorInTab(wizardState.base) ||
+              hasMissingComponentError('base')) &&
+              styles.errorTab,
           )}
           label={<div className={styles.tabLabel}>Base</div>}
           icon={<Icon name="base" />}
@@ -122,7 +161,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.sugar) && styles.errorTab,
+            (hasErrorInTab(wizardState.sugar) ||
+              hasMissingComponentError('sugar')) &&
+              styles.errorTab,
           )}
           label={<div className={styles.tabLabel}>Sugar</div>}
           icon={<Icon name="sugar" />}
@@ -130,7 +171,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.phosphate) && styles.errorTab,
+            (hasErrorInTab(wizardState.phosphate) ||
+              hasMissingComponentError('phosphate')) &&
+              styles.errorTab,
           )}
           label={<div className={styles.tabLabel}>Phosphate</div>}
           icon={<Icon name="phosphate" />}

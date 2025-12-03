@@ -478,6 +478,11 @@ export const selectFilteredMonomers = createSelector(
 
     return monomers
       .filter((item: MonomerOrAmbiguousType) => {
+        // Filter out hidden monomers - they are part of presets and should not be visible in the library
+        if (!item.isAmbiguous && (item as MonomerItemType).props?.Hidden) {
+          return false;
+        }
+
         if (item.isAmbiguous) {
           const {
             label,

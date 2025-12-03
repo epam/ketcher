@@ -978,7 +978,7 @@ const MonomerCreationWizard = () => {
       });
     } else {
       // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
-      const presetCodeRegex = /^[a-zA-Z0-9-_*]*$/;
+      const presetCodeRegex = /^[a-zA-Z0-9-_*]+$/;
       if (!presetCodeRegex.test(presetCode)) {
         needSaveMonomers = false;
         rnaPresetWizardStateDispatch({
@@ -1003,34 +1003,34 @@ const MonomerCreationWizard = () => {
           rnaComponentKey: 'preset',
           editor,
         });
-      }
-
-      // Validate preset code uniqueness
-      const coreEditor = CoreEditor.provideEditorInstance();
-      if (coreEditor.checkIfPresetCodeExists(presetCode)) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: {
-            name: true,
-          },
-          rnaComponentKey: 'preset',
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: new Map([
-            [
-              'notUniquePresetCode',
-              {
-                type: 'error',
-                message: NotificationMessages.notUniquePresetCode,
-              },
-            ],
-          ]),
-          rnaComponentKey: 'preset',
-          editor,
-        });
+      } else {
+        // Validate preset code uniqueness (only if format is valid)
+        const coreEditor = CoreEditor.provideEditorInstance();
+        if (coreEditor.checkIfPresetCodeExists(presetCode)) {
+          needSaveMonomers = false;
+          rnaPresetWizardStateDispatch({
+            type: 'SetErrors',
+            errors: {
+              name: true,
+            },
+            rnaComponentKey: 'preset',
+            editor,
+          });
+          rnaPresetWizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: new Map([
+              [
+                'notUniquePresetCode',
+                {
+                  type: 'error',
+                  message: NotificationMessages.notUniquePresetCode,
+                },
+              ],
+            ]),
+            rnaComponentKey: 'preset',
+            editor,
+          });
+        }
       }
     }
 

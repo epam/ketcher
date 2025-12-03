@@ -83,6 +83,11 @@ const initialRnaPresetWizardState: RnaPresetWizardState = {
       name: undefined,
     },
     notifications: new Map(),
+    manuallyModifiedSymbols: {
+      base: false,
+      sugar: false,
+      phosphate: false,
+    },
   },
 };
 
@@ -252,10 +257,29 @@ const rnaPresetWizardReducer = (
   }
 
   if (rnaComponentKey !== 'preset') {
-    return {
+    const updatedState = {
       ...state,
       [rnaComponentKey]: wizardReducer(state[rnaComponentKey], restAction),
     };
+
+    // Track manual symbol modifications
+    if (
+      restAction.type === 'SetFieldValue' &&
+      restAction.fieldId === 'symbol'
+    ) {
+      return {
+        ...updatedState,
+        preset: {
+          ...updatedState.preset,
+          manuallyModifiedSymbols: {
+            ...updatedState.preset.manuallyModifiedSymbols,
+            [rnaComponentKey]: true,
+          },
+        },
+      };
+    }
+
+    return updatedState;
   }
 
   if (restAction.type === 'SetErrors') {
@@ -272,7 +296,7 @@ const rnaPresetWizardReducer = (
   }
 
   if (restAction.type === 'SetFieldValue') {
-    return {
+    let updatedState = {
       ...state,
       preset: {
         ...state.preset,
@@ -283,6 +307,53 @@ const rnaPresetWizardReducer = (
         },
       },
     };
+
+    // When preset code changes, update monomer symbols that haven't been manually modified
+    if (restAction.fieldId === 'name') {
+      const newPresetCode = restAction.value;
+      const { manuallyModifiedSymbols } = state.preset;
+
+      if (!manuallyModifiedSymbols.base) {
+        updatedState = {
+          ...updatedState,
+          base: {
+            ...updatedState.base,
+            values: {
+              ...updatedState.base.values,
+              symbol: newPresetCode,
+            },
+          },
+        };
+      }
+
+      if (!manuallyModifiedSymbols.sugar) {
+        updatedState = {
+          ...updatedState,
+          sugar: {
+            ...updatedState.sugar,
+            values: {
+              ...updatedState.sugar.values,
+              symbol: newPresetCode,
+            },
+          },
+        };
+      }
+
+      if (!manuallyModifiedSymbols.phosphate) {
+        updatedState = {
+          ...updatedState,
+          phosphate: {
+            ...updatedState.phosphate,
+            values: {
+              ...updatedState.phosphate.values,
+              symbol: newPresetCode,
+            },
+          },
+        };
+      }
+    }
+
+    return updatedState;
   }
 
   return {

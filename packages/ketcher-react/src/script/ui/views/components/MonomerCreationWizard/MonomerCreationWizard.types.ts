@@ -141,6 +141,9 @@ export type RnaPresetWizardAction =
       type: 'ResetErrors';
     }
   | {
+      type: 'ResetWizard';
+    }
+  | {
       type: 'SetErrors';
       errors: {
         name?: boolean;

@@ -1104,24 +1104,28 @@ const MonomerCreationWizard = () => {
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
           AttachmentPointName.R2,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
           AttachmentPointName.R3,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
+          true,
         );
       }
 

@@ -180,6 +180,7 @@ export interface IKetMonomerTemplate {
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
+  hidden?: boolean;
 }
 
 export interface IKetAmbiguousMonomerTemplate {

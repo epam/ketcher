@@ -55,7 +55,9 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
-  | 'invalidRnaPresetStructure';
+  | 'invalidRnaPresetStructure'
+  | 'notUniquePresetCode'
+  | 'invalidPresetCode';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

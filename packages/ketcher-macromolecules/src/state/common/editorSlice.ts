@@ -58,6 +58,7 @@ interface EditorState {
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
+  isClipboardAvailableForPaste: boolean;
   isMacromoleculesPropertiesWindowOpened: boolean;
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
@@ -82,6 +83,7 @@ const initialState: EditorState = {
   },
   position: undefined,
   isContextMenuActive: false,
+  isClipboardAvailableForPaste: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
@@ -159,6 +161,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
     },
+    setClipboardAvailableForPaste: (state, action: PayloadAction<boolean>) => {
+      state.isClipboardAvailableForPaste = action.payload;
+    },
     setMacromoleculesPropertiesWindowVisibility: (
       state,
       action: PayloadAction<boolean>,
@@ -228,6 +233,7 @@ export const {
   destroyEditor,
   showPreview,
   setContextMenuActive,
+  setClipboardAvailableForPaste,
   setMacromoleculesPropertiesWindowVisibility,
   toggleMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
@@ -281,6 +287,9 @@ export const hasAntisenseChains = (state: RootState): CoreEditor =>
 
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
+
+export const selectIsClipboardAvailableForPaste = (state: RootState): boolean =>
+  state.editor.isClipboardAvailableForPaste;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (
   state: RootState,

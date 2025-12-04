@@ -7,7 +7,7 @@ import {
   IconName,
 } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectIsClipboardAvailableForPaste } from 'state/common';
 import { BaseMonomer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
@@ -32,6 +32,9 @@ export const SelectedMonomersContextMenu = ({
 }: SelectedMonomersContextMenuType) => {
   const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
+  const isClipboardAvailable = useAppSelector(
+    selectIsClipboardAvailableForPaste,
+  );
   const { hideAll } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
@@ -80,7 +83,8 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.paste,
       title: 'Paste',
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: ({ props = {} }) => !isCanvasContext(props),
+      disabled: ({ props = {} }) =>
+        !isCanvasContext(props) || !isClipboardAvailable,
       separator: true,
     },
     {

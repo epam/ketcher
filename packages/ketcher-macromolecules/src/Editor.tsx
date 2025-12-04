@@ -35,6 +35,7 @@ import {
   NodeSelection,
   NodesSelection,
   SequenceMode,
+  isClipboardAPIAvailable,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -56,6 +57,7 @@ import {
   selectIsHandToolSelected,
   initKetcherId,
   setContextMenuActive,
+  setClipboardAvailableForPaste,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
@@ -205,6 +207,22 @@ function Editor({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
+  const checkClipboardContent = useCallback(async () => {
+    if (!isClipboardAPIAvailable()) {
+      dispatch(setClipboardAvailableForPaste(false));
+      return;
+    }
+
+    try {
+      const clipboardData = await navigator.clipboard.read();
+      const hasContent =
+        clipboardData.length > 0 && clipboardData[0].types.length > 0;
+      dispatch(setClipboardAvailableForPaste(hasContent));
+    } catch {
+      dispatch(setClipboardAvailableForPaste(false));
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     dispatch(
       createEditor({
@@ -230,6 +248,7 @@ function Editor({
       setContextMenuEvent(event);
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
+      checkClipboardContent();
       showSequenceContextMenu({
         event,
         props: {
@@ -244,6 +263,7 @@ function Editor({
       ]): void => {
         setContextMenuEvent(event);
         setSelectedMonomers([]);
+        checkClipboardContent();
         showSelectedMonomersContextMenu({
           event,
           props: {
@@ -257,6 +277,7 @@ function Editor({
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
+        checkClipboardContent();
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
@@ -268,6 +289,7 @@ function Editor({
         setContextMenuEvent(event);
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
+        checkClipboardContent();
 
         // TODO separate by two events
         if (editor.mode instanceof SequenceMode) {

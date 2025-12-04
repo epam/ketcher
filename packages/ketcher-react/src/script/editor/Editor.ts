@@ -25,6 +25,7 @@ import {
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
   FloatingToolsParams,
+  fromAtomsAttrs,
   fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
@@ -1151,6 +1152,7 @@ class Editor implements KetcherEditor {
       [number, number]
     >,
     monomerStructure?: Selection,
+    forceAddNewLeavingGroupAtom = false,
   ) {
     assert(this.monomerCreationState);
 
@@ -1159,7 +1161,7 @@ class Editor implements KetcherEditor {
 
     let leavingAtomId: number;
     let additionalAction: Action | null = null;
-    if (potentialLeavingAtoms) {
+    if (!forceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
       const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
         .sort((a, b) => a - b)
         .reduce(
@@ -1629,6 +1631,36 @@ class Editor implements KetcherEditor {
         newName,
       ),
     ]).perform(this.render.ctab);
+
+    this.update(action);
+  }
+
+  changeLeavingAtomLabel(
+    name: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) {
+    assert(this.monomerCreationState);
+
+    const atomPair =
+      this.monomerCreationState.assignedAttachmentPoints.get(name);
+    assert(atomPair);
+
+    const [, leavingAtomId] = atomPair;
+    const leavingAtom = this.struct().atoms.get(leavingAtomId);
+    assert(leavingAtom);
+
+    // Don't do anything if the label is the same
+    if (leavingAtom.label === newLeavingAtomLabel) {
+      return;
+    }
+
+    // Change the atom label using fromAtomsAttrs
+    const action = fromAtomsAttrs(
+      this.render.ctab,
+      leavingAtomId,
+      { label: newLeavingAtomLabel },
+      false,
+    );
 
     this.update(action);
   }

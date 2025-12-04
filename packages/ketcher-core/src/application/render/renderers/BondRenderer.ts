@@ -24,6 +24,7 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
+import { editorEvents } from 'application/editor/editorEvents';
 
 const BOND_WIDTH = 2;
 
@@ -484,10 +485,12 @@ export class BondRenderer extends BaseRenderer {
       .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath
-      .on('mouseenter', () => {
+      .on('mouseenter', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

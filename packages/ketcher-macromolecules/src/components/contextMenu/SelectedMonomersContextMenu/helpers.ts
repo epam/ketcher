@@ -311,7 +311,9 @@ export const isCycleExistsForSelectedMonomers = (
       }
 
       if (!visited.has(neighbor)) {
-        return dfs(neighbor, monomer);
+        if (dfs(neighbor, monomer)) {
+          return true;
+        }
       }
     }
 
@@ -321,7 +323,9 @@ export const isCycleExistsForSelectedMonomers = (
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      return dfs(monomer, null);
+      if (dfs(monomer, null)) {
+        return true;
+      }
     }
   }
 

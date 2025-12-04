@@ -35,13 +35,15 @@ import { Icon, StructRender } from 'components';
 import { ketcherProvider, Struct } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
+type StructStringOrPromise = string | Promise<unknown> | null;
+
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
 interface FooterContentProps {
   onImage: (file: File | null) => void;
-  structStr: string | Promise<unknown> | null;
+  structStr: StructStringOrPromise;
   openHandler: () => void;
   copyHandler: () => void;
   isAddToCanvasDisabled: boolean;
@@ -88,7 +90,7 @@ function FooterContent({
 
 interface RecognizeDialogProps {
   file: File | null;
-  structStr: string | Promise<unknown> | null;
+  structStr: StructStringOrPromise;
   fragment: boolean;
   version: string;
   imagoVersions: string[];
@@ -249,7 +251,7 @@ interface RecognizeState {
     };
     recognize: {
       file: File | null;
-      structStr: string | Promise<unknown> | null;
+      structStr: StructStringOrPromise;
       fragment: boolean;
       version: string | null;
     };

@@ -3,6 +3,7 @@ import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
   Atom,
+  AtomLabel,
   AttachmentPointClickData,
   AttachmentPointName,
   BaseMonomer,
@@ -186,6 +187,10 @@ const rnaPresetWizardReducer = (
         errors: {},
       },
     };
+  }
+
+  if (action.type === 'ResetWizard') {
+    return initialRnaPresetWizardState;
   }
 
   if (action.type === 'RemoveNotification') {
@@ -587,6 +592,9 @@ const MonomerCreationWizard = () => {
         wizardStateDispatch({
           type: 'ResetWizard',
         });
+        rnaPresetWizardStateDispatch({
+          type: 'ResetWizard',
+        });
       } else {
         wizardStateDispatch({
           type: 'SetFieldValue',
@@ -629,6 +637,7 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
+    rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
     setAttachmentPointEditPopupData(null);
   };
 
@@ -643,9 +652,9 @@ const MonomerCreationWizard = () => {
 
   const handleLeavingAtomChange = (
     apName: AttachmentPointName,
-    newLeavingAtomId: number,
+    newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.reassignAttachmentPointLeavingAtom(apName, newLeavingAtomId);
+    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
   };
 
   const handleAttachmentPointEditPopupClose = () => {
@@ -1096,24 +1105,28 @@ const MonomerCreationWizard = () => {
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
           AttachmentPointName.R2,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
           AttachmentPointName.R3,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
+          true,
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
+          true,
         );
       }
 

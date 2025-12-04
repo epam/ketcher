@@ -267,7 +267,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(msg.payload || '');
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -296,7 +296,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -330,7 +330,7 @@ class IndigoService implements StructService {
             };
             resolve(result);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
@@ -402,7 +402,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -458,7 +458,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -498,7 +498,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -537,7 +537,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -576,7 +576,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -615,7 +615,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -659,7 +659,7 @@ class IndigoService implements StructService {
           );
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -706,7 +706,7 @@ class IndigoService implements StructService {
           }, {} as CalculateResult);
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -749,7 +749,7 @@ class IndigoService implements StructService {
           if (!msg.hasError) {
             resolve(msg.payload);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
@@ -817,7 +817,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -853,7 +853,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(JSON.parse(msg.payload));
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 

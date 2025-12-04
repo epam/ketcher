@@ -59,7 +59,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   test('Add SMILES molecule using ketcher.setMolecule() method', async () => {
     /*
     Test case: EPMLSOPKET-10090
-    Description: Molecule of aromatized Benzene is on canvas
+    Description: Molecule of aromatized Benzene is on canvas.
     */
     await waitForSpinnerFinishedWork(
       page,

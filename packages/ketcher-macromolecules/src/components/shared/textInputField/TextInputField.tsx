@@ -17,7 +17,7 @@
 import styled from '@emotion/styled';
 import { HTMLInputTypeAttribute } from 'react';
 
-interface Props {
+export interface TextInputFieldProps {
   value: string | number;
   id: string;
   onChange: (value: string) => void;
@@ -67,7 +67,7 @@ export const TextInputField = ({
   className,
   inputClassName,
   ...rest
-}: Props) => {
+}: TextInputFieldProps) => {
   const handleChange = (event) => {
     onChange(event.target.value);
   };

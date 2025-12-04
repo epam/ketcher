@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { DropDown } from 'components/shared/dropDown';
+import { TextInputField } from 'components/shared/textInputField';
 
 export const Form = styled.form({
   display: 'flex',
@@ -33,6 +34,12 @@ export const StyledDropdown = styled(DropDown)(({ theme }) => ({
 export const stylesForExpanded = {
   border: 'none',
 };
+
+export const StyledTextInputField = styled(TextInputField)({
+  '& input': {
+    height: '28px',
+  },
+});
 
 export const Loader = styled.div`
   position: absolute;

@@ -1268,9 +1268,10 @@ export function sequenceReplacer(key: string, value: unknown): unknown {
     !['Object', 'Array'].includes(value.constructor.name)
   ) {
     const valueObj = value as object;
+    const hasOwnToString = valueObj.toString !== Object.prototype.toString;
     return {
       ctor: value.constructor.name,
-      repr: valueObj.toString(),
+      ...(hasOwnToString && { repr: valueObj.toString() }),
       ...value,
     };
   }

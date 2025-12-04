@@ -1152,6 +1152,7 @@ class Editor implements KetcherEditor {
       [number, number]
     >,
     monomerStructure?: Selection,
+    forceAddNewLeavingGroupAtom = false,
   ) {
     assert(this.monomerCreationState);
 
@@ -1160,7 +1161,7 @@ class Editor implements KetcherEditor {
 
     let leavingAtomId: number;
     let additionalAction: Action | null = null;
-    if (potentialLeavingAtoms) {
+    if (!forceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
       const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
         .sort((a, b) => a - b)
         .reduce(

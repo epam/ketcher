@@ -221,7 +221,7 @@ const rnaPresetWizardReducer = (
     };
   }
 
-  if (!action.rnaComponentKey) {
+  if (!('rnaComponentKey' in action) || !action.rnaComponentKey) {
     return state;
   }
 

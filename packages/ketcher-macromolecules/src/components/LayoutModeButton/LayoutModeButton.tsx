@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
@@ -31,19 +31,22 @@ export const LayoutModeButton = () => {
     selectIsSequenceEditInRNABuilderMode,
   );
 
-  const menuContext = {
-    isActive: (mode) => activeMode === mode,
-    activate: (mode) => {
-      if (mode === activeMode) {
-        return;
-      }
-      setActiveMode(mode);
-      // event to change active mode state in editor
-      editor?.events.selectMode.dispatch(mode);
-      // event to change active mode state in useLayoutMode hook
-      editor?.events.layoutModeChange.dispatch(mode);
-    },
-  };
+  const menuContext = useMemo(
+    () => ({
+      isActive: (mode) => activeMode === mode,
+      activate: (mode) => {
+        if (mode === activeMode) {
+          return;
+        }
+        setActiveMode(mode);
+        // event to change active mode state in editor
+        editor?.events.selectMode.dispatch(mode);
+        // event to change active mode state in useLayoutMode hook
+        editor?.events.layoutModeChange.dispatch(mode);
+      },
+    }),
+    [activeMode, editor],
+  );
 
   useEffect(() => {
     setActiveMode(layoutMode);

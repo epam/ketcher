@@ -40,7 +40,6 @@ import {
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 

@@ -125,7 +125,7 @@ class ElementsTable extends Component<ElementsTableProps> {
           <MainRow
             atomClassNames={this.getAtomClassNames}
             className={styles.main_row}
-            key={index}
+            key={`period-${index + 1}`}
             row={row}
             caption={index + 1}
             refer={(element: number) =>

@@ -58,6 +58,7 @@ export const Preview = () => {
       const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
         .node()
         ?.getBoundingClientRect();
+      const canvasWrapperTop = canvasWrapperBoundingClientRect?.top || 0;
       const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
       const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
       const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
@@ -79,7 +80,7 @@ export const Preview = () => {
       const leftPreviewPosition =
         targetLeft + targetWidth / 2 - previewWidth / 2 - ketcherRootOffsetX;
 
-      if (targetTop > previewHeight + PREVIEW_OFFSET) {
+      if (targetTop - previewHeight - PREVIEW_OFFSET >= canvasWrapperTop) {
         previewRef.current.style.top = `${topPreviewPosition}px`;
       } else if (
         targetBottom + previewHeight > canvasWrapperBottom &&

@@ -504,152 +504,6 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
   await expect(getMonomerLocator(page, Peptide.Peptide)).toBeVisible();
 });
 
-test(`10. Check that the user can set a HELM alias for amino acids by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that the user can set a HELM alias for amino acids by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Press Create Monomer button
-   *      4. Set mandatory fields in Create Monomer dialog for amino acid monomer
-   *      5. Set HELM alias by clicking on + Add HELM alias and add custom HELM alias to the input field
-   *      6. Press Submit button
-   *      7. Switch to Macromolecules mode
-   *      8. Verify that the created monomer is present on the canvas
-   *      9. Hover the monomer and open the tooltip
-   *     10. Verify that the HELM alias is displayed in the tooltip
-   *
-   * Version 3.10
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-
-  await createMonomer(page, {
-    type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide3.alias,
-    name: 'Peptide3 Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: 'CustomHELMAliasPeptide',
-  });
-
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide3);
-  await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
-  await monomerOnCanvas.hover();
-  await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
-    'CustomHELMAliasPeptide',
-  );
-});
-
-test(`11. Check that the user can set a HELM alias for sugars by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that the user can set a HELM alias for sugars by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Press Create Monomer button
-   *      4. Set mandatory fields in Create Monomer dialog for sugar monomer
-   *      5. Set HELM alias by clicking on + Add HELM alias and add custom HELM alias to the input field
-   *      6. Press Submit button
-   *      7. Switch to Macromolecules mode
-   *      8. Verify that the created monomer is present on the canvas
-   *      9. Hover the monomer and open the tooltip
-   *     10. Verify that the HELM alias is displayed in the tooltip
-   *
-   * Version 3.10
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-
-  await createMonomer(page, {
-    type: MonomerType.Sugar,
-    symbol: Sugar.Sugar.alias,
-    name: 'Sugar Test monomer',
-    HELMAlias: 'CustomHELMAliasSugar',
-  });
-
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const monomerOnCanvas = getMonomerLocator(page, Sugar.Sugar);
-  await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
-  await monomerOnCanvas.hover();
-  await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
-    'CustomHELMAliasSugar',
-  );
-});
-
-test(`12. Check that the user can set a HELM alias for bases by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that the user can set a HELM alias for bases by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Press Create Monomer button
-   *      4. Set mandatory fields in Create Monomer dialog for base monomer
-   *      5. Set HELM alias by clicking on + Add HELM alias and add custom HELM alias to the input field
-   *      6. Press Submit button
-   *      7. Switch to Macromolecules mode
-   *      8. Verify that the created monomer is present on the canvas
-   *      9. Hover the monomer and open the tooltip
-   *     10. Verify that the HELM alias is displayed in the tooltip
-   *
-   * Version 3.10
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-
-  await createMonomer(page, {
-    type: MonomerType.Base,
-    symbol: Base.Base.alias,
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    HELMAlias: 'CustomHELMAliasBase',
-  });
-
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  const monomerOnCanvas = getMonomerLocator(page, Base.Base);
-  await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
-  await monomerOnCanvas.hover();
-  await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
-    'CustomHELMAliasBase',
-  );
-});
-
 test(`13. Check that the user can set a HELM alias for  phosphates by clicking on + Add HELM alias in the attributes window. The user can enter a string for the HELM alias`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8436
@@ -696,44 +550,6 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
   expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
     'CustomHELMAliasPhosphate',
   );
-});
-
-test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Press Create Monomer button
-   *      4. Set all possible type in Create Monomer dialog one by one
-   *      5. Verify that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
-   *
-   * Version 3.10
-   */
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
-
-  const createMonomerDialog = CreateMonomerDialog(page);
-  await LeftToolbar(page).createMonomer();
-  await createMonomerDialog.selectType(MonomerType.AminoAcid);
-  await expect(createMonomerDialog.aliasesSection).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.Sugar);
-  await expect(createMonomerDialog.aliasesSection).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.Base);
-  await expect(createMonomerDialog.aliasesSection).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.Phosphate);
-  await expect(createMonomerDialog.aliasesSection).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.CHEM);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
-  await createMonomerDialog.discard();
 });
 
 test(`15. Check that the HELM symbol must be a string of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*) (spaces prohibited)`, async () => {
@@ -811,10 +627,9 @@ test(`16. Check add prohibited HELM symbols`, async () => {
   await selectAllStructuresOnCanvas(page);
 
   await createMonomer(page, {
-    type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
     HELMAlias: '$#@',
   });
   expect(
@@ -860,10 +675,9 @@ test(`17. Check that the HELM alias string must be unique for one HELM class (pe
   await selectAllStructuresOnCanvas(page);
 
   await createMonomer(page, {
-    type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
     HELMAlias: '1Nal',
   });
   expect(
@@ -891,7 +705,7 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Press Create Monomer button
-   *      4. Set type in Create Monomer dialog to Base
+   *      4. Set type in Create Monomer dialog to Phosphate
    *      5. Set HELM symbols that already exist as symbols for different HELM class
    *      6. Fill all other mandatory fields
    *      7. Press Submit button
@@ -908,11 +722,10 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
   await selectAllStructuresOnCanvas(page);
 
   await createMonomer(page, {
-    type: MonomerType.Base,
-    symbol: Base.Base.alias,
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    HELMAlias: '1Nal',
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
+    HELMAlias: 'p',
   });
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -937,7 +750,7 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Press Create Monomer button
-   *      4. Set type in Create Monomer dialog to Amino Acid
+   *      4. Set type in Create Monomer dialog to Phosphate
    *      5. Set HELM symbols that already exist as symbols or HELM aliases for the same HELM class
    *      6. Fill all other mandatory fields
    *      7. Press Submit button
@@ -961,11 +774,10 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
   await selectAllStructuresOnCanvas(page);
 
   await createMonomer(page, {
-    type: MonomerType.AminoAcid,
+    type: MonomerType.Phosphate,
     symbol: Nucleotide.Nucleotide.alias,
     name: 'Nucleotide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: '1Nal',
+    HELMAlias: 'p',
   });
   expect(
     await NotificationMessageBanner(
@@ -1020,11 +832,10 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
   await selectAllStructuresOnCanvas(page);
 
   await createMonomer(page, {
-    type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: '1Nal',
+    type: MonomerType.Phosphate,
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
+    HELMAlias: 'p',
   });
   expect(
     await NotificationMessageBanner(
@@ -1077,7 +888,7 @@ test(`21. Check that the HELM alias section in the attributes panel can be expan
   await LeftToolbar(page).createMonomer();
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.AminoAcid);
+  await createMonomerDialog.selectType(MonomerType.Phosphate);
   await createMonomerDialog.expandAliasesSection();
   await takeElementScreenshot(
     page,

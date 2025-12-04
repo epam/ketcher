@@ -668,7 +668,6 @@ test(`14. Verify that by default the functionality of saving new monomers from c
     symbol: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: 'CustomHELMAliasPeptide',
   });
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -709,7 +708,6 @@ test(`15. Verify that by default the functionality of saving new monomers from c
     symbol: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: 'CustomHELMAliasPeptide',
   });
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

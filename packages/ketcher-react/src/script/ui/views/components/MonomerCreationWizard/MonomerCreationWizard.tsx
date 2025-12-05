@@ -189,6 +189,10 @@ const rnaPresetWizardReducer = (
     };
   }
 
+  if (action.type === 'ResetRnaPresetWizard') {
+    return initialRnaPresetWizardState;
+  }
+
   if (action.type === 'RemoveNotification') {
     const presetNotifications = new Map(state.preset.notifications);
     const baseNotifications = new Map(state.base.notifications);
@@ -625,6 +629,9 @@ const MonomerCreationWizard = () => {
     if (pendingTypeChange) {
       wizardStateDispatch({
         type: 'ResetWizard',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'ResetRnaPresetWizard',
       });
       wizardStateDispatch({
         type: 'SetFieldValue',

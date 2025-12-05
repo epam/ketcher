@@ -150,6 +150,9 @@ export type RnaPresetWizardAction =
   | {
       type: 'RemoveNotification';
       id: WizardNotificationId;
+    }
+  | {
+      type: 'ResetRnaPresetWizard';
     };
 
 export type AssignedAttachmentPointsByMonomerType = Map<

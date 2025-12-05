@@ -28,7 +28,7 @@ interface IRnaPresetTabsProps {
 
 // Colors for highlighting components
 const ACTIVE_TAB_HIGHLIGHT_COLOR = '#CDF1FC'; // Pale blue shading for active tab component
-const INACTIVE_TAB_HIGHLIGHT_COLOR = '#80DEEA'; // Fluorescent blue outline for inactive tab components
+const INACTIVE_TAB_HIGHLIGHT_COLOR = '#00EAFF'; // Fluorescent blue outline for inactive tab components
 
 const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
 type RnaComponentKeyType = typeof RNA_COMPONENT_KEYS[number];

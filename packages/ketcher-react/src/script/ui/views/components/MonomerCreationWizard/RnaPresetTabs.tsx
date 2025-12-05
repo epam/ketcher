@@ -137,6 +137,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         />
       </Tabs>
       <div className={styles.tabsContentWrapper}>
+        {/* Preset tab: Uses "Symbol" label per requirements table (Name ❌, Code ✔️)
+            but keeps "name" as the internal property to minimize state management changes */}
         {selectedTab === 0 && (
           <AttributeField
             title="Symbol"

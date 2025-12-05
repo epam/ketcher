@@ -4,7 +4,6 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  BondType,
   waitForPageInit,
   waitForRender,
   clickOnAtom,
@@ -15,7 +14,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -725,36 +723,31 @@ test.describe('Right-click menu', () => {
       { type: 'atom', index: 0, colorClass: HighlightOption.Red },
       {
         type: 'bond',
-        index: 0,
-        bondType: BondType.SINGLE,
+        bondId: 1,
         colorClass: HighlightOption.Blue,
       },
       { type: 'atom', index: 4, colorClass: HighlightOption.Green },
       {
         type: 'bond',
-        index: 1,
-        bondType: BondType.SINGLE,
+        bondId: 5,
         colorClass: HighlightOption.Yellow,
       },
       { type: 'atom', index: 2, colorClass: HighlightOption.Green },
       {
         type: 'bond',
-        index: 2,
-        bondType: BondType.SINGLE,
+        bondId: 3,
         colorClass: HighlightOption.Purple,
       },
       { type: 'atom', index: 5, colorClass: HighlightOption.Orange },
       {
         type: 'bond',
-        index: 0,
-        bondType: BondType.DOUBLE,
+        bondId: 0,
         colorClass: HighlightOption.Pink,
       },
     ];
 
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    let point: { x: number; y: number } = { x: 0, y: 0 };
     for (const highlight of highlights) {
       if (highlight.type === 'atom') {
         await ContextMenu(
@@ -764,15 +757,9 @@ test.describe('Right-click menu', () => {
             atomId: highlight.index,
           }),
         ).click([MicroBondOption.Highlight, highlight.colorClass]);
-      } else if (
-        highlight.type === 'bond' &&
-        highlight.bondType !== undefined
-      ) {
-        point = await getBondByIndex(
-          page,
-          { type: highlight.bondType },
-          highlight.index,
-        );
+      } else if (highlight.type === 'bond' && highlight.bondId !== undefined) {
+        const point = await getBondLocator(page, { bondId: highlight.bondId });
+
         await ContextMenu(page, point).click([
           MicroBondOption.Highlight,
           highlight.colorClass,

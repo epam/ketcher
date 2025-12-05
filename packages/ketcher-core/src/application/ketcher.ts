@@ -175,8 +175,9 @@ export class Ketcher {
     }
 
     if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
+      const value = settings.persistMonomerLibraryUpdates;
       SettingsManager.persistMonomerLibraryUpdates =
-        !!settings.persistMonomerLibraryUpdates;
+        value !== 'false' && value !== false && !!value;
     }
 
     return this.editor.setOptions(JSON.stringify(options));

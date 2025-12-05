@@ -61,8 +61,8 @@ function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
             <dd>No errors detected</dd>
           </div>
         ) : (
-          moleculeErrorsTypes.map((type, key) => (
-            <div key={key} data-testid={`${key}-warning`}>
+          moleculeErrorsTypes.map((type) => (
+            <div key={type} data-testid={`${type}-warning`}>
               <dt>{getOptionName(type)} warning:</dt>
               <dd>{moleculeErrors[type]}</dd>
             </div>

@@ -137,9 +137,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         />
       </Tabs>
       <div className={styles.tabsContentWrapper}>
+        {/* Preset tab: Uses "Symbol" label per requirements table (Name ❌, Code ✔️)
+            but keeps "name" as the internal property to minimize state management changes */}
         {selectedTab === 0 && (
           <AttributeField
-            title="Name"
+            title="Symbol"
             control={
               <input
                 type="text"
@@ -148,9 +150,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   wizardState.preset.errors.name &&
                     monomerCreationWizardStyles.inputError,
                 )}
-                placeholder="e.g. Diethylene Glycol"
+                placeholder="e.g. PEG-2"
                 value={wizardState.preset.name}
-                data-testid="name-input"
+                data-testid="symbol-input"
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   handleFieldChange('name', event.target.value, 'preset')
                 }

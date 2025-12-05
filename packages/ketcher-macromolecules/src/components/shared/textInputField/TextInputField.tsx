@@ -38,7 +38,7 @@ const Label = styled.label(({ theme }) => ({
 }));
 
 const Input = styled.input(({ theme }) => ({
-  height: '24px',
+  height: '28px',
   padding: '3px 7px',
   border: `1px solid ${theme.ketcher.color.input.border.regular}`,
   fontSize: '14px',

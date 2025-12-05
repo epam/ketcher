@@ -139,7 +139,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       <div className={styles.tabsContentWrapper}>
         {selectedTab === 0 && (
           <AttributeField
-            title="Name"
+            title="Symbol"
             control={
               <input
                 type="text"
@@ -148,9 +148,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   wizardState.preset.errors.name &&
                     monomerCreationWizardStyles.inputError,
                 )}
-                placeholder="e.g. Diethylene Glycol"
+                placeholder="e.g. PEG-2"
                 value={wizardState.preset.name}
-                data-testid="name-input"
+                data-testid="symbol-input"
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   handleFieldChange('name', event.target.value, 'preset')
                 }

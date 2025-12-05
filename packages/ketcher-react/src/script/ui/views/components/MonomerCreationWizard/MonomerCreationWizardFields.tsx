@@ -171,23 +171,23 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
-          <AttributeField
-            title="Natural analogue"
-            control={
-              <NaturalAnaloguePicker
-                monomerType={type}
-                value={naturalAnalogue}
-                onChange={(value) => {
-                  onFieldChange('naturalAnalogue', value);
-                }}
-                error={errors.naturalAnalogue}
-              />
-            }
-            disabled={!isNaturalAnalogueRequired(type)}
-            required
-          />
-        )}
+        {props.showNaturalAnalogue !== false &&
+          isNaturalAnalogueRequired(type) && (
+            <AttributeField
+              title="Natural analogue"
+              control={
+                <NaturalAnaloguePicker
+                  monomerType={type}
+                  value={naturalAnalogue}
+                  onChange={(value) => {
+                    onFieldChange('naturalAnalogue', value);
+                  }}
+                  error={errors.naturalAnalogue}
+                />
+              }
+              required
+            />
+          )}
       </div>
 
       <div className={styles.divider} />

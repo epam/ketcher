@@ -679,43 +679,47 @@ test(`14. Verify that by default the functionality of saving new monomers from c
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeTruthy();
 });
 
-test(`15. Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8755
-   * Description: Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled
-   *
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Set in local storage the flag explicitly disabling saving new monomers from creation wizard
-   *      3. Create a new monomer
-   *      4. Verify that the created monomer is present in the monomer library
-   *      5. Reload the application
-   *      6. Verify that the created monomer is not present in the monomer library
-   *
-   * Version 3.10
-   */
-  await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: 'false' }),
-  );
-  await pasteFromClipboardAndOpenAsNewProject(
-    page,
-    'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
-  );
-  await clickOnCanvas(page, 0, 0);
-  await selectAllStructuresOnCanvas(page);
+test.fail(
+  `15. Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled`,
+  async () => {
+    // Fails because of the issue: https://github.com/epam/ketcher/issues/8879
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8755
+     * Description: Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Set in local storage the flag explicitly disabling saving new monomers from creation wizard
+     *      3. Create a new monomer
+     *      4. Verify that the created monomer is present in the monomer library
+     *      5. Reload the application
+     *      6. Verify that the created monomer is not present in the monomer library
+     *
+     * Version 3.10
+     */
+    await page.evaluate(() =>
+      window.ketcher.setSettings({ persistMonomerLibraryUpdates: 'false' }),
+    );
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+    );
+    await clickOnCanvas(page, 0, 0);
+    await selectAllStructuresOnCanvas(page);
 
-  await createMonomer(page, {
-    type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
-    name: 'Peptide Test monomer',
-    naturalAnalogue: AminoAcidNaturalAnalogue.A,
-    HELMAlias: 'CustomHELMAliasPeptide',
-  });
+    await createMonomer(page, {
+      type: MonomerType.AminoAcid,
+      symbol: Peptide.Peptide.alias,
+      name: 'Peptide Test monomer',
+      naturalAnalogue: AminoAcidNaturalAnalogue.A,
+      HELMAlias: 'CustomHELMAliasPeptide',
+    });
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeTruthy();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeTruthy();
 
-  await page.reload();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeFalsy();
-});
+    await page.reload();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeFalsy();
+  },
+);

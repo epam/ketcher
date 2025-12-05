@@ -1101,7 +1101,7 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   const coords = [
     [600, 350],
     [587, 300],
@@ -1379,27 +1379,27 @@ test('Check that if the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(650, 380);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(380, 380);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(480, 360);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1426,27 +1426,27 @@ test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Co
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(530, 220);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(500, 560);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(500, 440);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

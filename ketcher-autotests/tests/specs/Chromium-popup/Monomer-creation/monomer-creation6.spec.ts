@@ -29,6 +29,7 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -680,6 +681,7 @@ test(`14. Verify that by default the functionality of saving new monomers from c
 });
 
 test(`15. Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled`, async () => {
+  // Fails because of the issue: https://github.com/epam/ketcher/issues/8879
   /*
    * Test task: https://github.com/epam/ketcher/issues/8755
    * Description: Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled
@@ -715,7 +717,7 @@ test(`15. Verify that by default the functionality of saving new monomers from c
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeTruthy();
 
-  await page.reload();
+  await pageReload(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeFalsy();
 });

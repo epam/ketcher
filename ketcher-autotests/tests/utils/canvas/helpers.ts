@@ -371,9 +371,9 @@ export async function copyStructureByCtrlMove(
   targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
 ) {
   await moveOnAtom(page, atom, atomIndex);
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
 }
 
 export async function selectCanvasArea(

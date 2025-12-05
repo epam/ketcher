@@ -70,13 +70,13 @@ test.describe('Sequence mode selection for view mode', () => {
   });
 
   test('Select entire chain with Ctrl+Lclick', async ({ page }) => {
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
     })
       .first()
       .click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });

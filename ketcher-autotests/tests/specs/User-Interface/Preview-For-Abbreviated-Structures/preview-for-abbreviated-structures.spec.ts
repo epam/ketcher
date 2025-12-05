@@ -8,12 +8,11 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  BondType,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 /* Show abbreviated structure preview when hovering over atoms or bonds
  * with the template tool selected
@@ -81,50 +80,49 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
   });
 
   test('Should show a preview for a benzene ring on bond', async ({ page }) => {
-    const bondId = 2;
-    const bondPosition = await getBondByIndex(
-      page,
-      { type: BondType.SINGLE },
-      bondId,
-    );
-    await page.mouse.move(bondPosition.x, bondPosition.y);
+    const shiftCoords2 = { x: 10, y: 25 };
+    const bondLocator = getBondLocator(page, { bondId: 7 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
+    await page.mouse.move(centerX + shiftCoords2.x, centerY + shiftCoords2.y);
+
     await takeEditorScreenshot(page);
   });
 
   test('Should show a preview following the mouse cursor', async ({ page }) => {
-    const bondId = 2;
-    const shift = 100;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    const bondPosition = await getBondByIndex(
-      page,
-      { type: BondType.SINGLE },
-      bondId,
-    );
-    const pointAwayFromBond = {
-      x: bondPosition.x + shift,
-      y: bondPosition.y + shift,
-    };
-    await page.mouse.move(pointAwayFromBond.x, pointAwayFromBond.y);
+    const shiftCoords2 = { x: 100, y: 100 };
+    const bondLocator = getBondLocator(page, { bondId: 7 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
+    await page.mouse.move(centerX + shiftCoords2.x, centerY + shiftCoords2.y);
+
     await takeEditorScreenshot(page);
   });
 
   test('Should show a preview following the mouse cursor and hide it when a bond is hovered over', async ({
     page,
   }) => {
-    const bondId = 2;
-    const shift = 100;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    const bondPosition = await getBondByIndex(
-      page,
-      { type: BondType.SINGLE },
-      bondId,
-    );
-    const pointAwayFromBond = {
-      x: bondPosition.x + shift,
-      y: bondPosition.y + shift,
-    };
+    const shiftCoords2 = { x: 100, y: 100 };
+    const bondLocator = getBondLocator(page, { bondId: 7 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
     await takeEditorScreenshot(page);
-    await page.mouse.move(pointAwayFromBond.x, pointAwayFromBond.y);
+
+    await page.mouse.move(centerX + shiftCoords2.x, centerY + shiftCoords2.y);
     await takeEditorScreenshot(page);
   });
 });

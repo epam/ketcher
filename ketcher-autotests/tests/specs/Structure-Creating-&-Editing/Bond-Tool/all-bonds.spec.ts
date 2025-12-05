@@ -18,8 +18,7 @@ import {
   clickOnCanvas,
   delay,
 } from '@utils';
-import { getBondByIndex, getLeftBondByAttributes } from '@utils/canvas/bonds';
-import { BondType } from '@utils/canvas/types';
+import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   MicroBondDataIds,
@@ -166,8 +165,7 @@ test.describe(`Bond tool:`, () => {
 
       await CommonLeftToolbar(page).bondTool(bondType);
 
-      point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+      await getBondLocator(page, { bondId: 0 }).click({ force: true });
 
       await CommonTopLeftToolbar(page).clearCanvas();
 
@@ -568,7 +566,7 @@ test.describe('Bond Tool', () => {
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
     await dragMouseTo(x + 50, y, page);
     await takeEditorScreenshot(page);
-    const point1 = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    const point1 = await getBondLocator(page, { bondId: 13 });
     await ContextMenu(page, point1).click(MicroBondOption.EditSelectedBonds);
     await BondPropertiesDialog(page).selectBondTopology(
       BondTopologyOption.Ring,

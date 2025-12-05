@@ -102,7 +102,7 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(deltas.x, deltas.y);
     await takeEditorScreenshot(page);
 
@@ -143,7 +143,7 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(deltas.x, deltas.y);
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await peptide.hover();
@@ -195,7 +195,7 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);

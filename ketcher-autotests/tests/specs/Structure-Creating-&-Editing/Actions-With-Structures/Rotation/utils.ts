@@ -1,8 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import {
-  BondType,
   clickOnCanvas,
   moveMouseAway,
   openFileAndAddToCanvas,
@@ -12,6 +10,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,
@@ -37,31 +36,36 @@ export async function rotateToCoordinates(
 
 export async function selectPartOfBenzeneRing(page: Page) {
   const coordinatesToStartSelection = 90;
-  const smallShift = 30;
-  const stereoBond = await getBondByIndex(
-    page,
-    { type: BondType.SINGLE, stereo: 1 },
-    0,
-  );
+  const smallShift = 15;
+
+  const stereoBond = await getBondLocator(page, { bondId: 14, bondStereo: 1 });
+  const box = await stereoBond.boundingBox();
+  if (!box) throw new Error('Bond bounding box not found');
+  const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+  const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,
   );
   await page.mouse.down();
-  await page.mouse.move(stereoBond.x + smallShift, stereoBond.y + smallShift);
+  await page.mouse.move(centerX + smallShift, centerY + smallShift);
   await page.mouse.up();
 }
 
 export async function selectPartOfChain(page: Page) {
   const coordinatesToStartSelection = 70;
   const smallShift = 20;
-  const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+  const doubleBond = await getBondLocator(page, { bondId: 18 });
+  const box = await doubleBond.boundingBox();
+  if (!box) throw new Error('Bond bounding box not found');
+  const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+  const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,
   );
   await page.mouse.down();
-  await page.mouse.move(doubleBond.x + 1, doubleBond.y + smallShift);
+  await page.mouse.move(centerX + 1, centerY + smallShift);
   await page.mouse.up();
 }
 

@@ -165,9 +165,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
       symbolAlias: 'T',
       nodeIndexOverall: 1,
     }).first();
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await symbolT.click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     // should see the whole chain selected
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

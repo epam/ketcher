@@ -4,7 +4,8 @@ import { SettingsManager } from 'utilities/SettingsManager';
 function convertToPersistMonomerLibraryUpdates(
   value: string | boolean,
 ): boolean {
-  return value !== 'false' && value !== false && !!value;
+  // Handle string 'false'/'true' and boolean false/true values correctly
+  return value === true || value === 'true';
 }
 
 describe('SettingsManager', () => {

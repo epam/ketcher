@@ -176,8 +176,9 @@ export class Ketcher {
 
     if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
       const value = settings.persistMonomerLibraryUpdates;
+      // Handle string 'false'/'true' and boolean false/true values correctly
       SettingsManager.persistMonomerLibraryUpdates =
-        value !== 'false' && value !== false && !!value;
+        value === true || value === 'true';
     }
 
     return this.editor.setOptions(JSON.stringify(options));

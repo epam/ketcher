@@ -4,8 +4,14 @@
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProjectMacro } from '@utils/files/readFile';
-import { MacroFileType, selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
+  MacroFileType,
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { arrangeAsARingByKeyboard } from '@utils/keyboard';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -21,13 +27,15 @@ test(`1. Check that after selecting the closed structure, the user able to acces
 }) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8436
-   * Description: Check that after selecting the closed structure, the user able to access the 'Create cyclic structure' option when in Flex mode only
+   * Description: 1. Check that after selecting the closed structure, the user able to access the 'Create cyclic structure' option when in Flex mode only
+   *              2. Verify that the button active only when a selection is made
    *
    * Case:
    *      1. Open Macromolecules canvas - flex mode
    *      2. Load cyclic peptide HELM 'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0' from clipboard as new project
-   *      3. Select the entire structure on the canvas
-   *      4. Verify that 'Arrange as a Ring' button is enabled
+   *      3. Verify that 'Arrange as a Ring' button is disabled
+   *      4. Select the entire structure on the canvas
+   *      5. Verify that 'Arrange as a Ring' button is enabled
    *
    * Version 3.11
    */
@@ -61,5 +69,39 @@ test(`2. Check that after selecting the closed structure, the user able to acces
     MacroFileType.HELM,
     'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0',
   );
-  // NOT FINISHED YET
+  await selectAllStructuresOnCanvas(page);
+  await arrangeAsARingByKeyboard(page);
+  await takeEditorScreenshot(page);
+});
+
+test(`3. Check that the button deactivated in other modes (Sequence, Snake)`, async ({
+  FlexCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8436
+   * Description: Check that the button deactivated in other modes (Sequence, Snake)
+   *
+   * Case:
+   *      1. Open Macromolecules canvas - flex mode
+   *      2. Load cyclic peptide HELM 'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0' from clipboard as new project
+   *      3. Select the entire structure on the canvas
+   *      4. Switch to Sequence mode and verify that 'Arrange as a Ring' button is absent
+   *      5. Switch to Snake mode and verify that 'Arrange as a Ring' button is absent
+   *
+   * Version 3.11
+   */
+  await pasteFromClipboardAndOpenAsNewProjectMacro(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{A.C.D.E.F.G}$PEPTIDE1,PEPTIDE1,6:R2-1:R1$$$V2.0',
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await selectAllStructuresOnCanvas(page);
+  expect(MacromoleculesTopToolbar(page).arrangeAsRingButton).not.toBeVisible();
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await selectAllStructuresOnCanvas(page);
+  expect(MacromoleculesTopToolbar(page).arrangeAsRingButton).not.toBeVisible();
 });

@@ -1,12 +1,12 @@
 import { Page } from '@playwright/test';
-import { isMacOS } from '../os';
+import * as os from 'os';
 import { waitForRender } from '@tests/utils';
 
 let cachedControlModifier: string | null = null;
 
 export function getControlModifier() {
   if (cachedControlModifier) return cachedControlModifier;
-  cachedControlModifier = isMacOS() ? 'Meta' : 'Control';
+  cachedControlModifier = os.platform() === 'darwin' ? 'Meta' : 'Control';
   return cachedControlModifier;
 }
 

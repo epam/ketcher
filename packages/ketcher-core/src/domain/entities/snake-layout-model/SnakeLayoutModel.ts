@@ -475,7 +475,7 @@ export class SnakeLayoutModel {
               // Fill the rest of the row with empty nodes
               for (let i = 0; i < freeCellsInCurrentRow; i++) {
                 currentRowToHandle.snakeLayoutModelItems.push(
-                  new EmptySnakeLayoutNode(),
+                  EmptySnakeLayoutNode,
                 );
               }
 
@@ -488,7 +488,7 @@ export class SnakeLayoutModel {
               for (let i = 0; i < emptyRowsToAdd; i++) {
                 newChain.addRow({
                   snakeLayoutModelItems: row.snakeLayoutModelItems.map(
-                    (_) => new EmptySnakeLayoutNode(),
+                    (_) => EmptySnakeLayoutNode,
                   ),
                 });
               }
@@ -503,7 +503,7 @@ export class SnakeLayoutModel {
             // Fill the rest of cells needed for the molecule with empty nodes
             for (let i = 1; i < cellsNeededHorizontally; i++) {
               currentRowToHandle.snakeLayoutModelItems.push(
-                new EmptySnakeLayoutNode(),
+                EmptySnakeLayoutNode,
               );
             }
 
@@ -522,9 +522,7 @@ export class SnakeLayoutModel {
             i < lineLength;
             i++
           ) {
-            currentRowToHandle.snakeLayoutModelItems.push(
-              new EmptySnakeLayoutNode(),
-            );
+            currentRowToHandle.snakeLayoutModelItems.push(EmptySnakeLayoutNode);
           }
           newChain.addRow(currentRowToHandle);
         }
@@ -534,7 +532,7 @@ export class SnakeLayoutModel {
           for (let i = 0; i < emptyRowsToAdd; i++) {
             newChain.addRow({
               snakeLayoutModelItems: row.snakeLayoutModelItems.map(
-                (_) => new EmptySnakeLayoutNode(),
+                (_) => EmptySnakeLayoutNode,
               ),
             });
           }

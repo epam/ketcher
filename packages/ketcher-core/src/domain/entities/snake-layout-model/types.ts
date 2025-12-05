@@ -1,6 +1,9 @@
 import { BaseMonomer, Chain } from 'domain/entities';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
-import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import {
+  IEmptySnakeLayoutNode,
+  isEmptySnakeLayoutNode,
+} from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 
 export interface ISnakeLayoutMonomersNode {
   monomers: BaseMonomer[];
@@ -16,7 +19,7 @@ export interface ISnakeLayoutModelRow {
   snakeLayoutModelItems: (
     | ITwoStrandedSnakeLayoutNode
     | MoleculeSnakeLayoutNode
-    | EmptySnakeLayoutNode
+    | IEmptySnakeLayoutNode
   )[];
 }
 
@@ -24,10 +27,9 @@ export function isTwoStrandedSnakeLayoutNode(
   node:
     | ITwoStrandedSnakeLayoutNode
     | MoleculeSnakeLayoutNode
-    | EmptySnakeLayoutNode,
+    | IEmptySnakeLayoutNode,
 ): node is ITwoStrandedSnakeLayoutNode {
   return (
-    !(node instanceof MoleculeSnakeLayoutNode) &&
-    !(node instanceof EmptySnakeLayoutNode)
+    !(node instanceof MoleculeSnakeLayoutNode) && !isEmptySnakeLayoutNode(node)
   );
 }

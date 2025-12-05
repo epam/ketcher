@@ -13,6 +13,7 @@ import {
   createMonomer,
   CreateMonomerDialog,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   AminoAcidNaturalAnalogue,
   MonomerType,
@@ -80,6 +81,16 @@ test(`1. Check warning messages on Amino acid monomer if R1 attachment point wit
 
   await createMonomerDialog.submit();
 
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
+
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
     'Amino acid monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?',
@@ -122,6 +133,16 @@ test(`2. Check warning messages on Amino acid monomer if R2 attachment point wit
   await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
 
   await createMonomerDialog.submit();
+
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
@@ -170,6 +191,16 @@ test(`3. Check warning messages on Sugar monomer if R1 attachment point with a l
   // (R1 = OH, R2 = H, R3 = OH)
 
   await createMonomerDialog.submit();
+
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
@@ -220,6 +251,16 @@ test(`4. Check warning messages on Sugar monomer if R2 attachment point with a l
 
   await createMonomerDialog.submit();
 
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
+
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
     'Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Do you wish to proceed with the current attachment points?',
@@ -265,6 +306,16 @@ test(`5. Check warning messages on Sugar monomer if R3 attachment point with a l
 
   await createMonomerDialog.submit();
 
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
+
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
     'Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Do you wish to proceed with the current attachment points?',
@@ -307,6 +358,16 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
   // (R1 = H)
 
   await createMonomerDialog.submit();
+
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
@@ -357,6 +418,16 @@ test(`7. Check warning messages on Phosphate monomer if R1 attachment point with
 
   await createMonomerDialog.submit();
 
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
+
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
     'Phosphate monomers typically have a hydroxyl as the leaving group for R1 and R2. Do you wish to proceed with the current attachment points?',
@@ -404,6 +475,16 @@ test(`8. Check warning messages on Phosphate monomer if R2 attachment point with
   // (R1 = OH, R2 = H)
 
   await createMonomerDialog.submit();
+
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
@@ -455,6 +536,16 @@ test(`9. Check warning messages on Nucleotide monomer if R1 attachment point wit
 
   await createMonomerDialog.submit();
 
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
+
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
     'Nucleotide monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?',
@@ -499,6 +590,16 @@ test(`10. Check warning messages on Nucleotide monomer if R2 attachment point wi
   // (R1 = H, R2 = H)
 
   await createMonomerDialog.submit();
+
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
@@ -546,6 +647,15 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
+  {
+    const infoDlg = InfoMessageDialog(page);
+    if (await infoDlg.isVisible()) {
+      const text = (await infoDlg.getInfoMessage()) || '';
+      if (text.includes('The monomer was successfully added to the library.')) {
+        await infoDlg.ok();
+      }
+    }
+  }
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {

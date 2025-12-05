@@ -479,8 +479,17 @@ export const CreateMonomerDialog = (page: Page) => {
         if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
           await WarningMessageDialog(page).ok();
         }
-        // Close success message if it appears to avoid overlay blocking next steps
-        await InfoMessageDialog(page).ok();
+        const infoDialog = InfoMessageDialog(page);
+        if (await infoDialog.isVisible()) {
+          const bodyText = (await infoDialog.getInfoMessage()) || '';
+          if (
+            bodyText.includes(
+              'The monomer was successfully added to the library.',
+            )
+          ) {
+            await infoDialog.ok();
+          }
+        }
       });
     },
 

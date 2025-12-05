@@ -1,4 +1,4 @@
-import { SettingsManager } from 'utilities/SettingsManager';
+import { SettingsManager } from '../../src/utilities/SettingsManager';
 
 // Helper function that simulates the conversion logic from ketcher.ts setSettings method
 function convertToPersistMonomerLibraryUpdates(

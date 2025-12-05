@@ -17,7 +17,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   undoByKeyboard,
-  getControlModifier,
   MacroFileType,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -285,9 +284,8 @@ test.describe('Undo-Redo tests', () => {
     }
     await takeEditorScreenshot(page);
 
-    const modifier = getControlModifier();
     for (let i = 0; i < numberOfPress; i++) {
-      await keyboardPressOnCanvas(page, `${modifier}+KeyY`);
+      await keyboardPressOnCanvas(page, `ControlOrMeta+KeyY`);
     }
     await takeEditorScreenshot(page);
   });

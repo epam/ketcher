@@ -7,7 +7,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  getControlModifier,
   Point,
   waitForPageInit,
   waitForRender,
@@ -775,8 +774,7 @@ test.describe('Plus and Arrows tools ', () => {
        * Description: Arrow Snapping to Horizontal Position with Ctrl Key Pressed
        */
       const x = point.x + 100;
-      const modifier = getControlModifier();
-      await page.keyboard.down(modifier);
+      await page.keyboard.down('ControlOrMeta');
       await page.mouse.down();
 
       await page.mouse.move(x, point.y - 50);
@@ -794,8 +792,7 @@ test.describe('Plus and Arrows tools ', () => {
        * Description: Arrow Snapping to Vertical Position with Ctrl Key Pressed
        */
       const y = point.y - 100;
-      const modifier = getControlModifier();
-      await page.keyboard.down(modifier);
+      await page.keyboard.down('ControlOrMeta');
       await page.mouse.down();
 
       await page.mouse.move(point.x + 50, y);

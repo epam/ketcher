@@ -8,6 +8,7 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type MacromoleculesTopToolbarLocators = {
+  arrangeAsRingButton: Locator;
   createAntisenseStrandDropdownButton: Locator;
   createAntisenseStrandDropdownExpandButton: Locator;
   arrangeAsARingButton: Locator;
@@ -24,6 +25,7 @@ type MacromoleculesTopToolbarLocators = {
 
 export const MacromoleculesTopToolbar = (page: Page) => {
   const locators: MacromoleculesTopToolbarLocators = {
+    arrangeAsRingButton: page.getByTestId('arrange-ring'),
     createAntisenseStrandDropdownButton: page.getByTestId('antisenseRnaStrand'),
     createAntisenseStrandDropdownExpandButton: page
       .getByTestId('Create Antisense Strand')

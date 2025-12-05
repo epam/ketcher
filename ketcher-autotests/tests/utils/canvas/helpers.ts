@@ -7,7 +7,6 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo, moveOnAtom } from '@utils/clicks';
-import { getControlModifier } from '@utils/keyboard';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -180,8 +179,7 @@ export async function takeMonomerLibraryScreenshot(
 ) {
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyB`);
+    await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
   await takeElementScreenshot(
     page,
@@ -202,8 +200,7 @@ export async function takeEditorScreenshot(
 ) {
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyB`);
+    await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
   await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }
@@ -295,14 +292,13 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. Sometimes - select object on the screen took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyC`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyC`, options),
   );
 }
 
@@ -314,14 +310,13 @@ export async function cutToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. Sometimes - select object on the screen took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyX`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyX`, options),
   );
 }
 
@@ -333,14 +328,13 @@ export async function pasteFromClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. For ex. - select object on the screen can took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyV`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
   );
 }
 
@@ -352,10 +346,8 @@ export async function undoByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyZ`, options);
+    await page.keyboard.press(`ControlOrMeta+KeyZ`, options);
   });
 }
 
@@ -367,10 +359,8 @@ export async function redoByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
+    await page.keyboard.press(`ControlOrMeta+Shift+KeyZ`, options);
   });
 }
 

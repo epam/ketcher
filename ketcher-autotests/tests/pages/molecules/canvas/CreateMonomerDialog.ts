@@ -20,6 +20,7 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { InfoMessageDialog } from './InfoMessageDialog';
 import { delay } from '@utils/canvas';
 
 export enum ModificationTypeDropdown {
@@ -477,6 +478,17 @@ export const CreateMonomerDialog = (page: Page) => {
         await locators.submitButton.click();
         if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
           await WarningMessageDialog(page).ok();
+        }
+        const infoDialog = InfoMessageDialog(page);
+        if (await infoDialog.isVisible()) {
+          const bodyText = (await infoDialog.getInfoMessage()) || '';
+          if (
+            bodyText.includes(
+              'The monomer was successfully added to the library.',
+            )
+          ) {
+            await infoDialog.ok();
+          }
         }
       });
     },

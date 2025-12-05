@@ -4,6 +4,7 @@ import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
+import { InfoMessageDialog } from '../molecules/canvas/InfoMessageDialog';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -112,6 +113,10 @@ export const CommonTopRightToolbar = (page: Page) => {
         disableAutozoom: true,
       },
     ) {
+      const infoDialog = InfoMessageDialog(page);
+      if (await infoDialog.isVisible()) {
+        await infoDialog.ok();
+      }
       if (options.disableChainLengthRuler !== false) {
         await page.evaluate(() => {
           // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
@@ -157,6 +162,10 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMicromoleculesEditor() {
+      const infoDialog = InfoMessageDialog(page);
+      if (await infoDialog.isVisible()) {
+        await infoDialog.ok();
+      }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
       const moleculesCanvas = page.getByTestId('canvas');

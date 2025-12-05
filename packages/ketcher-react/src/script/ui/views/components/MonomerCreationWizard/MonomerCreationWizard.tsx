@@ -23,9 +23,9 @@ import Select from '../../../component/form/Select';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
 import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
-import { onAction } from '../../../state/shared';
+import { openSuccessModal, onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -189,10 +189,6 @@ const rnaPresetWizardReducer = (
     };
   }
 
-  if (action.type === 'ResetWizard') {
-    return initialRnaPresetWizardState;
-  }
-
   if (action.type === 'RemoveNotification') {
     const presetNotifications = new Map(state.preset.notifications);
     const baseNotifications = new Map(state.base.notifications);
@@ -225,7 +221,7 @@ const rnaPresetWizardReducer = (
     };
   }
 
-  if (!action.rnaComponentKey) {
+  if (!('rnaComponentKey' in action) || !action.rnaComponentKey) {
     return state;
   }
 
@@ -592,9 +588,6 @@ const MonomerCreationWizard = () => {
         wizardStateDispatch({
           type: 'ResetWizard',
         });
-        rnaPresetWizardStateDispatch({
-          type: 'ResetWizard',
-        });
       } else {
         wizardStateDispatch({
           type: 'SetFieldValue',
@@ -637,7 +630,6 @@ const MonomerCreationWizard = () => {
 
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
-    rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
     setAttachmentPointEditPopupData(null);
   };
 
@@ -1105,28 +1097,24 @@ const MonomerCreationWizard = () => {
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
-          true,
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
           AttachmentPointName.R2,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
-          true,
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
           AttachmentPointName.R3,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
-          true,
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
-          true,
         );
       }
 
@@ -1185,6 +1173,16 @@ const MonomerCreationWizard = () => {
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();
+      // Show success message in a modal dialog after wizard closes
+      setTimeout(() => {
+        dispatch(
+          openSuccessModal(
+            'All Set!',
+            NotificationMessages.creationSuccessful,
+            'OK',
+          ),
+        );
+      }, 100);
     }
   };
 
@@ -1344,6 +1342,15 @@ const MonomerCreationWizard = () => {
 
                   dispatch(onAction(selectRectangleAction));
                   resetWizard();
+                  setTimeout(() => {
+                    dispatch(
+                      openSuccessModal(
+                        'All Set!',
+                        NotificationMessages.creationSuccessful,
+                        'OK',
+                      ),
+                    );
+                  }, 100);
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}

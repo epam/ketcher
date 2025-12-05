@@ -49,12 +49,6 @@ export const MacromoleculesTopToolbar = (page: Page) => {
   return {
     ...locators,
 
-    async arrangeAsRing() {
-      await waitForRender(page, async () => {
-        await locators.arrangeAsRingButton.click();
-      });
-    },
-
     async createAntisenseStrand() {
       await waitForRender(page, async () => {
         await locators.createAntisenseStrandDropdownButton.click();

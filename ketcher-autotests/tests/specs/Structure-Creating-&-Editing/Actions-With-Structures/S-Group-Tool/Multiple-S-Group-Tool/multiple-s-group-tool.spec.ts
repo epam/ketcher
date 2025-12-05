@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  BondType,
   clickOnAtom,
   waitForPageInit,
   clickOnCanvas,
@@ -26,7 +25,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -113,7 +111,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    const point = await getBondLocator(page, { bondId: 9 });
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).setRepeatCountValue('99');
     await SGroupPropertiesDialog(page).apply();

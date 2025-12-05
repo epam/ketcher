@@ -3,7 +3,6 @@ import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {
   clickOnCanvas,
@@ -95,15 +94,17 @@ test.describe('Chain Tool drawing', () => {
     Description: After several click the bond type is changed cyclically: single-double-triple-single.
     */
 
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getBondLocator(page, { bondId: 0 }).click({ force: true });
 
-    const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
-    expect(doubleBond.type).toEqual(BondType.DOUBLE);
+    const doubleBond = await getBondLocator(page, { bondId: 0 });
+    const bondTypeAttr = await doubleBond.getAttribute('data-bondtype');
+    expect(Number(bondTypeAttr)).toBe(BondType.DOUBLE);
 
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
-    expect(tripleBond.type).toEqual(BondType.TRIPLE);
+    await getBondLocator(page, { bondId: 0 }).click({ force: true });
+
+    const tripleBond = await getBondLocator(page, { bondId: 0 });
+    const bondTypeAttr1 = await tripleBond.getAttribute('data-bondtype');
+    expect(Number(bondTypeAttr1)).toBe(BondType.TRIPLE);
     await takeEditorScreenshot(page);
   });
 });

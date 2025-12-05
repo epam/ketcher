@@ -1,14 +1,12 @@
 import { expect, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  BondType,
   waitForPageInit,
   takeEditorScreenshot,
   clickOnAtom,
   openFileAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
@@ -16,6 +14,7 @@ import {
   drawBenzeneRing,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,8 +30,13 @@ test.describe('Select tools tests', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.move(point.x, point.y);
+    const bondLocator = getBondLocator(page, { bondId: 7 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await page.mouse.move(centerX, centerY);
 
     const cursor = await page.getByTestId('canvas').getAttribute('cursor');
     expect(cursor).toBe('all-scroll');

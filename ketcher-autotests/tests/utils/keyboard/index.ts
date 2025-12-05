@@ -1,12 +1,12 @@
 import { Page } from '@playwright/test';
-import { isMacOS } from '../os';
+import * as os from 'os';
 import { waitForRender } from '@tests/utils';
 
 let cachedAltModifier: string | null = null;
 
 export function getAltModifier() {
   if (cachedAltModifier) return cachedAltModifier;
-  cachedAltModifier = isMacOS() ? 'Option' : 'Alt';
+  cachedAltModifier = os.platform() === 'darwin' ? 'Option' : 'Alt';
   return cachedAltModifier;
 }
 

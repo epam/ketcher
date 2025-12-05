@@ -4,7 +4,6 @@ import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  BondType,
   clickInTheMiddleOfTheScreen,
   receiveFileComparisonData,
   saveToFile,
@@ -20,7 +19,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -398,8 +396,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getBondLocator(page, { bondId: 3 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -413,8 +410,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.move(point.x, point.y);
+    await getBondLocator(page, { bondId: 2 }).hover({ force: true });
     await takeEditorScreenshot(page);
   });
 

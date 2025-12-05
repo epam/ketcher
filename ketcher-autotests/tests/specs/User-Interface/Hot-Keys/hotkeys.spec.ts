@@ -254,9 +254,9 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await dragMouseTo(300, 300, page);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -312,9 +312,9 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await dragMouseTo(300, 300, page);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });

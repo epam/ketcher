@@ -115,9 +115,9 @@ const topLeftCorner = {
 
 async function zoomWithMouseWheel(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(0, scrollValue);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
   });
 }
 

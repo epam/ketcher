@@ -32,13 +32,13 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, -zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
 }
 

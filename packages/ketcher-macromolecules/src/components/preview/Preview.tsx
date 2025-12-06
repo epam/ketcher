@@ -76,7 +76,8 @@ export const Preview = () => {
 
       const topPreviewPosition =
         targetTop - previewHeight - PREVIEW_OFFSET - ketcherRootOffsetY;
-      const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
+      const bottomPreviewPosition =
+        targetBottom + PREVIEW_OFFSET - ketcherRootOffsetY;
       const leftPreviewPosition =
         targetLeft + targetWidth / 2 - previewWidth / 2 - ketcherRootOffsetX;
 

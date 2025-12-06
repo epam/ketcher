@@ -27,8 +27,8 @@ export interface Template {
     bondid: number;
     group: string;
     prerender?: string;
-    abbreviation: string;
-    name: string;
+    abbreviation?: string;
+    name?: string;
   };
 }
 
@@ -49,7 +49,7 @@ const isFunctionalGroupTemplate = (template) =>
 
 function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
-    return template.props.name;
+    return template.props.name || '';
   }
   // For tooltips, use struct.name (long name)
   return (
@@ -59,7 +59,7 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation;
+    return tmpl.props.abbreviation || tmpl.props.name || '';
   }
   // For display under the card, use props.name (short name) if available, otherwise struct.name
   return (

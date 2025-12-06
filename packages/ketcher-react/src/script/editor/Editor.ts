@@ -1254,6 +1254,7 @@ class Editor implements KetcherEditor {
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
+      hidden,
     } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
@@ -1303,6 +1304,7 @@ class Editor implements KetcherEditor {
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
+      ...(hidden ? { hidden: true } : {}),
       root: {
         nodes: [],
         // TODO: Revisit IKetMonomerTemplate type

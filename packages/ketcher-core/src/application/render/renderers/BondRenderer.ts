@@ -27,8 +27,14 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
-const LINE_WIDTH = 1.3;
-const BOND_SPACE = 4.2;
+// Use same scale factor as Molecules mode (microModeScale = 40)
+const SCALE_FACTOR = 40;
+// lineWidth = scaleFactorMicro / 20 = 40 / 20 = 2
+const LINE_WIDTH = SCALE_FACTOR / 20;
+// bondSpace = scaleFactorMicro / 7 ≈ 5.7
+const BOND_SPACE = SCALE_FACTOR / 7;
+// fontszsubInPx ≈ 13 (matches Molecules mode)
+const FONT_SIZE_SUB = 13;
 // Topology mark offset multipliers (controls position above bond)
 const TOPOLOGY_OFFSET_X_MULTIPLIER = 2;
 const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
@@ -717,7 +723,7 @@ export class BondRenderer extends BaseRenderer {
       .append('text')
       .text(mark)
       .attr('font-family', 'Arial')
-      .attr('font-size', '10px')
+      .attr('font-size', `${FONT_SIZE_SUB}px`)
       .attr('fill', '#000')
       .attr('pointer-events', 'none');
 

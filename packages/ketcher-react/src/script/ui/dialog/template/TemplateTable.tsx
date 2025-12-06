@@ -51,6 +51,7 @@ function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
     return template.props.name;
   }
+  // For tooltips, use struct.name (long name)
   return (
     template.struct.name || `${template.props.group} template ${index + 1}`
   );
@@ -60,7 +61,8 @@ function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
     return tmpl.props.abbreviation;
   }
-  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+  // For display under the card, use props.name (short name) if available, otherwise struct.name
+  return tmpl.props.name || tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
 function createKeyDownHandler(callback: () => void) {

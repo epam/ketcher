@@ -454,7 +454,7 @@ export class RenderersManager {
     const viewModel = editor.viewModel;
     const canvas = ZoomTool.instance?.canvas;
 
-    if (!canvas) {
+    if (!canvas || !canvas.selectAll) {
       return;
     }
 

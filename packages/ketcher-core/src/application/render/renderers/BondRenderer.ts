@@ -583,17 +583,35 @@ export class BondRenderer extends BaseRenderer {
 
       case BondType.Aromatic:
       case BondType.SingleAromatic:
-      case BondType.DoubleAromatic:
-        bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-          bondVectors,
-          this.getDoubleBondShift(
-            viewModel,
-            bondVectors.firstHalfEdge,
-            bondVectors.secondHalfEdge,
-          ),
-          this.bond.type,
-        );
+      case BondType.DoubleAromatic: {
+        // Check if the bond is in an aromatic loop
+        const firstHalfEdge = bondVectors.firstHalfEdge;
+        const secondHalfEdge = bondVectors.secondHalfEdge;
+        const inAromaticLoop =
+          (firstHalfEdge &&
+            firstHalfEdge.loopId >= 0 &&
+            viewModel.loops.get(firstHalfEdge.loopId)?.aromatic) ||
+          (secondHalfEdge &&
+            secondHalfEdge.loopId >= 0 &&
+            viewModel.loops.get(secondHalfEdge.loopId)?.aromatic);
+
+        // If in an aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
+        // Otherwise, render as a dashed double bond
+        if (inAromaticLoop) {
+          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+            bondVectors,
+            this.getDoubleBondShift(
+              viewModel,
+              bondVectors.firstHalfEdge,
+              bondVectors.secondHalfEdge,
+            ),
+            this.bond.type,
+          );
+        }
         break;
+      }
 
       case BondType.SingleDouble:
         bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);

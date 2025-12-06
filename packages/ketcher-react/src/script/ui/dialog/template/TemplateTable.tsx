@@ -62,7 +62,11 @@ function tmplName(tmpl: Template, i: number): string {
     return tmpl.props.abbreviation;
   }
   // For display under the card, use props.name (short name) if available, otherwise struct.name
-  return tmpl.props.name || tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+  return (
+    tmpl.props.name ||
+    tmpl.struct.name ||
+    `${tmpl.props.group} template ${i + 1}`
+  );
 }
 
 function createKeyDownHandler(callback: () => void) {

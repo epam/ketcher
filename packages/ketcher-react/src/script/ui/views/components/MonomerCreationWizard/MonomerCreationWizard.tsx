@@ -2,7 +2,6 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, Dialog } from 'components';
 import {
-  Atom,
   AtomLabel,
   AttachmentPointClickData,
   AttachmentPointName,
@@ -802,90 +801,211 @@ const MonomerCreationWizard = () => {
       },
     ];
 
-    // check structure
     const wizardStruct = editor.struct();
-    const bondsBetweenSugarAndBase: Bond[] = [];
-    const bondsBetweenSugarAndPhosphate: Bond[] = [];
-    const bondsBetweenBaseAndPhosphate: Bond[] = [];
-    const atomsOutsideComponents: Atom[] = [];
-    let hasSameAtomsInSeveralComponents = false;
+    const sugarAtoms = rnaPresetWizardState.sugar.structure?.atoms || [];
+    const baseAtoms = rnaPresetWizardState.base.structure?.atoms || [];
+    const phosphateAtoms =
+      rnaPresetWizardState.phosphate.structure?.atoms || [];
 
-    wizardStruct.bonds.forEach((bond) => {
-      if (
-        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenSugarAndBase.push(bond);
-      }
+    // 4.2: Check missing components - must have at least 2 components with sugar being mandatory
+    const hasSugar = sugarAtoms.length > 0;
+    const hasBase = baseAtoms.length > 0;
+    const hasPhosphate = phosphateAtoms.length > 0;
+    const componentCount = [hasSugar, hasBase, hasPhosphate].filter(
+      Boolean,
+    ).length;
 
-      if (
-        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
-          bond.begin,
-        ) ||
-          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenSugarAndPhosphate.push(bond);
-      }
-
-      if (
-        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
-          bond.begin,
-        ) ||
-          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenBaseAndPhosphate.push(bond);
-      }
-    });
-
-    wizardStruct.atoms.forEach((atom, atomId) => {
-      if (
-        !rnaPresetWizardState.sugar.structure?.atoms?.includes(atomId) &&
-        !rnaPresetWizardState.base.structure?.atoms?.includes(atomId) &&
-        !rnaPresetWizardState.phosphate.structure?.atoms?.includes(atomId)
-      ) {
-        atomsOutsideComponents.push(atom);
-      }
-    });
-
-    const atomsArrayFromAllComponents = [
-      ...(rnaPresetWizardState.sugar.structure?.atoms || []),
-      ...(rnaPresetWizardState.base.structure?.atoms || []),
-      ...(rnaPresetWizardState.phosphate.structure?.atoms || []),
-    ];
-    const atomsSetFromAllComponents = new Set(atomsArrayFromAllComponents);
-
-    hasSameAtomsInSeveralComponents =
-      atomsSetFromAllComponents.size < atomsArrayFromAllComponents.length;
-
-    if (
-      hasSameAtomsInSeveralComponents ||
-      atomsOutsideComponents.length > 0 ||
-      bondsBetweenSugarAndBase.length !== 1 ||
-      bondsBetweenSugarAndPhosphate.length !== 1 ||
-      bondsBetweenBaseAndPhosphate.length !== 0
-    ) {
+    if (!hasSugar || componentCount < 2) {
       needSaveMonomers = false;
       rnaPresetWizardStateDispatch({
         type: 'SetNotifications',
         notifications: new Map([
           [
-            'invalidRnaPresetStructure',
+            'missingComponents',
             {
               type: 'error',
-              message: NotificationMessages.invalidRnaPresetStructure,
+              message: NotificationMessages.missingComponents,
             },
           ],
         ]),
         rnaComponentKey: 'preset',
         editor,
       });
+      return needSaveMonomers;
     }
+
+    // 4.1.1 & 4.1.2: Check for unassigned and multi-assigned atoms
+    const atomsOutsideComponents: number[] = [];
+    const multiAssignedAtoms: number[] = [];
+
+    wizardStruct.atoms.forEach((_, atomId) => {
+      const isInSugar = sugarAtoms.includes(atomId);
+      const isInBase = baseAtoms.includes(atomId);
+      const isInPhosphate = phosphateAtoms.includes(atomId);
+      const componentCount = [isInSugar, isInBase, isInPhosphate].filter(
+        Boolean,
+      ).length;
+
+      if (componentCount === 0) {
+        atomsOutsideComponents.push(atomId);
+      } else if (componentCount > 1) {
+        multiAssignedAtoms.push(atomId);
+      }
+    });
+
+    // 4.1.1: Atoms not assigned to any component
+    if (atomsOutsideComponents.length > 0) {
+      needSaveMonomers = false;
+      editor.setProblematicPresetAtoms(new Set(atomsOutsideComponents));
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'atomsNotAssigned',
+            {
+              type: 'error',
+              message: NotificationMessages.atomsNotAssigned,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      return needSaveMonomers;
+    }
+
+    // 4.1.2: Atoms assigned to multiple components
+    if (multiAssignedAtoms.length > 0) {
+      needSaveMonomers = false;
+      editor.setProblematicPresetAtoms(new Set(multiAssignedAtoms));
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'atomsMultipleAssigned',
+            {
+              type: 'warning',
+              message: NotificationMessages.atomsMultipleAssigned,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      return needSaveMonomers;
+    }
+
+    // Check bonds between components
+    const bondsBetweenSugarAndBase: Bond[] = [];
+    const bondsBetweenSugarAndPhosphate: Bond[] = [];
+    const bondsBetweenBaseAndPhosphate: Bond[] = [];
+
+    wizardStruct.bonds.forEach((bond) => {
+      const beginInSugar = sugarAtoms.includes(bond.begin);
+      const endInSugar = sugarAtoms.includes(bond.end);
+      const beginInBase = baseAtoms.includes(bond.begin);
+      const endInBase = baseAtoms.includes(bond.end);
+      const beginInPhosphate = phosphateAtoms.includes(bond.begin);
+      const endInPhosphate = phosphateAtoms.includes(bond.end);
+
+      if ((beginInSugar || endInSugar) && (beginInBase || endInBase)) {
+        bondsBetweenSugarAndBase.push(bond);
+      }
+
+      if (
+        (beginInSugar || endInSugar) &&
+        (beginInPhosphate || endInPhosphate)
+      ) {
+        bondsBetweenSugarAndPhosphate.push(bond);
+      }
+
+      if ((beginInBase || endInBase) && (beginInPhosphate || endInPhosphate)) {
+        bondsBetweenBaseAndPhosphate.push(bond);
+      }
+    });
+
+    // 4.3.2: No bonds should exist between base and phosphate
+    if (bondsBetweenBaseAndPhosphate.length > 0) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'basePhosphateBond',
+            {
+              type: 'error',
+              message: NotificationMessages.basePhosphateBond,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      return needSaveMonomers;
+    }
+
+    // Helper function to check if bond is a valid single bond (single, up, or down)
+    const isValidSingleBond = (bond: Bond): boolean => {
+      return (
+        bond.type === Bond.PATTERN.TYPE.SINGLE &&
+        (bond.stereo === Bond.PATTERN.STEREO.NONE ||
+          bond.stereo === Bond.PATTERN.STEREO.UP ||
+          bond.stereo === Bond.PATTERN.STEREO.DOWN)
+      );
+    };
+
+    // 4.3.1: Sugar-Base bond validation (if base exists)
+    if (hasBase) {
+      if (
+        bondsBetweenSugarAndBase.length !== 1 ||
+        !isValidSingleBond(bondsBetweenSugarAndBase[0])
+      ) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidSugarBond',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidSugarBond,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        return needSaveMonomers;
+      }
+    }
+
+    // 4.3.1: Sugar-Phosphate bond validation (if phosphate exists)
+    if (hasPhosphate) {
+      if (
+        bondsBetweenSugarAndPhosphate.length !== 1 ||
+        !isValidSingleBond(bondsBetweenSugarAndPhosphate[0])
+      ) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidSugarBond',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidSugarBond,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        return needSaveMonomers;
+      }
+    }
+
+    // 4.4.1 & 4.4.2: Validate attachment points for bonds between components
+    // These validations will be done after the monomers are saved, during the attachment point assignment
 
     // check rna name
     if (!rnaPresetWizardState.preset.name?.trim()) {
@@ -985,6 +1105,7 @@ const MonomerCreationWizard = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
+    editor.setProblematicPresetAtoms(new Set());
 
     const monomersToSave = isRnaPresetType
       ? [

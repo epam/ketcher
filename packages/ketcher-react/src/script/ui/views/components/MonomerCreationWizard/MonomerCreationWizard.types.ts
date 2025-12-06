@@ -55,7 +55,14 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
-  | 'invalidRnaPresetStructure';
+  | 'invalidRnaPresetStructure'
+  | 'atomsNotAssigned'
+  | 'atomsMultipleAssigned'
+  | 'missingComponents'
+  | 'invalidSugarBond'
+  | 'basePhosphateBond'
+  | 'invalidSugarBaseAttachmentPoints'
+  | 'invalidSugarPhosphateAttachmentPoints';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,

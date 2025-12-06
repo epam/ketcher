@@ -15,6 +15,7 @@ import {
   Nucleotide,
   Sugar,
   UnsplitNucleotide,
+  Vec2,
 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
@@ -41,6 +42,9 @@ import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { BaseSequenceItemRenderer } from 'application/render';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import ZoomTool from 'application/editor/tools/Zoom';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -445,10 +449,84 @@ export class RenderersManager {
     rxnPlus.renderer?.remove();
   }
 
+  private renderAromaticCircles() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const canvas = ZoomTool.instance?.canvas;
+
+    if (!canvas) {
+      return;
+    }
+
+    // Remove existing aromatic circles
+    canvas.selectAll('.aromatic-circle').remove();
+
+    // Draw aromatic circles for each aromatic loop
+    viewModel.loops.forEach((loop) => {
+      if (!loop.aromatic || !loop.isConvex) {
+        return;
+      }
+
+      // Calculate the center and radius of the loop
+      const { center, radius } = this.calculateLoopCenterAndRadius(loop);
+
+      if (radius <= 0) {
+        return;
+      }
+
+      // Draw the circle
+      canvas
+        .append('circle')
+        .attr('class', 'aromatic-circle')
+        .attr('cx', center.x)
+        .attr('cy', center.y)
+        .attr('r', radius)
+        .attr('stroke', '#000')
+        .attr('stroke-width', 1)
+        .attr('fill', 'none');
+    });
+  }
+
+  private calculateLoopCenterAndRadius(loop) {
+    const editorSettings = provideEditorSettings();
+
+    let center = new Vec2(0, 0);
+
+    // Calculate the center as the average of all atom positions
+    loop.halfEdges.forEach((halfEdge) => {
+      const atomPos = Scale.modelToCanvas(
+        halfEdge.firstAtom.position,
+        editorSettings,
+      );
+      center = center.add(atomPos);
+    });
+    center = center.scaled(1.0 / loop.halfEdges.length);
+
+    // Calculate the radius as the minimum distance from center to any bond
+    let radius = -1;
+    loop.halfEdges.forEach((halfEdge) => {
+      const apos = Scale.modelToCanvas(
+        halfEdge.firstAtom.position,
+        editorSettings,
+      );
+      const bpos = Scale.modelToCanvas(
+        halfEdge.secondAtom.position,
+        editorSettings,
+      );
+      const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
+      const dist = Vec2.dot(Vec2.diff(apos, center), n);
+      radius = radius < 0 ? dist : Math.min(radius, dist);
+    });
+    radius *= 0.7; // Scale down the radius
+
+    return { center, radius };
+  }
+
   public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
     }
+    this.renderAromaticCircles();
   }
 
   public static getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {

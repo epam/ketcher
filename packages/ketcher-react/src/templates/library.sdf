@@ -9639,6 +9639,9 @@ fullerene C60
  57 60  1  0  0  0  0
  58 59  1  0  0  0  0
 M  END
+>  <name>
+C60
+
 >  <group>
 3D Templates
 
@@ -9676,6 +9679,9 @@ adamantane
   8 10  1  0  0  0  0
   2  3  1  0  0  0  0
 M  END
+>  <name>
+C10H16
+
 >  <group>
 3D Templates
 
@@ -9710,6 +9716,9 @@ cubane
   8  5  1  0  0  0  0
   8  7  1  0  0  0  0
 M  END
+>  <name>
+C8H8
+
 >  <atomid>
 0
 
@@ -9761,6 +9770,9 @@ ring 6 boat
  17 18  1  0  0  0  0
   1  7  1  0  0  0  0
 M  END
+>  <name>
+C6H12
+
 >  <atomid>
 0
 
@@ -9812,6 +9824,9 @@ ring 6 chair
  17 18  1  0  0  0  0
   1 18  1  0  0  0  0
 M  END
+>  <name>
+C6H12
+
 >  <atomid>
 0
 
@@ -9879,6 +9894,9 @@ Ferrocene_covalent
   7  8  1  0  0  0  0
 M  CHG  3  10  -1  11   2  21  -1
 M  END
+>  <name>
+Fe(C5H5)2
+
 >  <atomid>
 0
 
@@ -9941,6 +9959,9 @@ Ferrocene_haptic
  20 21  1  0     0  0
 M  CHG  3  10  -1  11   2  18  -1
 M  END
+>  <name>
+Fe(η5-C5H5)2
+
 >  <group>
 3D Templates
 
@@ -9999,6 +10020,9 @@ bis(benzene)chromium_haptic
  23 24  1  0     0  0
  20 21  2  0     0  0
 M  END
+>  <name>
+Cr(η6-C6H6)2
+
 >  <group>
 3D Templates
 
@@ -10069,6 +10093,9 @@ bis(benzene)chromium_covalent
  24 25  1  0  0  0  0
   8  9  2  0  0  0  0
 M  END
+>  <name>
+Cr(C6H6)2
+
 >  <atomid>
 13
 
@@ -10151,6 +10178,9 @@ Dodecaborate
   1 13  1  0  0  0  0
 M  CHG  2   1  -1  12  -1
 M  END
+>  <name>
+B12H12(2-)
+
 >  <group>
 3D Templates
 
@@ -10378,6 +10408,9 @@ Vitamin B12_dative
  22 20  9  0  0  0  0
 M  CHG  4  20   1  24  -1  25  -1  78  -1
 M  END
+>  <name>
+C63H88CoN14O14P
+
 >  <group>
 3D Templates
 
@@ -10605,6 +10638,9 @@ Vitamin B12_covalent
  83 84  1  0  0  0  0
 M  CHG  4  20   3  24  -1  25  -1  78  -1
 M  END
+>  <name>
+C63H88CoN14O14P
+
 >  <atomid>
 83
 
@@ -10683,6 +10719,9 @@ sucrose
  30 31  1  0  0  0  0
  27 28  1  0  0  0  0
 M  END
+>  <name>
+C12H22O11
+
 >  <atomid>
 20
 
@@ -10774,6 +10813,9 @@ M  CHG  8   1   2   5  -1   6   2   9  -1  10   2  12  -2  14   2  16  -2
 M  CHG  8  17  -2  18  -1  20   2  22  -2  24  -1  25   2  26  -2  27  -1
 M  CHG  2  29  -2  31  -1
 M  END
+>  <name>
+Mo7O24(6-)
+
 >  <group>
 3D Templates
 
@@ -10857,6 +10899,9 @@ Heptamolybdate ion_covalent
  20 23  2  0  0  0  0
 M  CHG  8   1   6   2  -2   3  -2   4   6   5  -2   6   6   7  -2   8  -2
 M  END
+>  <name>
+Mo7O24(6-)
+
 >  <atomid>
 1
 
@@ -10962,6 +11007,9 @@ C20H20
  36 40  1  0  0  0  0
  31 34  1  0  0  0  0
 M  END
+>  <name>
+C20H20
+
 >  <atomid>
 19
 
@@ -11041,6 +11089,9 @@ M  CHG  8   2  -1   3  -1   4  -1   5   1   6   1   7   1   8  -1   9  -1
 M  CHG  8  10   1  11   1  12  -1  13  -1  14   1  15   1  16  -1  17  -1
 M  CHG  8  18   1  19   1  20  -2  22   2  23  -2  25   2  26  -2  27   2
 M  END
+>  <name>
+Co4(CO)12
+
 >  <group>
 3D Templates
 
@@ -11111,6 +11162,9 @@ Tetracobalt dodecacarbonyl_covalent
  26 28  2  0  0  0  0
   3  6  3  0  0  0  0
 M  END
+>  <name>
+Co4(CO)12
+
 >  <atomid>
 0
 
@@ -11149,6 +11203,9 @@ Iron pentacarbonyl_dative
 M  CHG  8   2  -1   3  -1   4  -1   5  -1   6  -1   7   1   8   1   9   1
 M  CHG  2  10   1  11   1
 M  END
+>  <name>
+Fe(CO)5
+
 >  <group>
 3D Templates
 
@@ -11179,6 +11236,9 @@ Iron pentacarbonyl_covalent
   6 11  3  0  0  0  0
   5 10  3  0  0  0  0
 M  END
+>  <name>
+Fe(CO)5
+
 >  <atomid>
 0
 
@@ -11352,6 +11412,9 @@ M  V30 MDLV30/STEABS ATOMS=(5 3 38 43 56 62)
 M  V30 END COLLECTION
 M  V30 END CTAB
 M  END
+>  <name>
+C55H72MgN4O5
+
 >  <group>
 3D Templates
 
@@ -11512,6 +11575,9 @@ Chlorophyll A_covalent
  69 70  1  0  0  0  0
 M  CHG  3  21  -1  23  -1  25   2
 M  END
+>  <name>
+C55H72MgN4O5
+
 >  <atomid>
 31
 
@@ -11575,4 +11641,3 @@ M  END
 >  <group>
 Aromatics
 
-$$$$

@@ -92,7 +92,7 @@ Object {
                       File name:
                     </span>
                     <input
-                      class="css-1w4st8l"
+                      class="css-95wl3x"
                       data-testid="filename-input"
                       id="filename"
                       type="text"
@@ -109,7 +109,7 @@ Object {
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1ydgb7t-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1lgf593-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div

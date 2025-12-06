@@ -32,7 +32,9 @@ const StyledFormControl = styled(FormControl)`
 `;
 
 const DropDownSelect = styled(Select)`
-  height: 28px;
+  &.MuiInputBase-root {
+    height: 28px;
+  }
   border: 1px solid #e1e5ea;
   border-radius: 4px;
   font-size: 12px;
@@ -46,9 +48,10 @@ const DropDownSelect = styled(Select)`
       border-bottom-right-radius: 0;
     `}
 
-  & .MuiSelect-select {
+  & .MuiSelect-select.MuiSelect-select {
     padding: 0 24px 0 8px;
     height: 100%;
+    min-height: auto;
     display: flex;
     align-items: center;
   }
@@ -153,6 +156,7 @@ export const DropDown = ({
         disabled={disabled}
         fullWidth
         data-testid={testId ?? 'dropdown-select'}
+        sx={{ height: 28 }}
         MenuProps={{
           PaperProps: {
             style: { ...stylesForExpanded, ...customStylesForExpanded },

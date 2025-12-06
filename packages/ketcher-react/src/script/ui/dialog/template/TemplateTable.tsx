@@ -61,7 +61,7 @@ function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
     return tmpl.props.abbreviation;
   }
-  if (is3DTemplate(tmpl) && tmpl.props.name) {
+  if (is3DTemplate(tmpl) && tmpl.props.name?.trim()) {
     return tmpl.props.name;
   }
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;

@@ -767,9 +767,15 @@ class ReAtom extends ReObject {
 
           const selectedClass =
             render.monomerCreationState?.selectedMonomerClass;
+          // Get the component type for the attachment atom (for presets)
+          const presetComponentAtoms =
+            render.monomerCreationState?.presetComponentAtoms;
+          const presetComponentType =
+            presetComponentAtoms?.get(attachmentAtomId);
           const apTooltip = getAttachmentPointTooltip(
             selectedClass,
             attachmentPointName,
+            presetComponentType,
           );
           if (apTooltip) {
             addTooltip(rLabelElement.node, apTooltip);

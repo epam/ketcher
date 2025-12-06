@@ -30,6 +30,8 @@ import { notifyRenderComplete } from './notifyRenderComplete';
 import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 
+export type RnaPresetComponentType = 'sugar' | 'base' | 'phosphate';
+
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
@@ -39,6 +41,8 @@ export type MonomerCreationState = {
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
+  // For RNA presets: maps atom id to its component type
+  presetComponentAtoms?: Map<number, RnaPresetComponentType>;
 } | null;
 
 export class Render {

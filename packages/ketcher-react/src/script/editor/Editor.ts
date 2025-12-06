@@ -48,6 +48,7 @@ import {
   KetTemplateType,
   MacromoleculesConverter,
   MonomerCreationState,
+  RnaPresetComponentType,
   monomerFactory,
   MULTITAIL_ARROW_KEY,
   normalizeMonomerAtomsPositions,
@@ -590,6 +591,27 @@ class Editor implements KetcherEditor {
     this.render.monomerCreationState = {
       ...currentState,
       selectedMonomerClass: type,
+    };
+    this.render.update(true);
+  }
+
+  public updatePresetComponentAtoms(
+    componentType: RnaPresetComponentType,
+    atomIds: number[],
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    const presetComponentAtoms = new Map(
+      currentState.presetComponentAtoms || [],
+    );
+    atomIds.forEach((atomId) => {
+      presetComponentAtoms.set(atomId, componentType);
+    });
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      presetComponentAtoms,
     };
     this.render.update(true);
   }

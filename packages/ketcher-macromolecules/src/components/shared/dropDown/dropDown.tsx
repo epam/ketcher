@@ -32,7 +32,7 @@ const StyledFormControl = styled(FormControl)`
 `;
 
 const DropDownSelect = styled(Select)`
-  height: 24px;
+  height: 28px;
   border: 1px solid #e1e5ea;
   border-radius: 4px;
   font-size: 12px;

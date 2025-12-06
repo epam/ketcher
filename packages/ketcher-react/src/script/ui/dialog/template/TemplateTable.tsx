@@ -46,6 +46,7 @@ const isSaltOrSolventTemplate = (template) =>
   template.props.group === 'Salts and Solvents';
 const isFunctionalGroupTemplate = (template) =>
   template.props.group === 'Functional Groups';
+const is3DTemplate = (template) => template.props.group === '3D Templates';
 
 function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
@@ -59,6 +60,9 @@ function getTemplateTitle(template: Template, index: number): string {
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
     return tmpl.props.abbreviation;
+  }
+  if (is3DTemplate(tmpl) && tmpl.props.name) {
+    return tmpl.props.name;
   }
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }

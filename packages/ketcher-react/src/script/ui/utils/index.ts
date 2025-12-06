@@ -43,7 +43,8 @@ export function filterLib(lib, filter: string) {
       (item: any) =>
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group)),
+        re.test(greekify(item.props.group)) ||
+        (item.props.name && re.test(greekify(item.props.name))),
     ),
     reduce((res, item) => {
       if (!res[item.props.group]) res[item.props.group] = [item];

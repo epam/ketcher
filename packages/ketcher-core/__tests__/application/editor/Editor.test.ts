@@ -37,6 +37,9 @@ describe('CoreEditor', () => {
       errorSpy.mockRestore();
     });
 
+    // Note: In the KET format, idtAliases is defined at the template level.
+    // During parsing (via templateToMonomerProps), it gets moved to props.idtAliases.
+    // The validation checks newMonomer.props?.idtAliases after this conversion.
     it('should reject monomer with idtAliases but no base alias', () => {
       const monomerWithoutBase = {
         root: {

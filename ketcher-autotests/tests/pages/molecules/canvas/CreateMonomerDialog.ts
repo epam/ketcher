@@ -21,6 +21,7 @@ import {
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 import { delay } from '@utils/canvas';
+import { NucleotidePresetSection } from './createMonomer/NucleiotidePresetSection';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -163,6 +164,7 @@ const createModificationTypeDropdownMap = (
   [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
   [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
 });
+
 const deleteModificationTypeMap = (
   section: ModificationSectionLocators,
 ): Record<ModificationTypeDropdown, Locator> => ({
@@ -219,6 +221,8 @@ export const CreateMonomerDialog = (page: Page) => {
         .getByTestId('CloseIcon'),
     },
   );
+
+  const nucleotidePresetSection = NucleotidePresetSection(page);
 
   const locators: CreateMonomerDialogLocators = {
     typeCombobox: page.getByTestId('type-select'),
@@ -285,6 +289,8 @@ export const CreateMonomerDialog = (page: Page) => {
 
   return {
     ...locators,
+
+    nucleotidePresetSection,
 
     getAttachmentPointControlGroup(ap: AttachmentPointOption) {
       return attachmentPointControlGroupByAP[ap];

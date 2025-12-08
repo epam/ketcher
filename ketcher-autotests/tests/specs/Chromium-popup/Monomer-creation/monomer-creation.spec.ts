@@ -505,26 +505,26 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
   });
 }
 
-test(`7. Check than monomer Type field is blank when open it first time`, async () => {
+test(`7. Check that monomer Type defaults to CHEM when wizard opens`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check than monomer Type field is blank when open it first time
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that when a structure is selected and the wizard is entered, the monomer type is prefilled with CHEM
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
-   *      5. Check than monomer Type field is blank when open it first time
+   *      5. Check that monomer Type field is set to CHEM by default
    *
-   * Version 3.7
+   * Version 3.11
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
 
-  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('CHEM');
   await CreateMonomerDialog(page).discard();
 });
 
@@ -564,30 +564,29 @@ test(`8. Check options from the drop-down menu Type`, async () => {
   await CreateMonomerDialog(page).discard();
 });
 
-test(`9. Check that if the monomer type is not selected error message occures`, async () => {
+test(`9. Check that mandatory fields validation is shown when submitting empty wizard`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check that if the monomer type is not selected, and the user clicks on Save/Finish in the wizard,
-   *              an error message appears in the error/warning area: "Mandatory fields must be filled.",
-   *              and the type drop-down is highlighted
+   * Description: Check that submitting the wizard without filling required fields shows
+   *              an error message: "Mandatory fields must be filled." while the default type remains selected
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
-   *      4.1 Validate that Type drop-down is not filled
-   *      5. Press Submit button
-   *      6. Verify that the error message is displayed
-   *      7. Take screenshot to validate that Type drop-down is highlighted
+   *      5. Validate that Type drop-down is prefilled with CHEM
+   *      6. Press Submit button
+   *      7. Verify that the error message is displayed
+   *      8. Take screenshot to validate that Symbol field is highlighted as mandatory
    *
-   * Version 3.7
+   * Version 3.11
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
   await prepareMoleculeForMonomerCreation(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('CHEM');
   await CreateMonomerDialog(page).submit();
   expect(
     await NotificationMessageBanner(
@@ -640,6 +639,92 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
   await monomerOnMacro.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getTitleText()).toBe(testSymbol);
+});
+
+test(`11. Verify nucleotide type options are available in the wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that when a structure is selected and the wizard is entered,
+   *              the user can pick Nucleotide (monomer) and Nucleotide (preset) types
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Open Type drop-down and check Nucleotide options are present with expected titles
+   *
+   * Version 3.11
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.typeCombobox.click();
+
+  const nucleotideMonomerOption = page.getByTestId(
+    MonomerType.NucleotideMonomer,
+  );
+  const nucleotidePresetOption = page.getByTestId(MonomerType.NucleotidePreset);
+
+  await expect(nucleotideMonomerOption).toHaveText('Nucleotide (monomer)');
+  await expect(nucleotidePresetOption).toHaveText('Nucleotide (preset)');
+
+  await page.keyboard.press('Escape');
+  await createMonomerDialog.discard();
+});
+
+test(`12. Check that Nucleotide (preset) is placed last in the Type drop-down`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that Nucleotide (preset) option is displayed at the bottom of the Type list
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Open Type drop-down and verify options order keeps Nucleotide (preset) last
+   *
+   * Version 3.11
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.typeCombobox.click();
+  await page.getByTestId(MonomerType.AminoAcid).waitFor();
+
+  const expectedOptionsOrder: MonomerType[] = [
+    MonomerType.AminoAcid,
+    MonomerType.Sugar,
+    MonomerType.Base,
+    MonomerType.Phosphate,
+    MonomerType.NucleotideMonomer,
+    MonomerType.CHEM,
+    MonomerType.NucleotidePreset,
+  ];
+
+  const actualOptionsOrder = await page
+    .locator('[data-testid$="-option"]')
+    .evaluateAll((elements) =>
+      elements
+        .map((element) => element.getAttribute('data-testid'))
+        .filter((testId): testId is string => Boolean(testId)),
+    );
+
+  const monomerTypeOptionsOrder = actualOptionsOrder.filter((testId) =>
+    expectedOptionsOrder.includes(testId as MonomerType),
+  );
+
+  expect(monomerTypeOptionsOrder).toEqual(expectedOptionsOrder);
+
+  await page.keyboard.press('Escape');
+  await createMonomerDialog.discard();
 });
 
 const eligableNames = [

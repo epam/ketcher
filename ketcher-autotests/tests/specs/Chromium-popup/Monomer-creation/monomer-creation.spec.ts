@@ -77,7 +77,8 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleiotidePresetSection';
+import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -726,6 +727,84 @@ test(`12. Check that Nucleotide (preset) is placed last in the Type drop-down`, 
 
   await page.keyboard.press('Escape');
   await createMonomerDialog.discard();
+});
+
+test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Check that in Sugar, Base, and Phosphate tabs user can edit default and non-default fields
+   *              (symbol, name, alias; natural analogue for Base) and values persist across tab switches.
+   *
+   * Version 3.11
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await prepareMoleculeForMonomerCreation(page, ['0']);
+
+  const dialog = CreateMonomerDialog(page);
+  const presetSection = NucleotidePresetSection(page);
+
+  await LeftToolbar(page).createMonomer();
+  await dialog.selectType(MonomerType.NucleotidePreset);
+
+  await presetSection.setPresetName('PresetMonomer');
+
+  await presetSection.setupSugar({
+    symbol: 'SugSym',
+    name: 'SugarName',
+    HELMAlias: 'SugAlias',
+  });
+  await presetSection.setupBase({
+    symbol: 'BaseSym',
+    name: 'BaseName',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+    HELMAlias: 'BaseAlias',
+  });
+  await presetSection.setupPhosphate({
+    symbol: 'PhosSym',
+    name: 'PhosphateName',
+    HELMAlias: 'PhosAlias',
+  });
+
+  await presetSection.openTab(NucleotidePresetTab.Preset);
+  await expect(presetSection.presetTab.nameEditbox).toHaveValue(
+    'PresetMonomer',
+  );
+
+  await presetSection.openTab(NucleotidePresetTab.Sugar);
+  await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('SugSym');
+  await expect(presetSection.sugarTab.nameEditbox).toHaveValue('SugarName');
+  await presetSection.openAliasesSection(NucleotidePresetTab.Sugar);
+  expect(
+    await presetSection.sugarTab.aliasesSection.helmAliasEditbox
+      .getByRole('combobox')
+      .getAttribute('value'),
+  ).toEqual('SugAlias');
+
+  await presetSection.openTab(NucleotidePresetTab.Base);
+  await expect(presetSection.baseTab.symbolEditbox).toHaveValue('BaseSym');
+  await expect(presetSection.baseTab.nameEditbox).toHaveValue('BaseName');
+  await expect(presetSection.baseTab.naturalAnalogueCombobox).toContainText(
+    'A',
+  );
+  await presetSection.openAliasesSection(NucleotidePresetTab.Base);
+  expect(
+    presetSection.baseTab.aliasesSection.helmAliasEditbox
+      .getByRole('combobox')
+      .getAttribute('value'),
+  ).toEqual('BaseAlias');
+
+  await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('PhosSym');
+  await expect(presetSection.phosphateTab.nameEditbox).toHaveValue(
+    'PhosphateName',
+  );
+  await presetSection.openAliasesSection(NucleotidePresetTab.Phosphate);
+  expect(
+    presetSection.phosphateTab.aliasesSection.helmAliasEditbox
+      .getByRole('combobox')
+      .getAttribute('value'),
+  ).toEqual('PhosAlias');
+
+  await dialog.discard();
 });
 
 // test(`13. Confirm warning appears when changing type after Nucleotide (preset)`, async () => {

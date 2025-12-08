@@ -9,12 +9,16 @@ type WarningMessageDialogLocators = {
 };
 
 export const WarningMessageDialog = (page: Page) => {
+  const window = page
+    .getByTestId('info-modal-window')
+    .filter({ hasText: 'Non-typical attachment points' });
+
   const locators: WarningMessageDialogLocators = {
-    window: page.getByTestId('info-modal-window'),
-    closeWindowButton: page.getByTestId('close-window-button'),
-    warningMessageBody: page.getByTestId('info-modal-body'),
-    okButton: page.getByTestId('OK'),
-    cancelButton: page.getByTestId('Cancel'),
+    window,
+    closeWindowButton: window.getByTestId('close-window-button'),
+    warningMessageBody: window.getByTestId('info-modal-body'),
+    okButton: window.getByTestId('OK'),
+    cancelButton: window.getByTestId('Cancel'),
   };
 
   return {
@@ -29,13 +33,33 @@ export const WarningMessageDialog = (page: Page) => {
     },
 
     async ok() {
-      await locators.okButton.click();
-      await locators.okButton.waitFor({ state: 'detached' });
+      await locators.window.waitFor({ state: 'visible' });
+      await locators.okButton.waitFor({ state: 'visible' });
+      await Promise.all([
+        locators.okButton.click(),
+        locators.window.waitFor({ state: 'hidden' }),
+      ]);
+    },
+
+    async okIfVisible() {
+      if (await this.isVisible()) {
+        await this.ok();
+      }
     },
 
     async cancel() {
-      await locators.cancelButton.click();
-      await locators.cancelButton.waitFor({ state: 'detached' });
+      await locators.window.waitFor({ state: 'visible' });
+      await locators.cancelButton.waitFor({ state: 'visible' });
+      await Promise.all([
+        locators.cancelButton.click(),
+        locators.window.waitFor({ state: 'hidden' }),
+      ]);
+    },
+
+    async cancelIfVisible() {
+      if (await this.isVisible()) {
+        await this.cancel();
+      }
     },
 
     async getWarningMessage() {

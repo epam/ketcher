@@ -77,6 +77,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -726,6 +727,62 @@ test(`12. Check that Nucleotide (preset) is placed last in the Type drop-down`, 
   await page.keyboard.press('Escape');
   await createMonomerDialog.discard();
 });
+
+// test(`13. Confirm warning appears when changing type after Nucleotide (preset)`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/8248
+//    * Description: Check that switching from Nucleotide (preset) to another type shows confirmation modal,
+//    *              Cancel keeps Nucleotide (preset) with entered data, Yes applies new type and reloads wizard
+//    *
+//    * Case:
+//    *      1. Open Molecules canvas
+//    *      2. Load molecule on canvas
+//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//    *      4. Press "Create Monomer" button
+//    *      5. Select Nucleotide (preset) type and enter a name
+//    *      6. Pick another type (e.g. CHEM) and verify confirmation modal
+//    *      7. Cancel and verify type and data remain unchanged
+//    *      8. Repeat change, confirm Yes, verify type changed to new value and fields reset
+//    *
+//    * Version 3.11
+//    */
+//   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//   await prepareMoleculeForMonomerCreation(page, ['0']);
+
+//   const createMonomerDialog = CreateMonomerDialog(page);
+//   const confirmDialog = ConfirmYourActionDialog(page);
+
+//   await LeftToolbar(page).createMonomer();
+//   await createMonomerDialog.selectType(MonomerType.NucleotidePreset);
+//   await createMonomerDialog.setName('PresetName');
+//   await expect(createMonomerDialog.typeCombobox).toContainText(
+//     'Nucleotide (preset)',
+//   );
+
+//   await createMonomerDialog.selectType(MonomerType.CHEM);
+
+//   await expect(confirmDialog.window).toBeVisible();
+//   await expect(page.getByText('Confirm type change')).toBeVisible();
+//   await expect(confirmDialog.messageBody).toHaveText(
+//     'Changing the type will result in a loss of inputted data. Do you wish to proceed?',
+//   );
+//   await expect(confirmDialog.cancelButton).toBeVisible();
+//   await expect(confirmDialog.yesButton).toBeVisible();
+
+//   await confirmDialog.cancel();
+//   await expect(confirmDialog.window).not.toBeVisible();
+//   await expect(createMonomerDialog.typeCombobox).toContainText(
+//     'Nucleotide (preset)',
+//   );
+//   await expect(createMonomerDialog.nameEditbox).toHaveValue('PresetName');
+
+//   await createMonomerDialog.selectType(MonomerType.CHEM);
+//   await expect(confirmDialog.window).toBeVisible();
+//   await confirmDialog.yes();
+
+//   await expect(createMonomerDialog.typeCombobox).toContainText('CHEM');
+//   await expect(createMonomerDialog.nameEditbox).toHaveValue('');
+// });
 
 const eligableNames = [
   // Bug: https://github.com/epam/ketcher/issues/7745

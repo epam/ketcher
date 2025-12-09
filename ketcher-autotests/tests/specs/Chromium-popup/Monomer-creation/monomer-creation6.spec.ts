@@ -31,7 +31,6 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { pageReload } from '@utils/common/helpers';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleiotidePresetSection';
-import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';

@@ -1282,7 +1282,7 @@ class Editor implements KetcherEditor {
       },
     );
 
-    const monomerId = `${symbol}___${name}`;
+    const monomerId = `${symbol}___${name}${hidden ? '___hidden' : ''}`;
     const monomerRef = setMonomerTemplatePrefix(monomerId);
     const monomerHELMClass = getHELMClassByKetMonomerClass(type);
     const naturalAnalogueToUse = fillNaturalAnalogueForPhosphateAndSugar(

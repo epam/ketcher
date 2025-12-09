@@ -24,6 +24,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
@@ -86,6 +87,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   MonomerOnMicroOption,
   SequenceSymbolOption,
+  SuperatomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
@@ -431,13 +433,15 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 150,
+    });
   });
 
   test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async () => {
     /* 
     Test case: Macro-Micro-Switcher
-    Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
+    Description: Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -449,8 +453,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 10 }), {
+      padding: 190,
     });
   });
 
@@ -465,12 +469,11 @@ test.describe('Macro-Micro-Switcher', () => {
       y: 0,
       fromCenter: true,
     });
-    await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await IndigoFunctionsToolbar(page).layout();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await expect(
+      getAbbreviationLocator(page, { name: Peptide.A.alias }),
+    ).toBeVisible();
   });
 
   test(`Check that Pressing Clean Up button not erase all macromolecules from canvas`, async () => {
@@ -485,13 +488,12 @@ test.describe('Macro-Micro-Switcher', () => {
       y: 0,
       fromCenter: true,
     });
-    await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await IndigoFunctionsToolbar(page).cleanUp();
     await resetZoomLevelToDefault(page);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await expect(
+      getAbbreviationLocator(page, { name: Peptide.A.alias }),
+    ).toBeVisible();
   });
 
   test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async () => {
@@ -515,9 +517,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await test6Ch.hover();
     await ContextMenu(page, test6Ch).open();
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await expect(
+      page.getByTestId(MonomerOnMicroOption.ExpandMonomer),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId(SuperatomOption.RemoveAbbreviation),
+    ).not.toBeVisible();
   });
 
   test('The 3D view works for micromolecules when there are macromolecules on the canvas', async () => {

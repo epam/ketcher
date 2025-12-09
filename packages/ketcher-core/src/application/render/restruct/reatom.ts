@@ -368,6 +368,29 @@ class ReAtom extends ReObject {
     return this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
+  // Keep atom available in DOM for tests even when the label is hidden
+  private createInvisibleAtomTarget(
+    restruct: ReStruct,
+    render: Render,
+    position: Vec2,
+  ) {
+    const invisibleAtomTarget = this.getSelectionContour(render).attr({
+      opacity: 0,
+      fill: '#000',
+      stroke: 'none',
+      'stroke-width': 0,
+    });
+
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      invisibleAtomTarget,
+      position,
+    );
+
+    return invisibleAtomTarget;
+  }
+
   private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
     const MIN_BOND_LENGTH = 24;
     const isBondLengthTooShort = bondLength <= MIN_BOND_LENGTH;
@@ -1093,68 +1116,69 @@ class ReAtom extends ReObject {
       );
     }
 
-    if (label?.path) {
-      label?.path.node?.setAttribute('data-testid', 'atom');
-      label?.path.node?.setAttribute(
-        'data-atom-id',
-        restruct.molecule.atoms.keyOf(this.a ?? ''),
-      );
-      label?.path.node?.setAttribute('data-atom-type', getAtomType(this.a));
-      label?.path.node?.setAttribute('data-atomLabel', this.a.label ?? '');
-      label?.path.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomIsotopeAtomicMass',
-        this.a.isotope ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomValence', this.a.valence ?? '');
-      label?.path.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomRingBondCount',
-        this.a.ringBondCount ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomSubstitutionCount',
-        this.a.substitutionCount ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomUnsaturated',
-        this.a.unsaturatedAtom ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomAromaticity',
-        this.a.queryProperties.aromaticity ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomImplicitHCount',
-        this.a.implicitHCount ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomRingMembership',
-        this.a.queryProperties.ringMembership ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomRingSize',
-        this.a.queryProperties.ringSize ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomConnectivity',
-        this.a.queryProperties.connectivity ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomChirality',
-        this.a.queryProperties.chirality ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomExactChange',
-        this.a.exactChangeFlag ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomCustomQuery',
-        this.a.queryProperties.customQuery ?? '',
-      );
-    }
+    const atomElement =
+      label?.path ?? this.createInvisibleAtomTarget(restruct, render, ps);
+
+    atomElement?.node?.setAttribute('data-testid', 'atom');
+    atomElement?.node?.setAttribute(
+      'data-atom-id',
+      restruct.molecule.atoms.keyOf(this.a ?? ''),
+    );
+    atomElement?.node?.setAttribute('data-atom-type', getAtomType(this.a));
+    atomElement?.node?.setAttribute('data-atomLabel', this.a.label ?? '');
+    atomElement?.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomIsotopeAtomicMass',
+      this.a.isotope ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomValence', this.a.valence ?? '');
+    atomElement?.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomRingBondCount',
+      this.a.ringBondCount ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomSubstitutionCount',
+      this.a.substitutionCount ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomUnsaturated',
+      this.a.unsaturatedAtom ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomAromaticity',
+      this.a.queryProperties.aromaticity ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomImplicitHCount',
+      this.a.implicitHCount ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingMembership',
+      this.a.queryProperties.ringMembership ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingSize',
+      this.a.queryProperties.ringSize ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomConnectivity',
+      this.a.queryProperties.connectivity ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomChirality',
+      this.a.queryProperties.chirality ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomExactChange',
+      this.a.exactChangeFlag ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCustomQuery',
+      this.a.queryProperties.customQuery ?? '',
+    );
   }
 
   getLargestSectorFromNeighbors(struct: Struct): {

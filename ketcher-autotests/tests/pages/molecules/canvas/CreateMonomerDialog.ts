@@ -21,6 +21,8 @@ import {
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 import { delay } from '@utils/canvas';
+import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -163,6 +165,7 @@ const createModificationTypeDropdownMap = (
   [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
   [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
 });
+
 const deleteModificationTypeMap = (
   section: ModificationSectionLocators,
 ): Record<ModificationTypeDropdown, Locator> => ({
@@ -219,6 +222,8 @@ export const CreateMonomerDialog = (page: Page) => {
         .getByTestId('CloseIcon'),
     },
   );
+
+  const nucleotidePresetSection = NucleotidePresetSection(page);
 
   const locators: CreateMonomerDialogLocators = {
     typeCombobox: page.getByTestId('type-select'),
@@ -285,6 +290,8 @@ export const CreateMonomerDialog = (page: Page) => {
 
   return {
     ...locators,
+
+    nucleotidePresetSection,
 
     getAttachmentPointControlGroup(ap: AttachmentPointOption) {
       return attachmentPointControlGroupByAP[ap];
@@ -527,7 +534,7 @@ export async function createMonomer(
   await createMonomerDialog.submit({ ignoreWarning });
 }
 
-export async function prepareMoleculeForMonomerCreation(
+export async function deselectAtomAndBonds(
   page: Page,
   AtomIDsToExclude?: string[],
   BondIDsToExclude?: string[],
@@ -544,11 +551,41 @@ export async function prepareMoleculeForMonomerCreation(
   }
   if (BondIDsToExclude) {
     for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
+      await getBondLocator(page, { bondId: Number(bondId) }).click({
+        force: true,
+      });
     }
   }
   await page.keyboard.up('Shift');
   await waitForCustomEvent(page, 'monomerCreationEnabled', 200);
+}
+
+export async function selectAtomAndBonds(
+  page: Page,
+  options: {
+    atomIds?: number[];
+    bondIds?: number[];
+  },
+) {
+  await CommonLeftToolbar(page).handTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
+  await clickOnCanvas(page, 0, 0);
+  await page.keyboard.down('Shift');
+  if (options.atomIds) {
+    for (const atomId of options.atomIds) {
+      await getAtomLocator(page, { atomId }).click({
+        force: true,
+      });
+    }
+  }
+  if (options.bondIds) {
+    for (const bondId of options.bondIds) {
+      await getBondLocator(page, { bondId }).click({
+        force: true,
+      });
+    }
+  }
+  await page.keyboard.up('Shift');
 }
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

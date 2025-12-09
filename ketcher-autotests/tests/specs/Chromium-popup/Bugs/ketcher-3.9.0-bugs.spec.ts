@@ -47,7 +47,7 @@ import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMo
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
@@ -817,7 +817,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     });
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
-    await prepareMoleculeForMonomerCreation(page);
+    await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.CHEM);
     await createMonomerDialog.setSymbol('TempSymbol');
@@ -932,7 +932,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCOCCC');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    await prepareMoleculeForMonomerCreation(
+    await deselectAtomAndBonds(
       page,
       ['0', '1', '2', '3'],
       ['0', '1', '2', '3'],
@@ -968,7 +968,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      */
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
-    await prepareMoleculeForMonomerCreation(page);
+    await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     await BottomToolbar(page).structureLibrary();
 
@@ -996,7 +996,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      */
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'C%91.[*:1]%91 |$;_R1$|');
-    await prepareMoleculeForMonomerCreation(page);
+    await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();

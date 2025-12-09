@@ -13,7 +13,7 @@ import {
 import { clickOnCanvas, dragMouseTo } from '@utils/index';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
@@ -290,7 +290,7 @@ test(`3. Check that the number of simple-single bonds to non-selected parts of t
     page,
     'CC(C(C)C(C)C(C)C(C)C(C)C(C)C(C)C)C',
   );
-  await prepareMoleculeForMonomerCreation(page, [
+  await deselectAtomAndBonds(page, [
     '0',
     '5',
     '3',

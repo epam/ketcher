@@ -27,7 +27,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
@@ -246,7 +246,7 @@ test(`5. Check that after the option "Mark as leaving group" is clicked`, async 
   await page.mouse.move(600, 200);
   await dragMouseTo(500, 260, page);
 
-  const targetAtom = getAtomLocator(page, { atomLabel: 'C' });
+  const targetAtom = getAtomLocator(page, { atomLabel: 'C', atomId: 1 });
   await ContextMenu(page, targetAtom).click(
     ConnectionPointOption.MarkAsLeavingGroup,
   );
@@ -947,7 +947,7 @@ test.skip(`24. Check that when clicking on Remove explicit hydrogens, hydrogens 
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible
@@ -979,7 +979,7 @@ test(`25. Verify that Copy button copies the selected structure fragment and Pas
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible
@@ -1013,7 +1013,7 @@ test(`26. Verify that Cut button removes selected structure and stores it in the
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible

@@ -108,6 +108,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             styles.styledTab,
             hasErrorInTab(wizardState.preset) && styles.errorTab,
           )}
+          data-testid="nucleotide-preset-tab"
           label={<div className={styles.tabLabel}>Preset</div>}
           icon={<Icon name="preset" />}
         />
@@ -116,6 +117,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             styles.styledTab,
             hasErrorInTab(wizardState.base) && styles.errorTab,
           )}
+          data-testid="nucleotide-base-tab"
           label={<div className={styles.tabLabel}>Base</div>}
           icon={<Icon name="base" />}
         />
@@ -124,6 +126,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             styles.styledTab,
             hasErrorInTab(wizardState.sugar) && styles.errorTab,
           )}
+          data-testid="nucleotide-sugar-tab"
           label={<div className={styles.tabLabel}>Sugar</div>}
           icon={<Icon name="sugar" />}
         />
@@ -132,6 +135,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             styles.styledTab,
             hasErrorInTab(wizardState.phosphate) && styles.errorTab,
           )}
+          data-testid="nucleotide-phosphate-tab"
           label={<div className={styles.tabLabel}>Phosphate</div>}
           icon={<Icon name="phosphate" />}
         />
@@ -168,6 +172,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     Select all atoms that form this nucleotide component.
                   </div>
                   <button
+                    data-testid={`Mark-as-${rnaComponentKey}-button`}
                     className={clsx(
                       monomerCreationWizardStyles.buttonSubmit,
                       styles.createComponentButton,

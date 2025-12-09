@@ -18,7 +18,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
@@ -441,7 +441,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      */
     const createMonomerDialog = CreateMonomerDialog(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCC');
-    await prepareMoleculeForMonomerCreation(page, ['0'], ['0']);
+    await deselectAtomAndBonds(page, ['0'], ['0']);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);

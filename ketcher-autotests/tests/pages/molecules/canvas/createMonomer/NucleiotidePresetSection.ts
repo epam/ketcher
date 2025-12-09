@@ -137,7 +137,7 @@ export const NucleotidePresetSection = (page: Page) => {
       }
     },
 
-    async setPresetName(value: string) {
+    async setName(value: string) {
       await this.openTab(NucleotidePresetTab.Preset);
       await locators.presetTab.nameEditbox.fill(value);
     },

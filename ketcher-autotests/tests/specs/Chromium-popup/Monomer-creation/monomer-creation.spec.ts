@@ -755,18 +755,18 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
 
   await dialog.selectType(MonomerType.NucleotidePreset);
 
-  await presetSection.setPresetName('PresetMonomer');
+  await presetSection.setName('PresetMonomer');
 
   await presetSection.setupSugar({
-    atomIds: [0, 1],
-    bondIds: [0],
+    atomIds: [2, 3],
+    bondIds: [2],
     symbol: 'SugSym',
     name: 'SugarName',
     HELMAlias: 'SugAlias',
   });
   await presetSection.setupBase({
-    atomIds: [2, 3],
-    bondIds: [2],
+    atomIds: [0, 1],
+    bondIds: [0],
     symbol: 'BaseSym',
     name: 'BaseName',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -848,12 +848,12 @@ test(`14. Component tab is highlighted red when its property is invalid after su
   await dialog.selectType(MonomerType.NucleotidePreset);
 
   await presetSection.setupSugar({
-    atomIds: [0, 1],
-    bondIds: [0],
-  });
-  await presetSection.setupBase({
     atomIds: [2, 3],
     bondIds: [2],
+  });
+  await presetSection.setupBase({
+    atomIds: [0, 1],
+    bondIds: [0],
   });
   await presetSection.setupPhosphate({
     atomIds: [4, 5],

@@ -10,7 +10,6 @@ import {
   MolFileFormat,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
   moveMouseAway,
@@ -2058,7 +2057,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await takeEditorScreenshot(page);
   });
@@ -2075,12 +2076,16 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).chargePlus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).chargeMinus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

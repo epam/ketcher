@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   moveOnAtom,
   dragMouseTo,
   takeLeftToolbarScreenshot,

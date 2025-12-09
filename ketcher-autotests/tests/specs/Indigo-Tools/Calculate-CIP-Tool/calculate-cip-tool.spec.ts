@@ -10,7 +10,6 @@ import {
   waitForRender,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  clickOnAtom,
   deleteByKeyboard,
   moveMouseAway,
 } from '@utils';

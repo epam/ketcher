@@ -11,7 +11,6 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   MolFileFormat,
 } from '@utils';
 
@@ -93,7 +92,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -116,7 +117,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.AddToOrGroup,
     });
@@ -139,7 +142,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -267,7 +272,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -290,7 +297,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.AddToAndGroup,
     });
@@ -319,7 +328,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });

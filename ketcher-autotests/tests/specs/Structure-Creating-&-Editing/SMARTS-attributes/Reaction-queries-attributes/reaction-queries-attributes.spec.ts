@@ -76,9 +76,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 1);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await verifySMARTSExport(page, '[#6:1]-[#6:2]');
   });

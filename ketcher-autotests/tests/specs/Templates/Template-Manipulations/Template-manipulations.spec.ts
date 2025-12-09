@@ -431,7 +431,9 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await clickOnAtom(page, 'C', 3);
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
@@ -445,7 +447,9 @@ test.describe('Template Manupulations', () => {
     */
     await drawBenzeneRing(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await clickOnAtom(page, 'C', 3);
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
@@ -462,7 +466,9 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
@@ -478,7 +484,9 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });

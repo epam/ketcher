@@ -6,7 +6,6 @@ import {
   moveOnAtom,
   waitForRender,
   takeEditorScreenshot,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   dragMouseTo,
@@ -36,6 +35,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -97,7 +97,9 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await page.keyboard.up('Shift');
     await copyStructureByCtrlMove(page, 'C', 0);

@@ -16,7 +16,6 @@ import {
   takeTopToolbarScreenshot,
 } from '@utils/canvas';
 import {
-  clickOnAtom,
   clickOnCanvas,
   clickOnMiddleOfCanvas,
   dragMouseTo,

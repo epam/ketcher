@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,

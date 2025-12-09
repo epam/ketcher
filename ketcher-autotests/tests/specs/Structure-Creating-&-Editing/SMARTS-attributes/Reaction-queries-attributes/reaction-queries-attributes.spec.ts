@@ -1,7 +1,6 @@
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,

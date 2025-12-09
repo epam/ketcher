@@ -697,10 +697,18 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', 1);
-    await clickOnAtom(page, 'C', 4);
-    await clickOnAtom(page, 'C', 6);
-    await clickOnAtom(page, 'C', 9);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 27 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
       await CommonTopLeftToolbar(page).undo();

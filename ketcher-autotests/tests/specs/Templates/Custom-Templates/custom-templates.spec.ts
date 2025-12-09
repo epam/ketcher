@@ -4,7 +4,6 @@ import {
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  clickOnAtom,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';

@@ -382,7 +382,9 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowDown');
@@ -398,7 +400,9 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowUp');
@@ -414,7 +418,9 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
       await page.keyboard.press('ArrowRight');
@@ -430,7 +436,9 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -447,7 +455,9 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 100; i++) {
       await page.keyboard.press('ArrowDown');

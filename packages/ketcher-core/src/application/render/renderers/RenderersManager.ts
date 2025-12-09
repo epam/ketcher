@@ -461,30 +461,85 @@ export class RenderersManager {
     // Remove existing aromatic circles
     canvas.selectAll('.aromatic-circle').remove();
 
-    // Draw aromatic circles for each aromatic loop
+    // Draw aromatic circles or dashed polygons for each aromatic loop
     viewModel.loops.forEach((loop) => {
-      if (!loop.aromatic || !loop.isConvex) {
+      if (!loop.aromatic) {
         return;
       }
 
-      // Calculate the center and radius of the loop
-      const { center, radius } = this.calculateLoopCenterAndRadius(loop);
+      if (loop.isConvex) {
+        // For convex loops, draw a circle
+        const { center, radius } = this.calculateLoopCenterAndRadius(loop);
 
-      if (radius <= 0) {
-        return;
+        if (radius <= 0) {
+          return;
+        }
+
+        canvas
+          .append('circle')
+          .attr('class', 'aromatic-circle')
+          .attr('cx', center.x)
+          .attr('cy', center.y)
+          .attr('r', radius)
+          .attr('stroke', '#000')
+          .attr('stroke-width', 1)
+          .attr('fill', 'none');
+      } else {
+        // For non-convex loops, draw a dashed polygon
+        const pathStr = this.calculateDashedPolygonPath(loop);
+
+        if (!pathStr) {
+          return;
+        }
+
+        canvas
+          .append('path')
+          .attr('class', 'aromatic-circle')
+          .attr('d', pathStr)
+          .attr('stroke', '#000')
+          .attr('stroke-width', 1)
+          .attr('stroke-dasharray', '2,2')
+          .attr('fill', 'none');
       }
-
-      // Draw the circle
-      canvas
-        .append('circle')
-        .attr('class', 'aromatic-circle')
-        .attr('cx', center.x)
-        .attr('cy', center.y)
-        .attr('r', radius)
-        .attr('stroke', '#000')
-        .attr('stroke-width', 1)
-        .attr('fill', 'none');
     });
+  }
+
+  private calculateDashedPolygonPath(loop) {
+    const editorSettings = provideEditorSettings();
+    let pathStr = '';
+
+    // Calculate the polygon path similar to reloop.js
+    loop.halfEdges.forEach((halfEdge, k) => {
+      const nextHalfEdge = loop.halfEdges[(k + 1) % loop.halfEdges.length];
+
+      // Calculate the angle between consecutive half edges
+      const angle = Math.atan2(
+        Vec2.cross(halfEdge.direction, nextHalfEdge.direction),
+        Vec2.dot(halfEdge.direction, nextHalfEdge.direction),
+      );
+      const halfAngle = (Math.PI - angle) / 2;
+      const dir = nextHalfEdge.direction.rotate(halfAngle);
+
+      const pi = Scale.modelToCanvas(
+        nextHalfEdge.firstAtom.position,
+        editorSettings,
+      );
+
+      let sin = Math.sin(halfAngle);
+      const minSin = 0.1;
+      if (Math.abs(sin) < minSin) {
+        sin = (sin * minSin) / Math.abs(sin);
+      }
+
+      const bondSpace = 6; // Default bond space
+      const offset = bondSpace / sin;
+      const qi = pi.addScaled(dir, -offset);
+
+      pathStr += k === 0 ? `M ${qi.x} ${qi.y}` : ` L ${qi.x} ${qi.y}`;
+    });
+
+    pathStr += ' Z';
+    return pathStr;
   }
 
   private calculateLoopCenterAndRadius(loop) {

@@ -25,7 +25,7 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
@@ -471,7 +471,7 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
   );
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.CHEM);
@@ -506,7 +506,7 @@ test(`14. Verify that creating a duplicate of a new item is not allowed for newl
   );
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Phosphate);
 
@@ -542,7 +542,7 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
   );
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
 
@@ -578,7 +578,7 @@ test(`16. Verify that creating a duplicate of a new item is not allowed for newl
   );
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.CHEM);
 

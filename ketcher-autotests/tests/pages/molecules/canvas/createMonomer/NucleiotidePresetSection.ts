@@ -2,6 +2,7 @@
 import { Locator, Page } from '@playwright/test';
 import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Constants';
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { selectAtomAndBonds } from '../CreateMonomerDialog';
 
 type AliasesSectionLocators = {
   helmAliasEditbox: Locator;
@@ -157,18 +158,30 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async setupBase(options: {
-      symbol: string;
+      atomIds: number[];
+      bondIds: number[];
+      symbol?: string;
       name?: string;
-      naturalAnalogue: NucleotideNaturalAnalogue;
+      naturalAnalogue?: NucleotideNaturalAnalogue;
       HELMAlias?: string;
     }) {
       await this.openTab(NucleotidePresetTab.Base);
-      await locators.baseTab.symbolEditbox.fill(options.symbol);
+      await selectAtomAndBonds(page, {
+        atomIds: options.atomIds,
+        bondIds: options.bondIds,
+      });
+      await this.markAsBase();
+
+      if (options.symbol) {
+        await locators.baseTab.symbolEditbox.fill(options.symbol);
+      }
       if (options.name) {
         await locators.baseTab.nameEditbox.fill(options.name);
       }
-      await locators.baseTab.naturalAnalogueCombobox.click();
-      await page.getByTestId(options.naturalAnalogue).click();
+      if (options.naturalAnalogue) {
+        await locators.baseTab.naturalAnalogueCombobox.click();
+        await page.getByTestId(options.naturalAnalogue).click();
+      }
       if (options.HELMAlias) {
         await this.openAliasesSection(NucleotidePresetTab.Base);
         await locators.baseTab.aliasesSection.helmAliasEditbox.click();
@@ -177,12 +190,22 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async setupSugar(options: {
-      symbol: string;
+      atomIds: number[];
+      bondIds: number[];
+      symbol?: string;
       name?: string;
       HELMAlias?: string;
     }) {
       await this.openTab(NucleotidePresetTab.Sugar);
-      await locators.sugarTab.symbolEditbox.fill(options.symbol);
+      await selectAtomAndBonds(page, {
+        atomIds: options.atomIds,
+        bondIds: options.bondIds,
+      });
+      await this.markAsSugar();
+
+      if (options.symbol) {
+        await locators.sugarTab.symbolEditbox.fill(options.symbol);
+      }
       if (options.name) {
         await locators.sugarTab.nameEditbox.fill(options.name);
       }
@@ -194,12 +217,22 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async setupPhosphate(options: {
-      symbol: string;
+      atomIds: number[];
+      bondIds: number[];
+      symbol?: string;
       name?: string;
       HELMAlias?: string;
     }) {
       await this.openTab(NucleotidePresetTab.Phosphate);
-      await locators.phosphateTab.symbolEditbox.fill(options.symbol);
+      await selectAtomAndBonds(page, {
+        atomIds: options.atomIds,
+        bondIds: options.bondIds,
+      });
+      await this.markAsPhosphate();
+
+      if (options.symbol) {
+        await locators.phosphateTab.symbolEditbox.fill(options.symbol);
+      }
       if (options.name) {
         await locators.phosphateTab.nameEditbox.fill(options.name);
       }

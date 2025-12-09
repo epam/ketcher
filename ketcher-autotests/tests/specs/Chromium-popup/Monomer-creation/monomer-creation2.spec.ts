@@ -11,7 +11,7 @@ import { takeEditorScreenshot } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   createMonomer,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   AminoAcidNaturalAnalogue,
@@ -96,7 +96,7 @@ for (const monomerToCreate of monomersToCreate35) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -182,7 +182,7 @@ for (const monomerToCreate of monomersToCreate45) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,

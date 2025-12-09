@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@fixtures';
-import { clickOnAtom, doubleClickOnAtom, waitForPageInit } from '@utils';
+import { doubleClickOnAtom, waitForPageInit } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -14,6 +14,7 @@ import {
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
 import { BondTypeOption } from '@tests/pages/constants/bondProperties/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -77,11 +78,11 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when structure has "Any" atom', async ({ page }) => {
-    const anyAtomButton = RightToolbar(page).anyAtomButton;
-
     await AtomPropertiesDialog(page).cancel();
-    await anyAtomButton.click();
-    await clickOnAtom(page, 'C', 0);
+    await RightToolbar(page).anyAtom();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await selectAllStructuresOnCanvas(page);
     expect(await isQueryStructureSelected(page)).toBe(true);
   });

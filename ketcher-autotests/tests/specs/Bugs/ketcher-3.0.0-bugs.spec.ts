@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
@@ -68,6 +67,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -413,14 +413,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Scenario:
      * 1. Draw structure on ketcher canvas
      * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
-     * quickly afterward
+     *    quickly afterward
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'O');
     await moveOnAtom(page, 'C', 1);
     await keyboardPressOnCanvas(page, 'N');

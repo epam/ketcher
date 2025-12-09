@@ -26,6 +26,11 @@ class ClearTool implements BaseTool {
     this.history = new EditorHistory(editor);
     const mode = editor.mode;
 
+    // Only update history if there are entities to delete
+    if (!this.editor.drawingEntitiesManager.hasDrawingEntities) {
+      return;
+    }
+
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
 
     if (mode.modeName === 'sequence-layout-mode') {

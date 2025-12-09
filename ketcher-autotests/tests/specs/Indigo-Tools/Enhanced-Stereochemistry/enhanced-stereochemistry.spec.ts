@@ -37,6 +37,7 @@ import {
 } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.describe('Enhanced Stereochemistry Tool', () => {
@@ -63,7 +64,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewOrGroup();
     await EnhancedStereochemistry(page).cancel();
@@ -83,7 +86,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -104,7 +109,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -125,7 +132,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -146,7 +155,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
   });
@@ -227,7 +238,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
     await EnhancedStereochemistry(page).cancel();
@@ -247,7 +260,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -268,7 +283,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -295,7 +312,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -322,12 +341,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -349,12 +372,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -376,12 +403,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -403,12 +434,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -671,10 +706,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+
     await takeEditorScreenshot(page);
   });
 
@@ -686,7 +726,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

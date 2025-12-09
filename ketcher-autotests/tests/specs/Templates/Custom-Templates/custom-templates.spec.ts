@@ -20,6 +20,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -223,8 +224,6 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-1720
     Description: The template is attached to the structure by the defined attachment bond.
     */
-    const atomToolbar = RightToolbar(page);
-
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).editTemplate(
       TemplateLibraryTab.Aromatics,
@@ -240,10 +239,12 @@ test.describe('Open Ketcher', () => {
     );
     await clickOnCanvas(page, 0, 1, { from: 'pageCenter' });
     const point = { x: -50, y: 0 };
-    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

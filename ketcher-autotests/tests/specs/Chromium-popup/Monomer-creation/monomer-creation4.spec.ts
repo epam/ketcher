@@ -882,7 +882,9 @@ test(`21. Check if a selection is made, the minimum is one atom wizard become di
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
-  await clickOnAtom(page, 'C', 0);
+  await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+    force: true,
+  });
   await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
 });
 

@@ -308,11 +308,15 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'N', 0);
-
-    await clickOnAtom(page, 'O', 0);
-
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 21 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 13 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
     await doubleClickOnAtom(page, 'C', 0);

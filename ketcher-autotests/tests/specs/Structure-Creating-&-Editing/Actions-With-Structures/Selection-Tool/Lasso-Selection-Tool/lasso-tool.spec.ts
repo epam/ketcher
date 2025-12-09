@@ -244,7 +244,9 @@ test.describe('Lasso Selection tool', () => {
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
 
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+    });
     const atomPoint = await getAtomLocator(page, { atomLabel: 'C', atomId: 0 })
       .first()
       .boundingBox();

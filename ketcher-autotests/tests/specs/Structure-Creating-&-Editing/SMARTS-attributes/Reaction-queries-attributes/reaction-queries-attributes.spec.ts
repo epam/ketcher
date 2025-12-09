@@ -149,9 +149,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'F', 0);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'F', atomId: 1 }).click({
+      force: true,
+    });
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     const carbonPoint = await getAtomLocator(page, { atomLabel: 'C' })

@@ -319,7 +319,9 @@ test.describe('Selection tools', () => {
     const pointy1 = 300;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 16 }).click({
+      force: true,
+    });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.Data,
       Context: ContextOption.Fragment,

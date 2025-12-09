@@ -137,7 +137,7 @@ const MonomerCreationWizardFields = (
         className={clsx(styles.attributesFields, selectStyles.selectContainer)}
       >
         <AttributeField
-          title="Symbol"
+          title="Code"
           control={
             <input
               type="text"

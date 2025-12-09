@@ -442,14 +442,14 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
 /**
  * @param restruct { ReStruct }
  * @param selected { object }
- * @param maps { Array<string> }
  * @param scale { number }
+ * @param maps { Array<string> }
  * @return {{
  * 		atoms: Map<number, number>?
  * 		bonds: Map<number, number>?
  * }}
  */
-function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
+function findCloseMerge(restruct, selected, scale, maps = ['atoms', 'bonds']) {
   const pos = {
     atoms: new Map(), // aid -> position
     bonds: new Map(), // bid -> position

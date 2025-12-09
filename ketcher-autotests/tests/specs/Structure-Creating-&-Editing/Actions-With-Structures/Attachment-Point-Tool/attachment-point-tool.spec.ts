@@ -61,9 +61,9 @@ test.beforeEach(async ({ MoleculesCanvas: _ }) => {
 });
 
 test.describe('Attachment Point Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  // test.beforeEach(async ({ page }) => {
+  //   // await waitForPageInit(page);
+  // });
 
   test('Attachment point dialog', async () => {
     /*
@@ -72,7 +72,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await AttachmentPointsDialog(page).closeWindow();
   });
@@ -84,7 +86,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await AttachmentPointsDialog(
       page,
     ).primaryAttachmentPointCheckbox.setChecked(true);
@@ -164,7 +168,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await AttachmentPointsDialog(
       page,
     ).primaryAttachmentPointCheckbox.setChecked(true);
@@ -172,7 +178,9 @@ test.describe('Attachment Point Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await AttachmentPointsDialog(
       page,
     ).secondaryAttachmentPointCheckbox.setChecked(true);
@@ -262,13 +270,19 @@ test.describe('Attachment Point Tool', () => {
 
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
 
     await atomToolbar.clickAtom(Atom.Sulfur);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -277,8 +291,6 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
-    const anyAtomButton = RightToolbar(page).anyAtomButton;
-
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
       PeriodicTableElement.U,
@@ -286,13 +298,19 @@ test.describe('Attachment Point Tool', () => {
       PeriodicTableElement.Pu,
     ]);
 
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
-    await anyAtomButton.click();
-    await clickOnAtom(page, 'C', 2);
+    await RightToolbar(page).anyAtom();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
 
     await selectExtendedTableElement(page, ExtendedTableButton.G);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

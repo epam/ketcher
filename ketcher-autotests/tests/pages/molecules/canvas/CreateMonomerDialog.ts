@@ -21,7 +21,7 @@ import {
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
 import { delay } from '@utils/canvas';
-import { NucleotidePresetSection } from './createMonomer/NucleiotidePresetSection';
+import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 export enum ModificationTypeDropdown {

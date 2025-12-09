@@ -246,7 +246,7 @@ test(`5. Check that after the option "Mark as leaving group" is clicked`, async 
   await page.mouse.move(600, 200);
   await dragMouseTo(500, 260, page);
 
-  const targetAtom = getAtomLocator(page, { atomLabel: 'C' });
+  const targetAtom = getAtomLocator(page, { atomLabel: 'C', atomId: 1 });
   await ContextMenu(page, targetAtom).click(
     ConnectionPointOption.MarkAsLeavingGroup,
   );

@@ -505,32 +505,36 @@ export class SequenceViewModel {
     return chainWithEmptyNode;
   }
 
-  public forEachNode(callback: (params: IForEachNodeParams) => void) {
+  // Use iterators to avoid stack and memory problems with large sequences
+  public *nodesInAllChains(): Generator<IForEachNodeParams> {
     let nodeIndexOverall = 0;
 
-    this.chains.forEach((chain, chainIndex) => {
-      chain.forEachNode((twoStrandedNode, nodeIndex) => {
-        callback({
+    for (let chainIndex = 0; chainIndex < this.chains.length; chainIndex++) {
+      const chain = this.chains[chainIndex];
+
+      for (const { node: twoStrandedNode, nodeIndex } of chain.nodesInChain()) {
+        yield {
           twoStrandedNode,
           nodeIndex,
           nodeIndexOverall,
           chain,
           chainIndex,
-        });
+        };
         nodeIndexOverall++;
-      });
-    });
+      }
+    }
   }
 
-  public getNodeIndex(node: ITwoStrandedChainItem) {
-    let nodeIndex = -1;
-
-    this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+  public getOverallIndex(node: ITwoStrandedChainItem) {
+    for (const {
+      twoStrandedNode,
+      nodeIndexOverall,
+    } of this.nodesInAllChains()) {
       if (twoStrandedNode === node) {
-        nodeIndex = nodeIndexOverall;
+        return nodeIndexOverall;
       }
-    });
+    }
 
-    return nodeIndex;
+    return -1;
   }
 }

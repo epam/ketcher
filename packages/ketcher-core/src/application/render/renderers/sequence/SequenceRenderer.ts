@@ -67,7 +67,7 @@ export class SequenceRenderer {
   private static lastUserDefinedCaretPositionValue = 0;
   private static chainsCollectionValue: ChainsCollection;
   private static lastChainStartPositionValue: Vec2;
-  private static sequenceViewModelValue: SequenceViewModel;
+  private static sequenceViewModelValue?: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
 
   public static get caretPosition(): number {
@@ -102,7 +102,7 @@ export class SequenceRenderer {
     this.lastChainStartPositionValue = value;
   }
 
-  public static get sequenceViewModel(): SequenceViewModel {
+  public static get sequenceViewModel(): SequenceViewModel | undefined {
     return this.sequenceViewModelValue;
   }
 
@@ -110,30 +110,33 @@ export class SequenceRenderer {
     this.sequenceViewModelValue = value;
   }
 
+  private static get nodesInAllChains() {
+    return this.sequenceViewModel?.nodesInAllChains() ?? [];
+  }
+
   public static show(
     chainsCollection: ChainsCollection,
     chainBeforeNewEmptyChainIndex?: number,
   ) {
     this.clear();
-    SequenceRenderer.chainsCollection = chainsCollection;
+    this.chainsCollection = chainsCollection;
     this.sequenceViewModel = new SequenceViewModel(chainsCollection);
     const newEmptyChain = this.addNewEmptyChainIfNeeded(
       chainBeforeNewEmptyChainIndex,
     );
     this.removeNewSequenceButtons();
-    this.showNodes(SequenceRenderer.sequenceViewModel);
-    this.showBonds(SequenceRenderer.chainsCollection);
+    this.showNodes(this.sequenceViewModel);
+    this.showBonds(this.chainsCollection);
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
   }
 
   private static setCaretToLastNodeInChain(chain: SequenceViewModelChain) {
-    const emptyChainNodeIndex = this.sequenceViewModel.getNodeIndex(
-      chain.lastNode,
-    );
+    const emptyChainNodeIndex =
+      this.sequenceViewModel?.getOverallIndex(chain.lastNode) ?? -1;
 
-    SequenceRenderer.setCaretPosition(emptyChainNodeIndex);
+    this.setCaretPosition(emptyChainNodeIndex);
   }
 
   public static removeNewSequenceButtons() {
@@ -144,7 +147,7 @@ export class SequenceRenderer {
   }
 
   private static addNewEmptyChainIfNeeded(chainBeforeNewEmptyChainIndex) {
-    if (this.sequenceViewModel.hasOnlyOneNewChain) {
+    if (this.sequenceViewModel?.hasOnlyOneNewChain) {
       return;
     }
 
@@ -153,7 +156,7 @@ export class SequenceRenderer {
       : undefined;
 
     if (isNumber(emptyChainIndex)) {
-      const emptyChain = this.sequenceViewModel.addEmptyChain(emptyChainIndex);
+      const emptyChain = this.sequenceViewModel?.addEmptyChain(emptyChainIndex);
 
       return emptyChain;
     }
@@ -171,9 +174,14 @@ export class SequenceRenderer {
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
-    sequenceViewModel.chains.forEach((chain, chainIndex) => {
+    for (
+      let chainIndex = 0;
+      chainIndex < sequenceViewModel.chains.length;
+      chainIndex++
+    ) {
+      const chain = sequenceViewModel.chains[chainIndex];
       currentMonomerIndexInChain = 0;
-      chain.forEachRow((row) => {
+      for (const { row } of chain.chainRows()) {
         hasAntisenseInRow = false;
 
         row.sequenceViewModelItems.forEach((chainItem) => {
@@ -196,7 +204,7 @@ export class SequenceRenderer {
               chainItem.antisenseNode === chain.lastNode.senseNode,
               chainItem.antisenseChain ?? chainItem.chain,
               currentMonomerIndexOverall,
-              SequenceRenderer.caretPosition,
+              this.caretPosition,
               chainItem,
               chainItem.antisenseNode?.monomer?.renderer,
               previousRowsWithAntisense,
@@ -233,7 +241,7 @@ export class SequenceRenderer {
             node === chainItem.chain.lastNode,
             chainItem.chain,
             currentMonomerIndexOverall,
-            SequenceRenderer.caretPosition,
+            this.caretPosition,
             chainItem,
             node.monomer.renderer,
             previousRowsWithAntisense,
@@ -260,9 +268,9 @@ export class SequenceRenderer {
         if (hasAntisenseInRow) {
           previousRowsWithAntisense++;
         }
-      });
+      }
 
-      currentChainStartPosition = SequenceRenderer.getNextChainPosition(
+      currentChainStartPosition = this.getNextChainPosition(
         currentChainStartPosition,
         chain.length,
       );
@@ -277,7 +285,7 @@ export class SequenceRenderer {
           ),
         );
       }
-    });
+    }
 
     if (this.caretPosition > currentMonomerIndexOverall) {
       this.setCaretPosition(currentMonomerIndexOverall);
@@ -287,8 +295,8 @@ export class SequenceRenderer {
   }
 
   public static getNextChainPosition(
-    currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
-    previousChainLength: number = SequenceRenderer.lastChainLength,
+    currentChainStartPosition: Vec2 = this.lastChainStartPosition,
+    previousChainLength: number = this.lastChainLength,
   ) {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     return new Vec2(
@@ -442,7 +450,7 @@ export class SequenceRenderer {
 
   public static setCaretPosition(caretPosition: number) {
     const editor = CoreEditor.provideEditorInstance();
-    const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+    const oldActiveTwoStrandedNode = this.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
       const renderer = oldActiveTwoStrandedNode.senseNode?.renderer;
@@ -454,8 +462,8 @@ export class SequenceRenderer {
         renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
       }
     }
-    SequenceRenderer.caretPosition = caretPosition;
-    const newActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+    this.caretPosition = caretPosition;
+    const newActiveTwoStrandedNode = this.currentEdittingNode;
     const renderer = newActiveTwoStrandedNode?.senseNode?.renderer;
 
     if (!newActiveTwoStrandedNode) {
@@ -469,7 +477,9 @@ export class SequenceRenderer {
       renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
     }
 
-    this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
+    for (const {
+      twoStrandedNode,
+    } of this.sequenceViewModel?.nodesInAllChains() ?? []) {
       const senseRenderer = twoStrandedNode.senseNode?.renderer;
       const antisenseRenderer = twoStrandedNode.antisenseNode?.renderer;
 
@@ -480,23 +490,11 @@ export class SequenceRenderer {
       if (antisenseRenderer instanceof BaseSequenceItemRenderer) {
         antisenseRenderer.redrawCounter(caretPosition);
       }
-    });
+    }
   }
 
   public static rerenderCaret() {
     this.setCaretPosition(this.caretPosition);
-  }
-
-  public static forEachNode(
-    forEachCallback: (params: {
-      chainIndex: number;
-      chain: SequenceViewModelChain;
-      nodeIndex: number;
-      nodeIndexOverall: number;
-      twoStrandedNode: ITwoStrandedChainItem;
-    }) => void,
-  ) {
-    this.sequenceViewModel?.forEachNode(forEachCallback);
   }
 
   public static setCaretPositionBySequenceItemRenderer(
@@ -504,14 +502,17 @@ export class SequenceRenderer {
   ) {
     let newCaretPosition = -1;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const {
+      twoStrandedNode,
+      nodeIndexOverall,
+    } of this.sequenceViewModel?.nodesInAllChains() ?? []) {
       if (
         twoStrandedNode.senseNode?.renderer === sequenceItemRenderer ||
         twoStrandedNode.antisenseNode?.renderer === sequenceItemRenderer
       ) {
         newCaretPosition = nodeIndexOverall;
       }
-    });
+    }
 
     this.setCaretPosition(newCaretPosition);
   }
@@ -519,14 +520,14 @@ export class SequenceRenderer {
   public static setCaretPositionByMonomer(monomer: BaseMonomer) {
     let newCaretPosition = -1;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       if (
         twoStrandedNode.senseNode?.monomers.includes(monomer) ||
         twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         newCaretPosition = nodeIndexOverall;
       }
-    });
+    }
 
     this.setCaretPosition(newCaretPosition);
   }
@@ -534,14 +535,14 @@ export class SequenceRenderer {
   public static setCaretPositionNextToMonomer(monomer: BaseMonomer) {
     let newCaretPosition = -1;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       if (
         twoStrandedNode.senseNode?.monomers.includes(monomer) ||
         twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         newCaretPosition = nodeIndexOverall;
       }
-    });
+    }
 
     if (newCaretPosition === -1) {
       return;
@@ -553,11 +554,11 @@ export class SequenceRenderer {
   public static setCaretPositionByNode(nodeToCompare: ITwoStrandedChainItem) {
     let newCaretPosition = -1;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       if (twoStrandedNode === nodeToCompare) {
         newCaretPosition = nodeIndexOverall;
       }
-    });
+    }
 
     this.setCaretPosition(newCaretPosition);
   }
@@ -567,7 +568,7 @@ export class SequenceRenderer {
     endCaretPosition,
   ) {
     const monomers: BaseMonomer[] = [];
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       if (
         startCaretPosition <= nodeIndexOverall &&
         nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
@@ -579,7 +580,7 @@ export class SequenceRenderer {
           monomers.push(twoStrandedNode.antisenseNode?.monomer);
         }
       }
-    });
+    }
     return monomers;
   }
 
@@ -587,14 +588,15 @@ export class SequenceRenderer {
     this.lastUserDefinedCaretPosition = this.caretPosition;
   }
 
+  // TODO cache this value, it's calculated too often
   private static get nodesGroupedByRows() {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     const finalArray: Array<Array<ITwoStrandedChainItem>> = [];
     let chainNodes: Array<ITwoStrandedChainItem> = [];
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       chainNodes.push(twoStrandedNode);
       if (!(twoStrandedNode.senseNode instanceof EmptySequenceNode)) {
-        return;
+        continue;
       }
 
       if (chainNodes.length > lineLength) {
@@ -605,7 +607,7 @@ export class SequenceRenderer {
         finalArray.push([...chainNodes]);
       }
       chainNodes = [];
-    });
+    }
 
     return finalArray;
   }
@@ -689,7 +691,7 @@ export class SequenceRenderer {
       this.previousRowOfNodes.length - lastUserDefinedCursorPositionInRow,
     );
 
-    SequenceRenderer.setCaretPosition(newCaretPosition);
+    this.setCaretPosition(newCaretPosition);
   }
 
   public static moveCaretDown() {
@@ -715,7 +717,7 @@ export class SequenceRenderer {
       this.nextRowOfNodes.length - 1,
     );
 
-    SequenceRenderer.setCaretPosition(newCaretPosition);
+    this.setCaretPosition(newCaretPosition);
   }
 
   public static moveCaretForward() {
@@ -723,7 +725,7 @@ export class SequenceRenderer {
       this.caretPosition,
       this.nextCaretPosition ?? this.caretPosition,
     );
-    SequenceRenderer.resetLastUserDefinedCaretPosition();
+    this.resetLastUserDefinedCaretPosition();
 
     return operation;
   }
@@ -733,7 +735,7 @@ export class SequenceRenderer {
       this.caretPosition,
       this.previousCaretPosition ?? this.caretPosition,
     );
-    SequenceRenderer.resetLastUserDefinedCaretPosition();
+    this.resetLastUserDefinedCaretPosition();
 
     return operation;
   }
@@ -741,25 +743,25 @@ export class SequenceRenderer {
   public static get currentChainIndex() {
     let currentChainIndex = -1;
 
-    SequenceRenderer.forEachNode(({ nodeIndexOverall, chainIndex }) => {
+    for (const { nodeIndexOverall, chainIndex } of this.nodesInAllChains) {
       if (nodeIndexOverall === this.caretPosition) {
         currentChainIndex = chainIndex;
       }
-    });
+    }
 
     return currentChainIndex;
   }
 
   public static get lastNodeCaretPosition(): number | undefined {
-    if (SequenceRenderer.chainsCollection.chains.length === 0) {
+    if (this.chainsCollection.chains.length === 0) {
       return undefined;
     }
 
     let lastNodeIndex = -1;
 
-    SequenceRenderer.forEachNode(() => {
+    for (const _ of this.nodesInAllChains) {
       lastNodeIndex++;
-    });
+    }
 
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
@@ -768,41 +770,33 @@ export class SequenceRenderer {
     if (sequencePointer === undefined) return undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       if (nodeIndexOverall === sequencePointer) {
         nodeToReturn = twoStrandedNode;
       }
-    });
+    }
 
     return nodeToReturn;
   }
 
   public static get currentEdittingNode() {
-    return SequenceRenderer.getNodeByPointer(this.caretPosition);
+    return this.getNodeByPointer(this.caretPosition);
   }
 
   public static get previousFromCurrentEdittingMonomer() {
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.previousCaretPosition,
-    );
+    return this.getNodeByPointer(this.previousCaretPosition);
   }
 
   public static get currentChain() {
-    return SequenceRenderer.chainsCollection.chains[
-      SequenceRenderer.currentChainIndex
-    ];
+    return this.chainsCollection.chains[this.currentChainIndex];
   }
 
   public static get previousChain() {
-    return SequenceRenderer.sequenceViewModel.chains[
-      SequenceRenderer.currentChainIndex - 1
-    ];
+    return this.sequenceViewModel?.chains[this.currentChainIndex - 1];
   }
 
   public static get nextChain() {
-    return SequenceRenderer.chainsCollection.chains[
-      SequenceRenderer.currentChainIndex + 1
-    ];
+    return this.chainsCollection.chains[this.currentChainIndex + 1];
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
@@ -818,26 +812,20 @@ export class SequenceRenderer {
   }
 
   public static get nextNode() {
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.nextCaretPosition,
-    );
+    return this.getNodeByPointer(this.nextCaretPosition);
   }
 
   public static get previousNode() {
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.previousCaretPosition,
-    );
+    return this.getNodeByPointer(this.previousCaretPosition);
   }
 
   public static get nextNodeInSameChain() {
-    if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
+    if (this.nextCaretPosition === this.caretPosition) {
       return undefined;
     }
 
     const currentNode = this.currentEdittingNode;
-    const nextNodeInSameChain = SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.nextCaretPosition,
-    );
+    const nextNodeInSameChain = this.getNodeByPointer(this.nextCaretPosition);
 
     return nextNodeInSameChain?.chain === currentNode?.chain
       ? nextNodeInSameChain
@@ -851,19 +839,17 @@ export class SequenceRenderer {
       return undefined;
     }
 
-    return SequenceRenderer.getPreviousNodeInSameChain(currentEdittingNode);
+    return this.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
   private static get nextCaretPosition(): number | undefined {
-    const nodeOnNextPosition = SequenceRenderer.getNodeByPointer(
-      this.caretPosition + 1,
-    );
+    const nodeOnNextPosition = this.getNodeByPointer(this.caretPosition + 1);
 
     return nodeOnNextPosition ? this.caretPosition + 1 : undefined;
   }
 
   public static get previousCaretPosition() {
-    const nodeOnPreviousPosition = SequenceRenderer.getNodeByPointer(
+    const nodeOnPreviousPosition = this.getNodeByPointer(
       this.caretPosition - 1,
     );
 
@@ -871,27 +857,28 @@ export class SequenceRenderer {
   }
 
   public static get lastChain() {
-    return SequenceRenderer.chainsCollection.chains[
-      SequenceRenderer.chainsCollection.chains.length - 1
+    return this.chainsCollection.chains[
+      this.chainsCollection.chains.length - 1
     ];
   }
 
   public static get lastChainLength() {
-    return SequenceRenderer.lastChain.length;
+    return this.lastChain.length;
   }
 
   public static startNewSequence(indexOfRowBefore?: number) {
     const editor = CoreEditor.provideEditorInstance();
-    const oldNewSequenceChainIndex =
-      SequenceRenderer.sequenceViewModel.chains.findIndex((chain) => {
+    const oldNewSequenceChainIndex = this.chainsCollection.chains.findIndex(
+      (chain) => {
         return chain.isNewSequenceChain;
-      });
+      },
+    );
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
     chainsCollection.rearrange();
 
-    SequenceRenderer.show(
+    this.show(
       chainsCollection,
       oldNewSequenceChainIndex !== -1 &&
         isNumber(indexOfRowBefore) &&
@@ -908,7 +895,7 @@ export class SequenceRenderer {
     let previousNodeChainIndex = -1;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, chainIndex }) => {
+    for (const { twoStrandedNode, chainIndex } of this.nodesInAllChains) {
       if (
         nodeToCompare === twoStrandedNode &&
         chainIndex === previousNodeChainIndex
@@ -917,7 +904,7 @@ export class SequenceRenderer {
       }
       previousNodeChainIndex = chainIndex;
       previousNode = twoStrandedNode;
-    });
+    }
 
     return nodeToReturn;
   }
@@ -929,7 +916,7 @@ export class SequenceRenderer {
     let previousNodeChainIndex = -1;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, chainIndex }) => {
+    for (const { twoStrandedNode, chainIndex } of this.nodesInAllChains) {
       if (
         nodeToCompare === previousNode &&
         chainIndex === previousNodeChainIndex
@@ -938,7 +925,7 @@ export class SequenceRenderer {
       }
       previousNodeChainIndex = chainIndex;
       previousNode = twoStrandedNode;
-    });
+    }
 
     return nodeToReturn;
   }
@@ -947,12 +934,12 @@ export class SequenceRenderer {
     let previousNode: ITwoStrandedChainItem | undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       if (nodeToCompare === twoStrandedNode) {
         nodeToReturn = previousNode;
       }
       previousNode = twoStrandedNode;
-    });
+    }
 
     return nodeToReturn;
   }
@@ -961,12 +948,12 @@ export class SequenceRenderer {
     let previousNode: ITwoStrandedChainItem | undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       if (previousNode === nodeToCompare) {
         nodeToReturn = twoStrandedNode;
       }
       previousNode = twoStrandedNode;
-    });
+    }
 
     return nodeToReturn;
   }
@@ -983,22 +970,18 @@ export class SequenceRenderer {
         return;
       }
 
-      modelChanges = SequenceRenderer.getShiftArrowChanges(
-        editor,
-        currentEdittingNode,
-      );
+      modelChanges = this.getShiftArrowChanges(editor, currentEdittingNode);
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
       const previousNodeInSameChain = this.previousNodeInSameChain;
 
       if (previousNodeInSameChain?.senseNode) {
-        modelChanges = SequenceRenderer.getShiftArrowChanges(
+        modelChanges = this.getShiftArrowChanges(
           editor,
           previousNodeInSameChain,
         );
-      } else if (SequenceRenderer.previousChain.lastNode) {
-        const previousChainLastEmptyNode =
-          SequenceRenderer.previousChain.lastNode;
+      } else if (this.previousChain?.lastNode) {
+        const previousChainLastEmptyNode = this.previousChain.lastNode;
 
         if (previousChainLastEmptyNode.senseNode) {
           const result =
@@ -1018,37 +1001,39 @@ export class SequenceRenderer {
       }
       modelChanges.addOperation(this.moveCaretBack());
     } else if (arrowKey === 'ArrowUp') {
-      const previousCaretPosition = SequenceRenderer.caretPosition;
-      SequenceRenderer.moveCaretUp();
-      const newCaretPosition = SequenceRenderer.caretPosition;
+      const previousCaretPosition = this.caretPosition;
+      this.moveCaretUp();
+      const newCaretPosition = this.caretPosition;
 
-      SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+      for (const { twoStrandedNode, nodeIndexOverall } of this
+        .nodesInAllChains) {
         if (
           nodeIndexOverall < previousCaretPosition &&
           nodeIndexOverall >= newCaretPosition &&
           twoStrandedNode.senseNode
         ) {
           modelChanges.merge(
-            SequenceRenderer.getShiftArrowChanges(editor, twoStrandedNode),
+            this.getShiftArrowChanges(editor, twoStrandedNode),
           );
         }
-      });
+      }
     } else if (arrowKey === 'ArrowDown') {
-      const previousCaretPosition = SequenceRenderer.caretPosition;
-      SequenceRenderer.moveCaretDown();
-      const newCaretPosition = SequenceRenderer.caretPosition;
+      const previousCaretPosition = this.caretPosition;
+      this.moveCaretDown();
+      const newCaretPosition = this.caretPosition;
 
-      SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+      for (const { twoStrandedNode, nodeIndexOverall } of this
+        .nodesInAllChains) {
         if (
           nodeIndexOverall >= previousCaretPosition &&
           nodeIndexOverall < newCaretPosition &&
           twoStrandedNode.senseNode
         ) {
           modelChanges.merge(
-            SequenceRenderer.getShiftArrowChanges(editor, twoStrandedNode),
+            this.getShiftArrowChanges(editor, twoStrandedNode),
           );
         }
-      });
+      }
     }
     editor.renderersContainer.update(modelChanges);
   }
@@ -1100,7 +1085,7 @@ export class SequenceRenderer {
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       if (
         twoStrandedNode.senseNode instanceof EmptySequenceNode ||
         twoStrandedNode.senseNode instanceof BackBoneSequenceNode
@@ -1123,7 +1108,7 @@ export class SequenceRenderer {
         );
         twoStrandedNode.antisenseNode.renderer?.removeSelection();
       }
-    });
+    }
     return command;
   }
 
@@ -1133,7 +1118,7 @@ export class SequenceRenderer {
     let lastSelectionRangeIndex = -1;
     let previousNode;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
+    for (const { twoStrandedNode, nodeIndexOverall } of this.nodesInAllChains) {
       const nodeToCheck = twoStrandedNode.senseNode?.monomer.selected
         ? twoStrandedNode.senseNode
         : twoStrandedNode.antisenseNode;
@@ -1173,7 +1158,7 @@ export class SequenceRenderer {
         });
       }
       previousNode = nodeToCheck;
-    });
+    }
 
     return selections;
   }
@@ -1183,7 +1168,7 @@ export class SequenceRenderer {
     let right;
     let top;
     let bottom;
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       assert(
         twoStrandedNode.senseNode?.monomer.renderer instanceof
           BaseSequenceItemRenderer,
@@ -1195,7 +1180,7 @@ export class SequenceRenderer {
       right = right ? Math.max(right, nodePosition.x) : nodePosition.x;
       top = top ? Math.min(top, nodePosition.y) : nodePosition.y;
       bottom = bottom ? Math.max(bottom, nodePosition.y) : nodePosition.y;
-    });
+    }
     return {
       left,
       right,
@@ -1209,7 +1194,7 @@ export class SequenceRenderer {
   public static getRendererByMonomer(monomer: BaseMonomer) {
     let rendererToReturn;
 
-    SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
+    for (const { twoStrandedNode } of this.nodesInAllChains) {
       if (
         twoStrandedNode.senseNode?.monomers.includes(monomer) ||
         twoStrandedNode.antisenseNode?.monomers.includes(monomer)
@@ -1218,7 +1203,7 @@ export class SequenceRenderer {
           twoStrandedNode.senseNode?.renderer ??
           twoStrandedNode.antisenseNode?.renderer;
       }
-    });
+    }
 
     return rendererToReturn;
   }
@@ -1231,21 +1216,21 @@ export class SequenceRenderer {
   }
 
   public static isEmptyCanvas() {
-    return SequenceRenderer.sequenceViewModel.hasOnlyOneNewChain;
+    return this.sequenceViewModel?.hasOnlyOneNewChain;
   }
 
   public static get isCaretAtChainEnd() {
-    return (
-      SequenceRenderer.currentEdittingNode?.senseNode instanceof
-      EmptySequenceNode
-    );
+    return this.currentEdittingNode?.senseNode instanceof EmptySequenceNode;
   }
 
   public static clear() {
-    this.sequenceViewModel?.forEachNode(({ twoStrandedNode }) => {
+    if (!this.sequenceViewModel) return;
+    for (const {
+      twoStrandedNode,
+    } of this.sequenceViewModel.nodesInAllChains()) {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
-    });
+    }
     this.removeNewSequenceButtons();
   }
 }

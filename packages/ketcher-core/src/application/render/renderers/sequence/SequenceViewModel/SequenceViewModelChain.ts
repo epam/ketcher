@@ -57,24 +57,26 @@ export class SequenceViewModelChain {
     this.rows.push(row);
   }
 
-  public forEachNode(
-    callback: (node: ITwoStrandedChainItem, nodeIndex: number) => void,
-  ) {
+  public *nodesInChain(): Generator<{
+    node: ITwoStrandedChainItem;
+    nodeIndex: number;
+  }> {
     let nodeIndexInChain = 0;
 
-    this.rows.forEach((row) => {
-      row.sequenceViewModelItems.forEach((node) => {
-        callback(node, nodeIndexInChain);
+    for (const row of this.rows) {
+      for (const node of row.sequenceViewModelItems) {
+        yield { node, nodeIndex: nodeIndexInChain };
         nodeIndexInChain++;
-      });
-    });
+      }
+    }
   }
 
-  public forEachRow(
-    callback: (row: ISequenceViewModelRow, rowIndex: number) => void,
-  ) {
-    this.rows.forEach((row, rowIndex) => {
-      callback(row, rowIndex);
-    });
+  public *chainRows(): Generator<{
+    row: ISequenceViewModelRow;
+    rowIndex: number;
+  }> {
+    for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
+      yield { row: this.rows[rowIndex], rowIndex };
+    }
   }
 }

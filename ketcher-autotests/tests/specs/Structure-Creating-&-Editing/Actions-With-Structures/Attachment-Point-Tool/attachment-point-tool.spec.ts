@@ -691,9 +691,13 @@ test.describe('Attachment Point Tool', () => {
     );
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'L#', 0);
+    await getAtomLocator(page, { atomLabel: 'L#' }).first().click({
+      force: true,
+    });
 
     await takeEditorScreenshot(page);
 

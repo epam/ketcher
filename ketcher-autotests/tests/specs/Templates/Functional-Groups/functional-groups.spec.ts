@@ -719,7 +719,7 @@ test.describe('Functional Groups', () => {
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).hover({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
       force: true,
     });
     await page.keyboard.press('Shift+t');

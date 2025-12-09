@@ -1,12 +1,12 @@
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickOnAtom,
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Generic node', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +38,9 @@ test.describe('Generic node', () => {
     const key = getEnumKeyByValue(ExtendedTableButton, extendedAtom);
     test(`adding atoms_${key}`, async ({ page }) => {
       await selectExtendedTableElement(page, extendedAtom);
-      await clickOnAtom(page, 'S', 0);
+      await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+        force: true,
+      });
       await takeEditorScreenshot(page);
     });
   }

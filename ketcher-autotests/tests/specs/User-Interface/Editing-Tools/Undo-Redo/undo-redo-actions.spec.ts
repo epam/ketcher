@@ -299,7 +299,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

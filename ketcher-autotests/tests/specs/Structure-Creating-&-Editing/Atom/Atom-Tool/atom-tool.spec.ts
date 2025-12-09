@@ -462,7 +462,6 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-10071
     Description: Only one atom should be removed and the other should remain
     */
-    const numberOfAtom = 0;
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
@@ -473,10 +472,14 @@ test.describe('Atom Tool', () => {
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'Br', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await clickOnAtom(page, 'N', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -485,10 +488,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-10072
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
-    const numberOfAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'N', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

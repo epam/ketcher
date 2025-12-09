@@ -81,7 +81,9 @@ test.describe('Fragment selection tool', () => {
     //  Test case: EPMLSOPKET-1359
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'Br', 0);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });

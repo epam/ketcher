@@ -103,11 +103,11 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     Choose any element from the left panel or Periodic Table and click on any atom of the created structure.
     */
-    const anyAtom = 0;
-
     await drawBenzeneRing(page);
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -132,10 +132,11 @@ test.describe('Template Manupulations', () => {
     Description: Put the cursor on any other structure atom, press, and drag. 
     Release the cursor when the distance from the cursor to the selected atom is more than the bond length. 
     */
-    const anyAtom = 0;
     await drawBenzeneRing(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -238,7 +239,9 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(x, y, page);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
 
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -317,13 +320,14 @@ test.describe('Template Manupulations', () => {
     Click Undo multiple times.
     Click Redo multiple times.
     */
-    const anyAtom = 0;
-    const anyAnotherAtom = 4;
-
     await drawBenzeneRing(page);
     await RightToolbar(page).clickAtom(Atom.Fluorine);
-    await clickOnAtom(page, 'C', anyAtom);
-    await clickOnAtom(page, 'C', anyAnotherAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C' }).nth(3).click({
+      force: true,
+    });
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
       await CommonTopLeftToolbar(page).undo();

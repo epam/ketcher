@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   moveOnAtom,
-  clickOnAtom,
   waitForRender,
   clickOnCanvas,
   MolFileFormat,
@@ -536,11 +535,17 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'I', 0);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
     await doubleClickOnAtom(page, 'S', 0);
@@ -662,11 +667,17 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
     await doubleClickOnAtom(page, 'O', 0);
@@ -699,9 +710,14 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
+
     await page.keyboard.up('Shift');
 
     await longClickOnAtom(page, 'S', 0);
@@ -768,11 +784,17 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
     await doubleClickOnAtom(page, 'O', 0);
@@ -885,11 +907,17 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
     await doubleClickOnAtom(page, 'O', 0);
@@ -1362,11 +1390,17 @@ test.describe('Atom Properties', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

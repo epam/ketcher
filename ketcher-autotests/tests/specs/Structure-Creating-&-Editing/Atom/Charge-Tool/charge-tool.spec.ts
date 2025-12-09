@@ -53,15 +53,21 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1665
     Description: Charge Minus and Charge Plus is applied to the structure atom.
     */
-    const anyAtom = 0;
-    const anotherAnyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await LeftToolbar(page).chargePlus();
-    await clickOnAtom(page, 'N', anyAtom);
-    await clickOnAtom(page, 'O', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await LeftToolbar(page).chargeMinus();
-    await clickOnAtom(page, 'S', anyAtom);
-    await clickOnAtom(page, 'O', anotherAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 20 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

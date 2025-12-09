@@ -11,9 +11,9 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Special nodes', () => {
   test.beforeEach(async ({ page }) => {
@@ -70,8 +70,12 @@ test.describe('Special nodes', () => {
       );
       await selectExtendedTableElement(page, atom);
       await page.keyboard.down('Shift');
-      await clickOnAtom(page, 'S', 0);
-      await clickOnAtom(page, 'F', 0);
+      await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+        force: true,
+      });
+      await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+        force: true,
+      });
       await page.keyboard.up('Shift');
       await takeEditorScreenshot(page);
     });

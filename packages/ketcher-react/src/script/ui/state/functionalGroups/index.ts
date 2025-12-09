@@ -39,10 +39,8 @@ const initialState: FGState = {
   mode: MODES.FG,
 };
 
-const functionalGroupsReducer = (
-  state = initialState,
-  { type, payload }: AnyAction,
-) => {
+const functionalGroupsReducer = (state = initialState, action: AnyAction) => {
+  const { type, payload } = action;
   switch (type) {
     case 'FG_INIT':
       return { ...state, ...payload };

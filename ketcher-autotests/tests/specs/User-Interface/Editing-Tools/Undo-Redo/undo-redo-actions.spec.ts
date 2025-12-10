@@ -61,9 +61,6 @@ import {
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
 
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
-
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -649,7 +646,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await CommonTopLeftToolbar(page).undo();
@@ -668,17 +665,17 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { secondary: true },
     );
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 4 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true, secondary: true },
     );
 
@@ -701,11 +698,11 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -724,11 +721,11 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -747,7 +744,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     for (let i = 0; i < 2; i++) {
@@ -768,7 +765,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await ZoomOutByKeyboard(page, { repeat: 5 });

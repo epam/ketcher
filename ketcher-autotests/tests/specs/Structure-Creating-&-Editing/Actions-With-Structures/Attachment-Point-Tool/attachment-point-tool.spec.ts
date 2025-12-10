@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
@@ -45,9 +46,6 @@ import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/Extend
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
-
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -55,9 +53,7 @@ test.beforeAll(async ({ initMoleculesCanvas }) => {
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-  // this empty function is needed
-});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
 test.describe('Attachment Point Tool', () => {
   // test.beforeEach(async ({ page }) => {
@@ -106,19 +102,17 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
-
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { secondary: true },
     );
-
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 4 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true, secondary: true },
     );
     await takeEditorScreenshot(page);
@@ -133,19 +127,17 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
-
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { secondary: true },
     );
-
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 4 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true, secondary: true },
     );
 
@@ -214,21 +206,21 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true },
     );
     await takeEditorScreenshot(page);
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: false, secondary: true },
     );
     await takeEditorScreenshot(page);
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: false },
     );
     await takeEditorScreenshot(page);
@@ -242,19 +234,19 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: false },
     );
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { secondary: false },
     );
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 5 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 13 }),
       { primary: false, secondary: false },
     );
     await takeEditorScreenshot(page);
@@ -322,19 +314,19 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 20 }),
       { primary: true },
     );
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 18 }),
       { secondary: true },
     );
 
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 5 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 22 }),
       { primary: true, secondary: true },
     );
     await takeEditorScreenshot(page);
@@ -348,7 +340,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -367,7 +359,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
 
@@ -769,13 +761,13 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true },
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: false, secondary: true },
     );
     await takeEditorScreenshot(page);
@@ -790,13 +782,13 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { secondary: true },
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: false },
     );
     await takeEditorScreenshot(page);
@@ -811,13 +803,13 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: false, secondary: false },
     );
     await takeEditorScreenshot(page);

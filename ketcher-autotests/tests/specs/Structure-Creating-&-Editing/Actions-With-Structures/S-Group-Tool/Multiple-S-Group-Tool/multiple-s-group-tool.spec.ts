@@ -94,7 +94,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true },
     );
     await selectAllStructuresOnCanvas(page);
@@ -334,7 +334,7 @@ test.describe('Multiple S-Group tool', () => {
     });
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await takeEditorScreenshot(page);

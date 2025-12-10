@@ -2024,7 +2024,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
     await takeEditorScreenshot(page);

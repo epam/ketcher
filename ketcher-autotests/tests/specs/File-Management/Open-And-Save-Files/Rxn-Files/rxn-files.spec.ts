@@ -96,7 +96,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await SaveStructureDialog(page).cancel();
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true },
     );
     await CommonTopLeftToolbar(page).saveFile();

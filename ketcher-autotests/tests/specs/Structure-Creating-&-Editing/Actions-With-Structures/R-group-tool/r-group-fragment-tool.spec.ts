@@ -119,11 +119,18 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    // const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    // await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R5);
 
-    await setAttachmentPoints(page, { x, y }, { primary: true });
+    await setAttachmentPoints(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+      { primary: true },
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -143,7 +150,7 @@ test.describe('Open Ketcher', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
       { primary: true },
     );
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -215,15 +222,16 @@ test.describe('Open Ketcher', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await setAttachmentPoints(
       page,
-      { x, y },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
       { primary: true, secondary: true },
     );
-    await page.keyboard.press('Control+r');
-    await page.keyboard.press('Control+r');
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await page.keyboard.press('ControlOrMeta+r');
+    await page.keyboard.press('ControlOrMeta+r');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await page.getByText('R8').click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R5);
     await takeEditorScreenshot(page);

@@ -829,18 +829,18 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    if (this.needToEditAntisense && currentTwoStrandedNode?.antisenseNode) {
+    if (this.needToEditAntisense && previousTwoStrandedNodeInSameChain?.antisenseNode) {
       this.deleteBondToNextNodeInChain(
-        currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
-          ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
-          : currentTwoStrandedNode.antisenseNode,
+        previousTwoStrandedNodeInSameChain.antisenseNode instanceof BackBoneSequenceNode
+          ? previousTwoStrandedNodeInSameChain.antisenseNode.firstConnectedNode
+          : previousTwoStrandedNodeInSameChain.antisenseNode,
         modelChanges,
       );
 
-      if (currentTwoStrandedNode?.antisenseNode instanceof Nucleotide) {
+      if (previousTwoStrandedNodeInSameChain?.antisenseNode instanceof Nucleotide) {
         modelChanges.merge(
           editor.drawingEntitiesManager.deleteMonomer(
-            currentTwoStrandedNode.antisenseNode.lastMonomerInNode,
+            previousTwoStrandedNodeInSameChain.antisenseNode.lastMonomerInNode,
           ),
         );
       }

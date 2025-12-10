@@ -290,7 +290,7 @@ const rnaPresetWizardReducer = (
   };
 };
 
-const validateInputs = (values: WizardValues) => {
+const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
@@ -323,7 +323,10 @@ const validateInputs = (values: WizardValues) => {
         return;
       }
 
-      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
+      if (
+        !skipUniquenessChecks &&
+        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+      ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('symbolExists', {
           type: 'error',
@@ -345,7 +348,10 @@ const validateInputs = (values: WizardValues) => {
         return;
       }
 
-      if (editor.checkIfMonomerSymbolClassPairExists(value, values.type)) {
+      if (
+        !skipUniquenessChecks &&
+        editor.checkIfMonomerSymbolClassPairExists(value, values.type)
+      ) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('notUniqueHELMAlias', {
           type: 'error',
@@ -937,8 +943,9 @@ const MonomerCreationWizard = () => {
 
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
+      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
       const { errors: inputsErrors, notifications: inputsNotifications } =
-        validateInputs(valuesToSave);
+        validateInputs(valuesToSave, true);
       if (Object.keys(inputsErrors).length > 0) {
         needSaveMonomers = false;
         rnaPresetWizardStateDispatch({
@@ -1169,6 +1176,8 @@ const MonomerCreationWizard = () => {
           aliasHELM: monomerToSave.values.aliasHELM,
           structure,
           attachmentPoints: monomerAssignedAttachmentPoints,
+          // Mark monomers as hidden when they are part of a preset
+          hidden: isRnaPresetType,
         });
 
         monomersData.push({

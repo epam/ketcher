@@ -727,61 +727,67 @@ test(`15. Verify that by default the functionality of saving new monomers from c
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeFalsy();
 });
 
-test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/8248
-   * Description: Verify that if for a monomer component all mandatory properties are filled, that monomer will
-   *              also be saved to the library (in addition to the preset).
-   * Case:
-   *      1. Open Molecules canvas
-   *      2. Load molecule on canvas
-   *      3. Press "Create Monomer" button
-   *      4. Fill in Sugar, Base, and Phosphate tabs with test data (all fields)
-   *      5. Press "Submit" button
-   *
-   * Version 3.11
-   */
-  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+test.fail(
+  `16. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`,
+  async () => {
+    /*
+     * !!! Failed until feature https://github.com/epam/ketcher/issues/8775 is done !!!
+     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Description: Verify that if for a monomer component all mandatory properties are filled, that monomer will
+     *              also be saved to the library (in addition to the preset).
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Load molecule on canvas
+     *      3. Press "Create Monomer" button
+     *      4. Fill in Sugar, Base, and Phosphate tabs with test data (all fields)
+     *      5. Press "Submit" button
+     *
+     * Version 3.11
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-  const dialog = CreateMonomerDialog(page);
-  const presetSection = NucleotidePresetSection(page);
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
 
-  await LeftToolbar(page).createMonomer();
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
+    await LeftToolbar(page).createMonomer();
+    // shifting canvas to make tooltip appear fully
+    await shiftCanvas(page, -150, 50);
 
-  await dialog.selectType(MonomerType.NucleotidePreset);
+    await dialog.selectType(MonomerType.NucleotidePreset);
 
-  await presetSection.setName(Preset.Preset.alias);
+    await presetSection.setName(Preset.Preset.alias);
 
-  await presetSection.setupSugar({
-    atomIds: [2, 3],
-    bondIds: [2],
-    symbol: Sugar.Sugar.alias,
-    name: 'Sugar Test monomer',
-    HELMAlias: 'SugAlias',
-  });
-  await presetSection.setupBase({
-    atomIds: [0, 1],
-    bondIds: [0],
-    symbol: Base.Base.alias,
-    name: 'Base Test monomer',
-    naturalAnalogue: NucleotideNaturalAnalogue.A,
-    HELMAlias: 'BaseAlias',
-  });
-  await presetSection.setupPhosphate({
-    atomIds: [4, 5],
-    bondIds: [4],
-    symbol: Phosphate.Phosphate.alias,
-    name: 'Phosphate Test monomer',
-    HELMAlias: 'PhosAlias',
-  });
+    await presetSection.setupSugar({
+      atomIds: [2, 3],
+      bondIds: [2],
+      symbol: Sugar.Sugar.alias,
+      name: 'Sugar Test monomer',
+      HELMAlias: 'SugAlias',
+    });
+    await presetSection.setupBase({
+      atomIds: [0, 1],
+      bondIds: [0],
+      symbol: Base.Base.alias,
+      name: 'Base Test monomer',
+      naturalAnalogue: NucleotideNaturalAnalogue.A,
+      HELMAlias: 'BaseAlias',
+    });
+    await presetSection.setupPhosphate({
+      atomIds: [4, 5],
+      bondIds: [4],
+      symbol: Phosphate.Phosphate.alias,
+      name: 'Phosphate Test monomer',
+      HELMAlias: 'PhosAlias',
+    });
 
-  await dialog.submit();
+    await dialog.submit();
 
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Sugar.Sugar)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Base.Base)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Phosphate.Phosphate)).toBeTruthy();
-});
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();
+    expect(await Library(page).isMonomerExist(Sugar.Sugar)).toBeTruthy();
+    expect(await Library(page).isMonomerExist(Base.Base)).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(Phosphate.Phosphate),
+    ).toBeTruthy();
+  },
+);

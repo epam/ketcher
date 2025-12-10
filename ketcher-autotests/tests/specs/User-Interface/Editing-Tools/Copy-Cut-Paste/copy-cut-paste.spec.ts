@@ -29,6 +29,7 @@ import { INPUT_DELAY } from '@utils/globals';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -247,9 +248,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
     */
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await MoleculesTopToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
@@ -324,10 +326,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 300;
     const y = 300;
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
     });
     await copyToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
@@ -1122,8 +1125,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All expanded and contracted Salts and Solvents are correctly rendered.
     User is not able to edit the pasted Functional Groups.
     */
-    const anyAtom = 0;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/expanded-and-contracted-salts.mol',
@@ -1135,7 +1136,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'S', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

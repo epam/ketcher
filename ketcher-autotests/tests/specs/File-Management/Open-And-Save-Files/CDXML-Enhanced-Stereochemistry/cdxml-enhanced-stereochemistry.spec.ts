@@ -4,9 +4,9 @@ import { applyEnhancedStereochemistry } from '@tests/pages/molecules/canvas/Enha
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
@@ -49,9 +49,10 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is opened correctly
     'Mixed AND' label added to structure.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -64,9 +65,10 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     Description: The structure is opened correctly
     'Mixed OR' label added to structure.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/stereo-test.mol');
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });

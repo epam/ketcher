@@ -2,7 +2,6 @@
 import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,

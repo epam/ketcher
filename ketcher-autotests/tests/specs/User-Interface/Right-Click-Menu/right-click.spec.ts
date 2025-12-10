@@ -126,12 +126,10 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await atomToolbar.clickAtom(Atom.Oxygen);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
-      const point = await getBondLocator(page, { bondId: 6 });
+      const point = getBondLocator(page, { bondId: 6 });
       await ContextMenu(page, point).click(MicroBondOption.Double);
     });
 

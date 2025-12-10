@@ -50,7 +50,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -578,9 +577,13 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
     );
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).first().click({
+      force: true,
+    });
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await clickOnAtom(page, 'O', 1);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 5 }).first().click({
+      force: true,
+    });
     await EditAbbreviationDialog(page).removeAbbreviation();
     await takeEditorScreenshot(page);
   });

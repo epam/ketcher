@@ -572,10 +572,11 @@ test.describe('Atom Tool', () => {
       await selectElementFromPeriodicTable(page, elementName);
     }
 
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await RightToolbar(page).clickAtom(Atom.Aurum);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -635,13 +636,14 @@ test.describe('Atom Tool', () => {
   ];
 
   for (const atomName of atomsNames) {
-    const anyAtom = 0;
     test(`Add ${atomName} from right toolbar to Benzene ring`, async () => {
       const atomToolbar = RightToolbar(page);
 
       await drawBenzeneRing(page);
       await atomToolbar.clickAtom(atomName);
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
       await CommonLeftToolbar(page).areaSelectionTool();
       await takeEditorScreenshot(page);
     });

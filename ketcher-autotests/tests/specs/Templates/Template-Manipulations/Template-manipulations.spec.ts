@@ -347,11 +347,11 @@ test.describe('Template Manupulations', () => {
     Select the structure and flip it horizontally with the 'Horizontal Flip' tool.
     Select the structure and flip it vertically with the 'Vertical Flip' tool.
     */
-    const anyAtom = 0;
-
     await drawBenzeneRing(page);
     await RightToolbar(page).clickAtom(Atom.Fluorine);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await verticalFlip(page);
     await takeEditorScreenshot(page);

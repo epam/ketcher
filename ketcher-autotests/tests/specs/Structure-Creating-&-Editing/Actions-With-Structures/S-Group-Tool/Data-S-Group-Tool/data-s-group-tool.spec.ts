@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  clickOnAtom,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,

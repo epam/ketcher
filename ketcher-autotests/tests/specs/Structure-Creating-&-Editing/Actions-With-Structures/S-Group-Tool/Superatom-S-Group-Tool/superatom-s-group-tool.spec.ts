@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,

@@ -6,7 +6,6 @@ import {
   takeLeftToolbarScreenshot,
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   waitForPageInit,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';

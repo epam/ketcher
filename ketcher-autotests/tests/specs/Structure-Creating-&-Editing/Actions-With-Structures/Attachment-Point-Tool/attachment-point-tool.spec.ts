@@ -4,7 +4,6 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForPageInit,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,

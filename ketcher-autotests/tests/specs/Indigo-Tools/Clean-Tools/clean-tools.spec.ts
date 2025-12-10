@@ -5,7 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   dragMouseTo,
-  clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
   MolFileFormat,
@@ -19,6 +18,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.describe('Indigo Tools - Clean Tools', () => {
@@ -337,7 +337,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     const x = 300;
     const y = 300;
-    const anyAtom = 0;
+
     const atomToolbar = RightToolbar(page);
     const bondLocator = getBondLocator(page, { bondId: 0 });
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
@@ -346,7 +346,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await dragMouseTo(x, y, page);
     await IndigoFunctionsToolbar(page).cleanUp();
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 

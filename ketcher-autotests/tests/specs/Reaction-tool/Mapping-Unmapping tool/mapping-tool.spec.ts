@@ -8,7 +8,6 @@ import {
   dragMouseTo,
   waitForPageInit,
   mapTwoAtoms,
-  clickOnAtom,
   clickOnCanvas,
   RxnFileFormat,
   deleteByKeyboard,
@@ -57,11 +56,12 @@ test.describe('Mapping Tools', () => {
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
-      const anyAtom = 0;
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionUnmapping,
       );
-      await clickOnAtom(page, 'Br', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
     });
 
     test('Map ordering', async ({ page }) => {

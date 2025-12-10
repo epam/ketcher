@@ -24,7 +24,7 @@ describe('getSelectionFromStruct', () => {
     const atomId1 = struct.atoms.add(atom1);
 
     const atom2 = new Atom({ label: 'C', pp: { x: 1, y: 0, z: 0 } });
-    const atomId2 = struct.atoms.add(atom2);
+    struct.atoms.add(atom2);
 
     const selection = getSelectionFromStruct(struct);
 

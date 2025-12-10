@@ -808,7 +808,6 @@ export class SequenceMode extends BaseMode {
     const editorHistory = new EditorHistory(editor);
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
-    const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (this.needToEditSense && previousTwoStrandedNodeInSameChain?.senseNode) {
       this.deleteBondToNextNodeInChain(
@@ -829,15 +828,21 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    if (this.needToEditAntisense && previousTwoStrandedNodeInSameChain?.antisenseNode) {
+    if (
+      this.needToEditAntisense &&
+      previousTwoStrandedNodeInSameChain?.antisenseNode
+    ) {
       this.deleteBondToNextNodeInChain(
-        previousTwoStrandedNodeInSameChain.antisenseNode instanceof BackBoneSequenceNode
+        previousTwoStrandedNodeInSameChain.antisenseNode instanceof
+          BackBoneSequenceNode
           ? previousTwoStrandedNodeInSameChain.antisenseNode.firstConnectedNode
           : previousTwoStrandedNodeInSameChain.antisenseNode,
         modelChanges,
       );
 
-      if (previousTwoStrandedNodeInSameChain?.antisenseNode instanceof Nucleotide) {
+      if (
+        previousTwoStrandedNodeInSameChain?.antisenseNode instanceof Nucleotide
+      ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.deleteMonomer(
             previousTwoStrandedNodeInSameChain.antisenseNode.lastMonomerInNode,

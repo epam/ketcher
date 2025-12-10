@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  clickOnAtom,
   moveOnAtom,
   openFileAndAddToCanvas,
   takePageScreenshot,
@@ -431,7 +430,9 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
     });
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -447,7 +448,9 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -465,8 +468,9 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
-    const anyAtom = 4;
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });

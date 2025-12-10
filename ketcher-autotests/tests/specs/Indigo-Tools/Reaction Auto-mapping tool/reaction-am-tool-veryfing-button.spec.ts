@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   clickOnCanvas,
   waitForPageInit,
-  clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { mapTwoAtoms } from '@utils/canvas/autoMapTools';
@@ -97,8 +96,6 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
-        const atomNumber1 = 1;
-        const atomNumber2 = 2;
         await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
         const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
         await LeftToolbar(page).selectReactionMappingTool(
@@ -111,8 +108,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await LeftToolbar(page).selectReactionMappingTool(
           ReactionMappingType.ReactionMapping,
         );
-        await clickOnAtom(page, 'C', atomNumber1);
-        await clickOnAtom(page, 'C', atomNumber2);
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).click({
+          force: true,
+        });
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+          force: true,
+        });
         await takeEditorScreenshot(page);
         await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,

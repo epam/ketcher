@@ -3,7 +3,6 @@ import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   doubleClickOnAtom,
   moveOnAtom,
   dragMouseTo,
@@ -855,7 +854,9 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);

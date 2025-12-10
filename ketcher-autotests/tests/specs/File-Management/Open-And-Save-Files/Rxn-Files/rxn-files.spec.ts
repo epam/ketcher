@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   getCoordinatesTopAtomOfBenzeneRing,
-  clickOnAtom,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -39,6 +38,7 @@ import {
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
@@ -83,7 +83,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await drawBenzeneRing(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R7);
 
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);

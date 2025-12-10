@@ -7,11 +7,11 @@ import {
   openFileAndAddToCanvas,
   moveOnAtom,
   dragMouseTo,
-  clickOnAtom,
   waitForPageInit,
   selectPartOfMolecules,
   selectPartOfChain,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -88,15 +88,16 @@ test.describe('Indigo Tools - Layout', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await IndigoFunctionsToolbar(page).layout();
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

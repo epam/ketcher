@@ -6,7 +6,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForRender,
   waitForPageInit,
   clickOnCanvas,
@@ -312,18 +311,17 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to create the reaction with components which contain the R-group labels.
       User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R8').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -335,16 +333,15 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to create the reaction with components which contain the R-group labels.
       User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R8').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 

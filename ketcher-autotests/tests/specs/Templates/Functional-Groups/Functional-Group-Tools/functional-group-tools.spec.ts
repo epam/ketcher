@@ -15,6 +15,7 @@ import {
   getCachedBodyCenter,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
+  clickOnAtom,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -107,7 +108,7 @@ test.describe('Templates - Functional Group Tools', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
       force: true,
     });
     await CommonLeftToolbar(page).areaSelectionTool();

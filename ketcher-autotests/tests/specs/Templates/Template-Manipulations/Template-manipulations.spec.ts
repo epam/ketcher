@@ -238,7 +238,7 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(x, y, page);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
-    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).first().click({
       force: true,
     });
 

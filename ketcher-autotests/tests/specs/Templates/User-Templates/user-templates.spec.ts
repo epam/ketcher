@@ -268,7 +268,7 @@ test.describe('Create and Save Templates', () => {
       TemplateLibraryTab.UserTemplate,
     );
     await page.getByText('My Template').click();
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
     await takeEditorScreenshot(page);

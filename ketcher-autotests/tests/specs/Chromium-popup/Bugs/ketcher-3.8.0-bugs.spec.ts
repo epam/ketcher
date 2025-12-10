@@ -577,11 +577,11 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
     );
     await CommonLeftToolbar(page).erase();
-    await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).first().click({
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).click({
       force: true,
     });
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await getAtomLocator(page, { atomLabel: 'O', atomId: 5 }).first().click({
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 52 }).click({
       force: true,
     });
     await EditAbbreviationDialog(page).removeAbbreviation();

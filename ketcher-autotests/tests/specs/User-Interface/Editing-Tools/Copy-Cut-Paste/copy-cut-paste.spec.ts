@@ -318,17 +318,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1717
     Description: Atom from reaction is copy and pasted.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
-      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 23 }).click({
         force: true,
       });
     });
     await copyToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

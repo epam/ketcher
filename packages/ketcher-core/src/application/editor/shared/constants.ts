@@ -39,6 +39,19 @@ export const selectionKeys = [
   MULTITAIL_ARROW_KEY,
 ] as const;
 
+export const selectableEntities = [
+  'atoms',
+  'bonds',
+  'enhancedFlags',
+  'rxnPluses',
+  'rxnArrows',
+  'texts',
+  'rgroupAttachmentPoints',
+  'simpleObjects',
+  IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
+] as const;
+
 export const defaultBondThickness = 2;
 
 export enum MonomerGroups {

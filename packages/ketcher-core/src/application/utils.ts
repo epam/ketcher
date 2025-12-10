@@ -11,8 +11,7 @@ import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
-import { IMAGE_KEY } from 'domain/constants/image';
-import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
+import { selectableEntities } from './editor/shared/constants';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();
@@ -52,20 +51,6 @@ export { ketcherProvider };
 
 export function getSelectionFromStruct(struct: Struct): EditorSelection {
   const selection: EditorSelection = {};
-  // List of entity types that support selection via initiallySelected flag
-  // This mirrors the list used in ketcher-react's load function
-  const selectableEntities = [
-    'atoms',
-    'bonds',
-    'enhancedFlags',
-    'rxnPluses',
-    'rxnArrows',
-    'texts',
-    'rgroupAttachmentPoints',
-    'simpleObjects',
-    IMAGE_KEY,
-    MULTITAIL_ARROW_KEY,
-  ] as const;
 
   selectableEntities.forEach((entityType) => {
     if (struct?.[entityType]) {

@@ -3,7 +3,6 @@ import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -604,8 +603,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Copied objects are pasted correctly.
     The structure is cut (and then is pasted) with the Chiral flag.
     */
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chiral-structure.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
@@ -614,8 +611,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 166 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 83 }).click({
       force: true,
     });
     await takeEditorScreenshot(page);
@@ -644,8 +640,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     The structure is cut (and then is pasted) with reaction arrow and plus sign
     */
     // Nitrogen atom can't attach to structure.
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction.rxn');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
@@ -654,7 +648,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 77 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -666,7 +662,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Select the other reaction component. Cut/Paste it into the canvas.
     Select the whole reaction. Cut/Paste it into the canvas.
     */
-    const anyAtom = 8;
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/rxn-reaction.rxn');
     await selectAllStructuresOnCanvas(page);
@@ -683,7 +678,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 223 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -713,8 +710,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2873
     Description: Cut reaction has Failed Arrow with default size and position.
     */
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/structure-with-failed-arrow.rxn',
@@ -726,7 +721,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 39 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -755,8 +752,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2874
     Description: Cut reaction has plus sign and one arrow.
     */
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/arrows-in-different-directions.rxn',
@@ -768,7 +763,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 57 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -797,7 +794,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
     // Can't attach atom of Nitrogen to structure.
-    const anyAtom = 5;
 
     await openFileAndAddToCanvas(
       page,
@@ -810,7 +806,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 121 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -835,17 +833,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2883
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 300;
-    const y = 200;
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-structure.rxn');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 39 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -889,7 +885,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2946
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
-    const anyAtom = 5;
 
     await openFileAndAddToCanvas(page, 'KET/stereo-test-structures.ket');
     await selectAllStructuresOnCanvas(page);
@@ -899,7 +894,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 67 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -932,8 +929,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Error message when run under docker. But manual test is working.
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/complex-r-group-structure.mol',
@@ -945,7 +940,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 137 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -981,7 +978,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Can't attach atom of Nitrogen to structure.
-    const anyAtom = 5;
 
     await openFileAndAddToCanvas(
       page,
@@ -994,7 +990,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 44 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1024,8 +1022,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All  Aromatic structure are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/aromatic-structures.mol',
@@ -1037,7 +1033,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 261 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -1069,8 +1067,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All expanded and contracted Functional Froups are correctly rendered.
     User is not able to edit the pasted Functional Groups.
     */
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(page, 'KET/expanded-and-contracted-fg.ket');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
@@ -1079,7 +1075,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 79 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

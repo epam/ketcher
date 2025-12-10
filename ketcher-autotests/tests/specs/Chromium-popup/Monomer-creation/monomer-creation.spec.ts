@@ -831,7 +831,7 @@ test(`14. Component tab is highlighted red when its property is invalid after su
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Press "Create Monomer" button
-   *      4. Define Sugar, Base, and Phosphate molecules leaving all fields empty
+   *      4. Define Sugar, Base, and Phosphate molecules with invalid symbols (e.g. <invalid name>)
    *      5. Press Submit and verify error states
    *
    * Version 3.11
@@ -850,14 +850,18 @@ test(`14. Component tab is highlighted red when its property is invalid after su
   await presetSection.setupSugar({
     atomIds: [2, 3],
     bondIds: [2],
+    symbol: '<invalid name>',
   });
   await presetSection.setupBase({
     atomIds: [0, 1],
     bondIds: [0],
+    symbol: '<invalid name>',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
   await presetSection.setupPhosphate({
     atomIds: [4, 5],
     bondIds: [4],
+    symbol: '<invalid name>',
   });
 
   await dialog.submit();
@@ -868,6 +872,15 @@ test(`14. Component tab is highlighted red when its property is invalid after su
       ErrorMessage.emptyMandatoryFields,
     ).getNotificationMessage(),
   ).toEqual('Mandatory fields must be filled.');
+
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.invalidSymbol,
+    ).getNotificationMessage(),
+  ).toEqual(
+    'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  );
 
   await presetSection.openTab(NucleotidePresetTab.Preset);
   await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);

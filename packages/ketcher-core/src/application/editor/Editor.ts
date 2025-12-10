@@ -392,7 +392,8 @@ export class CoreEditor {
         (monomer) => {
           return (
             monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
+            monomer?.props.hidden === newMonomer.props?.hidden
           );
         },
       );

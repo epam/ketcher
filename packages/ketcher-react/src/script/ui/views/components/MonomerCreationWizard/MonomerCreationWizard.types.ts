@@ -55,7 +55,9 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
-  | 'invalidRnaPresetStructure';
+  | 'invalidRnaPresetStructure'
+  | 'notUniquePresetCode'
+  | 'invalidPresetCode';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -88,6 +90,11 @@ export type RnaPresetWizardStatePresetFieldValue = {
     name?: boolean;
   };
   notifications: WizardNotifications;
+  manuallyModifiedSymbols: {
+    base: boolean;
+    sugar: boolean;
+    phosphate: boolean;
+  };
 };
 
 export type RnaPresetWizardState = {

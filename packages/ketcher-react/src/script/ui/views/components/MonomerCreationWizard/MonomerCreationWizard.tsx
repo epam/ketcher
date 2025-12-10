@@ -1170,6 +1170,7 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
           true,
+          AtomLabel.H,
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
@@ -1177,6 +1178,7 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
+          AtomLabel.H,
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
@@ -1184,6 +1186,7 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
+          AtomLabel.O,
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
@@ -1191,6 +1194,7 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
           true,
+          AtomLabel.O,
         );
       }
 

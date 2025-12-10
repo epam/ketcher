@@ -47,9 +47,6 @@ import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDi
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
-
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
   const inputText = 'My Template';
@@ -144,7 +141,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-groups-expanded.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -174,7 +171,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-contracted.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

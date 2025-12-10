@@ -38,9 +38,6 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 500;
-
 test.describe('SRU Polymer tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -268,7 +265,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 500, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

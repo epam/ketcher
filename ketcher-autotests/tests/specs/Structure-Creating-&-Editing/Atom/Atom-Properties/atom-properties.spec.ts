@@ -71,9 +71,6 @@ import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/Extend
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
-const CANVAS_CLICK_X = 200;
-const CANVAS_CLICK_Y = 200;
-
 test.describe('Atom Properties', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -1415,7 +1412,7 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

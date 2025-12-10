@@ -43,9 +43,6 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-const CANVAS_CLICK_X = 600;
-const CANVAS_CLICK_Y = 600;
-
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -135,7 +132,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

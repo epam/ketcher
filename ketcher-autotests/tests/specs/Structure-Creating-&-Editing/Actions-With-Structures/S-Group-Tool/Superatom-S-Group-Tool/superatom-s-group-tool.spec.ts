@@ -96,11 +96,9 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1538
       Description: User is able to edit the Superatom S-group.
     */
-    const CANVAS_CLICK_X = 570;
-    const CANVAS_CLICK_Y = 380;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await LeftToolbar(page).sGroup();
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 570, 380, {
       from: 'pageTopLeft',
     });
     await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
@@ -211,11 +209,9 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1540
       Description: User is able to copy and paste structure with Superatom S-group.
     */
-    const CANVAS_CLICK_X = 600;
-    const CANVAS_CLICK_Y = 600;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

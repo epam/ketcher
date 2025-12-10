@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
@@ -24,9 +25,6 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const inputText = 'My Template';
@@ -174,7 +172,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -187,7 +185,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

@@ -11,6 +11,8 @@ import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
+import { IMAGE_KEY } from 'domain/constants/image';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();
@@ -47,6 +49,40 @@ class KetcherProvider {
 const ketcherProvider = new KetcherProvider();
 
 export { ketcherProvider };
+
+export function getSelectionFromStruct(struct: Struct): EditorSelection {
+  const selection: EditorSelection = {};
+  const selectionEntities = [
+    'atoms',
+    'bonds',
+    'enhancedFlags',
+    'rxnPluses',
+    'rxnArrows',
+    'texts',
+    'rgroupAttachmentPoints',
+    'simpleObjects',
+    IMAGE_KEY,
+    MULTITAIL_ARROW_KEY,
+  ] as const;
+
+  selectionEntities.forEach((selectionEntity) => {
+    if (struct?.[selectionEntity]) {
+      const selected: number[] = [];
+      struct[selectionEntity].forEach((value, key) => {
+        if (
+          typeof value.getInitiallySelected === 'function' &&
+          value.getInitiallySelected()
+        ) {
+          selected.push(key);
+        }
+      });
+      if (selected.length > 0) {
+        selection[selectionEntity] = selected;
+      }
+    }
+  });
+  return selection;
+}
 
 export function getStructure(
   ketcherId: string,

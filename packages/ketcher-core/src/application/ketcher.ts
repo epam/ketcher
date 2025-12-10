@@ -49,6 +49,7 @@ import {
   ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
+  getSelectionFromStruct,
 } from './utils';
 import { EditorSelection, EditorType } from './editor/editor.types';
 import {
@@ -512,6 +513,12 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
+
         this.editor.zoomAccordingContent(struct);
         if (x == null && y == null) {
           this.editor.centerStruct();
@@ -568,6 +575,11 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
       }
     }, this.eventBus);
   }

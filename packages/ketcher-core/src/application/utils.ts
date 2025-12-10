@@ -52,7 +52,9 @@ export { ketcherProvider };
 
 export function getSelectionFromStruct(struct: Struct): EditorSelection {
   const selection: EditorSelection = {};
-  const selectionEntities = [
+  // List of entity types that support selection via initiallySelected flag
+  // This mirrors the list used in ketcher-react's load function
+  const selectableEntities = [
     'atoms',
     'bonds',
     'enhancedFlags',
@@ -65,10 +67,10 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
     MULTITAIL_ARROW_KEY,
   ] as const;
 
-  selectionEntities.forEach((selectionEntity) => {
-    if (struct?.[selectionEntity]) {
+  selectableEntities.forEach((entityType) => {
+    if (struct?.[entityType]) {
       const selected: number[] = [];
-      struct[selectionEntity].forEach((value, key) => {
+      struct[entityType].forEach((value, key) => {
         if (
           typeof value.getInitiallySelected === 'function' &&
           value.getInitiallySelected()
@@ -77,7 +79,7 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
         }
       });
       if (selected.length > 0) {
-        selection[selectionEntity] = selected;
+        selection[entityType] = selected;
       }
     }
   });

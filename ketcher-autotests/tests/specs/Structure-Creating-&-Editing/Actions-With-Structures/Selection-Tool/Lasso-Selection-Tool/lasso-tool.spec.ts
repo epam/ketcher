@@ -2,7 +2,6 @@ import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   dragMouseTo,
   getCoordinatesTopAtomOfBenzeneRing,
   getCoordinatesOfTheMiddleOfTheScreen,

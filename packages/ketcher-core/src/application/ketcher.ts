@@ -28,7 +28,7 @@ import {
   type CalculateResult,
 } from 'domain/services';
 
-import { CoreEditor, Editor } from './editor';
+import { CoreEditor, Editor, getSelectionFromStruct } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { SGroup, Struct } from 'domain/entities';
@@ -49,7 +49,6 @@ import {
   ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
-  getSelectionFromStruct,
 } from './utils';
 import { EditorSelection, EditorType } from './editor/editor.types';
 import {

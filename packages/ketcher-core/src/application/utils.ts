@@ -11,7 +11,6 @@ import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
-import { selectableEntities } from './editor/shared/constants';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();
@@ -48,28 +47,6 @@ class KetcherProvider {
 const ketcherProvider = new KetcherProvider();
 
 export { ketcherProvider };
-
-export function getSelectionFromStruct(struct: Struct): EditorSelection {
-  const selection: EditorSelection = {};
-
-  selectableEntities.forEach((entityType) => {
-    if (struct?.[entityType]) {
-      const selected: number[] = [];
-      struct[entityType].forEach((value, key) => {
-        if (
-          typeof value.getInitiallySelected === 'function' &&
-          value.getInitiallySelected()
-        ) {
-          selected.push(key);
-        }
-      });
-      if (selected.length > 0) {
-        selection[entityType] = selected;
-      }
-    }
-  });
-  return selection;
-}
 
 export function getStructure(
   ketcherId: string,

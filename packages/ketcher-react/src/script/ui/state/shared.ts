@@ -24,8 +24,7 @@ import {
   Editor,
   KetcherLogger,
   SettingsManager,
-  MULTITAIL_ARROW_KEY,
-  IMAGE_KEY,
+  getSelectionFromStruct,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -100,36 +99,6 @@ export function removeStructAction(): {
 
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
-
-export const getSelectionFromStruct = (struct) => {
-  const selection = {};
-  [
-    'atoms',
-    'bonds',
-    'enhancedFlags',
-    'rxnPluses',
-    'rxnArrows',
-    'texts',
-    'rgroupAttachmentPoints',
-    'simpleObjects',
-    IMAGE_KEY,
-    MULTITAIL_ARROW_KEY,
-  ].forEach((selectionEntity) => {
-    if (struct?.[selectionEntity]) {
-      const selected: number[] = [];
-      struct[selectionEntity].forEach((value, key) => {
-        if (
-          typeof value.getInitiallySelected === 'function' &&
-          value.getInitiallySelected()
-        ) {
-          selected.push(key);
-        }
-      });
-      selection[selectionEntity] = selected;
-    }
-  });
-  return selection;
-};
 
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {

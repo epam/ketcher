@@ -629,10 +629,10 @@ class Editor implements KetcherEditor {
     let atomsToProcess: number[] = [];
     if (selection !== null) {
       // Start with explicitly selected atoms
-      atomsToProcess = selection.atoms ? [...selection.atoms] : [];
+      atomsToProcess = selection.atoms ?? [];
 
       // Include atoms from selected bonds
-      if (selection.bonds) {
+      if (selection.bonds && selection.bonds.length > 0) {
         const atomsFromBonds = new Set(atomsToProcess);
         selection.bonds.forEach((bondId) => {
           const bond = currentStruct.bonds.get(bondId);

@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  clickOnAtom,
   clickOnCanvas,
   resetZoomLevelToDefault,
   takeElementScreenshot,
@@ -134,7 +133,9 @@ test.describe('Right-click menu', () => {
     });
 
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', 1);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+        force: true,
+      });
     });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -543,7 +544,9 @@ test.describe('Right-click menu', () => {
     );
     await page.keyboard.down('Shift');
     await getBondLocator(page, { bondId: 2 }).click({ force: true });
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
     await ContextMenu(
       page,

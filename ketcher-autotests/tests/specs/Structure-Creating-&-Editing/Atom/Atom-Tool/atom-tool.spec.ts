@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
@@ -147,14 +146,15 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on structure with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.List, [
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
       PeriodicTableElement.Am,
     ]);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -181,14 +181,15 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on structure with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
       PeriodicTableElement.V,
       PeriodicTableElement.Ti,
       PeriodicTableElement.Cs,
     ]);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -656,10 +657,11 @@ test.describe('Atom Tool', () => {
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
       Description: Atom added to Benzene ring.
       */
-      const anyAtom = 2;
       await drawBenzeneRing(page);
       await CommonLeftToolbar(page).areaSelectionTool();
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+        force: true,
+      });
       await page.keyboard.press(atomName);
       await takeEditorScreenshot(page);
     });

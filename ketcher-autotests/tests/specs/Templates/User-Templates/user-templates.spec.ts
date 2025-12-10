@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
-  clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
@@ -24,6 +23,7 @@ import {
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -258,7 +258,6 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1729
       Description: Template attached to structure on canvas.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
@@ -269,7 +268,9 @@ test.describe('Create and Save Templates', () => {
       TemplateLibraryTab.UserTemplate,
     );
     await page.getByText('My Template').click();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

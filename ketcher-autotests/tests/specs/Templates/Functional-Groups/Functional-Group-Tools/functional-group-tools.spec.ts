@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  clickOnAtom,
   moveOnAtom,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -238,13 +237,14 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     const x = 650;
     const y = 650;
-    const anyAtom = 1;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/expanded-fg-CO2Et.mol');
 
     await LeftToolbar(page).chain();
     await clickInTheMiddleOfTheScreen(page);
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await clickOnAtom(page, 'O', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 7 }).click({
+      force: true,
+    });
     await dragMouseTo(x, y, page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -952,7 +952,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
    */
-      const anyAtom = 4;
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/functional-group-and-benzene.mol',
@@ -961,7 +960,9 @@ test.describe('Templates - Functional Group Tools3', () => {
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await waitForRender(page, async () => {
-        await clickOnAtom(page, 'C', anyAtom);
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).click({
+          force: true,
+        });
       });
       await takeEditorScreenshot(page);
     },
@@ -973,7 +974,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Can attach cutted Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
-    const anyAtom = 4;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-and-benzene.mol',
@@ -984,7 +984,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+        force: true,
+      });
     });
     await takeEditorScreenshot(page);
   });

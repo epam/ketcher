@@ -15,7 +15,6 @@ import {
   getCachedBodyCenter,
   keyboardPressOnCanvas,
   dragMouseAndMoveTo,
-  clickOnAtom,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -111,7 +110,6 @@ test.describe('Templates - Functional Group Tools', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
       force: true,
     });
-    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 

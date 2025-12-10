@@ -832,6 +832,8 @@ export class SequenceMode extends BaseMode {
       this.needToEditAntisense &&
       previousTwoStrandedNodeInSameChain?.antisenseNode
     ) {
+      // For antisense chain, we use the same node reference as sense chain (previousTwoStrandedNodeInSameChain)
+      // and firstConnectedNode because both chains should break at the same position in sync mode
       this.deleteBondToNextNodeInChain(
         previousTwoStrandedNodeInSameChain.antisenseNode instanceof
           BackBoneSequenceNode

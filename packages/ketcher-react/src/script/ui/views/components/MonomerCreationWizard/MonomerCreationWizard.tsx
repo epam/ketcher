@@ -290,6 +290,96 @@ const rnaPresetWizardReducer = (
   };
 };
 
+/**
+ * Checks if all mandatory properties required for a non-hidden monomer are filled.
+ * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+ * @param values - The wizard form values to check
+ * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+ */
+const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
+  const { type, symbol, naturalAnalogue } = values;
+
+  // Check if Code/symbol is filled
+  if (!symbol?.trim()) {
+    return false;
+  }
+
+  // Check if Natural analogue is filled (only required for certain types)
+  if (isNaturalAnalogueRequired(type) && !naturalAnalogue?.trim()) {
+    return false;
+  }
+
+  return true;
+};
+
+const getComponentSuffix = (componentType: KetMonomerClass): string => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return 'B';
+    case KetMonomerClass.Sugar:
+      return 'S';
+    case KetMonomerClass.Phosphate:
+      return 'P';
+    default:
+      return '';
+  }
+};
+
+/**
+ * Gets the appropriate leaving atom for a specific attachment point based on component type.
+ * Per requirement 2.3.2.2:
+ * - Base R1: H
+ * - Sugar R2: H, R3: O (representing OH)
+ * - Phosphate R1: O (representing OH)
+ * @param componentType - The monomer class (Base, Sugar, or Phosphate)
+ * @param attachmentPointName - The attachment point name (R1, R2, R3)
+ * @returns The atom label to use for the leaving group
+ */
+const getLeavingAtomForAttachmentPoint = (
+  componentType: KetMonomerClass,
+  attachmentPointName: AttachmentPointName,
+): AtomLabel => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return AttachmentPointName.R1 === attachmentPointName
+        ? AtomLabel.H
+        : AtomLabel.H;
+    case KetMonomerClass.Sugar:
+      if (attachmentPointName === AttachmentPointName.R3) {
+        return AtomLabel.O; // OH group for base connection
+      }
+      return AtomLabel.H; // H for R2 (phosphate connection) and R1
+    case KetMonomerClass.Phosphate:
+      return AttachmentPointName.R1 === attachmentPointName
+        ? AtomLabel.O
+        : AtomLabel.O;
+    default:
+      return AtomLabel.H;
+  }
+};
+
+const autoAssignPropertiesForHiddenMonomer = (
+  values: WizardValues,
+  presetCode: string,
+): WizardValues => {
+  const suffix = getComponentSuffix(values.type as KetMonomerClass);
+  const autoCode = `${presetCode}${suffix}`;
+
+  return {
+    ...values,
+    // Use auto-generated code if symbol is empty or only whitespace
+    symbol: values.symbol?.trim() || autoCode,
+    // Use auto-generated name if name is empty or only whitespace
+    name: values.name?.trim() || autoCode,
+    // For bases, default to 'X' if naturalAnalogue is empty or whitespace
+    // For other types, clear whitespace-only values
+    naturalAnalogue:
+      values.type === KetMonomerClass.Base
+        ? values.naturalAnalogue?.trim() || 'X'
+        : values.naturalAnalogue?.trim() || '',
+  };
+};
+
 const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
@@ -943,25 +1033,35 @@ const MonomerCreationWizard = () => {
 
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
-      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
-      const { errors: inputsErrors, notifications: inputsNotifications } =
-        validateInputs(valuesToSave, true);
-      if (Object.keys(inputsErrors).length > 0) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: inputsErrors,
-          rnaComponentKey,
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: inputsNotifications,
-          rnaComponentKey,
-          editor,
-        });
-        return;
+
+      // Check if all mandatory properties are filled
+      // If not, we'll auto-assign properties instead of validating
+      const hasMandatoryProperties =
+        hasAllMandatoryPropertiesFilled(valuesToSave);
+
+      if (hasMandatoryProperties) {
+        // User has filled properties - validate them
+        // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+        const { errors: inputsErrors, notifications: inputsNotifications } =
+          validateInputs(valuesToSave, true);
+        if (Object.keys(inputsErrors).length > 0) {
+          needSaveMonomers = false;
+          rnaPresetWizardStateDispatch({
+            type: 'SetErrors',
+            errors: inputsErrors,
+            rnaComponentKey,
+            editor,
+          });
+          rnaPresetWizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: inputsNotifications,
+            rnaComponentKey,
+            editor,
+          });
+          return;
+        }
       }
+      // If no mandatory properties filled, skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {
@@ -1113,6 +1213,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
           true,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Base,
+            AttachmentPointName.R1,
+          ),
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
@@ -1120,6 +1224,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Sugar,
+            AttachmentPointName.R2,
+          ),
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
@@ -1127,6 +1235,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Sugar,
+            AttachmentPointName.R3,
+          ),
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
@@ -1134,6 +1246,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
           true,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Phosphate,
+            AttachmentPointName.R1,
+          ),
         );
       }
 
@@ -1167,17 +1283,32 @@ const MonomerCreationWizard = () => {
           },
         );
 
+        // Determine if this monomer should be hidden
+        // For RNA presets: hidden if mandatory properties are not filled
+        const shouldBeHidden =
+          isRnaPresetType &&
+          !hasAllMandatoryPropertiesFilled(monomerToSave.values);
+
+        // Auto-assign properties for hidden monomers
+        let valuesToSave = monomerToSave.values;
+        if (shouldBeHidden) {
+          valuesToSave = autoAssignPropertiesForHiddenMonomer(
+            monomerToSave.values,
+            rnaPresetWizardState.preset.name,
+          );
+        }
+
         const result = editor.saveNewMonomer({
-          type: monomerToSave.values.type,
-          symbol: monomerToSave.values.symbol,
-          name: monomerToSave.values.name || monomerToSave.values.symbol,
-          naturalAnalogue: monomerToSave.values.naturalAnalogue,
+          type: valuesToSave.type,
+          symbol: valuesToSave.symbol,
+          name: valuesToSave.name || valuesToSave.symbol,
+          naturalAnalogue: valuesToSave.naturalAnalogue,
           modificationTypes,
-          aliasHELM: monomerToSave.values.aliasHELM,
+          aliasHELM: valuesToSave.aliasHELM,
           structure,
           attachmentPoints: monomerAssignedAttachmentPoints,
-          // Mark monomers as hidden when they are part of a preset
-          hidden: isRnaPresetType,
+          // Mark monomers as hidden when they are part of a preset and don't have all properties filled
+          hidden: shouldBeHidden,
         });
 
         monomersData.push({

@@ -130,6 +130,8 @@ const MonomerCreationWizardFields = (
       KetMonomerClass.Sugar,
       KetMonomerClass.Phosphate,
     ].includes(type as KetMonomerClass);
+  const displayNaturalAnalogue =
+    props.showNaturalAnalogue !== false && isNaturalAnalogueRequired(type);
 
   return (
     <div>
@@ -171,7 +173,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
+        {displayNaturalAnalogue && (
           <AttributeField
             title="Natural analogue"
             control={
@@ -184,7 +186,6 @@ const MonomerCreationWizardFields = (
                 error={errors.naturalAnalogue}
               />
             }
-            disabled={!isNaturalAnalogueRequired(type)}
             required
           />
         )}

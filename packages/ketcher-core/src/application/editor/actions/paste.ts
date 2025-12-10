@@ -37,7 +37,6 @@ import { Action } from './action';
 import { MultitailArrow, SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Image } from 'domain/entities/image';
 
 type CreatedItems = {
@@ -158,12 +157,6 @@ export function fromPaste(
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
     const attachmentPoints = sg.cloneAttachmentPoints(aidMap);
-    if (
-      sg.isNotContractible(pstruct) &&
-      !(sg instanceof MonomerMicromolecule)
-    ) {
-      sg.setAttr('expanded', true);
-    }
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,

@@ -290,6 +290,12 @@ const rnaPresetWizardReducer = (
   };
 };
 
+/**
+ * Checks if all mandatory properties required for a non-hidden monomer are filled.
+ * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+ * @param values - The wizard form values to check
+ * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+ */
 const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   const { type, symbol, naturalAnalogue } = values;
 
@@ -319,6 +325,39 @@ const getComponentSuffix = (componentType: KetMonomerClass): string => {
   }
 };
 
+/**
+ * Gets the appropriate leaving atom for a specific attachment point based on component type.
+ * Per requirement 2.3.2.2:
+ * - Base R1: H
+ * - Sugar R2: H, R3: O (representing OH)
+ * - Phosphate R1: O (representing OH)
+ * @param componentType - The monomer class (Base, Sugar, or Phosphate)
+ * @param attachmentPointName - The attachment point name (R1, R2, R3)
+ * @returns The atom label to use for the leaving group
+ */
+const getLeavingAtomForAttachmentPoint = (
+  componentType: KetMonomerClass,
+  attachmentPointName: AttachmentPointName,
+): AtomLabel => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return AttachmentPointName.R1 === attachmentPointName
+        ? AtomLabel.H
+        : AtomLabel.H;
+    case KetMonomerClass.Sugar:
+      if (attachmentPointName === AttachmentPointName.R3) {
+        return AtomLabel.O; // OH group for base connection
+      }
+      return AtomLabel.H; // H for R2 (phosphate connection) and R1
+    case KetMonomerClass.Phosphate:
+      return AttachmentPointName.R1 === attachmentPointName
+        ? AtomLabel.O
+        : AtomLabel.O;
+    default:
+      return AtomLabel.H;
+  }
+};
+
 const autoAssignPropertiesForHiddenMonomer = (
   values: WizardValues,
   presetCode: string,
@@ -328,12 +367,16 @@ const autoAssignPropertiesForHiddenMonomer = (
 
   return {
     ...values,
+    // Use auto-generated code if symbol is empty or only whitespace
     symbol: values.symbol?.trim() || autoCode,
+    // Use auto-generated name if name is empty or only whitespace
     name: values.name?.trim() || autoCode,
+    // For bases, default to 'X' if naturalAnalogue is empty or whitespace
+    // For other types, clear whitespace-only values
     naturalAnalogue:
       values.type === KetMonomerClass.Base
         ? values.naturalAnalogue?.trim() || 'X'
-        : values.naturalAnalogue || '',
+        : values.naturalAnalogue?.trim() || '',
   };
 };
 
@@ -1170,7 +1213,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
           true,
-          AtomLabel.H,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Base,
+            AttachmentPointName.R1,
+          ),
         );
         editor.assignConnectionPointAtom(
           sugarR2AttachmentPointAtom,
@@ -1178,7 +1224,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
-          AtomLabel.H,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Sugar,
+            AttachmentPointName.R2,
+          ),
         );
         editor.assignConnectionPointAtom(
           sugarR3AttachmentPointAtom,
@@ -1186,7 +1235,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
           true,
-          AtomLabel.O,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Sugar,
+            AttachmentPointName.R3,
+          ),
         );
         editor.assignConnectionPointAtom(
           phosphateR1AttachmentPointAtom,
@@ -1194,7 +1246,10 @@ const MonomerCreationWizard = () => {
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
           true,
-          AtomLabel.O,
+          getLeavingAtomForAttachmentPoint(
+            KetMonomerClass.Phosphate,
+            AttachmentPointName.R1,
+          ),
         );
       }
 

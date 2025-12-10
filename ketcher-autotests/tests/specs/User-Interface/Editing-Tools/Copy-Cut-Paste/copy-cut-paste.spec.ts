@@ -31,9 +31,6 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 300;
-
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -79,9 +76,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
+      force: true,
+    });
     await MoleculesTopToolbar(page).cut();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -129,10 +127,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All query features are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -140,9 +134,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 67 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -171,14 +167,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
-    const anyAtom = 1;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).click({
+        force: true,
+      });
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -200,7 +197,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -286,10 +283,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Nitrogen atom can't attach to atom on structure.
-    const x = 400;
-    const y = 300;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -297,9 +290,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 63 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -422,17 +417,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/generic-groups.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 98 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -442,17 +435,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting three same structures located on canvas.
     */
-    const x = 300;
-    const y = 200;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickAfterItemsToMergeInitialization(page, x, y);
+    await clickAfterItemsToMergeInitialization(page, 300, 200);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 95 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -463,17 +454,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const x = 300;
-    const y = 200;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 95 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -501,18 +490,16 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Nitrogen atom can't attach to structure
-    const x = 500;
-    const y = 300;
-    const anyAtom = 5;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/R-Group-structure.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
+        force: true,
+      });
     });
     await takeEditorScreenshot(page);
   });
@@ -541,17 +528,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Can't add atom to structure
-    const x = 500;
-    const y = 300;
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/s-group-features.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 127 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -581,17 +566,17 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Nitrogen atom can't attach to structure
-    const anyAtom = 12;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached.mol');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 166 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -625,11 +610,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 166 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -662,7 +650,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -684,14 +672,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await openFileAndAddToCanvas(page, 'Rxn-V2000/allenes.rxn');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -734,7 +722,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -776,7 +764,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -818,7 +806,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -907,7 +895,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -953,7 +941,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -1002,7 +990,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -1045,7 +1033,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Oxygen);
@@ -1087,7 +1075,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
@@ -1132,7 +1120,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 300, {
       from: 'pageTopLeft',
     });
     await RightToolbar(page).clickAtom(Atom.Nitrogen);

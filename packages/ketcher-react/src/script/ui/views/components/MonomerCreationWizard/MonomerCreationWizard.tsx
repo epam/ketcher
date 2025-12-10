@@ -290,6 +290,53 @@ const rnaPresetWizardReducer = (
   };
 };
 
+const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
+  const { type, symbol, naturalAnalogue } = values;
+
+  // Check if Code/symbol is filled
+  if (!symbol?.trim()) {
+    return false;
+  }
+
+  // Check if Natural analogue is filled (only required for certain types)
+  if (isNaturalAnalogueRequired(type) && !naturalAnalogue?.trim()) {
+    return false;
+  }
+
+  return true;
+};
+
+const getComponentSuffix = (componentType: KetMonomerClass): string => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return 'B';
+    case KetMonomerClass.Sugar:
+      return 'S';
+    case KetMonomerClass.Phosphate:
+      return 'P';
+    default:
+      return '';
+  }
+};
+
+const autoAssignPropertiesForHiddenMonomer = (
+  values: WizardValues,
+  presetCode: string,
+): WizardValues => {
+  const suffix = getComponentSuffix(values.type as KetMonomerClass);
+  const autoCode = `${presetCode}${suffix}`;
+
+  return {
+    ...values,
+    symbol: values.symbol?.trim() || autoCode,
+    name: values.name?.trim() || autoCode,
+    naturalAnalogue:
+      values.type === KetMonomerClass.Base
+        ? values.naturalAnalogue?.trim() || 'X'
+        : values.naturalAnalogue || '',
+  };
+};
+
 const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   const editor = CoreEditor.provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
@@ -943,25 +990,35 @@ const MonomerCreationWizard = () => {
 
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
-      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
-      const { errors: inputsErrors, notifications: inputsNotifications } =
-        validateInputs(valuesToSave, true);
-      if (Object.keys(inputsErrors).length > 0) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: inputsErrors,
-          rnaComponentKey,
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: inputsNotifications,
-          rnaComponentKey,
-          editor,
-        });
-        return;
+
+      // Check if all mandatory properties are filled
+      // If not, we'll auto-assign properties instead of validating
+      const hasMandatoryProperties =
+        hasAllMandatoryPropertiesFilled(valuesToSave);
+
+      if (hasMandatoryProperties) {
+        // User has filled properties - validate them
+        // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+        const { errors: inputsErrors, notifications: inputsNotifications } =
+          validateInputs(valuesToSave, true);
+        if (Object.keys(inputsErrors).length > 0) {
+          needSaveMonomers = false;
+          rnaPresetWizardStateDispatch({
+            type: 'SetErrors',
+            errors: inputsErrors,
+            rnaComponentKey,
+            editor,
+          });
+          rnaPresetWizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: inputsNotifications,
+            rnaComponentKey,
+            editor,
+          });
+          return;
+        }
       }
+      // If no mandatory properties filled, skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {
@@ -1167,17 +1224,32 @@ const MonomerCreationWizard = () => {
           },
         );
 
+        // Determine if this monomer should be hidden
+        // For RNA presets: hidden if mandatory properties are not filled
+        const shouldBeHidden =
+          isRnaPresetType &&
+          !hasAllMandatoryPropertiesFilled(monomerToSave.values);
+
+        // Auto-assign properties for hidden monomers
+        let valuesToSave = monomerToSave.values;
+        if (shouldBeHidden) {
+          valuesToSave = autoAssignPropertiesForHiddenMonomer(
+            monomerToSave.values,
+            rnaPresetWizardState.preset.name,
+          );
+        }
+
         const result = editor.saveNewMonomer({
-          type: monomerToSave.values.type,
-          symbol: monomerToSave.values.symbol,
-          name: monomerToSave.values.name || monomerToSave.values.symbol,
-          naturalAnalogue: monomerToSave.values.naturalAnalogue,
+          type: valuesToSave.type,
+          symbol: valuesToSave.symbol,
+          name: valuesToSave.name || valuesToSave.symbol,
+          naturalAnalogue: valuesToSave.naturalAnalogue,
           modificationTypes,
-          aliasHELM: monomerToSave.values.aliasHELM,
+          aliasHELM: valuesToSave.aliasHELM,
           structure,
           attachmentPoints: monomerAssignedAttachmentPoints,
-          // Mark monomers as hidden when they are part of a preset
-          hidden: isRnaPresetType,
+          // Mark monomers as hidden when they are part of a preset and don't have all properties filled
+          hidden: shouldBeHidden,
         });
 
         monomersData.push({

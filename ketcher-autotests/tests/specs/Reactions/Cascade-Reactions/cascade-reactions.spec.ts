@@ -9,7 +9,6 @@ import {
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
   selectPartOfMolecules,
-  moveOnAtom,
   dragMouseTo,
   clickOnCanvas,
   waitForRender,
@@ -38,6 +37,7 @@ import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog'
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -1017,7 +1017,9 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await moveOnAtom(page, 'C', 2);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
+        force: true,
+      });
       await dragMouseTo(300, 600, page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();

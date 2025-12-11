@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  moveOnAtom,
   waitForRender,
   clickOnCanvas,
   MolFileFormat,
@@ -133,7 +132,9 @@ test.describe('Atom Properties', () => {
       The 'Atom Properties' header.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('/');
     });

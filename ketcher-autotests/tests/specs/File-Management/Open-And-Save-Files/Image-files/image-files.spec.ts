@@ -5,7 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
-  moveOnAtom,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -55,6 +54,7 @@ import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDia
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -1383,7 +1383,9 @@ test.describe('Image files', () => {
       'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
     await dragMouseTo(400, 300, page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);

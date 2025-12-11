@@ -3,8 +3,6 @@ import { expect, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  moveOnAtom,
-  waitForRender,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
@@ -557,8 +555,8 @@ test.describe('Hot key Del', () => {
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
     });
     await deleteByKeyboard(page);
     await page.mouse.move(100, 100);

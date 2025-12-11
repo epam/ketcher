@@ -6,7 +6,6 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  moveOnAtom,
   dragMouseTo,
   waitForPageInit,
   selectPartOfMolecules,
@@ -86,11 +85,11 @@ test.describe('Indigo Tools - Layout', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Layout action.
     */
-    const anyAtom = 0;
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await IndigoFunctionsToolbar(page).layout();
     await RightToolbar(page).clickAtom(Atom.Oxygen);

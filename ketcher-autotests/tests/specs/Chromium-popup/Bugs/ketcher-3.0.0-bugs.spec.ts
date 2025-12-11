@@ -14,7 +14,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  moveOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
@@ -416,7 +415,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       force: true,
     });
     await keyboardPressOnCanvas(page, 'O');
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'N');
     await takeEditorScreenshot(page);
   });

@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  moveOnAtom,
   openFileAndAddToCanvas,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
@@ -116,9 +115,10 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     Put the cursor on any other structure atom, click, and drag slightly.
     */
-    const anyAtom = 0;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page);
   });
@@ -142,9 +142,10 @@ test.describe('Template Manupulations', () => {
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
     */
-    const anyAtom = 0;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -224,11 +225,11 @@ test.describe('Template Manupulations', () => {
     Load the smile-string CCCCC ("Open..." -> "Paste from clipboard").
     With the benzene template click the third atom of the created chain.
     */
-    const anyAtom = 0;
-
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
@@ -244,7 +245,9 @@ test.describe('Template Manupulations', () => {
       waitForMergeInitialization: true,
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -565,8 +568,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
-    await moveOnAtom(page, 'C', 1);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   });
@@ -578,9 +585,10 @@ test.describe('Open Ketcher', () => {
     Paste benzene from templates on the canvas.
     Edit benzene with all possible ways.
     */
-    const anyAtom = 2;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
   });
 
@@ -696,8 +704,9 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    const anyAtom = 2;
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
   });
 });

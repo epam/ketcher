@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  moveOnAtom,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   pasteFromClipboardAndOpenAsNewProject,
@@ -25,10 +24,11 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1664
     Description: Charge Plus is applied to the structure atom.
     */
-    const anyAtom = 0;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift++');
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -39,10 +39,11 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1664
     Description: Charge Minus is applied to the structure atom.
     */
-    const anyAtom = 0;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await page.keyboard.press('-');
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -79,9 +80,10 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     When you click outside atom atoms are not changed.
     */
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift++');
     await page.mouse.move(300, 300);
     await page.keyboard.press('Shift++');
@@ -96,9 +98,10 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     When you click outside atom atoms are not changed.
     */
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).hover({
+      force: true,
+    });
     await page.keyboard.press('-');
     await page.mouse.move(300, 300);
     await page.keyboard.press('-');

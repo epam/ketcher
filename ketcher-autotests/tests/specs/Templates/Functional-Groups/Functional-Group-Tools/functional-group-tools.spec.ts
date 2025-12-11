@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  moveOnAtom,
   waitForRender,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -912,9 +911,10 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-12970
     Description: Structure on canvas remains unchanged
    */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });

@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
-  moveOnAtom,
   dragMouseTo,
   takeLeftToolbarScreenshot,
   waitForRender,
@@ -90,7 +89,9 @@ test.describe('Selection tools', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -485,7 +486,9 @@ test.describe('Selection tools', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);

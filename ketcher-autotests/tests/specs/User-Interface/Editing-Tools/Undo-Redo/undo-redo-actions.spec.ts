@@ -3,7 +3,6 @@ import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  moveOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -248,7 +247,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).chain();
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
 
     await CommonTopLeftToolbar(page).undo();

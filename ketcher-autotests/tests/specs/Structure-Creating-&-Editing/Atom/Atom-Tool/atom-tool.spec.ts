@@ -11,7 +11,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  moveOnAtom,
   selectPartOfMolecules,
   clickOnCanvas,
   ZoomInByKeyboard,
@@ -216,7 +215,9 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -667,11 +668,11 @@ test.describe('Atom Tool', () => {
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
       Description: Atom added to Benzene ring.
       */
-      const anyAtom = 2;
-
       await drawBenzeneRing(page);
       await RightToolbar(page).clickAtom(atomName);
-      await moveOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+        force: true,
+      });
       await dragMouseTo(640, 270, page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();

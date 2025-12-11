@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  moveOnAtom,
   waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -469,9 +468,13 @@ test.describe('Bond Tool', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -482,9 +485,13 @@ test.describe('Bond Tool', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await takeEditorScreenshot(page);
 
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -510,9 +517,13 @@ test.describe('Bond Tool', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -521,9 +532,13 @@ test.describe('Bond Tool', () => {
       200,
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {

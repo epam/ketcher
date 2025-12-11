@@ -9,7 +9,6 @@ import {
   cutToClipboardByKeyboard,
   dragMouseTo,
   moveMouseAway,
-  moveOnAtom,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -59,6 +58,7 @@ import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialo
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -1070,7 +1070,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(250, 250, page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
   });
@@ -1087,7 +1089,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
   });
@@ -1103,7 +1107,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -1136,7 +1142,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(250, 250, page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await dragMouseTo(600, 250, page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -3409,9 +3417,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
     );
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'P', 0);
+    await getAtomLocator(page, { atomLabel: 'P' }).first().hover({
+      force: true,
+    });
     await dragMouseTo(540, 260, page);
-    await moveOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().hover({
+      force: true,
+    });
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -3447,9 +3459,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
     );
     await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'P', 0);
+    await getAtomLocator(page, { atomLabel: 'P' }).first().hover({
+      force: true,
+    });
     await dragMouseTo(540, 260, page);
-    await moveOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().hover({
+      force: true,
+    });
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);

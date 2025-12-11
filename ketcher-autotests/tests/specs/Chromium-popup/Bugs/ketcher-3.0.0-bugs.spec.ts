@@ -64,7 +64,6 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 

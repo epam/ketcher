@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
@@ -79,12 +80,10 @@ test.describe('Charge tool', () => {
     When you click outside atom atoms are not changed.
     */
     const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
-    await page.mouse.move(x, y);
+    await page.mouse.move(300, 300);
     await page.keyboard.press('Shift++');
     await takeEditorScreenshot(page);
   });
@@ -98,12 +97,10 @@ test.describe('Charge tool', () => {
     When you click outside atom atoms are not changed.
     */
     const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
-    await page.mouse.move(x, y);
+    await page.mouse.move(300, 300);
     await page.keyboard.press('-');
     await takeEditorScreenshot(page);
   });

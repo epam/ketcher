@@ -1378,15 +1378,13 @@ test.describe('Image files', () => {
      * Description: Images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved
      * and aligned, they can be saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
      */
-    const x = 400;
-    const y = 300;
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/images-png-svg-with-benzene-for-distorting.ket',
     );
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(400, 300, page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).cleanUp();

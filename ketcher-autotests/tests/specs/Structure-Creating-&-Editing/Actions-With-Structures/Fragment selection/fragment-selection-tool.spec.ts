@@ -22,9 +22,6 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-const xMark = 300;
-const yMark = 200;
-
 test.describe('Fragment selection tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -60,7 +57,7 @@ test.describe('Fragment selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 29 }).dblclick({
       force: true,
     });
-    await dragMouseTo(xMark, yMark, page);
+    await dragMouseTo(300, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -103,7 +100,7 @@ test.describe('Fragment selection tool', () => {
       await getPlusLocator(page).nth(0).click({ force: true });
       await page.mouse.down();
     });
-    await dragMouseTo(xMark, yMark, page);
+    await dragMouseTo(300, 200, page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,

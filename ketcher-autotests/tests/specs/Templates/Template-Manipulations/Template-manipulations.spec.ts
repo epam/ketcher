@@ -117,11 +117,9 @@ test.describe('Template Manupulations', () => {
     Put the cursor on any other structure atom, click, and drag slightly.
     */
     const anyAtom = 0;
-    const x = 200;
-    const y = 200;
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -145,11 +143,9 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     */
     const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
 
@@ -228,14 +224,12 @@ test.describe('Template Manupulations', () => {
     Load the smile-string CCCCC ("Open..." -> "Paste from clipboard").
     With the benzene template click the third atom of the created chain.
     */
-    const x = 300;
-    const y = 300;
     const anyAtom = 0;
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).first().click({
@@ -251,7 +245,7 @@ test.describe('Template Manupulations', () => {
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
 

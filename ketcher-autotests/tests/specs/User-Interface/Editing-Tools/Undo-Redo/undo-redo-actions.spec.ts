@@ -3,7 +3,6 @@ import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  doubleClickOnAtom,
   moveOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
@@ -246,14 +245,12 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Chain is removed;
     Redo: the Chain is restored.
     */
-    const x = 300;
-    const y = 300;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).chain();
     await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

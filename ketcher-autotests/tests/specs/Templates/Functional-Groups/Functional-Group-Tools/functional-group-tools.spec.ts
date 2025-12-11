@@ -234,8 +234,6 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: EDIT ABBREVIATION window appears after click by Chain on expanded FG.
     After click Remove abbreviation in modal window user can add Chain to structure.
    */
-    const x = 650;
-    const y = 650;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/expanded-fg-CO2Et.mol');
 
     await LeftToolbar(page).chain();
@@ -244,7 +242,7 @@ test.describe('Templates - Functional Group Tools', () => {
     await getAtomLocator(page, { atomLabel: 'O', atomId: 7 }).click({
       force: true,
     });
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(650, 650, page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -915,13 +913,11 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Structure on canvas remains unchanged
    */
     const anyAtom = 2;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

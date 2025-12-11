@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
@@ -50,25 +51,19 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function drawThreeMonomers(page: Page) {
-  const x1 = 301;
-  const y1 = 102;
-  const x2 = 303;
-  const y2 = 504;
-  const x3 = 705;
-  const y3 = 106;
   await Library(page).dragMonomerOnCanvas(Sugar._3A6, {
-    x: x1,
-    y: y1,
+    x: 301,
+    y: 102,
   });
   await Library(page).dragMonomerOnCanvas(Base.baA, {
-    x: x2,
-    y: y2,
+    x: 303,
+    y: 504,
   });
   await Library(page).dragMonomerOnCanvas(Phosphate.P, {
-    x: x3,
-    y: y3,
+    x: 705,
+    y: 106,
   });
-  await clickOnCanvas(page, x3, y3, { from: 'pageTopLeft' });
+  await clickOnCanvas(page, 705, 106, { from: 'pageTopLeft' });
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
@@ -1110,8 +1105,6 @@ test.describe('RNA Library', () => {
       await clearLocalStorage(page);
       await reloadPageAndConfigureInitialState(page);
 
-      const x = 200;
-      const y = 200;
       await Library(page).dragMonomerOnCanvas(monomer, {
         x: 0,
         y: 0,
@@ -1125,13 +1118,13 @@ test.describe('RNA Library', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await dragMouseTo(x, y, page);
+      await dragMouseTo(200, 200, page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
       await CommonLeftToolbar(page).erase();
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1214,15 +1207,13 @@ test.describe('RNA Library', () => {
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
     */
-      const x = 300;
-      const y = 500;
 
       await Library(page).dragMonomerOnCanvas(monomer, {
-        x,
-        y,
+        x: 300,
+        y: 500,
       });
       await page.keyboard.press('Escape');
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 300, 500, { from: 'pageTopLeft' });
       await moveMouseAway(page);
       await getMonomerLocator(page, monomer).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1249,8 +1240,6 @@ test.describe('RNA Library', () => {
     Test case: Import/Saving files/#4382
     Description: Undo/redo tool works correct with unsplit nucleotide.
     */
-      const x = 200;
-      const y = 200;
       await Library(page).dragMonomerOnCanvas(monomer, {
         x: 0,
         y: 0,
@@ -1258,14 +1247,14 @@ test.describe('RNA Library', () => {
       });
       await page.keyboard.press('Escape');
       await clickOnMiddleOfCanvas(page);
-      await dragMouseTo(x, y, page);
+      await dragMouseTo(200, 200, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).redo();
       await CommonLeftToolbar(page).erase();
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);

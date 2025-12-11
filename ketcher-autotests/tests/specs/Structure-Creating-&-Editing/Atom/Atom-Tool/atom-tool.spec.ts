@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page, expect } from '@fixtures';
@@ -212,15 +213,13 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1527
     Description: The whole structure is moved.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
 
@@ -284,14 +283,12 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1528
     Description: Structure with List/Not List and Generic Group is copy and pasted.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -300,14 +297,12 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1528
     Description: Structure with List/Not List and Generic Group is cut and pasted.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

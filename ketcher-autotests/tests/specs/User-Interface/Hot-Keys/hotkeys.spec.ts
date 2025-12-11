@@ -555,15 +555,13 @@ test.describe('Hot key Del', () => {
         );
       }
     });
-    const x = 100;
-    const y = 100;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);
     });
     await deleteByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(100, 100);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -85,14 +86,12 @@ test.describe('Indigo Tools - Layout', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Layout action.
     */
-    const x = 300;
-    const y = 300;
     const anyAtom = 0;
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
     await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await IndigoFunctionsToolbar(page).layout();
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({

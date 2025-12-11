@@ -278,14 +278,12 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1564
       Description: User is able to move the R-group label, a part of the structure.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R1').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -294,12 +292,10 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1564
       Description: User is able to move the R-group label, the whole structure.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -350,11 +346,9 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1566
       Description: User is able to Copy/Paste structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -363,11 +357,9 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1566
       Description: User is able to Cut/Paste the structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -394,15 +386,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct bond is sprouted from the R-group label
     */
-    const x = 100;
-    const y = 100;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(100, 100, page);
     await takeEditorScreenshot(page);
   });
 
@@ -411,15 +401,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Chain is sprouted from the R-group label
     */
-    const x = 500;
-    const y = 500;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await LeftToolbar(page).chain();
     await page.getByText('R10').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
   });
 
@@ -428,15 +416,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
     */
-    const x = 500;
-    const y = 500;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await page.getByText('R10').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
   });
 

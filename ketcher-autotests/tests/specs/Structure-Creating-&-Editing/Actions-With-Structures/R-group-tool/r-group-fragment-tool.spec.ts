@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -297,14 +298,12 @@ test.describe('Open Ketcher', () => {
     /*   Test case: EPMLSOPKET-1601
      * Description: User is able to Copy/Paste structure with R-group label.
      */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/r1-several-structures.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -312,14 +311,12 @@ test.describe('Open Ketcher', () => {
     /*      Test case: EPMLSOPKET-1601
      * Description: User is able to Cut/Paste the structure with R-group label.
      */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/r1-several-structures.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

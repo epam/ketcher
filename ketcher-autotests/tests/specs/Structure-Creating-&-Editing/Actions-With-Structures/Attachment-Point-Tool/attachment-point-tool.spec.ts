@@ -376,14 +376,12 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1646
     Description: Pasted structures are displayed with the correct attachment points.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'KET/reaction-with-attachment-points.ket',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -393,14 +391,12 @@ test.describe('Attachment Point Tool', () => {
     Description: Pasted structures are displayed with the correct attachment points.
     Undo/Redo actions for each step are correct.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'KET/reaction-with-attachment-points.ket',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

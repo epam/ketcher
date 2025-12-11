@@ -265,15 +265,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
     */
-    const x = 600;
-    const y = 400;
-    const smallShift = 10;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await page.mouse.move(x, y);
-    await page.mouse.move(x + smallShift, y);
+    await page.mouse.move(600, 400);
+    await page.mouse.move(600 + 10, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -609,8 +606,6 @@ test.describe('Functional Groups', () => {
     Description: With each addition of FG to FG connected to terminal atoms of structure,
     bond is not disappears and structure is not decreases.
     */
-    const x = 540;
-    const y = 350;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
@@ -626,7 +621,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ms,
     );
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 540, 350, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -785,8 +780,6 @@ test.describe('Functional Groups', () => {
     Description: After pressing hotkey 'N' it can be placed on canvas.
     Test working not properly. We have open bug https://github.com/epam/ketcher/issues/2591
     */
-    const x = 300;
-    const y = 300;
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
@@ -799,7 +792,7 @@ test.describe('Functional Groups', () => {
       getAbbreviationLocator(page, { name: 'Boc' }),
     );
     await page.keyboard.press('n');
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

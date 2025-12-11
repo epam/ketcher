@@ -146,13 +146,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
-    const x = 600;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 300, { from: 'pageTopLeft' });
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -303,13 +301,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting two same structures located on canvas.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -336,8 +332,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting two same structures located on canvas.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await waitForRender(page, async () => {
       await getBondLocator(page, { bondId: 31 }).click({ force: true });
@@ -346,7 +340,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
 
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -356,13 +350,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting two same structures located on canvas.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -372,10 +364,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting two same structures located on canvas.
     */
-    const x = 400;
-    const y = 200;
-    const x2 = 400;
-    const y2 = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -383,9 +371,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 400, 200, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -395,13 +383,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting three same structures located on canvas.
     */
-    const x = 700;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/generic-groups.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 700, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -469,13 +455,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting R-Group structure same structures located on canvas.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/R-Group-structure.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -507,13 +491,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting three same structures located on canvas.
     */
-    const x = 500;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/s-group-features.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -543,13 +525,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting three same structures located on canvas.
     */
-    const x = 500;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -583,13 +563,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Copied objects are pasted correctly.
     The structure is copied (and then is pasted) with the Chiral flag.
     */
-    const x = 500;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chiral-structure.mol');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -621,13 +599,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Copied objects are pasted correctly.
     The structure is copied (and then is pasted) with reaction arrow and plus sign
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction.rxn');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -687,8 +663,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2873
     Description: Copied reaction has Failed Arrow with default size and position.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/structure-with-failed-arrow.rxn',
@@ -696,7 +670,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -730,8 +704,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2874
     Description: Copied reaction has plus sign and one arrow.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/arrows-in-different-directions.rxn',
@@ -739,7 +711,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -773,8 +745,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     Not able to load indigo in time
     */
-    const x = 300;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-all-kinds-of-s-groups.mol',
@@ -782,7 +752,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -815,13 +785,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2883
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 300;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-structure.rxn');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -848,8 +816,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2945
     Description: Copied bonds are pasted as one object and correctly displayed without data loss.
     */
-    const x = 300;
-    const y = 400;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/all-kinds-of-bonds-test-file.mol',
@@ -857,7 +823,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -866,13 +832,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2946
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 300;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'KET/stereo-test-structures.ket');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -906,8 +870,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     After pasting R-Group structure same structures located on canvas.
     */
     // Error message when run under docker. But manual test is working.
-    const x = 500;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/complex-r-group-structure.mol',
@@ -915,7 +877,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -953,8 +915,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting Structure with Simple objects and text same structures located on canvas.
     */
-    const x = 550;
-    const y = 150;
     await openFileAndAddToCanvas(
       page,
       'KET/structure-with-simple-objects-and-text.ket',
@@ -962,7 +922,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 550, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1000,8 +960,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting  Aromatic structure same structures located on canvas.
     */
-    const x = 500;
-    const y = 100;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/aromatic-structures.mol',
@@ -1009,7 +967,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickAfterItemsToMergeInitialization(page, x, y);
+    await clickAfterItemsToMergeInitialization(page, 500, 100);
     await takeEditorScreenshot(page);
   });
 
@@ -1046,13 +1004,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting expanded and contracted Functional Froups same structures located on canvas.
     */
-    const x = 500;
-    const y = 150;
     await openFileAndAddToCanvas(page, 'KET/expanded-and-contracted-fg.ket');
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1087,8 +1043,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting expanded and contracted Salts and Solvents same structures located on canvas.
     */
-    const x = 500;
-    const y = 150;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/expanded-and-contracted-salts.mol',
@@ -1096,7 +1050,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 150, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

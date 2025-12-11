@@ -189,14 +189,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
     And above one structure appears 'Mixed' stereo flag.
     */
-    const xDelta = 300;
-    const yDelta = 600;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/two-stereostructures.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y - yDelta, page);
+    await dragMouseTo(x + 300, y - 600, page);
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });

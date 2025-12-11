@@ -362,7 +362,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await CommonTopLeftToolbar(page).undo();
 
         await RightToolbar(page).clickAtom(Atom.Oxygen);
-        await getAtomLocator(page, { atomLabel: 'O' }).first().click();
+        await getAtomLocator(page, { atomLabel: 'C' }).first().click();
 
         await CommonTopLeftToolbar(page).undo();
 

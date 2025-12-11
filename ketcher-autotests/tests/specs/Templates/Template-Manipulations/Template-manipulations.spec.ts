@@ -233,7 +233,7 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(300, 300, page);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).first().click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
       force: true,
     });
 
@@ -245,7 +245,7 @@ test.describe('Template Manupulations', () => {
       waitForMergeInitialization: true,
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).hover({
       force: true,
     });
     await dragMouseTo(300, 300, page);

@@ -423,7 +423,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       force: true,
     });
     await keyboardPressOnCanvas(page, 'O');
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
       force: true,
     });
     await keyboardPressOnCanvas(page, 'N');

@@ -10,7 +10,6 @@ import {
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
-  longClickOnAtom,
 } from '@utils';
 import {
   copyAndPaste,

@@ -16,7 +16,6 @@ import {
   clickOnCanvas,
   deleteByKeyboard,
   keyboardPressOnCanvas,
-  longClickOnAtom,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

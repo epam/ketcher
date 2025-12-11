@@ -151,7 +151,7 @@ test.describe('Open Ketcher', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true },
     );
     await CommonLeftToolbar(page).areaSelectionTool();

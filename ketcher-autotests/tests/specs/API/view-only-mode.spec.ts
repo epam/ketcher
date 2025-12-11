@@ -469,7 +469,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Cancel' }).click();
     await enableViewOnlyModeBySetOptions(page);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
       force: true,
       delay: 2000,
     });

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import { MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,

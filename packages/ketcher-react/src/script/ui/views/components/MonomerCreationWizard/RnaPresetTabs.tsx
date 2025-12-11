@@ -143,7 +143,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       <div className={styles.tabsContentWrapper}>
         {selectedTab === 0 && (
           <AttributeField
-            title="Name"
+            title="Code"
             control={
               <input
                 type="text"
@@ -154,7 +154,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 )}
                 placeholder="e.g. Diethylene Glycol"
                 value={wizardState.preset.name}
-                data-testid="name-input"
+                data-testid="code-input"
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   handleFieldChange('name', event.target.value, 'preset')
                 }

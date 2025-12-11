@@ -498,6 +498,11 @@ export class CoreEditor {
     });
   }
 
+  public checkIfPresetCodeExists(code: string) {
+    const rnaPresets = this.defaultRnaPresetsLibraryItems;
+    return rnaPresets.some((preset) => preset.name === code);
+  }
+
   public get defaultRnaPresetsLibraryItems() {
     const monomersLibraryJson = this.monomersLibraryParsedJson;
 

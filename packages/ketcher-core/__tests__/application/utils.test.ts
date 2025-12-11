@@ -1,5 +1,5 @@
 import { Atom, Bond, Struct } from 'domain/entities';
-import { getSelectionFromStruct } from 'application/utils';
+import { getSelectionFromStruct } from 'application/editor';
 
 describe('getSelectionFromStruct', () => {
   it('should return empty selection for struct without selected items', () => {

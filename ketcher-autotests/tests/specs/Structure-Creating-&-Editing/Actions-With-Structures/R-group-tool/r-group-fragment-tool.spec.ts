@@ -3,7 +3,6 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   openFileAndAddToCanvas,
   waitForPageInit,
   clickOnCanvas,
@@ -45,8 +44,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroup(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -59,8 +57,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await takeEditorScreenshot(page);
   });
 
@@ -72,8 +69,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroup(RGroup.R5);
     await RGroupDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -87,8 +83,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -103,11 +98,10 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R5);
 
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await takeEditorScreenshot(page);
   });
@@ -120,8 +114,6 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    // const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    // await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });

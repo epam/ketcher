@@ -3,10 +3,8 @@
 import { test, expect, Page } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  getCoordinatesTopAtomOfBenzeneRing,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
@@ -71,8 +69,7 @@ test.describe('S-Group Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).typeDropdown.click();
 
     await expect(page.getByTestId(TypeOption.Data)).toContainText('Data');
@@ -970,8 +967,7 @@ test.describe('S-Group Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.Superatom,
       Name: 'Test',
@@ -984,16 +980,13 @@ test.describe('S-Group Properties', () => {
       Test case: EPMLSOPKET-1542
       Description: An atom is created with the name `Test` and the value 8
     */
-    const testName = 'Test';
-    const testValue = '8';
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
-    await SGroupPropertiesDialog(page).setFieldNameValue(testName);
-    await SGroupPropertiesDialog(page).setFieldValueValue(testValue);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await SGroupPropertiesDialog(page).setFieldNameValue('Test');
+    await SGroupPropertiesDialog(page).setFieldValueValue('8');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await SGroupPropertiesDialog(page).apply();
@@ -1005,8 +998,7 @@ test.describe('S-Group Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).selectType(TypeOption.QueryComponent);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

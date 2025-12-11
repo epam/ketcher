@@ -3,7 +3,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -95,8 +94,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.QueryComponent,
     });

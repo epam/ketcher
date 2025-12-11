@@ -6,7 +6,6 @@ import {
   moveOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
   waitForPageInit,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -600,9 +599,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -623,9 +620,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

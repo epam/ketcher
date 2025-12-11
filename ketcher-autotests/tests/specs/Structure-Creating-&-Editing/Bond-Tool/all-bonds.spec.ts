@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -315,9 +314,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
          * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
          */
         test.setTimeout(120000);
-        const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-        const atomToolbar = RightToolbar(page);
 
         await CommonLeftToolbar(page).bondTool(bondType);
         await clickInTheMiddleOfTheScreen(page);
@@ -327,7 +324,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         );
 
         await moveMouseToTheMiddleOfTheScreen(page);
-        await dragMouseTo(point.x + DELTA_X, point.y, page);
+        await dragMouseTo(point.x + 100, point.y, page);
         await CommonTopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).areaSelectionTool(
@@ -346,7 +343,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
 
-        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+        await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
         });
         await CommonTopLeftToolbar(page).undo();
@@ -354,7 +351,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+        await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
         });
         await CommonTopLeftToolbar(page).undo();
@@ -365,13 +362,9 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await CommonTopLeftToolbar(page).undo();
 
-        await atomToolbar.clickAtom(Atom.Oxygen);
-        point = await getCoordinatesTopAtomOfBenzeneRing(page);
+        await RightToolbar(page).clickAtom(Atom.Oxygen);
+        await getAtomLocator(page, { atomLabel: 'O' }).first().click();
 
-        await clickOnCanvas(page, point.x, point.y, {
-          waitForRenderTimeOut: 100,
-          from: 'pageTopLeft',
-        });
         await CommonTopLeftToolbar(page).undo();
 
         await BottomToolbar(page).clickRing(RingButton.Cyclohexane);

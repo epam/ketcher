@@ -13,12 +13,12 @@ import {
   waitForRender,
   moveOnAtom,
   selectPartOfMolecules,
-  getCoordinatesTopAtomOfBenzeneRing,
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
+  dragTo,
 } from '@utils';
 import {
   copyAndPaste,
@@ -47,8 +47,6 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ExtendedTableDialog } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
-
-const X_DELTA_ONE = 100;
 
 test.describe('Atom Tool', () => {
   let page: Page;
@@ -311,23 +309,21 @@ test.describe('Atom Tool', () => {
       Test case: EPMLSOPKET-1581
       Description: when drag & drop an atom on an atom it should replace it
     */
-    const atomToolbar = RightToolbar(page);
-
     await drawBenzeneRing(page);
 
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    const bromineCoordinates = { x: x + X_DELTA_ONE, y };
-
-    await atomToolbar.clickAtom(Atom.Bromine);
-    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y, {
+    await RightToolbar(page).clickAtom(Atom.Bromine);
+    await clickOnCanvas(page, 740, 320, {
       from: 'pageTopLeft',
     });
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
-    await dragMouseTo(x, y, page);
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'Br' }).first(),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -672,14 +668,11 @@ test.describe('Atom Tool', () => {
       Description: Atom added to Benzene ring.
       */
       const anyAtom = 2;
-      const atomToolbar = RightToolbar(page);
 
       await drawBenzeneRing(page);
-      await atomToolbar.clickAtom(atomName);
+      await RightToolbar(page).clickAtom(atomName);
       await moveOnAtom(page, 'C', anyAtom);
-      const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-      const coordinatesWithShift = y - MAX_BOND_LENGTH;
-      await dragMouseTo(x, coordinatesWithShift, page);
+      await dragMouseTo(640, 270, page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
     });

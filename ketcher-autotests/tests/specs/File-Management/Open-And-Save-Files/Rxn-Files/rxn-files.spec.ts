@@ -5,7 +5,6 @@ import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -103,8 +102,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await SaveStructureDialog(page).cancel();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');

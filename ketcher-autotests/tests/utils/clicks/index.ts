@@ -233,18 +233,6 @@ export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
 }
 
-export async function longClickOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-  timeout = 2000,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.waitForTimeout(timeout);
-}
-
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,

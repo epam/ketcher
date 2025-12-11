@@ -463,11 +463,17 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await longClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Cancel' }).click();
     await enableViewOnlyModeBySetOptions(page);
-    await longClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
   });
 

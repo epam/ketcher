@@ -740,7 +740,10 @@ test.describe('Atom Properties', () => {
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await longClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('18O');
     await takeEditorScreenshot(page);
   });
@@ -766,7 +769,10 @@ test.describe('Atom Properties', () => {
 
     await page.keyboard.up('Shift');
 
-    await longClickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('18S');
     await takeEditorScreenshot(page);
   });
@@ -937,19 +943,24 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1634
       Description: All selected atoms is replaced with the typed atom symbols and Radicals.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
       force: true,
+      delay: 2000,
     });
     await LabelEditDialog(page).setLabel('O.');
 
-    await longClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('N:');
 
-    await longClickOnAtom(page, 'C', secondAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('F^^');
     await takeEditorScreenshot(page);
   });
@@ -1076,19 +1087,24 @@ test.describe('Atom Properties', () => {
       Description: Several atoms are selected.
       All selected atoms are replaced with the correct atom symbol with the correct atom properties.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
       force: true,
+      delay: 2000,
     });
     await LabelEditDialog(page).setLabel('15s^^2-');
 
-    await longClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('209Pb:2+');
 
-    await longClickOnAtom(page, 'C', secondAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('22F.3+');
     await takeEditorScreenshot(page);
   });
@@ -1477,10 +1493,12 @@ test.describe('Atom Properties', () => {
       "E" symbol appeared in "Atom" field next to "F".
       Selected atom now has "Fe" label.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await longClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await LabelEditDialog(page).setLabel('FE');
     await takeEditorScreenshot(page);
   });

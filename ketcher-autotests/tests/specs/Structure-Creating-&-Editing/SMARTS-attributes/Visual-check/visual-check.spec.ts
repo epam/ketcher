@@ -1,7 +1,6 @@
 import { test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  doubleClickOnAtom,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -29,12 +28,13 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Checking if displaying atom attributes does not broke integrity of the structure', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 3;
     await waitForPageInit(page);
     await BottomToolbar(page).cyclooctane();
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
@@ -99,12 +99,13 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
 
 test.describe('Checking if preview of attributes is displayed correctly after hover', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
     await waitForPageInit(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
+      force: true,
+    });
   });
 
   test('Checking preview of general atom and query specific attributes', async ({
@@ -205,18 +206,18 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
      * adding SMARTS specific attribute (connectivity) and taking screenshot to check if all properties in the list are displayed in SMARTS notation
      * (now ring bond count should be displayed as x<n>)
      */
-    let correctLabelIsDisplayed = false;
-
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         RingBondCount: RingBondCount.Three,
       },
     });
-    correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
+    const correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
     expect(correctLabelIsDisplayed).toBe(true);
     await takeEditorScreenshot(page);
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
+      force: true,
+    });
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {

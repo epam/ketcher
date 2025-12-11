@@ -3,7 +3,6 @@ import { test } from '@fixtures';
 import {
   clickOnCanvas,
   deleteByKeyboard,
-  doubleClickOnAtom,
   dragMouseTo,
   dragTo,
   openFileAndAddToCanvas,
@@ -58,8 +57,9 @@ test.describe('Fragment selection tool', () => {
     await page.keyboard.down('Shift');
     await getPlusLocator(page).nth(1).click({ force: true });
     await getArrowLocator(page, {}).nth(0).click({ force: true });
-    const atomToClick = 7;
-    await doubleClickOnAtom(page, 'C', atomToClick);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 29 }).dblclick({
+      force: true,
+    });
     await dragMouseTo(xMark, yMark, page);
     await takeEditorScreenshot(page);
   });

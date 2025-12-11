@@ -707,7 +707,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await expandMonomers(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    const atom = await getAtomById(page, 35);
+    const atom = getAtomLocator(page, { atomId: 35 });
     await collapseMonomers(page, atom);
     await takeEditorScreenshot(page);
   });

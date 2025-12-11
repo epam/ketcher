@@ -127,7 +127,9 @@ test.describe('Undo/Redo Actions', () => {
       SelectionToolType.Rectangle,
     );
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: {
         Alias: '!@#$%123AbCd',

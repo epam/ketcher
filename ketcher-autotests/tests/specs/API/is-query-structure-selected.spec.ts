@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@fixtures';
-import { doubleClickOnAtom, waitForPageInit } from '@utils';
+import { waitForPageInit } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -33,10 +33,11 @@ async function checkIsQueryStructureSelected(
 test.describe('API isQueryStructureSelected for atoms', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    const anyAtom = 0;
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 

@@ -6,7 +6,7 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { dragMouseTo, moveOnAtom } from '@utils/clicks';
+import { dragMouseTo } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { emptyFunction } from '@utils/common/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -335,18 +335,6 @@ export async function redoByKeyboard(
   await waitForRender(page, async () => {
     await page.keyboard.press(`ControlOrMeta+Shift+KeyZ`, options);
   });
-}
-
-export async function copyStructureByCtrlMove(
-  page: Page,
-  atom: string,
-  atomIndex: number,
-  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
-) {
-  await moveOnAtom(page, atom, atomIndex);
-  await page.keyboard.down('ControlOrMeta');
-  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
-  await page.keyboard.up('ControlOrMeta');
 }
 
 export async function selectCanvasArea(

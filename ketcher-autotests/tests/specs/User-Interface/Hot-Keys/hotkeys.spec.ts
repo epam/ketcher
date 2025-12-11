@@ -14,7 +14,6 @@ import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { copyStructureByCtrlMove } from '@utils/canvas/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -74,7 +73,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await takeEditorScreenshot(page);
   });
 
@@ -100,7 +104,12 @@ test.describe('Hot keys', () => {
     });
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await page.keyboard.up('Shift');
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -122,7 +131,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -147,7 +161,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -174,7 +193,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -205,7 +229,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 250, y: 250 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(250, 250, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -228,7 +257,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 245, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(245, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -286,7 +320,12 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'Cbz' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -344,7 +383,12 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'formic acid' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -369,7 +413,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(270, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -394,7 +443,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(270, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -419,7 +473,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(270, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -445,7 +504,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(270, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page, { maxDiffPixels: 2 });
@@ -469,7 +533,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -494,7 +563,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -524,7 +598,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(270, 245, page);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);

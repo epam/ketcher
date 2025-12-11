@@ -232,12 +232,3 @@ export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
 }
-
-export async function moveOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
-}

@@ -109,7 +109,9 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
           selected.push(key);
         }
       });
-      selection[entityType] = selected;
+      if (selected.length > 0) {
+        selection[entityType] = selected;
+      }
     }
   });
   return selection;

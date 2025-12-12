@@ -2,6 +2,7 @@ import { Page, Locator } from '@playwright/test';
 import { MoleculesFileFormatType } from '../constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFileFormats';
 import { delay } from '@utils/canvas';
+import { InfoMessageDialog } from '../molecules/canvas/InfoMessageDialog';
 
 type SaveStructureDialogLocators = {
   window: Locator;
@@ -41,6 +42,15 @@ export const SaveStructureDialog = (page: Page) => {
       format: MoleculesFileFormatType | MacromoleculesFileFormatType,
     ) {
       const delayTime = 0.15;
+      const infoDlg = InfoMessageDialog(page);
+      if (await infoDlg.isVisible()) {
+        const text = (await infoDlg.getInfoMessage()) || '';
+        if (
+          text.includes('The monomer was successfully added to the library.')
+        ) {
+          await infoDlg.ok();
+        }
+      }
       await locators.fileFormatDropdownList.click();
       await delay(delayTime);
       await page.getByTestId(format).click({ force: true });

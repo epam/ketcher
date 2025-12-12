@@ -6,6 +6,7 @@ import {
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
 import { delay } from '@utils/canvas';
+import { InfoMessageDialog } from '../molecules/canvas/InfoMessageDialog';
 
 type ContextMenuLocators = {
   contextMenuBody: Locator;
@@ -23,6 +24,15 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     ...locators,
 
     async open() {
+      const infoDlg = InfoMessageDialog(page);
+      if (await infoDlg.isVisible()) {
+        const text = (await infoDlg.getInfoMessage()) || '';
+        if (
+          text.includes('The monomer was successfully added to the library.')
+        ) {
+          await infoDlg.ok();
+        }
+      }
       if ('x' in element && 'y' in element) {
         await page.mouse.click(element.x, element.y, { button: 'right' });
       } else {

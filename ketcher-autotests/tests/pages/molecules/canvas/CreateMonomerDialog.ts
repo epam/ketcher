@@ -537,6 +537,19 @@ export async function createMonomer(
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
   await createMonomerDialog.submit({ ignoreWarning });
+  const infoDlg = InfoMessageDialog(page);
+  const maybeCloseSuccessModal = async () => {
+    if (await infoDlg.isVisible()) {
+      const bodyText = (await infoDlg.getInfoMessage()) || '';
+      if (
+        bodyText.includes('The monomer was successfully added to the library.')
+      ) {
+        await infoDlg.ok();
+      }
+    }
+  };
+  await page.waitForTimeout(150);
+  await maybeCloseSuccessModal();
 }
 
 export async function prepareMoleculeForMonomerCreation(

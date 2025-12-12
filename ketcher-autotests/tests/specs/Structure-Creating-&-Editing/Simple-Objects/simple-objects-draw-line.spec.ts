@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -26,11 +27,9 @@ async function selectLineWithSelectionTool(page: Page) {
 }
 
 async function moveLineToNewPosition(page: Page) {
-  const x = 759;
-  const y = 183;
   await clickInTheMiddleOfTheScreen(page);
   await page.mouse.down();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(759, 183, page);
   await page.mouse.up();
 }
 

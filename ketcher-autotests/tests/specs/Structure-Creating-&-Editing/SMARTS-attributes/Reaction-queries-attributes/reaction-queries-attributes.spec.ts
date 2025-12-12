@@ -1,10 +1,8 @@
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -76,9 +74,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 1);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await verifySMARTSExport(page, '[#6:1]-[#6:2]');
   });
@@ -93,8 +94,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.QueryComponent,
     });
@@ -146,9 +146,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'F', 0);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'F', atomId: 1 }).click({
+      force: true,
+    });
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     const carbonPoint = await getAtomLocator(page, { atomLabel: 'C' })

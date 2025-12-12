@@ -6,9 +6,8 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { dragMouseTo, moveOnAtom } from '@utils/clicks';
+import { dragMouseTo } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
@@ -48,32 +47,6 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
   }
 
   return Number.MIN_SAFE_INTEGER;
-}
-
-export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
-  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
-    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
-    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
-    return {
-      carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
-    };
-  });
-  let min = {
-    x: Infinity,
-    y: Infinity,
-  };
-  for (const carbonAtom of carbonAtoms) {
-    if (carbonAtom.pp.y < min.y) {
-      min = carbonAtom.pp;
-    }
-  }
-  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
-  return {
-    x: min.x * scale + offset.x + leftBarWidth,
-    y: min.y * scale + offset.y + topBarHeight,
-  };
 }
 
 export async function takeElementScreenshot(
@@ -362,18 +335,6 @@ export async function redoByKeyboard(
   await waitForRender(page, async () => {
     await page.keyboard.press(`ControlOrMeta+Shift+KeyZ`, options);
   });
-}
-
-export async function copyStructureByCtrlMove(
-  page: Page,
-  atom: string,
-  atomIndex: number,
-  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
-) {
-  await moveOnAtom(page, atom, atomIndex);
-  await page.keyboard.down('ControlOrMeta');
-  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
-  await page.keyboard.up('ControlOrMeta');
 }
 
 export async function selectCanvasArea(

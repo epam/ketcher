@@ -10,7 +10,6 @@ import {
   MolFileFormat,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
   moveMouseAway,
@@ -265,8 +264,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3654
     */
-    const x = 400;
-    const y = 400;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
       page,
@@ -275,7 +272,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await getAbbreviationLocator(page, { name: 'Edc' }).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(400, 400, page);
     await takeEditorScreenshot(page);
   });
 
@@ -308,10 +305,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3658
     */
-    const x1 = 400;
-    const y1 = 400;
-    const x2 = 500;
-    const y2 = 500;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await resetZoomLevelToDefault(page);
     await openFileAndAddToCanvasMacro(
@@ -321,9 +314,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await resetZoomLevelToDefault(page);
     await getAbbreviationLocator(page, { name: 'Edc' }).hover();
-    await dragMouseTo(x1, y1, page);
+    await dragMouseTo(400, 400, page);
     await getAbbreviationLocator(page, { name: 'Edc' }).hover();
-    await dragMouseTo(x2, y2, page);
+    await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
   });
 
@@ -739,13 +732,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-      const xOffsetFromCenter = 200;
-      const yOffsetFromCenter = 0;
       await openFileAndAddToCanvas(
         page,
         'KET/three-alpha-d-allopyranose.ket',
-        xOffsetFromCenter,
-        yOffsetFromCenter,
+        200,
+        0,
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
@@ -1014,19 +1005,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
       await BottomToolbar(page).clickRing(RingButton.Benzene);
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await dragMouseTo(x1, y1, page);
+      await dragMouseTo(600, 600, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1042,21 +1029,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await dragMouseTo(x1, y1, page);
+      await dragMouseTo(600, 600, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1072,22 +1055,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
       await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await dragMouseTo(x1, y1, page);
+      await dragMouseTo(600, 600, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1103,22 +1082,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
       await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).addSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
-      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await dragMouseTo(x1, y1, page);
+      await dragMouseTo(600, 600, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1159,8 +1134,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
@@ -1169,8 +1142,8 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).dragMonomerOnCanvas(data.monomer, {
-        x,
-        y,
+        x: 750,
+        y: 370,
       });
       await bondTwoMonomersPointToPoint(
         page,
@@ -1194,8 +1167,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
@@ -1204,8 +1175,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 750,
+      y: 370,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -1255,8 +1226,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
@@ -1268,8 +1237,8 @@ test.describe('Macro-Micro-Switcher', () => {
         LayoutMode.Snake,
       );
       await Library(page).dragMonomerOnCanvas(data.monomer, {
-        x,
-        y,
+        x: 750,
+        y: 370,
       });
       await bondTwoMonomersPointToPoint(
         page,
@@ -1289,8 +1258,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
@@ -1300,8 +1267,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 750,
+      y: 370,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -1348,8 +1315,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
@@ -1358,8 +1323,8 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).dragMonomerOnCanvas(data.monomer, {
-        x,
-        y,
+        x: 750,
+        y: 370,
       });
       await bondTwoMonomersPointToPoint(
         page,
@@ -1384,8 +1349,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
@@ -1394,8 +1357,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 750,
+      y: 370,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -1447,8 +1410,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description: Macro structure deleted.
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
@@ -1457,8 +1418,8 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await Library(page).dragMonomerOnCanvas(data.monomer, {
-        x,
-        y,
+        x: 750,
+        y: 370,
       });
       await bondTwoMonomersPointToPoint(
         page,
@@ -1482,8 +1443,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       After removing bond and then pressing Undo, the micro and macro structures are disconnected
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
@@ -1492,8 +1451,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 750,
+      y: 370,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -1519,8 +1478,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       it is not possible to change bond type between monomer and micromolecule in micro mode
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
@@ -1529,8 +1486,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 750,
+      y: 370,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -2025,7 +1982,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
     await takeEditorScreenshot(page);
@@ -2058,7 +2015,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await takeEditorScreenshot(page);
   });
@@ -2075,12 +2034,16 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).chargePlus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).chargeMinus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

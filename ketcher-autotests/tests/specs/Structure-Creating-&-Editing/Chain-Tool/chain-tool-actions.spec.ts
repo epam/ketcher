@@ -9,11 +9,11 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  clickOnAtom,
   MolFileFormat,
   deleteByKeyboard,
   keyboardPressOnCanvas,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
@@ -43,7 +43,9 @@ test.describe('Chain Tool verification', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
@@ -77,19 +79,24 @@ test.describe('Chain Tool verification', () => {
   }) => {
     // Test case: EPMLSOPKET-16949
     // Verify selecting and changing atom type on chain
-    const bondNumber = 2;
-    const bondNumber1 = 4;
-    const bondNumber2 = 6;
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', bondNumber);
-    await clickOnAtom(page, 'C', bondNumber1);
-    await clickOnAtom(page, 'C', bondNumber2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
     await page.keyboard.press('p');
     await takeEditorScreenshot(page);

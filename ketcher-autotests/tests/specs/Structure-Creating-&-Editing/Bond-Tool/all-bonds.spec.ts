@@ -4,12 +4,10 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  moveOnAtom,
   waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -315,9 +313,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
          * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
          */
         test.setTimeout(120000);
-        const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-        const atomToolbar = RightToolbar(page);
 
         await CommonLeftToolbar(page).bondTool(bondType);
         await clickInTheMiddleOfTheScreen(page);
@@ -327,7 +323,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         );
 
         await moveMouseToTheMiddleOfTheScreen(page);
-        await dragMouseTo(point.x + DELTA_X, point.y, page);
+        await dragMouseTo(point.x + 100, point.y, page);
         await CommonTopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).areaSelectionTool(
@@ -346,7 +342,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
 
-        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+        await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
         });
         await CommonTopLeftToolbar(page).undo();
@@ -354,7 +350,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+        await clickOnCanvas(page, point.x + 100, point.y, {
           waitForRenderTimeOut: 100,
         });
         await CommonTopLeftToolbar(page).undo();
@@ -365,20 +361,17 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await CommonTopLeftToolbar(page).undo();
 
-        await atomToolbar.clickAtom(Atom.Oxygen);
-        point = await getCoordinatesTopAtomOfBenzeneRing(page);
+        await RightToolbar(page).clickAtom(Atom.Oxygen);
+        await getAtomLocator(page, { atomLabel: 'C' })
+          .first()
+          .click({ force: true });
 
-        await clickOnCanvas(page, point.x, point.y, {
-          waitForRenderTimeOut: 100,
-          from: 'pageTopLeft',
-        });
         await CommonTopLeftToolbar(page).undo();
 
         await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-        await clickOnCanvas(page, point.x, point.y, {
-          waitForRenderTimeOut: 100,
-          from: 'pageTopLeft',
-        });
+        await getAtomLocator(page, { atomLabel: 'C' })
+          .nth(1)
+          .click({ force: true });
 
         await takeEditorScreenshot(page);
       },
@@ -476,9 +469,13 @@ test.describe('Bond Tool', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -489,9 +486,13 @@ test.describe('Bond Tool', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await takeEditorScreenshot(page);
 
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -517,9 +518,13 @@ test.describe('Bond Tool', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {
@@ -528,9 +533,13 @@ test.describe('Bond Tool', () => {
       200,
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await page.mouse.down();
-    await moveOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
+      force: true,
+    });
     await waitForRender(
       page,
       async () => {

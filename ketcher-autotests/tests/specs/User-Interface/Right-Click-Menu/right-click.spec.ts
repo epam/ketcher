@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  clickOnAtom,
   clickOnCanvas,
   resetZoomLevelToDefault,
   takeElementScreenshot,
@@ -126,17 +125,17 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await atomToolbar.clickAtom(Atom.Oxygen);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
-      const point = await getBondLocator(page, { bondId: 6 });
+      const point = getBondLocator(page, { bondId: 6 });
       await ContextMenu(page, point).click(MicroBondOption.Double);
     });
 
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', 1);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+        force: true,
+      });
     });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -545,7 +544,9 @@ test.describe('Right-click menu', () => {
     );
     await page.keyboard.down('Shift');
     await getBondLocator(page, { bondId: 2 }).click({ force: true });
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
     await ContextMenu(
       page,

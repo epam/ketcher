@@ -10,13 +10,11 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   openFile,
-  moveOnAtom,
   dragMouseTo,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   deleteByKeyboard,
   keyboardPressOnCanvas,
-  longClickOnAtom,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -371,9 +369,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
     await deleteByKeyboard(page);
-    await moveOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
@@ -388,9 +390,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
     await deleteByKeyboard(page);
-    await moveOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
@@ -463,11 +469,17 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await longClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Cancel' }).click();
     await enableViewOnlyModeBySetOptions(page);
-    await longClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -501,7 +513,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });

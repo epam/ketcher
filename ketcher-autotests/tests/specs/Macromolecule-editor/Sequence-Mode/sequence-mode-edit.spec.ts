@@ -81,9 +81,7 @@ test.describe('Sequence edit mode', () => {
     Description: When right ckick on canvas for new sequence: 'Start new sequence'
     For clicking on existed: 'Edit sequence' and 'Start new sequence'.
     */
-    const x = 100;
-    const y = 100;
-    await ContextMenu(page, { x, y }).open();
+    await ContextMenu(page, { x: 100, y: 100 }).open();
     expect(
       page.getByTestId(SequenceSymbolOption.StartNewSequence),
     ).toBeVisible();
@@ -122,11 +120,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #3650
     Description: Exiting text-editing mode occurs with a click outside the sequence.
     */
-    const x = 400;
-    const y = 400;
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

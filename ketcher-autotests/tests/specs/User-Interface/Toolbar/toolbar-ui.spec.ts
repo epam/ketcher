@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   takeRightToolbarScreenshot,
-  clickOnAtom,
   waitForIndigoToLoad,
   keyboardPressOnCanvas,
 } from '@utils';
@@ -23,6 +22,7 @@ import {
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -138,13 +138,15 @@ test.describe('Open Ketcher', () => {
      * Iodine tool is applied
      * Single bond tool kept selected and applied on further mouse clicks
      */
-    const anyAtom = 2;
-    const secondAtom = 4;
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
-    await clickOnAtom(page, 'C', secondAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
   });
 
   test('Highlight currently selected tool with mouse cursor and toolbox icons', async ({

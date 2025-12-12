@@ -832,8 +832,6 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
     */
     await Library(page).switchToPeptidesTab();
-    const x = 650;
-    const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Peptide._1Nal);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -842,8 +840,8 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -865,8 +863,6 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -875,8 +871,8 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -892,8 +888,6 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async () => {
-    const x = 650;
-    const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Peptide._1Nal);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
@@ -904,8 +898,8 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -935,8 +929,6 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
@@ -946,8 +938,8 @@ test.describe('Import-Saving .idt Files', () => {
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await bondTwoMonomersPointToPoint(
       page,
@@ -968,8 +960,6 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Sequence with unresolved IDT monomers copied/pasted.
     */
-    const x = 0;
-    const y = 600;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
@@ -977,7 +967,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(0, 600);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -987,16 +977,14 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
     */
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptide._1Nal).click();
@@ -1013,16 +1001,14 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('defaultLayout');
 
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
@@ -1040,16 +1026,14 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
       `/iMe-dC2/`,
     );
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-      x,
-      y,
+      x: 650,
+      y: 400,
     });
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC2).click();

@@ -1,4 +1,5 @@
-import { test, expect, Page } from '@fixtures';
+/* eslint-disable no-magic-numbers */
+import { test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
@@ -14,10 +15,10 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  moveOnAtom,
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
@@ -28,39 +29,27 @@ const testCasesForOpeningFiles = [
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'Molfiles-V2000/cyclopentyl.mol',
     atomType: 'O',
+    atomId: 20,
   },
   {
     firstFile: 'Molfiles-V2000/cyclopentyl.mol',
     secondFile: 'Rxn-V2000/reaction-3.rxn',
     atomType: 'C',
+    atomId: 16,
   },
   {
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'SMILES/1840-cyclopentyl.smi',
     atomType: 'O',
+    atomId: 20,
   },
   {
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'KET/simple-chain.ket',
     atomType: 'O',
+    atomId: 20,
   },
 ];
-
-async function moveElement(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-  xShiftForElement = 350,
-  yShiftForElement = 150,
-) {
-  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-  const pointXToMoveElement = x - xShiftForElement;
-  const pointYToMoveElement = y - yShiftForElement;
-
-  await CommonLeftToolbar(page).handTool();
-  await moveOnAtom(page, atomLabel, atomNumber);
-  await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
-}
 
 test.describe('load as fragment (Add to Canvas) srtuctures from files with different formats', () => {
   test.beforeEach(async ({ page }) => {
@@ -77,7 +66,16 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
        * Test case: EPMLSOPKET-1860, EPMLSOPKET-1854, EPMLSOPKET-1861, EPMLSOPKET-2933
        */
       await openFileAndAddToCanvas(page, testCase.firstFile);
-      await moveElement(page, testCase.atomType, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, {
+        atomLabel: testCase.atomType,
+        atomId: testCase.atomId,
+      }).hover({
+        force: true,
+      });
+      await dragMouseTo(x - 350, y - 150, page);
       await openFileAndAddToCanvas(page, testCase.secondFile);
     });
   }
@@ -176,7 +174,15 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickInTheMiddleOfTheScreen(page);
-      await moveElement(page, 'H', 0, shiftForHydrogen, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const pointXToMoveElement = x - shiftForHydrogen;
+      const pointYToMoveElement = y - 0;
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, { atomLabel: 'H' }).first().hover({
+        force: true,
+      });
+      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
     }
 
     async function addAndMovePlusSymbol() {
@@ -194,7 +200,15 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
       await atomToolbar.clickAtom(Atom.Oxygen);
       await clickInTheMiddleOfTheScreen(page);
-      await moveElement(page, 'O', 0, shiftForOxygen, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const pointXToMoveElement = x - shiftForOxygen;
+      const pointYToMoveElement = y - 0;
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+        force: true,
+      });
+      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
     }
 
     async function addArrowSymbol() {

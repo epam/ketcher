@@ -5,6 +5,10 @@ export class UnresolvedMonomerSequenceItemRenderer extends BaseSequenceItemRende
     return '?';
   }
 
+  get dataSymbolType(): string {
+    return 'Unresolved';
+  }
+
   protected drawModification(): void {
     return undefined;
   }

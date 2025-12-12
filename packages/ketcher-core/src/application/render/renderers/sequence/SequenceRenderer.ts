@@ -2,7 +2,6 @@ import {
   ChainsCollection,
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
-import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import {
   BaseMonomer,
   HydrogenBond,
@@ -43,6 +42,7 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
+import { SequenceNodeRendererPool } from 'application/render/renderers/sequence/SequenceNodeRendererPool';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -118,18 +118,25 @@ export class SequenceRenderer {
     chainsCollection: ChainsCollection,
     chainBeforeNewEmptyChainIndex?: number,
   ) {
-    this.clear();
     this.chainsCollection = chainsCollection;
     this.sequenceViewModel = new SequenceViewModel(chainsCollection);
     const newEmptyChain = this.addNewEmptyChainIfNeeded(
       chainBeforeNewEmptyChainIndex,
     );
+    // console.timeEnd('    SequenceRenderer.SequenceViewModel build done');
+    console.debug('    SequenceRenderer.showNodes');
+    console.time('    SequenceRenderer.showNodes done');
     this.removeNewSequenceButtons();
     this.showNodes(this.sequenceViewModel);
+    console.timeEnd('    SequenceRenderer.showNodes done');
+    console.debug('    SequenceRenderer.showBonds');
+    console.time('    SequenceRenderer.showBonds done');
     this.showBonds(this.chainsCollection);
+    console.timeEnd('    SequenceRenderer.showBonds done');
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
+    // console.debug('    << SequenceRenderer.show <<');
   }
 
   private static setCaretToLastNodeInChain(chain: SequenceViewModelChain) {
@@ -197,20 +204,32 @@ export class SequenceRenderer {
             chainItem.antisenseNode &&
             !handledNodes.has(chainItem.antisenseNode)
           ) {
-            antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
-              chainItem.antisenseNode,
-              currentChainStartPosition.add(new Vec2(0, 30)),
-              currentMonomerIndexInChain,
-              chainItem.antisenseNode === chain.lastNode.senseNode,
-              chainItem.antisenseChain ?? chainItem.chain,
-              currentMonomerIndexOverall,
-              this.caretPosition,
-              chainItem,
-              chainItem.antisenseNode?.monomer?.renderer,
+            // TODO pool pass context only to show, acquire without context
+            const context = {
+              node: chainItem.antisenseNode,
+              firstMonomerInChainPosition: currentChainStartPosition.add(
+                new Vec2(0, 30),
+              ),
+              monomerIndexInChain: currentMonomerIndexInChain,
+              isLastMonomerInChain:
+                chainItem.antisenseNode === chain.lastNode.senseNode,
+              chain: chainItem.antisenseChain ?? chainItem.chain,
+              nodeIndexOverall: currentMonomerIndexOverall,
+              editingNodeIndexOverall: SequenceRenderer.caretPosition,
+              twoStrandedNode: chainItem,
+              monomerSize:
+                chainItem.antisenseNode?.monomer?.renderer?.monomerSize,
+              scaledMonomerPosition:
+                chainItem.antisenseNode?.monomer?.renderer
+                  ?.scaledMonomerPosition,
               previousRowsWithAntisense,
-            );
+            };
+            antisenseNodeRenderer =
+              SequenceNodeRendererPool.acquire<BaseSequenceItemRenderer>(
+                context,
+              );
 
-            antisenseNodeRenderer.show();
+            antisenseNodeRenderer.show(context);
             chainItem.antisenseNode.monomers?.forEach((monomer) =>
               monomer.setRenderer(
                 antisenseNodeRenderer as BaseSequenceItemRenderer,
@@ -233,21 +252,22 @@ export class SequenceRenderer {
           if (!node) {
             return;
           }
-
-          const renderer = SequenceNodeRendererFactory.fromNode(
+          const context = {
             node,
-            currentChainStartPosition,
-            currentMonomerIndexInChain,
-            node === chainItem.chain.lastNode,
-            chainItem.chain,
-            currentMonomerIndexOverall,
-            this.caretPosition,
-            chainItem,
-            node.monomer.renderer,
+            firstMonomerInChainPosition: currentChainStartPosition,
+            monomerIndexInChain: currentMonomerIndexInChain,
+            isLastMonomerInChain: node === chainItem.chain.lastNode,
+            chain: chainItem.chain,
+            nodeIndexOverall: currentMonomerIndexOverall,
+            editingNodeIndexOverall: SequenceRenderer.caretPosition,
+            twoStrandedNode: chainItem,
+            monomerSize: node.monomer.renderer?.monomerSize,
+            scaledMonomerPosition: node.monomer.renderer?.scaledMonomerPosition,
             previousRowsWithAntisense,
-          );
-
-          renderer.show();
+          };
+          const renderer =
+            SequenceNodeRendererPool.acquire<BaseSequenceItemRenderer>(context);
+          renderer.show(context);
           node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
           currentMonomerIndexInChain++;
           currentMonomerIndexOverall++;
@@ -1223,14 +1243,16 @@ export class SequenceRenderer {
     return this.currentEdittingNode?.senseNode instanceof EmptySequenceNode;
   }
 
-  public static clear() {
+  public static clear(clearPools = false) {
     if (!this.sequenceViewModel) return;
+    console.log('SequenceRenderer.clear');
     for (const {
       twoStrandedNode,
     } of this.sequenceViewModel.nodesInAllChains()) {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
     }
+    if (clearPools) SequenceNodeRendererPool.clear();
     this.removeNewSequenceButtons();
   }
 }

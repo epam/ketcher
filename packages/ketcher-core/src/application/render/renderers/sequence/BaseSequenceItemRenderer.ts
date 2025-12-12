@@ -20,10 +20,16 @@ import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
+import { SequenceNodeOptions } from './types';
+import { Poolable } from '../pooling/RendererPool';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+let ID_COUNTER = 0;
 
-export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+export abstract class BaseSequenceItemRenderer
+  extends BaseSequenceRenderer
+  implements Poolable<SequenceNodeOptions>
+{
   private readonly editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -34,26 +40,51 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | D3SvgElementSelection<SVGGElement, void>;
 
-  public antisenseNodeRenderer?: this;
+  private chainStartArrow?: D3SvgElementSelection<SVGUseElement, void>;
 
-  constructor(
-    public readonly node: SequenceNode,
-    private readonly firstNodeInChainPosition: Vec2,
-    private readonly monomerIndexInChain: number,
-    private readonly isLastMonomerInChain: boolean,
-    private readonly chain: Chain,
-    private readonly nodeIndexOverall: number,
-    private readonly editingNodeIndexOverall: number,
-    public readonly monomerSize: { width: number; height: number },
-    public readonly scaledMonomerPosition: Vec2,
-    public readonly twoStrandedNode: ITwoStrandedChainItem,
-    private readonly previousRowsWithAntisense = 0,
-  ) {
-    super(node.monomer);
+  public poolGeneration = 0;
+  public poolName?: string;
+  public id = ID_COUNTER++;
+  public inPool = false;
+  public onRemove?: (e: Poolable<SequenceNodeOptions>) => void;
+
+  public antisenseNodeRenderer?: this;
+  public node: SequenceNode;
+  private firstNodeInChainPosition: Vec2;
+  private monomerIndexInChain: number;
+  private isLastMonomerInChain: boolean;
+  private chain: Chain;
+  private nodeIndexOverall: number;
+  private editingNodeIndexOverall: number;
+  public monomerSize: { width: number; height: number };
+  public scaledMonomerPosition: Vec2;
+  public twoStrandedNode: ITwoStrandedChainItem;
+  private previousRowsWithAntisense = 0;
+
+  constructor(options: SequenceNodeOptions) {
+    if (!options.node) {
+      throw new Error('SequenceNodeOptions.node is required');
+    }
+    super(options.node.monomer);
+    this.node = options.node;
+    this.firstNodeInChainPosition = options.firstMonomerInChainPosition;
+    this.monomerIndexInChain = options.monomerIndexInChain;
+    this.isLastMonomerInChain = options.isLastMonomerInChain;
+    this.chain = options.chain;
+    this.nodeIndexOverall = options.nodeIndexOverall;
+    this.editingNodeIndexOverall = options.editingNodeIndexOverall;
+    this.monomerSize = options.monomerSize || { width: 0, height: 0 };
+    this.scaledMonomerPosition =
+      options.scaledMonomerPosition || new Vec2(0, 0);
+    this.twoStrandedNode = options.twoStrandedNode;
     this.editorEvents = editorEvents;
+
+    // Create DOM elements once
+    this.createBasicDOMElements();
   }
 
   abstract get symbolToDisplay(): string;
+  abstract get dataSymbolType(): string;
 
   public isEditingSymbol(editingNodeIndexOverall?: number) {
     return (
@@ -75,7 +106,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      SequenceRenderer.sequenceViewModel?.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -142,92 +173,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }
 
-  protected appendRootElement() {
+  private createRootElement(): D3SvgElementSelection<SVGGElement, void> {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('data-symbol-type', this.dataSymbolType)
       .attr('data-testid', 'sequence-item')
-      .attr('data-symbol-id', this.node.monomer.id)
-      .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
-      .attr(
-        'data-side-connection-number',
-        this.node.monomers.reduce(
-          (acc, monomer) =>
-            acc +
-            monomer.covalentBonds.filter(
-              (bond) =>
-                bond instanceof PolymerBond && bond.isSideChainConnection,
-            ).length,
-          0,
-        ),
-      )
-      .attr(
-        'data-has-left-connection',
-        Boolean(this.node.firstMonomerInNode.attachmentPointsToBonds.R1),
-      )
-      .attr(
-        'data-has-right-connection',
-        Boolean(this.node.lastMonomerInNode.attachmentPointsToBonds.R2),
-      )
-      .attr(
-        'data-hydrogen-connection-number',
-        this.node.monomers.reduce(
-          (acc, monomer) => acc + monomer.hydrogenBonds.length,
-          0,
-        ),
-      )
-      .attr('data-isAntisense', this.isAntisenseNode)
-      .attr('data-nodeIndexOverall', this.nodeIndexOverall)
       .attr('transition', 'transform 0.2s')
-      .attr(
-        'transform',
-        `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
-
-    if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
-      rootElement.attr('pointer-events', 'all').attr('cursor', 'text');
-    }
+      .attr('pointer-events', 'all') as never as D3SvgElementSelection<
+      SVGGElement,
+      void
+    >;
 
     return rootElement;
-  }
-
-  private appendBackgroundElement() {
-    const backgroundElement = this.rootElement
-      ?.append('rect')
-      .attr('width', 16)
-      .attr('height', 20)
-      .attr('y', -16)
-      .attr('x', -2)
-      .attr('rx', 2)
-      .attr(
-        'cursor',
-        this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
-          ? 'text'
-          : 'default',
-      );
-
-    backgroundElement?.attr('fill', 'transparent');
-
-    return backgroundElement;
-  }
-
-  private appendSpacerElement() {
-    const spacerGroupElement = this.rootElement
-      ?.append('g')
-      .attr('transform', 'translate(14, -16)');
-
-    spacerGroupElement
-      ?.append('rect')
-      .attr('width', 4)
-      .attr('height', 20)
-      .attr(
-        'cursor',
-        this.isSequenceEditInRnaBuilderModeTurnedOn ? 'default' : 'text',
-      )
-      .attr('fill', 'transparent');
-
-    return spacerGroupElement;
   }
 
   private get nthSeparationInRow() {
@@ -354,10 +312,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendCounterElement(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    const y = this.node.monomer.monomerItem.isAntisense ? '24' : '-24';
     return rootElement
       .append('text')
-      .attr('x', '2')
-      .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
+      .attr('transform', `translate(2, ${y})`)
       .text(this.counterNumber)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
@@ -371,12 +329,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return;
     }
 
-    this.counterElement?.remove();
-    this.counterElement = undefined;
-
     if (this.needDisplayCounter(editingNodeIndexOverall)) {
-      this.counterElement = this.appendCounterElement(this.rootElement);
+      if (!this.counterElement) {
+        this.counterElement = this.appendCounterElement(this.rootElement);
+      } else {
+        const y = this.node.monomer.monomerItem.isAntisense ? '24' : '-24';
+        this.counterElement
+          .text(this.counterNumber)
+          .attr('transform', `translate(2, ${y})`)
+          .style('display', null);
+      }
+    } else {
+      this.hideCounter();
     }
+  }
+
+  private hideCounter(): void {
+    this.counterElement?.style('display', 'none');
   }
 
   private needDisplayCounter(editingNodeIndexOverall?: number) {
@@ -587,7 +556,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret() {
-    this.caretElement = this.spacerElement?.append('g');
+    if (!this.caretElement) {
+      this.caretElement = this.spacerElement?.append('g');
+    }
+    this.caretElement?.style('display', null);
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
       this.caretElement
@@ -597,9 +569,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr(
           'transform',
           `translate(
-          ${-21},
-          ${20}
-          )`,
+            ${-21},
+            ${20}
+            )`,
         )
         .attr('stroke', '#7C7C7F');
       this.caretElement
@@ -629,76 +601,220 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
+  // Caret and chain start arrow are atypical render pieces
+  // (appended to many nodes but almost never reused)
+  // that's why they are always removed completely instead of pooling
+  // TODO It might be better to manage them from the chain context
   public redrawCaret(editingNodeIndexOverall?: number) {
-    this.removeCaret();
-
     if (
       (this.isSequenceEditModeTurnedOn &&
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
       this.showCaret();
+    } else {
+      this.removeCaret();
     }
   }
 
   protected redrawBackgroundElementColor() {
-    this.backgroundElement?.attr(
-      'fill',
-      this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
-        ? '#FF7A001A'
-        : 'transparent',
-    );
+    this.updateBackgroundColor();
   }
 
-  private appendChainStartArrow() {
-    this.rootElement
-      ?.append('use')
-      .attr('x', -17)
-      .attr('y', -27)
-      .attr('data-testid', 'sequence-start-arrow')
-      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+  private showChainStartArrow(): void {
+    if (!this.chainStartArrow) {
+      this.chainStartArrow = this.rootElement
+        ?.append('use')
+        .attr('transform', 'translate(-17, -27)')
+        .attr('data-testid', 'sequence-start-arrow')
+        .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+    }
+  }
+
+  private removeChainStartArrow(): void {
+    this.chainStartArrow?.remove();
+    this.chainStartArrow = undefined;
   }
 
   private drawGreyOverlay() {
     this.rootElement?.attr('opacity', '0.2');
   }
 
-  show(): void {
-    this.rootElement = this.appendRootElement();
-    if (
-      (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) ||
-      this.isSingleEmptyNode
-    ) {
-      this.appendChainStartArrow();
-    }
-    this.spacerElement = this.appendSpacerElement();
-    this.backgroundElement = this.appendBackgroundElement();
+  private clearGreyOverlay() {
+    this.rootElement?.attr('opacity', null);
+  }
 
-    this.redrawCaret();
+  /**
+   * Create basic DOM elements once during construction
+   * Some of the optionals like caret are still appended when needed
+   */
+  private createBasicDOMElements(): void {
+    this.rootElement = this.createRootElement();
+    this.backgroundElement = this.rootElement
+      ?.append('rect')
+      .attr('id', 'bg')
+      .attr('width', 16)
+      .attr('height', 20)
+      .attr('transform', 'translate(-2, -16)')
+      .attr('rx', 2)
+      .attr('fill', 'none');
 
     this.textElement = this.rootElement
-      .append('text')
-      .text(this.symbolToDisplay)
+      ?.append('text')
       .attr('font-family', 'Courier New')
       .attr('font-size', '20px')
       .attr('font-weight', '700')
+      .attr('style', 'user-select: none;');
+
+    this.spacerElement = this.rootElement
+      ?.append('g')
+      .attr('transform', 'translate(14, -16)');
+
+    this.spacerElement
+      ?.append('rect')
+      .attr('width', 4)
+      .attr('height', 20)
+      .attr('fill', 'transparent');
+
+    this.attachEventListeners();
+    this.hide(); // Start hidden for pool
+  }
+
+  public show(options: SequenceNodeOptions): void {
+    // Update all options
+    this.node = options.node;
+    this.firstNodeInChainPosition = options.firstMonomerInChainPosition;
+    this.monomerIndexInChain = options.monomerIndexInChain;
+    this.isLastMonomerInChain = options.isLastMonomerInChain;
+    this.chain = options.chain;
+    this.nodeIndexOverall = options.nodeIndexOverall;
+    this.editingNodeIndexOverall = options.editingNodeIndexOverall;
+    this.monomerSize = options.monomerSize || { width: 0, height: 0 };
+    this.scaledMonomerPosition =
+      options.scaledMonomerPosition || new Vec2(0, 0);
+    this.twoStrandedNode = options.twoStrandedNode;
+    this.previousRowsWithAntisense = options.previousRowsWithAntisense ?? 0;
+
+    // Update visual representation
+    this.updateRootElement();
+    this.updateDataAttributes();
+    this.updateTextElement();
+    this.updateBackgroundColor();
+    this.updateCursor();
+    this.updateChainStartArrow();
+    this.redrawCaret();
+    this.redrawCounter();
+    this.drawSelection();
+    this.updateOverlay();
+  }
+
+  /**
+   * Reset visual state (e.g. before returning to pool)
+   */
+  public reset(): void {
+    this.hide();
+    this.removeCaret();
+    this.hideCounter();
+    this.hideSelection();
+    this.removeChainStartArrow();
+    this.antisenseNodeRenderer = undefined;
+  }
+
+  protected hide(): void {
+    this.rootElement?.style('display', 'none');
+  }
+
+  private updateRootElement(): void {
+    this.rootElement?.style('display', null);
+    this.rootElement?.attr(
+      'transform',
+      `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
+    );
+  }
+
+  private updateDataAttributes(): void {
+    this.rootElement
+      ?.attr('data-symbol-id', this.node.monomer.id)
+      .attr('data-chain-id', this.chain.id)
+      .attr(
+        'data-side-connection-number',
+        this.node.monomers.reduce(
+          (acc, monomer) =>
+            acc +
+            monomer.covalentBonds.filter(
+              (bond) =>
+                bond instanceof PolymerBond && bond.isSideChainConnection,
+            ).length,
+          0,
+        ),
+      )
+      .attr(
+        'data-has-left-connection',
+        Boolean(this.node.firstMonomerInNode.attachmentPointsToBonds.R1),
+      )
+      .attr(
+        'data-has-right-connection',
+        Boolean(this.node.lastMonomerInNode.attachmentPointsToBonds.R2),
+      )
+      .attr(
+        'data-hydrogen-connection-number',
+        this.node.monomers.reduce(
+          (acc, monomer) => acc + monomer.hydrogenBonds.length,
+          0,
+        ),
+      )
+      .attr('data-isAntisense', this.isAntisenseNode)
+      .attr('data-nodeIndexOverall', this.nodeIndexOverall);
+  }
+
+  private updateTextElement(): void {
+    this.textElement
+      ?.text(this.symbolToDisplay)
       .attr(
         'fill',
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
-      )
-      .attr('style', 'user-select: none;')
-      .attr(
-        'cursor',
-        this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
-          ? 'text'
-          : 'default',
       );
+  }
 
-    this.appendEvents();
-    this.redrawCounter();
+  private updateBackgroundColor(): void {
+    // Seems to be not used anymore
+    // this.backgroundElement?.attr(
+    //   'fill',
+    //   this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
+    //     ? '#FF7A001A'
+    //     : 'transparent',
+    // );
+  }
 
-    this.drawSelection();
+  private updateCursor(): void {
+    const cursor =
+      this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
+        ? 'text'
+        : 'default';
 
+    this.rootElement?.attr('cursor', cursor);
+    this.backgroundElement?.attr('cursor', cursor);
+    this.textElement?.attr('cursor', cursor);
+
+    const spacerCursor = this.isSequenceEditInRnaBuilderModeTurnedOn
+      ? 'default'
+      : 'text';
+    this.spacerElement?.select('rect').attr('cursor', spacerCursor);
+  }
+
+  private updateChainStartArrow(): void {
+    const shouldShow =
+      (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) ||
+      this.isSingleEmptyNode;
+
+    if (shouldShow) {
+      this.showChainStartArrow();
+    } else {
+      this.removeChainStartArrow();
+    }
+  }
+
+  private updateOverlay(): void {
     if (
       (this.isSequenceEditInRnaBuilderModeTurnedOn &&
         !this.node.monomer.selected) ||
@@ -709,6 +825,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           (!this.isAntisenseNode && this.isAntisenseEditMode)))
     ) {
       this.drawGreyOverlay();
+    } else {
+      this.clearGreyOverlay();
     }
   }
 
@@ -729,15 +847,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public appendSelection() {
-    this.selectionRectangle =
-      this.selectionRectangle ||
-      this.rootElement?.insert('rect', ':first-child');
+    if (!this.selectionRectangle) {
+      this.selectionRectangle = this.rootElement?.insert(
+        'rect',
+        ':first-child',
+      );
+    }
 
     if (this.isSequenceEditInRnaBuilderModeTurnedOn) {
       this.selectionRectangle
         ?.attr('fill', '#99D6DC')
-        .attr('x', -3)
-        .attr('y', -21)
+        .attr('transform', 'translate(-3, -21)')
         .attr('width', 18)
         .attr('height', 30)
         .attr('rx', 3)
@@ -745,18 +865,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     } else {
       this.selectionRectangle
         ?.attr('fill', '#57FF8F')
-        .attr('x', -4)
-        .attr('y', -16)
+        .attr('transform', 'translate(-4, -16)')
         .attr('width', 20)
         .attr('height', 20)
         .attr('class', 'dynamic-element');
     }
-    this.backgroundElement?.attr('fill', 'none');
+    this.selectionRectangle?.style('display', null);
   }
 
   public removeSelection() {
-    this.selectionRectangle?.remove();
-    this.selectionRectangle = undefined;
+    this.hideSelection();
+  }
+
+  private hideSelection(): void {
+    this.selectionRectangle?.style('display', 'none');
   }
 
   private raiseElement() {
@@ -764,9 +886,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public remove() {
+    if (this.poolName && this.onRemove) {
+      this.onRemove(this); // returns this element to pool
+    } else {
+      this.removeCompletely();
+    }
+  }
+
+  public removeCompletely() {
     this.rootElement?.remove();
     this.rootElement = undefined;
-    this.removeSelection();
+    this.textElement = undefined;
+    this.backgroundElement = undefined;
+    this.spacerElement = undefined;
+    this.counterElement = undefined;
+    this.caretElement = undefined;
+    this.selectionRectangle = undefined;
+    this.chainStartArrow = undefined;
   }
 
   public setEnumeration() {}
@@ -804,7 +940,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
   }
 
-  private appendEvents() {
+  private attachEventListeners() {
     assert(this.textElement);
 
     this.textElement.on('mouseover', (event) => {

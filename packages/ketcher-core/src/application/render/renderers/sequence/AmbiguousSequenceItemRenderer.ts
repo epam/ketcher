@@ -17,5 +17,9 @@ export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
     return this.node.monomer.label;
   }
 
+  get dataSymbolType(): string {
+    return 'Ambiguous';
+  }
+
   protected drawModification() {}
 }

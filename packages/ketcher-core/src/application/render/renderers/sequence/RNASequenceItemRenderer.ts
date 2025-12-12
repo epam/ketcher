@@ -1,46 +1,23 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import {
-  AmbiguousMonomer,
-  Nucleoside,
-  Nucleotide,
-  Vec2,
-} from 'domain/entities';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { AmbiguousMonomer, Nucleoside, Nucleotide } from 'domain/entities';
+import { SequenceNodeOptions } from './types';
 
 export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
-  constructor(
-    public node: Nucleoside | Nucleotide,
-    _firstNodeInChainPosition: Vec2,
-    _monomerIndexInChain: number,
-    _isLastMonomerInChain: boolean,
-    _chain: Chain,
-    _nodeIndexOverall: number,
-    _editingNodeIndexOverall: number,
-    public monomerSize: { width: number; height: number },
-    public scaledMonomerPosition: Vec2,
-    _twoStrandedNode: ITwoStrandedChainItem,
-    _previousRowsWithAntisense = 0,
-  ) {
-    super(
-      node,
-      _firstNodeInChainPosition,
-      _monomerIndexInChain,
-      _isLastMonomerInChain,
-      _chain,
-      _nodeIndexOverall,
-      _editingNodeIndexOverall,
-      monomerSize,
-      scaledMonomerPosition,
-      _twoStrandedNode,
-      _previousRowsWithAntisense,
-    );
+  declare node: Nucleoside | Nucleotide;
+
+  constructor(options: SequenceNodeOptions) {
+    super(options);
+    this.node = options.node as Nucleoside | Nucleotide;
   }
 
   get symbolToDisplay(): string {
     return this.node.rnaBase instanceof AmbiguousMonomer
       ? this.node.rnaBase.label
       : this.node.rnaBase.monomerItem?.props.MonomerNaturalAnalogCode || '@';
+  }
+
+  get dataSymbolType(): string {
+    return 'RNA';
   }
 
   protected drawCommonModification(node: Nucleoside | Nucleotide) {
@@ -64,5 +41,9 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
         )
         .attr('stroke-width', '1px');
     }
+  }
+
+  public reset(): void {
+    super.reset();
   }
 }

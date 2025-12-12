@@ -11,6 +11,10 @@ export class UnsplitNucleotideSequenceItemRenderer extends BaseSequenceItemRende
       : NO_NATURAL_ANALOGUE;
   }
 
+  get dataSymbolType(): string {
+    return 'UnsplitNucleotide';
+  }
+
   protected drawModification(): void {
     return undefined;
   }

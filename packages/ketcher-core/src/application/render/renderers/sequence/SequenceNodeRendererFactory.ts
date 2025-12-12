@@ -2,7 +2,6 @@ import {
   Chem,
   Peptide,
   Phosphate,
-  Vec2,
   Nucleotide,
   Nucleoside,
   EmptySequenceNode,
@@ -16,89 +15,49 @@ import {
   PhosphateSequenceItemRenderer,
   NucleotideSequenceItemRenderer,
   EmptySequenceItemRenderer,
-  BaseMonomerRenderer,
   BaseSequenceItemRenderer,
   NucleosideSequenceItemRenderer,
   UnresolvedMonomerSequenceItemRenderer,
   UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
-import { SequenceNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { SequenceNodeOptions } from './types';
 
 export class SequenceNodeRendererFactory {
-  static fromNode(
-    node: SequenceNode,
-    firstMonomerInChainPosition: Vec2,
-    monomerIndexInChain: number,
-    isLastMonomerInChain: boolean,
-    chain: Chain,
-    nodeIndexOverall: number,
-    editingNodeIndexOverall: number,
-    twoStrandedNode: ITwoStrandedChainItem,
-    renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
-    previousRowsWithAntisense = 0,
-  ): BaseSequenceItemRenderer {
-    let RendererClass;
-
-    switch (node.constructor) {
+  static fromNode<T = BaseSequenceItemRenderer>(
+    options: SequenceNodeOptions,
+  ): T {
+    switch (options.node.constructor) {
       case Nucleotide:
-        RendererClass = NucleotideSequenceItemRenderer;
-        break;
+        return new NucleotideSequenceItemRenderer(options) as T;
       case Nucleoside:
-        RendererClass = NucleosideSequenceItemRenderer;
-        break;
+        return new NucleosideSequenceItemRenderer(options) as T;
       case EmptySequenceNode:
-        RendererClass = EmptySequenceItemRenderer;
-        break;
+        return new EmptySequenceItemRenderer(options) as T;
       case BackBoneSequenceNode:
-        RendererClass = BackBoneSequenceItemRenderer;
-        break;
+        return new BackBoneSequenceItemRenderer(options) as T;
       case LinkerSequenceNode:
-        RendererClass = ChemSequenceItemRenderer;
-        break;
+        return new ChemSequenceItemRenderer(options) as T;
       case AmbiguousMonomerSequenceNode:
-        RendererClass = AmbiguousSequenceItemRenderer;
-        break;
+        return new AmbiguousSequenceItemRenderer(options) as T;
       default:
-        switch (node.monomer.constructor) {
+        switch (options.node.monomer.constructor) {
           case Phosphate:
-            RendererClass = PhosphateSequenceItemRenderer;
-            break;
+            return new PhosphateSequenceItemRenderer(options) as T;
           case Peptide:
-            RendererClass = PeptideSequenceItemRenderer;
-            break;
+            return new PeptideSequenceItemRenderer(options) as T;
           case Chem:
-            RendererClass = ChemSequenceItemRenderer;
-            break;
+            return new ChemSequenceItemRenderer(options) as T;
           case UnresolvedMonomer:
-            RendererClass = UnresolvedMonomerSequenceItemRenderer;
-            break;
+            return new UnresolvedMonomerSequenceItemRenderer(options) as T;
           case UnsplitNucleotide:
-            RendererClass = UnsplitNucleotideSequenceItemRenderer;
-            break;
+            return new UnsplitNucleotideSequenceItemRenderer(options) as T;
           default:
-            RendererClass = ChemSequenceItemRenderer;
-            break;
+            return new ChemSequenceItemRenderer(options) as T;
         }
     }
-
-    return new RendererClass(
-      node,
-      firstMonomerInChainPosition,
-      monomerIndexInChain,
-      isLastMonomerInChain,
-      chain,
-      nodeIndexOverall,
-      editingNodeIndexOverall,
-      renderer?.monomerSize,
-      renderer?.scaledMonomerPosition,
-      twoStrandedNode,
-      previousRowsWithAntisense,
-    );
   }
 }

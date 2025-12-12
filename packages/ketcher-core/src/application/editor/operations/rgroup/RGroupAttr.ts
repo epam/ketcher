@@ -61,7 +61,7 @@ export class RGroupAttr extends BaseOperation {
   invert() {
     const inverted = new RGroupAttr();
     inverted.data = this.data2;
-    inverted.data2 = this.data;
+    inverted.data2 = null;
     return inverted;
   }
 

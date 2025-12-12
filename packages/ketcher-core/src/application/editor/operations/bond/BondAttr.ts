@@ -76,7 +76,7 @@ export class BondAttr extends BaseOperation {
   invert() {
     const inverted = new BondAttr();
     inverted.data = this.data2;
-    inverted.data2 = this.data;
+    inverted.data2 = null;
     return inverted;
   }
 }

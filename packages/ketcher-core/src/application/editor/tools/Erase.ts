@@ -35,6 +35,11 @@ class EraserTool implements BaseTool {
       );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 
@@ -57,6 +62,11 @@ class EraserTool implements BaseTool {
       );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 

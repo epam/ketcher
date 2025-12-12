@@ -2,7 +2,7 @@ import {
   ISnakeLayoutModelRow,
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
-import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import { IEmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModelChain {
@@ -31,7 +31,7 @@ export class SnakeLayoutModelChain {
       (acc, row) => acc.concat(row.snakeLayoutModelItems),
       [] as (
         | ITwoStrandedSnakeLayoutNode
-        | EmptySnakeLayoutNode
+        | IEmptySnakeLayoutNode
         | MoleculeSnakeLayoutNode
       )[],
     );
@@ -54,7 +54,7 @@ export class SnakeLayoutModelChain {
       node:
         | ITwoStrandedSnakeLayoutNode
         | MoleculeSnakeLayoutNode
-        | EmptySnakeLayoutNode,
+        | IEmptySnakeLayoutNode,
       nodeIndex: number,
     ) => void,
   ) {

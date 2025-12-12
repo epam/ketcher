@@ -10,7 +10,7 @@ import {
   WizardState,
 } from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
-import { KetMonomerClass } from 'ketcher-core';
+import { KetMonomerClass, RnaPresetComponentKey } from 'ketcher-core';
 import clsx from 'clsx';
 import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
 import styles from './RnaPresetTabs.module.less';
@@ -30,8 +30,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const structureSelection = useSelector(selectionSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
-  const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
-  type rnaComponentKeyType = typeof rnaComponentsKeys[number];
+  const rnaComponentsKeys: readonly RnaPresetComponentKey[] = [
+    'base',
+    'sugar',
+    'phosphate',
+  ] as const;
   const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
 
   const highlightStructure = (activeTabState: WizardState) => {
@@ -60,7 +63,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const handleFieldChange = (
     fieldId: StringWizardFormFieldId,
     value: KetMonomerClass | string,
-    rnaComponentKey: rnaComponentKeyType | 'preset',
+    rnaComponentKey: RnaPresetComponentKey | 'preset',
   ) => {
     wizardStateDispatch({
       type: 'SetFieldValue',
@@ -71,12 +74,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
+  const handleClickCreateComponent = (
+    rnaComponentKey: RnaPresetComponentKey,
+  ) => {
+    // Get the current selection from the editor
+    const selection = editor.selection();
+    const atomIds = selection?.atoms || [];
+    const bondIds = selection?.bonds || [];
+
+    // Update the wizard state
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',
       rnaComponentKey,
       editor,
     });
+
+    // Sync the component atoms with the Editor for auto-assignment tracking
+    editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
   };
 
   useEffect(() => {

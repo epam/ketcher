@@ -72,6 +72,9 @@ import {
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
   fromFragmentDeletion,
+  MonomerCreationComponentStructureUpdateEvent,
+  RnaPresetComponentKey,
+  ComponentStructureUpdateData,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -592,6 +595,23 @@ class Editor implements KetcherEditor {
       selectedMonomerClass: type,
     };
     this.render.update(true);
+  }
+
+  public setRnaComponentAtoms(
+    componentKey: RnaPresetComponentKey,
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    const rnaComponentAtoms = currentState.rnaComponentAtoms || new Map();
+    rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      rnaComponentAtoms,
+    };
   }
 
   public get isMonomerCreationWizardActive() {
@@ -1773,6 +1793,92 @@ class Editor implements KetcherEditor {
     return potentialLeavingAtoms;
   }
 
+  /**
+   * Auto-assigns atoms to RNA preset components when new bonds are added.
+   * If one atom belongs to a component and the other doesn't belong to any,
+   * the unassigned atom (and the bond) is added to the same component.
+   */
+  private autoAssignAtomToRnaComponent(
+    atomId1: number,
+    atomId2: number,
+    bondId: number,
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    const rnaComponentAtoms = this.monomerCreationState.rnaComponentAtoms;
+
+    // Find which component (if any) each atom belongs to
+    let atom1Component: RnaPresetComponentKey | null = null;
+    let atom2Component: RnaPresetComponentKey | null = null;
+
+    for (const [componentKey, componentData] of rnaComponentAtoms.entries()) {
+      if (componentData.atoms.includes(atomId1)) {
+        atom1Component = componentKey;
+      }
+      if (componentData.atoms.includes(atomId2)) {
+        atom2Component = componentKey;
+      }
+    }
+
+    // If one atom is in a component and the other is not, assign the unassigned atom to the component
+    if (atom1Component && !atom2Component) {
+      this.addAtomAndBondToRnaComponent(atom1Component, atomId2, bondId);
+    } else if (atom2Component && !atom1Component) {
+      this.addAtomAndBondToRnaComponent(atom2Component, atomId1, bondId);
+    }
+  }
+
+  /**
+   * Adds an atom and bond to an RNA preset component and fires an event
+   * so the wizard can update its state.
+   */
+  private addAtomAndBondToRnaComponent(
+    componentKey: RnaPresetComponentKey,
+    atomId: number,
+    bondId: number,
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    const componentData =
+      this.monomerCreationState.rnaComponentAtoms.get(componentKey);
+    if (!componentData) {
+      return;
+    }
+
+    // Add the new atom and bond if not already present
+    const updatedAtoms = [...componentData.atoms];
+    const updatedBonds = [...componentData.bonds];
+
+    if (!updatedAtoms.includes(atomId)) {
+      updatedAtoms.push(atomId);
+    }
+    if (!updatedBonds.includes(bondId)) {
+      updatedBonds.push(bondId);
+    }
+
+    // Update the state
+    this.monomerCreationState.rnaComponentAtoms.set(componentKey, {
+      atoms: updatedAtoms,
+      bonds: updatedBonds,
+    });
+
+    // Fire an event so the wizard can update its state
+    const eventData: ComponentStructureUpdateData = {
+      componentKey,
+      atomIds: updatedAtoms,
+      bondIds: updatedBonds,
+    };
+    window.dispatchEvent(
+      new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
+        detail: eventData,
+      }),
+    );
+  }
+
   private subscribeToChangeEventInMonomerCreationWizard() {
     if (this.changeEventSubscriber) {
       return;
@@ -1807,6 +1913,7 @@ class Editor implements KetcherEditor {
 
     data.forEach((entry) => {
       switch (entry.operation) {
+        case OperationType.ATOM_ADD:
         case OperationType.ATOM_DELETE:
         case OperationType.ATOM_ATTR:
         case OperationType.BOND_ADD:
@@ -2061,6 +2168,10 @@ class Editor implements KetcherEditor {
                 }
               }
             }
+
+            // Handle RNA preset component auto-assignment
+            // When a new bond is added, auto-assign atoms to their connected component
+            this.autoAssignAtomToRnaComponent(bond.begin, bond.end, id);
           }
           break;
         }

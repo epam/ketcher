@@ -145,6 +145,12 @@ export type RnaPresetWizardAction =
       editor: Editor;
     }
   | {
+      type: 'UpdateRnaPresetComponentStructure';
+      rnaComponentKey: RnaPresetWizardComponentStateFieldId;
+      atomIds: number[];
+      bondIds: number[];
+    }
+  | {
       type: 'ResetErrors';
     }
   | {

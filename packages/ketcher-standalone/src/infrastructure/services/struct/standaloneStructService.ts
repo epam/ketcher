@@ -276,8 +276,7 @@ class IndigoService implements StructService {
         data: { struct },
       };
 
-      this.EE.removeListener(WorkerEvent.GetInChIKey, action);
-      this.EE.addListener(WorkerEvent.GetInChIKey, action);
+      this.EE.once(WorkerEvent.GetInChIKey, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -300,8 +299,7 @@ class IndigoService implements StructService {
         }
       };
 
-      this.EE.removeListener(WorkerEvent.Info, action);
-      this.EE.addListener(WorkerEvent.Info, action);
+      this.EE.once(WorkerEvent.Info, action);
 
       this.worker.postMessage({ type: Command.Info });
     });
@@ -323,6 +321,7 @@ class IndigoService implements StructService {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
         if (msg.inputData === struct) {
+          this.EE.removeListener(WorkerEvent.Convert, action);
           if (!msg.hasError) {
             const result: ConvertResult = {
               struct: msg.payload,
@@ -366,7 +365,6 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Convert, action);
       this.EE.addListener(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
@@ -437,8 +435,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Layout, action);
-      this.EE.addListener(WorkerEvent.Layout, action);
+      this.EE.once(WorkerEvent.Layout, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -474,8 +471,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Clean, action);
-      this.EE.addListener(WorkerEvent.Clean, action);
+      this.EE.once(WorkerEvent.Clean, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -513,8 +509,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Aromatize, action);
-      this.EE.addListener(WorkerEvent.Aromatize, action);
+      this.EE.once(WorkerEvent.Aromatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -552,8 +547,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Dearomatize, action);
-      this.EE.addListener(WorkerEvent.Dearomatize, action);
+      this.EE.once(WorkerEvent.Dearomatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -591,8 +585,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.CalculateCip, action);
-      this.EE.addListener(WorkerEvent.CalculateCip, action);
+      this.EE.once(WorkerEvent.CalculateCip, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -631,8 +624,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Automap, action);
-      this.EE.addListener(WorkerEvent.Automap, action);
+      this.EE.once(WorkerEvent.Automap, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -674,8 +666,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Check, action);
-      this.EE.addListener(WorkerEvent.Check, action);
+      this.EE.once(WorkerEvent.Check, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -722,8 +713,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Calculate, action);
-      this.EE.addListener(WorkerEvent.Calculate, action);
+      this.EE.once(WorkerEvent.Calculate, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -746,6 +736,7 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
         if (msg.inputData === inputData) {
+          this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
           if (!msg.hasError) {
             resolve(msg.payload);
           } else {
@@ -792,7 +783,6 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
       this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action);
 
       this.worker.postMessage(inputMessage);
@@ -833,8 +823,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
-      this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
+      this.EE.once(WorkerEvent.ExplicitHydrogens, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -870,8 +859,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.CalculateMacromoleculeProperties);
-      this.EE.addListener(WorkerEvent.CalculateMacromoleculeProperties, action);
+      this.EE.once(WorkerEvent.CalculateMacromoleculeProperties, action);
       this.worker.postMessage(inputMessage);
     });
   }

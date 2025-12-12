@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -18,6 +18,10 @@ import AttributeField from './components/AttributeField/AttributeField';
 import { selectionSelector } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
+import {
+  MonomerCreationMarkAsComponentAction,
+  RnaPresetComponentType,
+} from './MonomerCreationWizard.constants';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -34,20 +38,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   type rnaComponentKeyType = typeof rnaComponentsKeys[number];
   const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
 
-  const highlightStructure = (activeTabState: WizardState) => {
-    editor.highlights.clear();
+  const highlightStructure = useCallback(
+    (activeTabState: WizardState) => {
+      editor.highlights.clear();
 
-    if (!activeTabState?.structure) {
-      return;
-    }
+      if (!activeTabState?.structure) {
+        return;
+      }
 
-    editor.highlights.create({
-      atoms: activeTabState.structure.atoms || [],
-      bonds: activeTabState.structure.bonds || [],
-      rgroupAttachmentPoints: [],
-      color: '#CDF1FC',
-    });
-  };
+      editor.highlights.create({
+        atoms: activeTabState.structure.atoms || [],
+        bonds: activeTabState.structure.bonds || [],
+        rgroupAttachmentPoints: [],
+        color: '#CDF1FC',
+      });
+    },
+    [editor],
+  );
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
@@ -71,13 +78,16 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
-    wizardStateDispatch({
-      type: 'SetRnaPresetComponentStructure',
-      rnaComponentKey,
-      editor,
-    });
-  };
+  const handleClickCreateComponent = useCallback(
+    (rnaComponentKey: rnaComponentKeyType) => {
+      wizardStateDispatch({
+        type: 'SetRnaPresetComponentStructure',
+        rnaComponentKey,
+        editor,
+      });
+    },
+    [wizardStateDispatch, editor],
+  );
 
   useEffect(() => {
     if (!currentTabState) {
@@ -86,7 +96,35 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
     highlightStructure(currentTabState);
     editor.selection(null);
-  }, [currentTabState?.structure]);
+  }, [currentTabState?.structure, highlightStructure, editor]);
+
+  useEffect(() => {
+    const handleMarkAsComponent = (event: Event) => {
+      const componentType = (event as CustomEvent<RnaPresetComponentType>)
+        .detail;
+      const tabIndex = rnaComponentsKeys.indexOf(componentType) + 1;
+
+      // First, mark the structure as the component
+      handleClickCreateComponent(componentType);
+
+      // Then, switch to the appropriate tab
+      setSelectedTab(tabIndex);
+      const activeTabState = wizardState[componentType];
+      highlightStructure(activeTabState);
+    };
+
+    window.addEventListener(
+      MonomerCreationMarkAsComponentAction,
+      handleMarkAsComponent,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationMarkAsComponentAction,
+        handleMarkAsComponent,
+      );
+    };
+  }, [wizardState, handleClickCreateComponent, highlightStructure]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

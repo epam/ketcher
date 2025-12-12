@@ -3,6 +3,7 @@ import { Item, Submenu, Separator } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
+import useMarkAs from '../hooks/useMarkAs';
 import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
@@ -100,6 +101,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
+  const {
+    handler: handleMarkAs,
+    isVisible: markAsIsVisible,
+    isDisabled: markAsIsDisabled,
+  } = useMarkAs();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -181,9 +187,45 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     : 'Edit...';
 
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+  const showMarkAsMenu = markAsIsVisible();
+  const markAsDisabled = markAsIsDisabled();
 
   return (
     <>
+      {showMarkAsMenu && (
+        <Submenu
+          {...props}
+          data-testid="Mark as a...-option"
+          label="Mark as a..."
+          disabled={markAsDisabled}
+          className={styles.subMenu}
+        >
+          <Item
+            {...props}
+            data-testid="Mark as Base-option"
+            onClick={handleMarkAs('base')}
+          >
+            <Icon name="base" className={styles.icon} />
+            <span>Base</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Sugar-option"
+            onClick={handleMarkAs('sugar')}
+          >
+            <Icon name="sugar" className={styles.icon} />
+            <span>Sugar</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Phosphate-option"
+            onClick={handleMarkAs('phosphate')}
+          >
+            <Icon name="phosphate" className={styles.icon} />
+            <span>Phosphate</span>
+          </Item>
+        </Submenu>
+      )}
       {makeAttachmentPointMenuItems && (
         <>
           {makeAttachmentPointMenuItems}

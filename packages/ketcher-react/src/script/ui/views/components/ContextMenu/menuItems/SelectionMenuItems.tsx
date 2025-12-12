@@ -8,6 +8,7 @@ import useBondEdit from '../hooks/useBondEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
+import useMarkAs from '../hooks/useMarkAs';
 import { formatTitle, getBondNames } from '../utils';
 import Editor from 'src/script/editor';
 import {
@@ -35,6 +36,11 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
+  const {
+    handler: handleMarkAs,
+    isVisible: markAsIsVisible,
+    isDisabled: markAsIsDisabled,
+  } = useMarkAs();
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
     const atomIds = props.propsFromTrigger?.atomIds || [];
@@ -49,9 +55,46 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
     });
   };
   const options = useSelector(optionsSelector);
+  const showMarkAsMenu = markAsIsVisible();
+  const markAsDisabled = markAsIsDisabled();
 
   return (
     <>
+      {showMarkAsMenu && (
+        <Submenu
+          {...props}
+          data-testid="Mark as a...-option"
+          label="Mark as a..."
+          disabled={markAsDisabled}
+          className={styles.subMenu}
+        >
+          <Item
+            {...props}
+            data-testid="Mark as Base-option"
+            onClick={handleMarkAs('base')}
+          >
+            <Icon name="base" className={styles.icon} />
+            <span>Base</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Sugar-option"
+            onClick={handleMarkAs('sugar')}
+          >
+            <Icon name="sugar" className={styles.icon} />
+            <span>Sugar</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Phosphate-option"
+            onClick={handleMarkAs('phosphate')}
+          >
+            <Icon name="phosphate" className={styles.icon} />
+            <span>Phosphate</span>
+          </Item>
+        </Submenu>
+      )}
+
       <Item
         {...props}
         data-testid="Edit selected bonds...-option"

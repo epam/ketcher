@@ -3,10 +3,8 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForRender,
   waitForPageInit,
   clickOnCanvas,
@@ -56,8 +54,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await takeEditorScreenshot(page);
   });
 
@@ -80,8 +77,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -95,8 +91,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels([RGroup.R4, RGroup.R5, RGroup.R6]);
     await takeEditorScreenshot(page);
   });
@@ -110,8 +105,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await CommonLeftToolbar(page).erase();
@@ -130,8 +124,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await page.getByText('R5').click();
@@ -151,8 +144,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
 
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.MultipleGroup,
@@ -175,8 +167,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await selectAllStructuresOnCanvas(page);
@@ -193,8 +184,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await page.getByText('R5').click();
@@ -218,8 +208,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await moveMouseAway(page);
 
@@ -242,8 +231,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await ZoomOutByKeyboard(page, { repeat: 5 });
@@ -262,8 +250,7 @@ test.describe('R-Group Label Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -279,14 +266,12 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1564
       Description: User is able to move the R-group label, a part of the structure.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R1').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -295,12 +280,10 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1564
       Description: User is able to move the R-group label, the whole structure.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -312,18 +295,17 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to create the reaction with components which contain the R-group labels.
       User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('R8').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -335,16 +317,15 @@ test.describe('R-Group Label Tool', () => {
       Description: User is able to create the reaction with components which contain the R-group labels.
       User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
     */
-    const x = 500;
-    const y = 200;
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/reaction-with-arrow-and-plus.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R8').click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -353,11 +334,9 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1566
       Description: User is able to Copy/Paste structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -366,11 +345,9 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1566
       Description: User is able to Cut/Paste the structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -397,15 +374,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct bond is sprouted from the R-group label
     */
-    const x = 100;
-    const y = 100;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(100, 100, page);
     await takeEditorScreenshot(page);
   });
 
@@ -414,15 +389,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Chain is sprouted from the R-group label
     */
-    const x = 500;
-    const y = 500;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await LeftToolbar(page).chain();
     await page.getByText('R10').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
   });
 
@@ -431,15 +404,13 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
     */
-    const x = 500;
-    const y = 500;
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await page.getByText('R10').hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
   });
 

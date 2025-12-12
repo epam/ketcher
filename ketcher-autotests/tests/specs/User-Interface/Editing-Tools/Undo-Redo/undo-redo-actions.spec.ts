@@ -3,12 +3,8 @@ import { expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
-  doubleClickOnAtom,
-  moveOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
   waitForPageInit,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -62,9 +58,6 @@ import {
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
 
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
-
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -81,7 +74,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).erase();
 
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -104,7 +99,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Chlorine);
 
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -127,7 +124,9 @@ test.describe('Undo/Redo Actions', () => {
       SelectionToolType.Rectangle,
     );
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: {
         Alias: '!@#$%123AbCd',
@@ -181,7 +180,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -201,7 +202,9 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -221,7 +224,9 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -238,14 +243,14 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Chain is removed;
     Redo: the Chain is restored.
     */
-    const x = 300;
-    const y = 300;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).chain();
-    await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -266,7 +271,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -287,7 +294,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -310,7 +319,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -333,7 +344,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -354,7 +367,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -375,7 +390,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -398,7 +415,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -421,7 +440,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -444,7 +465,9 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -577,9 +600,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -600,9 +621,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -622,7 +641,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await CommonTopLeftToolbar(page).undo();
@@ -641,17 +660,17 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
     );
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { secondary: true },
     );
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 4 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true, secondary: true },
     );
 
@@ -674,11 +693,11 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -697,11 +716,11 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -720,7 +739,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     for (let i = 0; i < 2; i++) {
@@ -741,7 +760,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await ZoomOutByKeyboard(page, { repeat: 5 });
@@ -827,7 +846,9 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);

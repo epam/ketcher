@@ -4,7 +4,7 @@
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import { test, Page, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -69,14 +69,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
-
-export async function doubleClickOnAtom(page: Page, atomText: string) {
-  const atomLocator = page
-    .locator('g', { hasText: new RegExp(`^${atomText}$`) })
-    .locator('rect')
-    .first();
-  await atomLocator.dblclick();
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Macro-Micro-Switcher2', () => {
   test.beforeEach(async ({ page }) => {
@@ -459,7 +452,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await doubleClickOnAtom(page, 'Zn');
+    await getAtomLocator(page, { atomLabel: 'Zn' }).first().dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

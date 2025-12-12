@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
@@ -5,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
-  clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
@@ -24,9 +24,7 @@ import {
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const inputText = 'My Template';
@@ -174,7 +172,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -187,7 +185,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -258,7 +256,6 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1729
       Description: Template attached to structure on canvas.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
@@ -269,7 +266,9 @@ test.describe('Create and Save Templates', () => {
       TemplateLibraryTab.UserTemplate,
     );
     await page.getByText('My Template').click();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

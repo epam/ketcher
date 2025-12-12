@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -5,13 +6,12 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  moveOnAtom,
   dragMouseTo,
-  clickOnAtom,
   waitForPageInit,
   selectPartOfMolecules,
   selectPartOfChain,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,18 +85,17 @@ test.describe('Indigo Tools - Layout', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Layout action.
     */
-    const x = 300;
-    const y = 300;
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
     await IndigoFunctionsToolbar(page).layout();
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

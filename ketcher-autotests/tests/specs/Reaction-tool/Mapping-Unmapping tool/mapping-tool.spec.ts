@@ -4,14 +4,11 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
-  dragMouseTo,
   waitForPageInit,
   mapTwoAtoms,
-  clickOnAtom,
-  clickOnCanvas,
   RxnFileFormat,
   deleteByKeyboard,
+  dragTo,
 } from '@utils';
 import {
   FileType,
@@ -23,8 +20,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
-import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Mapping Tools', () => {
@@ -40,13 +35,11 @@ test.describe('Mapping Tools', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
-      getAtomLocator(page, { atomLabel: 'C' }).nth(14),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 23 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 33 }),
     );
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await takeEditorScreenshot(page);
   });
 
@@ -57,11 +50,12 @@ test.describe('Mapping Tools', () => {
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
-      const anyAtom = 0;
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionUnmapping,
       );
-      await clickOnAtom(page, 'Br', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
     });
 
     test('Map ordering', async ({ page }) => {
@@ -86,13 +80,16 @@ test.describe('Mapping Tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 23 }).click();
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 23 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 37 }),
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Undo working in atom mapping, able to remove mapping', async ({
@@ -105,8 +102,7 @@ test.describe('Mapping Tools', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

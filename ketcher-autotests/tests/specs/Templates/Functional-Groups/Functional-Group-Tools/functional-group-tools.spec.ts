@@ -6,8 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  clickOnAtom,
-  moveOnAtom,
   waitForRender,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -103,15 +101,14 @@ test.describe('Templates - Functional Group Tools', () => {
     Test case: EPMLSOPKET-2889
     Description: All the Functional Group elements are selected and highlighted on the canvas
    */
-    const anyAtom = 0;
-
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).areaSelectionTool();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -236,16 +233,15 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: EDIT ABBREVIATION window appears after click by Chain on expanded FG.
     After click Remove abbreviation in modal window user can add Chain to structure.
    */
-    const x = 650;
-    const y = 650;
-    const anyAtom = 1;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/expanded-fg-CO2Et.mol');
 
     await LeftToolbar(page).chain();
     await clickInTheMiddleOfTheScreen(page);
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await clickOnAtom(page, 'O', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 7 }).click({
+      force: true,
+    });
+    await dragMouseTo(650, 650, page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -915,14 +911,13 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-12970
     Description: Structure on canvas remains unchanged
    */
-    const anyAtom = 2;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -952,7 +947,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
    */
-      const anyAtom = 4;
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/functional-group-and-benzene.mol',
@@ -961,7 +955,9 @@ test.describe('Templates - Functional Group Tools3', () => {
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await waitForRender(page, async () => {
-        await clickOnAtom(page, 'C', anyAtom);
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).click({
+          force: true,
+        });
       });
       await takeEditorScreenshot(page);
     },
@@ -973,7 +969,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Can attach cutted Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
-    const anyAtom = 4;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-and-benzene.mol',
@@ -984,7 +979,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+        force: true,
+      });
     });
     await takeEditorScreenshot(page);
   });

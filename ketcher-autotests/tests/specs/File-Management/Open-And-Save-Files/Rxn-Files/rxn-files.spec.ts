@@ -5,8 +5,6 @@ import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
-  clickOnAtom,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -39,6 +37,7 @@ import {
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
@@ -79,22 +78,23 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R7);
 
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
-    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
+    await clickOnCanvas(page, 40, 0, { from: 'pageCenter' });
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true },
     );
     await CommonTopLeftToolbar(page).saveFile();
@@ -102,8 +102,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await SaveStructureDialog(page).cancel();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
@@ -142,13 +143,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDelta = 300;
-    const xDeltaHalf = 150;
-    const yDelta50 = 50;
-    const yDelta20 = 20;
-    const xCoordinatesWithShift = x + xDelta;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
-    const yCoordinatesWithShift = y + yDelta50;
+    const xCoordinatesWithShift = x + 300;
+    const xCoordinatesWithShiftHalf = x + 150;
+    const yCoordinatesWithShift = y + 50;
     await dragMouseTo(xCoordinatesWithShift, y, page);
     await savedFileInfoStartsWithRxn(page);
 
@@ -159,7 +156,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       yCoordinatesWithShift,
       { from: 'pageTopLeft' },
     );
-    const ySecondChain = yCoordinatesWithShift + yDelta50;
+    const ySecondChain = yCoordinatesWithShift + 50;
     await LeftToolbar(page).chain();
     await page.mouse.move(x, ySecondChain);
     await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
@@ -173,8 +170,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { from: 'pageTopLeft' },
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
+    const yArrowStart = y + 20;
+    const yArrowEnd = yArrowStart + 20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
     await savedFileInfoStartsWithRxn(page, true);
@@ -196,10 +193,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
-    const xOffsetFromCenter = 50;
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
+    await clickOnCanvas(page, 50, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

@@ -53,7 +53,13 @@ export function customOnChangeHandler(action, handler) {
   }
 
   function handleMicroChanges(action, handler) {
-    action.operations.reverse().forEach((operation) => {
+    // Check if action has operations array to avoid errors
+    if (!action?.operations || !Array.isArray(action.operations)) {
+      return handler(data);
+    }
+
+    // Use slice to avoid mutating the original array with reverse()
+    [...action.operations].reverse().forEach((operation) => {
       const op = operation._inverted;
       switch (op.type) {
         case OperationType.ATOM_ADD:

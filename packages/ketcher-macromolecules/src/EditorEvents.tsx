@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -67,6 +67,7 @@ export const EditorEvents = () => {
     selectLastSelectedSelectionMenuItem,
   );
 
+  const hoveredTargetRef = useRef<BaseMonomer | AmbiguousMonomer | null>(null);
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
@@ -351,6 +352,7 @@ export const EditorEvents = () => {
 
   const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
+    hoveredTargetRef.current = null;
     dispatch(showPreview(undefined));
   }, [debouncedShowPreview, dispatch]);
 
@@ -366,6 +368,10 @@ export const EditorEvents = () => {
 
     const onMoveHandler = (e) => {
       handleClosePreview();
+      hoveredTargetRef.current =
+        e.target?.__data__?.monomer ||
+        e.target?.__data__?.node?.monomer ||
+        null;
       const isLeftClick = e.buttons === 1;
       if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);
@@ -401,6 +407,25 @@ export const EditorEvents = () => {
       editor?.events.resetSequenceEditMode.dispatch();
     }
   }, [hasAtLeastOneAntisense]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '1' && editor?.mode.modeName !== 'sequence-layout-mode') {
+        dispatch(selectTool('bond-single'));
+      } else {
+        if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        const monomer = hoveredTargetRef.current;
+        if (!monomer) return;
+
+        monomer.selected = true;
+        editor?.events.deleteSelectedStructure.dispatch();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [editor, dispatch]);
 
   return <></>;
 };

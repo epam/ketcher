@@ -362,15 +362,16 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await CommonTopLeftToolbar(page).undo();
 
         await RightToolbar(page).clickAtom(Atom.Oxygen);
-        await getAtomLocator(page, { atomLabel: 'C' }).first().click();
+        await getAtomLocator(page, { atomLabel: 'C' })
+          .first()
+          .click({ force: true });
 
         await CommonTopLeftToolbar(page).undo();
 
         await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-        await clickOnCanvas(page, point.x, point.y, {
-          waitForRenderTimeOut: 100,
-          from: 'pageTopLeft',
-        });
+        await getAtomLocator(page, { atomLabel: 'C' })
+          .nth(1)
+          .click({ force: true });
 
         await takeEditorScreenshot(page);
       },

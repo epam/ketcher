@@ -24,8 +24,8 @@ export const MonomerTypeSelectConfig: MonomerTypeSelectItem[] = [
     label: 'Nucleotide (monomer)',
     iconName: 'nucleotide',
   },
-  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
   { value: 'rnaPreset', label: 'Nucleotide (preset)', iconName: 'preset' },
+  { value: KetMonomerClass.CHEM, label: 'CHEM', iconName: 'chem' },
 ];
 
 export const MAX_MODIFICATION_TYPES = 5;

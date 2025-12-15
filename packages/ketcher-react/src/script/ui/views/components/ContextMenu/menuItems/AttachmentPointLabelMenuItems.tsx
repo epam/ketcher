@@ -11,12 +11,14 @@ import {
   Coordinates,
   ketcherProvider,
   MonomerCreationAttachmentPointClickEvent,
+  Vec2,
 } from 'ketcher-core';
 import Editor from '../../../../../editor';
-import assert from 'assert';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const AttachmentPointLabelMenuItems = ({
   propsFromTrigger,
+  triggerEvent,
 }: MenuItemsProps<AttachmentPointLabelContextMenuProps>) => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -34,15 +36,37 @@ const AttachmentPointLabelMenuItems = ({
         attachmentPointName,
       );
 
-    assert(atomPair);
+    if (!atomPair) {
+      return;
+    }
 
     const [, leavingAtomId] = atomPair;
     const leavingAtom = editor.struct().atoms.get(leavingAtomId);
-    assert(leavingAtom);
+    if (!leavingAtom) {
+      return;
+    }
+
+    const positionFromClick = (() => {
+      const event = triggerEvent?.event;
+      if (!event || typeof (event as MouseEvent).clientX !== 'number') {
+        return null;
+      }
+      const rootElement = document.querySelector(
+        KETCHER_ROOT_NODE_CSS_SELECTOR,
+      );
+      if (!rootElement) {
+        return null;
+      }
+      const { left, top } = rootElement.getBoundingClientRect();
+      return new Vec2(
+        (event as MouseEvent).clientX - left,
+        (event as MouseEvent).clientY - top,
+      );
+    })();
 
     const attachmentPointEditData: AttachmentPointClickData = {
       attachmentPointName,
-      position: Coordinates.modelToView(leavingAtom.pp),
+      position: positionFromClick ?? Coordinates.modelToView(leavingAtom.pp),
     };
 
     window.dispatchEvent(

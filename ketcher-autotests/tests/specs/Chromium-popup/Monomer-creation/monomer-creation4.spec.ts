@@ -638,6 +638,39 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
   await CreateMonomerDialog(page).discard();
 });
 
+test(`14a. Edit connection point opens via context menu without prior selection`, async () => {
+  /*
+   * Regression: https://github.com/epam/ketcher/issues/8499
+   * Steps:
+   * 1. Load structure [*:1]C%91.[*:2]%91 |$_R1;;_R2$|
+   * 2. Select whole structure and open Create Monomer
+   * 3. Right-click an attachment point label and choose "Edit connection point"
+   * Expected: Edit Connection Point popup appears
+   */
+
+  await pasteFromClipboardAndOpenAsNewProject(
+    page,
+    '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|',
+  );
+  await clickOnCanvas(page, 0, 0);
+  await selectAllStructuresOnCanvas(page);
+  await LeftToolbar(page).createMonomer();
+
+  // to make attachment points visible
+  await CommonLeftToolbar(page).handTool();
+  await page.mouse.move(600, 200);
+  await dragMouseTo(550, 250, page);
+
+  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  await ContextMenu(page, attachmentPointR1).click(
+    ConnectionPointOption.EditConnectionPoint,
+  );
+
+  expect(await EditConnectionPointPopup(page).isVisible()).toBeTruthy();
+
+  await CreateMonomerDialog(page).discard();
+});
+
 test(`15. Check that when editing the LGA, the user should see all possible LGAs that exist for the AA`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8268

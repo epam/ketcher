@@ -468,6 +468,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       symbolAlias: 'E',
       nodeIndexOverall: 1,
     }).dblclick();
+    await page.mouse.move(500, 500);
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

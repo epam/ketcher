@@ -35,6 +35,7 @@ export const selectionKeys = [
   'rxnPluses',
   'simpleObjects',
   'texts',
+  'enhancedFlags',
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ] as const;

@@ -70,6 +70,17 @@ export function fromFlip(
     );
   }
 
+  if (structToFlip.enhancedFlags) {
+    action.mergeWith(
+      fromEnhancedFlagFlip(
+        reStruct,
+        structToFlip.enhancedFlags,
+        flipDirection,
+        center,
+      ),
+    );
+  }
+
   return action;
 }
 
@@ -150,6 +161,40 @@ function fromTextFlip(
 
     const difference = flipPointByCenter(textCenter, center, flipDirection);
     action.addOp(new TextMove(textId, difference));
+  });
+
+  return action.perform(reStruct);
+}
+
+function fromEnhancedFlagFlip(
+  reStruct: ReStruct,
+  enhancedFlagIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2,
+) {
+  const action = new Action();
+
+  enhancedFlagIds.forEach((flagId) => {
+    const frId = flagId;
+    const frag = reStruct.molecule.frags.get(frId);
+    if (!frag) {
+      return;
+    }
+
+    const currentPosition =
+      frag.stereoFlagPosition ||
+      Fragment.getDefaultStereoFlagPosition(reStruct.molecule, frId);
+
+    if (!currentPosition) {
+      return;
+    }
+
+    const difference = flipPointByCenter(
+      currentPosition,
+      center,
+      flipDirection,
+    );
+    action.addOp(new EnhancedFlagMove(flagId, difference));
   });
 
   return action.perform(reStruct);

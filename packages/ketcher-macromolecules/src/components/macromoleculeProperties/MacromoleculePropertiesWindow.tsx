@@ -1058,7 +1058,7 @@ export const MacromoleculePropertiesWindow = () => {
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
           .map((atomNameWithAmount, index, array) => (
-            <span key={atomNameWithAmount}>
+            <span key={`${atomNameWithAmount}-${index}`}>
               <GrossFormulaPart part={atomNameWithAmount} />
               {index < array.length - 1 ? ' ' : ''}
             </span>

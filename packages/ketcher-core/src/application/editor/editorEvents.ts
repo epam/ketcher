@@ -63,6 +63,7 @@ export interface IEditorEvents {
   copySelectedStructure: Subscription;
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
+  deleteHoveredStructure: Subscription;
   selectEntities: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
@@ -139,6 +140,7 @@ export function resetEditorEvents() {
     copySelectedStructure: new Subscription(),
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
+    deleteHoveredStructure: new Subscription(),
     selectEntities: new Subscription(),
     toggleMacromoleculesPropertiesVisibility: new Subscription(),
     modifyAminoAcids: new Subscription(),

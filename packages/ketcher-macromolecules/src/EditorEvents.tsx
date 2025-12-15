@@ -417,9 +417,9 @@ export const EditorEvents = () => {
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         const monomer = hoveredTargetRef.current;
         if (!monomer) return;
-
-        monomer.selected = true;
-        editor?.events.deleteSelectedStructure.dispatch();
+        if (editor) {
+          editor.events.deleteHoveredStructure.dispatch();
+        }
       }
     };
 

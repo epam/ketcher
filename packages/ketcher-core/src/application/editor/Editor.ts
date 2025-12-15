@@ -755,23 +755,29 @@ export class CoreEditor {
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
     });
+
     this.events.deleteSelectedStructure.add(() => {
-      if (this.mode instanceof SequenceMode) {
-        this.mode.deleteSelection();
-
-        return;
-      }
-
       const command = new Command();
       const history = new EditorHistory(this);
-
-      command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
+      const commandData =
+        this.drawingEntitiesManager.deleteSelectedEntities() as Command;
+      command.merge(commandData);
       history.update(command);
       this.renderersContainer.update(command);
       this.events.selectEntities.dispatch(
         this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
       );
     });
+
+    this.events.deleteHoveredStructure.add(() => {
+      const command = new Command();
+      const history = new EditorHistory(this);
+
+      command.merge(this.drawingEntitiesManager.deleteHoveredEntities());
+      history.update(command);
+      this.renderersContainer.update(command);
+    });
+
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
         this.onModifyAminoAcids(monomers, modificationType);

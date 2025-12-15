@@ -210,6 +210,12 @@ export class DrawingEntitiesManager {
     );
   }
 
+  public get hoveredEntities() {
+    return this.allEntities.filter(
+      ([, drawingEntity]) => drawingEntity.hovered,
+    );
+  }
+
   public get selectedMonomers() {
     return this.monomersArray.filter((monomer) => monomer.selected);
   }
@@ -298,8 +304,18 @@ export class DrawingEntitiesManager {
   }
 
   public deleteSelectedEntities() {
+    if (this.hoveredEntities.length !== 0) return;
     const mergedCommand = new Command();
     this.selectedEntities.forEach(([, drawingEntity]) => {
+      const command = this.deleteDrawingEntity(drawingEntity);
+      mergedCommand.merge(command);
+    });
+    return mergedCommand;
+  }
+
+  public deleteHoveredEntities() {
+    const mergedCommand = new Command();
+    this.hoveredEntities.forEach(([, drawingEntity]) => {
       const command = this.deleteDrawingEntity(drawingEntity);
       mergedCommand.merge(command);
     });
@@ -392,6 +408,8 @@ export class DrawingEntitiesManager {
     needToDeleteConnectedEntities = true,
     force = false,
   ) {
+    // debugger;
+    console.log('delete drawing entity: ', drawingEntity);
     if (drawingEntity instanceof BaseMonomer) {
       return this.deleteMonomer(
         drawingEntity,

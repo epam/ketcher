@@ -13,25 +13,92 @@ import {
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { KetSerializer } from 'domain/serializers';
-import { monomerFactory } from 'application/editor';
+import { monomerFactory, CoreEditor } from 'application/editor';
+
+/**
+ * Looks up a monomer template in the library by template ID or alias.
+ * This is used to enrich templates from KET deserialization with library data like idtAliases.
+ */
+export function getLibraryMonomerTemplate(
+  templateId: string,
+  templateAlias?: string,
+): IKetMonomerTemplate | undefined {
+  try {
+    const editor = CoreEditor.provideEditorInstance();
+    if (!editor?.monomersLibraryParsedJson) {
+      return undefined;
+    }
+
+    const libraryJson = editor.monomersLibraryParsedJson;
+    
+    // Try to find by template ID first
+    const templateKey = setMonomerTemplatePrefix(templateId);
+    if (libraryJson[templateKey]) {
+      return libraryJson[templateKey] as IKetMonomerTemplate;
+    }
+
+    // Try to find by alias if provided
+    if (templateAlias) {
+      const templateByAlias = setMonomerTemplatePrefix(templateAlias);
+      if (libraryJson[templateByAlias]) {
+        return libraryJson[templateByAlias] as IKetMonomerTemplate;
+      }
+    }
+
+    return undefined;
+  } catch (e) {
+    // If there's any error accessing the library, just return undefined
+    // and fall back to using the template from the KET file
+    return undefined;
+  }
+}
+
+/**
+ * Merges a KET template with its corresponding library template to enrich it with
+ * additional properties like idtAliases that may not be present in the KET file.
+ */
+export function enrichTemplateWithLibraryData(
+  template: IKetMonomerTemplate,
+): IKetMonomerTemplate {
+  const libraryTemplate = getLibraryMonomerTemplate(template.id, template.alias);
+  
+  if (!libraryTemplate) {
+    return template;
+  }
+
+  // Merge library template data, prioritizing library values for properties
+  // that might be missing from the KET template (like idtAliases)
+  return {
+    ...template,
+    // If the template doesn't have idtAliases but the library does, use library's
+    idtAliases: template.idtAliases || libraryTemplate.idtAliases,
+    // Similar for other properties that might be missing
+    aliasHELM: template.aliasHELM || libraryTemplate.aliasHELM,
+    aliasAxoLabs: template.aliasAxoLabs || libraryTemplate.aliasAxoLabs,
+    modificationTypes: template.modificationTypes || libraryTemplate.modificationTypes,
+  };
+}
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
+  // Enrich the template with library data before extracting props
+  const enrichedTemplate = enrichTemplateWithLibraryData(template);
+  
   return {
-    id: template.id,
-    Name: template.fullName ?? template.name ?? template.alias ?? template.id,
-    MonomerNaturalAnalogCode: template.naturalAnalogShort ?? '',
-    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog ?? '',
-    MonomerName: template.name ?? template.alias ?? template.id,
-    MonomerFullName: template.fullName,
-    MonomerType: template.classHELM,
-    MonomerClass: template.class,
+    id: enrichedTemplate.id,
+    Name: enrichedTemplate.fullName ?? enrichedTemplate.name ?? enrichedTemplate.alias ?? enrichedTemplate.id,
+    MonomerNaturalAnalogCode: enrichedTemplate.naturalAnalogShort ?? '',
+    MonomerNaturalAnalogThreeLettersCode: enrichedTemplate.naturalAnalog ?? '',
+    MonomerName: enrichedTemplate.name ?? enrichedTemplate.alias ?? enrichedTemplate.id,
+    MonomerFullName: enrichedTemplate.fullName,
+    MonomerType: enrichedTemplate.classHELM,
+    MonomerClass: enrichedTemplate.class,
     MonomerCaps: {},
-    idtAliases: template.idtAliases,
-    unresolved: template.unresolved,
-    modificationTypes: template.modificationTypes,
-    ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
-    ...(template.aliasAxoLabs ? { aliasAxoLabs: template.aliasAxoLabs } : {}),
-    ...(template.hidden ? { hidden: template.hidden } : {}),
+    idtAliases: enrichedTemplate.idtAliases,
+    unresolved: enrichedTemplate.unresolved,
+    modificationTypes: enrichedTemplate.modificationTypes,
+    ...(enrichedTemplate.aliasHELM ? { aliasHELM: enrichedTemplate.aliasHELM } : {}),
+    ...(enrichedTemplate.aliasAxoLabs ? { aliasAxoLabs: enrichedTemplate.aliasAxoLabs } : {}),
+    ...(enrichedTemplate.hidden ? { hidden: enrichedTemplate.hidden } : {}),
   };
 }
 

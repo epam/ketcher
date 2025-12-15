@@ -48,7 +48,7 @@ const AttachmentPointLabelMenuItems = ({
 
     const positionFromClick = (() => {
       const event = triggerEvent?.event;
-      if (!event || typeof (event as MouseEvent).clientX !== 'number') {
+      if (!(event instanceof MouseEvent)) {
         return null;
       }
       const rootElement = document.querySelector(
@@ -58,10 +58,7 @@ const AttachmentPointLabelMenuItems = ({
         return null;
       }
       const { left, top } = rootElement.getBoundingClientRect();
-      return new Vec2(
-        (event as MouseEvent).clientX - left,
-        (event as MouseEvent).clientY - top,
-      );
+      return new Vec2(event.clientX - left, event.clientY - top);
     })();
 
     const attachmentPointEditData: AttachmentPointClickData = {

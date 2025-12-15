@@ -30,7 +30,7 @@ export function getLibraryMonomerTemplate(
     }
 
     const libraryJson = editor.monomersLibraryParsedJson;
-    
+
     // Try to find by template ID first
     const templateKey = setMonomerTemplatePrefix(templateId);
     if (libraryJson[templateKey]) {
@@ -60,8 +60,11 @@ export function getLibraryMonomerTemplate(
 export function enrichTemplateWithLibraryData(
   template: IKetMonomerTemplate,
 ): IKetMonomerTemplate {
-  const libraryTemplate = getLibraryMonomerTemplate(template.id, template.alias);
-  
+  const libraryTemplate = getLibraryMonomerTemplate(
+    template.id,
+    template.alias,
+  );
+
   if (!libraryTemplate) {
     return template;
   }
@@ -75,20 +78,26 @@ export function enrichTemplateWithLibraryData(
     // Similar for other properties that might be missing
     aliasHELM: template.aliasHELM || libraryTemplate.aliasHELM,
     aliasAxoLabs: template.aliasAxoLabs || libraryTemplate.aliasAxoLabs,
-    modificationTypes: template.modificationTypes || libraryTemplate.modificationTypes,
+    modificationTypes:
+      template.modificationTypes || libraryTemplate.modificationTypes,
   };
 }
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   // Enrich the template with library data before extracting props
   const enrichedTemplate = enrichTemplateWithLibraryData(template);
-  
+
   return {
     id: enrichedTemplate.id,
-    Name: enrichedTemplate.fullName ?? enrichedTemplate.name ?? enrichedTemplate.alias ?? enrichedTemplate.id,
+    Name:
+      enrichedTemplate.fullName ??
+      enrichedTemplate.name ??
+      enrichedTemplate.alias ??
+      enrichedTemplate.id,
     MonomerNaturalAnalogCode: enrichedTemplate.naturalAnalogShort ?? '',
     MonomerNaturalAnalogThreeLettersCode: enrichedTemplate.naturalAnalog ?? '',
-    MonomerName: enrichedTemplate.name ?? enrichedTemplate.alias ?? enrichedTemplate.id,
+    MonomerName:
+      enrichedTemplate.name ?? enrichedTemplate.alias ?? enrichedTemplate.id,
     MonomerFullName: enrichedTemplate.fullName,
     MonomerType: enrichedTemplate.classHELM,
     MonomerClass: enrichedTemplate.class,
@@ -96,8 +105,12 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     idtAliases: enrichedTemplate.idtAliases,
     unresolved: enrichedTemplate.unresolved,
     modificationTypes: enrichedTemplate.modificationTypes,
-    ...(enrichedTemplate.aliasHELM ? { aliasHELM: enrichedTemplate.aliasHELM } : {}),
-    ...(enrichedTemplate.aliasAxoLabs ? { aliasAxoLabs: enrichedTemplate.aliasAxoLabs } : {}),
+    ...(enrichedTemplate.aliasHELM
+      ? { aliasHELM: enrichedTemplate.aliasHELM }
+      : {}),
+    ...(enrichedTemplate.aliasAxoLabs
+      ? { aliasAxoLabs: enrichedTemplate.aliasAxoLabs }
+      : {}),
     ...(enrichedTemplate.hidden ? { hidden: enrichedTemplate.hidden } : {}),
   };
 }

@@ -19,9 +19,15 @@ import { getSelectOptionsFromSchema } from '../../utils';
 import Select from '../../component/form/Select';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 
-const content = (schema, context, fieldName, fieldValue, checked) => {
-  const isContextEmpty = !context;
-  return Object.keys(schema.properties)
+const content = (
+  schema,
+  context,
+  fieldName,
+  fieldValue,
+  checked,
+  isContextEmpty,
+) =>
+  Object.keys(schema.properties)
     .filter(
       (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName',
     )
@@ -57,7 +63,6 @@ const content = (schema, context, fieldName, fieldValue, checked) => {
         );
       }
     });
-};
 
 function SDataFieldset({ formState }) {
   const { result } = formState;
@@ -83,6 +88,7 @@ function SDataFieldset({ formState }) {
         result.fieldName,
         result.fieldValue,
         result.radiobuttons,
+        isContextEmpty,
       )}
     </fieldset>
   );

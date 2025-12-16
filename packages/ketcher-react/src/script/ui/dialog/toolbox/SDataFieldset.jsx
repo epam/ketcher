@@ -67,7 +67,9 @@ const content = (
 function SDataFieldset({ formState }) {
   const { result } = formState;
   const formSchema = sdataCustomSchema;
-  const isContextEmpty = !result.context;
+  const validContextValues = formSchema.properties.context.enum;
+  const isContextEmpty =
+    !result.context || !validContextValues.includes(result.context);
 
   return (
     <fieldset className="sdata">

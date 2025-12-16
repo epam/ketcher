@@ -41,16 +41,22 @@ import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { BaseSequenceItemRenderer } from 'application/render';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
+import { AmbiguousSequenceItemRenderer } from './sequence/AmbiguousSequenceItemRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
+type Renderer =
+  | BaseMonomerRenderer
+  | AmbiguousMonomerRenderer
+  | BaseSequenceItemRenderer
+  | AmbiguousSequenceItemRenderer;
+
 export class RenderersManager {
   // FIXME: Specify the types.
   private readonly theme;
-  public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
-    new Map();
+  public monomers: Map<number, Renderer> = new Map();
 
   public polymerBonds = new Map<
     number,
@@ -62,9 +68,41 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
+  private deferredShowRenderers: Set<Renderer> = new Set();
+  private scheduledShowTimer?: NodeJS.Timeout;
 
   constructor({ theme }) {
     this.theme = theme;
+  }
+
+  scheduleDeferredShow() {
+    if (!this.scheduledShowTimer)
+      this.scheduledShowTimer = setTimeout(() => {
+        this.showDeferredRenderers();
+        this.scheduledShowTimer = undefined;
+      }, 300);
+  }
+
+  // During sequence mode render, for each sequence item Sugar / RNA entities are added and then
+  // removed from this.monomers, each time calling show() and causing layout reflows.
+  // This hack sums the result of multiple operations and only shows the result (usually 0 since SequenceRenderer creates its own renderers)
+  // TODO pool: this should probably be solved on command plan/execution level, or in Nucleoside.createOnCanvas
+  // but impact of such refactoring is too high at the moment.
+  private showDeferredRenderers() {
+    for (const renderer of this.deferredShowRenderers) {
+      renderer.show(this.theme);
+    }
+
+    this.deferredShowRenderers.clear();
+  }
+
+  public addToDeferredShow(renderer?: Renderer) {
+    if (renderer) this.deferredShowRenderers.add(renderer);
+    this.scheduleDeferredShow();
+  }
+
+  public removeFromDeferredShow(renderer?: Renderer) {
+    if (renderer) this.deferredShowRenderers.delete(renderer);
   }
 
   public hoverDrawingEntity(drawingEntity: DrawingEntity) {
@@ -99,9 +137,13 @@ export class RenderersManager {
       const MonomerRenderer = monomerFactory(monomer.monomerItem)[1];
       monomerRenderer = new MonomerRenderer(monomer);
     }
-
+    // console.log(
+    //   'addMonomer with renderer',
+    //   Object.getPrototypeOf(monomer).constructor.name,
+    //   Object.getPrototypeOf(monomerRenderer).constructor.name,
+    // );
     this.monomers.set(monomer.id, monomerRenderer);
-    monomerRenderer.show(this.theme);
+    this.addToDeferredShow(monomerRenderer);
     this.markForReEnumeration();
     if (callback) {
       callback();
@@ -128,6 +170,7 @@ export class RenderersManager {
   public deleteAllDrawingEntities() {
     this.monomers.forEach((monomerRenderer) => {
       monomerRenderer.remove();
+      this.removeFromDeferredShow(monomerRenderer);
     });
     this.polymerBonds.forEach((polymerBondRenderer) => {
       polymerBondRenderer.remove();
@@ -135,7 +178,13 @@ export class RenderersManager {
   }
 
   public deleteMonomer(monomer: BaseMonomer) {
+    // console.log(
+    //   'deleteMonomer with renderer',
+    //   Object.getPrototypeOf(monomer).constructor.name,
+    //   Object.getPrototypeOf(monomer.renderer)?.constructor.name,
+    // );
     monomer.renderer?.remove();
+    this.removeFromDeferredShow(monomer.renderer);
     this.monomers.delete(monomer.id);
     this.markForReEnumeration();
   }
@@ -247,6 +296,7 @@ export class RenderersManager {
     });
   }
 
+  // TODO pool find out why we need that
   private recalculateMonomersEnumeration() {
     const editor = CoreEditor.provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([

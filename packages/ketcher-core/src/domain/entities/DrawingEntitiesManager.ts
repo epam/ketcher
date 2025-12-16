@@ -2292,6 +2292,7 @@ export class DrawingEntitiesManager {
   }
 
   public clearCanvas() {
+    console.log('DrawingEntitiesManager.clearCanvas');
     const editor = CoreEditor.provideEditorInstance();
 
     // TODO rewrite to work with base class (drawingEntity)

@@ -98,9 +98,12 @@ export class RendererPool<C, T extends Poolable<C>> {
    */
   private release(element: T): void {
     if (element.inPool) {
-      console.warn(
-        `Trying to release an element that is already in pool: ${this.poolName} id:${element.id}`,
-      );
+      // Currently SequenceRenderer sets same renderer to each monomer of node,
+      // which later will cause multiple pool releases due to the fact that renderer is removed for each monomer
+      // TODO pool: sort out that logic
+      // console.warn(
+      //   `Trying to release an element that is already in pool: ${this.poolName} id:${element.id}`,
+      // );
       return;
     }
     this.stats.released++;

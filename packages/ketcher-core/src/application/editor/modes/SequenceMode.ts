@@ -172,13 +172,23 @@ export class SequenceMode extends BaseMode {
     needRemoveSelection = true,
     needReArrangeChains = true,
   ) {
+    console.debug('  ');
+    console.debug('============ SequenceMode INITIALIZE =============');
+    console.time('SequenceMode initialize.total');
+    console.debug('SequenceMode super.initialize');
+    console.time('SequenceMode super.initialize done');
     const command = super.initialize(needRemoveSelection);
+    console.timeEnd('SequenceMode super.initialize done');
     const editor = CoreEditor.provideEditorInstance();
 
+    console.debug('SequenceMode clearCanvas');
+    console.time('SequenceMode clearCanvas done');
     editor.drawingEntitiesManager.clearCanvas();
-
+    console.timeEnd('SequenceMode clearCanvas done');
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
+    console.debug('SequenceMode snake');
+    console.time('SequenceMode snake done');
     const modelChanges = needReArrangeChains
       ? editor.drawingEntitiesManager.applySnakeLayout(
           true,
@@ -190,12 +200,19 @@ export class SequenceMode extends BaseMode {
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
           !this.isEditMode,
         );
+    console.timeEnd('SequenceMode snake done');
     const zoom = ZoomTool.instance;
 
+    console.debug('SequenceMode renderersContainer.update');
+    console.time('SequenceMode renderersContainer.update done');
     editor.renderersContainer.update(modelChanges);
+    console.timeEnd('SequenceMode renderersContainer.update done');
 
+    console.debug('SequenceMode applyMonomersSequenceLayout');
+    console.time('SequenceMode applyMonomersSequenceLayout done');
     const chainsCollection =
       editor.drawingEntitiesManager.applyMonomersSequenceLayout();
+    console.timeEnd('SequenceMode applyMonomersSequenceLayout done');
 
     const firstMonomerPosition = (
       chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
@@ -220,7 +237,8 @@ export class SequenceMode extends BaseMode {
     }
 
     modelChanges.merge(command);
-
+    console.timeEnd('SequenceMode initialize.total');
+    console.debug('================ SequenceMode INITIALIZE END <<');
     return modelChanges;
   }
 
@@ -271,9 +289,10 @@ export class SequenceMode extends BaseMode {
     if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode) {
       return;
     }
-    const currentChainIndex = this.isEditMode
-      ? SequenceRenderer.currentChainIndex
-      : SequenceRenderer.sequenceViewModel.chains.length - 1;
+    const currentChainIndex =
+      this.isEditMode || !SequenceRenderer.sequenceViewModel
+        ? SequenceRenderer.currentChainIndex
+        : SequenceRenderer.sequenceViewModel.chains.length - 1;
     const indexOfRowBefore = isNumber(eventData?.indexOfRowBefore)
       ? eventData?.indexOfRowBefore
       : currentChainIndex;
@@ -284,7 +303,10 @@ export class SequenceMode extends BaseMode {
 
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
-    if (SequenceRenderer.caretPosition === -1) {
+    if (
+      SequenceRenderer.caretPosition === -1 &&
+      SequenceRenderer.sequenceViewModel
+    ) {
       SequenceRenderer.setCaretPositionByNode(
         SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
       );
@@ -2887,6 +2909,6 @@ export class SequenceMode extends BaseMode {
 
   public destroy() {
     this.turnOffEditMode();
-    SequenceRenderer.clear();
+    SequenceRenderer.clear(true);
   }
 }

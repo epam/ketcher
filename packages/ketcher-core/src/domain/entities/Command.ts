@@ -40,9 +40,11 @@ export class Command {
   }
 
   public execute(renderersManagers: RenderersManager) {
-    this.operations.forEach((operation) =>
-      operation.execute(renderersManagers),
-    );
+    console.log('Executing command', this);
+    this.operations.forEach((operation) => {
+      // console.log('Executing operation', operation);
+      operation.execute(renderersManagers);
+    });
     renderersManagers.reinitializeViewModel();
     this.executeAfterAllOperations(renderersManagers);
     renderersManagers.runPostRenderMethods();

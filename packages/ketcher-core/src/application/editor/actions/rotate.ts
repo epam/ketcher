@@ -175,15 +175,14 @@ function fromEnhancedFlagFlip(
   const action = new Action();
 
   enhancedFlagIds.forEach((flagId) => {
-    const frId = flagId;
-    const frag = reStruct.molecule.frags.get(frId);
+    const frag = reStruct.molecule.frags.get(flagId);
     if (!frag) {
       return;
     }
 
     const currentPosition =
       frag.stereoFlagPosition ||
-      Fragment.getDefaultStereoFlagPosition(reStruct.molecule, frId);
+      Fragment.getDefaultStereoFlagPosition(reStruct.molecule, flagId);
 
     if (!currentPosition) {
       return;

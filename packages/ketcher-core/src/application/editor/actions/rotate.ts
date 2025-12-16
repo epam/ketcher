@@ -70,6 +70,17 @@ export function fromFlip(
     );
   }
 
+  if (structToFlip.enhancedFlags) {
+    action.mergeWith(
+      fromEnhancedFlagFlip(
+        reStruct,
+        structToFlip.enhancedFlags,
+        flipDirection,
+        center,
+      ),
+    );
+  }
+
   return action;
 }
 
@@ -155,6 +166,40 @@ function fromTextFlip(
   return action.perform(reStruct);
 }
 
+function fromEnhancedFlagFlip(
+  reStruct: ReStruct,
+  enhancedFlagIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2,
+) {
+  const action = new Action();
+
+  enhancedFlagIds.forEach((flagId) => {
+    const frId = flagId;
+    const frag = reStruct.molecule.frags.get(frId);
+    if (!frag) {
+      return;
+    }
+
+    const currentPosition =
+      frag.stereoFlagPosition ||
+      Fragment.getDefaultStereoFlagPosition(reStruct.molecule, frId);
+
+    if (!currentPosition) {
+      return;
+    }
+
+    const difference = flipPointByCenter(
+      currentPosition,
+      center,
+      flipDirection,
+    );
+    action.addOp(new EnhancedFlagMove(flagId, difference));
+  });
+
+  return action.perform(reStruct);
+}
+
 export const flipBonds = (
   bondIds: number[],
   struct: Struct,
@@ -221,39 +266,6 @@ function fromStructureFlip(
 
   if (selection?.bonds) {
     flipBonds(selection.bonds, struct, action);
-  }
-
-  // Flip enhanced flags for fragments that contain selected atoms
-  if (selection?.atoms) {
-    const fragmentIds = new Set<number>();
-    selection.atoms.forEach((atomId) => {
-      const atom = struct.atoms.get(atomId);
-      if (atom?.fragment != null) {
-        fragmentIds.add(atom.fragment);
-      }
-    });
-
-    fragmentIds.forEach((frId) => {
-      const frag = struct.frags.get(frId);
-      if (!frag) {
-        return;
-      }
-
-      const currentPosition =
-        frag.stereoFlagPosition ||
-        Fragment.getDefaultStereoFlagPosition(struct, frId);
-
-      if (!currentPosition) {
-        return;
-      }
-
-      const difference = flipPointByCenter(
-        currentPosition,
-        center,
-        flipDirection,
-      );
-      action.addOp(new EnhancedFlagMove(frId, difference));
-    });
   }
 
   return action.perform(reStruct);

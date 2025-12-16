@@ -228,7 +228,7 @@ function fromStructureFlip(
     const fragmentIds = new Set<number>();
     selection.atoms.forEach((atomId) => {
       const atom = struct.atoms.get(atomId);
-      if (atom && atom.fragment !== undefined) {
+      if (atom?.fragment != null) {
         fragmentIds.add(atom.fragment);
       }
     });

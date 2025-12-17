@@ -60,6 +60,17 @@ jest.mock('components', () => ({
 describe('RnaPresetTabs - Highlight Toggle Feature', () => {
   const mockWizardStateDispatch = jest.fn();
 
+  // Test data constants
+  const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
+  const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+  const BASE_ATOMS = [1, 2];
+  const BASE_BONDS = [1];
+  const SUGAR_ATOMS = [3, 4];
+  const SUGAR_BONDS = [2];
+  const PHOSPHATE_ATOMS = [5, 6];
+  const PHOSPHATE_BONDS = [3];
+  const EMPTY_RGROUP_ATTACHMENT_POINTS: never[] = [];
+
   const createMockWizardState = (
     withStructures = false,
   ): RnaPresetWizardState => ({
@@ -83,7 +94,9 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       },
       errors: {},
       notifications: new Map(),
-      structure: withStructures ? { atoms: [1, 2], bonds: [1] } : undefined,
+      structure: withStructures
+        ? { atoms: BASE_ATOMS, bonds: BASE_BONDS }
+        : undefined,
     } as any,
     sugar: {
       values: {
@@ -95,7 +108,9 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       },
       errors: {},
       notifications: new Map(),
-      structure: withStructures ? { atoms: [3, 4], bonds: [2] } : undefined,
+      structure: withStructures
+        ? { atoms: SUGAR_ATOMS, bonds: SUGAR_BONDS }
+        : undefined,
     } as any,
     phosphate: {
       values: {
@@ -107,7 +122,9 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       },
       errors: {},
       notifications: new Map(),
-      structure: withStructures ? { atoms: [5, 6], bonds: [3] } : undefined,
+      structure: withStructures
+        ? { atoms: PHOSPHATE_ATOMS, bonds: PHOSPHATE_BONDS }
+        : undefined,
     } as any,
   });
 
@@ -244,30 +261,30 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       // Base should have active color (tab index 1)
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [1, 2],
-          bonds: [1],
-          rgroupAttachmentPoints: [],
-          color: '#CDF1FC', // ACTIVE_HIGHLIGHT_COLOR
+          atoms: BASE_ATOMS,
+          bonds: BASE_BONDS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
         }),
       );
 
       // Sugar should have inactive color
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [3, 4],
-          bonds: [2],
-          rgroupAttachmentPoints: [],
-          color: '#EFF2F5', // INACTIVE_HIGHLIGHT_COLOR
+          atoms: SUGAR_ATOMS,
+          bonds: SUGAR_BONDS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
         }),
       );
 
       // Phosphate should have inactive color
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [5, 6],
-          bonds: [3],
-          rgroupAttachmentPoints: [],
-          color: '#EFF2F5', // INACTIVE_HIGHLIGHT_COLOR
+          bonds: PHOSPHATE_BONDS,
+          atoms: PHOSPHATE_ATOMS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
         }),
       );
     });
@@ -300,30 +317,30 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       // Base should have inactive color
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [1, 2],
-          bonds: [1],
-          rgroupAttachmentPoints: [],
-          color: '#EFF2F5', // INACTIVE_HIGHLIGHT_COLOR
+          atoms: BASE_ATOMS,
+          bonds: BASE_BONDS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
         }),
       );
 
       // Sugar should have active color (tab index 2)
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [3, 4],
-          bonds: [2],
-          rgroupAttachmentPoints: [],
-          color: '#CDF1FC', // ACTIVE_HIGHLIGHT_COLOR
+          atoms: SUGAR_ATOMS,
+          bonds: SUGAR_BONDS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
         }),
       );
 
       // Phosphate should have inactive color
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [5, 6],
-          bonds: [3],
-          rgroupAttachmentPoints: [],
-          color: '#EFF2F5', // INACTIVE_HIGHLIGHT_COLOR
+          bonds: PHOSPHATE_BONDS,
+          atoms: PHOSPHATE_ATOMS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
         }),
       );
     });
@@ -356,10 +373,10 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       // Phosphate should have active color (tab index 3)
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [5, 6],
-          bonds: [3],
-          rgroupAttachmentPoints: [],
-          color: '#CDF1FC', // ACTIVE_HIGHLIGHT_COLOR
+          bonds: PHOSPHATE_BONDS,
+          atoms: PHOSPHATE_ATOMS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
         }),
       );
     });
@@ -368,7 +385,10 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       const user = userEvent.setup();
       const wizardState = createMockWizardState(false);
       // Add structure only to base
-      wizardState.base.structure = { atoms: [1, 2], bonds: [1] } as any;
+      wizardState.base.structure = {
+        atoms: BASE_ATOMS,
+        bonds: BASE_BONDS,
+      } as any;
 
       render(
         <RnaPresetTabs
@@ -389,22 +409,22 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       expect(mockHighlightsCreate).toHaveBeenCalled();
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [1, 2],
-          bonds: [1],
-          rgroupAttachmentPoints: [],
-          color: '#CDF1FC', // ACTIVE_HIGHLIGHT_COLOR
+          atoms: BASE_ATOMS,
+          bonds: BASE_BONDS,
+          rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
+          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
         }),
       );
 
       // Verify it was NOT called with sugar or phosphate (they have no structures)
       expect(mockHighlightsCreate).not.toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [3, 4],
+          atoms: SUGAR_ATOMS,
         }),
       );
       expect(mockHighlightsCreate).not.toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [5, 6],
+          bonds: PHOSPHATE_BONDS,
         }),
       );
     });
@@ -500,9 +520,9 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
       // Verify highlights are created for all three components
       expect(mockHighlightsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          atoms: [1, 2],
-          bonds: [1],
-          color: '#CDF1FC', // ACTIVE_HIGHLIGHT_COLOR for base
+          atoms: BASE_ATOMS,
+          bonds: BASE_BONDS,
+          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR for base
         }),
       );
     });

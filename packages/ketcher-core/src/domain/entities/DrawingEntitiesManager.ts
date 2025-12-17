@@ -408,8 +408,6 @@ export class DrawingEntitiesManager {
     needToDeleteConnectedEntities = true,
     force = false,
   ) {
-    // debugger;
-    console.log('delete drawing entity: ', drawingEntity);
     if (drawingEntity instanceof BaseMonomer) {
       return this.deleteMonomer(
         drawingEntity,

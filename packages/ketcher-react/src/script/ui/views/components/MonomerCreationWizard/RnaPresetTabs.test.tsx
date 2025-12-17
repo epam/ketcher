@@ -19,6 +19,13 @@ import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Import after mocks
+import { RnaPresetTabs } from './RnaPresetTabs';
+import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import { KetMonomerClass } from 'ketcher-core';
+
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
   Icon: ({ name }: { name: string }) => <div data-testid={`icon-${name}`} />,
@@ -41,11 +48,6 @@ jest.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
   default: () => <div data-testid="monomer-creation-wizard-fields" />,
 }));
-
-// Import after mocks
-import { RnaPresetTabs } from './RnaPresetTabs';
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
-import { KetMonomerClass } from 'ketcher-core';
 
 // Create a mock store
 const createMockStore = (selection = { atoms: [], bonds: [] }) => {

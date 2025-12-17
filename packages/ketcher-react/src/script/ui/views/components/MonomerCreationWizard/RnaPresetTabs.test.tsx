@@ -69,7 +69,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
   const SUGAR_BONDS = [2];
   const PHOSPHATE_ATOMS = [5, 6];
   const PHOSPHATE_BONDS = [3];
-  const EMPTY_RGROUP_ATTACHMENT_POINTS: never[] = [];
+  const EMPTY_RGROUP_ATTACHMENT_POINTS: any[] = [];
 
   const createMockWizardState = (
     withStructures = false,
@@ -264,7 +264,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           atoms: BASE_ATOMS,
           bonds: BASE_BONDS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
+          color: ACTIVE_HIGHLIGHT_COLOR,
         }),
       );
 
@@ -274,7 +274,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           atoms: SUGAR_ATOMS,
           bonds: SUGAR_BONDS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
+          color: INACTIVE_HIGHLIGHT_COLOR,
         }),
       );
 
@@ -284,7 +284,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           bonds: PHOSPHATE_BONDS,
           atoms: PHOSPHATE_ATOMS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
+          color: INACTIVE_HIGHLIGHT_COLOR,
         }),
       );
     });
@@ -320,7 +320,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           atoms: BASE_ATOMS,
           bonds: BASE_BONDS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
+          color: INACTIVE_HIGHLIGHT_COLOR,
         }),
       );
 
@@ -330,7 +330,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           atoms: SUGAR_ATOMS,
           bonds: SUGAR_BONDS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
+          color: ACTIVE_HIGHLIGHT_COLOR,
         }),
       );
 
@@ -340,7 +340,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           bonds: PHOSPHATE_BONDS,
           atoms: PHOSPHATE_ATOMS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: INACTIVE_HIGHLIGHT_COLOR, // INACTIVE_HIGHLIGHT_COLOR
+          color: INACTIVE_HIGHLIGHT_COLOR,
         }),
       );
     });
@@ -376,7 +376,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           bonds: PHOSPHATE_BONDS,
           atoms: PHOSPHATE_ATOMS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
+          color: ACTIVE_HIGHLIGHT_COLOR,
         }),
       );
     });
@@ -412,7 +412,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
           atoms: BASE_ATOMS,
           bonds: BASE_BONDS,
           rgroupAttachmentPoints: EMPTY_RGROUP_ATTACHMENT_POINTS,
-          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR
+          color: ACTIVE_HIGHLIGHT_COLOR,
         }),
       );
 
@@ -522,7 +522,7 @@ describe('RnaPresetTabs - Highlight Toggle Feature', () => {
         expect.objectContaining({
           atoms: BASE_ATOMS,
           bonds: BASE_BONDS,
-          color: ACTIVE_HIGHLIGHT_COLOR, // ACTIVE_HIGHLIGHT_COLOR for base
+          color: ACTIVE_HIGHLIGHT_COLOR, // Active color for base
         }),
       );
     });

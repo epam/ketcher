@@ -14,25 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup, Vec2 } from 'domain/entities';
+import { FunctionalGroup, Pool, Vec2 } from 'domain/entities';
 import { ReStruct } from 'application/render';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
+/**
+ * Finds the closest atom to the given position, respecting skip filters
+ * and contracted functional groups.
+ * @param restruct Rendered structure to search within.
+ * @param pos Cursor position in model coordinates.
+ * @param skip Optional atom reference to ignore when map is 'atoms'.
+ * @param minDist Optional maximum search radius in model units.
+ * @returns Closest atom id with distance or null when nothing is found.
+ */
 function findClosestAtom(
   restruct: ReStruct,
   pos: Vec2,
-  skip: any,
+  skip?: { map: 'atoms'; id: number } | null,
   minDist?: number,
-) {
+): { id: number; dist: number } | null {
   let closestAtom: number | null = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip?.map === 'atoms' ? skip.id : null;
   const sGroups = restruct.sgroups;
-  const functionalGroups = restruct.molecule.functionalGroups;
+  const functionalGroups: Pool<FunctionalGroup> =
+    restruct.molecule.functionalGroups;
 
-  minDist = minDist ?? maxMinDist;
-  minDist = Math.min(minDist, maxMinDist);
+  minDist = Math.min(minDist ?? maxMinDist, maxMinDist);
 
   restruct.visibleAtoms.forEach((atom, aid) => {
     if (

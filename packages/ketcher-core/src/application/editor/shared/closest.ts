@@ -15,10 +15,16 @@
  ***************************************************************************/
 
 import { FunctionalGroup, Vec2 } from 'domain/entities';
+import { ReStruct } from 'application/render';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
-function findClosestAtom(restruct, pos, skip, minDist) {
+function findClosestAtom(
+  restruct: ReStruct,
+  pos: Vec2,
+  skip: any,
+  minDist?: number,
+) {
   let closestAtom: number | null = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip?.map === 'atoms' ? skip.id : null;

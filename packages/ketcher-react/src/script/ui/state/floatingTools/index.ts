@@ -27,8 +27,9 @@ export const updateFloatingTools = (payload: FloatingToolsPayload) => {
 
 const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
   state = initialState,
-  { type, payload },
+  action,
 ) => {
+  const { type, payload } = action;
   if (type === 'UPDATE_FLOATING_TOOLS') {
     return { ...state, ...payload };
   }

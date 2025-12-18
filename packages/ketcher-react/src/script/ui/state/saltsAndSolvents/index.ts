@@ -36,10 +36,8 @@ const initialState: SaltsAndSolventsState = {
   mode: MODES.FG,
 };
 
-const saltsAndSolventsReducer = (
-  state = initialState,
-  { type, payload }: AnyAction,
-) => {
+const saltsAndSolventsReducer = (state = initialState, action: AnyAction) => {
+  const { type, payload } = action;
   if (type === 'SALTS_AND_SOLVENTS_INIT') {
     return { ...state, ...payload };
   }

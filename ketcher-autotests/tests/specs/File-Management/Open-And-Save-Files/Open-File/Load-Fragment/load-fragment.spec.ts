@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -11,12 +12,12 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
-  waitForPageInit,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  takeElementScreenshot,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
@@ -52,16 +53,19 @@ const testCasesForOpeningFiles = [
 ];
 
 test.describe('load as fragment (Add to Canvas) srtuctures from files with different formats', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
-
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   for (const testCase of testCasesForOpeningFiles) {
     const index = -1;
     const fileExtension = testCase.secondFile.split('.').at(index);
-    test(`Load Fragment - Load as fragment (Add to Canvas) - ${fileExtension}-files`, async ({
-      page,
-    }) => {
+    test(`Load Fragment - Load as fragment (Add to Canvas) - ${fileExtension}-files`, async () => {
       /*
        * Test case: EPMLSOPKET-1860, EPMLSOPKET-1854, EPMLSOPKET-1861, EPMLSOPKET-2933
        */
@@ -80,20 +84,20 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     });
   }
 
-  test('Open file - Input SMILE-string - check the preview', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string - check the preview', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
     const smileString = 'C1=CC=CC=C1';
     await openPasteFromClipboard(page, smileString);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      OpenStructureDialog(page).previewTextArea,
+    );
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Open file - Input SMILE-string - open as new project', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string - open as new project', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -103,9 +107,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open file - Input SMILE-string with arrow symbol - open as new project', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string with arrow symbol - open as new project', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -118,9 +120,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open file - Input SMILE-string and try to add incorrect one', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string and try to add incorrect one', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -148,12 +148,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       "'scanner: BufferScanner::read() error'";
 
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    await takeEditorScreenshot(page);
   });
 
-  test('Open/Import structure as a KET file - create KET file', async ({
-    page,
-  }) => {
+  test('Open/Import structure as a KET file - create KET file', async () => {
     /*
      * Test case: EPMLSOPKET-4702 (creating file)
      * Description: Creating a reaction using elements from vertical tool bars
@@ -235,9 +232,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open/Import structure as a KET file - open KET file', async ({
-    page,
-  }) => {
+  test('Open/Import structure as a KET file - open KET file', async () => {
     /*
      * Test case: EPMLSOPKET-4702 (opening file)
      * Test is related to the existing bug: https://github.com/epam/ketcher/issues/3153

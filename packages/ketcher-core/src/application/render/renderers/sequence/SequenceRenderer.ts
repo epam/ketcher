@@ -43,6 +43,10 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
+import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
+import ZoomTool from 'application/editor/tools/Zoom';
+import { select } from 'd3';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -123,6 +127,7 @@ export class SequenceRenderer {
     this.removeNewSequenceButtons();
     this.showNodes(SequenceRenderer.sequenceViewModel);
     this.showBonds(SequenceRenderer.chainsCollection);
+    this.attachDelegatedEvents();
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
@@ -1247,6 +1252,16 @@ export class SequenceRenderer {
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
     this.removeNewSequenceButtons();
+    this.removeDelegatedEvents();
+  }
+
+  private static attachDelegatedEvents() {
+    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    SequenceEventDelegationManager.instance.attachDelegatedEvents(canvas);
+  }
+
+  private static removeDelegatedEvents() {
+    SequenceEventDelegationManager.instance.removeDelegatedEvents();
   }
 }
 

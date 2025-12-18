@@ -17,10 +17,7 @@ export class FlexMode extends BaseMode {
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
 
-    // Clear the snake layout matrix to prevent unwanted position shifts
-    editor.drawingEntitiesManager.snakeLayoutMatrix = undefined;
-
-    command.merge(editor.drawingEntitiesManager.recalculateCanvasMatrix());
+    command.merge(modelChanges);
 
     editor.renderersContainer.update(modelChanges);
 

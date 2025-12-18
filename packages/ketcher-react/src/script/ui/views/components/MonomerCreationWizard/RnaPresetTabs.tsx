@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -18,7 +18,6 @@ import AttributeField from './components/AttributeField/AttributeField';
 import { selectionSelector } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
-import inputStyles from '../../../component/form/Input/Input.module.less';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -26,66 +25,42 @@ interface IRnaPresetTabsProps {
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
 }
 
-const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
-const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
-type RnaComponentKeyType = typeof RNA_COMPONENT_KEYS[number];
-
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [isHighlightEnabled, setIsHighlightEnabled] = useState(true);
   const structureSelection = useSelector(selectionSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
+  const rnaComponentsKeys = ['base', 'sugar', 'phosphate'] as const;
+  type rnaComponentKeyType = typeof rnaComponentsKeys[number];
+  const currentTabState = wizardState[rnaComponentsKeys[selectedTab - 1]];
 
-  const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
+  const highlightStructure = (activeTabState: WizardState) => {
+    editor.highlights.clear();
 
-  const applyHighlights = useCallback(
-    (activeTabIndex: number, highlightEnabled: boolean) => {
-      editor.highlights.clear();
+    if (!activeTabState?.structure) {
+      return;
+    }
 
-      if (!highlightEnabled) {
-        return;
-      }
-
-      // Apply highlights for all components based on whether they're active or not
-      RNA_COMPONENT_KEYS.forEach((componentKey, index) => {
-        const componentState = wizardState[componentKey];
-        if (!componentState?.structure) {
-          return;
-        }
-
-        const isActiveTab = index + 1 === activeTabIndex;
-        const highlightColor = isActiveTab
-          ? ACTIVE_HIGHLIGHT_COLOR
-          : INACTIVE_HIGHLIGHT_COLOR;
-
-        editor.highlights.create({
-          atoms: componentState.structure.atoms || [],
-          bonds: componentState.structure.bonds || [],
-          rgroupAttachmentPoints: [],
-          color: highlightColor,
-        });
-      });
-    },
-    [editor, wizardState],
-  );
+    editor.highlights.create({
+      atoms: activeTabState.structure.atoms || [],
+      bonds: activeTabState.structure.bonds || [],
+      rgroupAttachmentPoints: [],
+      color: '#CDF1FC',
+    });
+  };
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
-    applyHighlights(newValue, isHighlightEnabled);
-  };
 
-  const handleHighlightToggle = () => {
-    const newHighlightEnabled = !isHighlightEnabled;
-    setIsHighlightEnabled(newHighlightEnabled);
-    applyHighlights(selectedTab, newHighlightEnabled);
+    const activeTabState = wizardState[rnaComponentsKeys[newValue - 1]];
+
+    highlightStructure(activeTabState);
   };
 
   const handleFieldChange = (
     fieldId: StringWizardFormFieldId,
     value: KetMonomerClass | string,
-    rnaComponentKey: RnaComponentKeyType | 'preset',
+    rnaComponentKey: rnaComponentKeyType | 'preset',
   ) => {
     wizardStateDispatch({
       type: 'SetFieldValue',
@@ -96,7 +71,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (rnaComponentKey: RnaComponentKeyType) => {
+  const handleClickCreateComponent = (rnaComponentKey: rnaComponentKeyType) => {
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',
       rnaComponentKey,
@@ -104,22 +79,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const currentTabStructure = currentTabState?.structure;
-
   useEffect(() => {
-    if (!currentTabStructure) {
+    if (!currentTabState) {
       return;
     }
 
-    applyHighlights(selectedTab, isHighlightEnabled);
+    highlightStructure(currentTabState);
     editor.selection(null);
-  }, [
-    applyHighlights,
-    currentTabStructure,
-    editor,
-    isHighlightEnabled,
-    selectedTab,
-  ]);
+  }, [currentTabState?.structure]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
@@ -196,7 +163,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             required
           />
         )}
-        {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
+        {rnaComponentsKeys.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
               <>
@@ -233,16 +200,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           );
         })}
       </div>
-      <label className={styles.highlightCheckboxWrapper}>
-        <input
-          type="checkbox"
-          checked={isHighlightEnabled}
-          onChange={handleHighlightToggle}
-          className={inputStyles.input}
-        />
-        <span className={inputStyles.checkbox} />
-        Highlight
-      </label>
     </div>
   );
 };

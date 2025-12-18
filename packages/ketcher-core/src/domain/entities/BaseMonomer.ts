@@ -10,7 +10,6 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
-import assert from 'assert';
 import {
   IKetAttachmentPoint,
   IKetAttachmentPointType,
@@ -431,6 +430,20 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
   }
 
+  private static readonly ATTACHMENT_POINT_TYPE_TO_NUMBER: {
+    [key in IKetAttachmentPointType]: (
+      attachmentPointNumber: number,
+      hasR1: boolean,
+      hasR2: boolean,
+    ) => number;
+  } = {
+    left: () => 1,
+    right: () => 2,
+    side: (attachmentPointNumber: number, hasR1: boolean, hasR2: boolean) => {
+      return attachmentPointNumber + (hasR1 ? 0 : 1) + (hasR2 ? 0 : 1);
+    },
+  };
+
   public static getAttachmentPointDictFromMonomerDefinition(
     attachmentPoints: IKetAttachmentPoint[],
   ): {
@@ -439,34 +452,23 @@ export abstract class BaseMonomer extends DrawingEntity {
   } {
     const attachmentPointDictionary = {};
     const attachmentPointsList: AttachmentPointName[] = [];
-    const attachmentPointTypeToNumber: {
-      [key in IKetAttachmentPointType]: (
-        attachmentPointNumber?: number,
-      ) => number;
-    } = {
-      left: () => 1,
-      right: () => 2,
-      side: (attachmentPointNumber) => {
-        assert(attachmentPointNumber);
-        return (
-          attachmentPointNumber +
-          Number(!('R1' in attachmentPointDictionary)) +
-          Number(!('R2' in attachmentPointDictionary))
-        );
-      },
-    };
+
     attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
       const attachmentPointNumber = attachmentPointIndex + 1;
-      let calculatedAttachmentPointNumber;
+      let calculatedAttachmentPointNumber: number;
       if (attachmentPoint.type) {
         const getLabelByTypeAction =
-          attachmentPointTypeToNumber[attachmentPoint.type];
-        calculatedAttachmentPointNumber =
-          typeof getLabelByTypeAction === 'function'
-            ? attachmentPointTypeToNumber[attachmentPoint.type](
-                attachmentPointNumber,
-              )
-            : attachmentPointNumber;
+          BaseMonomer.ATTACHMENT_POINT_TYPE_TO_NUMBER[attachmentPoint.type];
+        if (getLabelByTypeAction) {
+          calculatedAttachmentPointNumber = getLabelByTypeAction(
+            attachmentPointNumber,
+            'R1' in attachmentPointDictionary,
+            'R2' in attachmentPointDictionary,
+          );
+        } else {
+          // compatibility, should not happen according to types
+          calculatedAttachmentPointNumber = attachmentPointNumber;
+        }
       } else {
         calculatedAttachmentPointNumber = attachmentPointNumber;
       }

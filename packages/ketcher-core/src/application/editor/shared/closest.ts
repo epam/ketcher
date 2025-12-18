@@ -14,20 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities';
+import { FunctionalGroup, Vec2 } from 'domain/entities';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
 function findClosestAtom(restruct, pos, skip, minDist) {
-  let closestAtom = null;
+  let closestAtom: number | null = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'atoms' ? skip.id : null;
+  const skipId = skip?.map === 'atoms' ? skip.id : null;
+  const sGroups = restruct.sgroups;
+  const functionalGroups = restruct.molecule.functionalGroups;
 
-  minDist = minDist || maxMinDist;
+  minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   restruct.visibleAtoms.forEach((atom, aid) => {
-    if (aid === skipId) return;
+    if (
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom.a,
+        sGroups,
+        functionalGroups,
+      )
+    ) {
+      return;
+    }
+
+    const isSkippedAtom = aid === skipId || atom.a.isPreview;
+    if (isSkippedAtom) {
+      return;
+    }
 
     const dist = Vec2.dist(pos, atom.a.pp);
 

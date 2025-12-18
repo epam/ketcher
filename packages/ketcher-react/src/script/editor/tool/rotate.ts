@@ -170,21 +170,19 @@ class RotateTool implements Tool {
       center = this.struct.atoms.get(this.centerAtomId)?.pp;
     }
 
-    const { texts, rxnArrows, rxnPluses, enhancedFlags } = this.selection;
+    const { texts, rxnArrows, rxnPluses } = this.selection;
     if (
       !center &&
       (visibleAtoms.length ||
         texts?.length ||
         rxnArrows?.length ||
-        rxnPluses?.length ||
-        enhancedFlags?.length)
+        rxnPluses?.length)
     ) {
       center = this.reStruct.getSelectionBoxCenter({
         atoms: visibleAtoms,
         texts,
         rxnArrows,
         rxnPluses,
-        enhancedFlags,
       });
     }
 

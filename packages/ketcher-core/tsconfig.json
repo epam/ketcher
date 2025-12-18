@@ -27,7 +27,8 @@
       "domain/*": ["src/domain/*"],
       "application/*": ["src/application/*"],
       "infrastructure/*": ["src/infrastructure/*"],
-      "utilities": ["src/utilities"]
+      "utilities": ["src/utilities"],
+      "ketcher-core": ["src/index.ts"]
     },
     "plugins": [
       {

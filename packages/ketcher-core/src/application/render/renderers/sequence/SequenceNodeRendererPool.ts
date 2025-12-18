@@ -104,52 +104,54 @@ export class SequenceNodeRendererPool {
 
     // Check node types first
     if (node instanceof EmptySequenceNode) {
-      return this.emptyRendererPool.acquire(options) as T;
+      return this.emptyRendererPool.acquire(options) as unknown as T;
     }
 
     if (node instanceof BackBoneSequenceNode) {
-      return this.backboneRendererPool.acquire(options) as T;
+      return this.backboneRendererPool.acquire(options) as unknown as T;
     }
 
     if (node instanceof AmbiguousMonomerSequenceNode) {
-      return this.ambiguousRendererPool.acquire(options) as T;
+      return this.ambiguousRendererPool.acquire(options) as unknown as T;
     }
 
     if (node instanceof LinkerSequenceNode) {
-      return this.chemRendererPool.acquire(options) as T;
+      return this.chemRendererPool.acquire(options) as unknown as T;
     }
 
     // Check monomer types
     const monomer = node.monomer;
 
     if (monomer instanceof UnresolvedMonomer) {
-      return this.unresolvedRendererPool.acquire(options) as T;
+      return this.unresolvedRendererPool.acquire(options) as unknown as T;
     }
 
     if (node.constructor === Nucleotide) {
-      return this.nucleotideRendererPool.acquire(options) as T;
+      return this.nucleotideRendererPool.acquire(options) as unknown as T;
     }
 
     if (node.constructor === Nucleoside) {
-      return this.nucleosideRendererPool.acquire(options) as T;
+      return this.nucleosideRendererPool.acquire(options) as unknown as T;
     }
 
     if (monomer instanceof Phosphate) {
-      return this.phosphateRendererPool.acquire(options) as T;
+      return this.phosphateRendererPool.acquire(options) as unknown as T;
     }
 
     if (
       'monomerClass' in monomer &&
-      monomer.monomerClass === MONOMER_CONST.AMINO_ACID
+      (monomer as unknown as { monomerClass: string }).monomerClass ===
+        MONOMER_CONST.AMINO_ACID
     ) {
-      return this.peptideRendererPool.acquire(options) as T;
+      return this.peptideRendererPool.acquire(options) as unknown as T;
     }
 
     if (
       'monomerClass' in monomer &&
-      monomer.monomerClass === MONOMER_CONST.CHEM
+      (monomer as unknown as { monomerClass: string }).monomerClass ===
+        MONOMER_CONST.CHEM
     ) {
-      return this.chemRendererPool.acquire(options) as T;
+      return this.chemRendererPool.acquire(options) as unknown as T;
     }
 
     // Fallback to factory for any other types

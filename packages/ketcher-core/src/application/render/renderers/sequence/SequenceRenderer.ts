@@ -106,7 +106,7 @@ export class SequenceRenderer {
     return this.sequenceViewModelValue;
   }
 
-  private static set sequenceViewModel(value: SequenceViewModel) {
+  private static set sequenceViewModel(value: SequenceViewModel | undefined) {
     this.sequenceViewModelValue = value;
   }
 

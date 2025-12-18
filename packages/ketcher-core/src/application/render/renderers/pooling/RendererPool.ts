@@ -163,7 +163,7 @@ export class RendererPool<C, T extends Poolable<C>> {
     if (!urlParams.has('pool-log')) return;
 
     const contextId =
-      (context as SequenceNodeOptions)?.node?.monomer?.id ?? 'N/A';
+      (context as unknown as SequenceNodeOptions)?.node?.monomer?.id ?? 'N/A';
     const r = renderer as unknown as BaseSequenceItemRenderer;
 
     const wd = window as unknown as {

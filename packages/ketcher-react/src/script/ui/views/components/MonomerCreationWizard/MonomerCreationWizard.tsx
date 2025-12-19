@@ -1,6 +1,6 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Icon, Dialog } from 'components';
+import { Dialog, Icon } from 'components';
 import {
   Atom,
   AtomLabel,
@@ -89,6 +89,19 @@ const initialRnaPresetWizardState: RnaPresetWizardState = {
       phosphate: false,
     },
   },
+};
+
+const getComponentSuffix = (componentType: KetMonomerClass): string => {
+  switch (componentType) {
+    case KetMonomerClass.Base:
+      return 'B';
+    case KetMonomerClass.Sugar:
+      return 'S';
+    case KetMonomerClass.Phosphate:
+      return 'P';
+    default:
+      return '';
+  }
 };
 
 const wizardReducer = (
@@ -320,7 +333,9 @@ const rnaPresetWizardReducer = (
             ...updatedState.base,
             values: {
               ...updatedState.base.values,
-              symbol: newPresetCode,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Base)
+                : '',
             },
           },
         };
@@ -333,7 +348,9 @@ const rnaPresetWizardReducer = (
             ...updatedState.sugar,
             values: {
               ...updatedState.sugar.values,
-              symbol: newPresetCode,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Sugar)
+                : '',
             },
           },
         };
@@ -346,7 +363,9 @@ const rnaPresetWizardReducer = (
             ...updatedState.phosphate,
             values: {
               ...updatedState.phosphate.values,
-              symbol: newPresetCode,
+              symbol: newPresetCode
+                ? newPresetCode + getComponentSuffix(KetMonomerClass.Phosphate)
+                : '',
             },
           },
         };
@@ -381,19 +400,6 @@ const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   }
 
   return true;
-};
-
-const getComponentSuffix = (componentType: KetMonomerClass): string => {
-  switch (componentType) {
-    case KetMonomerClass.Base:
-      return 'B';
-    case KetMonomerClass.Sugar:
-      return 'S';
-    case KetMonomerClass.Phosphate:
-      return 'P';
-    default:
-      return '';
-  }
 };
 
 /**
@@ -1412,10 +1418,7 @@ const MonomerCreationWizard = () => {
         );
 
         // Determine if this monomer should be hidden
-        // For RNA presets: hidden if mandatory properties are not filled
-        const shouldBeHidden =
-          isRnaPresetType &&
-          !hasAllMandatoryPropertiesFilled(monomerToSave.values);
+        const shouldBeHidden = isRnaPresetType;
 
         // Auto-assign properties for hidden monomers
         let valuesToSave = monomerToSave.values;

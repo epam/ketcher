@@ -730,8 +730,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
 test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8248
+   * Behavior changed(components are not saving in library now) in https://github.com/epam/ketcher/issues/8854
    * Description: Verify that if for a monomer component all mandatory properties are filled, that monomer will
-   *              also be saved to the library (in addition to the preset).
+   *              NOT be saved to the library (in addition to the preset).
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
@@ -781,7 +782,7 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Sugar.Sugar)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Base.Base)).toBeTruthy();
-  expect(await Library(page).isMonomerExist(Phosphate.Phosphate)).toBeTruthy();
+  expect(await Library(page).isMonomerExist(Sugar.Sugar)).toBeFalsy();
+  expect(await Library(page).isMonomerExist(Base.Base)).toBeFalsy();
+  expect(await Library(page).isMonomerExist(Phosphate.Phosphate)).toBeFalsy();
 });

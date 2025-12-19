@@ -42,7 +42,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   noAttachmentPoints: 'The monomer must have at least one attachment point.',
   incorrectAttachmentPointsOrder:
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
-  creationSuccessful: 'The monomer was successfully added to the library.',
+  creationSuccessful: 'The preset was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
   notUniqueModificationTypes:
     'Only one amino acid within a natural analogue can have the same modification type.',

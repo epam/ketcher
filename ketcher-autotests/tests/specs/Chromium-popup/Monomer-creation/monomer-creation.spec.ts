@@ -679,7 +679,7 @@ test(`11. Verify nucleotide type options are available in the wizard`, async () 
   await createMonomerDialog.discard();
 });
 
-test(`12. Check that Nucleotide (preset) is placed last in the Type drop-down`, async () => {
+test(`12. Check that Nucleotide (preset) is placed 6 in the Type drop-down`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8248
    * Description: Verify that Nucleotide (preset) option is displayed at the bottom of the Type list
@@ -708,8 +708,8 @@ test(`12. Check that Nucleotide (preset) is placed last in the Type drop-down`, 
     MonomerType.Base,
     MonomerType.Phosphate,
     MonomerType.NucleotideMonomer,
-    MonomerType.CHEM,
     MonomerType.NucleotidePreset,
+    MonomerType.CHEM,
   ];
 
   const actualOptionsOrder = await page

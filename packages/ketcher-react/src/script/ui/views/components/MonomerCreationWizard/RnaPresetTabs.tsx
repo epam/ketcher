@@ -121,6 +121,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     selectedTab,
   ]);
 
+  useEffect(() => {
+    return () => {
+      editor?.highlights.clear();
+    };
+  }, [editor?.highlights]);
+
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
   ) => {

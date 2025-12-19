@@ -697,6 +697,10 @@ const MonomerCreationWizard = () => {
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
+  const [pendingType, setPendingType] = useState<
+    KetMonomerClass | string | null
+  >(null);
+  const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -753,35 +757,45 @@ const MonomerCreationWizard = () => {
     };
   }, []);
 
+  const applyTypeChange = (newType: KetMonomerClass | string) => {
+    setModificationTypes([]);
+    if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
+      wizardStateDispatch({
+        type: 'ResetWizard',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'ResetWizard',
+      });
+    } else {
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasHELM',
+        value: '',
+      });
+    }
+
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'type',
+      value: newType as KetMonomerClass,
+    });
+  };
+
   const handleFieldChange = (
     fieldId: WizardFormFieldId,
     value: KetMonomerClass | string,
   ) => {
-    if (['type', 'naturalAnalogue'].includes(fieldId)) {
-      setModificationTypes([]);
-    }
     if (fieldId === 'type') {
-      if ((type === 'rnaPreset' || value === 'rnaPreset') && type !== value) {
-        wizardStateDispatch({
-          type: 'ResetWizard',
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'ResetWizard',
-        });
-      } else {
-        wizardStateDispatch({
-          type: 'SetFieldValue',
-          fieldId: 'aliasHELM',
-          value: '',
-        });
+      if (type === 'rnaPreset' && value !== 'rnaPreset') {
+        setPendingType(value as KetMonomerClass);
+        setShowTypeChangeDialog(true);
+        return;
       }
-
-      wizardStateDispatch({
-        type: 'SetFieldValue',
-        fieldId: 'type',
-        value: value as KetMonomerClass,
-      });
+      applyTypeChange(value);
     } else {
+      if (fieldId === 'naturalAnalogue') {
+        setModificationTypes([]);
+      }
       wizardStateDispatch({
         type: 'SetFieldValue',
         fieldId,
@@ -1569,6 +1583,40 @@ const MonomerCreationWizard = () => {
           </button>
         </div>
       </div>
+      {showTypeChangeDialog &&
+        ketcherEditorRootElement &&
+        createPortal(
+          <div className={styles.dialogOverlay}>
+            <Dialog
+              className={styles.smallDialog}
+              title="Confirm type change"
+              withDivider={true}
+              valid={() => true}
+              params={{
+                onOk: () => {
+                  if (pendingType !== null) {
+                    applyTypeChange(pendingType);
+                  }
+                  setPendingType(null);
+                  setShowTypeChangeDialog(false);
+                },
+                onCancel: () => {
+                  setPendingType(null);
+                  setShowTypeChangeDialog(false);
+                },
+              }}
+              buttons={['OK', 'Cancel']}
+              buttonsNameMap={{ OK: 'Yes', Cancel: 'Cancel' }}
+              primaryButtons={['Cancel']}
+            >
+              <div className={styles.DialogMessage}>
+                Changing the type will result in a loss of inputted data. Do you
+                wish to proceed?
+              </div>
+            </Dialog>
+          </div>,
+          ketcherEditorRootElement,
+        )}
       {leavingGroupDialogMessage &&
         ketcherEditorRootElement &&
         createPortal(

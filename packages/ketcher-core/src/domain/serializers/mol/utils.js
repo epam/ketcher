@@ -370,7 +370,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
       ctab.rgroups.set(rgid, existingRGroup);
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);
-      ctab.rgroups.get(rgid)!.frags.add(frid);
+      existingRGroup.frags.add(frid);
       ctab.atoms.forEach((atom) => {
         atom.fragment = frid;
       });

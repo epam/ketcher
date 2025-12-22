@@ -366,10 +366,11 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
     const rgid = parseInt(id, 10);
 
     for (const ctab of rgroups[rgid]) {
-      ctab.rgroups.set(rgid, new RGroup());
+      const existingRGroup = ctab.rgroups.get(rgid) || new RGroup();
+      ctab.rgroups.set(rgid, existingRGroup);
       const frag = new Fragment();
       const frid = ctab.frags.add(frag);
-      ctab.rgroups.get(rgid).frags.add(frid);
+      ctab.rgroups.get(rgid)!.frags.add(frid);
       ctab.atoms.forEach((atom) => {
         atom.fragment = frid;
       });

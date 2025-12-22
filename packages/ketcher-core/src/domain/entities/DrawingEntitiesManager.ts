@@ -1924,13 +1924,14 @@ export class DrawingEntitiesManager {
 
   public isNucleosideAndPhosphateConnectedAsNucleotide(
     nucleoside: Nucleoside,
-    phosphate: Phosphate,
+    phosphate: Phosphate | AmbiguousMonomer,
   ) {
-    if (
-      !(nucleoside instanceof Nucleoside) ||
-      !(phosphate instanceof Phosphate)
-    )
-      return false;
+    const isPhosphate =
+      phosphate instanceof Phosphate ||
+      (phosphate instanceof AmbiguousMonomer &&
+        phosphate.monomerClass === KetMonomerClass.Phosphate);
+
+    if (!(nucleoside instanceof Nucleoside) || !isPhosphate) return false;
 
     const r2Bond = nucleoside.sugar.attachmentPointsToBonds.R2;
 
@@ -3195,6 +3196,17 @@ export class DrawingEntitiesManager {
       .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
       .map(([, monomer]) => monomer as BaseMonomer);
     const chainsCollection = ChainsCollection.fromMonomers(selectedMonomers);
+    const getMonomerItemForCopy = (monomer: BaseMonomer) =>
+      monomer instanceof AmbiguousMonomer
+        ? monomer.variantMonomerItem
+        : monomer.monomerItem;
+    const addMonomerByItem = (
+      monomerItem: MonomerOrAmbiguousType,
+      position: Vec2,
+    ) =>
+      isAmbiguousMonomerLibraryItem(monomerItem)
+        ? this.addAmbiguousMonomer(monomerItem, position)
+        : this.addMonomer(monomerItem, position);
     const chainsForAntisenseCreation = chainsCollection.chains.filter(
       (chain) => {
         return chain.subChains.some((subChain) =>
@@ -3293,7 +3305,12 @@ export class DrawingEntitiesManager {
               RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
             );
 
-            if (!phosphateLibraryItem) {
+            const phosphateMonomerItem =
+              senseNode.phosphate instanceof AmbiguousMonomer
+                ? senseNode.phosphate.variantMonomerItem
+                : phosphateLibraryItem;
+
+            if (!phosphateMonomerItem) {
               KetcherLogger.warn(
                 'Phosphate is not found in monomers library. Skipping phosphate addition.',
               );
@@ -3301,8 +3318,8 @@ export class DrawingEntitiesManager {
               return;
             }
 
-            const monomerAddCommand = this.addMonomer(
-              phosphateLibraryItem,
+            const monomerAddCommand = addMonomerByItem(
+              phosphateMonomerItem,
               senseNode.phosphate.position.add(new Vec2(0, 3)),
             );
             addedPhosphate = monomerAddCommand.operations[0]
@@ -3373,8 +3390,8 @@ export class DrawingEntitiesManager {
               return;
             }
 
-            const monomerAddCommand = this.addMonomer(
-              monomer.monomerItem,
+            const monomerAddCommand = addMonomerByItem(
+              getMonomerItemForCopy(monomer),
               monomer.position.add(new Vec2(0, 4.25)),
             );
             const addedMonomer = monomerAddCommand.operations[0]

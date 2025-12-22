@@ -185,10 +185,14 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
 }
 
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
-  if (!monomer) return undefined;
+  if (!monomer || !(monomer instanceof Sugar)) {
+    return undefined;
+  }
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
-  return nextMonomerInChain instanceof Phosphate
+  return nextMonomerInChain instanceof Phosphate ||
+    (nextMonomerInChain instanceof AmbiguousMonomer &&
+      nextMonomerInChain.monomerClass === KetMonomerClass.Phosphate)
     ? nextMonomerInChain
     : undefined;
 }

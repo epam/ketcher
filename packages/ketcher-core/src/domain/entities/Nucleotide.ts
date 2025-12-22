@@ -23,7 +23,7 @@ export class Nucleotide {
   constructor(
     public sugar: Sugar,
     public rnaBase: RNABase | AmbiguousMonomer,
-    public phosphate: Phosphate,
+    public phosphate: Phosphate | AmbiguousMonomer,
   ) {}
 
   toString() {
@@ -51,7 +51,7 @@ export class Nucleotide {
     return new Nucleotide(
       sugar,
       getRnaBaseFromSugar(sugar) as RNABase,
-      getPhosphateFromSugar(sugar) as Phosphate,
+      getPhosphateFromSugar(sugar) as Phosphate | AmbiguousMonomer,
     );
   }
 

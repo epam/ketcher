@@ -12,7 +12,6 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import {
   IKetAttachmentPoint,
-  IKetAttachmentPointType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
@@ -430,20 +429,6 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
   }
 
-  private static readonly ATTACHMENT_POINT_TYPE_TO_NUMBER: {
-    [key in IKetAttachmentPointType]: (
-      attachmentPointNumber: number,
-      hasR1: boolean,
-      hasR2: boolean,
-    ) => number;
-  } = {
-    left: () => 1,
-    right: () => 2,
-    side: (attachmentPointNumber: number, hasR1: boolean, hasR2: boolean) => {
-      return attachmentPointNumber + (hasR1 ? 0 : 1) + (hasR2 ? 0 : 1);
-    },
-  };
-
   public static getAttachmentPointDictFromMonomerDefinition(
     attachmentPoints: IKetAttachmentPoint[],
   ): {
@@ -457,14 +442,15 @@ export abstract class BaseMonomer extends DrawingEntity {
       const attachmentPointNumber = attachmentPointIndex + 1;
       let calculatedAttachmentPointNumber: number;
       if (attachmentPoint.type) {
-        const getLabelByTypeAction =
-          BaseMonomer.ATTACHMENT_POINT_TYPE_TO_NUMBER[attachmentPoint.type];
-        if (getLabelByTypeAction) {
-          calculatedAttachmentPointNumber = getLabelByTypeAction(
-            attachmentPointNumber,
-            'R1' in attachmentPointDictionary,
-            'R2' in attachmentPointDictionary,
-          );
+        if (attachmentPoint.type === 'left') {
+          calculatedAttachmentPointNumber = 1;
+        } else if (attachmentPoint.type === 'right') {
+          calculatedAttachmentPointNumber = 2;
+        } else if (attachmentPoint.type === 'side') {
+          calculatedAttachmentPointNumber =
+            attachmentPointNumber +
+            ('R1' in attachmentPointDictionary ? 0 : 1) +
+            ('R2' in attachmentPointDictionary ? 0 : 1);
         } else {
           // compatibility, should not happen according to types
           calculatedAttachmentPointNumber = attachmentPointNumber;

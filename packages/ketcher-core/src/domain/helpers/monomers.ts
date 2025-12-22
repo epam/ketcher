@@ -184,17 +184,21 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
   );
 }
 
+export function isPhosphateLike(monomer?: BaseMonomer) {
+  return (
+    monomer instanceof Phosphate ||
+    (monomer instanceof AmbiguousMonomer &&
+      monomer.monomerClass === KetMonomerClass.Phosphate)
+  );
+}
+
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
   if (!monomer || !(monomer instanceof Sugar)) {
     return undefined;
   }
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
-  return nextMonomerInChain instanceof Phosphate ||
-    (nextMonomerInChain instanceof AmbiguousMonomer &&
-      nextMonomerInChain.monomerClass === KetMonomerClass.Phosphate)
-    ? nextMonomerInChain
-    : undefined;
+  return isPhosphateLike(nextMonomerInChain) ? nextMonomerInChain : undefined;
 }
 
 export function isMonomerBeginningOfChain(

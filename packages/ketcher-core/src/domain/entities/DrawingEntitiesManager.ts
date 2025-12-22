@@ -53,6 +53,7 @@ import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
+  isPhosphateLike,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -1926,12 +1927,8 @@ export class DrawingEntitiesManager {
     nucleoside: Nucleoside,
     phosphate: Phosphate | AmbiguousMonomer,
   ) {
-    const isPhosphate =
-      phosphate instanceof Phosphate ||
-      (phosphate instanceof AmbiguousMonomer &&
-        phosphate.monomerClass === KetMonomerClass.Phosphate);
-
-    if (!(nucleoside instanceof Nucleoside) || !isPhosphate) return false;
+    if (!(nucleoside instanceof Nucleoside) || !isPhosphateLike(phosphate))
+      return false;
 
     const r2Bond = nucleoside.sugar.attachmentPointsToBonds.R2;
 

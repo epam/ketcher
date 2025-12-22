@@ -309,7 +309,7 @@ export class DrawingEntitiesManager {
   public deleteAllEntities() {
     const mergedCommand = new Command();
     this.allEntities.forEach(([, drawingEntity]) => {
-      const command = this.deleteDrawingEntity(drawingEntity, true);
+      const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
     });
     this.clearMicromoleculesHiddenEntities();

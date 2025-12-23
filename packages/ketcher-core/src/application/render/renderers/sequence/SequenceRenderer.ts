@@ -365,7 +365,7 @@ export class SequenceRenderer {
               }
 
               if (!subChain.bonds.includes(polymerBond)) {
-                subChain.bonds.push(polymerBond);
+                subChain.addBond(polymerBond);
               }
               if (!polymerBond.isSideChainConnection) {
                 polymerBond.setRenderer(

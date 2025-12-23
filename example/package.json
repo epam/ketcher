@@ -35,6 +35,8 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/material": "^5.18.0",
     "ketcher-core": "*",
     "ketcher-macromolecules": "*",

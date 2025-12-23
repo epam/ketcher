@@ -312,6 +312,7 @@ export class DrawingEntitiesManager {
       const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
     });
+    this.clearMicromoleculesHiddenEntities();
     return mergedCommand;
   }
 

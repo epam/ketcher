@@ -757,11 +757,15 @@ export class CoreEditor {
     });
 
     this.events.deleteSelectedStructure.add(() => {
+      if (this.mode instanceof SequenceMode) {
+        this.mode.deleteSelection();
+        return;
+      }
+
       const command = new Command();
       const history = new EditorHistory(this);
-      const commandData =
-        this.drawingEntitiesManager.deleteSelectedEntities() as Command;
-      command.merge(commandData);
+
+      command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
       history.update(command);
       this.renderersContainer.update(command);
       this.events.selectEntities.dispatch(
@@ -770,6 +774,11 @@ export class CoreEditor {
     });
 
     this.events.deleteHoveredStructure.add(() => {
+      if (this.mode instanceof SequenceMode) {
+        this.mode.deleteSelection();
+        return;
+      }
+
       const command = new Command();
       const history = new EditorHistory(this);
 

@@ -304,7 +304,9 @@ export class DrawingEntitiesManager {
   }
 
   public deleteSelectedEntities() {
-    if (this.hoveredEntities.length !== 0) return;
+    if (this.hoveredEntities.length !== 0) {
+      return new Command();
+    }
     const mergedCommand = new Command();
     this.selectedEntities.forEach(([, drawingEntity]) => {
       const command = this.deleteDrawingEntity(drawingEntity);

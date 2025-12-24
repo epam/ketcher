@@ -248,6 +248,15 @@ export const hotkeysConfiguration = {
       editor.onSelectHistory('redo');
     },
   },
+  'single-bond': {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch([
+        ToolName.bondSingle,
+        { toolName: ToolName.bondSingle },
+      ]);
+    },
+  },
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
@@ -255,6 +264,7 @@ export const hotkeysConfiguration = {
       if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch([ToolName.erase]);
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      editor.events.deleteHoveredStructure.dispatch();
     },
   },
   clear: {

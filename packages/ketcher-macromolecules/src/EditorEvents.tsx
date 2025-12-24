@@ -408,24 +408,5 @@ export const EditorEvents = () => {
     }
   }, [hasAtLeastOneAntisense]);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '1' && editor?.mode.modeName !== 'sequence-layout-mode') {
-        dispatch(selectTool('bond-single'));
-      } else {
-        if (e.key !== 'Delete' && e.key !== 'Backspace') return;
-        if (e.ctrlKey || e.metaKey || e.altKey) return;
-        const monomer = hoveredTargetRef.current;
-        if (!monomer) return;
-        if (editor) {
-          editor.events.deleteHoveredStructure.dispatch();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editor, dispatch]);
-
   return <></>;
 };

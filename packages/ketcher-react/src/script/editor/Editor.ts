@@ -1793,75 +1793,232 @@ class Editor implements KetcherEditor {
     return potentialLeavingAtoms;
   }
 
+  private getRnaComponentForAtom(atomId: number): RnaPresetComponentKey | null {
+    const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
+
+    if (!rnaComponentAtoms) {
+      return null;
+    }
+
+    for (const [componentKey, componentData] of rnaComponentAtoms.entries()) {
+      if (componentData.atoms.includes(atomId)) {
+        return componentKey;
+      }
+    }
+
+    return null;
+  }
+
+  private canAssignRnaComponent(bond: Bond) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return false;
+    }
+
+    const beginAtomRnaComponent = this.getRnaComponentForAtom(bond.begin);
+    const endAtomRnaComponent = this.getRnaComponentForAtom(bond.end);
+
+    // Can assign if only one of the atoms belongs to an RNA component
+    if (
+      (!beginAtomRnaComponent && !endAtomRnaComponent) ||
+      (beginAtomRnaComponent &&
+        endAtomRnaComponent &&
+        beginAtomRnaComponent !== endAtomRnaComponent)
+    ) {
+      return false;
+    }
+
+    const rnaComponentToAssign = beginAtomRnaComponent || endAtomRnaComponent;
+    const struct = this.struct();
+    const atomIdToStartFrom = beginAtomRnaComponent ? bond.begin : bond.end;
+    const visitedAtomIds = new Set<number>();
+    const atomsToCheck = [atomIdToStartFrom];
+    let hasConnectionToAnotherComponent = false;
+    let hasConnectionToOriginalStructure = false;
+
+    visitedAtomIds.add(atomIdToStartFrom);
+
+    while (atomsToCheck.length > 0) {
+      const currentAtomId = atomsToCheck.pop();
+      const currentAtom = isNumber(currentAtomId)
+        ? struct.atoms.get(currentAtomId)
+        : undefined;
+
+      if (!currentAtom) {
+        continue;
+      }
+
+      currentAtom?.neighbors.forEach((neighbor) => {
+        const halfBond = struct.halfBonds.get(neighbor);
+
+        if (
+          hasConnectionToAnotherComponent ||
+          hasConnectionToOriginalStructure
+        ) {
+          return;
+        }
+
+        if (!halfBond) {
+          KetcherLogger.warn('Half-bond not found in structure');
+
+          return;
+        }
+
+        const neighborAtomId =
+          halfBond.begin === currentAtomId ? halfBond.end : halfBond.begin;
+
+        if (visitedAtomIds.has(neighborAtomId)) {
+          return;
+        }
+
+        visitedAtomIds.add(neighborAtomId);
+
+        const neighborAtomRnaComponent =
+          this.getRnaComponentForAtom(neighborAtomId);
+
+        if (neighborAtomRnaComponent === rnaComponentToAssign) {
+          return;
+        }
+
+        if (
+          neighborAtomRnaComponent &&
+          neighborAtomRnaComponent !== rnaComponentToAssign
+        ) {
+          hasConnectionToAnotherComponent = true;
+
+          return;
+        }
+
+        const originalAtomId =
+          this.selectedToOriginalAtomsIdMap.get(neighborAtomId);
+
+        if (
+          isNumber(originalAtomId) &&
+          this.originalStruct.atoms.has(originalAtomId)
+        ) {
+          hasConnectionToOriginalStructure = true;
+
+          return;
+        }
+
+        atomsToCheck.push(neighborAtomId);
+        visitedAtomIds.add(neighborAtomId);
+      });
+    }
+
+    if (hasConnectionToAnotherComponent || hasConnectionToOriginalStructure) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Auto-assigns atoms to RNA preset components when new bonds are added.
    * If one atom belongs to a component and the other doesn't belong to any,
    * the unassigned atom (and the bond) is added to the same component.
    */
-  private autoAssignAtomToRnaComponent(
-    atomId1: number,
-    atomId2: number,
-    bondId: number,
-  ) {
-    if (!this.monomerCreationState?.rnaComponentAtoms) {
+  private autoAssignAtomToRnaComponent(bondId: number) {
+    const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
+
+    if (!rnaComponentAtoms) {
       return;
     }
 
-    const rnaComponentAtoms = this.monomerCreationState.rnaComponentAtoms;
+    const struct = this.struct();
+    const bond = struct.bonds.get(bondId);
 
-    // Find which component (if any) each atom belongs to
-    let atom1Component: RnaPresetComponentKey | null = null;
-    let atom2Component: RnaPresetComponentKey | null = null;
+    if (!bond) {
+      KetcherLogger.warn('Bond not found in structure');
 
-    for (const [componentKey, componentData] of rnaComponentAtoms.entries()) {
-      if (componentData.atoms.includes(atomId1)) {
-        atom1Component = componentKey;
-      }
-      if (componentData.atoms.includes(atomId2)) {
-        atom2Component = componentKey;
-      }
+      return;
     }
 
-    // If one atom is in a component and the other is not, assign the unassigned atom to the component
-    if (atom1Component && !atom2Component) {
-      this.addAtomAndBondToRnaComponent(atom1Component, atomId2, bondId);
-    } else if (atom2Component && !atom1Component) {
-      this.addAtomAndBondToRnaComponent(atom2Component, atomId1, bondId);
+    const beginAtomComponent = this.getRnaComponentForAtom(bond.begin);
+    const endAtomComponent = this.getRnaComponentForAtom(bond.end);
+    const componentToMark = beginAtomComponent || endAtomComponent;
+
+    if (!componentToMark) {
+      return;
     }
+
+    const atomsIdsToMark: number[] = [];
+    const bondIdsToMark: number[] = [];
+    const bondIdsToCheck = [bondId];
+    const visitedBonds = new Set<number>();
+
+    while (bondIdsToCheck.length > 0) {
+      const currentBondId = bondIdsToCheck.pop();
+      const currentBond = isNumber(currentBondId)
+        ? struct.bonds.get(currentBondId)
+        : undefined;
+
+      if (
+        !isNumber(currentBondId) ||
+        !currentBond ||
+        visitedBonds.has(currentBondId)
+      ) {
+        continue;
+      }
+
+      bondIdsToMark.push(currentBondId);
+      visitedBonds.add(currentBondId);
+
+      const beginAtom = struct.atoms.get(currentBond.begin);
+      const endAtom = struct.atoms.get(currentBond.end);
+      const beginAtomRnaComponent = this.getRnaComponentForAtom(
+        currentBond.begin,
+      );
+      const endAtomRnaComponent = this.getRnaComponentForAtom(currentBond.end);
+      const atomsToContinue: Atom[] = [];
+
+      if (beginAtom && beginAtomRnaComponent !== componentToMark) {
+        atomsIdsToMark.push(currentBond.begin);
+        atomsToContinue.push(beginAtom);
+      }
+
+      if (endAtom && endAtomRnaComponent !== componentToMark) {
+        atomsIdsToMark.push(currentBond.end);
+        atomsToContinue.push(endAtom);
+      }
+
+      atomsToContinue.forEach((atom) => {
+        atom.neighbors.forEach((halfBondId) => {
+          const halfBond = struct.halfBonds.get(halfBondId);
+
+          if (!halfBond) {
+            KetcherLogger.warn('Half-bond not found in structure');
+
+            return;
+          }
+
+          const nextBondId = halfBond.bid;
+          const nextBond = struct.bonds.get(nextBondId);
+
+          if (!nextBond || bondIdsToCheck.includes(nextBondId)) {
+            KetcherLogger.warn('Bond not found in structure');
+
+            return;
+          }
+
+          bondIdsToCheck.push(nextBondId);
+        });
+      });
+    }
+
+    this.addAtomsAndBondsToRnaComponent(
+      componentToMark,
+      atomsIdsToMark,
+      bondIdsToMark,
+    );
   }
 
-  /**
-   * Adds an atom and bond to an RNA preset component and fires an event
-   * so the wizard can update its state.
-   */
-  private addAtomAndBondToRnaComponent(
+  private updateRnaComponentStructureState(
     componentKey: RnaPresetComponentKey,
-    atomId: number,
-    bondId: number,
+    updatedAtoms: number[],
+    updatedBonds: number[],
   ) {
-    if (!this.monomerCreationState?.rnaComponentAtoms) {
-      return;
-    }
-
-    const componentData =
-      this.monomerCreationState.rnaComponentAtoms.get(componentKey);
-    if (!componentData) {
-      return;
-    }
-
-    // Add the new atom and bond if not already present
-    const updatedAtoms = [...componentData.atoms];
-    const updatedBonds = [...componentData.bonds];
-
-    if (!updatedAtoms.includes(atomId)) {
-      updatedAtoms.push(atomId);
-    }
-    if (!updatedBonds.includes(bondId)) {
-      updatedBonds.push(bondId);
-    }
-
     // Update the state
-    this.monomerCreationState.rnaComponentAtoms.set(componentKey, {
+    this.monomerCreationState?.rnaComponentAtoms?.set(componentKey, {
       atoms: updatedAtoms,
       bonds: updatedBonds,
     });
@@ -1877,6 +2034,75 @@ class Editor implements KetcherEditor {
         detail: eventData,
       }),
     );
+  }
+
+  /**
+   * Adds an atom and bond to an RNA preset component and fires an event
+   * so the wizard can update its state.
+   */
+  private addAtomsAndBondsToRnaComponent(
+    componentKey: RnaPresetComponentKey,
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    const componentData =
+      this.monomerCreationState.rnaComponentAtoms.get(componentKey);
+    if (!componentData) {
+      return;
+    }
+
+    // Add the new atom and bond if not already present
+    const updatedAtoms = [...componentData.atoms];
+    const updatedBonds = [...componentData.bonds];
+
+    atomIds.forEach((atomId) => {
+      if (!updatedAtoms.includes(atomId)) {
+        updatedAtoms.push(atomId);
+      }
+    });
+
+    bondIds.forEach((bondId) => {
+      if (!updatedBonds.includes(bondId)) {
+        updatedBonds.push(bondId);
+      }
+    });
+
+    this.updateRnaComponentStructureState(
+      componentKey,
+      updatedAtoms,
+      updatedBonds,
+    );
+  }
+
+  private removeAtomsAndBondsFromRnaComponents(
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    for (const [
+      componentKey,
+      componentData,
+    ] of this.monomerCreationState.rnaComponentAtoms.entries()) {
+      const updatedAtoms = componentData.atoms.filter(
+        (atomId) => !atomIds.includes(atomId),
+      );
+      const updatedBonds = componentData.bonds.filter(
+        (bondId) => !bondIds.includes(bondId),
+      );
+
+      this.updateRnaComponentStructureState(
+        componentKey,
+        updatedAtoms,
+        updatedBonds,
+      );
+    }
   }
 
   private subscribeToChangeEventInMonomerCreationWizard() {
@@ -1917,6 +2143,7 @@ class Editor implements KetcherEditor {
         case OperationType.ATOM_DELETE:
         case OperationType.ATOM_ATTR:
         case OperationType.BOND_ADD:
+        case OperationType.BOND_DELETE:
         case OperationType.BOND_ATTR: {
           if (entry.id !== undefined) {
             const existingChanges = changesMap.get(entry.operation);
@@ -2021,6 +2248,8 @@ class Editor implements KetcherEditor {
                 }
               },
             );
+
+            this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
           }
           break;
 
@@ -2171,8 +2400,16 @@ class Editor implements KetcherEditor {
 
             // Handle RNA preset component auto-assignment
             // When a new bond is added, auto-assign atoms to their connected component
-            this.autoAssignAtomToRnaComponent(bond.begin, bond.end, id);
+            if (this.canAssignRnaComponent(bond)) {
+              this.autoAssignAtomToRnaComponent(id);
+            }
           }
+          break;
+        }
+
+        case OperationType.BOND_DELETE: {
+          this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
+
           break;
         }
 

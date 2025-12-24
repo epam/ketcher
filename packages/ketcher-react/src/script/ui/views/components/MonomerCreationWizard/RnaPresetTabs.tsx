@@ -10,7 +10,7 @@ import {
   WizardState,
 } from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
-import { KetMonomerClass } from 'ketcher-core';
+import { KetMonomerClass, RnaPresetComponentKey } from 'ketcher-core';
 import clsx from 'clsx';
 import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
 import styles from './RnaPresetTabs.module.less';
@@ -29,7 +29,6 @@ interface IRnaPresetTabsProps {
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
 const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
 const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
-type RnaComponentKeyType = typeof RNA_COMPONENT_KEYS[number];
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -37,7 +36,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const structureSelection = useSelector(selectionSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
-
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
 
   const applyHighlights = useCallback(
@@ -85,7 +83,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const handleFieldChange = (
     fieldId: StringWizardFormFieldId,
     value: KetMonomerClass | string,
-    rnaComponentKey: RnaComponentKeyType | 'preset',
+    rnaComponentKey: RnaPresetComponentKey | 'preset',
   ) => {
     wizardStateDispatch({
       type: 'SetFieldValue',
@@ -96,12 +94,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (rnaComponentKey: RnaComponentKeyType) => {
+  const handleClickCreateComponent = (
+    rnaComponentKey: RnaPresetComponentKey,
+  ) => {
+    // Get the current selection from the editor
+    const selection = editor.selection();
+    const atomIds = selection?.atoms || [];
+    const bondIds = selection?.bonds || [];
+
+    // Update the wizard state
     wizardStateDispatch({
       type: 'SetRnaPresetComponentStructure',
       rnaComponentKey,
       editor,
     });
+
+    // Sync the component atoms with the Editor for auto-assignment tracking
+    editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
   };
 
   const currentTabStructure = currentTabState?.structure;

@@ -36,12 +36,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const structureSelection = useSelector(selectionSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
-  const rnaComponentsKeys: readonly RnaPresetComponentKey[] = [
-    'base',
-    'sugar',
-    'phosphate',
-  ] as const;
-
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
 
   const applyHighlights = useCallback(

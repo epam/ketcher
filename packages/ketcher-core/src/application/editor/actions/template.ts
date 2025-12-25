@@ -21,7 +21,7 @@ import { fromAtomsAttrs, mergeSgroups } from './atom';
 import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond';
 
 import { Action } from './action';
-import closest from '../../../../../ketcher-react/src/script/editor/shared/closest';
+import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
 import { fromPaste } from './paste';
 import utils from '../shared/utils';

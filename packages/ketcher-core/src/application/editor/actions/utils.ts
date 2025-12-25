@@ -24,7 +24,7 @@ import {
   Vec2,
 } from 'domain/entities';
 
-import closest from '../../../../../ketcher-react/src/script/editor/shared/closest';
+import closest from '../shared/closest';
 import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';

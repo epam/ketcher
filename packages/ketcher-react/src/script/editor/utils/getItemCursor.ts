@@ -1,4 +1,4 @@
-import { ClosestItemWithMap } from '../shared/closest.types';
+import { ClosestItemWithMap } from 'ketcher-core/src/application/editor/shared/closest.types';
 import {
   IMAGE_KEY,
   imageReferencePositionToCursor,

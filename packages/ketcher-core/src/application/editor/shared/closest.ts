@@ -14,16 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Fragment,
-  Vec2,
-  Scale,
-  ReStruct,
-  IMAGE_KEY,
-  ImageReferencePositionInfo,
-  MULTITAIL_ARROW_KEY,
-  FunctionalGroup,
-} from 'ketcher-core';
+import { Fragment, Vec2, ImageReferencePositionInfo } from 'domain/entities';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { Scale } from 'domain/helpers';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { ReStruct } from 'application/render/restruct';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;

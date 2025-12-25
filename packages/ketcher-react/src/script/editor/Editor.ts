@@ -79,7 +79,7 @@ import {
   Subscription,
 } from 'subscription';
 
-import closest from './shared/closest';
+import closest from 'ketcher-core/src/application/editor/shared/closest';
 import { ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';

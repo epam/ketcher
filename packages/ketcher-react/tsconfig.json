@@ -4,6 +4,7 @@
     "paths": {
       "components": ["src/components"],
       "ketcher-core": ["../ketcher-core/src"],
+      "ketcher-core/*": ["../ketcher-core/*"],
       "domain/*": ["../ketcher-core/src/domain/*"],
       "infrastructure/*": ["../ketcher-core/src/infrastructure/*"],
       "application/*": ["../ketcher-core/src/application/*"],

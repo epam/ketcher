@@ -27,7 +27,9 @@
     "baseUrl": ".",
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "components": ["src/components"]
+      "components": ["src/components"],
+      "ketcher-core": ["../ketcher-core/src"],
+      "ketcher-core/*": ["../ketcher-core/*"]
     }
   },
   "include": ["src"]

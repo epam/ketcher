@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Editor } from './Editor';
+import { Vec2 } from 'domain/entities';
 
-export { Editor };
-export * from 'ketcher-core/src/application/editor/shared/closest.types';
-export default Editor;
+export interface ClosestItem<T = Vec2> {
+  id: number;
+  dist: number;
+  ref?: T | null;
+}
+
+export interface ClosestItemWithMap<T = unknown, Map extends string = string>
+  extends ClosestItem<T> {
+  map: Map;
+}

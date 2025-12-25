@@ -264,7 +264,9 @@ export const hotkeysConfiguration = {
       if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch([ToolName.erase]);
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
-      editor.events.deleteHoveredStructure.dispatch();
+      if (editor.drawingEntitiesManager.hoveredEntities.length > 0) {
+        editor.events.deleteHoveredStructure.dispatch();
+      }
     },
   },
   clear: {

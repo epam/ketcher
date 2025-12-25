@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -67,7 +67,6 @@ export const EditorEvents = () => {
     selectLastSelectedSelectionMenuItem,
   );
 
-  const hoveredTargetRef = useRef<BaseMonomer | AmbiguousMonomer | null>(null);
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
@@ -352,7 +351,6 @@ export const EditorEvents = () => {
 
   const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
-    hoveredTargetRef.current = null;
     dispatch(showPreview(undefined));
   }, [debouncedShowPreview, dispatch]);
 
@@ -368,10 +366,7 @@ export const EditorEvents = () => {
 
     const onMoveHandler = (e) => {
       handleClosePreview();
-      hoveredTargetRef.current =
-        e.target?.__data__?.monomer ||
-        e.target?.__data__?.node?.monomer ||
-        null;
+
       const isLeftClick = e.buttons === 1;
       if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);

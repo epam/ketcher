@@ -911,7 +911,9 @@
             <bond atomRefs2="a259 a260" order="1"/>
             <bond atomRefs2="a260 a261" order="1"/>
             <bond atomRefs2="a261 a262" order="1"/>
-            <bond atomRefs2="a77 a248" order="1"/>
+            <bond atomRefs2="a77 a248" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
             <bond atomRefs2="a254 a264" order="1"/>
             <bond atomRefs2="a254 a268" order="1">
                 <bondStereo>H</bondStereo>
@@ -981,7 +983,9 @@
             <bond atomRefs2="a304 a305" order="1"/>
             <bond atomRefs2="a305 a306" order="1"/>
             <bond atomRefs2="a306 a307" order="1"/>
-            <bond atomRefs2="a145 a293" order="1"/>
+            <bond atomRefs2="a145 a293" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
             <bond atomRefs2="a299 a309" order="1"/>
             <bond atomRefs2="a299 a313" order="1">
                 <bondStereo>H</bondStereo>
@@ -1050,7 +1054,9 @@
             <bond atomRefs2="a349 a350" order="1"/>
             <bond atomRefs2="a350 a351" order="1"/>
             <bond atomRefs2="a351 a352" order="1"/>
-            <bond atomRefs2="a207 a338" order="1"/>
+            <bond atomRefs2="a207 a338" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
         </bondArray>
         <molecule id="sg0" atomRefs="a106" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">

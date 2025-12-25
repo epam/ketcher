@@ -599,19 +599,20 @@ function findCloseMerge(
   });
 
   selected.bonds.forEach((bid) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const bond = struct.bonds.get(bid)!;
-    pos.bonds.set(
-      bid,
-      Vec2.lc2(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        struct.atoms.get(bond.begin)!.pp,
-        0.5,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        struct.atoms.get(bond.end)!.pp,
-        0.5,
-      ),
-    );
+    const bond = struct.bonds.get(bid);
+    if (bond) {
+      pos.bonds.set(
+        bid,
+        Vec2.lc2(
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          struct.atoms.get(bond.begin)!.pp,
+          0.5,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          struct.atoms.get(bond.end)!.pp,
+          0.5,
+        ),
+      );
+    }
   });
 
   const result = {

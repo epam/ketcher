@@ -26,9 +26,6 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
-const CANVAS_CLICK_X = 200;
-const CANVAS_CLICK_Y = 200;
-
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -135,7 +132,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await IndigoFunctionsToolbar(page).aromatize();
@@ -155,7 +152,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await IndigoFunctionsToolbar(page).aromatize();

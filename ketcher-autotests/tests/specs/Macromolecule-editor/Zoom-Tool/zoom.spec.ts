@@ -32,13 +32,13 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, -zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
 }
 
@@ -270,10 +270,6 @@ test.describe('Zoom Tool', () => {
     Description: After create a peptide chain, zoom in and add new elements to chain then zoom out and add
     another elements, then after back to zoom 100% all structure is create properly.
     */
-    const x = 800;
-    const y = 350;
-    const x1 = 650;
-    const y1 = 150;
     await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
@@ -281,14 +277,14 @@ test.describe('Zoom Tool', () => {
     });
     await ZoomInByKeyboard(page, { repeat: 3 });
     await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-      x,
-      y,
+      x: 800,
+      y: 350,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await ZoomOutByKeyboard(page, { repeat: 5 });
     await Library(page).dragMonomerOnCanvas(Peptide.meD, {
-      x: x1,
-      y: y1,
+      x: 650,
+      y: 150,
     });
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
@@ -300,16 +296,14 @@ test.describe('Zoom Tool', () => {
     Description: After creating structure on canvas and then
     click zoom in, and then Undo, Redo the structure is the same size as before.
     */
-    const x = 800;
-    const y = 350;
     await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-      x,
-      y,
+      x: 800,
+      y: 350,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);

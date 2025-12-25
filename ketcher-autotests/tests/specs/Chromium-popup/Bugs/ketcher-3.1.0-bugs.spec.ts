@@ -10,7 +10,6 @@ import {
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
   delay,
-  BondType,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
@@ -42,12 +41,12 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -331,7 +330,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 5 });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });

@@ -26,11 +26,12 @@ import {
   MolFileFormat,
   SdfFileFormat,
   SequenceFileFormat,
+  shiftCanvas,
 } from '@utils/index';
 import {
   createMonomer,
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -78,6 +79,8 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -179,7 +182,7 @@ for (const eligableMolecule of eligableMolecules) {
       page,
       eligableMolecule.MoleculeSMARTS,
     );
-    await prepareMoleculeForMonomerCreation(
+    await deselectAtomAndBonds(
       page,
       eligableMolecule.AtomIDsToExclude,
       eligableMolecule.BondIDsToExclude,
@@ -310,7 +313,7 @@ for (const nonEligableMolecule of nonEligableMolecules) {
       page,
       nonEligableMolecule.MoleculeSMARTS,
     );
-    await prepareMoleculeForMonomerCreation(
+    await deselectAtomAndBonds(
       page,
       nonEligableMolecule.AtomIDsToExclude,
       nonEligableMolecule.BondIDsToExclude,
@@ -336,7 +339,7 @@ test(`4. Check that when user clicks on the "Create monomer" button the structur
    * Version 3.7
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
@@ -372,7 +375,7 @@ test.fail(
     const commonLeftToolbar = CommonLeftToolbar(page);
     const leftToolbar = LeftToolbar(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await leftToolbar.createMonomer();
     try {
@@ -494,7 +497,7 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
       page,
       eightAttachmentPointsMolecule.MoleculeSMARTS,
     );
-    await prepareMoleculeForMonomerCreation(
+    await deselectAtomAndBonds(
       page,
       eightAttachmentPointsMolecule.AtomIDsToExclude,
       eightAttachmentPointsMolecule.BondIDsToExclude,
@@ -506,26 +509,26 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
   });
 }
 
-test(`7. Check than monomer Type field is blank when open it first time`, async () => {
+test(`7. Check that monomer Type defaults to CHEM when wizard opens`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check than monomer Type field is blank when open it first time
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that when a structure is selected and the wizard is entered, the monomer type is prefilled with CHEM
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
-   *      5. Check than monomer Type field is blank when open it first time
+   *      5. Check that monomer Type field is set to CHEM by default
    *
-   * Version 3.7
+   * Version 3.11
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
 
-  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('CHEM');
   await CreateMonomerDialog(page).discard();
 });
 
@@ -544,7 +547,7 @@ test(`8. Check options from the drop-down menu Type`, async () => {
    * Version 3.7
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).typeCombobox.click();
@@ -565,30 +568,29 @@ test(`8. Check options from the drop-down menu Type`, async () => {
   await CreateMonomerDialog(page).discard();
 });
 
-test(`9. Check that if the monomer type is not selected error message occures`, async () => {
+test(`9. Check that mandatory fields validation is shown when submitting empty wizard`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657
-   * Description: Check that if the monomer type is not selected, and the user clicks on Save/Finish in the wizard,
-   *              an error message appears in the error/warning area: "Mandatory fields must be filled.",
-   *              and the type drop-down is highlighted
+   * Description: Check that submitting the wizard without filling required fields shows
+   *              an error message: "Mandatory fields must be filled." while the default type remains selected
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press "Create Monomer" button
-   *      4.1 Validate that Type drop-down is not filled
-   *      5. Press Submit button
-   *      6. Verify that the error message is displayed
-   *      7. Take screenshot to validate that Type drop-down is highlighted
+   *      5. Validate that Type drop-down is prefilled with CHEM
+   *      6. Press Submit button
+   *      7. Verify that the error message is displayed
+   *      8. Take screenshot to validate that Symbol field is highlighted as mandatory
    *
-   * Version 3.7
+   * Version 3.11
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
-  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('');
+  await expect(CreateMonomerDialog(page).typeCombobox).toContainText('CHEM');
   await CreateMonomerDialog(page).submit();
   expect(
     await NotificationMessageBanner(
@@ -621,7 +623,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
    */
   const testSymbol = 'TestSymbol';
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
@@ -642,6 +644,328 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getTitleText()).toBe(testSymbol);
 });
+
+test(`11. Verify nucleotide type options are available in the wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that when a structure is selected and the wizard is entered,
+   *              the user can pick Nucleotide (monomer) and Nucleotide (preset) types
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Open Type drop-down and check Nucleotide options are present with expected titles
+   *
+   * Version 3.11
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await deselectAtomAndBonds(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.typeCombobox.click();
+
+  const nucleotideMonomerOption = page.getByTestId(
+    MonomerType.NucleotideMonomer,
+  );
+  const nucleotidePresetOption = page.getByTestId(MonomerType.NucleotidePreset);
+
+  await expect(nucleotideMonomerOption).toHaveText('Nucleotide (monomer)');
+  await expect(nucleotidePresetOption).toHaveText('Nucleotide (preset)');
+
+  await page.keyboard.press('Escape');
+  await createMonomerDialog.discard();
+});
+
+test(`12. Check that Nucleotide (preset) is placed 6 in the Type drop-down`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Verify that Nucleotide (preset) option is displayed at the bottom of the Type list
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+   *      4. Press "Create Monomer" button
+   *      5. Open Type drop-down and verify options order keeps Nucleotide (preset) last
+   *
+   * Version 3.11
+   */
+  const createMonomerDialog = CreateMonomerDialog(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await deselectAtomAndBonds(page, ['0']);
+
+  await LeftToolbar(page).createMonomer();
+  await createMonomerDialog.typeCombobox.click();
+  await page.getByTestId(MonomerType.AminoAcid).waitFor();
+
+  const expectedOptionsOrder: MonomerType[] = [
+    MonomerType.AminoAcid,
+    MonomerType.Sugar,
+    MonomerType.Base,
+    MonomerType.Phosphate,
+    MonomerType.NucleotideMonomer,
+    MonomerType.NucleotidePreset,
+    MonomerType.CHEM,
+  ];
+
+  const actualOptionsOrder = await page
+    .locator('[data-testid$="-option"]')
+    .evaluateAll((elements) =>
+      elements
+        .map((element) => element.getAttribute('data-testid'))
+        .filter((testId): testId is string => Boolean(testId)),
+    );
+
+  const monomerTypeOptionsOrder = actualOptionsOrder.filter((testId) =>
+    expectedOptionsOrder.includes(testId as MonomerType),
+  );
+
+  expect(monomerTypeOptionsOrder).toEqual(expectedOptionsOrder);
+
+  await page.keyboard.press('Escape');
+  await createMonomerDialog.discard();
+});
+
+test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Check that in Sugar, Base, and Phosphate tabs user can edit default and non-default fields
+   *              (symbol, name, alias; natural analogue for Base) and values persist across tab switches.
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press "Create Monomer" button
+   *      4. Fill in Sugar, Base, and Phosphate tabs with test data (all fields)
+   *      5. Switch between tabs to verify data persistence
+   *
+   * Version 3.11
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+  const dialog = CreateMonomerDialog(page);
+  const presetSection = NucleotidePresetSection(page);
+
+  await LeftToolbar(page).createMonomer();
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+
+  await dialog.selectType(MonomerType.NucleotidePreset);
+
+  await presetSection.setName('PresetMonomer');
+
+  await presetSection.setupSugar({
+    atomIds: [2, 3],
+    bondIds: [2],
+    symbol: 'SugSym',
+    name: 'SugarName',
+    HELMAlias: 'SugAlias',
+  });
+  await presetSection.setupBase({
+    atomIds: [0, 1],
+    bondIds: [0],
+    symbol: 'BaseSym',
+    name: 'BaseName',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+    HELMAlias: 'BaseAlias',
+  });
+  await presetSection.setupPhosphate({
+    atomIds: [4, 5],
+    bondIds: [4],
+    symbol: 'PhosSym',
+    name: 'PhosphateName',
+    HELMAlias: 'PhosAlias',
+  });
+
+  await presetSection.openTab(NucleotidePresetTab.Preset);
+  await expect(presetSection.presetTab.nameEditbox).toHaveValue(
+    'PresetMonomer',
+  );
+
+  await presetSection.openTab(NucleotidePresetTab.Sugar);
+  await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('SugSym');
+  await expect(presetSection.sugarTab.nameEditbox).toHaveValue('SugarName');
+  await presetSection.openAliasesSection(NucleotidePresetTab.Sugar);
+  await expect(
+    presetSection.sugarTab.aliasesSection.helmAliasEditbox.getByRole(
+      'combobox',
+    ),
+  ).toHaveValue('SugAlias');
+
+  await presetSection.openTab(NucleotidePresetTab.Base);
+  await expect(presetSection.baseTab.symbolEditbox).toHaveValue('BaseSym');
+  await expect(presetSection.baseTab.nameEditbox).toHaveValue('BaseName');
+  await expect(presetSection.baseTab.naturalAnalogueCombobox).toContainText(
+    'A',
+  );
+
+  await presetSection.openAliasesSection(NucleotidePresetTab.Base);
+  await expect(
+    presetSection.baseTab.aliasesSection.helmAliasEditbox.getByRole('combobox'),
+  ).toHaveValue('BaseAlias');
+
+  await presetSection.openTab(NucleotidePresetTab.Phosphate);
+  await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('PhosSym');
+  await expect(presetSection.phosphateTab.nameEditbox).toHaveValue(
+    'PhosphateName',
+  );
+  await presetSection.openAliasesSection(NucleotidePresetTab.Phosphate);
+  expect(
+    presetSection.phosphateTab.aliasesSection.helmAliasEditbox.getByRole(
+      'combobox',
+    ),
+  ).toHaveValue('PhosAlias');
+
+  await dialog.discard();
+});
+
+test(`14. Component tab is highlighted red when its property is invalid after submit`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Description: Check that if a component has invalid fields, after Submit the field is highlighted,
+   *              the error message is shown, and the corresponding tab gets red highlight.
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press "Create Monomer" button
+   *      4. Define Sugar, Base, and Phosphate molecules with invalid symbols (e.g. <invalid name>)
+   *      5. Press Submit and verify error states
+   *
+   * Version 3.11
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+  const dialog = CreateMonomerDialog(page);
+  const presetSection = NucleotidePresetSection(page);
+
+  await LeftToolbar(page).createMonomer();
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+
+  await dialog.selectType(MonomerType.NucleotidePreset);
+
+  await presetSection.setupSugar({
+    atomIds: [2, 3],
+    bondIds: [2],
+    symbol: '<invalid name>',
+  });
+  await presetSection.setupBase({
+    atomIds: [0, 1],
+    bondIds: [0],
+    symbol: '<invalid name>',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+  });
+  await presetSection.setupPhosphate({
+    atomIds: [4, 5],
+    bondIds: [4],
+    symbol: '<invalid name>',
+  });
+
+  await dialog.submit();
+
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.emptyMandatoryFields,
+    ).getNotificationMessage(),
+  ).toEqual('Mandatory fields must be filled.');
+
+  expect(
+    await NotificationMessageBanner(
+      page,
+      ErrorMessage.invalidSymbol,
+    ).getNotificationMessage(),
+  ).toEqual(
+    'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  );
+
+  await presetSection.openTab(NucleotidePresetTab.Preset);
+  await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
+  await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
+    /errorTab/,
+  );
+
+  await presetSection.openTab(NucleotidePresetTab.Base);
+  await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
+  await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
+    /errorTab/,
+  );
+
+  await presetSection.openTab(NucleotidePresetTab.Sugar);
+  await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(/inputError/);
+  await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
+    /errorTab/,
+  );
+  await presetSection.openTab(NucleotidePresetTab.Phosphate);
+  await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+    /inputError/,
+  );
+  await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
+    /errorTab/,
+  );
+
+  await dialog.discard();
+});
+
+// test(`13. Confirm warning appears when changing type after Nucleotide (preset)`, async () => {
+//   /*
+//    * Test task: https://github.com/epam/ketcher/issues/8248
+//    * Description: Check that switching from Nucleotide (preset) to another type shows confirmation modal,
+//    *              Cancel keeps Nucleotide (preset) with entered data, Yes applies new type and reloads wizard
+//    *
+//    * Case:
+//    *      1. Open Molecules canvas
+//    *      2. Load molecule on canvas
+//    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+//    *      4. Press "Create Monomer" button
+//    *      5. Select Nucleotide (preset) type and enter a name
+//    *      6. Pick another type (e.g. CHEM) and verify confirmation modal
+//    *      7. Cancel and verify type and data remain unchanged
+//    *      8. Repeat change, confirm Yes, verify type changed to new value and fields reset
+//    *
+//    * Version 3.11
+//    */
+//   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+//   await prepareMoleculeForMonomerCreation(page, ['0']);
+
+//   const createMonomerDialog = CreateMonomerDialog(page);
+//   const confirmDialog = ConfirmYourActionDialog(page);
+
+//   await LeftToolbar(page).createMonomer();
+//   await createMonomerDialog.selectType(MonomerType.NucleotidePreset);
+//   await createMonomerDialog.setName('PresetName');
+//   await expect(createMonomerDialog.typeCombobox).toContainText(
+//     'Nucleotide (preset)',
+//   );
+
+//   await createMonomerDialog.selectType(MonomerType.CHEM);
+
+//   await expect(confirmDialog.window).toBeVisible();
+//   await expect(page.getByText('Confirm type change')).toBeVisible();
+//   await expect(confirmDialog.messageBody).toHaveText(
+//     'Changing the type will result in a loss of inputted data. Do you wish to proceed?',
+//   );
+//   await expect(confirmDialog.cancelButton).toBeVisible();
+//   await expect(confirmDialog.yesButton).toBeVisible();
+
+//   await confirmDialog.cancel();
+//   await expect(confirmDialog.window).not.toBeVisible();
+//   await expect(createMonomerDialog.typeCombobox).toContainText(
+//     'Nucleotide (preset)',
+//   );
+//   await expect(createMonomerDialog.nameEditbox).toHaveValue('PresetName');
+
+//   await createMonomerDialog.selectType(MonomerType.CHEM);
+//   await expect(confirmDialog.window).toBeVisible();
+//   await confirmDialog.yes();
+
+//   await expect(createMonomerDialog.typeCombobox).toContainText('CHEM');
+//   await expect(createMonomerDialog.nameEditbox).toHaveValue('');
+// });
 
 const eligableNames = [
   // Bug: https://github.com/epam/ketcher/issues/7745
@@ -680,7 +1004,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
@@ -738,7 +1062,7 @@ for (const eligableSymbol of eligableSymbols) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
@@ -769,7 +1093,7 @@ const nonEligableSymbols = [
     symbol: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
     type: MonomerType.CHEM,
     errorMessage:
-      'The monomer symbol must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+      'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   },
   {
     description: '3. Non-unique for one HELM class (Peptides-Amino Acids)',
@@ -777,14 +1101,14 @@ const nonEligableSymbols = [
     type: MonomerType.AminoAcid,
     naturalAnalogue: AminoAcidNaturalAnalogue.C,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '4. Non-unique for one HELM class (RNA-Sugars)',
     symbol: '12ddR',
     type: MonomerType.Sugar,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '5. Non-unique for one HELM class (RNA-Bases)',
@@ -792,28 +1116,28 @@ const nonEligableSymbols = [
     type: MonomerType.Base,
     naturalAnalogue: NucleotideNaturalAnalogue.C,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '6. Non-unique for one HELM class (RNA-Phosphates)',
     symbol: 'AmC12',
     type: MonomerType.Phosphate,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '7. Non-unique for one HELM class (RNA-Nucleotides)',
     symbol: '3Puro',
     type: MonomerType.NucleotideMonomer,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '8. Non-unique for one HELM class (RNA-CHEM)',
     symbol: '2-Bio',
     type: MonomerType.CHEM,
     errorMessage:
-      'The symbol must be unique amongst peptide, RNA, or CHEM monomers.',
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '9. No symbol entered',
@@ -842,7 +1166,7 @@ for (const nonEligableSymbol of nonEligableSymbols) {
     const createMonomerDialog = CreateMonomerDialog(page);
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(nonEligableSymbol.type);
@@ -879,7 +1203,7 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
@@ -920,7 +1244,7 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
@@ -961,7 +1285,7 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
@@ -1000,7 +1324,7 @@ test(`18. Check drop-down grid for Natural analogue for Amino acid`, async () =>
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
@@ -1034,7 +1358,7 @@ test(`19. Check drop-down grid for Natural analogue for Base`, async () => {
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
@@ -1068,7 +1392,7 @@ test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () =>
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
@@ -1103,7 +1427,7 @@ test(`21. Check that if the user changes the monomer type after they've set a na
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
@@ -1193,7 +1517,7 @@ for (const monomerToCreate of monomersToCreate) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1236,7 +1560,7 @@ test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, a
   const createMonomerDialog = CreateMonomerDialog(page);
 
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
@@ -1279,7 +1603,7 @@ for (const monomerToCreate of monomersToCreate) {
     } else {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+      await deselectAtomAndBonds(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -1325,7 +1649,7 @@ for (const monomerToCreate of monomersToCreate) {
     } else {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+      await deselectAtomAndBonds(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -1410,7 +1734,7 @@ for (const monomerToCreate of monomersToCreate25) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1491,7 +1815,7 @@ for (const monomerToCreate of monomersToCreate26) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1571,7 +1895,7 @@ for (const monomerToCreate of monomersToCreate27) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1653,7 +1977,7 @@ for (const monomerToCreate of monomersToCreate28) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1737,7 +2061,7 @@ for (const monomerToCreate of monomersToCreate29) {
        * Version 3.7
        */
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+      await deselectAtomAndBonds(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -1822,7 +2146,7 @@ for (const monomerToCreate of monomersToCreate30) {
        * Version 3.7
        */
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+      await deselectAtomAndBonds(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -1904,7 +2228,7 @@ for (const monomerToCreate of monomersToCreate31) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -1981,7 +2305,7 @@ for (const monomerToCreate of monomersToCreate32) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2049,7 +2373,7 @@ for (const monomerToCreate of monomersToCreate33) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2120,7 +2444,7 @@ for (const monomerToCreate of monomersToCreate34) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2201,7 +2525,7 @@ for (const monomerToCreate of monomersToCreate36) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2281,7 +2605,7 @@ for (const monomerToCreate of monomersToCreate37) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2364,7 +2688,7 @@ for (const monomerToCreate of monomersToCreate38) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2447,7 +2771,7 @@ for (const monomerToCreate of monomersToCreate39) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2529,7 +2853,7 @@ for (const monomerToCreate of monomersToCreate40) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2613,7 +2937,7 @@ for (const monomerToCreate of monomersToCreate41) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2692,7 +3016,7 @@ for (const monomerToCreate of monomersToCreate42) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2762,7 +3086,7 @@ for (const monomerToCreate of monomersToCreate43) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2835,7 +3159,7 @@ for (const monomerToCreate of monomersToCreate44) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -2918,7 +3242,7 @@ for (const monomerToCreate of monomersToCreate46) {
        * Version 3.7
        */
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-      await prepareMoleculeForMonomerCreation(page, ['0']);
+      await deselectAtomAndBonds(page, ['0']);
 
       await createMonomer(page, {
         ...monomerToCreate,
@@ -3003,7 +3327,7 @@ for (const monomerToCreate of monomersToCreate47) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3064,7 +3388,7 @@ for (const monomerToCreate of monomersToCreate48) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3134,7 +3458,7 @@ for (const monomerToCreate of monomersToCreate49) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3204,7 +3528,7 @@ for (const monomerToCreate of monomersToCreate50) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3302,7 +3626,7 @@ for (const monomerToCreate of monomersToCreate51) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3381,7 +3705,7 @@ for (const monomerToCreate of monomersToCreate52) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3462,7 +3786,7 @@ for (const monomerToCreate of monomersToCreate53) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3549,7 +3873,7 @@ for (const monomerToCreate of monomersToCreate54) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3629,7 +3953,7 @@ for (const monomerToCreate of monomersToCreate55) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3710,7 +4034,7 @@ for (const monomerToCreate of monomersToCreate56) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -3795,7 +4119,7 @@ for (const monomerToCreate of monomersToCreate) {
       } else {
         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
         await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-        await prepareMoleculeForMonomerCreation(page, ['0']);
+        await deselectAtomAndBonds(page, ['0']);
 
         await createMonomer(page, {
           ...monomerToCreate,
@@ -3857,7 +4181,7 @@ for (const monomerToCreate of monomersToCreate) {
       } else {
         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
         await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-        await prepareMoleculeForMonomerCreation(page, ['0']);
+        await deselectAtomAndBonds(page, ['0']);
 
         await createMonomer(page, {
           ...monomerToCreate,
@@ -3919,7 +4243,7 @@ for (const monomerToCreate of monomersToCreate) {
       } else {
         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
         await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-        await prepareMoleculeForMonomerCreation(page, ['0']);
+        await deselectAtomAndBonds(page, ['0']);
 
         await createMonomer(page, {
           ...monomerToCreate,
@@ -3987,7 +4311,7 @@ for (const monomerToCreate of monomersToCreate) {
       } else {
         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
         await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-        await prepareMoleculeForMonomerCreation(page, ['0']);
+        await deselectAtomAndBonds(page, ['0']);
 
         await createMonomer(page, {
           ...monomerToCreate,

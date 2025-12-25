@@ -1,19 +1,20 @@
 import { test, expect } from '@fixtures';
 import {
-  doubleClickOnAtom,
   pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Checking custom query in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
     await waitForPageInit(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+      force: true,
+    });
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 

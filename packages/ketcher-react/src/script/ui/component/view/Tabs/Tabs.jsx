@@ -57,7 +57,7 @@ class Tabs extends Component {
             {tabs.map((tabPanel, index) => (
               <button
                 type="button"
-                key={index}
+                key={tabPanel.caption}
                 className={clsx({
                   [classes.active]: this.state.tabIndex === index,
                 })}

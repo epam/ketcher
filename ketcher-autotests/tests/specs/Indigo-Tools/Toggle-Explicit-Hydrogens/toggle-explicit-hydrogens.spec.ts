@@ -52,10 +52,8 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     Test case: #4128 https://github.com/epam/ketcher/issues/4128
     Description: Adding hydrogens not moves molecules to center of canvas.
     */
-    const x = 200;
-    const y = 200;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();

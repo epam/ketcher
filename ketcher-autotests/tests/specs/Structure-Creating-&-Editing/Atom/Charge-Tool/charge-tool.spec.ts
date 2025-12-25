@@ -1,12 +1,11 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  moveOnAtom,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   waitForPageInit,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
@@ -25,10 +24,11 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1664
     Description: Charge Plus is applied to the structure atom.
     */
-    const anyAtom = 0;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift++');
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -39,10 +39,11 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1664
     Description: Charge Minus is applied to the structure atom.
     */
-    const anyAtom = 0;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await page.keyboard.press('-');
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -53,15 +54,21 @@ test.describe('Charge tool', () => {
     Test case: EPMLSOPKET-1665
     Description: Charge Minus and Charge Plus is applied to the structure atom.
     */
-    const anyAtom = 0;
-    const anotherAnyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
     await LeftToolbar(page).chargePlus();
-    await clickOnAtom(page, 'N', anyAtom);
-    await clickOnAtom(page, 'O', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await LeftToolbar(page).chargeMinus();
-    await clickOnAtom(page, 'S', anyAtom);
-    await clickOnAtom(page, 'O', anotherAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 20 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -73,13 +80,12 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     When you click outside atom atoms are not changed.
     */
-    const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift++');
-    await page.mouse.move(x, y);
+    await page.mouse.move(300, 300);
     await page.keyboard.press('Shift++');
     await takeEditorScreenshot(page);
   });
@@ -92,13 +98,12 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     When you click outside atom atoms are not changed.
     */
-    const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/heteroatoms.mol');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).hover({
+      force: true,
+    });
     await page.keyboard.press('-');
-    await page.mouse.move(x, y);
+    await page.mouse.move(300, 300);
     await page.keyboard.press('-');
     await takeEditorScreenshot(page);
   });

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test, expect } from '@fixtures';
 import {
@@ -5,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   dragMouseTo,
-  clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
   MolFileFormat,
@@ -19,6 +19,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.describe('Indigo Tools - Clean Tools', () => {
@@ -335,18 +336,17 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Clean Up action.
     */
-    const x = 300;
-    const y = 300;
-    const anyAtom = 0;
     const atomToolbar = RightToolbar(page);
     const bondLocator = getBondLocator(page, { bondId: 0 });
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).cleanUp();
     await bondLocator.hover({ force: true });
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(300, 300, page);
     await IndigoFunctionsToolbar(page).cleanUp();
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 

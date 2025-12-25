@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import { AtomLabelType, MouseButton } from './types';
+import { MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -232,61 +230,4 @@ export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
 
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
-}
-
-export async function clickOnAtom(
-  page: Page,
-  atomLabel: AtomLabelType,
-  atomNumber: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
-export async function clickOnAtomById(
-  page: Page,
-  atomId: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getAtomById(page, atomId);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
-export async function doubleClickOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.dblclick(point.x, point.y);
-  });
-}
-
-export async function longClickOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-  timeout = 2000,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.waitForTimeout(timeout);
-}
-
-export async function moveOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
 }

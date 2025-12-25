@@ -7,8 +7,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  clickOnAtom,
-  moveOnAtom,
   clickOnCanvas,
   getCachedBodyCenter,
   deleteByKeyboard,
@@ -48,11 +46,6 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
-
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
-
-const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -148,7 +141,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-groups-expanded.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -178,7 +171,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-contracted.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -272,15 +265,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
     */
-    const x = 600;
-    const y = 400;
-    const smallShift = 10;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await page.mouse.move(x, y);
-    await page.mouse.move(x + smallShift, y);
+    await page.mouse.move(600, 400);
+    await page.mouse.move(600 + 10, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -294,7 +284,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -303,14 +295,15 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5238
     Description: When Adding 'Atom' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    const atomToolbar = RightToolbar(page);
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
 
-    await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     if (await EditAbbreviationDialog(page).isVisible()) {
       await EditAbbreviationDialog(page).cancel();
@@ -327,7 +320,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chain();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -341,7 +336,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -355,7 +352,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chargePlus();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -369,7 +368,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).chargeMinus();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -383,7 +384,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -425,7 +428,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -439,7 +444,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -453,7 +460,9 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -557,7 +566,9 @@ test.describe('Functional Groups', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
@@ -595,8 +606,6 @@ test.describe('Functional Groups', () => {
     Description: With each addition of FG to FG connected to terminal atoms of structure,
     bond is not disappears and structure is not decreases.
     */
-    const x = 540;
-    const y = 350;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
@@ -612,7 +621,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ms,
     );
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 540, 350, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -702,7 +711,9 @@ test.describe('Functional Groups', () => {
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
+      force: true,
+    });
     await page.keyboard.press('Shift+t');
     await StructureLibraryDialog(page).switchToFunctionalGroupTab();
     await page.getByTitle('Boc').click();
@@ -769,8 +780,6 @@ test.describe('Functional Groups', () => {
     Description: After pressing hotkey 'N' it can be placed on canvas.
     Test working not properly. We have open bug https://github.com/epam/ketcher/issues/2591
     */
-    const x = 300;
-    const y = 300;
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
@@ -783,7 +792,7 @@ test.describe('Functional Groups', () => {
       getAbbreviationLocator(page, { name: 'Boc' }),
     );
     await page.keyboard.press('n');
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

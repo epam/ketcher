@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Page, test, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
-  doubleClickOnAtom,
   pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
@@ -23,22 +22,16 @@ import {
   verifySMARTSExport,
   verifySMARTSExportWarnings,
 } from '@utils/files/receiveFileComparisonData';
-
-async function drawStructureAndDoubleClickOnAtom(
-  page: Page,
-  atomType: string,
-  numberOfAtom: number,
-) {
-  await waitForPageInit(page);
-  await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
-  await doubleClickOnAtom(page, atomType, numberOfAtom);
-  await expect(AtomPropertiesDialog(page).window).toBeVisible();
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
-    await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
+    await waitForPageInit(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting ring bond count', async ({ page }) => {
@@ -174,8 +167,12 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
 
   test.describe('Checking converting attributes to custom query', () => {
     test.beforeEach(async ({ page }) => {
-      const numberOfAtom = 0;
-      await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
+      await waitForPageInit(page);
+      await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+        force: true,
+      });
+      await expect(AtomPropertiesDialog(page).window).toBeVisible();
       await AtomPropertiesDialog(page).expandQuerySpecific();
     });
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -247,8 +248,6 @@ test.describe('Peptide library testing', () => {
     Description: Selected 'Nal' monomer appear above the others when you click on it.
     And you can move it on new position.
     */
-    const x = 200;
-    const y = 200;
     await openFileAndAddToCanvasMacro(page, 'KET/stuck-peptides-connected.ket');
     await getMonomerLocator(page, Peptide.Nal).click();
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
@@ -258,7 +257,7 @@ test.describe('Peptide library testing', () => {
     });
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Peptide.Nal).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

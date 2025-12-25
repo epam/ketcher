@@ -266,8 +266,6 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: #2507 - Add Peptides monomers to canvas
     Description: Selected by selection tool peptide moved to new position on canvas
     */
-    const x = 200;
-    const y = 200;
     await Library(page).dragMonomerOnCanvas(Peptide.meD, {
       x: 0,
       y: 0,
@@ -277,7 +275,7 @@ test.describe('Rectangle Selection Tool', () => {
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, Peptide.meD).click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -296,9 +294,7 @@ test.describe('Rectangle Selection Tool', () => {
 
   for (const testCase of testCases) {
     test(testCase.description, async () => {
-      const x = 400;
-      const y = 500;
-      await moveMonomersToNewPosition(page, testCase.filePath, 'meD', x, y);
+      await moveMonomersToNewPosition(page, testCase.filePath, 'meD', 400, 500);
     });
   }
 
@@ -307,8 +303,6 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: #2507 - Add CHEM monomers to canvas
     Description: Selected by selection tool CHEM moved to new position on canvas
     */
-    const x = 200;
-    const y = 200;
     await Library(page).dragMonomerOnCanvas(Chem.A6OH, {
       x: 0,
       y: 0,
@@ -319,7 +313,7 @@ test.describe('Rectangle Selection Tool', () => {
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, Chem.A6OH).click();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -341,9 +335,13 @@ test.describe('Rectangle Selection Tool', () => {
 
   for (const testCase of testCasesForChems) {
     test(testCase.description, async () => {
-      const x = 400;
-      const y = 500;
-      await moveMonomersToNewPosition(page, testCase.filePath, 'A6OH', x, y);
+      await moveMonomersToNewPosition(
+        page,
+        testCase.filePath,
+        'A6OH',
+        400,
+        500,
+      );
     });
   }
 
@@ -370,14 +368,12 @@ test.describe('Rectangle Selection Tool', () => {
 
   for (const testCase of testCasesForMolfiles) {
     test(testCase.description, async () => {
-      const x = 400;
-      const y = 500;
       await moveMonomersToNewPosition(
         page,
         testCase.filePath,
         testCase.monomerName,
-        x,
-        y,
+        400,
+        500,
       );
     });
   }
@@ -387,12 +383,10 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Selection of monomers looks in accordance with the design.
     */
-    const x = 100;
-    const y = 100;
     await openFileAndAddToCanvasMacro(page, 'KET/all-kind-of-monomers.ket');
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -401,8 +395,6 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Undo/Redo functions works after selection and moving monomer.
     */
-    const x = 200;
-    const y = 200;
     await Library(page).dragMonomerOnCanvas(Peptide._2Nal, {
       x: 0,
       y: 0,
@@ -412,7 +404,7 @@ test.describe('Rectangle Selection Tool', () => {
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, Peptide._2Nal).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(200, 200, page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
@@ -424,13 +416,11 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomers moved to new position in Snake mode view.
     */
-    const x = 850;
-    const y = 500;
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptide.Hhs).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(850, 500, page);
     await takeEditorScreenshot(page);
   });
 
@@ -439,11 +429,9 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomer moved to new position through rows of monomers.
     */
-    const x = 900;
-    const y = 500;
     await openFileAndAddToCanvasMacro(page, 'KET/two-rows-of-monomers.ket');
     await getMonomerLocator(page, Peptide.Hhs).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
   });
 

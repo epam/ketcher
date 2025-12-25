@@ -11,7 +11,6 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickOnAtomById,
   clickOnCanvas,
   waitForRender,
   resetZoomLevelToDefault,
@@ -37,10 +36,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-
-async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
-  await clickOnAtomById(page, atomId);
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function selectExpandedMonomer(page: Page) {
   await getBondLocator(page, { bondId: 1 }).click({ force: true });
@@ -784,7 +780,9 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
+    await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+      force: true,
+    });
     await expect(EditAbbreviationDialog(page).window).toBeVisible();
     await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
@@ -866,7 +864,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       const atomToolbar = RightToolbar(page);
 
 //       await atomToolbar.clickAtom(Atom.Bromine);
-//       await clickOnAtomOfExpandedMonomer(page, 1);
+//       await getAtomLocator(page, { atomId: 1 }).click({ force: true });
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
@@ -919,7 +917,9 @@ test(
 
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
-      await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
+      await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+        force: true,
+      });
       await CommonLeftToolbar(page).erase();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {

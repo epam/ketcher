@@ -58,11 +58,11 @@ test.describe('Zoom changes', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
       await page.mouse.wheel(0, randomNegativeNumber);
     }
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
 
     await checkZoomLevel(page, '120%');
     await takeEditorScreenshot(page);
@@ -85,11 +85,11 @@ test.describe('Zoom changes', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
       await page.mouse.wheel(0, randomPositiveNumber);
     }
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
 
     await checkZoomLevel(page, '80%');
     await takeEditorScreenshot(page);

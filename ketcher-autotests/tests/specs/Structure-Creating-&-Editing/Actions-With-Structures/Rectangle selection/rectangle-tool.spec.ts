@@ -1,7 +1,5 @@
 import { Page, test } from '@fixtures';
 import {
-  BondType,
-  clickOnAtom,
   clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
@@ -12,7 +10,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -64,13 +61,14 @@ test.describe('Rectangle selection tool', () => {
   test('Drag structure', async ({ page }) => {
     // Test case: EPMLSOPKET-1348
     const objectSelection = 100;
-    const atomNumber = 5;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     const point = await selectObjects(page, objectSelection, objectSelection);
-    await clickOnAtom(page, 'C', atomNumber);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+      force: true,
+    });
     await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
     await takeEditorScreenshot(page);
   });
@@ -106,7 +104,6 @@ test.describe('Rectangle selection tool', () => {
   test('Reaction components dragging', async ({ page }) => {
     //  Test case: EPMLSOPKET-1350
     const objectSelection = 100;
-    const moveMouseCoordinatesY = 10;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -117,7 +114,9 @@ test.describe('Rectangle selection tool', () => {
       selectionCoords.x,
       selectionCoords.y,
     );
-    await clickOnAtom(page, 'C', moveMouseCoordinatesY);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).click({
+      force: true,
+    });
     await dragMouseTo(
       point.x - objectSelection,
       point.y - selectionCoords.y,
@@ -128,13 +127,14 @@ test.describe('Rectangle selection tool', () => {
 
   test('Fusing atoms together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
-    const firstAtomNumber = 2;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnAtom(page, 'C', firstAtomNumber);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await dragTo(
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
@@ -146,18 +146,21 @@ test.describe('Rectangle selection tool', () => {
   test('Fusing bonds together', async ({ page }) => {
     //  Test case: EPMLSOPKET-1351
 
-    const secondBondnumber = 8;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getBondLocator(page, { bondId: 21 }).click({ force: true });
-    const bondPoint = await getBondByIndex(
-      page,
-      { type: BondType.SINGLE },
-      secondBondnumber,
-    );
-    await dragMouseTo(bondPoint.x, bondPoint.y, page);
+
+    const bondLocator = getBondLocator(page, { bondId: 29 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
+    await dragMouseTo(centerX, centerY, page);
+
     await takeEditorScreenshot(page);
   });
 
@@ -179,14 +182,15 @@ test.describe('Rectangle selection tool', () => {
         );
       }
     }
-    const atomOnTheRightSide = 14;
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectReactionLeftPart();
     await deleteByKeyboard(page);
-    await clickOnAtom(page, 'C', atomOnTheRightSide);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });

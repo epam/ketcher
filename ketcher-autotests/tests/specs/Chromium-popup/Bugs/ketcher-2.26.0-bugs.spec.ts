@@ -11,7 +11,6 @@ import {
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
-  BondType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeLeftToolbarScreenshot,
@@ -56,7 +55,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
-  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -93,7 +91,6 @@ import {
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -241,7 +238,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
@@ -554,7 +551,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -578,7 +575,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    const point = await getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -771,10 +768,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await AttachmentPointsDialog(page).selectAttachmentPoints({
-      leftMonomer: AttachmentPoint.R2,
-      rightMonomer: AttachmentPoint.R1,
-    });
+
+    await AttachmentPointsDialog(page).selectAttachmentPoints({});
     await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditAttachmentPoints,

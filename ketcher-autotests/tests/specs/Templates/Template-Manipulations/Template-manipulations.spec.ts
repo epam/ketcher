@@ -6,8 +6,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  clickOnAtom,
-  moveOnAtom,
   openFileAndAddToCanvas,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
@@ -103,12 +101,11 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     Choose any element from the left panel or Periodic Table and click on any atom of the created structure.
     */
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await drawBenzeneRing(page);
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -118,12 +115,11 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     Put the cursor on any other structure atom, click, and drag slightly.
     */
-    const anyAtom = 0;
-    const x = 200;
-    const y = 200;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await dragMouseTo(200, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -133,10 +129,11 @@ test.describe('Template Manupulations', () => {
     Description: Put the cursor on any other structure atom, press, and drag. 
     Release the cursor when the distance from the cursor to the selected atom is more than the bond length. 
     */
-    const anyAtom = 0;
     await drawBenzeneRing(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -145,12 +142,11 @@ test.describe('Template Manupulations', () => {
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
     */
-    const anyAtom = 0;
-    const x = 300;
-    const y = 300;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
 
@@ -204,9 +200,8 @@ test.describe('Template Manupulations', () => {
     Select any part of the structure (or whole structure) and click the 'Delete' keyboard button.
     with Ctrl+A hot key select all ojects on canvas and click the 'Delete' keyboard button.
     */
-      const atomToolbar = RightToolbar(page);
 
-      await atomToolbar.clickAtom(Atom.Fluorine);
+      await RightToolbar(page).clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheScreen(page);
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Fragment,
@@ -230,18 +225,17 @@ test.describe('Template Manupulations', () => {
     Load the smile-string CCCCC ("Open..." -> "Paste from clipboard").
     With the benzene template click the third atom of the created chain.
     */
-    const x = 300;
-    const y = 300;
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
     await LeftToolbar(page).chain();
-    await atomToolbar.clickAtom(Atom.Iodine);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Iodine);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
 
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -251,8 +245,10 @@ test.describe('Template Manupulations', () => {
       waitForMergeInitialization: true,
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
   });
 
@@ -263,9 +259,8 @@ test.describe('Template Manupulations', () => {
     With the 'Erase' tool press, hold and drag around (or click) any atom/bond/part of structure/whole structure.
     Select the 'Fragment Selection' tool, click the structure, and then select 'Erase' tool and click the template structure.
     */
-    const atomToolbar = RightToolbar(page);
 
-    await atomToolbar.clickAtom(Atom.Sulfur);
+    await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
@@ -273,7 +268,7 @@ test.describe('Template Manupulations', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await atomToolbar.clickAtom(Atom.Sulfur);
+    await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'S' }).click();
@@ -289,9 +284,8 @@ test.describe('Template Manupulations', () => {
     Description:
     With Selection Tool (Rectangle) click any atom of the template structure and type any correct atom symbol.
     */
-    const atomToolbar = RightToolbar(page);
 
-    await atomToolbar.clickAtom(Atom.Sulfur);
+    await RightToolbar(page).clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
@@ -322,14 +316,14 @@ test.describe('Template Manupulations', () => {
     Click Undo multiple times.
     Click Redo multiple times.
     */
-    const anyAtom = 0;
-    const anyAnotherAtom = 4;
-    const atomToolbar = RightToolbar(page);
-
     await drawBenzeneRing(page);
-    await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnAtom(page, 'C', anyAtom);
-    await clickOnAtom(page, 'C', anyAnotherAtom);
+    await RightToolbar(page).clickAtom(Atom.Fluorine);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C' }).nth(3).click({
+      force: true,
+    });
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -349,12 +343,11 @@ test.describe('Template Manupulations', () => {
     Select the structure and flip it horizontally with the 'Horizontal Flip' tool.
     Select the structure and flip it vertically with the 'Vertical Flip' tool.
     */
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await drawBenzeneRing(page);
-    await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Fluorine);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await verticalFlip(page);
     await takeEditorScreenshot(page);
@@ -431,8 +424,12 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -445,8 +442,12 @@ test.describe('Template Manupulations', () => {
     */
     await drawBenzeneRing(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -457,14 +458,16 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add double bond on it and atom
     Add cyclopentadiene ring to a single bond with two atoms, but one atom is connected with a single bond and another with a double bond
     */
-    const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
-    await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
-    const anyAtom = 4;
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -478,7 +481,9 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
@@ -563,8 +568,12 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/s-group-with-attachment-points.mol',
     );
-    await moveOnAtom(page, 'C', 1);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   });
@@ -576,9 +585,10 @@ test.describe('Open Ketcher', () => {
     Paste benzene from templates on the canvas.
     Edit benzene with all possible ways.
     */
-    const anyAtom = 2;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
   });
 
@@ -694,8 +704,9 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    const anyAtom = 2;
-    await moveOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
   });
 });

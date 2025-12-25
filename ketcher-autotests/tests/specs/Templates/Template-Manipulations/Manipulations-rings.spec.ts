@@ -10,14 +10,8 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { BondAttributes, BondXy, SORT_TYPE } from '@utils/canvas/types';
 import {
-  BondAttributes,
-  BondType,
-  BondXy,
-  SORT_TYPE,
-} from '@utils/canvas/types';
-import {
-  getBondByIndex,
   getBondsCoordinatesByAttributes,
   getLeftBondByAttributes,
 } from '@utils/canvas/bonds';
@@ -29,6 +23,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 /**
  * Get right bond by attributes.
@@ -79,8 +74,7 @@ async function mergeRingByBond(type: RingButton, page: Page) {
   await waitForRender(page, async () => {
     await BottomToolbar(page).clickRing(type);
   });
-  const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+  await getBondLocator(page, { bondId: 8 }).click({ force: true });
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {

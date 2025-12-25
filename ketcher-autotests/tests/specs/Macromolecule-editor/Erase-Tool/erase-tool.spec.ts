@@ -306,14 +306,12 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Monomers are not deleted.
     */
-    const x = 100;
-    const y = 100;
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/peptides-flex-chain.ket`,
     );
     await CommonLeftToolbar(page).erase();
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

@@ -191,8 +191,6 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     Description: In full-screen mode it is possible to add a bond between 
     a Peptide monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
@@ -201,8 +199,8 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
@@ -216,8 +214,6 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     Description: In full-screen mode it is possible to add a bond between 
     a RNA monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Preset.MOE_A_P, {
@@ -226,8 +222,8 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Preset.dR_U_P, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
@@ -241,8 +237,6 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     Description: In full-screen mode it is possible to add a bond between 
     a CHEM monomers if this bond is pulled not from a specific attachment point R.
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Chem.A6OH, {
@@ -251,8 +245,8 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await AttachmentPointsDialog(page).selectAttachmentPoints({
@@ -1101,7 +1095,7 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   const coords = [
     [600, 350],
     [587, 300],
@@ -1379,27 +1373,27 @@ test('Check that if the user holds down CRTL (⌘/Command for MacOS) while movin
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(650, 380);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(380, 380);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(480, 360);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1426,27 +1420,27 @@ test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Co
   });
   await getMonomerLocator(page, Peptide.meE).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(530, 220);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide._2Nal).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(500, 560);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
   await page.mouse.up();
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await getMonomerLocator(page, Peptide.Hhs).click();
   await page.mouse.down();
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.move(500, 440);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

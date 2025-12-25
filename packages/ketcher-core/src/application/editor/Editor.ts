@@ -392,7 +392,8 @@ export class CoreEditor {
         (monomer) => {
           return (
             monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
+            monomer?.props.hidden === newMonomer.props?.hidden
           );
         },
       );
@@ -495,6 +496,11 @@ export class CoreEditor {
         (props.aliasHELM === symbol || props.MonomerName === symbol)
       );
     });
+  }
+
+  public checkIfPresetCodeExists(code: string) {
+    const rnaPresets = this.defaultRnaPresetsLibraryItems;
+    return rnaPresets.some((preset) => preset.name === code);
   }
 
   public get defaultRnaPresetsLibraryItems() {
@@ -762,6 +768,9 @@ export class CoreEditor {
       command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
       history.update(command);
       this.renderersContainer.update(command);
+      this.events.selectEntities.dispatch(
+        this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+      );
     });
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {

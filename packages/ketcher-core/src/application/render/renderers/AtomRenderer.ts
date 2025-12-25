@@ -38,6 +38,8 @@ export class AtomRenderer extends BaseRenderer {
 
   private appendRootElement() {
     const editor = CoreEditor.provideEditorInstance();
+    const { hydrogenAmount } = this.atom.calculateValence();
+    const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
     const rootElement = this.canvas
       .insert('g', ':first-child')
@@ -46,6 +48,26 @@ export class AtomRenderer extends BaseRenderer {
       .attr('data-testid', 'atom')
       .attr('data-atomalias', this.atom.label)
       .attr('data-atomid', this.atom.id)
+      .attr('data-atom-id', atomId)
+      .attr('data-atom-type', 'single')
+      .attr('data-atomLabel', this.atom.label ?? '')
+      .attr('data-atomCharge', this.atom.properties.charge ?? '')
+      .attr('data-atomIsotopeAtomicMass', this.atom.properties.isotope ?? '')
+      .attr('data-atomValence', this.atom.properties.explicitValence ?? '')
+      .attr('data-atomRadical', this.atom.properties.radical ?? '')
+      .attr('data-atomRingBondCount', '')
+      .attr('data-atomHCount', hydrogenAmount ?? '')
+      .attr('data-atomSubstitutionCount', '')
+      .attr('data-atomUnsaturated', '')
+      .attr('data-atomAromaticity', '')
+      .attr('data-atomImplicitHCount', '')
+      .attr('data-atomRingMembership', '')
+      .attr('data-atomRingSize', '')
+      .attr('data-atomConnectivity', '')
+      .attr('data-atomChirality', '')
+      .attr('data-atomInversion', '')
+      .attr('data-atomExactChange', '')
+      .attr('data-atomCustomQuery', '')
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,

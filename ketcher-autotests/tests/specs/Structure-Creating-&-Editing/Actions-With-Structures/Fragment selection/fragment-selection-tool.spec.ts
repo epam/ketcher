@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickOnAtom,
   clickOnCanvas,
   deleteByKeyboard,
-  doubleClickOnAtom,
   dragMouseTo,
   dragTo,
   openFileAndAddToCanvas,
@@ -24,9 +22,6 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-const xMark = 300;
-const yMark = 200;
-
 test.describe('Fragment selection tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -36,7 +31,9 @@ test.describe('Fragment selection tool', () => {
     // Test case: EPMLSOPKET-1355
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -57,9 +54,10 @@ test.describe('Fragment selection tool', () => {
     await page.keyboard.down('Shift');
     await getPlusLocator(page).nth(1).click({ force: true });
     await getArrowLocator(page, {}).nth(0).click({ force: true });
-    const atomToClick = 7;
-    await doubleClickOnAtom(page, 'C', atomToClick);
-    await dragMouseTo(xMark, yMark, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 29 }).dblclick({
+      force: true,
+    });
+    await dragMouseTo(300, 200, page);
     await takeEditorScreenshot(page);
   });
 
@@ -68,7 +66,9 @@ test.describe('Fragment selection tool', () => {
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await dragTo(
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 2 }),
@@ -81,7 +81,9 @@ test.describe('Fragment selection tool', () => {
     //  Test case: EPMLSOPKET-1359
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction_4.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await clickOnAtom(page, 'Br', 0);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -98,7 +100,7 @@ test.describe('Fragment selection tool', () => {
       await getPlusLocator(page).nth(0).click({ force: true });
       await page.mouse.down();
     });
-    await dragMouseTo(xMark, yMark, page);
+    await dragMouseTo(300, 200, page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,

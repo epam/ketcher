@@ -30,6 +30,12 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { pageReload } from '@utils/common/helpers';
+import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -790,6 +796,7 @@ test(`14. Verify that by default the functionality of saving new monomers from c
 });
 
 test(`15. Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled`, async () => {
+  // Fails because of the issue: https://github.com/epam/ketcher/issues/8879
   /*
    * Test task: https://github.com/epam/ketcher/issues/8755
    * Description: Verify that by default the functionality of saving new monomers from creation wizard in local storage disabled
@@ -825,7 +832,67 @@ test(`15. Verify that by default the functionality of saving new monomers from c
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeTruthy();
 
-  await page.reload();
+  await pageReload(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Peptide.Peptide)).toBeFalsy();
+});
+
+test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer properties`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/8248
+   * Behavior changed(components are not saving in library now) in https://github.com/epam/ketcher/issues/8854
+   * Description: Verify that if for a monomer component all mandatory properties are filled, that monomer will
+   *              NOT be saved to the library (in addition to the preset).
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Press "Create Monomer" button
+   *      4. Fill in Sugar, Base, and Phosphate tabs with test data (all fields)
+   *      5. Press "Submit" button
+   *
+   * Version 3.11
+   */
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+  const dialog = CreateMonomerDialog(page);
+  const presetSection = NucleotidePresetSection(page);
+
+  await LeftToolbar(page).createMonomer();
+  // shifting canvas to make tooltip appear fully
+  await shiftCanvas(page, -150, 50);
+
+  await dialog.selectType(MonomerType.NucleotidePreset);
+
+  await presetSection.setName(Preset.Preset.alias);
+
+  await presetSection.setupSugar({
+    atomIds: [2, 3],
+    bondIds: [2],
+    symbol: Sugar.Sugar.alias,
+    name: 'Sugar Test monomer',
+    HELMAlias: 'SugAlias',
+  });
+  await presetSection.setupBase({
+    atomIds: [0, 1],
+    bondIds: [0],
+    symbol: Base.Base.alias,
+    name: 'Base Test monomer',
+    naturalAnalogue: NucleotideNaturalAnalogue.A,
+    HELMAlias: 'BaseAlias',
+  });
+  await presetSection.setupPhosphate({
+    atomIds: [4, 5],
+    bondIds: [4],
+    symbol: Phosphate.Phosphate.alias,
+    name: 'Phosphate Test monomer',
+    HELMAlias: 'PhosAlias',
+  });
+
+  await dialog.submit();
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();
+  expect(await Library(page).isMonomerExist(Sugar.Sugar)).toBeFalsy();
+  expect(await Library(page).isMonomerExist(Base.Base)).toBeFalsy();
+  expect(await Library(page).isMonomerExist(Phosphate.Phosphate)).toBeFalsy();
 });

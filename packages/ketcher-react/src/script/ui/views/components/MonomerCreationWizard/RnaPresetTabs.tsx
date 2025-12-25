@@ -144,15 +144,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     const handleMarkAsComponent = (event: Event) => {
       const componentType = (event as CustomEvent<RnaPresetComponentType>)
         .detail;
-      const tabIndex = rnaComponentsKeys.indexOf(componentType) + 1;
+      const tabIndex = RNA_COMPONENT_KEYS.indexOf(componentType) + 1;
 
       // First, mark the structure as the component
       handleClickCreateComponent(componentType);
 
       // Then, switch to the appropriate tab
       setSelectedTab(tabIndex);
-      const activeTabState = wizardState[componentType];
-      highlightStructure(activeTabState);
+      applyHighlights(selectedTab, isHighlightEnabled);
     };
 
     window.addEventListener(
@@ -166,7 +165,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         handleMarkAsComponent,
       );
     };
-  }, [wizardState, handleClickCreateComponent, highlightStructure]);
+  }, [wizardState, handleClickCreateComponent, applyHighlights]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

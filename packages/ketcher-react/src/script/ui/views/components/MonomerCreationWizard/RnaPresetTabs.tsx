@@ -19,6 +19,10 @@ import { selectionSelector } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
 import inputStyles from '../../../component/form/Input/Input.module.less';
+import {
+  MonomerCreationMarkAsComponentAction,
+  RnaPresetComponentType,
+} from './MonomerCreationWizard.constants';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -94,24 +98,25 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     });
   };
 
-  const handleClickCreateComponent = (
-    rnaComponentKey: RnaPresetComponentKey,
-  ) => {
-    // Get the current selection from the editor
-    const selection = editor.selection();
-    const atomIds = selection?.atoms || [];
-    const bondIds = selection?.bonds || [];
+  const handleClickCreateComponent = useCallback(
+    (rnaComponentKey: RnaPresetComponentKey) => {
+      // Get the current selection from the editor
+      const selection = editor.selection();
+      const atomIds = selection?.atoms || [];
+      const bondIds = selection?.bonds || [];
 
-    // Update the wizard state
-    wizardStateDispatch({
-      type: 'SetRnaPresetComponentStructure',
-      rnaComponentKey,
-      editor,
-    });
+      // Update the wizard state
+      wizardStateDispatch({
+        type: 'SetRnaPresetComponentStructure',
+        rnaComponentKey,
+        editor,
+      });
 
-    // Sync the component atoms with the Editor for auto-assignment tracking
-    editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
-  };
+      // Sync the component atoms with the Editor for auto-assignment tracking
+      editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
+    },
+    [editor, wizardStateDispatch],
+  );
 
   const currentTabStructure = currentTabState?.structure;
 
@@ -135,6 +140,39 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       editor?.highlights.clear();
     };
   }, [editor?.highlights]);
+
+  useEffect(() => {
+    const handleMarkAsComponent = (event: Event) => {
+      const componentType = (event as CustomEvent<RnaPresetComponentType>)
+        .detail;
+      const tabIndex = RNA_COMPONENT_KEYS.indexOf(componentType) + 1;
+
+      // First, mark the structure as the component
+      handleClickCreateComponent(componentType);
+
+      // Then, switch to the appropriate tab
+      setSelectedTab(tabIndex);
+      applyHighlights(selectedTab, isHighlightEnabled);
+    };
+
+    window.addEventListener(
+      MonomerCreationMarkAsComponentAction,
+      handleMarkAsComponent,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MonomerCreationMarkAsComponentAction,
+        handleMarkAsComponent,
+      );
+    };
+  }, [
+    wizardState,
+    handleClickCreateComponent,
+    applyHighlights,
+    selectedTab,
+    isHighlightEnabled,
+  ]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,

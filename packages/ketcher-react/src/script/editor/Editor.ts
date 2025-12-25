@@ -2421,6 +2421,16 @@ class Editor implements KetcherEditor {
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
   }
 
+  public setRnaMonomerCreationMode(isActive: boolean) {
+    if (!this.monomerCreationState) {
+      KetcherLogger.warn('Monomer creation state is not initialized');
+
+      return;
+    }
+
+    this.monomerCreationState.isRnaPresetMode = isActive;
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection; // eslint-disable-line

@@ -859,6 +859,8 @@ const MonomerCreationWizard = () => {
         value,
       });
     }
+
+    editor.setRnaMonomerCreationMode(value === 'rnaPreset');
   };
 
   useEffect(() => {

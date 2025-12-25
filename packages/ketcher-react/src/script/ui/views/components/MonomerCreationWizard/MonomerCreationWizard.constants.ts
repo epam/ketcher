@@ -86,3 +86,8 @@ export const NotificationTypes: WizardNotificationTypeMap = {
 
 export const MonomerCreationExternalNotificationAction =
   'MonomerCreationExternalNotification';
+
+export const MonomerCreationMarkAsComponentAction =
+  'MonomerCreationMarkAsComponent';
+
+export type RnaPresetComponentType = 'base' | 'sugar' | 'phosphate';

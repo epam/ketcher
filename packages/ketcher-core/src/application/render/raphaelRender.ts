@@ -47,6 +47,7 @@ export type MonomerCreationState = {
   hasDefaultAttachmentPoints?: boolean;
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
+  isRnaPresetMode?: boolean;
 } | null;
 
 export class Render {

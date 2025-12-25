@@ -34,7 +34,8 @@ const useMarkAs = () => {
       return false;
     }
     const monomerCreationState = editor.monomerCreationState;
-    return monomerCreationState?.selectedMonomerClass === 'rnaPreset';
+
+    return monomerCreationState?.isRnaPresetMode;
   }, [ketcherId]);
 
   const isDisabled = useCallback(() => {

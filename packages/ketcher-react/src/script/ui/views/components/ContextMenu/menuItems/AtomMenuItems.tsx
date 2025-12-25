@@ -24,6 +24,7 @@ import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
+import clsx from 'clsx';
 
 const {
   ringBondCount,
@@ -205,7 +206,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             data-testid="Mark as Base-option"
             onClick={handleMarkAs('base')}
           >
-            <Icon name="base" className={styles.icon} />
+            <Icon
+              name="base"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Base</span>
           </Item>
           <Item
@@ -213,7 +217,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             data-testid="Mark as Sugar-option"
             onClick={handleMarkAs('sugar')}
           >
-            <Icon name="sugar" className={styles.icon} />
+            <Icon
+              name="sugar"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Sugar</span>
           </Item>
           <Item
@@ -221,7 +228,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             data-testid="Mark as Phosphate-option"
             onClick={handleMarkAs('phosphate')}
           >
-            <Icon name="phosphate" className={styles.icon} />
+            <Icon
+              name="phosphate"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Phosphate</span>
           </Item>
         </Submenu>

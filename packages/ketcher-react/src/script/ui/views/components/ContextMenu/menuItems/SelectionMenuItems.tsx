@@ -22,6 +22,7 @@ import { CREATE_MONOMER_TOOL_NAME, ketcherProvider } from 'ketcher-core';
 import isHidden from '../../../../action/isHidden';
 import { useSelector } from 'react-redux';
 import { optionsSelector } from '../../../../state/options/selectors';
+import clsx from 'clsx';
 
 const bondNames = getBondNames(tools);
 
@@ -73,7 +74,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
             data-testid="Mark as Base-option"
             onClick={handleMarkAs('base')}
           >
-            <Icon name="base" className={styles.icon} />
+            <Icon
+              name="base"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Base</span>
           </Item>
           <Item
@@ -81,7 +85,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
             data-testid="Mark as Sugar-option"
             onClick={handleMarkAs('sugar')}
           >
-            <Icon name="sugar" className={styles.icon} />
+            <Icon
+              name="sugar"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Sugar</span>
           </Item>
           <Item
@@ -89,7 +96,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
             data-testid="Mark as Phosphate-option"
             onClick={handleMarkAs('phosphate')}
           >
-            <Icon name="phosphate" className={styles.icon} />
+            <Icon
+              name="phosphate"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
             <span>Phosphate</span>
           </Item>
         </Submenu>

@@ -19,6 +19,7 @@ import { Point, Vec2 } from './vec2';
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
 import { Struct, StructProperty } from './struct';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -38,6 +39,14 @@ function calcStereoFlag(
   if (!filteredStereoAtoms.length) return undefined;
 
   const atom = filteredStereoAtoms[0]!;
+
+  const monomerSGroups = struct.sgroups.filter(
+    (_, sgroup) => sgroup instanceof MonomerMicromolecule,
+  );
+  if (monomerSGroups.some((sgroup) => atom.sgs.has(sgroup.id))) {
+    return;
+  }
+
   const stereoLabel = atom.stereoLabel!; // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(

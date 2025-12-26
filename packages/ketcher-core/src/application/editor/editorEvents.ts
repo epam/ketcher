@@ -63,6 +63,7 @@ export interface IEditorEvents {
   copySelectedStructure: Subscription;
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
+  deleteHoveredStructure: Subscription;
   selectEntities: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
@@ -139,6 +140,7 @@ export function resetEditorEvents() {
     copySelectedStructure: new Subscription(),
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
+    deleteHoveredStructure: new Subscription(),
     selectEntities: new Subscription(),
     toggleMacromoleculesPropertiesVisibility: new Subscription(),
     modifyAminoAcids: new Subscription(),
@@ -246,6 +248,15 @@ export const hotkeysConfiguration = {
       editor.onSelectHistory('redo');
     },
   },
+  'single-bond': {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch([
+        ToolName.bondSingle,
+        { toolName: ToolName.bondSingle },
+      ]);
+    },
+  },
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
@@ -253,6 +264,9 @@ export const hotkeysConfiguration = {
       if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch([ToolName.erase]);
       editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      if (editor.drawingEntitiesManager.hoveredEntities.length > 0) {
+        editor.events.deleteHoveredStructure.dispatch();
+      }
     },
   },
   clear: {

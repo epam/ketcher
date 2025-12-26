@@ -18,6 +18,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { SequenceMode } from '../modes';
+import { Command } from 'domain/entities';
 
 class EraserTool implements BaseTool {
   private readonly history: EditorHistory;
@@ -29,7 +30,7 @@ class EraserTool implements BaseTool {
       !(this.editor.mode instanceof SequenceMode)
     ) {
       const modelChanges =
-        this.editor.drawingEntitiesManager.deleteSelectedEntities();
+        this.editor.drawingEntitiesManager.deleteSelectedEntities() as Command;
       modelChanges.merge(
         this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
       );

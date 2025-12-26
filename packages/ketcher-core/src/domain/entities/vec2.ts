@@ -22,6 +22,13 @@ export interface Point {
   y?: number;
   z?: number;
 }
+
+// Optimize major GC in case of importing big sequences - only parse float when necessary
+// most of the time it is already a number from atom.clone
+function toNumber(value: number | string): number {
+  return typeof value === 'number' ? value : parseFloat(value);
+}
+
 export class Vec2 {
   static readonly ZERO = new Vec2(0, 0);
   static readonly UNIT = new Vec2(1, 1);
@@ -38,17 +45,18 @@ export class Vec2 {
       this.y = 0;
       this.z = 0;
     } else if (arguments.length === 1) {
-      this.x = parseFloat(args[0].x || 0);
-      this.y = parseFloat(args[0].y || 0);
-      this.z = parseFloat(args[0].z || 0);
+      const point = args[0];
+      this.x = toNumber(point.x || 0);
+      this.y = toNumber(point.y || 0);
+      this.z = toNumber(point.z || 0);
     } else if (arguments.length === 2) {
-      this.x = parseFloat(args[0] || 0);
-      this.y = parseFloat(args[1] || 0);
+      this.x = toNumber(args[0] || 0);
+      this.y = toNumber(args[1] || 0);
       this.z = 0;
     } else if (arguments.length === 3) {
-      this.x = parseFloat(args[0]);
-      this.y = parseFloat(args[1]);
-      this.z = parseFloat(args[2]);
+      this.x = toNumber(args[0]);
+      this.y = toNumber(args[1]);
+      this.z = toNumber(args[2]);
     } else {
       throw new Error('Vec2(): invalid arguments');
     }

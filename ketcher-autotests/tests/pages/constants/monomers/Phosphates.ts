@@ -11,6 +11,10 @@ export const Phosphate = createMonomerGroup(MonomerType.Phosphate, {
     alias: 'Phosphate',
     testId: 'Phosphate___Phosphate Test monomer',
   },
+  Phosphate2: {
+    alias: 'Phosphate2',
+    testId: 'Phosphate2___Phosphate2 Test monomer',
+  },
   NoPhosphate: {
     alias: 'No Phosphate On The Canvas',
     testId: 'No Such Phosphate In The Library',

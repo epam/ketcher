@@ -17,7 +17,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   undoByKeyboard,
-  getControlModifier,
   MacroFileType,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -285,9 +284,8 @@ test.describe('Undo-Redo tests', () => {
     }
     await takeEditorScreenshot(page);
 
-    const modifier = getControlModifier();
     for (let i = 0; i < numberOfPress; i++) {
-      await keyboardPressOnCanvas(page, `${modifier}+KeyY`);
+      await keyboardPressOnCanvas(page, `ControlOrMeta+KeyY`);
     }
     await takeEditorScreenshot(page);
   });
@@ -409,16 +407,14 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Copy/Paste working as expected and Undo/Redo
     */
-    const x = 200;
-    const y = 200;
     await Library(page).dragMonomerOnCanvas(Preset.C, {
-      x,
-      y,
+      x: 200,
+      y: 200,
       fromCenter: true,
     });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(200, 200);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

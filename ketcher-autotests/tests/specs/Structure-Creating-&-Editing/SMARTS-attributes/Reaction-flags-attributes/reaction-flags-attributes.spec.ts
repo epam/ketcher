@@ -1,6 +1,5 @@
 import { test, expect } from '@fixtures';
 import {
-  doubleClickOnAtom,
   pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
@@ -11,15 +10,15 @@ import {
   verifySMARTSExport,
   verifySMARTSExportWarnings,
 } from '@utils/files/receiveFileComparisonData';
-
-const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
     await waitForPageInit(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+      force: true,
+    });
     await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
@@ -34,7 +33,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
     await verifySMARTSExportWarnings(page);
   });
 
@@ -49,7 +48,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
     await verifySMARTSExportWarnings(page);
   });
 
@@ -64,7 +63,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await verifySMARTSExport(page, expectedSmarts);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
     await verifySMARTSExportWarnings(page);
   });
 });

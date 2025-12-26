@@ -2,7 +2,10 @@ import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { UnsplitNucleotide } from 'domain/entities';
 import { D3SvgElementSelection } from 'application/render/types';
-import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import {
+  MONOMER_SYMBOLS_IDS,
+  UNRESOLVED_MONOMER_COLOR,
+} from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
@@ -24,6 +27,20 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       NUCLEOTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID,
       scale,
     );
+  }
+
+  public get textColor() {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return 'white';
+    }
+    return super.textColor;
+  }
+
+  protected getMonomerColor(theme) {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return UNRESOLVED_MONOMER_COLOR;
+    }
+    return super.getMonomerColor(theme);
   }
 
   protected appendBody(

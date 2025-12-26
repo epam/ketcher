@@ -112,9 +112,9 @@ test.describe('Rotation', () => {
       Description: Structure is rotated by 1 degree step with Ctrl
     */
     await addStructureAndSelect(page);
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });

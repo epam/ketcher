@@ -24,6 +24,7 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
+import { editorEvents } from 'application/editor/editorEvents';
 
 const BOND_WIDTH = 2;
 
@@ -484,10 +485,12 @@ export class BondRenderer extends BaseRenderer {
       .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath
-      .on('mouseenter', () => {
+      .on('mouseenter', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }
@@ -580,17 +583,39 @@ export class BondRenderer extends BaseRenderer {
 
       case BondType.Aromatic:
       case BondType.SingleAromatic:
-      case BondType.DoubleAromatic:
-        bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-          bondVectors,
-          this.getDoubleBondShift(
-            viewModel,
-            bondVectors.firstHalfEdge,
-            bondVectors.secondHalfEdge,
-          ),
-          this.bond.type,
-        );
+      case BondType.DoubleAromatic: {
+        // Check if the bond is in a convex aromatic loop
+        const firstHalfEdge = bondVectors.firstHalfEdge;
+        const secondHalfEdge = bondVectors.secondHalfEdge;
+        const firstLoop =
+          firstHalfEdge && firstHalfEdge.loopId >= 0
+            ? viewModel.loops.get(firstHalfEdge.loopId)
+            : null;
+        const secondLoop =
+          secondHalfEdge && secondHalfEdge.loopId >= 0
+            ? viewModel.loops.get(secondHalfEdge.loopId)
+            : null;
+        const inConvexAromaticLoop =
+          (firstLoop?.aromatic && firstLoop?.isConvex) ||
+          (secondLoop?.aromatic && secondLoop?.isConvex);
+
+        // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
+        // Otherwise, render as a dashed double bond
+        if (inConvexAromaticLoop) {
+          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+            bondVectors,
+            this.getDoubleBondShift(
+              viewModel,
+              bondVectors.firstHalfEdge,
+              bondVectors.secondHalfEdge,
+            ),
+            this.bond.type,
+          );
+        }
         break;
+      }
 
       case BondType.SingleDouble:
         bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);

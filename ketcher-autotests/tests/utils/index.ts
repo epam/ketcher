@@ -4,7 +4,6 @@ export * from './canvas';
 export * from './selectors';
 export * from './globals';
 export * from './common';
-export * from './os';
 export * from './keyboard';
 export * from './types';
 export * from './formats';

@@ -233,7 +233,7 @@ test(`4. Check that the option + Add modification type only appears after monome
   await expect(createMonomerDialog.modificationSection).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.Phosphate);
   await expect(createMonomerDialog.modificationSection).not.toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await expect(createMonomerDialog.modificationSection).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
   await expect(createMonomerDialog.modificationSection).not.toBeVisible();
@@ -729,7 +729,7 @@ test(`14. Check that the option + Add HELM alias appears only after monomer type
   await expect(createMonomerDialog.aliasesSection).toBeVisible();
   await createMonomerDialog.selectType(MonomerType.Phosphate);
   await expect(createMonomerDialog.aliasesSection).toBeVisible();
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
@@ -975,7 +975,7 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
   ).toEqual('The HELM alias must be unique amongst peptide or RNA monomers.');
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.submit({ ignoreWarning: true });
@@ -1222,7 +1222,7 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await LeftToolbar(page).createMonomer();
 
   const createMonomerDialog = CreateMonomerDialog(page);
-  await createMonomerDialog.selectType(MonomerType.Nucleotide);
+  await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();

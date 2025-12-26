@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { AttachmentPointClickData, AttachmentPointName } from 'ketcher-core';
+import {
+  AtomLabel,
+  AttachmentPointClickData,
+  AttachmentPointName,
+} from 'ketcher-core';
 import AttachmentPointControls from '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls';
 import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData';
 
@@ -17,7 +21,7 @@ type Props = {
   ) => void;
   onLeavingAtomChange: (
     apName: AttachmentPointName,
-    newLeavingAtomId: number,
+    newLeavingAtomLabel: AtomLabel,
   ) => void;
   onClose: VoidFunction;
   editor: Editor;
@@ -99,15 +103,19 @@ const AttachmentPointEditPopup = ({
     onClose();
   };
 
-  const handleLeavingAtomChange = (newLeavingAtomId: number) => {
+  const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
     const currentAtomPair = assignedAttachmentPoints.get(attachmentPointName);
 
     assert(currentAtomPair);
 
-    const currentLeavingAtomId = currentAtomPair[1];
+    const leavingAtomId = currentAtomPair[1];
+    const leavingAtom = editor.struct().atoms.get(leavingAtomId);
+    assert(leavingAtom);
 
-    if (newLeavingAtomId !== currentLeavingAtomId) {
-      onLeavingAtomChange(attachmentPointName, newLeavingAtomId);
+    const currentLeavingAtomLabel = leavingAtom.label;
+
+    if (newLeavingAtomLabel !== currentLeavingAtomLabel) {
+      onLeavingAtomChange(attachmentPointName, newLeavingAtomLabel);
     }
     onClose();
   };

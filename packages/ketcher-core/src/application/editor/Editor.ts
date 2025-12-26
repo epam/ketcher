@@ -303,6 +303,20 @@ export class CoreEditor {
     }
   }
 
+  private clearSelectionAfterCopy(): void {
+    const hasSelectedEntities =
+      this.drawingEntitiesManager.selectedEntitiesArr.length > 0;
+
+    if (!hasSelectedEntities) {
+      return;
+    }
+
+    const modelChanges =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+    this.renderersContainer.update(modelChanges);
+  }
+
   static provideEditorInstance(): CoreEditor {
     return editor;
   }
@@ -378,7 +392,8 @@ export class CoreEditor {
         (monomer) => {
           return (
             monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
+            monomer?.props.hidden === newMonomer.props?.hidden
           );
         },
       );
@@ -464,7 +479,7 @@ export class CoreEditor {
 
   public checkIfMonomerSymbolClassPairExists(
     symbol: string,
-    monomerClass: KetMonomerClass | undefined,
+    monomerClass: KetMonomerClass | 'rnaPreset' | undefined,
   ) {
     if (!monomerClass) {
       return true;
@@ -481,6 +496,11 @@ export class CoreEditor {
         (props.aliasHELM === symbol || props.MonomerName === symbol)
       );
     });
+  }
+
+  public checkIfPresetCodeExists(code: string) {
+    const rnaPresets = this.defaultRnaPresetsLibraryItems;
+    return rnaPresets.some((preset) => preset.name === code);
   }
 
   public get defaultRnaPresetsLibraryItems() {
@@ -563,6 +583,7 @@ export class CoreEditor {
       }
 
       this.mode.onCopy(event);
+      this.clearSelectionAfterCopy();
     };
     this.pasteEventHandler = (event: ClipboardEvent) => {
       // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
@@ -729,6 +750,7 @@ export class CoreEditor {
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
+      this.clearSelectionAfterCopy();
     });
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
@@ -746,6 +768,9 @@ export class CoreEditor {
       command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
       history.update(command);
       this.renderersContainer.update(command);
+      this.events.selectEntities.dispatch(
+        this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+      );
     });
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {

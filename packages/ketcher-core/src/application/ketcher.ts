@@ -28,7 +28,7 @@ import {
   type CalculateResult,
 } from 'domain/services';
 
-import { CoreEditor, Editor } from './editor';
+import { CoreEditor, Editor, getSelectionFromStruct } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { SGroup, Struct } from 'domain/entities';
@@ -158,7 +158,7 @@ export class Ketcher {
   }
 
   // TODO: create options type
-  setSettings(settings: Record<string, string>) {
+  setSettings(settings: Record<string, string | boolean>) {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');
@@ -512,6 +512,12 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
+
         this.editor.zoomAccordingContent(struct);
         if (x == null && y == null) {
           this.editor.centerStruct();
@@ -568,6 +574,11 @@ export class Ketcher {
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
         this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
       }
     }, this.eventBus);
   }
@@ -797,7 +808,9 @@ export class Ketcher {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
   }
 
   public async replaceMonomersLibrary(
@@ -826,7 +839,11 @@ export class Ketcher {
 
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
-    this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
+
     editor.events.updateMonomersLibrary.dispatch();
   }
 

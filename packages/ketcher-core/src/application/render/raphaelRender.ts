@@ -29,6 +29,12 @@ import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type RnaComponentAtoms = Map<
+  RnaPresetComponentKey,
+  { atoms: number[]; bonds: number[] }
+>;
 
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
@@ -37,8 +43,11 @@ export type MonomerCreationState = {
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
   clickedAttachmentPoint?: AttachmentPointName | null;
-  selectedMonomerClass?: KetMonomerClass;
+  selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
+  // RNA preset component atoms and bonds
+  rnaComponentAtoms?: RnaComponentAtoms;
+  isRnaPresetMode?: boolean;
 } | null;
 
 export class Render {

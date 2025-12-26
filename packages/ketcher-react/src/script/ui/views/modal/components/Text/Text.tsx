@@ -180,8 +180,9 @@ const Text = (props: TextProps) => {
         className={classes.controlPanel}
         onClick={setFocusInEditor}
         onKeyDown={handleKeyDown}
-        role="button"
+        role="toolbar"
         tabIndex={0}
+        aria-label="Text formatting toolbar"
       >
         {buttons.map((button) => {
           return (

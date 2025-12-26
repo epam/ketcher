@@ -2,9 +2,9 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="C" x2="7.85389" y2="-7.36875"/>
-            <atom id="a2" elementType="C" x2="9.15292" y2="-7.86875"/>
-            <atom id="a3" elementType="C" x2="10.0189" y2="-7.36875"/>
+            <atom id="a0" elementType="C" x2="7.96442" y2="-7.36875"/>
+            <atom id="a2" elementType="C" x2="8.60938" y2="-7.86875"/>
+            <atom id="a3" elementType="C" x2="9.47538" y2="-7.36875"/>
         </atomArray>
         <bondArray>
             <bond atomRefs2="a2 a3" order="1"/>

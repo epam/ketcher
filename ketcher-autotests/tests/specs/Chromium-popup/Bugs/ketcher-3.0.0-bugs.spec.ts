@@ -14,8 +14,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
@@ -65,8 +63,8 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -413,9 +411,13 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'O');
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'N');
     await takeEditorScreenshot(page);
   });
@@ -705,7 +707,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await expandMonomers(page, page.getByText('1Nal'));
     await takeEditorScreenshot(page);
-    const atom = await getAtomById(page, 35);
+    const atom = getAtomLocator(page, { atomId: 35 });
     await collapseMonomers(page, atom);
     await takeEditorScreenshot(page);
   });

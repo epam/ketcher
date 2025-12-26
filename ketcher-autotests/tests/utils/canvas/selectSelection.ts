@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   copyToClipboardByKeyboard,
@@ -39,10 +38,8 @@ export async function selectAllStructuresOnCanvas(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyA`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyA`, options),
   );
 }

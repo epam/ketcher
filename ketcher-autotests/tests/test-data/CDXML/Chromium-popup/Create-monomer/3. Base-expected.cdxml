@@ -16,13 +16,13 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="235.616592 228.562500 274.587738 221.062500">
+    <page HeightPages="1" WidthPages="1" BoundingBox="238.932709 228.562500 258.281250 221.062500">
         <fragment id="4">
             <n id="10" NodeType="Fragment">
                 <fragment id="11">
-                    <n id="6" p="38.971138 15.000000"/>
+                    <n id="6" p="19.348541 15.000000"/>
                     <n id="12" NodeType="ExternalConnectionPoint"/>
-                    <n id="7" p="64.951141 -0.000000"/>
+                    <n id="7" p="45.328545 -0.000000"/>
                     <b id="8" B="6" E="7"/>
                     <b id="14" B="12" E="6"/>
                 </fragment>

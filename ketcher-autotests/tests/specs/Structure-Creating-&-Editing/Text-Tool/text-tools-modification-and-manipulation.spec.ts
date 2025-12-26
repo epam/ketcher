@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -126,8 +127,6 @@ test.describe('Text tools test cases', () => {
   });
 
   test('Create several text objects and modifited them', async ({ page }) => {
-    const x = 150;
-    const y = 145;
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
     // Verify if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
@@ -139,7 +138,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText(
       'Ketcher is a tool to draw molecular structures and chemical reactions',
     );
@@ -265,8 +264,6 @@ test.describe('Text tools test cases', () => {
   });
 
   test(' Selection of a text object and a structure', async ({ page }) => {
-    const x = 500;
-    const y = 250;
     // Test case: EPMLSOPKET-2236
     // Verify if all created and selected elements are moved together
     await addTextBoxToCanvas(page);
@@ -274,7 +271,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await waitForRender(page, async () => {
-      await page.getByTestId('canvas').click({ position: { x, y } });
+      await page.getByTestId('canvas').click({ position: { x: 500, y: 250 } });
     });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);

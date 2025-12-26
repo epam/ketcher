@@ -4,22 +4,20 @@ import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  BondType,
   clickInTheMiddleOfTheScreen,
   receiveFileComparisonData,
   saveToFile,
   waitForRender,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  clickOnAtom,
   deleteByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
@@ -145,15 +143,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The structure is copied.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -163,15 +159,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The structure is cut.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -397,8 +391,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getBondLocator(page, { bondId: 3 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -412,8 +405,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.move(point.x, point.y);
+    await getBondLocator(page, { bondId: 2 }).hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -700,10 +692,18 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', 1);
-    await clickOnAtom(page, 'C', 4);
-    await clickOnAtom(page, 'C', 6);
-    await clickOnAtom(page, 'C', 9);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 27 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -983,6 +983,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -10,19 +10,31 @@ import Restruct from 'application/render/restruct/restruct';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
+  private readonly assignedAttachmentPoints: Map<
+    AttachmentPointName,
+    [number, number]
+  > = new Map();
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentPointName: AttachmentPointName,
     private readonly potentialLeavingAtoms?: Set<number>,
+    private _assignedAttachmentPoints?: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
   ) {
     super(OperationType.MONOMER_CREATION_REMOVE_AP);
 
     assert(this.monomerCreationState);
 
-    const atomPair = this.monomerCreationState.assignedAttachmentPoints.get(
+    this.assignedAttachmentPoints =
+      this._assignedAttachmentPoints ||
+      this.monomerCreationState.assignedAttachmentPoints;
+    const atomPair = this.assignedAttachmentPoints.get(
       this.attachmentPointName,
     );
+
     assert(atomPair);
 
     this.atomPair = atomPair;
@@ -31,11 +43,10 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   execute(restruct: Restruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const { potentialAttachmentPoints } = this.monomerCreationState;
 
     const [attachmentAtomId, leavingAtomId] = this.atomPair;
-    assignedAttachmentPoints.delete(this.attachmentPointName);
+    this.assignedAttachmentPoints.delete(this.attachmentPointName);
 
     if (this.potentialLeavingAtoms)
       potentialAttachmentPoints.set(

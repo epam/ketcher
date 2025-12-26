@@ -13,7 +13,7 @@ import {
 import { clickOnCanvas, dragMouseTo } from '@utils/index';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
@@ -290,7 +290,7 @@ test(`3. Check that the number of simple-single bonds to non-selected parts of t
     page,
     'CC(C(C)C(C)C(C)C(C)C(C)C(C)C(C)C)C',
   );
-  await prepareMoleculeForMonomerCreation(page, [
+  await deselectAtomAndBonds(page, [
     '0',
     '5',
     '3',
@@ -946,7 +946,7 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
    *      2. Load molecule on canvas
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press Create Monomer button
-   *      5. Change LGA atom by picking option form a drop-down: H, OH, NH2, F, Cl, Br, I (in that order)
+   *      5. Change LGA atom by picking option form a drop-down: H, OH (in that order)
    *      6. Take screenshot to validate that the LGA atom was changed after each change
    *
    * Version 3.8
@@ -973,36 +973,6 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
     attachmentPointName: AttachmentPointOption.R1,
     newAtom: AttachmentPointAtom.OH,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.NH2,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.F,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.Cl,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.Br,
-  });
-  await takeEditorScreenshot(page);
-
-  await CreateMonomerDialog(page).changeAttachmentPointAtom({
-    attachmentPointName: AttachmentPointOption.R1,
-    newAtom: AttachmentPointAtom.I,
   });
   await takeEditorScreenshot(page);
 
@@ -1369,7 +1339,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await page.mouse.move(600, 200);
   await dragMouseTo(425, 200, page);
 
-  await CreateMonomerDialog(page).selectType(MonomerType.Nucleotide);
+  await CreateMonomerDialog(page).selectType(MonomerType.NucleotideMonomer);
   await CreateMonomerDialog(page).setSymbol(Nucleotide.Nucleotide.alias);
   await CreateMonomerDialog(page).setName('Nucleotide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(

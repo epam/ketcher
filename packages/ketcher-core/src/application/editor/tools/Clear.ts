@@ -19,10 +19,16 @@ import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
 class ClearTool implements BaseTool {
-  private readonly history: EditorHistory;
+  private readonly history: EditorHistory | undefined;
 
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
+
+    // Only update history if there are entities to delete
+    if (!this.editor.drawingEntitiesManager.hasDrawingEntities) {
+      return;
+    }
+
     this.history = new EditorHistory(editor);
     const mode = editor.mode;
 

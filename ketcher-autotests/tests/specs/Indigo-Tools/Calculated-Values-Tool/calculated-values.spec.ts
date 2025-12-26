@@ -235,12 +235,9 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculated values dialog appears, the exact mass of
     the chosen fragment (C9H9O2) is 149.060
     */
-
-    const xDelta = 300;
-    const yDelta = 600;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/ritalin.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y - yDelta, page);
+    await dragMouseTo(x + 300, y - 600, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -341,12 +338,9 @@ test.describe('Calculated Values Tools', () => {
     Description: If the R-group label is absent in the selected object the calculation is represented
     in the common way (as simple structure).
     */
-
-    const xDelta = 200;
-    const yDelta = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(x + 200, y + 200, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     /*
     TODO:It is necessary to ensure the correctness of the test results.
@@ -385,11 +379,9 @@ test.describe('Calculated Values Tools', () => {
     Description: Regardless of the method of selection all fields contain
     'Cannot calculate properties for RGroups' message.
     */
-    const xDelta = 100;
-    const yDelta = 100;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -416,14 +408,12 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Rgroup attachment point is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    const xDelta = 100;
-    const yDelta = 100;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/attachment-points-structure.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -672,12 +662,9 @@ test.describe('Calculated Values Tools', () => {
      * Elemental Analysis:
      * [O 100.0]+[C 52.1 H 13.1 O 34.7]
      */
-
-    const xDelta = 500;
-    const yDelta = 800;
     await openFileAndAddToCanvas(page, 'KET/reaction-arrow.ket');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - xDelta, y + yDelta, page);
+    await dragMouseTo(x - 500, y + 800, page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,

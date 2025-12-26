@@ -25,6 +25,7 @@ import {
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
   FloatingToolsParams,
+  fromAtomsAttrs,
   fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
@@ -67,6 +68,13 @@ import {
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
   AssignAttachmentAtomOperation,
+  getKetRef,
+  setMonomerGroupTemplatePrefix,
+  KetMonomerClass,
+  fromFragmentDeletion,
+  MonomerCreationComponentStructureUpdateEvent,
+  RnaPresetComponentKey,
+  ComponentStructureUpdateData,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -91,7 +99,6 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
-import { KetMonomerClass } from 'ketcher-core/dist/application/formatters/types';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -578,7 +585,9 @@ class Editor implements KetcherEditor {
     this.render.monomerCreationState = state;
   }
 
-  public setMonomerCreationSelectedType(type: KetMonomerClass | undefined) {
+  public setMonomerCreationSelectedType(
+    type: KetMonomerClass | 'rnaPreset' | undefined,
+  ) {
     const currentState = this.render.monomerCreationState;
     if (!currentState) return;
     this.render.monomerCreationState = {
@@ -586,6 +595,23 @@ class Editor implements KetcherEditor {
       selectedMonomerClass: type,
     };
     this.render.update(true);
+  }
+
+  public setRnaComponentAtoms(
+    componentKey: RnaPresetComponentKey,
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    const rnaComponentAtoms = currentState.rnaComponentAtoms || new Map();
+    rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      rnaComponentAtoms,
+    };
   }
 
   public get isMonomerCreationWizardActive() {
@@ -616,19 +642,20 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    const currentStruct = this.struct();
     const selection = this.selection();
 
-    if (!selection) {
-      return true;
-    }
+    // When there's no selection, use all atoms from the structure
+    const atomsToProcess =
+      selection !== null
+        ? selection.atoms
+        : Array.from(currentStruct.atoms.keys());
 
-    const currentStruct = this.struct();
-
-    if (!selection.atoms || selection.atoms.length === 0) {
+    if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;
     }
 
-    const selectionInvalid = selection.atoms.some((atomId) => {
+    const selectionInvalid = atomsToProcess.some((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
       if (!atom) {
@@ -661,7 +688,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const terminalRGroupAtoms = selection.atoms.filter((atomId) => {
+    const terminalRGroupAtoms = atomsToProcess.filter((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
       if (!atom) {
@@ -671,11 +698,12 @@ class Editor implements KetcherEditor {
       return atom.rglabel !== null && atom.neighbors.length === 1;
     });
 
-    const selectionAtoms = new Set(selection.atoms);
+    const atomsToProcessSet = new Set(atomsToProcess);
     const bondsToOutside = currentStruct.bonds.filter((_, bond) => {
       return (
-        (selectionAtoms.has(bond.begin) && !selectionAtoms.has(bond.end)) ||
-        (selectionAtoms.has(bond.end) && !selectionAtoms.has(bond.begin))
+        (atomsToProcessSet.has(bond.begin) &&
+          !atomsToProcessSet.has(bond.end)) ||
+        (atomsToProcessSet.has(bond.end) && !atomsToProcessSet.has(bond.begin))
       );
     });
 
@@ -689,12 +717,12 @@ class Editor implements KetcherEditor {
     const potentialLeavingAtomsForAutoAssignment: number[] = [];
     bondsToOutside.forEach((bond) => {
       potentialLeavingAtomsForAutoAssignment.push(
-        selectionAtoms.has(bond.begin) ? bond.end : bond.begin,
+        atomsToProcessSet.has(bond.begin) ? bond.end : bond.begin,
       );
     });
 
     const potentialLeavingAtomForManualAssignment: number[] = [];
-    selectionAtoms.forEach((selectionAtomId) => {
+    atomsToProcessSet.forEach((selectionAtomId) => {
       const selectionAtom = currentStruct.atoms.get(selectionAtomId);
 
       assert(selectionAtom);
@@ -757,12 +785,15 @@ class Editor implements KetcherEditor {
     return true;
   }
 
-  public isMinimalViableStructure() {
-    const nonLeavingAtoms = this.struct().atoms.filter((atomId) => {
-      assert(this.monomerCreationState);
+  public static isMinimalViableStructure(
+    structure: Struct,
+    monomerCreationState: MonomerCreationState,
+  ) {
+    const nonLeavingAtoms = structure.atoms.filter((atomId) => {
+      assert(monomerCreationState);
 
       return Array.from(
-        this.monomerCreationState.assignedAttachmentPoints.values(),
+        monomerCreationState.assignedAttachmentPoints.values(),
       ).every((atomPair) => atomPair[1] !== atomId);
     });
 
@@ -770,7 +801,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const nonLeavingAtomBonds = this.struct().bonds.filter(
+    const nonLeavingAtomBonds = structure.bonds.filter(
       (_, bond) =>
         nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
     );
@@ -856,7 +887,6 @@ class Editor implements KetcherEditor {
   private originalHistoryPointer = 0;
 
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
-  private selectionBBox;
 
   private changeEventSubscriber: any = null;
 
@@ -869,8 +899,6 @@ class Editor implements KetcherEditor {
 
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);
-
-    this.selectionBBox = selectedStruct.getCoordBoundingBoxObj();
 
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
@@ -935,22 +963,39 @@ class Editor implements KetcherEditor {
         assert(selectedStructLeavingAtom.rglabel);
 
         let attachmentPointName: AttachmentPointName;
-        if (
+
+        // Check if this is R1 or R2 and if it's already assigned
+        const isR1OrR2 =
           attachmentPointLabel === AttachmentPointName.R1 ||
-          attachmentPointLabel === AttachmentPointName.R2 ||
-          sideAttachmentPointsNames.includes(
-            attachmentPointLabel as AttachmentPointName,
-          )
+          attachmentPointLabel === AttachmentPointName.R2;
+        const isAlreadyAssigned = assignedAttachmentPoints.has(
+          attachmentPointLabel as AttachmentPointName,
+        );
+
+        if (
+          (isR1OrR2 && !isAlreadyAssigned) ||
+          (!isR1OrR2 &&
+            sideAttachmentPointsNames.includes(
+              attachmentPointLabel as AttachmentPointName,
+            ))
         ) {
           attachmentPointName = attachmentPointLabel as AttachmentPointName;
         } else {
+          // For duplicate R1/R2 or other cases, assign to smallest available Rn (n>2)
+          // or fall back to R1/R2 if no side attachment points are available
           const assignedAttachmentPointNames = Array.from(
             assignedAttachmentPoints.keys(),
           );
+          // Skip R1/R2 when:
+          // 1. Processing a duplicate R1/R2 label (requirement 2.6: prefer R3+)
+          // 2. Processing other labels when we haven't assigned all expected side attachments yet
+          const shouldSkipR1AndR2 =
+            isR1OrR2 ||
+            assignedAttachmentPointNames.length <
+              sideAttachmentPointsNames.length;
           attachmentPointName = getNextFreeAttachmentPoint(
             assignedAttachmentPointNames,
-            assignedAttachmentPointNames.length <
-              sideAttachmentPointsNames.length,
+            shouldSkipR1AndR2,
           );
         }
 
@@ -1119,7 +1164,17 @@ class Editor implements KetcherEditor {
     this.update(action);
   }
 
-  assignConnectionPointAtom(atomId: number) {
+  assignConnectionPointAtom(
+    atomId: number,
+    attachmentPointName?: AttachmentPointName,
+    assignedAttachmentPointsByMonomer?: Map<
+      AttachmentPointName,
+      [number, number]
+    >,
+    monomerStructure?: Selection,
+    forceAddNewLeavingGroupAtom = false,
+    leavingAtomLabel: AtomLabel = AtomLabel.H,
+  ) {
     assert(this.monomerCreationState);
 
     const potentialLeavingAtoms =
@@ -1127,7 +1182,7 @@ class Editor implements KetcherEditor {
 
     let leavingAtomId: number;
     let additionalAction: Action | null = null;
-    if (potentialLeavingAtoms) {
+    if (!forceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
       const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
         .sort((a, b) => a - b)
         .reduce(
@@ -1150,15 +1205,20 @@ class Editor implements KetcherEditor {
 
       leavingAtomId = minimalAtomicNumberAtomId;
     } else {
-      const [bondAdditionAction, , endAtomId] = fromBondAddition(
+      const [bondAdditionAction, , endAtomId, newBondId] = fromBondAddition(
         this.render.ctab,
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         atomId,
-        { label: AtomLabel.H },
+        { label: leavingAtomLabel },
       );
 
       additionalAction = bondAdditionAction;
       leavingAtomId = endAtomId;
+
+      if (monomerStructure) {
+        monomerStructure.atoms?.push(leavingAtomId);
+        monomerStructure.bonds?.push(newBondId);
+      }
     }
 
     let finalAction = new Action([
@@ -1166,6 +1226,8 @@ class Editor implements KetcherEditor {
         this.monomerCreationState,
         atomId,
         leavingAtomId,
+        attachmentPointName,
+        assignedAttachmentPointsByMonomer,
       ),
     ]).perform(this.render.ctab);
 
@@ -1176,41 +1238,23 @@ class Editor implements KetcherEditor {
     this.update(finalAction);
   }
 
-  closeMonomerCreationWizard() {
+  closeMonomerCreationWizard(restoreOriginalStruct = false) {
     if (!this.isMonomerCreationWizardActive) {
       return;
     }
 
     this.unsubscribeFromChangeEventInMonomerCreationWizard();
 
-    this.monomerCreationState = null;
-
     this.historyStack = this.originalHistoryStack;
     this.historyPtr = this.originalHistoryPointer;
 
-    this.struct(this.originalStruct, false);
+    if (restoreOriginalStruct) {
+      this.struct(this.originalStruct, false);
+    }
+
+    this.monomerCreationState = null;
 
     this.tool('select');
-  }
-
-  private cleanupAttachmentPoint(leavingAtomId: number) {
-    const leavingAtom = this.struct().atoms.get(leavingAtomId);
-    assert(leavingAtom);
-
-    const originalLeavingAtomId =
-      this.selectedToOriginalAtomsIdMap.get(leavingAtomId);
-    assert(isNumber(originalLeavingAtomId));
-
-    const originalLeavingAtom = this.originalStruct.atoms.get(
-      originalLeavingAtomId,
-    );
-    assert(originalLeavingAtom);
-
-    if (originalLeavingAtom.rglabel !== null) {
-      originalLeavingAtom.rglabel = null;
-      originalLeavingAtom.label = leavingAtom.label;
-      this.originalStruct.calcImplicitHydrogen(originalLeavingAtomId);
-    }
   }
 
   saveNewMonomer(data) {
@@ -1219,10 +1263,9 @@ class Editor implements KetcherEditor {
         'Monomer creation wizard is not active, cannot save new monomer',
       );
     }
-
     const ketSerializer = new KetSerializer();
     const ketMicromolecule = JSON.parse(
-      ketSerializer.serialize(this.render.ctab.molecule),
+      ketSerializer.serialize(data.structure),
     );
 
     const {
@@ -1232,10 +1275,15 @@ class Editor implements KetcherEditor {
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
+      hidden,
     } = data;
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
-    this.monomerCreationState.assignedAttachmentPoints.forEach(
+    const sortedAttachmentPointsData = new Map<string, [number, number]>(
+      [...data.attachmentPoints].sort(),
+    );
+
+    sortedAttachmentPointsData.forEach(
       ([attachmentAtomId, leavingAtomId], attachmentPointName) => {
         let attachmentPointType: 'left' | 'right' | 'side' = 'side';
         if (attachmentPointName === AttachmentPointName.R1) {
@@ -1255,7 +1303,7 @@ class Editor implements KetcherEditor {
       },
     );
 
-    const monomerId = `${symbol}___${name}`;
+    const monomerId = `${symbol}___${name}${hidden ? '___hidden' : ''}`;
     const monomerRef = setMonomerTemplatePrefix(monomerId);
     const monomerHELMClass = getHELMClassByKetMonomerClass(type);
     const naturalAnalogueToUse = fillNaturalAnalogueForPhosphateAndSugar(
@@ -1277,6 +1325,7 @@ class Editor implements KetcherEditor {
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
+      ...(hidden ? { hidden: true } : {}),
       root: {
         nodes: [],
         // TODO: Revisit IKetMonomerTemplate type
@@ -1294,83 +1343,259 @@ class Editor implements KetcherEditor {
     const monomerItem =
       ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
     const [Monomer] = monomerFactory(monomerItem);
+    const monomerBBox = data.structure.getCoordBoundingBoxObj();
     const monomerPosition = new Vec2(
-      (this.selectionBBox.min.x + this.selectionBBox.max.x) / 2,
-      (this.selectionBBox.min.y + this.selectionBBox.max.y) / 2,
+      (monomerBBox.min.x + monomerBBox.max.x) / 2,
+      (monomerBBox.min.y + monomerBBox.max.y) / 2,
     );
     const monomer = new Monomer(monomerItem, monomerPosition);
 
-    this.monomerCreationState.assignedAttachmentPoints.forEach(
-      ([, leavingAtomId]) => this.cleanupAttachmentPoint(leavingAtomId),
-    );
-    this.monomerCreationState.potentialAttachmentPoints.forEach(
-      (leavingAtomIds) =>
-        Array.from(leavingAtomIds.values()).forEach((leavingAtomId) =>
-          this.cleanupAttachmentPoint(leavingAtomId),
-        ),
-    );
+    return {
+      monomer,
+      monomerTemplate,
+      monomerRef,
+    };
+  }
+
+  finishNewMonomersCreation(monomersData, rnaPresetName?: string) {
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    const isRnaType = Boolean(rnaPresetName);
 
     this.closeMonomerCreationWizard();
 
-    this.originalSelection.atoms?.forEach((atomId) => {
-      const atom = this.render.ctab.molecule.atoms.get(atomId);
-      if (atom) {
-        atom.fragment = -1;
+    const libraryItems = monomersData.map((monomerData) => {
+      const {
+        monomer,
+        monomerTemplate,
+        monomerRef,
+        monomerStructureInWizard,
+        atomIdMap,
+      } = monomerData;
+      const reversedAtomIdMap = new Map();
+
+      for (const [key, value] of atomIdMap.entries()) {
+        reversedAtomIdMap.set(value, key);
+      }
+      const sGroupAttachmentPoints =
+        MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+          monomer,
+          reversedAtomIdMap,
+        );
+
+      const action = fromSgroupAddition(
+        this.render.ctab,
+        SGroup.TYPES.SUP,
+        monomerStructureInWizard.atoms,
+        { expanded: true },
+        this.render.ctab.molecule.sgroups.newId(),
+        sGroupAttachmentPoints,
+        monomer.position,
+        true,
+        monomer.monomerItem.props.MonomerName,
+        null,
+        monomer,
+      );
+
+      this.render.ctab.molecule.clearFragments();
+      this.render.ctab.molecule.markFragments();
+
+      this.update(action);
+
+      const { root: templateRoot, ...templateData } = monomerTemplate;
+      const libraryItem = {
+        root: {
+          ...templateRoot,
+        },
+        [monomerRef]: {
+          ...templateData,
+        },
+      };
+
+      return libraryItem;
+    });
+
+    let ket = {
+      root: {
+        templates: libraryItems.map((libraryItem) => {
+          return libraryItem.root.templates[0];
+        }),
+      },
+    };
+
+    libraryItems.forEach((libraryItem) => {
+      ket = { ...libraryItem, ...ket };
+    });
+
+    if (isRnaType) {
+      const templateId = monomersData
+        .map((monomerData) => monomerData.monomerTemplate.id)
+        .join('_');
+      const templateRef = setMonomerGroupTemplatePrefix(templateId);
+      const libraryItem = {
+        root: {
+          templates: [getKetRef(templateRef)],
+        },
+        [templateRef]: {
+          type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+          class: KetMonomerClass.RNA,
+          name: rnaPresetName,
+          id: templateId,
+          templates: [
+            ...monomersData.map((monomerData) => {
+              return getKetRef(monomerData.monomerRef);
+            }),
+          ],
+        },
+      };
+
+      ket.root.templates.push(getKetRef(templateRef));
+      ket[templateRef] = libraryItem[templateRef];
+    }
+
+    ketcher.updateMonomersLibrary(JSON.stringify(ket), {
+      format: 'ket',
+      shouldPersist: true,
+      needDispatchLibraryUpdateEvent: true,
+    });
+
+    // store external bonds
+    const externalBonds: Bond[] = [];
+
+    this.originalStruct.bonds.forEach((bond) => {
+      if (
+        this.originalSelection.atoms?.includes(bond.begin) &&
+        !this.originalSelection.atoms?.includes(bond.end)
+      ) {
+        externalBonds.push(bond);
+      }
+      if (
+        this.originalSelection.atoms?.includes(bond.end) &&
+        !this.originalSelection.atoms?.includes(bond.begin)
+      ) {
+        externalBonds.push(bond);
       }
     });
 
-    const sGroupAttachmentPoints =
-      MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
-        monomer,
-        this.selectedToOriginalAtomsIdMap,
+    // rerendering the original structure to clean up any leftover atoms/bonds from the wizard
+    const newAction = new Action();
+    const structFromWizard = this.struct();
+
+    this.struct(this.originalStruct, false);
+
+    // this.struct(struct) uses setTimeout to defer some calculations,
+    // so we need to wait until they are done before applying further changes
+    setTimeout(() => {
+      newAction.mergeWith(
+        fromFragmentDeletion(this.render.ctab, this.originalSelection),
       );
 
-    sGroupAttachmentPoints.forEach((ap) => {
-      this.render.ctab.molecule.bonds.forEach((bond) => {
+      this.update(newAction);
+
+      const atomIdMap = new Map<number, number>();
+
+      structFromWizard.mergeInto(
+        this.struct(),
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        atomIdMap,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true,
+      );
+
+      const originalToSelectedAtomsIdMap = new Map<number, number>();
+
+      this.selectedToOriginalAtomsIdMap.forEach(
+        (originalAtomId, selectedAtomId) => {
+          originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+        },
+      );
+
+      let struct = this.struct();
+
+      externalBonds.forEach((bond) => {
+        const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
+        const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
+        const newBegin =
+          isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
+        const newEnd = isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
+
         if (
-          (bond.begin === ap.atomId || bond.end === ap.atomId) &&
-          (!this.originalSelection.atoms?.includes(bond.begin) ||
-            !this.originalSelection.atoms?.includes(bond.end))
+          this.originalSelection.atoms?.includes(bond.begin) &&
+          !this.originalSelection.atoms?.includes(bond.end) &&
+          isNumber(beginIdInWizard) &&
+          isNumber(newBegin)
         ) {
-          bond.beginSuperatomAttachmentPointNumber = ap.attachmentPointNumber;
+          const newBond = bond.clone();
+
+          newBond.begin = newBegin;
+
+          struct.bonds.add(newBond);
+        }
+        if (
+          this.originalSelection.atoms?.includes(bond.end) &&
+          !this.originalSelection.atoms?.includes(bond.begin) &&
+          isNumber(endIdInWizard) &&
+          isNumber(newEnd)
+        ) {
+          const newBond = bond.clone();
+
+          newBond.end = newEnd;
+
+          struct.bonds.add(newBond);
         }
       });
-    });
 
-    const action = fromSgroupAddition(
-      this.render.ctab,
-      SGroup.TYPES.SUP,
-      this.originalSelection.atoms,
-      { expanded: true },
-      this.render.ctab.molecule.sgroups.newId(),
-      sGroupAttachmentPoints,
-      monomer.position,
-      true,
-      monomer.monomerItem.props.MonomerName,
-      null,
-      monomer,
-    );
+      // fully recreate canvas
+      this.struct(
+        this.struct().clone(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        ),
+      );
 
-    this.render.ctab.molecule.clearFragments();
-    this.render.ctab.molecule.markFragments();
+      struct = this.struct();
 
-    this.update(action);
+      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
+      // between monomers created in wizard together
+      struct.bonds.forEach((bond) => {
+        const fromSgroup = struct.getGroupFromAtomId(bond.begin);
+        const toSgroup = struct.getGroupFromAtomId(bond.end);
 
-    const { root: templateRoot, ...templateData } = monomerTemplate;
-    const libraryItem = JSON.stringify({
-      root: {
-        ...templateRoot,
-      },
-      [monomerRef]: {
-        ...templateData,
-      },
-    });
+        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
+          fromSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+            if (attachmentPoint.atomId === bond.begin) {
+              bond.beginSuperatomAttachmentPointNumber =
+                attachmentPoint.attachmentPointNumber;
+            }
+          });
+        }
 
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
-    ketcher.updateMonomersLibrary(libraryItem, {
-      format: 'ket',
-      shouldPersist: true,
-    });
+        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
+          toSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+            if (attachmentPoint.atomId === bond.end) {
+              bond.endSuperatomAttachmentPointNumber =
+                attachmentPoint.attachmentPointNumber;
+            }
+          });
+        }
+      });
+    }, 0);
   }
 
   reassignAttachmentPointLeavingAtom(
@@ -1429,6 +1654,36 @@ class Editor implements KetcherEditor {
         newName,
       ),
     ]).perform(this.render.ctab);
+
+    this.update(action);
+  }
+
+  changeLeavingAtomLabel(
+    name: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) {
+    assert(this.monomerCreationState);
+
+    const atomPair =
+      this.monomerCreationState.assignedAttachmentPoints.get(name);
+    assert(atomPair);
+
+    const [, leavingAtomId] = atomPair;
+    const leavingAtom = this.struct().atoms.get(leavingAtomId);
+    assert(leavingAtom);
+
+    // Don't do anything if the label is the same
+    if (leavingAtom.label === newLeavingAtomLabel) {
+      return;
+    }
+
+    // Change the atom label using fromAtomsAttrs
+    const action = fromAtomsAttrs(
+      this.render.ctab,
+      leavingAtomId,
+      { label: newLeavingAtomLabel },
+      false,
+    );
 
     this.update(action);
   }
@@ -1538,6 +1793,318 @@ class Editor implements KetcherEditor {
     return potentialLeavingAtoms;
   }
 
+  private getRnaComponentForAtom(atomId: number): RnaPresetComponentKey | null {
+    const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
+
+    if (!rnaComponentAtoms) {
+      return null;
+    }
+
+    for (const [componentKey, componentData] of rnaComponentAtoms.entries()) {
+      if (componentData.atoms.includes(atomId)) {
+        return componentKey;
+      }
+    }
+
+    return null;
+  }
+
+  private canAssignRnaComponent(bond: Bond) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return false;
+    }
+
+    const beginAtomRnaComponent = this.getRnaComponentForAtom(bond.begin);
+    const endAtomRnaComponent = this.getRnaComponentForAtom(bond.end);
+
+    // Can assign if only one of the atoms belongs to an RNA component
+    if (
+      (!beginAtomRnaComponent && !endAtomRnaComponent) ||
+      (beginAtomRnaComponent &&
+        endAtomRnaComponent &&
+        beginAtomRnaComponent !== endAtomRnaComponent)
+    ) {
+      return false;
+    }
+
+    const rnaComponentToAssign = beginAtomRnaComponent || endAtomRnaComponent;
+    const struct = this.struct();
+    const atomIdToStartFrom = beginAtomRnaComponent ? bond.begin : bond.end;
+    const visitedAtomIds = new Set<number>();
+    const atomsToCheck = [atomIdToStartFrom];
+    let hasConnectionToAnotherComponent = false;
+    let hasConnectionToOriginalStructure = false;
+
+    visitedAtomIds.add(atomIdToStartFrom);
+
+    while (atomsToCheck.length > 0) {
+      const currentAtomId = atomsToCheck.pop();
+      const currentAtom = isNumber(currentAtomId)
+        ? struct.atoms.get(currentAtomId)
+        : undefined;
+
+      if (!currentAtom) {
+        continue;
+      }
+
+      currentAtom?.neighbors.forEach((neighbor) => {
+        const halfBond = struct.halfBonds.get(neighbor);
+
+        if (
+          hasConnectionToAnotherComponent ||
+          hasConnectionToOriginalStructure
+        ) {
+          return;
+        }
+
+        if (!halfBond) {
+          KetcherLogger.warn('Half-bond not found in structure');
+
+          return;
+        }
+
+        const neighborAtomId =
+          halfBond.begin === currentAtomId ? halfBond.end : halfBond.begin;
+
+        if (visitedAtomIds.has(neighborAtomId)) {
+          return;
+        }
+
+        visitedAtomIds.add(neighborAtomId);
+
+        const neighborAtomRnaComponent =
+          this.getRnaComponentForAtom(neighborAtomId);
+
+        if (neighborAtomRnaComponent === rnaComponentToAssign) {
+          return;
+        }
+
+        if (
+          neighborAtomRnaComponent &&
+          neighborAtomRnaComponent !== rnaComponentToAssign
+        ) {
+          hasConnectionToAnotherComponent = true;
+
+          return;
+        }
+
+        const originalAtomId =
+          this.selectedToOriginalAtomsIdMap.get(neighborAtomId);
+
+        if (
+          isNumber(originalAtomId) &&
+          this.originalStruct.atoms.has(originalAtomId)
+        ) {
+          hasConnectionToOriginalStructure = true;
+
+          return;
+        }
+
+        atomsToCheck.push(neighborAtomId);
+        visitedAtomIds.add(neighborAtomId);
+      });
+    }
+
+    if (hasConnectionToAnotherComponent || hasConnectionToOriginalStructure) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Auto-assigns atoms to RNA preset components when new bonds are added.
+   * If one atom belongs to a component and the other doesn't belong to any,
+   * the unassigned atom (and the bond) is added to the same component.
+   */
+  private autoAssignAtomToRnaComponent(bondId: number) {
+    const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
+
+    if (!rnaComponentAtoms) {
+      return;
+    }
+
+    const struct = this.struct();
+    const bond = struct.bonds.get(bondId);
+
+    if (!bond) {
+      KetcherLogger.warn('Bond not found in structure');
+
+      return;
+    }
+
+    const beginAtomComponent = this.getRnaComponentForAtom(bond.begin);
+    const endAtomComponent = this.getRnaComponentForAtom(bond.end);
+    const componentToMark = beginAtomComponent || endAtomComponent;
+
+    if (!componentToMark) {
+      return;
+    }
+
+    const atomsIdsToMark: number[] = [];
+    const bondIdsToMark: number[] = [];
+    const bondIdsToCheck = [bondId];
+    const visitedBonds = new Set<number>();
+
+    while (bondIdsToCheck.length > 0) {
+      const currentBondId = bondIdsToCheck.pop();
+      const currentBond = isNumber(currentBondId)
+        ? struct.bonds.get(currentBondId)
+        : undefined;
+
+      if (
+        !isNumber(currentBondId) ||
+        !currentBond ||
+        visitedBonds.has(currentBondId)
+      ) {
+        continue;
+      }
+
+      bondIdsToMark.push(currentBondId);
+      visitedBonds.add(currentBondId);
+
+      const beginAtom = struct.atoms.get(currentBond.begin);
+      const endAtom = struct.atoms.get(currentBond.end);
+      const beginAtomRnaComponent = this.getRnaComponentForAtom(
+        currentBond.begin,
+      );
+      const endAtomRnaComponent = this.getRnaComponentForAtom(currentBond.end);
+      const atomsToContinue: Atom[] = [];
+
+      if (beginAtom && beginAtomRnaComponent !== componentToMark) {
+        atomsIdsToMark.push(currentBond.begin);
+        atomsToContinue.push(beginAtom);
+      }
+
+      if (endAtom && endAtomRnaComponent !== componentToMark) {
+        atomsIdsToMark.push(currentBond.end);
+        atomsToContinue.push(endAtom);
+      }
+
+      atomsToContinue.forEach((atom) => {
+        atom.neighbors.forEach((halfBondId) => {
+          const halfBond = struct.halfBonds.get(halfBondId);
+
+          if (!halfBond) {
+            KetcherLogger.warn('Half-bond not found in structure');
+
+            return;
+          }
+
+          const nextBondId = halfBond.bid;
+          const nextBond = struct.bonds.get(nextBondId);
+
+          if (!nextBond || bondIdsToCheck.includes(nextBondId)) {
+            KetcherLogger.warn('Bond not found in structure');
+
+            return;
+          }
+
+          bondIdsToCheck.push(nextBondId);
+        });
+      });
+    }
+
+    this.addAtomsAndBondsToRnaComponent(
+      componentToMark,
+      atomsIdsToMark,
+      bondIdsToMark,
+    );
+  }
+
+  private updateRnaComponentStructureState(
+    componentKey: RnaPresetComponentKey,
+    updatedAtoms: number[],
+    updatedBonds: number[],
+  ) {
+    // Update the state
+    this.monomerCreationState?.rnaComponentAtoms?.set(componentKey, {
+      atoms: updatedAtoms,
+      bonds: updatedBonds,
+    });
+
+    // Fire an event so the wizard can update its state
+    const eventData: ComponentStructureUpdateData = {
+      componentKey,
+      atomIds: updatedAtoms,
+      bondIds: updatedBonds,
+    };
+    window.dispatchEvent(
+      new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
+        detail: eventData,
+      }),
+    );
+  }
+
+  /**
+   * Adds an atom and bond to an RNA preset component and fires an event
+   * so the wizard can update its state.
+   */
+  private addAtomsAndBondsToRnaComponent(
+    componentKey: RnaPresetComponentKey,
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    const componentData =
+      this.monomerCreationState.rnaComponentAtoms.get(componentKey);
+    if (!componentData) {
+      return;
+    }
+
+    // Add the new atom and bond if not already present
+    const updatedAtoms = [...componentData.atoms];
+    const updatedBonds = [...componentData.bonds];
+
+    atomIds.forEach((atomId) => {
+      if (!updatedAtoms.includes(atomId)) {
+        updatedAtoms.push(atomId);
+      }
+    });
+
+    bondIds.forEach((bondId) => {
+      if (!updatedBonds.includes(bondId)) {
+        updatedBonds.push(bondId);
+      }
+    });
+
+    this.updateRnaComponentStructureState(
+      componentKey,
+      updatedAtoms,
+      updatedBonds,
+    );
+  }
+
+  private removeAtomsAndBondsFromRnaComponents(
+    atomIds: number[],
+    bondIds: number[],
+  ) {
+    if (!this.monomerCreationState?.rnaComponentAtoms) {
+      return;
+    }
+
+    for (const [
+      componentKey,
+      componentData,
+    ] of this.monomerCreationState.rnaComponentAtoms.entries()) {
+      const updatedAtoms = componentData.atoms.filter(
+        (atomId) => !atomIds.includes(atomId),
+      );
+      const updatedBonds = componentData.bonds.filter(
+        (bondId) => !bondIds.includes(bondId),
+      );
+
+      this.updateRnaComponentStructureState(
+        componentKey,
+        updatedAtoms,
+        updatedBonds,
+      );
+    }
+  }
+
   private subscribeToChangeEventInMonomerCreationWizard() {
     if (this.changeEventSubscriber) {
       return;
@@ -1572,9 +2139,11 @@ class Editor implements KetcherEditor {
 
     data.forEach((entry) => {
       switch (entry.operation) {
+        case OperationType.ATOM_ADD:
         case OperationType.ATOM_DELETE:
         case OperationType.ATOM_ATTR:
         case OperationType.BOND_ADD:
+        case OperationType.BOND_DELETE:
         case OperationType.BOND_ATTR: {
           if (entry.id !== undefined) {
             const existingChanges = changesMap.get(entry.operation);
@@ -1679,6 +2248,8 @@ class Editor implements KetcherEditor {
                 }
               },
             );
+
+            this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
           }
           break;
 
@@ -1826,7 +2397,19 @@ class Editor implements KetcherEditor {
                 }
               }
             }
+
+            // Handle RNA preset component auto-assignment
+            // When a new bond is added, auto-assign atoms to their connected component
+            if (this.canAssignRnaComponent(bond)) {
+              this.autoAssignAtomToRnaComponent(id);
+            }
           }
+          break;
+        }
+
+        case OperationType.BOND_DELETE: {
+          this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
+
           break;
         }
 
@@ -1836,6 +2419,16 @@ class Editor implements KetcherEditor {
     }
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+  }
+
+  public setRnaMonomerCreationMode(isActive: boolean) {
+    if (!this.monomerCreationState) {
+      KetcherLogger.warn('Monomer creation state is not initialized');
+
+      return;
+    }
+
+    this.monomerCreationState.isRnaPresetMode = isActive;
   }
 
   selection(ci?: any) {
@@ -2083,8 +2676,24 @@ class Editor implements KetcherEditor {
   }
 
   unsubscribe(eventName: any, subscriber: any) {
-    // Only for event type - subscription
-    this.event[eventName].remove(subscriber.handler);
+    switch (eventName) {
+      case 'change': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .changeEvent.remove(subscriber.handler);
+        break;
+      }
+
+      case 'libraryUpdate': {
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .libraryUpdateEvent.remove(subscriber.handler);
+        break;
+      }
+
+      default:
+        this.event[eventName].remove(subscriber.handler);
+    }
   }
 
   findItem(event: any, maps: Array<string> | null, skip: any = null) {
@@ -2140,19 +2749,24 @@ class Editor implements KetcherEditor {
     return res;
   }
 
-  structSelected(existingSelection?: Selection): Struct {
+  structSelected(
+    existingSelection?: Selection,
+    atomIdMap?: Map<number, number>,
+    bondIdMap?: Map<number, number>,
+  ): Struct {
     const struct = this.render.ctab.molecule;
     const selection = existingSelection ?? this.explicitSelected();
     const dst = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),
       true,
-      null,
+      atomIdMap,
       new Pile(selection.simpleObjects),
       new Pile(selection.texts),
       null,
       new Pile(selection.images),
       new Pile(selection[MULTITAIL_ARROW_KEY]),
+      bondIdMap,
     );
 
     // Copy by its own as Struct.clone doesn't support

@@ -127,7 +127,7 @@ export class MacromoleculesConverter {
 
   public static convertMonomerAttachmentPointsToSGroupAttachmentPoints(
     monomer: BaseMonomer,
-    atomIdsMap: Map<number, number>,
+    atomIdsMap?: Map<number, number>,
   ) {
     return monomer.listOfAttachmentPoints.map(
       (attachmentPointName, attachmentPointIndex) => {
@@ -138,8 +138,12 @@ export class MacromoleculesConverter {
         ] as IKetAttachmentPoint;
 
         return new SGroupAttachmentPoint(
-          atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
-          atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
+          atomIdsMap
+            ? (atomIdsMap.get(attachmentPoint.attachmentAtom) as number)
+            : attachmentPoint.attachmentAtom,
+          atomIdsMap
+            ? atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0])
+            : attachmentPoint.leavingGroup?.atoms[0],
           undefined,
           attachmentPointNumber,
         );
@@ -622,11 +626,11 @@ export class MacromoleculesConverter {
           atomIdInMicromolecules,
           globalAtomIdToMonomerMap.get(moleculeAtomId),
         );
+      const attachmentPointNumber =
+        bond.beginSuperatomAttachmentPointNumber ??
+        bond.endSuperatomAttachmentPointNumber;
 
-      if (
-        !atomToConnect ||
-        !isNumber(bond.beginSuperatomAttachmentPointNumber)
-      ) {
+      if (!atomToConnect || !isNumber(attachmentPointNumber)) {
         return;
       }
 
@@ -634,7 +638,7 @@ export class MacromoleculesConverter {
         drawingEntitiesManager.addMonomerToAtomBond(
           monomer,
           atomToConnect,
-          getAttachmentPointLabel(bond.beginSuperatomAttachmentPointNumber),
+          getAttachmentPointLabel(attachmentPointNumber),
         ),
       );
     });

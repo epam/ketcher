@@ -2,6 +2,7 @@ import styles from './Notification.module.less';
 import { Icon, IconName } from 'components';
 import clsx from 'clsx';
 import {
+  RnaPresetWizardAction,
   WizardAction,
   WizardNotificationId,
   WizardNotificationType,
@@ -12,7 +13,7 @@ type Props = {
   id: WizardNotificationId;
   type: WizardNotificationType;
   message: string;
-  wizardStateDispatch: Dispatch<WizardAction>;
+  wizardStateDispatch: Dispatch<WizardAction> | Dispatch<RnaPresetWizardAction>;
 };
 
 const iconMap: Record<WizardNotificationType, IconName> = {

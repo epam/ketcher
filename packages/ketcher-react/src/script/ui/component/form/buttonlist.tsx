@@ -55,7 +55,7 @@ function ButtonList({
   testId,
 }: ButtonListProps) {
   let className: string;
-  const selected = classes.selected || 'selected';
+  const selected = classes.selected ?? 'selected';
   return (
     <ul>
       {schema.items.enum.map((item, i) => {

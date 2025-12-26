@@ -18,7 +18,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
@@ -50,7 +50,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -441,7 +440,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
      */
     const createMonomerDialog = CreateMonomerDialog(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCC');
-    await prepareMoleculeForMonomerCreation(page, ['0'], ['0']);
+    await deselectAtomAndBonds(page, ['0'], ['0']);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
@@ -578,9 +577,13 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(1),
     );
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 4 }).click({
+      force: true,
+    });
     await EditAbbreviationDialog(page).removeAbbreviation();
-    await clickOnAtom(page, 'O', 1);
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 52 }).click({
+      force: true,
+    });
     await EditAbbreviationDialog(page).removeAbbreviation();
     await takeEditorScreenshot(page);
   });

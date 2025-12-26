@@ -11,7 +11,7 @@ import { takeEditorScreenshot } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   createMonomer,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   AminoAcidNaturalAnalogue,
@@ -64,7 +64,7 @@ const monomersToCreate35 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide35',
     name: 'Nucleotide Test monomer for test 35',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -96,7 +96,7 @@ for (const monomerToCreate of monomersToCreate35) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,
@@ -149,7 +149,7 @@ const monomersToCreate45 = [
   },
   {
     description: '5. Nucleotide',
-    type: MonomerType.Nucleotide,
+    type: MonomerType.NucleotideMonomer,
     symbol: 'Nucleotide45',
     name: 'Nucleotide Test monomer for test 45',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
@@ -182,7 +182,7 @@ for (const monomerToCreate of monomersToCreate45) {
      * Version 3.7
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await prepareMoleculeForMonomerCreation(page, ['0']);
+    await deselectAtomAndBonds(page, ['0']);
 
     await createMonomer(page, {
       ...monomerToCreate,

@@ -16,7 +16,6 @@ import {
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
   takePageScreenshot,
-  clickOnAtom,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -80,6 +79,8 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -645,8 +646,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'O', 0, 'right');
-    await page.getByText('Collapse monomer').click();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'O', atomId: 4 }),
+    ).click(MonomerOnMicroOption.CollapseMonomer);
     await takeEditorScreenshot(page);
   });
 

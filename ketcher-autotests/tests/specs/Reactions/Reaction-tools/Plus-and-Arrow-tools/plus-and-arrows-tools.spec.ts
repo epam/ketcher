@@ -7,7 +7,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  getControlModifier,
   Point,
   waitForPageInit,
   waitForRender,
@@ -89,9 +88,6 @@ const formatsForSave = [
 const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
-  const CANVAS_CLICK_X = 300;
-  const CANVAS_CLICK_Y = 300;
-
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -147,11 +143,11 @@ test.describe('Plus and Arrows tools ', () => {
     await dragMouseTo(x + 100, y + 100, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -775,8 +771,7 @@ test.describe('Plus and Arrows tools ', () => {
        * Description: Arrow Snapping to Horizontal Position with Ctrl Key Pressed
        */
       const x = point.x + 100;
-      const modifier = getControlModifier();
-      await page.keyboard.down(modifier);
+      await page.keyboard.down('ControlOrMeta');
       await page.mouse.down();
 
       await page.mouse.move(x, point.y - 50);
@@ -794,8 +789,7 @@ test.describe('Plus and Arrows tools ', () => {
        * Description: Arrow Snapping to Vertical Position with Ctrl Key Pressed
        */
       const y = point.y - 100;
-      const modifier = getControlModifier();
-      await page.keyboard.down(modifier);
+      await page.keyboard.down('ControlOrMeta');
       await page.mouse.down();
 
       await page.mouse.move(point.x + 50, y);
@@ -843,7 +837,7 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();
@@ -861,7 +855,7 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await CommonTopLeftToolbar(page).undo();

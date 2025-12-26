@@ -45,6 +45,10 @@ class Form extends Component {
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
+
+    // Cache the context value to avoid creating new objects on every render
+    this._cachedSchema = schema;
+    this._contextValue = { schema, stateStore: this };
   }
 
   componentDidUpdate(prevProps) {
@@ -95,9 +99,15 @@ class Form extends Component {
   render() {
     const { schema, children } = this.props;
 
+    // Update the cached context value only if schema has changed
+    if (this._cachedSchema !== schema) {
+      this._cachedSchema = schema;
+      this._contextValue = { schema, stateStore: this };
+    }
+
     return (
       <form>
-        <FormContext.Provider value={{ schema, stateStore: this }}>
+        <FormContext.Provider value={this._contextValue}>
           {children}
         </FormContext.Provider>
       </form>

@@ -90,7 +90,7 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
 ];
 
 export const getValidationRuleForMonomerType = (
-  monomerType: KetMonomerClass,
+  monomerType: KetMonomerClass | 'rnaPreset',
 ): MonomerValidationRule | undefined => {
   return MONOMER_VALIDATION_RULES.find(
     (rule) => rule.monomerType === monomerType,

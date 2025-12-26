@@ -26,8 +26,10 @@ export interface Tool extends ToolEventHandler {
   isNotActiveTool?: boolean;
 }
 
-export type ToolConstructorInterface = {
-  new (editor: Editor, ...args: any[]): Tool;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolConstructorInterface = new (
+  editor: Editor,
+  ...args: any[]
+) => Tool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

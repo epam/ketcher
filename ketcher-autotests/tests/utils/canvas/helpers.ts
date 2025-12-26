@@ -6,10 +6,8 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { dragMouseTo, moveOnAtom } from '@utils/clicks';
-import { getControlModifier } from '@utils/keyboard';
+import { dragMouseTo } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
@@ -49,32 +47,6 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
   }
 
   return Number.MIN_SAFE_INTEGER;
-}
-
-export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
-  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
-    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
-    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
-    return {
-      carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
-    };
-  });
-  let min = {
-    x: Infinity,
-    y: Infinity,
-  };
-  for (const carbonAtom of carbonAtoms) {
-    if (carbonAtom.pp.y < min.y) {
-      min = carbonAtom.pp;
-    }
-  }
-  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
-  return {
-    x: min.x * scale + offset.x + leftBarWidth,
-    y: min.y * scale + offset.y + topBarHeight,
-  };
 }
 
 export async function takeElementScreenshot(
@@ -180,8 +152,7 @@ export async function takeMonomerLibraryScreenshot(
 ) {
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyB`);
+    await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
   await takeElementScreenshot(
     page,
@@ -202,8 +173,7 @@ export async function takeEditorScreenshot(
 ) {
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyB`);
+    await page.keyboard.press(`ControlOrMeta+KeyB`);
   }
   await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }
@@ -295,14 +265,13 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. Sometimes - select object on the screen took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyC`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyC`, options),
   );
 }
 
@@ -314,14 +283,13 @@ export async function cutToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. Sometimes - select object on the screen took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyX`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyX`, options),
   );
 }
 
@@ -333,14 +301,13 @@ export async function pasteFromClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. For ex. - select object on the screen can took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyV`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
   );
 }
 
@@ -352,10 +319,8 @@ export async function undoByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyZ`, options);
+    await page.keyboard.press(`ControlOrMeta+KeyZ`, options);
   });
 }
 
@@ -367,23 +332,9 @@ export async function redoByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
+    await page.keyboard.press(`ControlOrMeta+Shift+KeyZ`, options);
   });
-}
-
-export async function copyStructureByCtrlMove(
-  page: Page,
-  atom: string,
-  atomIndex: number,
-  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
-) {
-  await moveOnAtom(page, atom, atomIndex);
-  await page.keyboard.down('Control');
-  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
-  await page.keyboard.up('Control');
 }
 
 export async function selectCanvasArea(

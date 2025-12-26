@@ -1,8 +1,12 @@
 import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
+import { Editor } from '../../../../editor';
+import { Selection } from '../../../../editor/Editor';
+import { AttachmentPointName } from 'domain/types';
+import { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
-  value: KetMonomerClass;
+  value: KetMonomerClass | 'rnaPreset';
   label: string;
   iconName: IconName;
 };
@@ -14,10 +18,21 @@ export type WizardFormFieldId =
   | 'naturalAnalogue'
   | 'aliasHELM';
 
+export type RnaPresetWizardStateFieldId =
+  | 'base'
+  | 'sugar'
+  | 'phosphate'
+  | 'preset';
+
+export type RnaPresetWizardComponentStateFieldId = Exclude<
+  RnaPresetWizardStateFieldId,
+  'preset'
+>;
+
 export type StringWizardFormFieldId = Exclude<WizardFormFieldId, 'type'>;
 
 export type WizardValues = {
-  type: KetMonomerClass | undefined;
+  type: KetMonomerClass | 'rnaPreset' | undefined;
 } & {
   [key in StringWizardFormFieldId]: string;
 };
@@ -39,7 +54,10 @@ export type WizardNotificationId =
   | 'notMinimalViableStructure'
   | 'impureStructure'
   | 'notUniqueHELMAlias'
-  | 'invalidHELMAlias';
+  | 'invalidHELMAlias'
+  | 'invalidRnaPresetStructure'
+  | 'notUniquePresetCode'
+  | 'invalidPresetCode';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -63,6 +81,27 @@ export type WizardState = {
   values: WizardValues;
   errors: WizardErrors;
   notifications: WizardNotifications;
+  structure?: Selection;
+};
+
+export type RnaPresetWizardStatePresetFieldValue = {
+  name: string;
+  errors: {
+    name?: boolean;
+  };
+  notifications: WizardNotifications;
+  manuallyModifiedSymbols: {
+    base: boolean;
+    sugar: boolean;
+    phosphate: boolean;
+  };
+};
+
+export type RnaPresetWizardState = {
+  base: WizardState;
+  sugar: WizardState;
+  phosphate: WizardState;
+  preset: RnaPresetWizardStatePresetFieldValue;
 };
 
 export type WizardAction =
@@ -94,3 +133,50 @@ export type WizardAction =
   | {
       type: 'ResetErrors';
     };
+
+export type RnaPresetWizardAction =
+  | (WizardAction & {
+      rnaComponentKey: RnaPresetWizardStateFieldId;
+      editor: Editor;
+    })
+  | {
+      type: 'SetRnaPresetComponentStructure';
+      rnaComponentKey: RnaPresetWizardStateFieldId;
+      editor: Editor;
+    }
+  | {
+      type: 'UpdateRnaPresetComponentStructure';
+      rnaComponentKey: RnaPresetWizardComponentStateFieldId;
+      atomIds: number[];
+      bondIds: number[];
+    }
+  | {
+      type: 'ResetErrors';
+    }
+  | {
+      type: 'ResetWizard';
+    }
+  | {
+      type: 'SetErrors';
+      errors: {
+        name?: boolean;
+      };
+      rnaComponentKey: RnaPresetWizardStateFieldId;
+    }
+  | {
+      type: 'RemoveNotification';
+      id: WizardNotificationId;
+    };
+
+export type AssignedAttachmentPointsByMonomerType = Map<
+  WizardState,
+  Map<AttachmentPointName, [number, number]>
+>;
+
+export function isDispatchActionForRnaPreset(
+  action:
+    | ActionDispatch<[WizardAction]>
+    | ActionDispatch<[RnaPresetWizardAction]>,
+): action is ActionDispatch<[RnaPresetWizardAction]> {
+  return 'rnaComponentKey' in action;
+}

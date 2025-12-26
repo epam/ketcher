@@ -135,8 +135,8 @@ export abstract class DrawingEntity {
     let flag1 = false;
     let flag0 = false;
 
-    for (let i = 0; i < r.length; ++i) {
-      const v1 = Vec2.diff(r[i], p);
+    for (const point of r) {
+      const v1 = Vec2.diff(point, p);
       const w1 = Vec2.diff(v1, v0);
       const n1 = Vec2.dot(n, v1);
       const d1 = Vec2.dot(d, v1);

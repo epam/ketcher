@@ -66,6 +66,7 @@ export type MonomerItemType = MonomerItemBase & {
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
     modificationTypes?: string[];
+    hidden?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;

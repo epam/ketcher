@@ -1,7 +1,5 @@
 import { Page, Locator } from '@playwright/test';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { clickOnAtom } from '@utils/clicks';
-import { AtomLabelType } from '@utils/clicks/types';
 import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
 
@@ -52,16 +50,12 @@ export const AttachmentPointsDialog = (page: Page) => {
 
 export async function setAttachmentPoints(
   page: Page,
-  atom: { label: AtomLabelType; index: number } | { x: number; y: number },
+  atom: Locator,
   { primary = false, secondary = false },
 ) {
   await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
 
-  if ('x' in atom && 'y' in atom) {
-    await page.mouse.click(atom.x, atom.y, { button: 'left' });
-  } else {
-    await clickOnAtom(page, atom.label, atom.index);
-  }
+  await atom.click({ force: true });
 
   await AttachmentPointsDialog(page).primaryAttachmentPointCheckbox.setChecked(
     primary,

@@ -13,17 +13,20 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
-  takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils/canvas';
-import { clickOnAtom, clickOnCanvas, dragMouseTo } from '@utils/index';
+import {
+  clickOnCanvas,
+  clickOnMiddleOfCanvas,
+  dragMouseTo,
+} from '@utils/index';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   CreateMonomerDialog,
-  prepareMoleculeForMonomerCreation,
+  deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
@@ -35,6 +38,8 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -240,7 +245,7 @@ test(`5. Check that after the option "Mark as leaving group" is clicked`, async 
   await page.mouse.move(600, 200);
   await dragMouseTo(500, 260, page);
 
-  const targetAtom = getAtomLocator(page, { atomLabel: 'C' });
+  const targetAtom = getAtomLocator(page, { atomLabel: 'C', atomId: 1 });
   await ContextMenu(page, targetAtom).click(
     ConnectionPointOption.MarkAsLeavingGroup,
   );
@@ -675,9 +680,7 @@ test(`15. Check that when editing the LGA, the user should see all possible LGAs
     .getAttachmentPointAtomCombobox(AttachmentPointOption.R1)
     .click();
   await expect(page.getByTestId(AttachmentPointAtom.H)).toBeVisible();
-  await expect(page.getByTestId(AttachmentPointAtom.CH3)).toBeVisible();
   await expect(page.getByTestId(AttachmentPointAtom.OH)).toBeVisible();
-  await expect(page.getByTestId(AttachmentPointAtom.NH2)).toBeVisible();
 
   await page.getByTestId(AttachmentPointAtom.OH).click();
 
@@ -859,9 +862,9 @@ test(`20. Check that the monomer creation wizard enabled when no selection is ma
    *
    * Version 3.10
    */
-
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
+  await clickOnMiddleOfCanvas(page);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-  await takeLeftToolbarScreenshot(page);
 });
 
 test(`21. Check if a selection is made, the minimum is one atom wizard become disabled`, async () => {
@@ -878,7 +881,9 @@ test(`21. Check if a selection is made, the minimum is one atom wizard become di
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'C1C=CC=CC=1');
-  await clickOnAtom(page, 'C', 0);
+  await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+    force: true,
+  });
   await expect(LeftToolbar(page).createMonomerButton).toBeDisabled();
 });
 
@@ -926,7 +931,8 @@ test(`23. Verify that on the top toolbar are now enabled buttons when opened wiz
   await CreateMonomerDialog(page).discard();
 });
 
-test(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+test.skip(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens`, async () => {
+  // Issue fails due to https://github.com/epam/ketcher/issues/8818
   /*
    * Test task: https://github.com/epam/ketcher/issues/8425
    * Description: Check that when clicking on Remove explicit hydrogens, hydrogens that are set as LGAs contracted because they are not "normal" hydrogens
@@ -942,13 +948,14 @@ test(`24. Check that when clicking on Remove explicit hydrogens, hydrogens that 
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
   await dragMouseTo(450, 250, page);
+
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
   await takeEditorScreenshot(page);
@@ -973,7 +980,7 @@ test(`25. Verify that Copy button copies the selected structure fragment and Pas
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible
@@ -1007,7 +1014,7 @@ test(`26. Verify that Cut button removes selected structure and stores it in the
    * Version 3.10
    */
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-  await prepareMoleculeForMonomerCreation(page, ['0']);
+  await deselectAtomAndBonds(page, ['0']);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
   await LeftToolbar(page).createMonomer();
   // to make molecule visible

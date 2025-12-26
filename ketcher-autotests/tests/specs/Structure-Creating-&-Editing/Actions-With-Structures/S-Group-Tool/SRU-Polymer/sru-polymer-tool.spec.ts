@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  BondType,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
@@ -16,7 +14,6 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   FileType,
   verifyFileExport,
@@ -39,9 +36,7 @@ import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 500;
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('SRU Polymer tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,7 +50,9 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.SRUPolymer,
       PolymerLabel: 'A',
@@ -114,7 +111,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    const point = await getBondLocator(page, { bondId: 17 });
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).selectRepeatPattern(
       RepeatPatternOption.HeadToHead,
@@ -131,7 +128,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    const point = await getBondLocator(page, { bondId: 17 });
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).selectRepeatPattern(
       RepeatPatternOption.EitherUnknown,
@@ -148,7 +145,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    const point = await getBondLocator(page, { bondId: 17 });
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
     await SGroupPropertiesDialog(page).selectRepeatPattern(
@@ -165,11 +162,11 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 3);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -183,7 +180,9 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -221,7 +220,9 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
@@ -242,7 +243,9 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R12);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -262,7 +265,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 500, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);

@@ -43,6 +43,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   incorrectAttachmentPointsOrder:
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
   creationSuccessful: 'The monomer was successfully added to the library.',
+  creationRNASuccessful: 'The preset was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
   notUniqueModificationTypes:
     'Only one amino acid within a natural analogue can have the same modification type.',
@@ -72,6 +73,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   noAttachmentPoints: 'error',
   incorrectAttachmentPointsOrder: 'error',
   creationSuccessful: 'info',
+  creationRNASuccessful: 'info',
   incontinuousStructure: 'error',
   notUniqueModificationTypes: 'error',
   modificationTypeExists: 'error',

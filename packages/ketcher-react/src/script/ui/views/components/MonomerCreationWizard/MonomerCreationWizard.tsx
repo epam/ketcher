@@ -60,6 +60,7 @@ import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
+import { showSnackbarNotification } from '../../../state/notifications';
 
 const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
@@ -1529,6 +1530,13 @@ const MonomerCreationWizard = () => {
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();
+      dispatch(
+        showSnackbarNotification(
+          isRnaPresetType
+            ? NotificationMessages.creationRNASuccessful
+            : NotificationMessages.creationSuccessful,
+        ),
+      );
     }
   };
 

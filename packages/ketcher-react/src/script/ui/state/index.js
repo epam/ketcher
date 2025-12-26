@@ -31,6 +31,7 @@ import requestReducer from './request';
 import { thunk } from 'redux-thunk';
 import toolbarReducer from './toolbar';
 import floatingToolsReducer from './floatingTools';
+import notificationsReducer, { initNotificationsState } from './notifications';
 
 export { onAction, load };
 
@@ -50,6 +51,7 @@ const shared = combineReducers({
   saltsAndSolvents: saltsAndSolventsReducer,
   requestsStatuses: requestReducer,
   floatingTools: floatingToolsReducer,
+  notifications: notificationsReducer,
 });
 
 function getRootReducer(setEditor) {
@@ -115,6 +117,7 @@ export default function (options, server, setEditor) {
     }),
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState,
+    notifications: initNotificationsState,
   };
 
   const middleware = [thunk];

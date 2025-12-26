@@ -1,5 +1,3 @@
-import { RootState } from 'ketcher-macromolecules/dist/state';
-
 export const initNotificationsState = {
   snackbarNotificationText: '',
 };
@@ -17,7 +15,7 @@ export function hideSnackbarNotification() {
   };
 }
 
-export function selectSnackbarNotificationText(state: RootState) {
+export function selectSnackbarNotificationText(state) {
   return state.notifications.snackbarNotificationText;
 }
 

@@ -769,4 +769,38 @@ describe('parseRg2000', () => {
     expect(spy.mock.calls[0][0].bonds.size).toBe(14);
     expect(Object.keys(spy.mock.calls[0][1])).toHaveLength(3);
   });
+
+  it('should preserve rgroup logic when merging fragments', () => {
+    const lines = [
+      '$MDL  REV  1',
+      '$MOL',
+      '$HDR',
+      '',
+      '',
+      '',
+      '$END HDR',
+      '$CTAB',
+      '  0  0  0     0  0            999 V2000',
+      'M  END',
+      '$END CTAB',
+      '$RGP',
+      '  1',
+      '$CTAB',
+      '  1  0  0     0  0            999 V2000',
+      '    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+      'M  LOG  1 001 002 001   >1',
+      'M  END',
+      '$END CTAB',
+      '$END RGP',
+      '$END MOL',
+    ];
+
+    const struct = molParsers.parseRg2000(lines);
+    const rgroup = struct.rgroups.get(1);
+
+    expect(rgroup).toBeDefined();
+    expect(rgroup?.ifthen).toBe(2);
+    expect(rgroup?.resth).toBe(true);
+    expect(rgroup?.range).toBe('>1');
+  });
 });

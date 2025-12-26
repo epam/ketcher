@@ -388,6 +388,14 @@ export class CoreEditor {
         return;
       }
 
+      // Validate base IDT alias is present when idtAliases is defined
+      if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
+        );
+        return;
+      }
+
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
           return (

@@ -178,6 +178,9 @@ class RotateTool implements Tool {
         rxnArrows?.length ||
         rxnPluses?.length)
     ) {
+      // Note: enhancedFlags are NOT included in center calculation
+      // They are UI labels that should follow the structure, not influence the flip center
+      // Enhanced flags will be transformed via fromEnhancedFlagFlip using this center
       center = this.reStruct.getSelectionBoxCenter({
         atoms: visibleAtoms,
         texts,

@@ -174,6 +174,7 @@ export async function takeEditorScreenshot(
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
+    options.mask = [...(options.mask || []), page.getByTestId('vertical-bar')];
   }
   await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }

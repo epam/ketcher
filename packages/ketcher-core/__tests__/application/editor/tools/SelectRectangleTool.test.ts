@@ -200,13 +200,18 @@ describe('Select Rectangle Tool', () => {
       editor.drawingEntitiesManager.rxnArrows.values(),
     )[0];
 
-    rxnArrow.turnOnSelection();
-    (selectRectangleTool as any).mode = 'moving';
-    (selectRectangleTool as any).mousePositionBeforeMove = new Vec2(0, 0);
-    (selectRectangleTool as any).mousePositionAfterMove = new Vec2(10, 0);
+    const mousedownEvent = {
+      target: {
+        __data__: rxnArrow.renderer,
+      },
+    } as unknown as MouseEvent;
+    selectRectangleTool.mousedown(mousedownEvent);
+
+    editor.lastCursorPositionOfCanvas = new Vec2(10, 0);
+    selectRectangleTool.mousemove(new MouseEvent('mousemove'));
 
     const historyLengthBefore = history.historyStack.length;
-    selectRectangleTool.mouseup({ target: {} } as MouseEvent);
+    selectRectangleTool.mouseup(new MouseEvent('mouseup'));
 
     expect(history.historyStack.length).toBe(historyLengthBefore + 1);
     history.destroy();

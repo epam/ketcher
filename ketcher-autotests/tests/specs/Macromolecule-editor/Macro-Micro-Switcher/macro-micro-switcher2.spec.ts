@@ -26,6 +26,7 @@ import {
   dragMouseTo,
   Arrows,
   takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -1311,59 +1312,48 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 53: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode', async () => {
+  test('Case 53: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /* 
-    * Version 3.6
-      Test case: https://github.com/epam/ketcher/issues/7125
+    *
+      Bug: undo/redo operations doesn't work for arrows and pluses after changing their positions in Macro mode
+      Test case: https://github.com/epam/ketcher/issues/8954
       Description: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode
       Case: 
-      1. Open file with reaction arrows in micromolecules mode
-      2. Switch to macromolecules mode
-      3. Move arrows and pluses on the canvas
+      1. Open molecules canvas
+      2. From left toolbar chose arrow tool and add arrow to the canvas
+      3. Switch to macromolecules mode
+      3. Move arrow  on the canvas
       4. Verify that arrows and pluses are moved correctly
       5. Undo and redo actions
-      Expected: Undo and redo actions correctly preserve changes to arrows and pluses positions.
+      Expected: Undo and redo actions correctly preserve changes to arrow positions.
     */
-    await pageReloadMicro(page);
-    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
-    await takeEditorScreenshot(page);
+
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    const shiftElement = 250;
+    const newX = x + shiftElement;
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
       force: true,
     });
-    await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
-      force: true,
-    });
-    await dragMouseTo(200, 300, page);
-    await getArrowLocator(page, {
-      arrowType: Arrows.BothEndsFilledTriangle,
-    }).hover({ force: true });
-    await dragMouseTo(200, 350, page);
-    await getArrowLocator(page, {
-      arrowType: Arrows.UnbalancedOpenHalfAngle,
-    }).hover({ force: true });
-    await dragMouseTo(200, 400, page);
-    await getArrowLocator(page, {
-      arrowType: Arrows.EllipticalArcFilledBow,
-    }).hover({ force: true });
-    await dragMouseTo(200, 450, page);
-    await getPlusLocator(page).hover({ force: true });
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(newX, y, page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    for (let i = 0; i < 6; i++) {
-      await CommonTopLeftToolbar(page).undo();
-    }
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    for (let i = 0; i < 6; i++) {
-      await CommonTopLeftToolbar(page).redo();
-    }
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

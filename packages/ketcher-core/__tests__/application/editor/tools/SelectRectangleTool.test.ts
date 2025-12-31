@@ -1,4 +1,4 @@
-import { CoreEditor, FlexMode } from 'application/editor';
+import { CoreEditor, EditorHistory, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import {
   getFinishedPolymerBond,
@@ -8,6 +8,7 @@ import {
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { Vec2 } from 'domain/entities/vec2';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 
 jest.mock('d3', () => {
@@ -175,5 +176,39 @@ describe('Select Rectangle Tool', () => {
 
     expect(onMove).toHaveBeenCalled();
     fn.mockRestore();
+  });
+
+  it('should update history on move even if mouseup target lacks renderer data', () => {
+    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const mode = new FlexMode();
+    const editor = new CoreEditor({
+      theme: polymerEditorTheme,
+      canvas,
+      mode,
+    });
+    const selectRectangleTool = new SelectRectangle(editor);
+    editor.transientDrawingView.clear = jest.fn();
+    editor.transientDrawingView.update = jest.fn();
+    const history = new EditorHistory(editor);
+    const arrowAddCommand = editor.drawingEntitiesManager.addRxnArrow(
+      RxnArrowMode.OpenAngle,
+      [new Vec2(0, 0), new Vec2(1, 0)],
+    );
+
+    editor.renderersContainer.update(arrowAddCommand);
+    const rxnArrow = Array.from(
+      editor.drawingEntitiesManager.rxnArrows.values(),
+    )[0];
+
+    rxnArrow.turnOnSelection();
+    (selectRectangleTool as any).mode = 'moving';
+    (selectRectangleTool as any).mousePositionBeforeMove = new Vec2(0, 0);
+    (selectRectangleTool as any).mousePositionAfterMove = new Vec2(10, 0);
+
+    const historyLengthBefore = history.historyStack.length;
+    selectRectangleTool.mouseup({ target: {} } as MouseEvent);
+
+    expect(history.historyStack.length).toBe(historyLengthBefore + 1);
+    history.destroy();
   });
 });

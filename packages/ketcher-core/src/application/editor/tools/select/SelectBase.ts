@@ -954,10 +954,11 @@ abstract class SelectBase implements BaseTool {
     });
   }
 
-  mouseup(event: MouseEvent) {
-    const renderer = event.target?.__data__;
+  mouseup(_event: MouseEvent) {
+    const hasSelectedEntities =
+      this.editor.drawingEntitiesManager.selectedEntities.length > 0;
     try {
-      if (this.mode === 'moving' && renderer?.drawingEntity?.selected) {
+      if (this.mode === 'moving' && hasSelectedEntities) {
         const selectedMonomers =
           this.editor.drawingEntitiesManager.selectedMonomers;
         const hasMonomerSelection = selectedMonomers.length > 0;

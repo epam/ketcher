@@ -8,6 +8,21 @@ describe('SelectBase mouseup', () => {
   let editor: CoreEditor;
   let history: EditorHistory;
   let selectTool: SelectRectangle;
+  const setMovementState = (
+    tool: SelectRectangle,
+    before: Vec2,
+    after: Vec2,
+  ) => {
+    const toolState = tool as unknown as {
+      mode: 'moving' | 'selecting' | 'standby';
+      mousePositionBeforeMove: Vec2;
+      mousePositionAfterMove: Vec2;
+    };
+
+    toolState.mode = 'moving';
+    toolState.mousePositionBeforeMove = before;
+    toolState.mousePositionAfterMove = after;
+  };
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
@@ -33,9 +48,7 @@ describe('SelectBase mouseup', () => {
       editor.drawingEntitiesManager.selectDrawingEntity(arrow);
     selectCommand.execute(editor.renderersContainer);
 
-    selectTool['mode'] = 'moving';
-    selectTool['mousePositionBeforeMove'] = new Vec2(0, 0);
-    selectTool['mousePositionAfterMove'] = new Vec2(10, 0);
+    setMovementState(selectTool, new Vec2(0, 0), new Vec2(10, 0));
 
     selectTool.mouseup({ target: editor.canvas } as unknown as MouseEvent);
 

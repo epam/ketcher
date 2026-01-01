@@ -957,7 +957,11 @@ abstract class SelectBase implements BaseTool {
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
     try {
-      if (this.mode === 'moving' && renderer?.drawingEntity?.selected) {
+      if (
+        this.mode === 'moving' &&
+        (renderer?.drawingEntity?.selected ||
+          this.editor.drawingEntitiesManager.selectedEntitiesArr.length > 0)
+      ) {
         const selectedMonomers =
           this.editor.drawingEntitiesManager.selectedMonomers;
         const hasMonomerSelection = selectedMonomers.length > 0;

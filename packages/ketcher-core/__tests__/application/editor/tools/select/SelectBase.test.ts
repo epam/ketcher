@@ -3,31 +3,24 @@ import { SelectRectangle } from 'application/editor/tools/select';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
 import { createPolymerEditorCanvas } from '../../../../helpers/dom';
 
+class TestSelectRectangle extends SelectRectangle {
+  public setMovementState(before: Vec2, after: Vec2) {
+    this.mode = 'moving';
+    this.mousePositionBeforeMove = before;
+    this.mousePositionAfterMove = after;
+  }
+}
+
 describe('SelectBase mouseup', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
   let history: EditorHistory;
-  let selectTool: SelectRectangle;
-  const setMovementState = (
-    tool: SelectRectangle,
-    before: Vec2,
-    after: Vec2,
-  ) => {
-    const toolState = tool as unknown as {
-      mode: 'moving' | 'selecting' | 'standby';
-      mousePositionBeforeMove: Vec2;
-      mousePositionAfterMove: Vec2;
-    };
-
-    toolState.mode = 'moving';
-    toolState.mousePositionBeforeMove = before;
-    toolState.mousePositionAfterMove = after;
-  };
+  let selectTool: TestSelectRectangle;
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({ theme: {}, canvas });
-    selectTool = new SelectRectangle(editor);
+    selectTool = new TestSelectRectangle(editor);
     history = new EditorHistory(editor);
   });
 
@@ -48,9 +41,15 @@ describe('SelectBase mouseup', () => {
       editor.drawingEntitiesManager.selectDrawingEntity(arrow);
     selectCommand.execute(editor.renderersContainer);
 
-    setMovementState(selectTool, new Vec2(0, 0), new Vec2(10, 0));
+    selectTool.setMovementState(new Vec2(0, 0), new Vec2(10, 0));
 
-    selectTool.mouseup({ target: editor.canvas } as unknown as MouseEvent);
+    const mouseUpEvent = new MouseEvent('mouseup', { bubbles: true });
+    Object.defineProperty(mouseUpEvent, 'target', {
+      value: editor.canvas,
+      writable: false,
+    });
+
+    selectTool.mouseup(mouseUpEvent);
 
     expect(history.historyPointer).toBe(1);
   });

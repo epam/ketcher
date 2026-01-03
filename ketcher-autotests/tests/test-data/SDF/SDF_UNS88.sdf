@@ -52,7 +52,7 @@ M  END
 UNS88
 
 >  <idtAliases>
-ep5=uns88Ep5,ep3=uns88Ep3,i=uns88I
+base=uns88,ep5=uns88Ep5,ep3=uns88Ep3,i=uns88I
 
 >  <modificationType>
 Unsplit monomer

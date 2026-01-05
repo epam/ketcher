@@ -458,14 +458,10 @@ export class SequenceRenderer {
     const newActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
     const renderer = newActiveTwoStrandedNode?.senseNode?.renderer;
 
-    if (!newActiveTwoStrandedNode) {
-      return;
-    }
+    if (newActiveTwoStrandedNode && editor.isSequenceEditMode) {
+      assert(renderer instanceof BaseSequenceItemRenderer);
 
-    assert(renderer instanceof BaseSequenceItemRenderer);
-
-    if (editor.isSequenceEditMode) {
-      renderer?.redrawCaret(caretPosition);
+      renderer.redrawCaret(caretPosition);
       renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
     }
 

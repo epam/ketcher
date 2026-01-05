@@ -224,6 +224,9 @@ export const Preset = {
     alias: 'Preset',
     testId: 'Preset_PresetB_PresetS_PresetP',
     monomerType: MonomerType.Preset,
+    sugar: Sugar.DefaultSugarRnaComponent,
+    base: Base.DefaultBaseRnaComponent,
+    phosphate: Phosphate.DefaultPhosphateRnaComponent,
   } as PresetType,
 };
 

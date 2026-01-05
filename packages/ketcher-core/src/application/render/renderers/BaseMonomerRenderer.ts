@@ -337,6 +337,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)
       .attr(
+        'data-naturalAnalogue',
+        this.monomer.monomerItem.props.MonomerNaturalAnalogCode,
+      )
+      .attr(
         'data-number-of-attachment-points',
         this.monomer.listOfAttachmentPoints.length,
       )

@@ -77,6 +77,10 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     alias: '_Sugar1',
     testId: '_Sugar1____Sugar1',
   },
+  DefaultSugarRnaComponent: {
+    alias: 'PresetS',
+    testId: 'PresetS___PresetS',
+  },
 });
 
 export type SugarsType = typeof Sugar;

@@ -21,7 +21,6 @@ import {
   pasteFromClipboardByKeyboard,
   takeEditorScreenshot,
   takePageScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -41,7 +40,6 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -53,19 +51,17 @@ async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
 }
-
+let page: Page;
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 test.describe('Sequence edit mode', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-  });
-
-  test('Text-editing mode activates when users start a new sequence or edit an existing one', async ({
-    page,
-  }) => {
+  test('Text-editing mode activates when users start a new sequence or edit an existing one', async () => {
     /*
     Test case: #3650
     Description: Text-editing mode activates when users start a new sequence or edit an existing one.
@@ -73,9 +69,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Context menu for right-click on canvas for new sequence and for clicking on existing', async ({
-    page,
-  }) => {
+  test('Context menu for right-click on canvas for new sequence and for clicking on existing', async () => {
     /*
     Test case: #3650
     Description: When right ckick on canvas for new sequence: 'Start new sequence'
@@ -98,7 +92,7 @@ test.describe('Sequence edit mode', () => {
     ).toBeVisible();
   });
 
-  test('Add/edit sequence', async ({ page }) => {
+  test('Add/edit sequence', async () => {
     test.slow();
     await keyboardTypeOnCanvas(page, 'ATGCU');
     await MacromoleculesTopToolbar(page).dna();
@@ -111,11 +105,13 @@ test.describe('Sequence edit mode', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Exiting text-editing mode occurs with a click outside the sequence', async ({
-    page,
-  }) => {
+  test('Exiting text-editing mode occurs with a click outside the sequence', async () => {
     /*
     Test case: #3650
     Description: Exiting text-editing mode occurs with a click outside the sequence.
@@ -126,9 +122,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Exiting text-editing mode occurs with a click Escape on keyboard', async ({
-    page,
-  }) => {
+  test('Exiting text-editing mode occurs with a click Escape on keyboard', async () => {
     /*
     Test case: #3650
     Description: Exiting text-editing mode occurs with a click Escape on keyboard.
@@ -139,9 +133,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Supported nucleotides for RNA are (A, T, G, C, U)', async ({
-    page,
-  }) => {
+  test('Supported nucleotides for RNA are (A, T, G, C, U)', async () => {
     /*
      * Test case: #3650
      * Description: After entering, only letters allowed for RNA are present on the canvas.
@@ -151,9 +143,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Supported nucleotides for DNA are (A, T, G, C, U)', async ({
-    page,
-  }) => {
+  test('Supported nucleotides for DNA are (A, T, G, C, U)', async () => {
     /*
      * Test case: #3650
      * Description: After entering, only letters allowed for DNA are present on the canvas.
@@ -164,7 +154,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Supported nucleotides for Peptides', async ({ page }) => {
+  test('Supported nucleotides for Peptides', async () => {
     /*
     Test case: #3650
     Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, X, Z
@@ -174,9 +164,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Enter starts a new chain aligned at the beginning of a new row', async ({
-    page,
-  }) => {
+  test('Enter starts a new chain aligned at the beginning of a new row', async () => {
     /*
     Test case: #3650
     Description: Enter starts a new chain aligned at the beginning of a new row.
@@ -189,9 +177,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Users can add new nucleotides at end of a sequence fragment as text', async ({
-    page,
-  }) => {
+  test('Users can add new nucleotides at end of a sequence fragment as text', async () => {
     /*
     Test case: #3650
     Description: Added 'U' in the end of sequence.
@@ -209,9 +195,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Users can add new nucleotides in the middle of a sequence fragment as text', async ({
-    page,
-  }) => {
+  test('Users can add new nucleotides in the middle of a sequence fragment as text', async () => {
     /*
     Test case: #3650
     Description: Added 'U' in the middle of sequence.
@@ -229,9 +213,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async ({
-    page,
-  }) => {
+  test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async () => {
     /*
     Test case: #4340
     Description: After adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode.
@@ -248,9 +230,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding symbols before separate phosphate should be allowed', async ({
-    page,
-  }) => {
+  test('Adding symbols before separate phosphate should be allowed', async () => {
     /*
     Github ticket: https://github.com/epam/ketcher/issues/4726
     Description: It was decided to restrict adding symbols before separate phosphate to prevent adding of nucleosides
@@ -267,9 +247,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that it is not possible to add more monomers to cycled scructure', async ({
-    page,
-  }) => {
+  test('Check that it is not possible to add more monomers to cycled scructure', async () => {
     /*
     Test case: #4706 https://github.com/epam/ketcher/issues/4706
     Description: It is not possible to add more monomers to cycled scructure. Error message appears.
@@ -284,32 +262,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that it is not possible to past cycling structures to sequence', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4575 https://github.com/epam/ketcher/issues/4575
-    Description: It is not possible to add more monomers to cycled structure. Error message appears.
-    */
-    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await ContextMenu(page, { x: 200, y: 200 }).click(
-      SequenceSymbolOption.StartNewSequence,
-    );
-
-    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-
-    await keyboardPressOnCanvas(page, 'ArrowLeft');
-    await keyboardPressOnCanvas(page, 'ArrowLeft');
-
-    await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Validate that attachment point on preview tooltip marked gray if an attachment point participates in a bond', async ({
-    page,
-  }) => {
+  test('Validate that attachment point on preview tooltip marked gray if an attachment point participates in a bond', async () => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
@@ -327,9 +280,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async () => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
@@ -344,9 +295,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async () => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
@@ -367,9 +316,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that preview tooltip for Peptide type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for Peptide type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
@@ -379,9 +326,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for Sugar type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for Sugar type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
@@ -391,9 +336,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for Base type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for Base type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
@@ -403,9 +346,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for Phosphate type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for Phosphate type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
@@ -415,9 +356,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for Nucleotide type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for Nucleotide type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
@@ -427,9 +366,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for CHEM type of monomer in the library', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for CHEM type of monomer in the library', async () => {
     /*
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
@@ -439,9 +376,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate that preview tooltip for each type of monomer in sequence mode', async ({
-    page,
-  }) => {
+  test('Validate that preview tooltip for each type of monomer in sequence mode', async () => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
@@ -466,9 +401,7 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Check that system show full set of IDT aliases at preview tooltip', async ({
-    page,
-  }) => {
+  test('Check that system show full set of IDT aliases at preview tooltip', async () => {
     /*
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
@@ -477,9 +410,7 @@ test.describe('Sequence edit mode', () => {
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takePageScreenshot(page);
   });
-  test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
-    page,
-  }) => {
+  test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async () => {
     /*
     Test case: #4887
     Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
@@ -489,9 +420,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify activation area of the plus for adding sequences in sequence mode', async ({
-    page,
-  }) => {
+  test('Verify activation area of the plus for adding sequences in sequence mode', async () => {
     /**
      * Test task: https://github.com/epam/ketcher/issues/6948
      * Description: Verify activation area of the plus for adding sequences in sequence mode
@@ -538,9 +467,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Hover mouse over any letter in sequence, verify that the cursor should be displayed as a arrow', async ({
-    page,
-  }) => {
+  test('Hover mouse over any letter in sequence, verify that the cursor should be displayed as a arrow', async () => {
     /*
     Test case: #4888
     Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
@@ -555,9 +482,7 @@ test.describe('Sequence edit mode', () => {
     await takePageScreenshot(page);
   });
 
-  test('Hover mouse between two letters in sequence, verify that the cursor should be displayed as a caret', async ({
-    page,
-  }) => {
+  test('Hover mouse between two letters in sequence, verify that the cursor should be displayed as a caret', async () => {
     /*
     Test case: #4888
     Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
@@ -571,9 +496,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Double-click on any symbol of sequence, verify that the edit mode turned on and the symbol highlighted', async ({
-    page,
-  }) => {
+  test('Double-click on any symbol of sequence, verify that the edit mode turned on and the symbol highlighted', async () => {
     /*
     Test case: #4888
     Description: Double-click on any symbol of sequence, the edit mode turned on AND cursor (blinking line) 
@@ -588,9 +511,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Switch to RNA mode and type any RNA symbol - A, C, G, U, T', async ({
-    page,
-  }) => {
+  test('Switch to RNA mode and type any RNA symbol - A, C, G, U, T', async () => {
     /*
     Test case: #5136
     Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
@@ -604,9 +525,7 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Clear canvas, switch to RNA mode, type any non-RNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
-    page,
-  }) => {
+  test('Clear canvas, switch to RNA mode, type any non-RNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async () => {
     /*
      * Test case: #5136
      * Description: Nothing happens. Monomer not added to canvas.
@@ -620,9 +539,7 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Switch to DNA mode and type any DNA symbol - A, C, G, U, T', async ({
-    page,
-  }) => {
+  test('Switch to DNA mode and type any DNA symbol - A, C, G, U, T', async () => {
     /*
      * Test case: #5136
      * Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence,
@@ -637,9 +554,7 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Clear canvas, switch to DNA mode, type any non-DNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
-    page,
-  }) => {
+  test('Clear canvas, switch to DNA mode, type any non-DNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async () => {
     /*
      * Test case: #5136
      * Description: Nothing happens. Monomer not added to canvas.
@@ -654,9 +569,7 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Switch to Peptide mode and type any Peptide symbol - A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y', async ({
-    page,
-  }) => {
+  test('Switch to Peptide mode and type any Peptide symbol - A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y', async () => {
     /*
      * Test case: #5136
      * Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence,
@@ -699,11 +612,10 @@ test.describe('Sequence edit mode', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     }
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
-    page,
-  }) => {
+  test('Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain ).
@@ -724,9 +636,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
-    page,
-  }) => {
+  test('Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain ).
@@ -748,9 +658,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
-    page,
-  }) => {
+  test('Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain )', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain ).
@@ -770,11 +678,13 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Check consecutive typing of multiple "p" characters in RNA or DNA', async ({
-    page,
-  }) => {
+  test('Check consecutive typing of multiple "p" characters in RNA or DNA', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Check consecutive typing of multiple "p" characters in RNA or DNA.
@@ -797,11 +707,13 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p"', async ({
-    page,
-  }) => {
+  test('Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p"', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p".
@@ -826,9 +738,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Ensure undo/redo functionality works for typed phosphates', async ({
-    page,
-  }) => {
+  test('Ensure undo/redo functionality works for typed phosphates', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Ensure undo/redo functionality works for typed phosphates.
@@ -866,11 +776,10 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Validate saving and opening a sequence with typed phosphates (KET)', async ({
-    page,
-  }) => {
+  test('Validate saving and opening a sequence with typed phosphates (KET)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Validate saving and opening a sequence with typed phosphates (KET).
@@ -906,11 +815,10 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Validate saving and opening a sequence with typed phosphates (MOL V3000)', async ({
-    page,
-  }) => {
+  test('Validate saving and opening a sequence with typed phosphates (MOL V3000)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Validate saving and opening a sequence with typed phosphates (MOL V3000).
@@ -947,11 +855,10 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify that typed phosphates are deleted and can be restored using the Undo action', async ({
-    page,
-  }) => {
+  test('Verify that typed phosphates are deleted and can be restored using the Undo action', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6357
      * Description: Verify that typed phosphates are deleted and can be restored using the Undo action.
@@ -985,11 +892,10 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains', async ({
-    page,
-  }) => {
+  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains.
@@ -1018,9 +924,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created DNA antisense chains', async ({
-    page,
-  }) => {
+  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created DNA antisense chains', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains.
@@ -1048,11 +952,13 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Check error message if the monomer in the sense chain lacks R2 attachment point', async ({
-    page,
-  }) => {
+  test('Check error message if the monomer in the sense chain lacks R2 attachment point', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Error message appears if the monomer in the sense chain lacks R2 attachment point.
@@ -1075,9 +981,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that a created structure with an antisense RNA chain can be copied and pasted onto the canvas', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense RNA chain can be copied and pasted onto the canvas', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense RNA chain can be copied and pasted onto the canvas.
@@ -1107,9 +1011,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that a created structure with an antisense DNA chain can be copied and pasted onto the canvas', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense DNA chain can be copied and pasted onto the canvas', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense RNA chain can be copied and pasted onto the canvas.
@@ -1138,11 +1040,13 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify that a created structure with an antisense RNA chain can be deleted and restored by Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense RNA chain can be deleted and restored by Undo/Redo', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense RNA chain can be deleted and restored by Undo/Redo.
@@ -1177,9 +1081,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that a created structure with an antisense DNA chain can be deleted and restored by Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense DNA chain can be deleted and restored by Undo/Redo', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense DNA chain can be deleted and restored by Undo/Redo.
@@ -1213,11 +1115,13 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify that a created structure with an antisense RNA chain can be saved and opened (KET)', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense RNA chain can be saved and opened (KET)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense RNA chain can be saved and opened (KET).
@@ -1247,9 +1151,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that a created structure with an antisense DNA chain can be saved and opened (KET)', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense DNA chain can be saved and opened (KET)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense DNA chain can be saved and opened (KET).
@@ -1278,11 +1180,10 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
-  test('Verify that a created structure with an antisense RNA chain can be saved and opened (MOL V3000)', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense RNA chain can be saved and opened (MOL V3000)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense RNA chain can be saved and opened (MOL V3000).
@@ -1313,9 +1214,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that a created structure with an antisense DNA chain can be saved and opened (MOL V3000)', async ({
-    page,
-  }) => {
+  test('Verify that a created structure with an antisense DNA chain can be saved and opened (MOL V3000)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6355
      * Description: Created structure with an antisense DNA chain can be saved and opened (MOL V3000).
@@ -1384,7 +1283,7 @@ test.describe('Sequence edit mode', () => {
   ];
 
   for (const config of testConfigs) {
-    test(config.name, async ({ page }) => {
+    test(config.name, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6284
        * Description: ${config.description}
@@ -1423,9 +1322,7 @@ test.describe('Sequence edit mode', () => {
     });
   }
 
-  test('Check that when the caret (sync edit mode) is placed to the right of a symbol associated with a number AND that number is >9, the number should not be visible', async ({
-    page,
-  }) => {
+  test('Check that when the caret (sync edit mode) is placed to the right of a symbol associated with a number AND that number is >9, the number should not be visible', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6425
      * Description: When the caret (sync edit mode) is placed to the right of a symbol associated with
@@ -1438,6 +1335,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take a screenshot
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await MacromoleculesTopToolbar(page).rna();
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
@@ -1452,9 +1350,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that when the caret is moved from the above described position, or edit mode changed (to non-sync), or edit mode exited (view mode entered) the number reappear', async ({
-    page,
-  }) => {
+  test('Check that when the caret is moved from the above described position, or edit mode changed (to non-sync), or edit mode exited (view mode entered) the number reappear', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6425
      * Description: When the caret is moved from the above described position, or edit mode changed (to non-sync),
@@ -1481,18 +1377,15 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Verify that options "Copy", "Paste" and "Delete" added to the r-click drop down menu', async ({
-    page,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6472
-     * Description: Options "Copy", "Paste" and "Delete" added to the r-click drop down menu.
-     * Scenario:
-     * 1. Go to Macro - Sequence mode - RNA
-     * 2. Start typing "ACGTU" in the sequence
-     * 3. Right click on the monomer
-     * 4. Take a screenshot
-     */
+  test('Verify that options "Copy", "Paste" and "Delete" added to the r-click drop down menu', async () => {
+    //  * Test case: https://github.com/epam/ketcher/issues/6472
+    //  * Description: Options "Copy", "Paste" and "Delete" added to the r-click drop down menu.
+    //  * Scenario:
+    //  * 1. Go to Macro - Sequence mode - RNA
+    //  * 2. Start typing "ACGTU" in the sequence
+    //  * 3. Right click on the monomer
+    //  * 4. Take a screenshot
+    //  */
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
@@ -1503,9 +1396,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that when monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them', async ({
-    page,
-  }) => {
+  test('Check that when monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: When monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them.
@@ -1537,9 +1428,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled', async ({
-    page,
-  }) => {
+  test('Check that R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled.
@@ -1558,9 +1447,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async ({
-    page,
-  }) => {
+  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled.
@@ -1578,9 +1465,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that copied and pasted structures through r-click menu can be saved and then opened (KET)', async ({
-    page,
-  }) => {
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (KET)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: Copied and pasted structures through r-click menu can be saved and then opened (KET).
@@ -1618,9 +1503,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that copied and pasted structures through r-click menu can be saved and then opened (MOL V3000)', async ({
-    page,
-  }) => {
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (MOL V3000)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: Copied and pasted structures through r-click menu can be saved and then opened (MOL V3000).
@@ -1660,9 +1543,7 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that deleted structures through r-click menu can be undo and redo', async ({
-    page,
-  }) => {
+  test('Check that deleted structures through r-click menu can be undo and redo', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
      * Description: Deleted structures through r-click menu can be undo and redo.
@@ -1706,5 +1587,27 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Check that it is not possible to past cycling structures to sequence', async () => {
+    /*
+    Test case: #4575 https://github.com/epam/ketcher/issues/4575
+    Description: It is not possible to add more monomers to cycled structure. Error message appears.
+    Has a bug, as bond element is not removed with clear canvas
+    */
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await ContextMenu(page, { x: 200, y: 200 }).click(
+      SequenceSymbolOption.StartNewSequence,
+    );
+
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
+
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
   });
 });

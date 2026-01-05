@@ -17,6 +17,8 @@ jest.mock('domain/serializers/ket/validate', () => ({
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { SequenceNode } from 'domain/entities/monomer-chains/types';
 
 describe('SequenceRenderer.setCaretPosition', () => {
   it('redraws counters even when caret is placed after the last node', () => {
@@ -29,16 +31,23 @@ describe('SequenceRenderer.setCaretPosition', () => {
       BaseSequenceItemRenderer as unknown as new () => MockRenderer;
     const rendererMock = new MockBaseSequenceItemRenderer();
     const twoStrandedNode: ITwoStrandedChainItem = {
-      senseNode: { renderer: rendererMock },
+      senseNode: { renderer: rendererMock } as unknown as SequenceNode,
       antisenseNode: undefined,
-    } as any;
+      senseNodeIndex: 0,
+      chain: {} as Chain,
+    };
 
-    const nodes = [
+    const nodes: Array<{
+      twoStrandedNode: ITwoStrandedChainItem;
+      nodeIndexOverall: number;
+      chainIndex: number;
+      nodeIndex: number;
+    }> = [
       { twoStrandedNode, nodeIndexOverall: 0, chainIndex: 0, nodeIndex: 0 },
     ];
 
     const sequenceViewModelMock = {
-      forEachNode: (callback: any) => {
+      forEachNode: (callback: (params: typeof nodes[number]) => void) => {
         nodes.forEach((params) => callback(params));
       },
     };

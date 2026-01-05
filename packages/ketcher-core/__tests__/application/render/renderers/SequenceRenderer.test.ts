@@ -16,14 +16,19 @@ jest.mock('domain/serializers/ket/validate', () => ({
 
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 describe('SequenceRenderer.setCaretPosition', () => {
   it('redraws counters even when caret is placed after the last node', () => {
-    const rendererMock =
-      new (BaseSequenceItemRenderer as any)() as BaseSequenceItemRenderer & {
-        redrawCounter: jest.Mock;
-      };
-    const twoStrandedNode = {
+    type MockRenderer = {
+      redrawCounter: jest.Mock;
+      redrawCaret: jest.Mock;
+      antisenseNodeRenderer?: MockRenderer;
+    };
+    const MockBaseSequenceItemRenderer =
+      BaseSequenceItemRenderer as unknown as new () => MockRenderer;
+    const rendererMock = new MockBaseSequenceItemRenderer();
+    const twoStrandedNode: ITwoStrandedChainItem = {
       senseNode: { renderer: rendererMock },
       antisenseNode: undefined,
     } as any;
@@ -38,24 +43,30 @@ describe('SequenceRenderer.setCaretPosition', () => {
       },
     };
 
+    type SequenceRendererState = {
+      sequenceViewModelValue: unknown;
+      caretPositionValue: number;
+      lastUserDefinedCaretPositionValue: number;
+    };
     // Directly manipulate internal static state to control caret/index mapping
     // for this isolated scenario and restore it afterwards.
-    const originalSequenceViewModel = (SequenceRenderer as any)
-      .sequenceViewModelValue;
-    const originalCaretPosition = (SequenceRenderer as any).caretPositionValue;
-    const originalLastUserDefinedCaretPosition = (SequenceRenderer as any)
-      .lastUserDefinedCaretPositionValue;
+    const sequenceRendererState =
+      SequenceRenderer as unknown as SequenceRendererState;
+    const originalSequenceViewModel =
+      sequenceRendererState.sequenceViewModelValue;
+    const originalCaretPosition = sequenceRendererState.caretPositionValue;
+    const originalLastUserDefinedCaretPosition =
+      sequenceRendererState.lastUserDefinedCaretPositionValue;
 
-    (SequenceRenderer as any).sequenceViewModelValue = sequenceViewModelMock;
+    sequenceRendererState.sequenceViewModelValue = sequenceViewModelMock;
 
     SequenceRenderer.setCaretPosition(1);
 
     expect(rendererMock.redrawCounter).toHaveBeenCalledWith(1);
 
-    (SequenceRenderer as any).sequenceViewModelValue =
-      originalSequenceViewModel;
-    (SequenceRenderer as any).caretPositionValue = originalCaretPosition;
-    (SequenceRenderer as any).lastUserDefinedCaretPositionValue =
+    sequenceRendererState.sequenceViewModelValue = originalSequenceViewModel;
+    sequenceRendererState.caretPositionValue = originalCaretPosition;
+    sequenceRendererState.lastUserDefinedCaretPositionValue =
       originalLastUserDefinedCaretPosition;
   });
 });

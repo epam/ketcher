@@ -463,8 +463,8 @@ export class SequenceRenderer {
       editor.isSequenceEditMode &&
       renderer instanceof BaseSequenceItemRenderer
     ) {
-      renderer.redrawCaret(caretPosition);
-      renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
+      renderer.redrawCaret?.(caretPosition);
+      renderer.antisenseNodeRenderer?.redrawCaret?.(caretPosition);
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {

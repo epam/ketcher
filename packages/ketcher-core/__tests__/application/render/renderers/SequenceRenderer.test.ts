@@ -38,6 +38,8 @@ describe('SequenceRenderer.setCaretPosition', () => {
       },
     };
 
+    // Directly manipulate internal static state to control caret/index mapping
+    // for this isolated scenario and restore it afterwards.
     const originalSequenceViewModel = (SequenceRenderer as any)
       .sequenceViewModelValue;
     const originalCaretPosition = (SequenceRenderer as any).caretPositionValue;

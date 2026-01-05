@@ -262,28 +262,6 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that it is not possible to past cycling structures to sequence', async () => {
-    /*
-    Test case: #4575 https://github.com/epam/ketcher/issues/4575
-    Description: It is not possible to add more monomers to cycled structure. Error message appears.
-    Has a bug, as junction is not removed with clear canvas
-    */
-    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await ContextMenu(page, { x: 200, y: 200 }).click(
-      SequenceSymbolOption.StartNewSequence,
-    );
-
-    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-
-    await keyboardPressOnCanvas(page, 'ArrowLeft');
-    await keyboardPressOnCanvas(page, 'ArrowLeft');
-
-    await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Validate that attachment point on preview tooltip marked gray if an attachment point participates in a bond', async () => {
     /*
     Test case: #4880
@@ -634,6 +612,7 @@ test.describe('Sequence edit mode', () => {
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).clearCanvas();
     }
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async () => {
@@ -913,6 +892,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains', async () => {
@@ -1200,6 +1180,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Verify that a created structure with an antisense RNA chain can be saved and opened (MOL V3000)', async () => {
@@ -1606,5 +1587,27 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Check that it is not possible to past cycling structures to sequence', async () => {
+    /*
+    Test case: #4575 https://github.com/epam/ketcher/issues/4575
+    Description: It is not possible to add more monomers to cycled structure. Error message appears.
+    Has a bug, as bond element is not removed with clear canvas
+    */
+    await openFileAndAddToCanvasMacro(page, 'KET/cyclic-sequence-tcgu.ket');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await ContextMenu(page, { x: 200, y: 200 }).click(
+      SequenceSymbolOption.StartNewSequence,
+    );
+
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
+
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
   });
 });

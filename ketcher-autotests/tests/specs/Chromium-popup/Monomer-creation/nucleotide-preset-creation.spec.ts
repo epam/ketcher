@@ -84,7 +84,8 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
   test('Nucleotide preset can be added to canvas after creation', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/8857
-     * Description: Create a nucleotide preset with a unique alias.
+     * Test task: https://github.com/epam/ketcher/issues/8775
+     * Description: Create a nucleotide preset with a unique alias. Leave components filled by default values.
      * Switch to macromolecules mode and add this preset from Library onto canvas to check
      *  that even with hidden components it can be added.
      */

@@ -833,7 +833,7 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '15. no ending token',
     HELMString: 'PEPTIDE1{L}',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   // {
   //   helmDescription: '17. No CHEM name',
@@ -1183,19 +1183,19 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '75. no ending token (RNA)',
     HELMString: 'RNA1{r(A)p}',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription: '76. no ending token (CHEM)',
     HELMString: 'CHEM1{[A6OH]}',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription: '77. no ending token (PEPTIDE)',
     HELMString: 'PEPTIDE1{L}',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription:
@@ -1241,7 +1241,7 @@ const incorrectHELMStrings: IHELMString[] = [
       '83. Multi-character peptide ID with missing closing bracket',
     HELMString: 'PEPTIDE1{[1Nal}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription:
@@ -1255,7 +1255,7 @@ const incorrectHELMStrings: IHELMString[] = [
       '85. Multi-character preset of all monomer ID with missing closing bracket for sugar',
     HELMString: 'RNA1{[5S6Rm5(mo6pur)sP-}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription:
@@ -1269,7 +1269,7 @@ const incorrectHELMStrings: IHELMString[] = [
       '87. Multi-character preset of all monomer ID with missing closing bracket for base',
     HELMString: 'RNA1{5S6Rm5([mo6pur)sP-}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription:
@@ -1283,7 +1283,7 @@ const incorrectHELMStrings: IHELMString[] = [
       '89. Multi-character preset of all monomer ID with missing closing bracket for phosphate',
     HELMString: 'RNA1{5S6Rm5(mo6pur)[sP-}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription:
@@ -1297,7 +1297,7 @@ const incorrectHELMStrings: IHELMString[] = [
       '91. Multi-character unsplit monomer ID with missing closing bracket',
     HELMString: 'RNA1{[2-damdA}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
   {
     helmDescription: '92. Multi-character CHEM ID with missing opening bracket',
@@ -1309,7 +1309,7 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '93. Multi-character CHEM ID with missing closing bracket',
     HELMString: 'CHEM1{[4aPEGMal}$$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: emsc'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unexpected end of data'",
   },
 ];
 

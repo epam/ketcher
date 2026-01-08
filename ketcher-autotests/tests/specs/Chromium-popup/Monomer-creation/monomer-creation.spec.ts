@@ -2238,7 +2238,10 @@ for (const monomerToCreate of monomersToCreate31) {
       page,
       `CML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cml`,
     );
-    await takeEditorScreenshot(page);
+    const monomer = getAbbreviationLocator(page, {
+      name: monomerToCreate.symbol,
+    }).first();
+    await takeElementScreenshot(page, monomer, { padding: 50 });
   });
 }
 
@@ -2454,7 +2457,10 @@ for (const monomerToCreate of monomersToCreate34) {
       page,
       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdxml`,
     );
-    await takeEditorScreenshot(page);
+    const monomer = getAbbreviationLocator(page, {
+      name: monomerToCreate.symbol,
+    }).first();
+    await takeElementScreenshot(page, monomer, { padding: 50 });
   });
 }
 
@@ -3169,7 +3175,10 @@ for (const monomerToCreate of monomersToCreate44) {
       page,
       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-collapsed-expected.cdxml`,
     );
-    await takeEditorScreenshot(page);
+    const monomer = getAbbreviationLocator(page, {
+      name: monomerToCreate.symbol,
+    }).first();
+    await takeElementScreenshot(page, monomer, { padding: 50 });
   });
 }
 

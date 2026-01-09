@@ -5,14 +5,15 @@ import { select } from 'd3';
 
 type ElementType = 'text' | 'background' | 'spacer';
 
+/**
+ * This class handles all mouse events for sequence
+ * so we don't have to add handlers to each sequence item individually.
+ */
 export class SequenceEventDelegationManager {
   // eslint-disable-next-line no-use-before-define
   static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
   private boundHandlers: Map<string, (event: MouseEvent) => void> = new Map();
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
 
   public static get instance() {
     if (!SequenceEventDelegationManager._instance) {
@@ -31,7 +32,6 @@ export class SequenceEventDelegationManager {
 
     this.canvas = canvas;
 
-    // Attach all delegated event listeners
     this.attachHandler('mouseover', this.handleMouseOver.bind(this));
     this.attachHandler('mousemove', this.handleMouseMove.bind(this));
     this.attachHandler('mouseout', this.handleMouseOut.bind(this));
@@ -43,7 +43,6 @@ export class SequenceEventDelegationManager {
   public removeDelegatedEvents(): void {
     if (!this.canvas) return;
 
-    // Remove all event listeners
     this.boundHandlers.forEach((_, eventType) => {
       this.canvas?.on(eventType, null);
     });
@@ -65,21 +64,18 @@ export class SequenceEventDelegationManager {
   ): { renderer: BaseSequenceItemRenderer; elementType: ElementType } | null {
     if (!target || !(target instanceof SVGElement)) return null;
 
-    // Find the closest sequence-item root element
     const sequenceItemElement = (target as SVGElement).closest(
       '[data-testid="sequence-item"]',
     ) as SVGGElement;
 
     if (!sequenceItemElement) return null;
 
-    // Get the renderer instance from D3 datum
     const renderer = select<SVGGElement, BaseSequenceItemRenderer>(
       sequenceItemElement,
     ).datum();
 
     if (!renderer) return null;
 
-    // Determine element type
     const elementType = this.getElementType(target as SVGElement);
     if (!elementType) return null;
 
@@ -87,7 +83,6 @@ export class SequenceEventDelegationManager {
   }
 
   private getElementType(target: SVGElement): ElementType | null {
-    // Check data attribute first
     const dataType = target.getAttribute('data-element-type');
     if (
       dataType === 'text' ||
@@ -97,11 +92,9 @@ export class SequenceEventDelegationManager {
       return dataType;
     }
 
-    // Fallback to tag name for backward compatibility
     const tagName = target.tagName.toLowerCase();
     if (tagName === 'text') return 'text';
     if (tagName === 'rect') {
-      // Check if it's within spacer group
       const parentGroup = target.closest('g[data-element-type="spacer"]');
       if (parentGroup) return 'spacer';
       return 'background';

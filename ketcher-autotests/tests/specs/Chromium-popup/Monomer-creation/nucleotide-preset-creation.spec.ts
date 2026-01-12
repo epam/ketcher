@@ -429,7 +429,7 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
 test.describe('Type change confirmation for Nucleotide (preset)', () => {
   test('Confirm warning appears when changing type after Nucleotide (preset)', async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Test task: https://github.com/epam/ketcher/issues/8849
      * Description: Start preset creation, fill fields, pick another type and check confirmation dialog appears.
      *
      * Case:
@@ -470,7 +470,7 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
 
   test('Type change: press Yes, then select Nucleotide (preset) again and verify fields cleared', async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Test task: https://github.com/epam/ketcher/issues/8849
      * Description: Start preset creation, fill fields, pick another type, press Yes, then select preset again and check fields are reset.
      *
      * Case:
@@ -518,7 +518,7 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
 
   test('Type change: press Cancel, verify fields remain intact', async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Test task: https://github.com/epam/ketcher/issues/8849
      * Description: Start preset creation, fill fields, pick another type, press Cancel and verify data persists.
      *
      * Case:
@@ -573,7 +573,7 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
 test.describe('Mark as... context menu for Nucleotide (preset) components', () => {
   test('Set Sugar/Base/Phosphate via context menu and verify fields are populated', async () => {
     /*
-     * Test task: Requirements 2.1, 2.1.1, 2.1.3
+     * Test task: https://github.com/epam/ketcher/issues/8850
      * Description: The user can set component structures (continuous selection) using "Mark as a..." > Sugar/Base/Phosphate.
      *
      * Case:
@@ -616,7 +616,7 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
 
   test('Selecting via context menu opens the corresponding component tab', async () => {
     /*
-     * Test task: Requirement 2.1.3.1
+     * Test task: https://github.com/epam/ketcher/issues/8850
      * Description: After marking with "Mark as a...", the corresponding tab opens automatically.
      *
      * Case:
@@ -651,7 +651,7 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
 
   test('Context menu option "Mark as a..." is disabled for non-continuous selection', async () => {
     /*
-     * Test task: Requirements 2.1.1, 2.1.2
+     * Test task: https://github.com/epam/ketcher/issues/8850
      * Description: Non-continuous selection keeps "Mark as a..." present but disabled.
      *
      * Case:
@@ -680,7 +680,7 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
 
   test('No "Mark as a..." option if monomer type is not Nucleotide (preset)', async () => {
     /*
-     * Test task: Requirement 2.1.4
+     * Test task: https://github.com/epam/ketcher/issues/8850
      * Description: "Mark as a..." is visible only for Nucleotide (preset) type.
      *
      * Case:

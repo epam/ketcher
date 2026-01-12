@@ -4,8 +4,16 @@
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import { MonomerType, shiftCanvas } from '@utils/index';
-import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  MonomerType,
+  shiftCanvas,
+  takeEditorScreenshot,
+  takeElementScreenshot,
+} from '@utils/index';
+import {
+  CreateMonomerDialog,
+  selectAtomAndBonds,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   NucleotideNaturalAnalogue,
@@ -23,6 +31,10 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/ConfirmationMessageDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -411,5 +423,400 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     await expect(
       page.getByText('The preset was successfully added to the library'),
     ).toBeVisible();
+  });
+});
+
+test.describe('Type change confirmation for Nucleotide (preset)', () => {
+  test('Confirm warning appears when changing type after Nucleotide (preset)', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8849
+     * Description: Start preset creation, fill fields, pick another type and check confirmation dialog appears.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Open Type drop-down, pick another type (e.g. Sugar)
+     *      5. Verify modal title, message, and buttons "Cancel" (default) and "Yes"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
+    await dialog.selectType(MonomerTypeInDropdown.Sugar);
+
+    await expect(confirmModal.confirmationModalWindow).toBeVisible();
+    await expect(
+      confirmModal.confirmationModalWindow.getByText(
+        'Changing the type will result in a loss of inputted data. Do you wish to proceed?',
+      ),
+    ).toBeVisible();
+
+    // Close modal to not affect other tests
+    if (await confirmModal.confirmationModalWindow.isVisible()) {
+      await confirmModal.ok();
+    }
+    await dialog.discard();
+  });
+
+  test('Type change: press Yes, then select Nucleotide (preset) again and verify fields cleared', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8849
+     * Description: Start preset creation, fill fields, pick another type, press Yes, then select preset again and check fields are reset.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Pick another type -> confirm modal -> press Yes
+     *      5. Select Nucleotide (preset) again
+     *      6. Verify Preset and component fields are cleared
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
+    await dialog.selectType(MonomerTypeInDropdown.Sugar);
+    await confirmModal.ok();
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await expect(presetSection.presetTab.nameEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('');
+
+    await dialog.discard();
+  });
+
+  test('Type change: press Cancel, verify fields remain intact', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8849
+     * Description: Start preset creation, fill fields, pick another type, press Cancel and verify data persists.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Pick another type -> confirm modal -> press Cancel
+     *      5. Verify current type is still Nucleotide (preset)
+     *      6. Verify Preset and component fields are not cleared
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [1, 2], bondIds: [1] });
+    await dialog.selectType(MonomerTypeInDropdown.Base);
+    await confirmModal.cancel();
+
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await expect(presetSection.presetTab.nameEditbox).toHaveValue('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'PresetP',
+    );
+
+    await dialog.discard();
+  });
+});
+
+test.describe('Mark as... context menu for Nucleotide (preset) components', () => {
+  test('Set Sugar/Base/Phosphate via context menu and verify fields are populated', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8850
+     * Description: The user can set component structures (continuous selection) using "Mark as a..." > Sugar/Base/Phosphate.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard, select Nucleotide (preset)
+     *      3. Select a continuous fragment and Mark as a... -> Sugar
+     *      4. Select a continuous fragment and Mark as a... -> Base
+     *      5. Select a continuous fragment and Mark as a... -> Phosphate
+     *      6. Verify atom/bond fields for respective tabs are populated
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Sugar,
+    ]);
+    await selectAtomAndBonds(page, { atomIds: [2, 3], bondIds: [2] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 2 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Base,
+    ]);
+    await selectAtomAndBonds(page, { atomIds: [4, 5], bondIds: [4] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 4 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Phosphate,
+    ]);
+
+    await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+
+  test('Selecting via context menu opens the corresponding component tab', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8850
+     * Description: After marking with "Mark as a...", the corresponding tab opens automatically.
+     *
+     * Case:
+     *      1. Open wizard, select Nucleotide (preset) and ensure another tab is active (Preset)
+     *      2. Select a continuous fragment and Mark as a... -> Phosphate
+     *      3. Verify Phosphate tab content is shown (fields visible)
+     *      4. Select a continuous fragment and Mark as a... -> Base
+     *      5. Verify Base tab is active
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const preset = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    // Ensure Preset tab is initially opened
+    await preset.openTab(NucleotidePresetTab.Preset);
+    await selectAtomAndBonds(page, { atomIds: [2, 3], bondIds: [2] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 2 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Base,
+    ]);
+
+    await takeElementScreenshot(page, dialog.nucleotidePresetSection.baseTab);
+
+    await dialog.discard();
+  });
+
+  test('Context menu option "Mark as a..." is disabled for non-continuous selection', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8850
+     * Description: Non-continuous selection keeps "Mark as a..." present but disabled.
+     *
+     * Case:
+     *      1. Open wizard, select Nucleotide (preset)
+     *      2. Select non-continuous atoms (e.g., 0 and 2 in a chain)
+     *      3. Open context menu and verify "Mark as a..." is disabled
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await selectAtomAndBonds(page, { atomIds: [0, 2], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).hover(
+      MonomerWizardOption.MarkAs,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+
+  test('No "Mark as a..." option if monomer type is not Nucleotide (preset)', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8850
+     * Description: "Mark as a..." is visible only for Nucleotide (preset) type.
+     *
+     * Case:
+     *      1. Open wizard with default CHEM (or explicitly select CHEM)
+     *      2. Open context menu on structure
+     *      3. Verify there is no "Mark as a..." item
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.CHEM);
+    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
+
+    await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+});
+
+test.describe('Preset code formatting and default component code behavior', () => {
+  test('Invalid preset code shows error and highlights Preset tab', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Enter invalid preset code, submit, verify error message and red highlight on field and Preset tab.
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Set Preset code to an invalid value (e.g. "<invalid name>")
+     *      4. Press Submit
+     *      5. Verify error message and red highlight for Preset code and Preset tab
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('<invalid name>');
+    await dialog.submit();
+
+    await expect(
+      page.getByText(
+        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+      ),
+    ).toBeVisible();
+
+    await takeElementScreenshot(page, dialog.nucleotidePresetSection.presetTab);
+    await takeElementScreenshot(page, presetSection.presetTab.nameEditbox);
+
+    await dialog.discard();
+  });
+
+  test('Setting preset code auto-populates default component codes', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Enter preset code and verify default component codes are derived from it.
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Enter Preset code "Preset"
+     *      4. Verify Sugar/Base/Phosphate codes are "PresetS/B/P"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+
+    await presetSection.setName('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'PresetP',
+    );
+
+    await dialog.discard();
+  });
+
+  test('Manually changed component code is preserved when preset code changes', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Change Sugar code manually, then change Preset code; Sugar code should remain, others update.
+     *
+     * Case:
+     *      1. Open wizard and select Nucleotide (preset)
+     *      2. Set Preset code "Preset"
+     *      3. Open Sugar tab and set code to "MySugar"
+     *      4. Change Preset code to "Preset2"
+     *      5. Verify Sugar code remains "MySugar"
+     *      6. Verify Base/Phosphate codes updated to "Preset2B"/"Preset2P"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+
+    await presetSection.setName('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await presetSection.sugarTab.symbolEditbox.fill('MySugar');
+
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await presetSection.setName('Preset2');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('MySugar');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('Preset2B');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'Preset2P',
+    );
+
+    await dialog.discard();
   });
 });

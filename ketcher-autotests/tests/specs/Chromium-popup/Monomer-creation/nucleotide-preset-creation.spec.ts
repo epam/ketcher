@@ -498,19 +498,15 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await confirmModal.ok();
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.openTab(NucleotidePresetTab.Preset);
-
     await expect(presetSection.presetTab.nameEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-
     await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-
     await expect(presetSection.baseTab.symbolEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-
     await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('');
 
     await dialog.discard();
@@ -549,19 +545,15 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(presetSection.presetTab.nameEditbox).toHaveValue('Preset');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-
     await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-
     await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-
     await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-
     await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
       'PresetP',
     );
@@ -701,6 +693,129 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
 
     await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+});
+
+test.describe('Preset code formatting and default component code behavior', () => {
+  test('Invalid preset code shows error and highlights Preset tab', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Enter invalid preset code, submit, verify error message and red highlight on field and Preset tab.
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Set Preset code to an invalid value (e.g. "<invalid name>")
+     *      4. Press Submit
+     *      5. Verify error message and red highlight for Preset code and Preset tab
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('<invalid name>');
+    await dialog.submit();
+
+    await expect(
+      page.getByText(
+        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+      ),
+    ).toBeVisible();
+
+    await takeElementScreenshot(page, dialog.nucleotidePresetSection.presetTab);
+    await takeElementScreenshot(page, presetSection.presetTab.nameEditbox);
+
+    await dialog.discard();
+  });
+
+  test('Setting preset code auto-populates default component codes', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Enter preset code and verify default component codes are derived from it.
+     *
+     * Case:
+     *      1. Open Molecules canvas
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Enter Preset code "Preset"
+     *      4. Verify Sugar/Base/Phosphate codes are "PresetS/B/P"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+
+    await presetSection.setName('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'PresetP',
+    );
+
+    await dialog.discard();
+  });
+
+  test('Manually changed component code is preserved when preset code changes', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8854
+     * Description: Change Sugar code manually, then change Preset code; Sugar code should remain, others update.
+     *
+     * Case:
+     *      1. Open wizard and select Nucleotide (preset)
+     *      2. Set Preset code "Preset"
+     *      3. Open Sugar tab and set code to "MySugar"
+     *      4. Change Preset code to "Preset2"
+     *      5. Verify Sugar code remains "MySugar"
+     *      6. Verify Base/Phosphate codes updated to "Preset2B"/"Preset2P"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+
+    await presetSection.setName('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await presetSection.sugarTab.symbolEditbox.fill('MySugar');
+
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await presetSection.setName('Preset2');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('MySugar');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('Preset2B');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'Preset2P',
+    );
 
     await dialog.discard();
   });

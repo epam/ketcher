@@ -4,8 +4,16 @@
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import { MonomerType, shiftCanvas } from '@utils/index';
-import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import {
+  MonomerType,
+  shiftCanvas,
+  takeEditorScreenshot,
+  takeElementScreenshot,
+} from '@utils/index';
+import {
+  CreateMonomerDialog,
+  selectAtomAndBonds,
+} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   NucleotideNaturalAnalogue,
@@ -24,6 +32,9 @@ import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/ConfirmationMessageDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 
@@ -554,6 +565,142 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
       'PresetP',
     );
+
+    await dialog.discard();
+  });
+});
+
+test.describe('Mark as... context menu for Nucleotide (preset) components', () => {
+  test('Set Sugar/Base/Phosphate via context menu and verify fields are populated', async () => {
+    /*
+     * Test task: Requirements 2.1, 2.1.1, 2.1.3
+     * Description: The user can set component structures (continuous selection) using "Mark as a..." > Sugar/Base/Phosphate.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard, select Nucleotide (preset)
+     *      3. Select a continuous fragment and Mark as a... -> Sugar
+     *      4. Select a continuous fragment and Mark as a... -> Base
+     *      5. Select a continuous fragment and Mark as a... -> Phosphate
+     *      6. Verify atom/bond fields for respective tabs are populated
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Sugar,
+    ]);
+    await selectAtomAndBonds(page, { atomIds: [2, 3], bondIds: [2] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 2 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Base,
+    ]);
+    await selectAtomAndBonds(page, { atomIds: [4, 5], bondIds: [4] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 4 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Phosphate,
+    ]);
+
+    await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+
+  test('Selecting via context menu opens the corresponding component tab', async () => {
+    /*
+     * Test task: Requirement 2.1.3.1
+     * Description: After marking with "Mark as a...", the corresponding tab opens automatically.
+     *
+     * Case:
+     *      1. Open wizard, select Nucleotide (preset) and ensure another tab is active (Preset)
+     *      2. Select a continuous fragment and Mark as a... -> Phosphate
+     *      3. Verify Phosphate tab content is shown (fields visible)
+     *      4. Select a continuous fragment and Mark as a... -> Base
+     *      5. Verify Base tab is active
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const preset = NucleotidePresetSection(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    // Ensure Preset tab is initially opened
+    await preset.openTab(NucleotidePresetTab.Preset);
+    await selectAtomAndBonds(page, { atomIds: [2, 3], bondIds: [2] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 2 })).click([
+      MonomerWizardOption.MarkAs,
+      MonomerWizardOption.Base,
+    ]);
+
+    await takeElementScreenshot(page, dialog.nucleotidePresetSection.baseTab);
+
+    await dialog.discard();
+  });
+
+  test('Context menu option "Mark as a..." is disabled for non-continuous selection', async () => {
+    /*
+     * Test task: Requirements 2.1.1, 2.1.2
+     * Description: Non-continuous selection keeps "Mark as a..." present but disabled.
+     *
+     * Case:
+     *      1. Open wizard, select Nucleotide (preset)
+     *      2. Select non-continuous atoms (e.g., 0 and 2 in a chain)
+     *      3. Open context menu and verify "Mark as a..." is disabled
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await selectAtomAndBonds(page, { atomIds: [0, 2], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).hover(
+      MonomerWizardOption.MarkAs,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await dialog.discard();
+  });
+
+  test('No "Mark as a..." option if monomer type is not Nucleotide (preset)', async () => {
+    /*
+     * Test task: Requirement 2.1.4
+     * Description: "Mark as a..." is visible only for Nucleotide (preset) type.
+     *
+     * Case:
+     *      1. Open wizard with default CHEM (or explicitly select CHEM)
+     *      2. Open context menu on structure
+     *      3. Verify there is no "Mark as a..." item
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.CHEM);
+    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
+    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
+
+    await takeEditorScreenshot(page);
 
     await dialog.discard();
   });

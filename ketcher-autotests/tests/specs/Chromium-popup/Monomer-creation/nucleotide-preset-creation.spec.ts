@@ -23,6 +23,7 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/ConfirmationMessageDialog';
 
 let page: Page;
 
@@ -411,5 +412,149 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     await expect(
       page.getByText('The preset was successfully added to the library'),
     ).toBeVisible();
+  });
+});
+
+test.describe('Type change confirmation for Nucleotide (preset)', () => {
+  test('Confirm warning appears when changing type after Nucleotide (preset)', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Description: Start preset creation, fill fields, pick another type and check confirmation dialog appears.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Open Type drop-down, pick another type (e.g. Sugar)
+     *      5. Verify modal title, message, and buttons "Cancel" (default) and "Yes"
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
+    await dialog.selectType(MonomerTypeInDropdown.Sugar);
+
+    await expect(confirmModal.confirmationModalWindow).toBeVisible();
+    await expect(
+      confirmModal.confirmationModalWindow.getByText(
+        'Changing the type will result in a loss of inputted data. Do you wish to proceed?',
+      ),
+    ).toBeVisible();
+
+    // Close modal to not affect other tests
+    if (await confirmModal.confirmationModalWindow.isVisible()) {
+      await confirmModal.ok();
+    }
+    await dialog.discard();
+  });
+
+  test('Type change: press Yes, then select Nucleotide (preset) again and verify fields cleared', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Description: Start preset creation, fill fields, pick another type, press Yes, then select preset again and check fields are reset.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Pick another type -> confirm modal -> press Yes
+     *      5. Select Nucleotide (preset) again
+     *      6. Verify Preset and component fields are cleared
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
+    await dialog.selectType(MonomerTypeInDropdown.Sugar);
+    await confirmModal.ok();
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+
+    await expect(presetSection.presetTab.nameEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('');
+
+    await dialog.discard();
+  });
+
+  test('Type change: press Cancel, verify fields remain intact', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/8248
+     * Description: Start preset creation, fill fields, pick another type, press Cancel and verify data persists.
+     *
+     * Case:
+     *      1. Open Molecules canvas and load molecule
+     *      2. Open wizard and select Nucleotide (preset)
+     *      3. Fill Preset name and Sugar minimal fields
+     *      4. Pick another type -> confirm modal -> press Cancel
+     *      5. Verify current type is still Nucleotide (preset)
+     *      6. Verify Preset and component fields are not cleared
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+    const confirmModal = ConfirmationMessageDialog(page);
+
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await presetSection.setName('Preset');
+    await presetSection.setupSugar({ atomIds: [1, 2], bondIds: [1] });
+    await dialog.selectType(MonomerTypeInDropdown.Base);
+    await confirmModal.cancel();
+
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await expect(presetSection.presetTab.nameEditbox).toHaveValue('Preset');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+
+    await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
+
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+
+    await presetSection.openTab(NucleotidePresetTab.Base);
+
+    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+
+    await presetSection.openTab(NucleotidePresetTab.Phosphate);
+
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+      'PresetP',
+    );
+
+    await dialog.discard();
   });
 });

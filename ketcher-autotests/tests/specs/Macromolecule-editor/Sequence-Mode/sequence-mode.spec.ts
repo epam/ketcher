@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
   scrollDown,
@@ -30,12 +30,16 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Sequence Mode', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  let page: Page;
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test('Open monomers chains and switch to sequence mode', async ({ page }) => {
+  test('Open monomers chains and switch to sequence mode', async () => {
     /* 
     Test case: #3648 - Open monomers chains and switch to sequence mode
     Description: Sequence mode tool
@@ -53,9 +57,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Switch from flex view to sequence view to snake view and back to flex.', async ({
-    page,
-  }) => {
+  test('Switch from flex view to sequence view to snake view and back to flex.', async () => {
     /* 
     Test case: #3648
     Description: Switching between modes occurs with a visual change in monomers and their compounds depending on the mode.
@@ -76,9 +78,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async ({
-    page,
-  }) => {
+  test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async () => {
     /* 
     Test case: #3648
     Description: Nucleotides are connected through R2-R1 bonds, these bonds are not visually represented,
@@ -94,9 +94,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async ({
-    page,
-  }) => {
+  test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async () => {
     /* 
     Test case: #3648
     Description: All phosphates not part of nucleotides are displayed as "p" symbols, 
@@ -112,7 +110,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test sequence display for long DNA/RNA', async ({ page }) => {
+  test('Test sequence display for long DNA/RNA', async () => {
     /* 
     Test case: #3648
     Description: Sequence of letters is divided into groups of tens, and enumeration 
@@ -132,7 +130,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Test sequence display for long Peptides chains', async ({ page }) => {
+  test('Test sequence display for long Peptides chains', async () => {
     /* 
     Test case: #3648
     Description: Sequence of letters is divided into groups of tens, and enumeration 
@@ -148,9 +146,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that if system encounters Peptide it is appears as letter for natural analog', async ({
-    page,
-  }) => {
+  test('Confirm that if system encounters Peptide it is appears as letter for natural analog', async () => {
     /* 
     Test case: #3648
     Description: Peptide appears as letter for natural analog
@@ -166,9 +162,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that if system encounters Sugar, Base or CHEM it is appears as @ symbol', async ({
-    page,
-  }) => {
+  test('Confirm that if system encounters Sugar, Base or CHEM it is appears as @ symbol', async () => {
     /* 
     Test case: #3648
     Description: Sugar, Base or CHEM appears as @ symbol
@@ -183,9 +177,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open RNA in sequence mode, switch to flex mode and confirm that RNA chain layout is left-to-right', async ({
-    page,
-  }) => {
+  test('Open RNA in sequence mode, switch to flex mode and confirm that RNA chain layout is left-to-right', async () => {
     /* 
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right.
@@ -203,9 +195,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Press Undo button and verify that layout returns to unarranged state', async ({
-    page,
-  }) => {
+  test('Press Undo button and verify that layout returns to unarranged state', async () => {
     /* 
     Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
@@ -222,28 +212,24 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async ({
-    page,
-  }) => {
+  test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async () => {
     /* 
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/rna.mol',
       MacroFileType.MOLv3000,
     );
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that length of each row is limited to 30 nucleotides', async ({
-    page,
-  }) => {
+  test('Confirm that length of each row is limited to 30 nucleotides', async () => {
     /* 
     Test case: #3648
     Description: Length of each row is limited to 30 nucleotides after switch to sequence mode.
@@ -259,9 +245,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async ({
-    page,
-  }) => {
+  test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async () => {
     /*
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
@@ -280,7 +264,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Open modified RNA in sequence mode', async ({ page }) => {
+  test('Open modified RNA in sequence mode', async () => {
     /*
     Test case: #3734
     Description: Displaying modified nucleotide chains in sequence representation
@@ -299,9 +283,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open monomers cyclic chains and switch to sequence mode', async ({
-    page,
-  }) => {
+  test('Open monomers cyclic chains and switch to sequence mode', async () => {
     /*
     Related bug: #4329 - Open monomers cyclic chains and switch to sequence mode
     */
@@ -342,7 +324,7 @@ test.describe('Sequence Mode', () => {
   ];
 
   for (const data of testData) {
-    test(`Ensure that ${data.description}`, async ({ page }) => {
+    test(`Ensure that ${data.description}`, async () => {
       await openFileAndAddToCanvasMacro(page, data.file, data.fileType);
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -382,7 +364,7 @@ test.describe('Sequence Mode', () => {
   ];
 
   for (const data of testsData) {
-    test(`${data.description}`, async ({ page }) => {
+    test(`${data.description}`, async () => {
       /*
       Test case: #3734
       Description: Modified component is unambiguously marked.
@@ -395,9 +377,7 @@ test.describe('Sequence Mode', () => {
     });
   }
 
-  test('Test display of a phosphate connected to R2 AP of sugar and a phosphate that is not part of a nucleotide in sequence view', async ({
-    page,
-  }) => {
+  test('Test display of a phosphate connected to R2 AP of sugar and a phosphate that is not part of a nucleotide in sequence view', async () => {
     /*
     Test case: #3734
     Description: Phosphate is displayed as p symbol.
@@ -412,9 +392,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test display of CHEM in sequence view and confirm that they are displayed as @', async ({
-    page,
-  }) => {
+  test('Test display of CHEM in sequence view and confirm that they are displayed as @', async () => {
     /*
     Test case: #3734
     Description: CHEM is displayed as @ symbol.
@@ -430,9 +408,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async ({
-    page,
-  }) => {
+  test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async () => {
     /*
     Test case: #3734
     Description: Sugars that are not part of a nucleotide or nucleoside in sequence view are displayed as @ symbol
@@ -448,9 +424,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Side chain connections between sugar and phosphate', async ({
-    page,
-  }) => {
+  test('Side chain connections between sugar and phosphate', async () => {
     /*
     Test case: #3734
     Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
@@ -463,7 +437,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Side chain connections between sugar and base', async ({ page }) => {
+  test('Side chain connections between sugar and base', async () => {
     /*
     Test case: #3734
     Description: Sugar and Base are displayed as straight lines connecting two monomers center-to-center.
@@ -481,9 +455,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test sequence view for chains containing both modified and unmodified nucleotides', async ({
-    page,
-  }) => {
+  test('Test sequence view for chains containing both modified and unmodified nucleotides', async () => {
     /*
     Test case: #3734
     Description: Modified component is marked accordingly to mockup.
@@ -499,9 +471,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test display of last nucleotide in sequence view, ensuring it lacks a phosphate', async ({
-    page,
-  }) => {
+  test('Test display of last nucleotide in sequence view, ensuring it lacks a phosphate', async () => {
     /*
     Test case: #3734
     Description: After switch to flex mode phosphate is absent.
@@ -515,9 +485,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Zoom In and Zoom Out while add monomers in sequence view', async ({
-    page,
-  }) => {
+  test('Zoom In and Zoom Out while add monomers in sequence view', async () => {
     /*
     Test case: #3734
     Description: Monomers added without errors.
@@ -534,9 +502,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Create a single chain in sequence mode. Switch to flex mode and verify that position of first monomer remains same', async ({
-    page,
-  }) => {
+  test('Create a single chain in sequence mode. Switch to flex mode and verify that position of first monomer remains same', async () => {
     /*
     Test case: #3870
     Description: Position of first monomer remains same.
@@ -550,9 +516,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Create a multiple chains in sequence mode. Switch to flex mode and confirm that position of first monomer defines "top left" corner on canvas', async ({
-    page,
-  }) => {
+  test('Create a multiple chains in sequence mode. Switch to flex mode and confirm that position of first monomer defines "top left" corner on canvas', async () => {
     /*
     Test case: #3870
     Description: Position of first monomer defines "top left" corner on canvas.
@@ -574,9 +538,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('If nucleotide is being added to the end of sequence, then phosphate P should be added automatically between last two nucleosides', async ({
-    page,
-  }) => {
+  test('If nucleotide is being added to the end of sequence, then phosphate P should be added automatically between last two nucleosides', async () => {
     /*
     Test case: #3650
     Description: Phosphate P added automatically between last two nucleosides.
@@ -589,9 +551,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Delete any nucleotide within RNA fragment using keyboard keys (Del, Backspace)', async ({
-    page,
-  }) => {
+  test('Delete any nucleotide within RNA fragment using keyboard keys (Del, Backspace)', async () => {
     /*
     Test case: #3650
     Description: RNA fragment deleted.
@@ -612,9 +572,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Merging two chains occurs when cursor is before first symbol of the second chain in text-editing mode, and Backspace is pressed', async ({
-    page,
-  }) => {
+  test('Merging two chains occurs when cursor is before first symbol of the second chain in text-editing mode, and Backspace is pressed', async () => {
     /*
     Test case: #3650
     Description: DNA and RNA chains are merged into one chain.
@@ -633,9 +591,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Verify that selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA)', async ({
-    page,
-  }) => {
+  test('Verify that selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA)', async () => {
     /*
     Test case: #3861
     Description: Selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA).
@@ -651,9 +607,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that a command icon added to the right of the Undo button and separated from it by a line.(Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check that a command icon added to the right of the Undo button and separated from it by a line.(Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Command icon added to the right of the Undo button and separated from it by a line.(Sequence mode).
@@ -673,9 +627,7 @@ test.describe('Sequence Mode', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Check that clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two options (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check that clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two options (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two
@@ -697,9 +649,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Create antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Create antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+R (Shift+Option+R for MacOS) for
@@ -721,9 +671,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Create antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
-    page,
-  }) => {
+  test('Create antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+R (Shift+Option+R for MacOS) for
@@ -747,9 +695,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+D (Shift+Option+D for MacOS) for
@@ -771,9 +717,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
-    page,
-  }) => {
+  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+D (Shift+Option+D for MacOS) for
@@ -797,9 +741,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check creation RNA Antisense Strand by button (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check creation RNA Antisense Strand by button (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Creation RNA Antisense Strand by button (Sequence mode).
@@ -820,9 +762,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check creation RNA Antisense Strand by button (Snake mode)', async ({
-    page,
-  }) => {
+  test('Check creation RNA Antisense Strand by button (Snake mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Creation RNA Antisense Strand by button (Snake mode).
@@ -845,9 +785,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check creation DNA Antisense Strand by button (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check creation DNA Antisense Strand by button (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Creation DNA Antisense Strand by button (Sequence mode).
@@ -871,9 +809,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check creation DNA Antisense Strand by button (Snake mode)', async ({
-    page,
-  }) => {
+  test('Check creation DNA Antisense Strand by button (Snake mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: Creation DNA Antisense Strand by button (Snake mode).
@@ -899,9 +835,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode).
@@ -924,9 +858,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode).
@@ -951,9 +883,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode).
@@ -978,9 +908,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode).
@@ -1005,9 +933,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode).
@@ -1034,9 +960,7 @@ test.describe('Sequence Mode', () => {
     });
   });
 
-  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode)', async ({
-    page,
-  }) => {
+  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
      * Description: When RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode).
@@ -1088,7 +1012,7 @@ test.describe('Sequence Mode', () => {
   ];
 
   for (const testCase of testCases) {
-    test(`${testCase.name}`, async ({ page }) => {
+    test(`${testCase.name}`, async () => {
       /*
       Test case: #3876
       */
@@ -1116,7 +1040,7 @@ test.describe('Sequence Mode', () => {
   test(
     'Check that Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: #4346
     Description: Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point.
@@ -1169,9 +1093,7 @@ test.describe('Sequence Mode', () => {
     });
   }
 
-  test('1. Check that in sequence mode not modifid amino acids are not marked', async ({
-    page,
-  }) => {
+  test('1. Check that in sequence mode not modifid amino acids are not marked', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5629
     Description: Check that in sequence mode not modifid amino acids are not marked
@@ -1232,9 +1154,7 @@ test.describe('Sequence Mode', () => {
       'PEPTIDE5{[DAnTyr].[Pyrro]}|PEPTIDE6{[Tos-].[-OMe]}$$$$V2.0',
   ];
 
-  test('2. Check that in sequence mode all modifid amino acids are marked', async ({
-    page,
-  }) => {
+  test('2. Check that in sequence mode all modifid amino acids are marked', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5629
     Description: Check that in sequence mode all modifid amino acids are marked
@@ -1258,9 +1178,7 @@ test.describe('Sequence Mode', () => {
     }
   });
 
-  test('Check that adjusted Add new sequence control width to longest sequence around it', async ({
-    page,
-  }) => {
+  test('Check that adjusted Add new sequence control width to longest sequence around it', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7104
      * Description: Check that adjusted Add new sequence control width to longest sequence around it

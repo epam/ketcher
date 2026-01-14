@@ -894,8 +894,8 @@ class ReStruct {
       if (item.togglePoints) item.togglePoints(false);
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
-        fill: 'none',
-        stroke: 'none',
+        fill: '#fff',
+        stroke: '#fff',
       });
     }
   }

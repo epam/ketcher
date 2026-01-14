@@ -172,6 +172,7 @@ function selectStereoFlagsIfNecessary(
 export interface Selection {
   atoms?: Array<number>;
   bonds?: Array<number>;
+  sgroups?: Array<number>;
   enhancedFlags?: Array<number>;
   rxnPluses?: Array<number>;
   rxnArrows?: Array<number>;
@@ -1595,6 +1596,41 @@ class Editor implements KetcherEditor {
           });
         }
       });
+
+      const newSelectedAtoms = new Set<number>();
+
+      monomersData.forEach(({ monomerStructureInWizard }) => {
+        monomerStructureInWizard?.atoms?.forEach((atomId) => {
+          const mappedAtomId = atomIdMap.get(atomId);
+
+          if (isNumber(mappedAtomId)) {
+            newSelectedAtoms.add(mappedAtomId);
+          }
+        });
+      });
+
+      if (newSelectedAtoms.size > 0) {
+        const selection: Selection = {
+          atoms: Array.from(newSelectedAtoms),
+        };
+
+        const sgroupsToSelect: number[] = [];
+
+        struct.sgroups.forEach((sgroup, sgroupId) => {
+          if (
+            sgroup.isMonomer &&
+            sgroup.atoms.some((atomId) => newSelectedAtoms.has(atomId))
+          ) {
+            sgroupsToSelect.push(sgroupId);
+          }
+        });
+
+        if (sgroupsToSelect.length > 0) {
+          selection.sgroups = sgroupsToSelect;
+        }
+
+        this.selection(selection);
+      }
     }, 0);
   }
 

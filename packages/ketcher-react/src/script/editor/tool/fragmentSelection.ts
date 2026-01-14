@@ -114,7 +114,7 @@ export default class FragmentSelectionTool implements Tool {
       {
         map: 'merge',
         items: { atoms: preview.atoms, bonds: preview.bonds },
-      } as any,
+      },
       this,
     );
 
@@ -208,7 +208,7 @@ export default class FragmentSelectionTool implements Tool {
     blockedBonds: Set<number>,
     componentAtoms: Set<number>,
   ): FragmentPreview {
-    if (startAtomId === undefined || startAtomId === null) {
+    if (startAtomId == null) {
       return { atoms: [], bonds: [] };
     }
 

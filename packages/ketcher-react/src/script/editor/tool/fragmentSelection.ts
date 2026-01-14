@@ -208,7 +208,7 @@ export default class FragmentSelectionTool implements Tool {
     blockedBonds: Set<number>,
     componentAtoms: Set<number>,
   ): FragmentPreview {
-    if (startAtomId == null) {
+    if (startAtomId === undefined || startAtomId === null) {
       return { atoms: [], bonds: [] };
     }
 

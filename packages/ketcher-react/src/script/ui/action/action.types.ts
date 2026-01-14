@@ -80,6 +80,7 @@ type ToolVariant =
   | 'rgroup-label'
   | 'save'
   | 'select-fragment'
+  | 'select-fragment-tool'
   | 'select-lasso'
   | 'select-rectangle'
   | 'select-all'

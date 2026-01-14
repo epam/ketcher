@@ -408,6 +408,7 @@ export const iconNameToIcon = {
   save: SaveIcon,
   search: SearchIcon,
   'select-fragment': SelectFragmentIcon,
+  'select-fragment-tool': SelectFragmentIcon,
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
   settings: SettingsIcon,

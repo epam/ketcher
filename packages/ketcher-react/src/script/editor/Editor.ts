@@ -139,6 +139,10 @@ const highlightTargets = [
   MULTITAIL_ARROW_KEY,
 ];
 
+type HoverTarget =
+  | { id: number; map: string }
+  | { map: 'merge'; items: Record<string, number[]> };
+
 function selectStereoFlagsIfNecessary(
   atoms: Pool<Atom>,
   explicitlySelectedAtoms: number[],
@@ -2494,19 +2498,19 @@ class Editor implements KetcherEditor {
     return this._selection; // eslint-disable-line
   }
 
-  hover(
-    ci: { id: number; map: string } | null,
-    newTool?: any,
-    event?: PointerEvent,
-  ) {
+  hover(ci: HoverTarget | null, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool; // eslint-disable-line
 
-    if (
-      'ci' in tool &&
-      (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
-    ) {
-      setHover(tool.ci, false, this.render);
-      delete tool.ci;
+    if ('ci' in tool) {
+      const previousId =
+        (tool.ci as HoverTarget | undefined) && 'id' in (tool.ci as HoverTarget)
+          ? (tool.ci as { id: number }).id
+          : undefined;
+      const nextId = ci && 'id' in ci ? (ci as { id: number }).id : undefined;
+      if (!ci || tool.ci.map !== ci.map || previousId !== nextId) {
+        setHover(tool.ci, false, this.render);
+        delete tool.ci;
+      }
     }
 
     if (ci && setHover(ci, true, this.render)) {

@@ -2501,12 +2501,13 @@ class Editor implements KetcherEditor {
   hover(ci: HoverTarget | null, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool; // eslint-disable-line
 
-    if ('ci' in tool) {
-      const previousId = this.getHoverId(tool.ci as HoverTarget);
+    const hoverState = (tool as { ci?: HoverTarget }).ci;
+    if (hoverState) {
+      const previousId = this.getHoverId(hoverState);
       const nextId = this.getHoverId(ci);
-      if (!ci || tool.ci.map !== ci.map || previousId !== nextId) {
-        setHover(tool.ci, false, this.render);
-        delete tool.ci;
+      if (!ci || hoverState.map !== ci.map || previousId !== nextId) {
+        setHover(hoverState, false, this.render);
+        delete (tool as { ci?: HoverTarget }).ci;
       }
     }
 

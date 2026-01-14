@@ -2502,11 +2502,8 @@ class Editor implements KetcherEditor {
     const tool = newTool || this._tool; // eslint-disable-line
 
     if ('ci' in tool) {
-      const previousId =
-        (tool.ci as HoverTarget | undefined) && 'id' in (tool.ci as HoverTarget)
-          ? (tool.ci as { id: number }).id
-          : undefined;
-      const nextId = ci && 'id' in ci ? (ci as { id: number }).id : undefined;
+      const previousId = this.getHoverId(tool.ci as HoverTarget);
+      const nextId = this.getHoverId(ci);
       if (!ci || tool.ci.map !== ci.map || previousId !== nextId) {
         setHover(tool.ci, false, this.render);
         delete tool.ci;
@@ -2532,6 +2529,10 @@ class Editor implements KetcherEditor {
         isShow: true,
       });
     }
+  }
+
+  private getHoverId(target: HoverTarget | null | undefined) {
+    return target && 'id' in target ? target.id : undefined;
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {

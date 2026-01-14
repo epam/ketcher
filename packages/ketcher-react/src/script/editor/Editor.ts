@@ -92,6 +92,7 @@ import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
 import {
+  HoverTarget,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
@@ -138,11 +139,6 @@ const highlightTargets = [
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];
-
-type HoverTarget =
-  | { id: number; map: string }
-  | { map: 'merge'; items: Record<string, number[]> };
-
 function selectStereoFlagsIfNecessary(
   atoms: Pool<Atom>,
   explicitlySelectedAtoms: number[],

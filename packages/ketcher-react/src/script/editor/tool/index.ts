@@ -40,11 +40,13 @@ import { ToolConstructorInterface } from './Tool';
 import { ImageTool } from './image';
 import { SelectCommonTool } from './select';
 import CreateMonomerTool from './create-monomer';
+import FragmentSelectionTool from './fragmentSelection';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,
   rgroupatom: RGroupAtomTool,
   select: SelectCommonTool,
+  fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
   eraser: EraserTool,
   atom: AtomTool,

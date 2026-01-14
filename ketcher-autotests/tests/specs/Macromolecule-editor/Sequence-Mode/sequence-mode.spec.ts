@@ -195,7 +195,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Press Undo button and verify that layout returns to unarranged state', async () => {
+  test('Press Undo button and verify that layout returns to unarranged state', async ({
+    FlexCanvas: _,
+  }) => {
     /* 
     Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
@@ -212,18 +214,20 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async () => {
+  test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async ({
+    FlexCanvas: _,
+  }) => {
     /* 
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/rna.mol',
       MacroFileType.MOLv3000,
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
     );
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);
@@ -392,7 +396,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test display of CHEM in sequence view and confirm that they are displayed as @', async () => {
+  test('Test display of CHEM in sequence view and confirm that they are displayed as @', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: CHEM is displayed as @ symbol.
@@ -408,7 +414,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async () => {
+  test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: Sugars that are not part of a nucleotide or nucleoside in sequence view are displayed as @ symbol
@@ -424,7 +432,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Side chain connections between sugar and phosphate', async () => {
+  test('Side chain connections between sugar and phosphate', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
@@ -437,7 +447,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Side chain connections between sugar and base', async () => {
+  test('Side chain connections between sugar and base', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: Sugar and Base are displayed as straight lines connecting two monomers center-to-center.
@@ -455,7 +467,9 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Test sequence view for chains containing both modified and unmodified nucleotides', async () => {
+  test('Test sequence view for chains containing both modified and unmodified nucleotides', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: Modified component is marked accordingly to mockup.
@@ -1083,7 +1097,7 @@ test.describe('Sequence Mode', () => {
 
   for (const testInfo of tests) {
     test(`Validate displaying modified nucleotide chains for ${testInfo.description}`, async ({
-      page,
+      FlexCanvas: _,
     }) => {
       await openFileAndAddToCanvasMacro(page, testInfo.fileName);
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(

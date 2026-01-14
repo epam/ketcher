@@ -78,7 +78,7 @@ function isGroupCenterSnapResult(
 abstract class SelectBase implements BaseTool {
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
-  protected selectionStartPosition = new Vec2(0, 0, 0);
+  protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   protected mode: 'moving' | 'selecting' | 'standby' = 'standby';
   private readonly canvasResizeObserver?: ResizeObserver;
@@ -108,7 +108,9 @@ abstract class SelectBase implements BaseTool {
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
-    this.selectionStartPosition = this.editor.lastCursorPosition;
+    this.selectionStartCanvasPosition = Coordinates.viewToCanvas(
+      this.editor.lastCursorPosition,
+    );
 
     if (event.target === this.editor.canvas) {
       if (!event.shiftKey) {

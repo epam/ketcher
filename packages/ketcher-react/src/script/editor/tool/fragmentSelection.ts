@@ -175,7 +175,10 @@ export default class FragmentSelectionTool implements Tool {
     const queue = [bond.begin];
 
     while (queue.length) {
-      const atomId = queue.shift() as number;
+      const atomId = queue.shift();
+      if (atomId === undefined) {
+        continue;
+      }
       for (const [id, currentBond] of struct.bonds.entries()) {
         if (id === bondId) continue;
 
@@ -218,7 +221,10 @@ export default class FragmentSelectionTool implements Tool {
     const queue = [startAtomId];
 
     while (queue.length) {
-      const atomId = queue.shift() as number;
+      const atomId = queue.shift();
+      if (atomId === undefined) {
+        continue;
+      }
       if (visitedAtoms.has(atomId) || componentAtoms.has(atomId)) {
         continue;
       }

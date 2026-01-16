@@ -117,6 +117,7 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   Base1: { alias: 'Base1', testId: 'Base1___Base1' },
   _Base1: { alias: '_Base1', testId: '_Base1____Base1' },
   BaseX: { alias: 'BaseX', testId: 'BaseX___BaseX' },
+  Aargh: { alias: 'Aargh', testId: 'Aargh___Aargh' },
 });
 
 export type BasesType = typeof Base;

@@ -95,7 +95,11 @@ export const DragGhost = () => {
   }
 
   return (
-    <div className={styles.dragGhost} ref={ghostWrapperRef}>
+    <div
+      className={styles.dragGhost}
+      ref={ghostWrapperRef}
+      data-testid="drag-ghost"
+    >
       {isLibraryItemRnaPreset(libraryItemDragData.item) ? (
         <GhostRnaPreset preset={libraryItemDragData.item} />
       ) : (

@@ -1070,6 +1070,13 @@ export class Atom extends BaseMicromoleculeEntity {
     );
     const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
     const isMonomer = sGroup instanceof MonomerMicromolecule;
+    const attachmentPointsForAtom = attachmentPoint
+      ? sGroup
+          ?.getAttachmentPoints()
+          .filter((point) => point.atomId === attachmentPoint.atomId)
+      : [];
+    const hasUniqueAttachmentPointForAtom =
+      attachmentPointsForAtom?.length === 1;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
@@ -1077,13 +1084,23 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return (
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-      attachmentAtomExternalConnections?.find((_, bond) =>
-        bond.begin === attachmentPoint?.atomId
-          ? bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber
-          : bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber,
-      )
+      attachmentAtomExternalConnections?.find((_, bond) => {
+        if (bond.begin === attachmentPoint?.atomId) {
+          return (
+            bond.beginSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber ||
+            (!isNumber(bond.beginSuperatomAttachmentPointNumber) &&
+              hasUniqueAttachmentPointForAtom)
+          );
+        }
+
+        return (
+          bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber ||
+          (!isNumber(bond.endSuperatomAttachmentPointNumber) &&
+            hasUniqueAttachmentPointForAtom)
+        );
+      })
     );
   }
 }

@@ -216,14 +216,7 @@ export function setExpandMonomerSGroup(
         continue;
       }
 
-      if (!attrs.expanded) {
-        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
-        continue;
-      }
-
-      if (!otherSGroup.isExpanded()) {
-        continue;
-      }
+      const otherMonomerIsExpanded = otherSGroup.isExpanded();
 
       const currentMonomerAP = attachmentPoints.find(
         (ap) => ap.atomId === atomInsideCurrentMonomer,
@@ -255,32 +248,48 @@ export function setExpandMonomerSGroup(
       const hasOtherStereo =
         otherMonomerStereo !== null &&
         otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
+      const currentMonomerStereoValue =
+        currentMonomerStereo ?? Bond.PATTERN.STEREO.NONE;
+      const otherMonomerStereoValue =
+        otherMonomerStereo ?? Bond.PATTERN.STEREO.NONE;
 
-      if (hasCurrentStereo && !hasOtherStereo) {
+      let hasEffectiveCurrentStereo = hasCurrentStereo;
+      let hasEffectiveOtherStereo = hasOtherStereo;
+      if (attrs.expanded !== otherMonomerIsExpanded) {
+        if (attrs.expanded && hasCurrentStereo) {
+          hasEffectiveOtherStereo = false;
+        } else if (otherMonomerIsExpanded && hasOtherStereo) {
+          hasEffectiveCurrentStereo = false;
+        }
+      }
+
+      if (hasEffectiveCurrentStereo && !hasEffectiveOtherStereo) {
         if (bondToOutside.begin !== atomInsideCurrentMonomer) {
           action.mergeWith(
             fromMonomerBondFlipWithNewStereo(
               struct,
               bondId,
-              currentMonomerStereo,
+              currentMonomerStereoValue,
             ),
           );
         } else {
-          action.addOp(new BondAttr(bondId, 'stereo', currentMonomerStereo));
+          action.addOp(
+            new BondAttr(bondId, 'stereo', currentMonomerStereoValue),
+          );
         }
-      } else if (!hasCurrentStereo && hasOtherStereo) {
+      } else if (!hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
         if (bondToOutside.begin !== atomOutsideCurrentMonomer) {
           action.mergeWith(
             fromMonomerBondFlipWithNewStereo(
               struct,
               bondId,
-              otherMonomerStereo,
+              otherMonomerStereoValue,
             ),
           );
         } else {
-          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereo));
+          action.addOp(new BondAttr(bondId, 'stereo', otherMonomerStereoValue));
         }
-      } else if (hasCurrentStereo && hasOtherStereo) {
+      } else if (hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
         action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
       }
     }

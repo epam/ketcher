@@ -258,6 +258,13 @@ export enum ConnectionPointOption {
   MarkAsConnectionPoint = 'mark-as-connection-point',
 }
 
+export enum MonomerWizardOption {
+  MarkAs = 'Mark as a...-option',
+  Sugar = 'Mark as Sugar-option',
+  Base = 'Mark as Base-option',
+  Phosphate = 'Mark as Phosphate-option',
+}
+
 export type ContextMenuOption =
   | MonomerOption
   | ModifyAminoAcidsOption
@@ -281,4 +288,5 @@ export type ContextMenuOption =
   | ConnectivityOption
   | MultiTailedArrowOption
   | LibraryPresetOption
-  | ConnectionPointOption;
+  | ConnectionPointOption
+  | MonomerWizardOption;

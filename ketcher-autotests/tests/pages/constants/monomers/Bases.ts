@@ -118,6 +118,10 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   _Base1: { alias: '_Base1', testId: '_Base1____Base1' },
   BaseX: { alias: 'BaseX', testId: 'BaseX___BaseX' },
   Aargh: { alias: 'Aargh', testId: 'Aargh___Aargh' },
+  DefaultBaseRnaComponent: {
+    alias: 'PresetB',
+    testId: 'PresetB___PresetB',
+  },
 });
 
 export type BasesType = typeof Base;

@@ -57,28 +57,29 @@ class SelectRectangle extends SelectBase {
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
     requestAnimationFrame(() => {
+      const lastCursorCanvasPosition = Coordinates.viewToCanvas(
+        this.editor.lastCursorPosition,
+      );
+
       const topLeftX = Math.min(
-        this.selectionStartPosition.x,
-        this.editor.lastCursorPosition.x,
+        this.selectionStartCanvasPosition.x,
+        lastCursorCanvasPosition.x,
       );
       const topLeftY = Math.min(
-        this.selectionStartPosition.y,
-        this.editor.lastCursorPosition.y,
+        this.selectionStartCanvasPosition.y,
+        lastCursorCanvasPosition.y,
       );
       const bottomRightX = Math.max(
-        this.selectionStartPosition.x,
-        this.editor.lastCursorPosition.x,
+        this.selectionStartCanvasPosition.x,
+        lastCursorCanvasPosition.x,
       );
       const bottomRightY = Math.max(
-        this.selectionStartPosition.y,
-        this.editor.lastCursorPosition.y,
+        this.selectionStartCanvasPosition.y,
+        lastCursorCanvasPosition.y,
       );
-      const topLeftPoint = Coordinates.viewToCanvas(
-        new Vec2(topLeftX, topLeftY),
-      );
-      const bottomRightPoint = Coordinates.viewToCanvas(
-        new Vec2(bottomRightX, bottomRightY),
-      );
+      const topLeftPoint = new Vec2(topLeftX, topLeftY);
+
+      const bottomRightPoint = new Vec2(bottomRightX, bottomRightY);
 
       const modelChanges =
         this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(

@@ -69,6 +69,7 @@ export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;
+  naturalAnalogue?: string;
 } & (
   | {
       monomerAlias?: string;
@@ -169,8 +170,12 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     if (monomerId) attributes['data-monomerid'] = String(monomerId);
   }
 
-  const { numberOfAttachmentPoints, rValues, hydrogenConnectionNumber } =
-    options;
+  const {
+    numberOfAttachmentPoints,
+    rValues,
+    hydrogenConnectionNumber,
+    naturalAnalogue,
+  } = options;
 
   if (numberOfAttachmentPoints) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
@@ -186,6 +191,10 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     rValues.forEach((value, index) => {
       attributes[`data-R${index + 1}`] = `${value}`;
     });
+  }
+
+  if (naturalAnalogue) {
+    attributes['data-naturalAnalogue'] = naturalAnalogue;
   }
 
   const attributeSelectors = Object.entries(attributes)

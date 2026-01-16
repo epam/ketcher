@@ -49,6 +49,10 @@ export const Phosphate = createMonomerGroup(MonomerType.Phosphate, {
     alias: 'pAargh',
     testId: 'pAargh___pAargh',
   },
+  DefaultPhosphateRnaComponent: {
+    alias: 'PresetP',
+    testId: 'PresetP___PresetP',
+  },
 });
 
 export type PhosphatesType = typeof Phosphate;

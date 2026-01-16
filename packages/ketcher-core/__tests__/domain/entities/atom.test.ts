@@ -1,4 +1,13 @@
 import { Atom, AttachmentPoints, radicalElectrons } from 'domain/entities/atom';
+import {
+  Bond,
+  MonomerMicromolecule,
+  Peptide,
+  SGroup,
+  SGroupAttachmentPoint,
+  Struct,
+} from 'domain/entities';
+import { peptideMonomerItem } from '../../mock-data';
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -552,5 +561,50 @@ describe('Atom', () => {
         expect(atom.calcValenceMinusHyd(2)).toBe(expected);
       },
     );
+  });
+
+  describe('isHiddenLeavingGroupAtom', () => {
+    it('should treat external monomer bonds without attachment numbers as hidden', () => {
+      const struct = new Struct();
+      const monomer = new Peptide(peptideMonomerItem);
+      const anotherMonomer = new Peptide(peptideMonomerItem);
+      const monomerSGroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+      const anotherMonomerSGroup = new MonomerMicromolecule(
+        SGroup.TYPES.SUP,
+        anotherMonomer,
+      );
+      const monomerSGroupId = struct.sgroups.add(monomerSGroup);
+      const anotherMonomerSGroupId = struct.sgroups.add(anotherMonomerSGroup);
+      const attachmentAtomId = struct.atoms.add(
+        new Atom({ ...hydrogenParams, label: 'N' }),
+      );
+      const leavingGroupAtomId = struct.atoms.add(
+        new Atom({ ...hydrogenParams, label: 'H' }),
+      );
+      const externalAtomId = struct.atoms.add(
+        new Atom({ ...hydrogenParams, label: 'C' }),
+      );
+
+      struct.atoms.get(attachmentAtomId)!.sgs.add(monomerSGroupId);
+      struct.atoms.get(leavingGroupAtomId)!.sgs.add(monomerSGroupId);
+      struct.atoms.get(externalAtomId)!.sgs.add(anotherMonomerSGroupId);
+
+      monomerSGroup.atoms = [attachmentAtomId, leavingGroupAtomId];
+      anotherMonomerSGroup.atoms = [externalAtomId];
+      monomerSGroup.addAttachmentPoint(
+        new SGroupAttachmentPoint(attachmentAtomId, leavingGroupAtomId, '', 1),
+      );
+      struct.bonds.add(
+        new Bond({
+          type: Bond.PATTERN.TYPE.SINGLE,
+          begin: attachmentAtomId,
+          end: externalAtomId,
+        }),
+      );
+
+      expect(
+        Atom.isHiddenLeavingGroupAtom(struct, leavingGroupAtomId),
+      ).toBe(true);
+    });
   });
 });

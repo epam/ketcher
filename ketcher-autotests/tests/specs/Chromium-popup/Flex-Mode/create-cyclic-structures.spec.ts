@@ -147,7 +147,7 @@ test.describe('Cyclic structures', () => {
      *
      * Version 3.10
      */
-    const sugar = getMonomerLocator(page, Sugar.R).first();
+    const sugar = getMonomerLocator(page, Sugar.R).nth(4);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/rna-sequence-without-small-molecules.ket',

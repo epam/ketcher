@@ -72,7 +72,7 @@ export class MacromoleculesConverter {
     const atomClone = atom.clone();
     atomClone.pp = monomer.position.add(atom.pp);
     atomClone.sgs = new Pile<number>([monomerMicromolecule.id]);
-    atomClone.fragment = atom.fragment;
+    atomClone.fragment = -1;
     const atomId = struct.atoms.add(atomClone);
     monomerMicromolecule.atoms.push(atomId);
 
@@ -197,11 +197,6 @@ export class MacromoleculesConverter {
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomer.monomerItem.struct.bonds;
 
-        const monomerFragments =
-          monomer instanceof AmbiguousMonomer
-            ? monomer.monomers[0].monomerItem.struct.frags
-            : monomer.monomerItem.struct.frags;
-
         monomerToMonomerMicromolecule.set(monomer, monomerMicromolecule);
 
         monomerAtoms.forEach((oldAtom, oldAtomId) => {
@@ -233,13 +228,6 @@ export class MacromoleculesConverter {
         });
 
         struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
-
-        monomerFragments.forEach((fragment) => {
-          if (!fragment) return;
-          const fragmentClone = fragment.clone(atomIdsMap);
-          const fragmentId = struct.frags.add(fragmentClone);
-          reStruct?.frags.set(fragmentId, new ReFrag(fragmentClone));
-        });
       }
     });
 
@@ -445,7 +433,6 @@ export class MacromoleculesConverter {
   // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
   public static getFragmentsGroupedBySgroup(struct: Struct) {
     const groupedFragments: number[][] = [];
-    let notGroupedFragments: number[] = [];
     struct.frags.forEach((_fragment, fragmentId) => {
       const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
         fragmentsGroup.includes(fragmentId),
@@ -473,18 +460,16 @@ export class MacromoleculesConverter {
         sgroup.atoms.forEach((aid) => {
           const atomFragmentId = struct.atoms.get(aid)?.fragment;
           if (
-            atomFragmentId &&
+            atomFragmentId !== undefined &&
             !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
           ) {
             groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
           }
         });
       });
-
-      notGroupedFragments = Array.from(fragmentNotSgroups);
     });
 
-    return [groupedFragments, notGroupedFragments];
+    return groupedFragments;
   }
 
   public static findAtomByMicromoleculeAtomId(
@@ -518,16 +503,17 @@ export class MacromoleculesConverter {
         );
       }
     });
-    const [, fragmentsNotSgroup] = this.getFragmentsGroupedBySgroup(struct);
+    const fragments = this.getFragmentsGroupedBySgroup(struct);
 
+    let fragmentNumber = 1;
     const fragmentIdToAtomIdMap = new Map<number, Map<number, number>>();
     const globalAtomIdToMonomerMap = new Map<number, BaseMonomer>();
 
-    fragmentsNotSgroup.forEach((_fragment) => {
+    fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
       const fragmentStruct = struct.getFragment(_fragment, false, atomIdMap);
       const monomerAddCommand = this.convertFragmentToChem(
-        _fragment,
+        fragmentNumber,
         fragmentStruct,
         drawingEntitiesManager,
       );
@@ -536,8 +522,11 @@ export class MacromoleculesConverter {
       const localAtomIdToGlobalAtomId = invert(atomIdMapObject);
       const atomsMap = new Map<number, Atom>();
 
-      fragmentIdToMonomer.set(_fragment, monomer);
-      fragmentIdToAtomIdMap.set(_fragment, atomIdMap);
+      _fragment.forEach((fragmentId) => {
+        fragmentIdToMonomer.set(fragmentId, monomer);
+        fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
+      });
+
       command.merge(monomerAddCommand);
 
       if (
@@ -588,6 +577,7 @@ export class MacromoleculesConverter {
           );
         });
       }
+      fragmentNumber++;
     });
 
     const superatomAttachmentPointToBond = new Map<

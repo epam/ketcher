@@ -29,6 +29,7 @@ import {
   BondDelete,
   BondAttr,
   BondAdd,
+  FragmentAdd,
 } from '../operations';
 import {
   BaseMonomer,
@@ -587,6 +588,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     });
   }
 
+  const fragmentId = struct.frags.newId();
   const atoms = SGroup.getAtoms(struct, sG);
   const attrs = sG?.getAttrs();
 
@@ -598,9 +600,14 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   }));
 
   action.addOp(new SGroupRemoveFromHierarchy(id));
+  action.addOp(new FragmentAdd(fragmentId));
 
-  atoms.forEach((atom) => {
-    action.addOp(new SGroupAtomRemove(id, atom));
+  atoms.forEach((atomId) => {
+    action.addOp(new SGroupAtomRemove(id, atomId));
+    const atom = struct.atoms.get(atomId);
+    if (atom && atom.fragment < 0) {
+      action.addOp(new AtomAttr(atom, 'fragment', fragmentId));
+    }
   });
 
   sG?.getAttachmentPoints().forEach((attachmentPoint) => {

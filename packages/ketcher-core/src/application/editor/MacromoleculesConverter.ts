@@ -16,6 +16,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   ReAtom,
   ReBond,
+  ReFrag,
   ReMultitailArrow,
   ReRxnArrow,
   ReRxnPlus,
@@ -42,6 +43,7 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { Group } from 'paper/dist/paper-core';
 
 export class MacromoleculesConverter {
   public static convertMonomerToMonomerMicromolecule(
@@ -71,7 +73,7 @@ export class MacromoleculesConverter {
     const atomClone = atom.clone();
     atomClone.pp = monomer.position.add(atom.pp);
     atomClone.sgs = new Pile<number>([monomerMicromolecule.id]);
-    atomClone.fragment = -1;
+    atomClone.fragment = atom.fragment;
     const atomId = struct.atoms.add(atomClone);
     monomerMicromolecule.atoms.push(atomId);
 
@@ -196,6 +198,11 @@ export class MacromoleculesConverter {
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomer.monomerItem.struct.bonds;
 
+        const monomerFragments =
+          monomer instanceof AmbiguousMonomer
+            ? monomer.monomers[0].monomerItem.struct.frags
+            : monomer.monomerItem.struct.frags;
+
         monomerToMonomerMicromolecule.set(monomer, monomerMicromolecule);
 
         monomerAtoms.forEach((oldAtom, oldAtomId) => {
@@ -227,6 +234,13 @@ export class MacromoleculesConverter {
         });
 
         struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
+
+        monomerFragments.forEach((fragment) => {
+          if (!fragment) return;
+          const fragmentClone = fragment.clone(atomIdsMap);
+          const fragmentId = struct.frags.add(fragmentClone);
+          reStruct?.frags.set(fragmentId, new ReFrag(fragmentClone));
+        });
       }
     });
 
@@ -432,6 +446,7 @@ export class MacromoleculesConverter {
   // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
   public static getFragmentsGroupedBySgroup(struct: Struct) {
     const groupedFragments: number[][] = [];
+    let notGroupedFragments: number[] = [];
     struct.frags.forEach((_fragment, fragmentId) => {
       const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
         fragmentsGroup.includes(fragmentId),
@@ -442,11 +457,14 @@ export class MacromoleculesConverter {
 
       // Find all sgroups related to fragment
       const fragmentSgroups = new Set<SGroup>();
+      const fragmentNotSgroups = new Set<number>();
       struct.atoms.forEach((atom, atomId) => {
         if (atom.fragment !== fragmentId) return;
         const sgroup = struct.getGroupFromAtomId(atomId);
         if (sgroup) {
           fragmentSgroups.add(sgroup);
+        } else {
+          fragmentNotSgroups.add(fragmentId);
         }
       });
 
@@ -463,9 +481,11 @@ export class MacromoleculesConverter {
           }
         });
       });
+
+      notGroupedFragments = Array.from(fragmentNotSgroups);
     });
 
-    return groupedFragments;
+    return [groupedFragments, notGroupedFragments];
   }
 
   public static findAtomByMicromoleculeAtomId(
@@ -499,17 +519,16 @@ export class MacromoleculesConverter {
         );
       }
     });
-    const fragments = this.getFragmentsGroupedBySgroup(struct);
+    const [, fragmentsNotSgroup] = this.getFragmentsGroupedBySgroup(struct);
 
-    let fragmentNumber = 1;
     const fragmentIdToAtomIdMap = new Map<number, Map<number, number>>();
     const globalAtomIdToMonomerMap = new Map<number, BaseMonomer>();
 
-    fragments.forEach((_fragment) => {
+    fragmentsNotSgroup.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
       const fragmentStruct = struct.getFragment(_fragment, false, atomIdMap);
       const monomerAddCommand = this.convertFragmentToChem(
-        fragmentNumber,
+        _fragment,
         fragmentStruct,
         drawingEntitiesManager,
       );
@@ -518,10 +537,8 @@ export class MacromoleculesConverter {
       const localAtomIdToGlobalAtomId = invert(atomIdMapObject);
       const atomsMap = new Map<number, Atom>();
 
-      _fragment.forEach((fragmentId) => {
-        fragmentIdToMonomer.set(fragmentId, monomer);
-        fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
-      });
+      fragmentIdToMonomer.set(_fragment, monomer);
+      fragmentIdToAtomIdMap.set(_fragment, atomIdMap);
       command.merge(monomerAddCommand);
 
       if (
@@ -572,8 +589,6 @@ export class MacromoleculesConverter {
           );
         });
       }
-
-      fragmentNumber++;
     });
 
     const superatomAttachmentPointToBond = new Map<

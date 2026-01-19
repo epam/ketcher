@@ -43,7 +43,6 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import { Group } from 'paper/dist/paper-core';
 
 export class MacromoleculesConverter {
   public static convertMonomerToMonomerMicromolecule(

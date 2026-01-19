@@ -36,3 +36,37 @@ describe('show selection', () => {
     expect(reSimpleObject.togglePoints).toHaveBeenCalled();
   });
 });
+
+describe('CIP label background on selection toggle', () => {
+  const option = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
+  const render = new Render(document as unknown as HTMLElement, option);
+  const restruct = new ReStruct(new Struct(), render);
+  const cipAttrMock = jest.fn();
+  const selectionPlate = {
+    show: jest.fn(),
+    hide: jest.fn(),
+    removed: false,
+  };
+  const cipItem = {
+    selectionPlate,
+    cip: { rectangle: { attr: cipAttrMock } },
+  };
+
+  it('restores CIP label background after deselection', () => {
+    restruct.showItemSelection(cipItem, true);
+    restruct.showItemSelection(cipItem, false);
+
+    expect(cipAttrMock).toHaveBeenCalledWith({
+      fill: '#7f7',
+      stroke: '#7f7',
+    });
+    expect(cipAttrMock).toHaveBeenLastCalledWith({
+      fill: '#fff',
+      stroke: '#fff',
+    });
+  });
+});

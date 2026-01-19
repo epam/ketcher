@@ -606,7 +606,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     action.addOp(new SGroupAtomRemove(id, atomId));
     const atom = struct.atoms.get(atomId);
     if (atom && atom.fragment < 0) {
-      action.addOp(new AtomAttr(atom, 'fragment', fragmentId));
+      action.addOp(new AtomAttr(atomId, 'fragment', fragmentId));
     }
   });
 

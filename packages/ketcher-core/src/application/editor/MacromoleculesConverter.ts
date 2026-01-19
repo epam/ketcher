@@ -16,7 +16,6 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   ReAtom,
   ReBond,
-  ReFrag,
   ReMultitailArrow,
   ReRxnArrow,
   ReRxnPlus,

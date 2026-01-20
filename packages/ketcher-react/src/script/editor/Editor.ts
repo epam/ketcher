@@ -1517,7 +1517,7 @@ class Editor implements KetcherEditor {
         },
       );
 
-      let struct = this.struct();
+      const struct = this.struct();
 
       externalBonds.forEach((bond) => {
         const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);

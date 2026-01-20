@@ -65,7 +65,7 @@ export class SequenceEventDelegationManager {
     if (!target || !(target instanceof SVGElement)) return null;
 
     const sequenceItemElement = (target as SVGElement).closest(
-      '[data-testid="sequence-item"]',
+      '.sequence-item',
     ) as SVGGElement;
 
     if (!sequenceItemElement) return null;

@@ -142,6 +142,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'sequence-item')
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)

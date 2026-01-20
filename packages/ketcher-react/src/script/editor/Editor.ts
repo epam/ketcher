@@ -1552,25 +1552,6 @@ class Editor implements KetcherEditor {
         }
       });
 
-      // fully recreate canvas
-      this.struct(
-        this.struct().clone(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          true,
-        ),
-      );
-
-      struct = this.struct();
-
       // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
       // between monomers created in wizard together
       struct.bonds.forEach((bond) => {
@@ -1595,6 +1576,23 @@ class Editor implements KetcherEditor {
           });
         }
       });
+
+      // fully recreate canvas
+      this.struct(
+        this.struct().clone(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        ),
+      );
     }, 0);
   }
 

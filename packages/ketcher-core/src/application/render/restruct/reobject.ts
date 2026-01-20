@@ -55,7 +55,7 @@ class ReObject {
     return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(hover: boolean, render: Render, drawHover = true): void {
     // TODO render should be field
     const { options } = render;
     if (hover) {
@@ -73,7 +73,9 @@ class ReObject {
         this.hovering.show();
       } else {
         render.paper.setStart();
-        this.drawHover(render);
+        if (drawHover) {
+          this.drawHover(render);
+        }
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {

@@ -224,8 +224,8 @@ class ReAtom extends ReObject {
     }
   }
 
-  setHover(hover: boolean, render: Render) {
-    super.setHover(hover, render);
+  setHover(hover: boolean, render: Render, drawHover = true) {
+    super.setHover(hover, render, drawHover);
 
     if (!hover || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
@@ -243,6 +243,8 @@ class ReAtom extends ReObject {
       this.expandedMonomerAttachmentPoints =
         this.makeMonomerAttachmentPointHighlightPlate(render);
     }
+
+    return this.hover;
   }
 
   public makeMonomerAttachmentPointHighlightPlate(render: Render) {

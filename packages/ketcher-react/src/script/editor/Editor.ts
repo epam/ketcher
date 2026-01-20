@@ -75,6 +75,9 @@ import {
   MonomerCreationComponentStructureUpdateEvent,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
+  LayerMap,
+  Visel,
+  paperPathFromSVGElement,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -100,6 +103,7 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
+import paperjs from 'paper';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -2986,6 +2990,7 @@ export { Editor };
 export default Editor;
 
 function setHover(ci: any, visible: any, render: any) {
+  console.log(ci, visible);
   if (highlightTargets.indexOf(ci.map) === -1) {
     return false;
   }
@@ -2998,10 +3003,65 @@ function setHover(ci: any, visible: any, render: any) {
         item = render.ctab[mp].get(dstId)!;
 
         if (item) {
-          item.setHover(visible, render);
+          item.setHover(visible, render, false);
         }
       });
     });
+
+    const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
+      return ci.items[mp].flatMap((dstId) => {
+        return render.ctab[mp].get(dstId);
+      });
+    });
+
+    const hoversToCombine = hoveredRenderers
+      .map((r) => r?.makeHoverPlate(render))
+      .filter(Boolean);
+
+    paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
+
+    // Generate Paper.js paths from all SVG elements
+    let combinedPath: any = null;
+    const options = render.options;
+    const hoverVisel = new Visel('sgroup');
+    const elements: Element[] = [];
+
+    hoversToCombine.forEach((item) => {
+      if (item?.node) {
+        elements.push(item.node);
+        item.node.remove();
+      }
+    });
+
+    elements.forEach((element) => {
+      const paperPath = paperPathFromSVGElement(element);
+
+      if (!paperPath) {
+        return;
+      }
+
+      if (!paperPath.closed) {
+        paperPath.closePath();
+      }
+
+      if (!combinedPath) {
+        combinedPath = paperPath;
+      } else {
+        combinedPath = combinedPath.unite(paperPath);
+      }
+    });
+
+    if (!combinedPath) {
+      return;
+    }
+
+    const combinedPathD = combinedPath.pathData;
+
+    render.ctab.addReObjectPath(
+      LayerMap.hovering,
+      hoverVisel,
+      render.paper.path(combinedPathD).attr(options.hoverStyle),
+    );
 
     return true;
   }
@@ -3030,5 +3090,6 @@ function setHover(ci: any, visible: any, render: any) {
   } else {
     item.setHover(visible, render);
   }
+
   return true;
 }

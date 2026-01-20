@@ -2997,6 +2997,16 @@ function setHover(ci: any, visible: any, render: any) {
   let item: any = null;
 
   if (ci.map === 'merge') {
+    Object.keys(ci.items).forEach((mp) => {
+      ci.items[mp].forEach((dstId) => {
+        item = render.ctab[mp].get(dstId)!;
+
+        if (item) {
+          item.setHover(visible, render, false);
+        }
+      });
+    });
+
     if (visible) {
       const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
         return ci.items[mp].flatMap((dstId) => {

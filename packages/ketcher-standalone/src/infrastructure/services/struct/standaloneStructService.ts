@@ -857,7 +857,6 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.CalculateMacromoleculeProperties);
       this.EE.once(WorkerEvent.CalculateMacromoleculeProperties, action);
       this.worker.postMessage(inputMessage);
     });

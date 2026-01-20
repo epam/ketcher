@@ -442,14 +442,11 @@ export class MacromoleculesConverter {
 
       // Find all sgroups related to fragment
       const fragmentSgroups = new Set<SGroup>();
-      const fragmentNotSgroups = new Set<number>();
       struct.atoms.forEach((atom, atomId) => {
         if (atom.fragment !== fragmentId) return;
         const sgroup = struct.getGroupFromAtomId(atomId);
         if (sgroup) {
           fragmentSgroups.add(sgroup);
-        } else {
-          fragmentNotSgroups.add(fragmentId);
         }
       });
 
@@ -459,7 +456,7 @@ export class MacromoleculesConverter {
         sgroup.atoms.forEach((aid) => {
           const atomFragmentId = struct.atoms.get(aid)?.fragment;
           if (
-            atomFragmentId !== undefined &&
+            atomFragmentId &&
             !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
           ) {
             groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);

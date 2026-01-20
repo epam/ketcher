@@ -118,8 +118,8 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp);
   }
 
-  drawHover(render: Render) {
-    const ret = this.makeHoverPlate(render);
+  drawHover(render: Render, drawOutline = true) {
+    const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
@@ -224,8 +224,8 @@ class ReAtom extends ReObject {
     }
   }
 
-  setHover(hover: boolean, render: Render, drawHover = true) {
-    super.setHover(hover, render, drawHover);
+  setHover(hover: boolean, render: Render, drawOutline = true) {
+    super.setHover(hover, render, drawOutline);
 
     if (!hover || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
@@ -349,14 +349,18 @@ class ReAtom extends ReObject {
     return this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
-  makeHoverPlate(render: Render) {
+  makeHoverPlate(render: Render, drawOutline = true) {
     const atom = this.a;
     const { options } = render;
     if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
 
-    return this.getSelectionContour(render).attr(options.hoverStyle);
+    return this.getSelectionContour(render).attr(
+      drawOutline
+        ? options.hoverStyle
+        : { fill: options.hoverStyle.fill, stroke: 'none' },
+    );
   }
 
   makeSelectionPlate(restruct: ReStruct) {

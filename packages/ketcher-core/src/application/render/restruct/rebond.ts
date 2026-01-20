@@ -132,8 +132,8 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
-  drawHover(render: Render) {
-    const ret = this.makeHoverPlate(render);
+  drawHover(render: Render, drawOutline = true) {
+    const ret = this.makeHoverPlate(render, drawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -278,7 +278,7 @@ class ReBond extends ReObject {
     return paper.path(pathString);
   }
 
-  makeHoverPlate(render: Render) {
+  makeHoverPlate(render: Render, drawOutline = true) {
     const restruct = render.ctab;
     const options = render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
@@ -287,7 +287,11 @@ class ReBond extends ReObject {
 
     const rect = this.getSelectionContour(render, false);
 
-    return rect.attr({ ...options.hoverStyle });
+    return rect.attr(
+      drawOutline
+        ? { ...options.hoverStyle }
+        : { fill: options.hoverStyle.fill, stroke: 'none' },
+    );
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {

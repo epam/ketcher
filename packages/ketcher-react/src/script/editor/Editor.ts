@@ -2990,7 +2990,6 @@ export { Editor };
 export default Editor;
 
 function setHover(ci: any, visible: any, render: any) {
-  console.log(ci, visible);
   if (highlightTargets.indexOf(ci.map) === -1) {
     return false;
   }
@@ -2998,70 +2997,73 @@ function setHover(ci: any, visible: any, render: any) {
   let item: any = null;
 
   if (ci.map === 'merge') {
-    Object.keys(ci.items).forEach((mp) => {
-      ci.items[mp].forEach((dstId) => {
-        item = render.ctab[mp].get(dstId)!;
+    if (visible) {
+      const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
+        return ci.items[mp].flatMap((dstId) => {
+          return render.ctab[mp].get(dstId);
+        });
+      });
 
-        if (item) {
-          item.setHover(visible, render, false);
+      const hoversToCombine = hoveredRenderers
+        .map((r) => r?.makeHoverPlate(render))
+        .filter(Boolean);
+
+      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
+
+      // Generate Paper.js paths from all SVG elements
+      let combinedPath: any = null;
+      const options = render.options;
+      const hoverVisel = new Visel('mergedHover');
+      const elements: Element[] = [];
+
+      hoversToCombine.forEach((item) => {
+        if (item?.node) {
+          elements.push(item.node);
+          item.node.remove();
         }
       });
-    });
 
-    const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
-      return ci.items[mp].flatMap((dstId) => {
-        return render.ctab[mp].get(dstId);
+      elements.forEach((element) => {
+        const paperPath = paperPathFromSVGElement(element);
+
+        if (!paperPath) {
+          return;
+        }
+
+        if (!paperPath.closed) {
+          paperPath.closePath();
+        }
+
+        if (!combinedPath) {
+          combinedPath = paperPath;
+        } else {
+          combinedPath = combinedPath.unite(paperPath);
+        }
       });
-    });
 
-    const hoversToCombine = hoveredRenderers
-      .map((r) => r?.makeHoverPlate(render))
-      .filter(Boolean);
-
-    paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
-
-    // Generate Paper.js paths from all SVG elements
-    let combinedPath: any = null;
-    const options = render.options;
-    const hoverVisel = new Visel('sgroup');
-    const elements: Element[] = [];
-
-    hoversToCombine.forEach((item) => {
-      if (item?.node) {
-        elements.push(item.node);
-        item.node.remove();
-      }
-    });
-
-    elements.forEach((element) => {
-      const paperPath = paperPathFromSVGElement(element);
-
-      if (!paperPath) {
+      if (!combinedPath) {
         return;
       }
 
-      if (!paperPath.closed) {
-        paperPath.closePath();
-      }
+      const combinedPathD = combinedPath.pathData;
 
-      if (!combinedPath) {
-        combinedPath = paperPath;
-      } else {
-        combinedPath = combinedPath.unite(paperPath);
-      }
-    });
+      render.ctab.addReObjectPath(
+        LayerMap.hovering,
+        hoverVisel,
+        render.paper.path(combinedPathD).attr({
+          stroke: options.hoverStyle.stroke,
+          'stroke-width': options.hoverStyle['stroke-width'],
+        }),
+      );
 
-    if (!combinedPath) {
-      return;
+      render.combinedHover = hoverVisel;
+    } else {
+      render.combinedHover?.paths.forEach((path) => {
+        path.remove();
+      });
+
+      render.combinedHover = null;
     }
-
-    const combinedPathD = combinedPath.pathData;
-
-    render.ctab.addReObjectPath(
-      LayerMap.hovering,
-      hoverVisel,
-      render.paper.path(combinedPathD).attr(options.hoverStyle),
-    );
 
     return true;
   }

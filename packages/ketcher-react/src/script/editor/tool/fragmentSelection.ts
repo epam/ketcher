@@ -43,6 +43,12 @@ export default class FragmentSelectionTool implements Tool {
     return true;
   }
 
+  mouseup() {
+    // No action needed on mouseup for this tool
+    // But this method is defined to prevent editor from dropping selection in case if method is absent
+    return true;
+  }
+
   mousemove(event: PointerEvent) {
     const restruct = this.editor.render.ctab;
     const bondItem = this.editor.findItem(event, ['bonds'], null);
@@ -70,14 +76,18 @@ export default class FragmentSelectionTool implements Tool {
       event,
       this.editor.render,
     );
-    const bondVector = halfBondEnd.p.sub(halfBondBegin.p);
-    const pointerVector = pointer.sub(
-      Vec2.lc2(halfBondBegin.p, 0.5, halfBondEnd.p, 0.5),
-    );
-    const cross =
-      bondVector.x * pointerVector.y - bondVector.y * pointerVector.x;
-    const startAtomId = cross >= 0 ? reBond.b.begin : reBond.b.end;
+    const beginAtom = struct.atoms.get(reBond.b.begin);
+    const endAtom = struct.atoms.get(reBond.b.end);
 
+    if (!beginAtom || !endAtom) {
+      this.resetPreview();
+      return true;
+    }
+
+    const startAtomId =
+      Vec2.dist(pointer, beginAtom.pp) < Vec2.dist(pointer, endAtom.pp)
+        ? reBond.b.begin
+        : reBond.b.end;
     const componentData = this.getComponentData(struct);
     if (componentData.componentAtoms.has(startAtomId)) {
       this.setDisabledState(COMPONENT_TOOLTIP);
@@ -103,10 +113,11 @@ export default class FragmentSelectionTool implements Tool {
       blockedBonds,
       componentData.componentAtoms,
     );
+
     this.preview = preview;
+    this.editor.hover(null, this);
 
     if (!preview.atoms.length && !preview.bonds.length) {
-      this.editor.hover(null, this);
       return true;
     }
 
@@ -222,15 +233,25 @@ export default class FragmentSelectionTool implements Tool {
 
     while (queueIndex < queue.length) {
       const atomId = queue[queueIndex];
+      const atom = struct.atoms.get(atomId);
+
       queueIndex += 1;
-      if (visitedAtoms.has(atomId) || componentAtoms.has(atomId)) {
+      if (!atom || visitedAtoms.has(atomId) || componentAtoms.has(atomId)) {
         continue;
       }
 
       visitedAtoms.add(atomId);
       atoms.push(atomId);
 
-      for (const [bondId, bond] of struct.bonds.entries()) {
+      for (const halfBondId of atom.neighbors) {
+        const bondId = struct.halfBonds.get(halfBondId)?.bid;
+
+        if (bondId === undefined) continue;
+
+        const bond = struct.bonds.get(bondId);
+
+        if (bond === undefined) continue;
+
         if (blockedBonds.has(bondId)) continue;
 
         let nextAtomId: number | null = null;

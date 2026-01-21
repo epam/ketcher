@@ -112,7 +112,7 @@ const RnaElementsAccordionView = ({
                 {groupData.groups.map(({ groupItems, groupTitle }) => (
                   <MonomerGroup
                     key={groupTitle}
-                    title={groupData.groups.length > 1 ? groupTitle : undefined}
+                    title={groupTitle}
                     groupName={groupData.groupName}
                     items={groupItems}
                     selectedMonomerUniqueKey={activeMonomerKey}

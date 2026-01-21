@@ -511,7 +511,7 @@ The left toolbar consists of the following elements:
 
 <img src=images/Macro-Bonds-3.0..png width = "100"/>
 
-Below the main toolbar a handle and the input feild are visible:
+Below the main toolbar a handle and the input field are visible:
 
 <img src=images/Ruler-Handle-3.5..png width = "50"/>
 

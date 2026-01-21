@@ -21,6 +21,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
+const scrollBarHideCssPath = './tests/utils/hideScroll.css';
+
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
   const leftBarSize = await page
     .getByTestId('left-toolbar')
@@ -53,7 +55,7 @@ export async function takeElementScreenshot(
   page: Page,
   elementLocator: Locator,
   options?: {
-    mask?: Locator[];
+    stylePath?: string | string[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
@@ -164,16 +166,17 @@ export async function takeMonomerLibraryScreenshot(
 export async function takeEditorScreenshot(
   page: Page,
   options?: {
-    mask?: Locator[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
     hideMacromoleculeEditorScrollBars?: boolean;
+    stylePath?: string | string[];
   },
 ) {
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
+    options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
   await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }

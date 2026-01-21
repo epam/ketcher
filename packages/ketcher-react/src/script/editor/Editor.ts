@@ -1517,7 +1517,7 @@ class Editor implements KetcherEditor {
         },
       );
 
-      let struct = this.struct();
+      const struct = this.struct();
 
       externalBonds.forEach((bond) => {
         const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
@@ -1552,6 +1552,33 @@ class Editor implements KetcherEditor {
         }
       });
 
+      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
+      // between monomers created in wizard together
+      struct.bonds.forEach((bond) => {
+        const fromSgroup = struct.getGroupFromAtomId(bond.begin);
+        const toSgroup = struct.getGroupFromAtomId(bond.end);
+
+        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
+          const fromAttachmentPoint = fromSgroup
+            .getAttachmentPoints()
+            .find((attachmentPoint) => attachmentPoint.atomId === bond.begin);
+          if (fromAttachmentPoint) {
+            bond.beginSuperatomAttachmentPointNumber =
+              fromAttachmentPoint.attachmentPointNumber;
+          }
+        }
+
+        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
+          const toAttachmentPoint = toSgroup
+            .getAttachmentPoints()
+            .find((attachmentPoint) => attachmentPoint.atomId === bond.end);
+          if (toAttachmentPoint) {
+            bond.endSuperatomAttachmentPointNumber =
+              toAttachmentPoint.attachmentPointNumber;
+          }
+        }
+      });
+
       // fully recreate canvas
       this.struct(
         this.struct().clone(
@@ -1568,33 +1595,6 @@ class Editor implements KetcherEditor {
           true,
         ),
       );
-
-      struct = this.struct();
-
-      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
-      // between monomers created in wizard together
-      struct.bonds.forEach((bond) => {
-        const fromSgroup = struct.getGroupFromAtomId(bond.begin);
-        const toSgroup = struct.getGroupFromAtomId(bond.end);
-
-        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
-          fromSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-            if (attachmentPoint.atomId === bond.begin) {
-              bond.beginSuperatomAttachmentPointNumber =
-                attachmentPoint.attachmentPointNumber;
-            }
-          });
-        }
-
-        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
-          toSgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-            if (attachmentPoint.atomId === bond.end) {
-              bond.endSuperatomAttachmentPointNumber =
-                attachmentPoint.attachmentPointNumber;
-            }
-          });
-        }
-      });
     }, 0);
   }
 

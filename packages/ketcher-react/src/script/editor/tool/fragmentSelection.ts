@@ -50,6 +50,10 @@ export default class FragmentSelectionTool implements Tool {
   }
 
   mousemove(event: PointerEvent) {
+    if (this.bondPreview) {
+      this.bondPreview.paths.forEach((path) => path.remove());
+    }
+
     const restruct = this.editor.render.ctab;
     const bondItem = this.editor.findItem(event, ['bonds'], null);
 
@@ -59,6 +63,7 @@ export default class FragmentSelectionTool implements Tool {
     }
 
     const reBond = restruct.bonds.get(bondItem.id);
+
     if (!reBond) {
       this.resetPreview();
       return true;
@@ -67,6 +72,7 @@ export default class FragmentSelectionTool implements Tool {
     const struct = restruct.molecule;
     const halfBondBegin = struct.halfBonds.get(reBond.b.hb1 ?? -1);
     const halfBondEnd = struct.halfBonds.get(reBond.b.hb2 ?? -1);
+
     if (!halfBondBegin?.p || !halfBondEnd?.p) {
       this.resetPreview();
       return true;
@@ -89,6 +95,7 @@ export default class FragmentSelectionTool implements Tool {
         ? reBond.b.begin
         : reBond.b.end;
     const componentData = this.getComponentData(struct);
+
     if (componentData.componentAtoms.has(startAtomId)) {
       this.setDisabledState(COMPONENT_TOOLTIP);
       return true;
@@ -100,9 +107,9 @@ export default class FragmentSelectionTool implements Tool {
     }
 
     const blockedBonds = new Set<number>(componentData.componentBonds);
+
     componentData.connectingBonds.forEach((bondId) => blockedBonds.add(bondId));
     blockedBonds.add(bondItem.id);
-
     this.disabledMessage = undefined;
     this.setCursor(false);
     this.clearTooltip();
@@ -127,6 +134,11 @@ export default class FragmentSelectionTool implements Tool {
         items: { atoms: preview.atoms, bonds: preview.bonds },
       },
       this,
+    );
+
+    this.bondPreview = reBond.drawFragmentSelectionPreview(
+      this.editor.render,
+      startAtomId,
     );
 
     return true;

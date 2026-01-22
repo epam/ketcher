@@ -35,6 +35,7 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
+import { CoordinateTransformation, Visel } from 'application/render';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -547,6 +548,125 @@ class ReBond extends ReObject {
         bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
       }
     }
+  }
+
+  public drawFragmentSelectionPreview(
+    render: Render,
+    atomIdToDrawArrows: number,
+  ) {
+    this.hovering?.node?.remove();
+
+    const preview = this.getSelectionContour(render, false);
+    const newVisel = new Visel('fragment-selection-bond-preview');
+
+    preview.attr({ fill: '#fff', stroke: '#365CFF', 'stroke-width': 0.7 });
+    render.ctab.addReObjectPath(LayerMap.bondSkeleton, newVisel, preview);
+    render.ctab.moveReObjectOnTopOfLayer(this.visel, LayerMap.bondSkeleton);
+
+    const halfBond1 = render.ctab.molecule.halfBonds.get(this.b.hb1);
+    const halfBond2 = render.ctab.molecule.halfBonds.get(this.b.hb2);
+
+    if (!halfBond1 || !halfBond2) {
+      return null;
+    }
+
+    const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
+    const bondCenter = Vec2.lc2(halfBond1.p, 0.5, halfBond2.p, 0.5);
+    const arrowsDirection =
+      this.b.begin === atomIdToDrawArrows
+        ? bondDirection
+        : bondDirection.scaled(-1);
+    const arrowStart =
+      atomIdToDrawArrows === this.b.begin ? halfBond1.p : halfBond2.p;
+    const arrowsOffset = 2;
+    const arrowHeadLength = 4;
+    const backgroundStartOffset = 1;
+    const offsets = [0, -5, -10];
+    const backgroundStart = new Vec2(
+      arrowStart.x + offsets[0] * arrowsDirection.x,
+      arrowStart.y + offsets[0] * arrowsDirection.y,
+    );
+
+    const backgroundPath = render.paper
+      .path(
+        `M ${
+          backgroundStart.x +
+          backgroundStartOffset * arrowsDirection.x +
+          arrowHeadLength * arrowsDirection.y
+        } ${
+          backgroundStart.y +
+          backgroundStartOffset * arrowsDirection.y -
+          arrowHeadLength * arrowsDirection.x
+        }` +
+          ` L ${
+            backgroundStart.x +
+            backgroundStartOffset * arrowsDirection.x -
+            arrowHeadLength * arrowsDirection.y
+          } ${
+            backgroundStart.y +
+            backgroundStartOffset * arrowsDirection.y +
+            arrowHeadLength * arrowsDirection.x
+          }` +
+          ` L ${bondCenter.x - arrowHeadLength * arrowsDirection.y} ${
+            bondCenter.y + arrowHeadLength * arrowsDirection.x
+          }` +
+          ` L ${bondCenter.x + arrowHeadLength * arrowsDirection.y} ${
+            bondCenter.y - arrowHeadLength * arrowsDirection.x
+          }` +
+          ` Z`,
+      )
+      .attr({
+        fill: '#fff',
+        stroke: '#fff',
+      });
+
+    render.ctab.addReObjectPath(
+      LayerMap.additionalInfo,
+      newVisel,
+      backgroundPath,
+    );
+
+    const arrowsSet = render.paper.set();
+
+    offsets.forEach((delta) => {
+      const start = new Vec2(
+        arrowStart.x + delta * arrowsDirection.x,
+        arrowStart.y + delta * arrowsDirection.y,
+      );
+
+      const path = render.paper
+        .path(
+          `M ${
+            start.x -
+            arrowsOffset * arrowsDirection.x +
+            arrowHeadLength * arrowsDirection.y
+          } ${
+            start.y -
+            arrowsOffset * arrowsDirection.y -
+            arrowHeadLength * arrowsDirection.x
+          }` +
+            ` L ${start.x} ${start.y}` +
+            ` L ${
+              start.x -
+              arrowsOffset * arrowsDirection.x -
+              arrowHeadLength * arrowsDirection.y
+            } ${
+              start.y -
+              arrowsOffset * arrowsDirection.y +
+              arrowHeadLength * arrowsDirection.x
+            }`,
+        )
+        .attr({
+          stroke: '#365CFF',
+          'stroke-width': 2,
+        });
+
+      arrowsSet.push(path);
+    });
+
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, arrowsSet);
+
+    return newVisel;
   }
 }
 

@@ -588,7 +588,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     });
   }
 
-  const fragmentId = struct.frags.newId();
+  let fragmentId;
   const atoms = SGroup.getAtoms(struct, sG);
   const attrs = sG?.getAttrs();
 
@@ -600,7 +600,18 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   }));
 
   action.addOp(new SGroupRemoveFromHierarchy(id));
-  action.addOp(new FragmentAdd(fragmentId));
+
+  // when we delete SGroup, we need to create fragment for its atoms if they do not belong to another fragments
+  // because monomers has atoms with fragment = -1
+  const isMonomer = atoms.some((atomId) => {
+    const atom = struct.atoms.get(atomId);
+    return atom && atom.fragment < 0;
+  });
+
+  if (isMonomer) {
+    fragmentId = struct.frags.newId();
+    action.addOp(new FragmentAdd(fragmentId));
+  }
 
   atoms.forEach((atomId) => {
     action.addOp(new SGroupAtomRemove(id, atomId));

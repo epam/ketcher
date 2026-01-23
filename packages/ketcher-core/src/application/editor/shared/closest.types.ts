@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core';
+import { Vec2 } from 'domain/entities';
 
 export interface ClosestItem<T = Vec2> {
   id: number;

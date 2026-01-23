@@ -23,10 +23,12 @@ export const vectorUtils = {
   calcNewAtomPos: utils.calcNewAtomPos,
 };
 
+export { default as closest } from './shared/closest';
 export * from './operations';
 export * from './actions';
 export * from './shared/constants';
 export * from './shared/coordinates';
+export * from './shared/closest.types';
 export * from './shared/customEvents';
 export * from './editor.types';
 export * from './Editor';

@@ -1,10 +1,11 @@
 import {
+  ClosestItemWithMap,
   FunctionalGroup,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
   ReMultitailArrow,
 } from 'ketcher-core';
-import Editor, { ClosestItemWithMap } from 'src/script/editor';
+import Editor from 'src/script/editor';
 import {
   CONTEXT_MENU_ID,
   ContextMenuProps,

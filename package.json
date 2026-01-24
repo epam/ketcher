@@ -68,13 +68,16 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "nth-check": "^2.1.1"
+    "nth-check": "^2.1.1",
+    "braces": "^3.0.3",
+    "sane": "^5.0.1"
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
     "minimatch": "^10.0.3",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
+    "sane": "^5.0.1",
     "serve-handler": "^6.1.6"
   },
   "stylelint": {

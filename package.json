@@ -68,7 +68,9 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
-    "nth-check": "^2.1.1"
+    "nth-check": "^2.1.1",
+    "body-parser": "^2.2.2",
+    "qs": "^6.14.1"
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",

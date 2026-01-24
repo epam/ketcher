@@ -41,7 +41,7 @@
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
     "test:stylelint": "stylelint \"./**/*.{css,less}\" --allow-empty-input",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
+    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --fix"
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",

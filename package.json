@@ -69,14 +69,14 @@
   },
   "overrides": {
     "nth-check": "^2.1.1",
-    "qs": "6.14.0"
+    "qs": "6.14.1"
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
     "minimatch": "^10.0.3",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
-    "qs": "^6.14.0",
+    "qs": "^6.14.1",
     "serve-handler": "^6.1.6"
   },
   "stylelint": {

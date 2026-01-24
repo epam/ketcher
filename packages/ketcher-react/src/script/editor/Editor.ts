@@ -2655,16 +2655,26 @@ class Editor implements KetcherEditor {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        ketcherProvider
-          .getKetcher(this.ketcherId)
-          .changeEvent.add(subscribeFuncWrapper);
+        try {
+          ketcherProvider
+            .getKetcher(this.ketcherId)
+            .changeEvent.add(subscribeFuncWrapper);
+        } catch {
+          // In dev mode editor can be unmounted before ketcher instance cleanup
+          // noop if instance is not available
+        }
         break;
       }
 
       case 'libraryUpdate': {
-        ketcherProvider
-          .getKetcher(this.ketcherId)
-          .libraryUpdateEvent.add(handler);
+        try {
+          ketcherProvider
+            .getKetcher(this.ketcherId)
+            .libraryUpdateEvent.add(handler);
+        } catch {
+          // In dev mode editor can be unmounted before ketcher instance cleanup
+          // noop if instance is not available
+        }
         break;
       }
 
@@ -2678,16 +2688,24 @@ class Editor implements KetcherEditor {
   unsubscribe(eventName: any, subscriber: any) {
     switch (eventName) {
       case 'change': {
-        ketcherProvider
-          .getKetcher(this.ketcherId)
-          .changeEvent.remove(subscriber.handler);
+        try {
+          ketcherProvider
+            .getKetcher(this.ketcherId)
+            .changeEvent.remove(subscriber.handler);
+        } catch {
+          // noop if instance is already removed
+        }
         break;
       }
 
       case 'libraryUpdate': {
-        ketcherProvider
-          .getKetcher(this.ketcherId)
-          .libraryUpdateEvent.remove(subscriber.handler);
+        try {
+          ketcherProvider
+            .getKetcher(this.ketcherId)
+            .libraryUpdateEvent.remove(subscriber.handler);
+        } catch {
+          // noop if instance is already removed
+        }
         break;
       }
 

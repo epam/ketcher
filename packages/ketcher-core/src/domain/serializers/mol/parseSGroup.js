@@ -207,7 +207,12 @@ function loadSGroup(mol, sg, atomMap) {
   sg.id = mol.sgroups.add(sg);
 
   // apply type-specific post-processing
-  postLoadMap[sg.type](sg, mol, atomMap);
+  const handler = Object.prototype.hasOwnProperty.call(postLoadMap, sg.type)
+    ? postLoadMap[sg.type]
+    : null;
+  if (typeof handler === 'function') {
+    handler(sg, mol, atomMap);
+  }
   // mark atoms in the group as belonging to it
   for (const atomId of sg.atoms) {
     if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);

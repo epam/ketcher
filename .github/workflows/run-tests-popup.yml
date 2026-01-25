@@ -23,7 +23,7 @@ env:
 jobs:
   build_ketcher:
     runs-on: ubuntu-latest
-    container: node:18.14-bullseye-slim
+    container: node:22.11-bullseye-slim
     steps:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
@@ -95,7 +95,7 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [popup-part]
     runs-on: ubuntu-latest
-    container: node:18.14-bullseye-slim
+    container: node:22.11-bullseye-slim
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

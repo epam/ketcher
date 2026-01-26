@@ -57,7 +57,8 @@
     "prettier-config-standard": "^5.0.0",
     "stylelint": "^14.16.1",
     "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-standard": "^23.0.0"
+    "stylelint-config-standard": "^23.0.0",
+    "webpack-dev-server": "^5.2.3"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"

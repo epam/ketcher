@@ -84,7 +84,7 @@ class ReObject {
     this.hover = hover;
   }
 
-  drawHover(_render: Render): any {
+  drawHover(_render: Render, _drawOutline?: boolean): any {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 

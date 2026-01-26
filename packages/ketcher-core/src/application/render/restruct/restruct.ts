@@ -336,6 +336,16 @@ class ReStruct {
     });
   }
 
+  movePathOnTopOfLayer(path, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    path.insertBefore(layer);
+  }
+
   clearMarks(): void {
     Object.keys(ReStruct.maps).forEach((map) => {
       this[map + 'Changed'] = new Map();

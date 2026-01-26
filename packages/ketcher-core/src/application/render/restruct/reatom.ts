@@ -125,6 +125,7 @@ class ReAtom extends ReObject {
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
+      drawOutline,
     );
 
     return ret;
@@ -181,8 +182,9 @@ class ReAtom extends ReObject {
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
     render: Render,
+    drawOutline = true,
   ) {
-    if (!render.monomerCreationState) {
+    if (!render.monomerCreationState || !drawOutline) {
       return;
     }
 

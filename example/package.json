@@ -46,7 +46,7 @@
     "react": "^19.1.0",
     "react-app-polyfill": "^2.0.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^6.29.0"
+    "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.2",

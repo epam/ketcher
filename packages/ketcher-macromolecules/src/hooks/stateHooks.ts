@@ -56,11 +56,7 @@ export function useLayoutMode() {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const isBlank = ketcher?.editor?.struct().isBlank();
-  const fallbackMode = previousLayoutMode
-    ? previousLayoutMode
-    : isBlank
-      ? DEFAULT_LAYOUT_MODE
-      : HAS_CONTENT_LAYOUT_MODE;
+  const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     previousLayoutMode || fallbackMode,
   );

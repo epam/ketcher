@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true",

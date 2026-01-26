@@ -574,6 +574,7 @@ class ReBond extends ReObject {
     const atom2Position = Coordinates.modelToCanvas(atom2.pp);
     const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
     const bondCenter = Vec2.lc2(halfBond1.p, 0.5, halfBond2.p, 0.5);
+    const bondLength = Vec2.dist(halfBond2.p, halfBond1.p);
     const arrowsDirection =
       this.b.begin === atomIdToDrawArrows
         ? bondDirection
@@ -584,17 +585,38 @@ class ReBond extends ReObject {
     const arrowHeadLength = 4;
     const backgroundStartOffset = 1;
     const offsets = [0, -5, -10];
+    // const backgroundStart = new Vec2(
+    //   arrowStart.x -
+    //     arrowsOffsetFromContour * arrowsDirection.x +
+    //     offsets[0] * arrowsDirection.x,
+    //   arrowStart.y -
+    //     arrowsOffsetFromContour * arrowsDirection.y +
+    //     offsets[0] * arrowsDirection.y,
+    // );
+    const contourSize = new Vec2(bondLength, 20);
     const backgroundStart = new Vec2(
-      arrowStart.x -
-        arrowsOffsetFromContour * arrowsDirection.x +
-        offsets[0] * arrowsDirection.x,
-      arrowStart.y -
-        arrowsOffsetFromContour * arrowsDirection.y +
-        offsets[0] * arrowsDirection.y,
+      atomIdToDrawArrows === this.b.begin
+        ? halfBond1.p.x
+        : halfBond1.p.x + bondLength / 2,
+      halfBond1.p.y - contourSize.y / 2,
     );
     const newVisel = new Visel('fragment-selection-bond-preview');
-    const bondLength = Vec2.dist(halfBond2.p, halfBond1.p);
-    const contourSize = new Vec2(bondLength, 20);
+    const backgroundRect = render.paper
+      .rect(
+        backgroundStart.x,
+        backgroundStart.y,
+        contourSize.x / 2,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: '#fff', stroke: 'none', 'stroke-width': 0 });
+
+    render.ctab.addReObjectPath(
+      LayerMap.additionalInfo,
+      newVisel,
+      backgroundRect,
+    );
+    backgroundRect.rotate(this.b.angle, halfBond1.p.x, halfBond1.p.y);
 
     const contour = render.paper
       .rect(
@@ -604,9 +626,9 @@ class ReBond extends ReObject {
         contourSize.y,
         contourBorderRadius,
       )
-      .attr({ fill: '#fff', stroke: '#365CFF', 'stroke-width': 0.7 });
+      .attr({ fill: 'none', stroke: '#365CFF', 'stroke-width': 0.7 });
 
-    render.ctab.addReObjectPath(LayerMap.bondSkeleton, newVisel, contour);
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, contour);
     // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
     render.ctab.movePathOnTopOfLayer(
       this.visel.paths[0],
@@ -614,45 +636,6 @@ class ReBond extends ReObject {
     );
 
     contour.rotate(this.b.angle, halfBond1.p.x, halfBond1.p.y);
-
-    const backgroundPath = render.paper
-      .path(
-        `M ${
-          backgroundStart.x +
-          backgroundStartOffset * arrowsDirection.x +
-          arrowHeadLength * arrowsDirection.y
-        } ${
-          backgroundStart.y +
-          backgroundStartOffset * arrowsDirection.y -
-          arrowHeadLength * arrowsDirection.x
-        }` +
-          ` L ${
-            backgroundStart.x +
-            backgroundStartOffset * arrowsDirection.x -
-            arrowHeadLength * arrowsDirection.y
-          } ${
-            backgroundStart.y +
-            backgroundStartOffset * arrowsDirection.y +
-            arrowHeadLength * arrowsDirection.x
-          }` +
-          ` L ${bondCenter.x - arrowHeadLength * arrowsDirection.y} ${
-            bondCenter.y + arrowHeadLength * arrowsDirection.x
-          }` +
-          ` L ${bondCenter.x + arrowHeadLength * arrowsDirection.y} ${
-            bondCenter.y - arrowHeadLength * arrowsDirection.x
-          }` +
-          ` Z`,
-      )
-      .attr({
-        fill: '#fff',
-        stroke: '#fff',
-      });
-
-    render.ctab.addReObjectPath(
-      LayerMap.additionalInfo,
-      newVisel,
-      backgroundPath,
-    );
 
     const arrowsSet = render.paper.set();
 

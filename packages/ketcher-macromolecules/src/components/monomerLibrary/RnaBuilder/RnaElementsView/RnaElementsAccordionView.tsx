@@ -125,8 +125,8 @@ const RnaElementsAccordionView = ({
                       selectedMonomerUniqueKey={activeMonomerKey}
                       onItemClick={(monomer) =>
                         onSelectItem(monomer, groupData.groupName)
-                    }
-                  />
+                      }
+                    />
                   );
                 })}
                 {variantMonomers.map((group) => (

@@ -415,7 +415,11 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   let validate;
   const schemaCopy = cloneDeep(schema);
   try {
-    const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
+    const ajv = new Ajv({
+      allErrors: true,
+      verbose: true,
+      strictSchema: false,
+    });
 
     if (customValid) {
       Object.entries(customValid).forEach(([formatName, formatValidator]) => {

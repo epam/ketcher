@@ -7,6 +7,7 @@ import {
   PolymerBondDeleteOperation,
 } from 'application/editor/operations/polymerBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import {
   DrawingEntityHoverOperation,
   DrawingEntityMoveOperation,
@@ -173,5 +174,41 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should clear all internal entities on clearCanvas', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
+    const firstPeptide = new Peptide(peptideMonomerItem);
+    const secondPeptide = new Peptide(peptideMonomerItem);
+
+    drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
+    drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(10, 10));
+    drawingEntitiesManager.startPolymerBondCreation(
+      firstPeptide,
+      new Vec2(0, 0),
+      new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
+    );
+    drawingEntitiesManager.bonds.set(1, new PolymerBond(firstPeptide, secondPeptide));
+
+    const sequenceClearSpy = jest
+      .spyOn(SequenceRenderer, 'clear')
+      .mockImplementation();
+
+    drawingEntitiesManager.clearCanvas();
+
+    expect(sequenceClearSpy).toHaveBeenCalled();
+    expect(drawingEntitiesManager.monomers.size).toBe(0);
+    expect(drawingEntitiesManager.polymerBonds.size).toBe(0);
+    expect(drawingEntitiesManager.monomerToAtomBonds.size).toBe(0);
+    expect(drawingEntitiesManager.atoms.size).toBe(0);
+    expect(drawingEntitiesManager.bonds.size).toBe(0);
+    expect(drawingEntitiesManager.rxnArrows.size).toBe(0);
+    expect(drawingEntitiesManager.multitailArrows.size).toBe(0);
+    expect(drawingEntitiesManager.rxnPluses.size).toBe(0);
   });
 });

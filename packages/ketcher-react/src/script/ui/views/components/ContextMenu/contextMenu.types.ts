@@ -106,7 +106,7 @@ export enum ContextMenuTriggerType {
 export interface ClosestItem {
   id: number;
   dist: number;
-  map: string /* should be enum something like keys of findMaps from packages/ketcher-react/src/script/editor/shared/closest.ts */;
+  map: string /* should be enum something like keys of findMaps from ketcher-core closest */;
 }
 
 export interface GetIsItemInSelectionArgs {

@@ -23,6 +23,7 @@ export const StyledDropdown = styled(DropDown)(({ theme }) => ({
   },
 
   '& .MuiOutlinedInput-root': {
+    height: '28px !important',
     border: `1px solid ${theme.ketcher.color.input.border.regular}`,
     backgroundColor: theme.ketcher.color.background.primary,
     color: theme.ketcher.color.text.primary,

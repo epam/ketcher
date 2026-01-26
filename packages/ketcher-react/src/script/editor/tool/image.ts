@@ -1,3 +1,4 @@
+import { ClosestItemWithMap } from '../shared/closest.types';
 import {
   CoordinateTransformation,
   Scale,
@@ -12,7 +13,6 @@ import {
 } from 'ketcher-core';
 import { Tool } from './Tool';
 import type Editor from '../Editor';
-import { ClosestItemWithMap } from '../shared/closest.types';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';
 

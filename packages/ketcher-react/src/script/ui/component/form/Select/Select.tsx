@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -78,6 +79,14 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
+      renderValue={(selected: string) =>
+        (currentValue?.children ??
+          currentValue?.label ??
+          placeholder ??
+          selected ??
+          '') as any
+      }
+      displayEmpty
       multiple={multiple}
       disabled={disabled}
       placeholder={placeholder}

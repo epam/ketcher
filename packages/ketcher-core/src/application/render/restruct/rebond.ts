@@ -36,6 +36,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
 import { Visel } from 'application/render';
+import { Coordinates } from 'application/editor';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -556,26 +557,21 @@ class ReBond extends ReObject {
   ) {
     this.hovering?.node?.remove();
 
-    const preview = this.getSelectionContour(render, false);
-    const newVisel = new Visel('fragment-selection-bond-preview');
-
-    preview.attr({ fill: '#fff', stroke: '#365CFF', 'stroke-width': 0.7 });
-    render.ctab.addReObjectPath(LayerMap.bondSkeleton, newVisel, preview);
-    // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
-    render.ctab.movePathOnTopOfLayer(
-      this.visel.paths[0],
-      LayerMap.bondSkeleton,
-    );
-
     const halfBond1 =
       this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
     const halfBond2 =
       this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
+    const atom1 = render.ctab.molecule.atoms.get(this.b.begin);
+    const atom2 = render.ctab.molecule.atoms.get(this.b.end);
 
-    if (!halfBond1 || !halfBond2) {
+    if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
       return null;
     }
 
+    const contourBorderRadius = 10;
+    const arrowsOffsetFromContour = 5;
+    const atom1Position = Coordinates.modelToCanvas(atom1.pp);
+    const atom2Position = Coordinates.modelToCanvas(atom2.pp);
     const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
     const bondCenter = Vec2.lc2(halfBond1.p, 0.5, halfBond2.p, 0.5);
     const arrowsDirection =
@@ -589,9 +585,35 @@ class ReBond extends ReObject {
     const backgroundStartOffset = 1;
     const offsets = [0, -5, -10];
     const backgroundStart = new Vec2(
-      arrowStart.x + offsets[0] * arrowsDirection.x,
-      arrowStart.y + offsets[0] * arrowsDirection.y,
+      arrowStart.x -
+        arrowsOffsetFromContour * arrowsDirection.x +
+        offsets[0] * arrowsDirection.x,
+      arrowStart.y -
+        arrowsOffsetFromContour * arrowsDirection.y +
+        offsets[0] * arrowsDirection.y,
     );
+    const newVisel = new Visel('fragment-selection-bond-preview');
+    const bondLength = Vec2.dist(halfBond2.p, halfBond1.p);
+    const contourSize = new Vec2(bondLength, 20);
+
+    const contour = render.paper
+      .rect(
+        halfBond1.p.x,
+        halfBond1.p.y - contourSize.y / 2,
+        contourSize.x,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: '#fff', stroke: '#365CFF', 'stroke-width': 0.7 });
+
+    render.ctab.addReObjectPath(LayerMap.bondSkeleton, newVisel, contour);
+    // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
+    render.ctab.movePathOnTopOfLayer(
+      this.visel.paths[0],
+      LayerMap.bondSkeleton,
+    );
+
+    contour.rotate(this.b.angle, halfBond1.p.x, halfBond1.p.y);
 
     const backgroundPath = render.paper
       .path(
@@ -636,8 +658,12 @@ class ReBond extends ReObject {
 
     offsets.forEach((delta) => {
       const start = new Vec2(
-        arrowStart.x + delta * arrowsDirection.x,
-        arrowStart.y + delta * arrowsDirection.y,
+        arrowStart.x -
+          arrowsOffsetFromContour * arrowsDirection.x +
+          delta * arrowsDirection.x,
+        arrowStart.y -
+          arrowsOffsetFromContour * arrowsDirection.y +
+          delta * arrowsDirection.y,
       );
 
       const path = render.paper

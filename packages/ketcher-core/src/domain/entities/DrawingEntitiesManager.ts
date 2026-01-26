@@ -313,6 +313,7 @@ export class DrawingEntitiesManager {
       mergedCommand.merge(command);
     });
     this.clearMicromoleculesHiddenEntities();
+    SequenceRenderer.clear();
     return mergedCommand;
   }
 

@@ -1,4 +1,4 @@
-import { ClosestItemWithMap } from '../shared/closest.types';
+import { ClosestItemWithMap } from 'ketcher-core';
 import {
   CoordinateTransformation,
   Scale,

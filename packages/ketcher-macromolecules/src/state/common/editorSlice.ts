@@ -141,6 +141,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       state.editor = editor;
+      state.editorLayoutMode = editor.mode.modeName;
       action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {

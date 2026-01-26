@@ -468,12 +468,25 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
-  const ajv = new Ajv({
-    allErrors: true,
-    keywords: [{ keyword: 'enumNames', schemaType: 'array' }],
-  });
+  let validate;
+  try {
+    const ajv = new Ajv({
+      allErrors: true,
+      keywords: [{ keyword: 'enumNames', schemaType: 'array' }],
+    });
+    validate = ajv.compile(optionsSchema);
+  } catch (error) {
+    console.warn(
+      'Options validation skipped: runtime schema compilation is not available (CSP may block eval).',
+      error,
+    );
+    validate = null;
+  }
 
-  const validate = ajv.compile(optionsSchema);
+  if (!validate) {
+    return settings;
+  }
+
   validate(settings);
   const errors = validate.errors || [];
   const errorsProps = errors.map((el) => el.instancePath.slice(1));

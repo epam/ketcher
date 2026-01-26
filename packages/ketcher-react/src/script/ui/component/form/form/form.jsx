@@ -412,33 +412,50 @@ const SelectOneOf = (props) => {
 };
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
+  let validate;
   const schemaCopy = cloneDeep(schema);
+  try {
+    const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
 
-  if (customValid) {
-    Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator);
-      const {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        pattern,
-        maxLength,
-        enum: enumIsReservedWord,
-        enumNames,
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-        ...rest
-      } = schemaCopy.properties[formatName];
-      schemaCopy.properties[formatName] = {
-        ...rest,
-        format: formatName,
-      };
-    });
+    if (customValid) {
+      Object.entries(customValid).forEach(([formatName, formatValidator]) => {
+        ajv.addFormat(formatName, formatValidator);
+        const {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          pattern,
+          maxLength,
+          enum: enumIsReservedWord,
+          enumNames,
+          /* eslint-enable @typescript-eslint/no-unused-vars */
+          ...rest
+        } = schemaCopy.properties[formatName];
+        schemaCopy.properties[formatName] = {
+          ...rest,
+          format: formatName,
+        };
+      });
+    }
+
+    validate = ajv.compile(schemaCopy);
+  } catch (error) {
+    console.warn(
+      'Form validation disabled: runtime schema compilation is not available (CSP may block eval).',
+      error,
+    );
+    validate = null;
   }
-
-  const validate = ajv.compile(schemaCopy);
 
   return {
     key: schema.key || '',
     serialize: (inst) => {
+      if (!validate) {
+        return {
+          instance: serializeRewrite(serialize, inst, schemaCopy),
+          valid: true,
+          errors: [],
+        };
+      }
+
       validate(inst);
 
       return {
@@ -448,7 +465,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
       };
     },
     deserialize: (inst) => {
-      validate(inst);
+      if (validate) validate(inst);
       return deserializeRewrite(deserialize, inst);
     },
   };

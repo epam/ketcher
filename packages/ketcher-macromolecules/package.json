@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",
@@ -58,7 +58,7 @@
     "file-saver": "^2.0.5",
     "ketcher-core": "*",
     "ketcher-react": "*",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "react-contexify": "^6.0.0",
     "react-dropzone": "^11.7.1",
     "react-intersection-observer": "^9.16.0",

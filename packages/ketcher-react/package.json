@@ -24,7 +24,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",
@@ -61,7 +61,7 @@
     "hoist-non-react-statics": "^3.3.2",
     "intersection-observer": "^0.12.2",
     "ketcher-core": "*",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "miew-react": "0.11.0",
     "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",

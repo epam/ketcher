@@ -64,7 +64,7 @@
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=16.0.0",
+    "node": ">=22.0.0",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
@@ -75,6 +75,8 @@
     "minimatch": "^10.0.3",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
+    "react-router": "^7.13.0",
+    "react-router-dom": "^7.13.0",
     "serve-handler": "^6.1.6"
   },
   "stylelint": {

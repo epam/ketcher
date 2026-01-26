@@ -362,7 +362,7 @@ function toIntArray(strArray) {
 }
 
 function trimRight(str) {
-  return str.replace(/\s+$/, '');
+  return str.trimEnd();
 }
 
 function identityMap(array) {

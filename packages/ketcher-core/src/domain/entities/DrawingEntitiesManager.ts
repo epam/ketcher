@@ -2330,6 +2330,14 @@ export class DrawingEntitiesManager {
     });
 
     SequenceRenderer.clear();
+    this.monomers.clear();
+    this.polymerBonds.clear();
+    this.monomerToAtomBonds.clear();
+    this.atoms.clear();
+    this.bonds.clear();
+    this.rxnArrows.clear();
+    this.multitailArrows.clear();
+    this.rxnPluses.clear();
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {

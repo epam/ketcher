@@ -26,7 +26,7 @@
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "scripts": {
     "ajv": "ajv compile -s src/domain/serializers/ket/schema.json -o src/domain/serializers/ket/compiledSchema.js",

@@ -1,4 +1,4 @@
-import { CoordinateTransformation, Struct, Vec2 } from 'ketcher-core';
+import { CoordinateTransformation, Struct, Vec2, Visel } from 'ketcher-core';
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -20,6 +20,7 @@ export default class FragmentSelectionTool implements Tool {
   private preview: FragmentPreview | null = null;
   private tooltipTimeoutId?: number;
   private disabledMessage?: string;
+  private bondPreview?: Visel | null;
 
   constructor(editor: Editor) {
     this.editor = editor;

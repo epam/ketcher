@@ -35,7 +35,7 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
-import { CoordinateTransformation, Visel } from 'application/render';
+import { Visel } from 'application/render';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -561,10 +561,16 @@ class ReBond extends ReObject {
 
     preview.attr({ fill: '#fff', stroke: '#365CFF', 'stroke-width': 0.7 });
     render.ctab.addReObjectPath(LayerMap.bondSkeleton, newVisel, preview);
-    render.ctab.moveReObjectOnTopOfLayer(this.visel, LayerMap.bondSkeleton);
+    // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
+    render.ctab.movePathOnTopOfLayer(
+      this.visel.paths[0],
+      LayerMap.bondSkeleton,
+    );
 
-    const halfBond1 = render.ctab.molecule.halfBonds.get(this.b.hb1);
-    const halfBond2 = render.ctab.molecule.halfBonds.get(this.b.hb2);
+    const halfBond1 =
+      this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
+    const halfBond2 =
+      this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
 
     if (!halfBond1 || !halfBond2) {
       return null;

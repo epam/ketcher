@@ -80,7 +80,6 @@ import {
   takeElementScreenshot,
   SdfFileFormat,
   dragMouseAndMoveTo,
-  takeTopToolbarScreenshot,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -130,8 +129,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
-
-    // click to ensure group is selected
     await clickInTheMiddleOfTheScreen(page);
 
     await takeEditorScreenshot(page);
@@ -367,7 +364,14 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/Ambiguous-monomers-bonds/ketcherPhosphateMixedAndAlternatives.ket',
     );
-    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
+    await takeElementScreenshot(
+      page,
+      getSymbolLocator(page, { symbolId: 27 }),
+      {
+        padding: 34,
+      },
+    );
   });
 
   test('Case 7 - System does not unite ambiguous sugars (alternatives and mixed) into one @ symbol', async ({
@@ -386,7 +390,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/Ambiguous-monomers-bonds/ketcherSugarsMixedAndAlternatives.ket',
     );
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
+      padding: 30,
+    });
   });
 
   test('Case 8 - System does not unite ambiguous CHEMs (alternatives and mixed) into one @ symbol', async ({
@@ -407,7 +413,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{([sDBL],[4aPEGMal])}|CHEM2{([sDBL]+[4aPEGMal])}|CHEM3{([sDBL],[4aPEGMal])}|CHEM4{([sDBL]+[4aPEGMal])}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1$$$V2.0',
     );
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
+      padding: 30,
+    });
   });
 
   test('Case 9 - Verify Undo/Redo do not restore partial selection after cancelling monomer creation (GH-7578)', async () => {
@@ -539,12 +547,16 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasMacro(page, 'KET/chain-with-atoms.ket');
-    await getAtomLocator(page, { atomId: 0 }).hover({ force: true });
-    await takeEditorScreenshot(page);
+    const atomlocator = await getAtomLocator(page, { atomId: 0 });
+    atomlocator.hover({ force: true });
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 3 }), {
+      padding: 155,
+    });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    const loc = await getAtomLocator(page, { atomId: 0 });
-    await loc.hover();
-    await takeEditorScreenshot(page);
+    await atomlocator.hover();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 3 }), {
+      padding: 155,
+    });
   });
 
   test('Case 15 - Peptide section for ambiguous monomers should have "Ambiguous Amino Acids" name', async ({
@@ -848,7 +860,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).selectMonomer(Nucleotide._5NitInd);
     await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
-      padding: 50,
+      padding: 30,
     });
   });
 
@@ -1130,9 +1142,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await Library(page).selectMonomer(Nucleotide.InvdA);
     await page.waitForTimeout(1000);
     await setMode(page, 'sequence');
-    await takeTopToolbarScreenshot(page);
+    await takeElementScreenshot(page, page.getByTestId('layout-mode'));
     await setMode(page, 'snake');
-    await takeTopToolbarScreenshot(page);
+    await takeElementScreenshot(page, page.getByTestId('layout-mode'));
   });
 
   test('Case 34 - System does not allow to add monomers with the same structure but different names (part2)', async ({
@@ -1236,14 +1248,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await locatorA2.hover();
     await page.waitForTimeout(1000);
-    await takePageScreenshot(page);
-    // await takeElementScreenshot(
-    //   page,
-    //   Library(page).getMonomerLibraryCardLocator(Preset._A2),
-    //   {
-    //     padding: 60,
-    //   },
-    // );
+    await takeElementScreenshot(
+      page,
+      Library(page).getMonomerLibraryCardLocator(Preset._A2),
+      {
+        padding: 200,
+      },
+    );
     await Library(page).selectMonomer(Preset._A2);
     await keyboardPressOnCanvas(page, 'Enter');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

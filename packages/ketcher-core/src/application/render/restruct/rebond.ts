@@ -573,32 +573,22 @@ class ReBond extends ReObject {
     const atom1Position = Coordinates.modelToCanvas(atom1.pp);
     const atom2Position = Coordinates.modelToCanvas(atom2.pp);
     const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
-    const bondCenter = Vec2.lc2(halfBond1.p, 0.5, halfBond2.p, 0.5);
-    const bondLength = Vec2.dist(halfBond2.p, halfBond1.p);
+    const bondLength = Vec2.dist(atom2Position, atom1Position);
     const arrowsDirection =
       this.b.begin === atomIdToDrawArrows
         ? bondDirection
         : bondDirection.scaled(-1);
     const arrowStart =
-      atomIdToDrawArrows === this.b.begin ? halfBond1.p : halfBond2.p;
+      atomIdToDrawArrows === this.b.begin ? atom1Position : atom2Position;
     const arrowsOffset = 2;
     const arrowHeadLength = 4;
-    const backgroundStartOffset = 1;
     const offsets = [0, -5, -10];
-    // const backgroundStart = new Vec2(
-    //   arrowStart.x -
-    //     arrowsOffsetFromContour * arrowsDirection.x +
-    //     offsets[0] * arrowsDirection.x,
-    //   arrowStart.y -
-    //     arrowsOffsetFromContour * arrowsDirection.y +
-    //     offsets[0] * arrowsDirection.y,
-    // );
     const contourSize = new Vec2(bondLength, 20);
     const backgroundStart = new Vec2(
       atomIdToDrawArrows === this.b.begin
-        ? halfBond1.p.x
-        : halfBond1.p.x + bondLength / 2,
-      halfBond1.p.y - contourSize.y / 2,
+        ? atom1Position.x
+        : atom1Position.x + bondLength / 2,
+      atom1Position.y - contourSize.y / 2,
     );
     const newVisel = new Visel('fragment-selection-bond-preview');
     const backgroundRect = render.paper
@@ -616,12 +606,12 @@ class ReBond extends ReObject {
       newVisel,
       backgroundRect,
     );
-    backgroundRect.rotate(this.b.angle, halfBond1.p.x, halfBond1.p.y);
+    backgroundRect.rotate(this.b.angle, atom1Position.x, atom1Position.y);
 
     const contour = render.paper
       .rect(
-        halfBond1.p.x,
-        halfBond1.p.y - contourSize.y / 2,
+        atom1Position.x,
+        atom1Position.y - contourSize.y / 2,
         contourSize.x,
         contourSize.y,
         contourBorderRadius,
@@ -635,7 +625,7 @@ class ReBond extends ReObject {
       LayerMap.bondSkeleton,
     );
 
-    contour.rotate(this.b.angle, halfBond1.p.x, halfBond1.p.y);
+    contour.rotate(this.b.angle, atom1Position.x, atom1Position.y);
 
     const arrowsSet = render.paper.set();
 

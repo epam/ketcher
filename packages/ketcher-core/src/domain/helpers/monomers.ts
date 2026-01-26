@@ -272,7 +272,12 @@ export const isRnaBaseVariantMonomer = (
 export function isAmbiguousMonomerLibraryItem(
   monomer?: MonomerOrAmbiguousType,
 ): monomer is AmbiguousMonomerType {
-  return Boolean(monomer && monomer.isAmbiguous);
+  return Boolean(
+    monomer &&
+      monomer.isAmbiguous &&
+      Array.isArray((monomer as AmbiguousMonomerType).monomers) &&
+      (monomer as AmbiguousMonomerType).monomers.length > 0,
+  );
 }
 
 export const isLibraryItemRnaPreset = (

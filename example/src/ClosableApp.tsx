@@ -119,6 +119,10 @@ M  END
               ketcher.setMolecule(molecule);
             }
           }}
+          onDestroy={(ketcher: Ketcher) => {
+            window.ketcher = undefined;
+            console.log('Ketcher destroyed, id->', ketcher?.id);
+          }}
         />
       )}
       {hasError && (

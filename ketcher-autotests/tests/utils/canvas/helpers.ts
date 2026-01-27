@@ -166,6 +166,7 @@ export async function takeMonomerLibraryScreenshot(
 export async function takeEditorScreenshot(
   page: Page,
   options?: {
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;

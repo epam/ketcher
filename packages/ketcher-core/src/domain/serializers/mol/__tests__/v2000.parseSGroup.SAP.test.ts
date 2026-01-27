@@ -1,6 +1,14 @@
 import sGroup from 'domain/serializers/mol/parseSGroup';
 
 describe('parseSGroup', () => {
+  it('applyDataSGroupData should trim trailing whitespace', () => {
+    const sg = { data: { fieldValue: '' } };
+
+    sGroup.applyDataSGroupData(sg, 'Value   ', true);
+
+    expect(sg.data.fieldValue).toBe('Value');
+  });
+
   it('parseSGroupSAPLineV2000 should parse valid SAP line with one attachment point', () => {
     const ctabLine = '   1  1   2   0   ';
 

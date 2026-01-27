@@ -184,30 +184,40 @@ function postLoadAny(_sgroup) {
   // TODO: Implement after adding ANY type support
 }
 
-function loadSGroup(mol, sg, atomMap) {
-  const postLoadMap = {
-    SUP: postLoadSup,
-    MUL: postLoadMul,
-    SRU: postLoadSru,
-    MON: postLoadMon,
-    MER: postLoadMer,
-    COP: postLoadCop,
-    CRO: postLoadCro,
-    MOD: postLoadMod,
-    GRA: postLoadGra,
-    COM: postLoadCom,
-    MIX: postLoadMix,
-    FOR: postLoadFor,
-    DAT: postLoadDat,
-    ANY: postLoadAny,
-    GEN: postLoadGen,
-  };
+// Map of allowed SGroup types to their post-load handlers
+const postLoadMap = {
+  SUP: postLoadSup,
+  MUL: postLoadMul,
+  SRU: postLoadSru,
+  MON: postLoadMon,
+  MER: postLoadMer,
+  COP: postLoadCop,
+  CRO: postLoadCro,
+  MOD: postLoadMod,
+  GRA: postLoadGra,
+  COM: postLoadCom,
+  MIX: postLoadMix,
+  FOR: postLoadFor,
+  DAT: postLoadDat,
+  ANY: postLoadAny,
+  GEN: postLoadGen,
+};
 
+// Set of allowed SGroup types for validation to prevent unvalidated dynamic method calls
+const allowedSGroupTypes = new Set(Object.keys(postLoadMap));
+
+function loadSGroup(mol, sg, atomMap) {
   // add the group to the molecule
   sg.id = mol.sgroups.add(sg);
 
   // apply type-specific post-processing
-  postLoadMap[sg.type](sg, mol, atomMap);
+  // Only call handlers for explicitly allowed types
+  if (allowedSGroupTypes.has(sg.type)) {
+    const handler = postLoadMap[sg.type];
+    if (typeof handler === 'function') {
+      handler(sg, mol, atomMap);
+    }
+  }
   // mark atoms in the group as belonging to it
   for (const atomId of sg.atoms) {
     if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);
@@ -362,7 +372,7 @@ function toIntArray(strArray) {
 }
 
 function trimRight(str) {
-  return str.replace(/\s+$/, '');
+  return str.trimEnd();
 }
 
 function identityMap(array) {

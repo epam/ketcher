@@ -345,7 +345,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
     await AtomPropertiesDialog(page).fillAlias('N1');
     expect(await AtomPropertiesDialog(page).applyButton.isEnabled()).toBe(true);
-    await takeEditorScreenshot(page);
   });
 
   test('Case 6 - Ambiguous phosphates (alternatives and mixed) in sequence shown as % symbol instead of @ symbol', async ({

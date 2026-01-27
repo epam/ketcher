@@ -72,6 +72,7 @@
     "@types/node": "^16.11.12",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "ajv-cli": "^5.0.0",
+    "fast-json-patch": "^3.1.1",
     "babel-jest": "26.6.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.44.0",

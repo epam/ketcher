@@ -437,20 +437,6 @@ export const Library = (page: Page) => {
       await this.openRNASection(RNASection.Presets);
       await presetsSection.newPresetsButton.click();
     },
-
-    async scrollActiveTabToBottom() {
-      const tabPanel = page.getByRole('tabpanel');
-      await tabPanel.waitFor({ state: 'visible' });
-      await tabPanel.evaluate((element) => {
-        element.scrollTop = element.scrollHeight;
-      });
-
-      return await tabPanel.evaluate((element) => ({
-        scrollTop: element.scrollTop,
-        scrollHeight: element.scrollHeight,
-        clientHeight: element.clientHeight,
-      }));
-    },
   };
 };
 

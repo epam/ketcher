@@ -116,7 +116,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
   });
   test('Case 1 — Rotation tool: selection box for expanded s-groups includes label and padding', async () => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
-     * Bug: https:*github.com/epam/ketcher/issues/2597
+     * Bug: https://github.com/epam/ketcher/issues/2597
      * Steps (reproduce expected behavior visually):
      * 1. Load molecule that contains an expanded S-group with label and brackets
      * 2. Select the S-group (or the whole group)
@@ -131,10 +131,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 250,
+    });
   });
 
-  test('Case 2 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
+  test('Case 2.1 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/2576
      * Scenario 1
@@ -157,9 +159,15 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
 
     await ContextMenu(page, getBondLocator(page, { bondId: 12 })).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getBondLocator(page, { bondId: 12 }), {
+      padding: 170,
+    });
+  });
 
-    /* Scenario 2
+  test('Case 2.2 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
+    /* Test case: https://github.com/epam/ketcher/issues/8974
+     * Bug: https://github.com/epam/ketcher/issues/2576
+     * Scenario 2
      * Steps:
      * 1. Open Ketcher
      * 2. Add two atoms on canvas
@@ -184,9 +192,15 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       });
     });
     await ContextMenu(page, getAtomLocator(page, { atomId: 1 })).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 1 }), {
+      padding: 200,
+    });
+  });
 
-    /* Scenario 3
+  test('Case 2.3 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
+    /* Test case: https://github.com/epam/ketcher/issues/8974
+     * Bug: https://github.com/epam/ketcher/issues/2576
+     * Scenario 3
      * Steps:
      * 1. Open Ketcher
      * 2. Add structure on canvas (e.g. Benzene)
@@ -204,9 +218,15 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await selectAllStructuresOnCanvas(page);
 
     await clickOnCanvas(page, 300, 300, { button: 'right' });
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 1 }), {
+      padding: 60,
+    });
+  });
 
-    /* Scenario 4
+  test('Case 2.4 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
+    /* Test case: https://github.com/epam/ketcher/issues/8974
+     * Bug: https://github.com/epam/ketcher/issues/2576
+     * Scenario 4
      * Steps:
      * 1. Open Ketcher
      * 2. Add two structures on canvas (e.g. Benzene)
@@ -231,9 +251,15 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     ]);
 
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 6 }), {
+      padding: 230,
+    });
+  });
 
-    /* Scenario 5
+  test('Case 2.5 — Context menu should be shown for clicked functional group (not for highlighted one)', async () => {
+    /* Test case: https://github.com/epam/ketcher/issues/8974
+     * Bug: https://github.com/epam/ketcher/issues/2576
+     * Scenario 5
      * Steps:
      * 1. Add any structure to the canvas, such as benzene
      * 2. Click Select Tool, and select some atoms/bonds of the structure
@@ -257,7 +283,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     ]);
 
     await ContextMenu(page, getBondLocator(page, { bondId: 3 })).open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getBondLocator(page, { bondId: 3 }), {
+      padding: 200,
+    });
   });
 
   test('Case 3 — Superatom rendering with multiple connection points — part of structure should not disappear', async () => {
@@ -284,7 +312,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await SGroupPropertiesDialog(page).setNameValue('Test@!#$%12345');
     await SGroupPropertiesDialog(page).apply();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 18 }), {
+      padding: 220,
+    });
   });
 
   test('Case 4 - When atoms are selected, pressing atoms hotkey opens a modal window instead of an instant replacement', async () => {
@@ -320,7 +350,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     ]);
 
     await page.keyboard.press('O');
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 0 }), {
+      padding: 80,
+    });
   });
 
   test('Case 5 - Cannot add atom properties to Any atom as it is defined with an incorrect label', async () => {
@@ -461,7 +493,14 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
     await ContextMenu(page, getBondLocator(page, { bondId: 45 })).open();
-    await takeEditorScreenshot(page);
+    await page.waitForTimeout(200);
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerId: 32 }),
+      {
+        padding: 185,
+      },
+    );
   });
 
   test('Case 11 - Preview tooltips for monomers loaded from HELM with inline smiles are wrong', async ({
@@ -571,7 +610,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await Library(page).switchToPeptidesTab();
-    await Library(page).scrollActiveTabToBottom();
+    await Library(page).selectMonomer(Peptide.X);
+    const text = page.getByText('Ambiguous Amino Acids');
+    await expect(text).toBeVisible();
+    await expect(text).toContainText('Ambiguous Amino Acids');
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -651,7 +693,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'PEPTIDE1{[c1(c(-c2ccc([*:2])cc2)c(-c2ccc([*:3])cc2)c(-c2ccc([*:4])cc2)c(-c2ccc([*:5])cc2)c1-c1ccc([*:6])cc1)-c1ccc([*:1])cc1 |$;;;;;;_R2;;;;;;;;_R3;;;;;;;;_R4;;;;;;;;_R5;;;;;;;;_R6;;;;;;;_R1;;$|]}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, page.getByText('Mod0'), {
+      padding: 35,
+    });
   });
 
   test('Case 18 - Charge tools does not work for "star" atoms', async () => {
@@ -757,7 +801,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, page.getByTestId('select-rectangle'), {
+      padding: 90,
+    });
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({
@@ -786,7 +832,14 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await ContextMenu(page, getMonomerLocator(page, { monomerId: 80 })).click(
       MonomerOption.ArrangeAsARing,
     );
-    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerId: 198 }),
+      {
+        padding: 150,
+      },
+    );
   });
 
   test('Case 23 - Tooltip is shown in wrong place for ambigous monomers in popup mode', async ({
@@ -1060,7 +1113,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       { x: 420, y: 290 },
     ]);
     await layout(page);
-    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('40');
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 13 }), {
+      padding: 210,
+    });
   });
 
   test('Case 32 - Unable to create more than one nucleotide monomer - system throws exception', async () => {
@@ -1167,30 +1223,17 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     expect(await Library(page).isMonomerExist(Base._Base1)).toBeTruthy();
     expect(await Library(page).isMonomerExist(Base._Base2)).toBeTruthy();
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Library(page).openRNASection(RNASection.Bases);
-    await takeMonomerLibraryScreenshot(page);
-    await Library(page).selectMonomer(Base._Base1);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerId: 0 }),
-      {
-        padding: 40,
-      },
-    );
+    await Library(page).dragMonomerOnCanvas(Base._Base1, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
 
-    await CommonTopLeftToolbar(page).clearCanvasButton.click();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Library(page).openRNASection(RNASection.Bases);
-    await Library(page).selectMonomer(Base._Base2);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).dragMonomerOnCanvas(Base._Base2, {
+      x: 30,
+      y: 10,
+      fromCenter: true,
+    });
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerId: 0 }),
@@ -1220,15 +1263,22 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     expect(await Library(page).isMonomerExist(Preset._A1)).toBeTruthy();
     expect(await Library(page).isMonomerExist(Preset._A2)).toBeTruthy();
+    expect(await Library(page).isMonomerExist(Sugar.Sugar1)).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(Phosphate.Phosphate1),
+    ).toBeTruthy();
+    expect(await Library(page).isMonomerExist(Base.Base1)).toBeTruthy();
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Library(page).openRNASection(RNASection.Presets);
-    await takeMonomerLibraryScreenshot(page);
-    await Library(page).selectMonomer(Preset._A1);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).dragMonomerOnCanvas(Preset._A1, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await Library(page).dragMonomerOnCanvas(Preset._A2, {
+      x: 40,
+      y: 30,
+      fromCenter: true,
+    });
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerId: 0 }),
@@ -1237,11 +1287,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       },
     );
 
-    await CommonTopLeftToolbar(page).clearCanvasButton.click();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Library(page).openRNASection(RNASection.Presets);
     const locatorA2 = await Library(page).getMonomerLibraryCardLocator(
       Preset._A2,
     );
@@ -1252,16 +1297,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       Library(page).getMonomerLibraryCardLocator(Preset._A2),
       {
         padding: 200,
-      },
-    );
-    await Library(page).selectMonomer(Preset._A2);
-    await keyboardPressOnCanvas(page, 'Enter');
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerId: 0 }),
-      {
-        padding: 100,
       },
     );
   });

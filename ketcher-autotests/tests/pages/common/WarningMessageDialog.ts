@@ -9,13 +9,12 @@ type WarningMessageDialogLocators = {
 };
 
 export const WarningMessageDialog = (page: Page) => {
-  const window = page.getByTestId('confirm-dialog');
   const locators: WarningMessageDialogLocators = {
-    window,
-    header: window.locator('[class*="header"]'),
-    question: window.locator('[class*="question"]'),
-    cancelButton: window.getByRole('button', { name: 'Cancel' }),
-    okButton: window.getByRole('button', { name: 'OK' }),
+    window: page.getByTestId('confirm-dialog'),
+    header: page.getByTestId('confirm-header'),
+    question: page.getByTestId('confirm-question'),
+    cancelButton: page.getByTestId('cancel-button'),
+    okButton: page.getByTestId('ok-button'),
   };
 
   return {

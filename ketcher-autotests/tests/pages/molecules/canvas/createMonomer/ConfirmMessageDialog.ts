@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 
-type WarningMessageDialogLocators = {
+type ConfirmMessageDialogLocators = {
   window: Locator;
   header: Locator;
   question: Locator;
@@ -8,8 +8,8 @@ type WarningMessageDialogLocators = {
   okButton: Locator;
 };
 
-export const WarningMessageDialog = (page: Page) => {
-  const locators: WarningMessageDialogLocators = {
+export const ConfirmMessageDialog = (page: Page) => {
+  const locators: ConfirmMessageDialogLocators = {
     window: page.getByTestId('confirm-dialog'),
     header: page.getByTestId('confirm-header'),
     question: page.getByTestId('confirm-question'),
@@ -47,4 +47,4 @@ export const WarningMessageDialog = (page: Page) => {
   };
 };
 
-export type WarningMessageDialogType = ReturnType<typeof WarningMessageDialog>;
+export type ConfirmMessageDialogType = ReturnType<typeof ConfirmMessageDialog>;

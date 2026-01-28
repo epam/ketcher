@@ -10,7 +10,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { WarningMessageDialog } from '@tests/pages/common/WarningMessageDialog';
+import { ConfirmMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/ConfirmMessageDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -889,7 +889,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
-    const chainlocator = await page.getByText('@').first();
+    const chainlocator = getSymbolLocator(page, { chainId: 8 });
     await chainlocator.hover({ force: true });
     await page.waitForTimeout(1000);
     await takeElementScreenshot(page, chainlocator, {
@@ -1513,10 +1513,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'Molfiles-V2000/unsupported-s-group.mol',
     );
-    const warningMessage = await WarningMessageDialog(page).getQuestionText();
+    const warningMessage = await ConfirmMessageDialog(page).getQuestionText();
     expect(warningMessage).toContain(
       'Unsupported S-group type found. Would you like to import structure without it?',
     );
-    await WarningMessageDialog(page).cancel();
+    await ConfirmMessageDialog(page).cancel();
   });
 });

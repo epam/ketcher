@@ -1393,30 +1393,42 @@ const MonomerCreationWizard = () => {
           ...bondsBetweenSugarAndPhosphate.values(),
         ][0];
 
-        const sugarR3AttachmentPointAtom = sugarStructure?.atoms?.includes(
+        const sugarR3AttachmentPointAtomId = sugarStructure?.atoms?.includes(
           bondBetweenSugarAndBase.begin,
         )
           ? bondBetweenSugarAndBase.begin
           : bondBetweenSugarAndBase.end;
-        const sugarR2AttachmentPointAtom = sugarStructure?.atoms?.includes(
+        const sugarR3AttachmentAtom = struct.atoms.get(
+          sugarR3AttachmentPointAtomId,
+        );
+        const sugarR2AttachmentPointAtomId = sugarStructure?.atoms?.includes(
           bondBetweenSugarAndPhosphate.begin,
         )
           ? bondBetweenSugarAndPhosphate.begin
           : bondBetweenSugarAndPhosphate.end;
-        const baseR1AttachmentPointAtom = baseStructure?.atoms?.includes(
+        const sugarR2AttachmentAtom = struct.atoms.get(
+          sugarR2AttachmentPointAtomId,
+        );
+        const baseR1AttachmentPointAtomId = baseStructure?.atoms?.includes(
           bondBetweenSugarAndBase.begin,
         )
           ? bondBetweenSugarAndBase.begin
           : bondBetweenSugarAndBase.end;
-        const phosphateR1AttachmentPointAtom =
+        const baseR1AttachmentAtom = struct.atoms.get(
+          baseR1AttachmentPointAtomId,
+        );
+        const phosphateR1AttachmentPointAtomId =
           phosphateStructure?.atoms?.includes(
             bondBetweenSugarAndPhosphate.begin,
           )
             ? bondBetweenSugarAndPhosphate.begin
             : bondBetweenSugarAndPhosphate.end;
+        const phosphateR1AttachmentAtom = struct.atoms.get(
+          phosphateR1AttachmentPointAtomId,
+        );
 
         editor.assignConnectionPointAtom(
-          baseR1AttachmentPointAtom,
+          baseR1AttachmentPointAtomId,
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
           rnaPresetWizardState.base.structure,
@@ -1425,9 +1437,10 @@ const MonomerCreationWizard = () => {
             KetMonomerClass.Base,
             AttachmentPointName.R1,
           ),
+          sugarR3AttachmentAtom?.pp,
         );
         editor.assignConnectionPointAtom(
-          sugarR2AttachmentPointAtom,
+          sugarR2AttachmentPointAtomId,
           AttachmentPointName.R2,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
@@ -1436,9 +1449,10 @@ const MonomerCreationWizard = () => {
             KetMonomerClass.Sugar,
             AttachmentPointName.R2,
           ),
+          phosphateR1AttachmentAtom?.pp,
         );
         editor.assignConnectionPointAtom(
-          sugarR3AttachmentPointAtom,
+          sugarR3AttachmentPointAtomId,
           AttachmentPointName.R3,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
           rnaPresetWizardState.sugar.structure,
@@ -1447,9 +1461,10 @@ const MonomerCreationWizard = () => {
             KetMonomerClass.Sugar,
             AttachmentPointName.R3,
           ),
+          baseR1AttachmentAtom?.pp,
         );
         editor.assignConnectionPointAtom(
-          phosphateR1AttachmentPointAtom,
+          phosphateR1AttachmentPointAtomId,
           AttachmentPointName.R1,
           assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.phosphate),
           rnaPresetWizardState.phosphate.structure,
@@ -1458,6 +1473,7 @@ const MonomerCreationWizard = () => {
             KetMonomerClass.Phosphate,
             AttachmentPointName.R1,
           ),
+          sugarR2AttachmentAtom?.pp,
         );
       }
 

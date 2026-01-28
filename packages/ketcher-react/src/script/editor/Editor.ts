@@ -1174,6 +1174,7 @@ class Editor implements KetcherEditor {
     monomerStructure?: Selection,
     forceAddNewLeavingGroupAtom = false,
     leavingAtomLabel: AtomLabel = AtomLabel.H,
+    leavingAtomPosition?: Vec2,
   ) {
     assert(this.monomerCreationState);
 
@@ -1210,6 +1211,8 @@ class Editor implements KetcherEditor {
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         atomId,
         { label: leavingAtomLabel },
+        undefined,
+        leavingAtomPosition,
       );
 
       additionalAction = bondAdditionAction;

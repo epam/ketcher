@@ -845,7 +845,7 @@ export class Struct {
     return components;
   }
 
-  markFragment(idSet: Pile<number>, properties: [StructProperty]) {
+  markFragment(idSet: Pile<number>, properties?: [StructProperty]) {
     const frag = new Fragment([], undefined, properties);
     const fid = this.frags.add(frag);
 

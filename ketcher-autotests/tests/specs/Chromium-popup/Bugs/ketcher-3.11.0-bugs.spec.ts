@@ -421,8 +421,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/Ambiguous-monomers-bonds/ketcherSugarsMixedAndAlternatives.ket',
     );
-    await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
-      padding: 30,
+    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 3 }), {
+      padding: 14,
     });
   });
 
@@ -444,8 +444,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{([sDBL],[4aPEGMal])}|CHEM2{([sDBL]+[4aPEGMal])}|CHEM3{([sDBL],[4aPEGMal])}|CHEM4{([sDBL]+[4aPEGMal])}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1$$$V2.0',
     );
-    await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
-      padding: 30,
+    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 7 }), {
+      padding: 34,
     });
   });
 
@@ -749,9 +749,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CalculateVariablesPanel(page).isVisible();
     await CalculateVariablesPanel(page).molecularMassUnitsCombobox.click();
     await page.waitForTimeout(1000);
-    await takeElementScreenshot(page, page.getByTestId('Molecular Mass Unit'), {
-      padding: 180,
-    });
+    await expect(
+      CalculateVariablesPanel(page).molecularMassUnitDropDownList,
+    ).toBeVisible();
   });
 
   test('Case 20 - Number of selected elements in context menu is wrong for sense/antisense chains', async ({
@@ -801,9 +801,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(page, page.getByTestId('select-rectangle'), {
-      padding: 90,
-    });
+    await takeElementScreenshot(
+      page,
+      CommonLeftToolbar(page).areaSelectionDropdownButton,
+      {
+        padding: 90,
+      },
+    );
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({
@@ -889,11 +893,11 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
-    const chainlocator = getSymbolLocator(page, { chainId: 8 });
+    const chainlocator = getSymbolLocator(page, { symbolId: 7 });
     await chainlocator.hover({ force: true });
     await page.waitForTimeout(1000);
     await takeElementScreenshot(page, chainlocator, {
-      padding: 140,
+      padding: 120,
     });
   });
 
@@ -911,7 +915,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).selectMonomer(Nucleotide._5NitInd);
-    await takeElementScreenshot(page, page.getByTestId('sequence-item'), {
+    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 0 }), {
       padding: 30,
     });
   });
@@ -1197,9 +1201,15 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await Library(page).selectMonomer(Nucleotide.InvdA);
     await page.waitForTimeout(1000);
     await setMode(page, 'sequence');
-    await takeElementScreenshot(page, page.getByTestId('layout-mode'));
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
+    );
     await setMode(page, 'snake');
-    await takeElementScreenshot(page, page.getByTestId('layout-mode'));
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
+    );
   });
 
   test('Case 34 - System does not allow to add monomers with the same structure but different names (part2)', async ({

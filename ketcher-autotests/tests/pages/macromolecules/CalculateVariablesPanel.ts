@@ -32,6 +32,7 @@ type CalculateVariablesPanelLocators = {
   molecularFormula: Locator;
   molecularMassValue: Locator;
   molecularMassUnitsCombobox: Locator;
+  molecularMassUnitDropDownList: Locator;
   peptidesTab: Locator & PeptidesTabLocators;
   rnaTab: Locator & RNATabLocators;
   closeButton: Locator;
@@ -78,6 +79,9 @@ export const CalculateVariablesPanel = (page: Page) => {
     molecularMassUnitsCombobox: page
       .getByTestId('Molecular Mass Unit')
       .getByRole('combobox'),
+    molecularMassUnitDropDownList: page
+      .getByTestId(MolecularMassUnit.Da)
+      .locator('../..'),
     closeButton: page.getByTestId('macromolecule-properties-close'),
   };
 

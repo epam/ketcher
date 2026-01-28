@@ -55,7 +55,7 @@ class ReObject {
     return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(hover: boolean, render: Render, drawOutline = true): void {
     // TODO render should be field
     const { options } = render;
     if (hover) {
@@ -73,7 +73,7 @@ class ReObject {
         this.hovering.show();
       } else {
         render.paper.setStart();
-        this.drawHover(render);
+        this.drawHover(render, drawOutline);
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
@@ -84,7 +84,7 @@ class ReObject {
     this.hover = hover;
   }
 
-  drawHover(_render: Render): any {
+  drawHover(_render: Render, _drawOutline?: boolean): any {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 

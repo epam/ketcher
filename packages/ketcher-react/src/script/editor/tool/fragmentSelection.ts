@@ -1,0 +1,327 @@
+import { CoordinateTransformation, Struct, Vec2, Visel } from 'ketcher-core';
+
+import Editor from '../Editor';
+import { Tool } from './Tool';
+import { selMerge } from './select';
+
+const CYCLE_TOOLTIP =
+  'Fragment Selection Tool cannot be used on bonds that participate in a cycle.';
+const COMPONENT_TOOLTIP =
+  'The structure fragment in this direction is already marked as a nucleotide component.';
+const TOOLTIP_DELAY = 200;
+
+type FragmentPreview = {
+  atoms: number[];
+  bonds: number[];
+};
+
+export default class FragmentSelectionTool implements Tool {
+  private readonly editor: Editor;
+  private preview: FragmentPreview | null = null;
+  private tooltipTimeoutId?: number;
+  private disabledMessage?: string;
+  private bondPreview?: Visel | null;
+
+  constructor(editor: Editor) {
+    this.editor = editor;
+  }
+
+  mousedown(event: PointerEvent) {
+    if (this.disabledMessage) {
+      return true;
+    }
+
+    if (!this.preview) {
+      this.editor.selection({});
+
+      return true;
+    }
+
+    const selection = {
+      atoms: [...this.preview.atoms],
+      bonds: [...this.preview.bonds],
+    };
+    const currentSelection = this.editor.selection();
+    const mergedSelection = event.shiftKey
+      ? selMerge({ ...(currentSelection || {}) }, selection, false)
+      : selection;
+
+    this.editor.selection(mergedSelection);
+    return true;
+  }
+
+  mouseup() {
+    // No action needed on mouseup for this tool
+    // But this method is defined to prevent editor from dropping selection in case if method is absent
+    return true;
+  }
+
+  mousemove(event: PointerEvent) {
+    if (this.bondPreview) {
+      this.bondPreview.paths.forEach((path) => path.remove());
+    }
+
+    const restruct = this.editor.render.ctab;
+    const bondItem = this.editor.findItem(event, ['bonds'], null);
+
+    if (!bondItem) {
+      this.resetPreview();
+      return true;
+    }
+
+    const reBond = restruct.bonds.get(bondItem.id);
+
+    if (!reBond) {
+      this.resetPreview();
+      return true;
+    }
+
+    const struct = restruct.molecule;
+    const halfBondBegin = struct.halfBonds.get(reBond.b.hb1 ?? -1);
+    const halfBondEnd = struct.halfBonds.get(reBond.b.hb2 ?? -1);
+
+    if (!halfBondBegin?.p || !halfBondEnd?.p) {
+      this.resetPreview();
+      return true;
+    }
+
+    const pointer = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
+    const beginAtom = struct.atoms.get(reBond.b.begin);
+    const endAtom = struct.atoms.get(reBond.b.end);
+
+    if (!beginAtom || !endAtom) {
+      this.resetPreview();
+      return true;
+    }
+
+    const startAtomId =
+      Vec2.dist(pointer, beginAtom.pp) < Vec2.dist(pointer, endAtom.pp)
+        ? reBond.b.begin
+        : reBond.b.end;
+    const componentData = this.getComponentData(struct);
+
+    if (componentData.componentAtoms.has(startAtomId)) {
+      this.setDisabledState(COMPONENT_TOOLTIP);
+      return true;
+    }
+
+    if (this.isBondInCycle(struct, bondItem.id)) {
+      this.setDisabledState(CYCLE_TOOLTIP);
+      return true;
+    }
+
+    const blockedBonds = new Set<number>(componentData.componentBonds);
+
+    componentData.connectingBonds.forEach((bondId) => blockedBonds.add(bondId));
+    blockedBonds.add(bondItem.id);
+    this.disabledMessage = undefined;
+    this.setCursor(false);
+    this.clearTooltip();
+
+    const preview = this.collectFragment(
+      struct,
+      startAtomId,
+      blockedBonds,
+      componentData.componentAtoms,
+    );
+
+    this.preview = preview;
+    this.editor.hover(null, this);
+
+    if (!preview.atoms.length && !preview.bonds.length) {
+      return true;
+    }
+
+    this.editor.hover(
+      {
+        map: 'merge',
+        items: { atoms: preview.atoms, bonds: preview.bonds },
+      },
+      this,
+    );
+
+    this.bondPreview = reBond.drawFragmentSelectionPreview(
+      this.editor.render,
+      startAtomId,
+    );
+
+    return true;
+  }
+
+  mouseleave() {
+    this.resetPreview();
+  }
+
+  mouseLeaveClientArea() {
+    this.resetPreview();
+  }
+
+  private resetPreview() {
+    this.preview = null;
+    this.disabledMessage = undefined;
+    this.clearTooltip();
+    this.setCursor(false);
+    this.editor.hover(null, this);
+  }
+
+  private setDisabledState(message: string) {
+    this.preview = null;
+    this.disabledMessage = message;
+    this.editor.hover(null, this);
+    this.setCursor(true);
+    this.queueTooltip(message);
+  }
+
+  private queueTooltip(message: string) {
+    this.clearTooltip();
+    this.tooltipTimeoutId = window.setTimeout(() => {
+      this.editor.event.tooltip.dispatch({ message });
+    }, TOOLTIP_DELAY);
+  }
+
+  private clearTooltip() {
+    if (this.tooltipTimeoutId) {
+      clearTimeout(this.tooltipTimeoutId);
+      this.tooltipTimeoutId = undefined;
+    }
+    this.editor.event.tooltip.dispatch();
+  }
+
+  private setCursor(isForbidden: boolean) {
+    const canvas = this.editor.render.paper?.canvas;
+    if (!canvas) return;
+    canvas.style.cursor = isForbidden ? 'not-allowed' : '';
+  }
+
+  private isBondInCycle(struct: Struct, bondId: number): boolean {
+    const bond = struct.bonds.get(bondId);
+    if (!bond) return false;
+
+    const targetAtomId = bond.end;
+    const visited = new Set<number>([bond.begin]);
+    const queue = [bond.begin];
+    let queueIndex = 0;
+
+    while (queueIndex < queue.length) {
+      const atomId = queue[queueIndex];
+      queueIndex += 1;
+      for (const [id, currentBond] of struct.bonds.entries()) {
+        if (id === bondId) continue;
+
+        const nextAtomId =
+          currentBond.begin === atomId
+            ? currentBond.end
+            : currentBond.end === atomId
+            ? currentBond.begin
+            : null;
+
+        if (nextAtomId === null || visited.has(nextAtomId)) {
+          continue;
+        }
+
+        if (nextAtomId === targetAtomId) {
+          return true;
+        }
+
+        visited.add(nextAtomId);
+        queue.push(nextAtomId);
+      }
+    }
+
+    return false;
+  }
+
+  private collectFragment(
+    struct: Struct,
+    startAtomId: number,
+    blockedBonds: Set<number>,
+    componentAtoms: Set<number>,
+  ): FragmentPreview {
+    if (startAtomId == null) {
+      return { atoms: [], bonds: [] };
+    }
+
+    const atoms: number[] = [];
+    const bondsSet = new Set<number>();
+    const visitedAtoms = new Set<number>();
+    const queue = [startAtomId];
+    let queueIndex = 0;
+
+    while (queueIndex < queue.length) {
+      const atomId = queue[queueIndex];
+      const atom = struct.atoms.get(atomId);
+
+      queueIndex += 1;
+      if (!atom || visitedAtoms.has(atomId) || componentAtoms.has(atomId)) {
+        continue;
+      }
+
+      visitedAtoms.add(atomId);
+      atoms.push(atomId);
+
+      for (const halfBondId of atom.neighbors) {
+        const bondId = struct.halfBonds.get(halfBondId)?.bid;
+
+        if (bondId === undefined) continue;
+
+        const bond = struct.bonds.get(bondId);
+
+        if (bond === undefined) continue;
+
+        if (blockedBonds.has(bondId)) continue;
+
+        let nextAtomId: number | null = null;
+        if (bond.begin === atomId) {
+          nextAtomId = bond.end;
+        } else if (bond.end === atomId) {
+          nextAtomId = bond.begin;
+        }
+
+        if (nextAtomId === null || componentAtoms.has(nextAtomId)) {
+          continue;
+        }
+
+        bondsSet.add(bondId);
+        if (!visitedAtoms.has(nextAtomId)) {
+          queue.push(nextAtomId);
+        }
+      }
+    }
+
+    return { atoms, bonds: Array.from(bondsSet) };
+  }
+
+  private getComponentData(struct: Struct) {
+    const componentAtoms = new Set<number>();
+    const componentBonds = new Set<number>();
+    const connectingBonds = new Set<number>();
+    const rnaComponentAtoms =
+      this.editor.monomerCreationState?.rnaComponentAtoms;
+
+    rnaComponentAtoms?.forEach((component) => {
+      component.atoms?.forEach((atomId) => componentAtoms.add(atomId));
+      component.bonds?.forEach((bondId) => componentBonds.add(bondId));
+    });
+
+    if (componentAtoms.size) {
+      for (const [bondId, bond] of struct.bonds.entries()) {
+        const beginComponent = componentAtoms.has(bond.begin);
+        const endComponent = componentAtoms.has(bond.end);
+        if (beginComponent || endComponent) {
+          if (!beginComponent || !endComponent) {
+            connectingBonds.add(bondId);
+          }
+        }
+      }
+    }
+
+    return { componentAtoms, componentBonds, connectingBonds };
+  }
+
+  public destroy() {
+    this.resetPreview();
+  }
+}

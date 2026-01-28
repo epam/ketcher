@@ -45,7 +45,7 @@ Using the _Tool palette_, you can:
 - Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options <img src=images/3_lasso_menu.png width = "100"/>):
   - To select **one atom or bond**, click _Lasso_ (1) or _Rectangle Selection tool_ (2), and then click the atom or bond;
   - To select the **entire structure**:
-      - Select the _Fragment Selection tool_ (3) and then click the object;
+      - Select the _Structure Selection tool_ (3) and then click the object;
       - Select the _Lasso_ or _Rectangle Selection tool_, and then drag the mouse to select the object;
       -`Ctrl-click`with the _Lasso_ or _Rectangle Selection tool_.
   - To select **multiple atoms, bonds, structures, or other objects**, do one of the following:
@@ -1035,7 +1035,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | Shortcut             | Action                                                                             |
 | -------------------- | ---------------------------------------------------------------------------------- |
 | `Mod+h`              | Hand tool                                                                          |
-| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection           |
+| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Structure Selection, Fragment Selection           |
 | `Delete, Backspace`  | Erase                                                                              |
 | `Alt+e`              | Stereochemistry                                                                    |
 | `+`                  | Charge Plus                                                                        |

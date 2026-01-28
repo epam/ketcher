@@ -69,8 +69,8 @@ type LeftToolbarItemVariant =
   | 'select'
   | 'select-lasso'
   | 'select-rectangle'
+  | 'select-structure'
   | 'select-fragment'
-  | 'select-fragment-tool'
   | 'erase'
   // bond group
   | 'bonds'

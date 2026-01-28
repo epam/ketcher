@@ -27,7 +27,13 @@ export default class FragmentSelectionTool implements Tool {
   }
 
   mousedown(event: PointerEvent) {
-    if (!this.preview || this.disabledMessage) {
+    if (this.disabledMessage) {
+      return true;
+    }
+
+    if (!this.preview) {
+      this.editor.selection({});
+
       return true;
     }
 
@@ -172,7 +178,7 @@ export default class FragmentSelectionTool implements Tool {
   private queueTooltip(message: string) {
     this.clearTooltip();
     this.tooltipTimeoutId = window.setTimeout(() => {
-      this.editor.event.message.dispatch({ info: message });
+      this.editor.event.tooltip.dispatch({ message });
     }, TOOLTIP_DELAY);
   }
 
@@ -181,7 +187,7 @@ export default class FragmentSelectionTool implements Tool {
       clearTimeout(this.tooltipTimeoutId);
       this.tooltipTimeoutId = undefined;
     }
-    this.editor.event.message.dispatch({ info: false });
+    this.editor.event.tooltip.dispatch();
   }
 
   private setCursor(isForbidden: boolean) {
@@ -313,5 +319,9 @@ export default class FragmentSelectionTool implements Tool {
     }
 
     return { componentAtoms, componentBonds, connectingBonds };
+  }
+
+  public destroy() {
+    this.resetPreview();
   }
 }

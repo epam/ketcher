@@ -49,17 +49,17 @@ const toolActions = {
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'lasso' },
   },
-  'select-fragment': {
+  'select-structure': {
     title: 'Structure Selection',
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'fragment' },
-    hidden: (options) => isHidden(options, 'select-fragment'),
+    hidden: (options) => isHidden(options, 'select-structure'),
   },
-  'select-fragment-tool': {
+  'select-fragment': {
     title: 'Fragment Selection',
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'fragmentSelection' },
-    hidden: (options) => isHidden(options, 'select-fragment-tool'),
+    hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {
     title: 'Erase',

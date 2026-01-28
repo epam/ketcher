@@ -106,6 +106,7 @@ import RgroupLabelIcon from '../../../assets/icons/files/rgroup-label.svg';
 import SaveIcon from '../../../assets/icons/files/save.svg';
 import SearchIcon from '../../../assets/icons/files/search.svg';
 import SelectFragmentIcon from '../../../assets/icons/files/select-fragment.svg';
+import SelectStructureIcon from '../../../assets/icons/files/select-structure.svg';
 import SelectLassoIcon from '../../../assets/icons/files/select-lasso.svg';
 import SelectRectangleIcon from '../../../assets/icons/files/select-rectangle.svg';
 import SettingsIcon from '../../../assets/icons/files/settings.svg';
@@ -407,8 +408,8 @@ export const iconNameToIcon = {
   'rgroup-label': RgroupLabelIcon,
   save: SaveIcon,
   search: SearchIcon,
+  'select-structure': SelectStructureIcon,
   'select-fragment': SelectFragmentIcon,
-  'select-fragment-tool': SelectFragmentIcon,
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
   settings: SettingsIcon,

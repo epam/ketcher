@@ -52,6 +52,7 @@ export function useLayoutMode() {
     editor?.events.layoutModeChange.add(onLayoutModeChange);
 
     return () => {
+      onLayoutModeChange(DEFAULT_LAYOUT_MODE);
       editor?.events.layoutModeChange.remove(onLayoutModeChange);
     };
   }, [onLayoutModeChange, editor]);

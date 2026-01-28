@@ -522,6 +522,7 @@ export class MacromoleculesConverter {
         fragmentIdToMonomer.set(fragmentId, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
       });
+
       command.merge(monomerAddCommand);
 
       if (
@@ -572,7 +573,6 @@ export class MacromoleculesConverter {
           );
         });
       }
-
       fragmentNumber++;
     });
 

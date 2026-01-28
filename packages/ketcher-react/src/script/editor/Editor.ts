@@ -200,6 +200,7 @@ class Editor implements KetcherEditor {
   rotateController: RotateController;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
@@ -261,6 +262,7 @@ class Editor implements KetcherEditor {
 
     this.event = {
       message: new Subscription(),
+      tooltip: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
       zoomIn: new PipelineSubscription(),

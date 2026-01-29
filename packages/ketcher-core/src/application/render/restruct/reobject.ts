@@ -32,16 +32,18 @@ class ReObject {
     this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: any) {
+  changeSelectionStyle(options: any, drawOutline = true) {
     const { hoverStyle } = options;
     if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
         'fill-opacity': this.selected ? 1 : 0,
+        stroke: drawOutline ? hoverStyle.stroke : 'none',
       });
     } else {
       this.hovering?.attr({
         fill: hoverStyle.fill,
         'fill-opacity': this.selected ? 1 : 0,
+        stroke: drawOutline ? hoverStyle.stroke : 'none',
       });
     }
   }
@@ -69,7 +71,7 @@ class ReObject {
         }
       }
       if (noredraw) {
-        this.changeSelectionStyle(options);
+        this.changeSelectionStyle(options, drawOutline);
         this.hovering.show();
       } else {
         render.paper.setStart();
@@ -77,7 +79,7 @@ class ReObject {
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(options);
+      this.changeSelectionStyle(options, drawOutline);
       this.hovering.hide();
     }
 

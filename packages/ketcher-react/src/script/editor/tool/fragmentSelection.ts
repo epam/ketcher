@@ -56,10 +56,14 @@ export default class FragmentSelectionTool implements Tool {
     return true;
   }
 
-  mousemove(event: PointerEvent) {
+  private removeBondPreview() {
     if (this.bondPreview) {
       this.bondPreview.paths.forEach((path) => path.remove());
     }
+  }
+
+  mousemove(event: PointerEvent) {
+    this.removeBondPreview();
 
     const restruct = this.editor.render.ctab;
     const bondItem = this.editor.findItem(event, ['bonds'], null);
@@ -165,6 +169,7 @@ export default class FragmentSelectionTool implements Tool {
     this.clearTooltip();
     this.setCursor(false);
     this.editor.hover(null, this);
+    this.removeBondPreview();
   }
 
   private setDisabledState(message: string) {
@@ -321,7 +326,7 @@ export default class FragmentSelectionTool implements Tool {
     return { componentAtoms, componentBonds, connectingBonds };
   }
 
-  public destroy() {
+  public cancel() {
     this.resetPreview();
   }
 }

@@ -29,13 +29,16 @@ export interface Option {
   children?: ReactNode;
 }
 
-interface Props {
+export interface SelectProps {
   options: Array<Option>;
   onChange: (value: string) => void;
   className?: string;
   value?: string;
   multiple?: boolean;
   disabled?: boolean;
+  open?: boolean;
+  onClose?: () => void;
+  onOpen?: () => void;
   formName?: string;
   name?: string;
   placeholder?: string;
@@ -53,13 +56,16 @@ const Select = ({
   onChange,
   multiple = false,
   disabled,
+  open,
+  onClose,
+  onOpen,
   options,
   formName,
   name,
   placeholder,
   'data-testid': testId,
   error,
-}: Props) => {
+}: SelectProps) => {
   const [currentValue, setCurrentValue] = useState<Option>();
 
   useEffect(() => {
@@ -90,6 +96,9 @@ const Select = ({
       multiple={multiple}
       disabled={disabled}
       placeholder={placeholder}
+      open={open}
+      onClose={onClose}
+      onOpen={onOpen}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
       data-testid={testId}

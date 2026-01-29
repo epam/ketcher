@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import Select from './Select';
 
 jest.mock(
@@ -24,5 +24,13 @@ describe('Select component should be rendered correctly', () => {
   it('should be rendered without crashing', () => {
     const { asFragment } = render(<Select {...mockProps} />);
     expect(asFragment).toMatchSnapshot();
+  });
+
+  it('should render options when forced open', () => {
+    render(<Select {...mockProps} open />);
+
+    expect(screen.getAllByRole('option')).toHaveLength(
+      mockProps.options.length,
+    );
   });
 });

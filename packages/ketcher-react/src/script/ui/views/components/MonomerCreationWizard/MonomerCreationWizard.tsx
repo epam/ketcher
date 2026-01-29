@@ -719,6 +719,7 @@ const MonomerCreationWizard = () => {
     KetMonomerClass | string | null
   >(null);
   const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
+  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -847,6 +848,7 @@ const MonomerCreationWizard = () => {
       if (type === 'rnaPreset' && value !== 'rnaPreset') {
         setPendingType(value as KetMonomerClass);
         setShowTypeChangeDialog(true);
+        setIsTypeSelectOpen(false);
         return;
       }
       applyTypeChange(value);
@@ -1607,6 +1609,9 @@ const MonomerCreationWizard = () => {
                   placeholder="Select monomer type"
                   data-testid="type-select"
                   value={type}
+                  open={isTypeSelectOpen}
+                  onOpen={() => setIsTypeSelectOpen(true)}
+                  onClose={() => setIsTypeSelectOpen(false)}
                   onChange={(value) => {
                     handleFieldChange('type', value);
                   }}

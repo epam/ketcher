@@ -47,6 +47,8 @@ export default class FragmentSelectionTool implements Tool {
       : selection;
 
     this.editor.selection(mergedSelection);
+    this.editor.rotateController.rerender();
+
     return true;
   }
 

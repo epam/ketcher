@@ -328,7 +328,8 @@ class Editor implements KetcherEditor {
       return null;
     }
 
-    const isSelectToolChosen = name === 'select';
+    const isSelectToolChosen =
+      name === 'select' || name === 'fragmentSelection';
     if (!isSelectToolChosen) {
       this.rotateController.clean();
     }

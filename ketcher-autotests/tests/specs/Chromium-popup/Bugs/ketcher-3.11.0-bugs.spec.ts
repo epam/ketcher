@@ -15,6 +15,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
+  MacroBondOption,
   MonomerOnMicroOption,
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
@@ -71,7 +72,6 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   takeMonomerLibraryScreenshot,
   pasteFromClipboardAndAddToCanvas,
-  takePageScreenshot,
   layout,
   dragMouseTo,
   setMode,
@@ -100,6 +100,7 @@ import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -493,14 +494,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
     await ContextMenu(page, getBondLocator(page, { bondId: 45 })).open();
-    await page.waitForTimeout(200);
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerId: 32 }),
-      {
-        padding: 185,
-      },
-    );
+    await expect(page.getByTestId(MacroBondOption.Delete)).toBeVisible();
   });
 
   test('Case 11 - Preview tooltips for monomers loaded from HELM with inline smiles are wrong', async ({
@@ -520,9 +514,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'PEPTIDE1{[N%91[C@H](C%92=O)C.[*:2]%92.[*:1]%91 |$;;;;;_R2;_R1$|].[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     );
-    await page.getByText('Mod3').first().hover({ force: true });
-    await page.waitForTimeout(1000);
-    await takePageScreenshot(page);
+    await getMonomerLocator(page, { monomerId: 10 }).hover({ force: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toBe('Mod3');
   });
 
   test('Case 12 - The tooltip does not appear below the cursor when hovering over the “plus” button and stripe', async ({
@@ -630,7 +624,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Peptide and 1-letter code has no shift up
      */
 
-    await CommonTopLeftToolbar(page).openButton.click({ force: true });
+    await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboardButton.click();
     const contentTypeSelector =
       PasteFromClipboardDialog(page).contentTypeSelector;
@@ -639,28 +633,25 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLettersSelector =
       PasteFromClipboardDialog(page).peptideLettersCodeSelector;
 
-    await PasteFromClipboardDialog(page).contentTypeSelector.click();
-    await page.getByRole('option', { name: MacroFileType.Sequence }).click();
+    PasteFromClipboardDialog(page).selectContentType(MacroFileType.Sequence);
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
       .evaluate((element) => window.getComputedStyle(element).fontSize);
     expect(contentTypeFontSize).toBe('12px');
 
-    await monomerTypeSelector.click();
-    await page
-      .getByRole('option', { name: SequenceMonomerType.Peptide })
-      .click();
+    await PasteFromClipboardDialog(page).selectMonomerType(
+      SequenceMonomerType.Peptide,
+    );
     const monomerTypeFontSize = await monomerTypeSelector
       .locator('span')
       .first()
       .evaluate((element) => window.getComputedStyle(element).fontSize);
     expect(monomerTypeFontSize).toBe('12px');
 
-    await peptideLettersSelector.click();
-    await page
-      .getByRole('option', { name: PeptideLetterCodeType.oneLetterCode })
-      .click();
+    await PasteFromClipboardDialog(page).selectPeptideLetterType(
+      PeptideLetterCodeType.oneLetterCode,
+    );
     const peptideLetterFontSize = await peptideLettersSelector
       .locator('span')
       .first()
@@ -693,7 +684,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'PEPTIDE1{[c1(c(-c2ccc([*:2])cc2)c(-c2ccc([*:3])cc2)c(-c2ccc([*:4])cc2)c(-c2ccc([*:5])cc2)c1-c1ccc([*:6])cc1)-c1ccc([*:1])cc1 |$;;;;;;_R2;;;;;;;;_R3;;;;;;;;_R4;;;;;;;;_R5;;;;;;;;_R6;;;;;;;_R1;;$|]}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeElementScreenshot(page, page.getByText('Mod0'), {
+    await takeElementScreenshot(page, getAbbreviationLocator(page, { id: 0 }), {
       padding: 35,
     });
   });
@@ -748,7 +739,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).isVisible();
     await CalculateVariablesPanel(page).molecularMassUnitsCombobox.click();
-    await page.waitForTimeout(1000);
     await expect(
       CalculateVariablesPanel(page).molecularMassUnitDropDownList,
     ).toBeVisible();
@@ -868,9 +858,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     );
-    const monomer = page.getByText('X').first();
+    const monomer = getMonomerLocator(page, { monomerId: 1 });
     await monomer.hover({ force: true });
-    await page.waitForTimeout(1000);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, monomer, {
       padding: 100,
     });
@@ -895,7 +885,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     const chainlocator = getSymbolLocator(page, { symbolId: 7 });
     await chainlocator.hover({ force: true });
-    await page.waitForTimeout(1000);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, chainlocator, {
       padding: 120,
     });
@@ -1297,11 +1287,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       },
     );
 
-    const locatorA2 = await Library(page).getMonomerLibraryCardLocator(
-      Preset._A2,
-    );
-    await locatorA2.hover();
-    await page.waitForTimeout(1000);
+    await Library(page).hoverMonomer(Preset._A2);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(
       page,
       Library(page).getMonomerLibraryCardLocator(Preset._A2),

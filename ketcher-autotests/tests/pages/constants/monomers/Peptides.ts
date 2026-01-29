@@ -130,6 +130,10 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
     alias: 'PeptideX',
     testId: 'PeptideX___PeptideX',
   },
+  stereo: {
+    alias: 'stereo',
+    testId: 'stereo___stereo',
+  },
 });
 
 export type PeptidesType = typeof Peptide;

@@ -116,6 +116,8 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   // for library update test, doesn't exist initially
   Base1: { alias: 'Base1', testId: 'Base1___Base1' },
   _Base1: { alias: '_Base1', testId: '_Base1____Base1' },
+  _Base2: { alias: '_Base2', testId: '_Base2____Base2' },
+  _Base3: { alias: '_Base3', testId: '_Base3____Base3' },
   BaseX: { alias: 'BaseX', testId: 'BaseX___BaseX' },
   Aargh: { alias: 'Aargh', testId: 'Aargh___Aargh' },
   DefaultBaseRnaComponent: {

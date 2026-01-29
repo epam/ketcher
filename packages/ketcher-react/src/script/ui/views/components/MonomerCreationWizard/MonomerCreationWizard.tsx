@@ -817,6 +817,7 @@ const MonomerCreationWizard = () => {
   }, []);
 
   const applyTypeChange = (newType: KetMonomerClass | string) => {
+    setIsTypeSelectOpen(false);
     setModificationTypes([]);
     if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
       wizardStateDispatch({

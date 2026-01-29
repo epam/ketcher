@@ -1692,6 +1692,7 @@ const MonomerCreationWizard = () => {
                 onCancel: () => {
                   setPendingType(null);
                   setShowTypeChangeDialog(false);
+                  setIsTypeSelectOpen(false);
                 },
               }}
               buttons={['OK', 'Cancel']}

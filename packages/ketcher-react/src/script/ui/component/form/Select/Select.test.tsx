@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Select from './Select';
 
 jest.mock(
@@ -32,5 +33,18 @@ describe('Select component should be rendered correctly', () => {
     expect(screen.getAllByRole('option')).toHaveLength(
       mockProps.options.length,
     );
+  });
+
+  it('should call onOpen and onClose callbacks', async () => {
+    const onOpen = jest.fn();
+    const onClose = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <Select {...mockProps} open={false} onOpen={onOpen} onClose={onClose} />,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });

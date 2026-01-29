@@ -28,6 +28,7 @@ export const KeyboardModifiers = {
 export const KeyCodePrefixes = {
   Key: 'Key',
   Digit: 'Digit',
+  Numpad: 'Numpad',
 };
 
 export const CanonicalModifiersOrder = [
@@ -51,6 +52,9 @@ const normalizeCode = (code: string) => {
   }
   if (code.startsWith(KeyCodePrefixes.Digit)) {
     return code.slice(5);
+  }
+  if (code.startsWith(KeyCodePrefixes.Numpad)) {
+    return code.slice(6);
   }
 
   return code;

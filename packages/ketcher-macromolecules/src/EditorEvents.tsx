@@ -366,6 +366,7 @@ export const EditorEvents = () => {
 
     const onMoveHandler = (e) => {
       handleClosePreview();
+
       const isLeftClick = e.buttons === 1;
       if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);

@@ -78,18 +78,16 @@ export const getPresets = (
         default: isDefault || rnaPresetsTemplate.default,
       };
 
-      const presetWithAliases = {
+      const presetWithAliases: IRnaPreset = {
         ...result,
-        ...(rnaPresetsTemplate.idtAliases
-          ? { idtAliases: rnaPresetsTemplate.idtAliases }
-          : {}),
+        ...(rnaPresetsTemplate.idtAliases && {
+          idtAliases: rnaPresetsTemplate.idtAliases,
+        }),
+        ...(rnaPresetsTemplate.aliasAxoLabs && {
+          aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
+        }),
       };
 
-      return rnaPresetsTemplate.aliasAxoLabs
-        ? {
-            ...presetWithAliases,
-            aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
-          }
-        : presetWithAliases;
+      return presetWithAliases;
     });
 };

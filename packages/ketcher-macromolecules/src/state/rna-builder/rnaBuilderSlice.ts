@@ -446,7 +446,7 @@ export const selectFilteredPresets = createSelector(
       const idtName = item.idtAliases?.base?.toLowerCase();
       const axoLabsAlias = (
         item.aliasAxoLabs ??
-        (name ? axoLabsAliasesByPresetName.get(name) : '') ??
+        (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
         ''
       ).toLowerCase();
       const modifications = item.idtAliases?.modifications;

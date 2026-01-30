@@ -1946,3 +1946,29 @@ for (const monomer of monomerToDrag) {
     await resetZoomLevelToDefault(page);
   });
 }
+
+test('39 Verify library searching using HELM aliases', async () => {
+  await Library(page).setSearchValue('5eU');
+  await Library(page).openRNASection(RNASection.Bases);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).setSearchValue('Hyl_5xi');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('40 Verify library searching using AxoLabs aliases', async () => {
+  await Library(page).setSearchValue('invdC');
+  await Library(page).openRNASection(RNASection.Nucleotides);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).switchToCHEMTab();
+  await Library(page).setSearchValue('(NHC');
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('41 Verify library searching using modification types', async () => {
+  await Library(page).setSearchValue('Side chain acetylation');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});

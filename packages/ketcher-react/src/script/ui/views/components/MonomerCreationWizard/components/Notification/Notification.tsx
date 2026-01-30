@@ -47,13 +47,15 @@ const Notification = ({ id, type, message, wizardStateDispatch }: Props) => {
       >
         {message}
       </p>
-      <button
-        className={styles.notificationButton}
-        onClick={handleButtonClick}
-        data-testid={`notification-message-ok-button`}
-      >
-        OK
-      </button>
+      {type === 'info' && (
+        <button
+          className={styles.notificationButton}
+          onClick={handleButtonClick}
+          data-testid={`notification-message-ok-button`}
+        >
+          OK
+        </button>
+      )}
     </div>
   );
 };

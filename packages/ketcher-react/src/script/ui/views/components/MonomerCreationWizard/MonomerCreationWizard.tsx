@@ -868,6 +868,10 @@ const MonomerCreationWizard = () => {
     editor?.setMonomerCreationSelectedType?.(values.type);
   }, [editor, values.type]);
 
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  );
+
   useEffect(() => {
     if (!showTypeChangeDialog) {
       return;
@@ -1572,9 +1576,6 @@ const MonomerCreationWizard = () => {
     }
   };
 
-  const ketcherEditorRootElement = document.querySelector(
-    KETCHER_ROOT_NODE_CSS_SELECTOR,
-  );
   const displayEditDialog =
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
   const isPresetType = type === 'rnaPreset';

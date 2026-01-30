@@ -59,9 +59,9 @@ export function LeftMenuComponent() {
               testId="select-lasso"
             />
             <Menu.Item
-              itemId="select-fragment"
+              itemId="select-structure"
               title={`Structure Selection (${hotkeysShortcuts.switchSelectTool})`}
-              testId="select-fragment"
+              testId="select-structure"
             />
           </Menu.Submenu>
         </Menu.Group>

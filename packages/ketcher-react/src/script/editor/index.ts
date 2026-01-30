@@ -17,5 +17,4 @@
 import { Editor } from './Editor';
 
 export { Editor };
-export * from './shared/closest.types';
 export default Editor;

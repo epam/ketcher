@@ -191,6 +191,18 @@ export const {
   setSelectedTabIndex,
 } = librarySlice.actions;
 
+export const selectAxoLabsAliasesByPresetName = createSelector(
+  (state: RootState) => state.library.defaultRnaPresets,
+  (defaultPresets) => {
+    return defaultPresets.reduce((aliases, preset) => {
+      if (preset.aliasAxoLabs && preset.name) {
+        aliases.set(preset.name.toLowerCase(), preset.aliasAxoLabs);
+      }
+      return aliases;
+    }, new Map<string, string>());
+  },
+);
+
 export const selectLibrarySlice = (state: RootState): LibraryState =>
   state.library;
 

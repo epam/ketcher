@@ -208,6 +208,7 @@ export interface IKetMonomerGroupTemplate {
   templates: IKetMonomerTemplateRef[];
   connections: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
+  aliasAxoLabs?: string;
 }
 
 export interface IKetNodeRef {

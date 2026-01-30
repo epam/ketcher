@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { render, screen } from '@testing-library/react';
-import { MONOMER_TYPES } from '../../../constants';
+import { MONOMER_LIBRARY_FAVORITES, MONOMER_TYPES } from '../../../constants';
 
 import { MonomerList } from './MonomerList';
 import { preset } from 'src/testMockData/monomerPresets';
@@ -28,6 +28,7 @@ describe('Monomer List', () => {
     library: {
       searchFilter: '',
       favorites: {},
+      defaultRnaPresets: [],
       monomers: [
         {
           props: {
@@ -83,6 +84,44 @@ describe('Monomer List', () => {
     expect(currentItem).toBeInTheDocument();
 
     expect(view).toMatchSnapshot();
+  });
+
+  it('should filter presets by AxoLabs alias', () => {
+    render(
+      withThemeAndStoreProvider(
+        <MonomerList
+          libraryName={MONOMER_LIBRARY_FAVORITES}
+          onItemClick={onItemClick}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
+        {
+          ...initialState,
+          library: {
+            ...initialState.library,
+            defaultRnaPresets: [
+              {
+                name: 'A',
+                aliasAxoLabs: '(5MdC)',
+              },
+            ],
+            searchFilter: '(5MdC)',
+          },
+          rnaBuilder: {
+            ...initialState.rnaBuilder,
+            presetsDefault: [
+              {
+                ...preset,
+                name: 'A',
+                favorite: true,
+              },
+            ],
+          },
+        },
+      ),
+    );
+
+    expect(screen.getByText('Presets')).toBeInTheDocument();
   });
 
   it('should render correct without groups', () => {

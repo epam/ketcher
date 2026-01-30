@@ -13,7 +13,9 @@ import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
   extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
-    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
+    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
+  aliasAxoLabs?: string;
+}
 
 export const getPresets = (
   monomers: ReadonlyArray<MonomerItemType>,
@@ -76,13 +78,18 @@ export const getPresets = (
         default: isDefault || rnaPresetsTemplate.default,
       };
 
-      if (!rnaPresetsTemplate.idtAliases) {
-        return result;
-      }
-
-      return {
+      const presetWithAliases = {
         ...result,
-        idtAliases: rnaPresetsTemplate.idtAliases,
+        ...(rnaPresetsTemplate.idtAliases
+          ? { idtAliases: rnaPresetsTemplate.idtAliases }
+          : {}),
       };
+
+      return rnaPresetsTemplate.aliasAxoLabs
+        ? {
+            ...presetWithAliases,
+            aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
+          }
+        : presetWithAliases;
     });
 };

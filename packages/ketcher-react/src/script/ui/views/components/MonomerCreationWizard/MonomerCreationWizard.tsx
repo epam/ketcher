@@ -868,6 +868,20 @@ const MonomerCreationWizard = () => {
     editor?.setMonomerCreationSelectedType?.(values.type);
   }, [editor, values.type]);
 
+  useEffect(() => {
+    if (!showTypeChangeDialog) {
+      return;
+    }
+
+    (document.activeElement as HTMLElement | null)?.blur();
+
+    const cancelButton = ketcherEditorRootElement?.querySelector(
+      `.${styles.dialogOverlay} input[data-testid="Cancel"]`,
+    ) as HTMLInputElement | null;
+
+    cancelButton?.focus();
+  }, [showTypeChangeDialog, ketcherEditorRootElement]);
+
   const monomerTypeSelectOptions = useMemo(
     () =>
       MonomerTypeSelectConfig.map((option) => ({

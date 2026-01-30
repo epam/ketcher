@@ -875,11 +875,13 @@ const MonomerCreationWizard = () => {
 
     (document.activeElement as HTMLElement | null)?.blur();
 
-    const cancelButton = ketcherEditorRootElement?.querySelector(
-      `.${styles.dialogOverlay} input[data-testid="Cancel"]`,
-    ) as HTMLInputElement | null;
+    requestAnimationFrame(() => {
+      const cancelButton = ketcherEditorRootElement?.querySelector(
+        `.${styles.dialogOverlay} input[value="Cancel"]`,
+      ) as HTMLInputElement | null;
 
-    cancelButton?.focus();
+      cancelButton?.focus();
+    });
   }, [showTypeChangeDialog, ketcherEditorRootElement]);
 
   const monomerTypeSelectOptions = useMemo(

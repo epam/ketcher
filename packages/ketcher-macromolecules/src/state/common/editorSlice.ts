@@ -89,10 +89,13 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE || '',
-    indigoVersion: process.env.INDIGO_VERSION || '',
-    indigoMachine: process.env.INDIGO_MACHINE || '',
-    version: process.env.VERSION || '',
+    buildDate:
+      typeof process !== 'undefined' ? process.env.BUILD_DATE || '' : '',
+    indigoVersion:
+      typeof process !== 'undefined' ? process.env.INDIGO_VERSION || '' : '',
+    indigoMachine:
+      typeof process !== 'undefined' ? process.env.INDIGO_MACHINE || '' : '',
+    version: typeof process !== 'undefined' ? process.env.VERSION || '' : '',
   },
   selectedMenuGroupItems: {},
 };

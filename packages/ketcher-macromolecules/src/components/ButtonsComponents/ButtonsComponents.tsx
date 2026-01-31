@@ -17,7 +17,10 @@ export function ButtonsComponents() {
           iconName="help"
           title="Help (?)"
           onClick={() => {
-            const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
+            const HELP_LINK =
+              typeof process !== 'undefined'
+                ? (process.env.HELP_LINK as string) || 'master'
+                : 'master';
             window.open(
               `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`,
               '_blank',

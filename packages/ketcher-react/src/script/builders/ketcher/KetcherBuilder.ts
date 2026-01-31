@@ -127,9 +127,14 @@ class KetcherBuilder {
         {
           buttons: buttons || {},
           errorHandler: errorHandler || null,
-          version: process.env.VERSION || '',
-          buildDate: process.env.BUILD_DATE || '',
-          buildNumber: process.env.BUILD_NUMBER || '',
+          version:
+            typeof process !== 'undefined' ? process.env.VERSION || '' : '',
+          buildDate:
+            typeof process !== 'undefined' ? process.env.BUILD_DATE || '' : '',
+          buildNumber:
+            typeof process !== 'undefined'
+              ? process.env.BUILD_NUMBER || ''
+              : '',
           customButtons: customButtons || [],
         },
         structService,

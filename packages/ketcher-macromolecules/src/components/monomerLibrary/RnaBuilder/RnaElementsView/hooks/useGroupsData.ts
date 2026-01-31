@@ -21,8 +21,18 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
   const nucleotideItems = selectUnsplitNucleotides(monomers);
   const nucleotideGroups = selectMonomerGroups(nucleotideItems);
 
-  return useMemo(
-    () => [
+  return useMemo(() => {
+    const phosphateItems = groups
+      .map((group) => ({
+        ...group,
+        groupItems: group.groupItems.filter(
+          (item) => item.props?.MonomerClass === KetMonomerClass.Phosphate,
+        ),
+      }))
+      .filter((group) => group.groupItems.length)
+      .flatMap((group) => group.groupItems);
+
+    return [
       {
         groupName: RnaBuilderPresetsItem.Presets,
         iconName: 'preset',
@@ -55,23 +65,22 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
       {
         groupName: MonomerGroups.PHOSPHATES,
         iconName: 'phosphate',
-        groups: groups
-          .map((group) => ({
-            ...group,
-            groupItems: group.groupItems.filter(
-              (item) => item.props?.MonomerClass === KetMonomerClass.Phosphate,
-            ),
-          }))
-          .filter((group) => group.groupItems.length),
+        groups: phosphateItems.length
+          ? [
+              {
+                groupTitle: MonomerGroups.PHOSPHATES,
+                groupItems: phosphateItems,
+              },
+            ]
+          : [],
       },
       {
         groupName: MonomerGroups.NUCLEOTIDES,
         iconName: 'nucleotide',
         groups: nucleotideGroups,
       },
-    ],
-    [groups, presets, nucleotideGroups],
-  );
+    ];
+  }, [groups, presets, nucleotideGroups]);
 };
 
 export type GroupsData = ReturnType<typeof useGroupsData>;

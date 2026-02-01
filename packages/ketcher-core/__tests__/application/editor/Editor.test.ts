@@ -174,7 +174,7 @@ describe('CoreEditor', () => {
         'monomerGroupTemplate-': {
           type: 'monomerGroupTemplate',
           id: '',
-          name: '',
+          name: '   ',
           class: 'RNA',
           templates: [],
           connections: [],

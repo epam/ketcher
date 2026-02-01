@@ -64,6 +64,7 @@ describe('Save modal', () => {
     expect(view).toMatchSnapshot();
     expect(filenameInput).toBeVisible();
     expect(filenameInput).toHaveValue('ketcher');
+    expect(filenameInput).toHaveClass('save-file-name-input');
     expect(fileFormatInput).toBeVisible();
   });
 

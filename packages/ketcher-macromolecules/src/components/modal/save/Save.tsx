@@ -85,6 +85,14 @@ const StyledModal = styled(Modal)({
   },
 });
 
+const fileNameInputClassName = 'save-file-name-input';
+
+const FileNameInput = styled(TextInputField)(() => ({
+  [`.${fileNameInputClassName}`]: {
+    height: '28px',
+  },
+}));
+
 export const Save = ({
   onClose,
   isModalOpen,
@@ -239,12 +247,13 @@ export const Save = ({
         <Form onSubmit={handleSave} id="save">
           <Row style={{ padding: '12px 12px 10px' }}>
             <div>
-              <TextInputField
+              <FileNameInput
                 value={currentFileName}
                 id="filename"
                 onChange={handleInputChange}
                 label="File name:"
                 data-testid="filename-input"
+                inputClassName={fileNameInputClassName}
               />
             </div>
             <StyledDropdown

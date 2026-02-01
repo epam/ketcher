@@ -363,7 +363,9 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
-      const aliasHELM = newMonomer.props?.aliasHELM;
+      const aliasHELM =
+        newMonomer.props?.aliasHELM ||
+        (newMonomer as { aliasHELM?: string }).aliasHELM;
       if (
         aliasHELM !== undefined &&
         aliasHELM !== null &&

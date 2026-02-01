@@ -72,7 +72,9 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase)),
+      ).toThrow(/Base IDT alias is required/);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(

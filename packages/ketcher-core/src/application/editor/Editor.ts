@@ -115,6 +115,7 @@ import {
 } from 'domain/serializers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
+const HELM_ALIAS_REGEX = /^[-A-Za-z0-9_*]+$/;
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -360,13 +361,12 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const helmAliasRegex = /^[-A-Za-z0-9_*]+$/;
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       if (
         newMonomer.props?.aliasHELM &&
-        !helmAliasRegex.test(newMonomer.props.aliasHELM)
+        !HELM_ALIAS_REGEX.test(newMonomer.props.aliasHELM)
       ) {
         const monomerName =
           newMonomer.props?.MonomerName ?? newMonomer.label ?? 'unknown';

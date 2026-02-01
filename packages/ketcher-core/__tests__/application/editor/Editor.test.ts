@@ -162,42 +162,45 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
-    it('should reject monomer with invalid HELM alias', () => {
-      const monomerWithInvalidHelmAlias = {
-        root: {
-          templates: [
-            {
-              $ref: 'monomerTemplate-PEPTIDE1',
-            },
-          ],
-        },
-        'monomerTemplate-PEPTIDE1': {
-          type: 'monomerTemplate',
-          id: 'PEPTIDE1',
-          class: 'PEPTIDE',
-          classHELM: 'PEPTIDE',
-          fullName: 'Test Peptide',
-          name: 'PEPTIDE1',
-          naturalAnalogShort: 'A',
-          aliasHELM: 'Bad Alias',
+    it.each(['Bad Alias', 'Bad@Alias'])(
+      'should reject monomer with invalid HELM alias "%s"',
+      (aliasHELM) => {
+        const monomerWithInvalidHelmAlias = {
+          root: {
+            templates: [
+              {
+                $ref: 'monomerTemplate-PEPTIDE1',
+              },
+            ],
+          },
+          'monomerTemplate-PEPTIDE1': {
+            type: 'monomerTemplate',
+            id: 'PEPTIDE1',
+            class: 'PEPTIDE',
+            classHELM: 'PEPTIDE',
+            fullName: 'Test Peptide',
+            name: 'PEPTIDE1',
+            naturalAnalogShort: 'A',
           props: {
             MonomerName: 'PEPTIDE1',
             MonomerClass: 'PEPTIDE',
             Name: 'PEPTIDE1',
             MonomerNaturalAnalogCode: 'A',
+            aliasHELM,
           },
         },
       };
 
-      const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidHelmAlias));
+        const initialLibrarySize = editor.monomersLibrary.length;
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidHelmAlias));
 
-      expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'monomer definition contains invalid HELM alias value',
-        ),
-      );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
-    });
+        expect(errorSpy).toHaveBeenCalledWith(
+          expect.stringContaining(
+            'Load of "PEPTIDE1" monomer has failed, monomer definition contains invalid HELM alias value',
+          ),
+        );
+        expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      },
+    );
   });
 });

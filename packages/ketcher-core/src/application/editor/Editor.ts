@@ -361,6 +361,30 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
 
+    const getModificationTypesError = (
+      modificationTypes?: string[],
+    ): string | null => {
+      if (!modificationTypes) {
+        return null;
+      }
+
+      for (const modificationType of modificationTypes) {
+        if (!modificationType.trim()) {
+          return "The modificationTypes couldn't be empty";
+        }
+
+        if (/[\t\n\r]/.test(modificationType)) {
+          return 'The modificationTypes value contains formatting characters';
+        }
+
+        if (modificationType.length > 200) {
+          return 'The modificationTypes value exceeds 200 characters';
+        }
+      }
+
+      return null;
+    };
+
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const aliasCollisionExists = this._monomersLibrary.some(
@@ -392,6 +416,16 @@ export class CoreEditor {
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         KetcherLogger.error(
           `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
+        );
+        return;
+      }
+
+      const modificationTypesError = getModificationTypesError(
+        newMonomer.props?.modificationTypes,
+      );
+      if (modificationTypesError) {
+        KetcherLogger.error(
+          `Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid modificationTypes value. ${modificationTypesError}`,
         );
         return;
       }

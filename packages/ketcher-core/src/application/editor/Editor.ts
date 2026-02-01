@@ -362,14 +362,45 @@ export class CoreEditor {
     } = parseMonomersLibrary(monomersDataRaw);
     const validationErrors: string[] = [];
 
+    const areSameMonomers = (
+      firstMonomer?: MonomerItemType,
+      secondMonomer?: MonomerItemType,
+    ) => {
+      if (!firstMonomer?.props || !secondMonomer?.props) {
+        return false;
+      }
+
+      return (
+        firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
+        firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
+        firstMonomer.props.hidden === secondMonomer.props.hidden
+      );
+    };
+    const formatAliasDetails = (monomer: MonomerItemType) =>
+      [
+        monomer.props?.aliasHELM
+          ? `HELM alias "${monomer.props.aliasHELM}"`
+          : null,
+        monomer.props?.idtAliases?.base
+          ? `IDT base alias "${monomer.props.idtAliases.base}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint3
+          ? `IDT 3' alias "${monomer.props.idtAliases.modifications.endpoint3}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint5
+          ? `IDT 5' alias "${monomer.props.idtAliases.modifications.endpoint5}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.internal
+          ? `IDT internal alias "${monomer.props.idtAliases.modifications.internal}"`
+          : null,
+      ]
+        .filter((value): value is string => Boolean(value))
+        .join(', ');
+
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
-        if (
-          monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-          monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-          monomer?.props?.hidden === newMonomer?.props?.hidden
-        ) {
+        if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
 
@@ -392,25 +423,7 @@ export class CoreEditor {
       });
 
       if (aliasCollisionExists) {
-        const aliasDetails = [
-          newMonomer.props?.aliasHELM
-            ? `HELM alias "${newMonomer.props.aliasHELM}"`
-            : null,
-          newMonomer.props?.idtAliases?.base
-            ? `IDT base alias "${newMonomer.props.idtAliases.base}"`
-            : null,
-          newMonomer.props?.idtAliases?.modifications?.endpoint3
-            ? `IDT 3' alias "${newMonomer.props.idtAliases.modifications.endpoint3}"`
-            : null,
-          newMonomer.props?.idtAliases?.modifications?.endpoint5
-            ? `IDT 5' alias "${newMonomer.props.idtAliases.modifications.endpoint5}"`
-            : null,
-          newMonomer.props?.idtAliases?.modifications?.internal
-            ? `IDT internal alias "${newMonomer.props.idtAliases.modifications.internal}"`
-            : null,
-        ]
-          .filter((value): value is string => Boolean(value))
-          .join(', ');
+        const aliasDetails = formatAliasDetails(newMonomer);
         const errorMessage = `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
           newMonomer.props.MonomerName
         }${

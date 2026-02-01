@@ -467,17 +467,18 @@ export class CoreEditor {
         return;
       }
 
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         !this._monomersLibraryParsedJson!.root.templates.find(
           (existingTemplateRef) =>
             existingTemplateRef.$ref === templateRef.$ref,
         )
       ) {
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
-
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
     });
 
     this.events.updateMonomersLibrary.dispatch();

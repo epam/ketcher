@@ -367,7 +367,7 @@ export class CoreEditor {
       const monomerName = newMonomer.props?.MonomerName ?? 'Unknown';
       if (
         aliasHELM !== undefined &&
-        /[^A-Za-z0-9_*\-]/.test(aliasHELM)
+        /[^A-Za-z0-9_\*\-]/.test(aliasHELM)
       ) {
         KetcherLogger.error(
           `Load of "${monomerName}" monomer has failed, monomer definition contains invalid HELM alias value. The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.`,

@@ -115,6 +115,7 @@ import {
 } from 'domain/serializers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
+const HELM_ALIAS_REGEX = /^[-A-Za-z0-9_*]+$/;
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -363,6 +364,17 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      if (
+        newMonomer.props?.aliasHELM &&
+        !HELM_ALIAS_REGEX.test(newMonomer.props.aliasHELM)
+      ) {
+        const monomerName =
+          newMonomer.props?.MonomerName ?? newMonomer.label ?? 'unknown';
+        KetcherLogger.error(
+          `Load of "${monomerName}" monomer has failed, monomer definition contains invalid HELM alias value. The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.`,
+        );
+        return;
+      }
       const aliasCollisionExists = this._monomersLibrary.some(
         (monomer) =>
           (Boolean(newMonomer.props?.aliasHELM) &&

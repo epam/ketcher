@@ -187,7 +187,7 @@ describe('CoreEditor', () => {
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Monomer group template name is required for template monomerGroupTemplate-',
+          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
         ),
       );
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(

@@ -462,7 +462,7 @@ export class CoreEditor {
 
       if (!templateDefinition.name?.trim()) {
         KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Monomer group template name is required for template ${templateRef.$ref}. The template was not added to the library.`,
+          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
         );
         return;
       }

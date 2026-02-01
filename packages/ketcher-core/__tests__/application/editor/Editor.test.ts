@@ -161,5 +161,133 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
+
+    it('should throw on HELM alias collision across monomers', () => {
+      const monomerWithAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-SUGAR1',
+            },
+          ],
+        },
+        'monomerTemplate-SUGAR1': {
+          type: 'monomerTemplate',
+          id: 'SUGAR1',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Test Sugar 1',
+          name: 'SUGAR1',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR1',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR1',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: 'Sugar1',
+        },
+      };
+      const monomerWithAliasCollision = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-SUGAR2',
+            },
+          ],
+        },
+        'monomerTemplate-SUGAR2': {
+          type: 'monomerTemplate',
+          id: 'SUGAR2',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Test Sugar 2',
+          name: 'SUGAR2',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR2',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR2',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: 'Sugar1',
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithAlias));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
+      ).toThrow(/Alias collision detected/);
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected'),
+      );
+    });
+
+    it('should throw on IDT alias collision across monomers', () => {
+      const monomerWithIdtAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM4',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM4': {
+          type: 'monomerTemplate',
+          id: 'CHEM4',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 4',
+          name: 'CHEM4',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM4',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM4',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase1',
+          },
+        },
+      };
+      const monomerWithIdtCollision = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM5',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM5': {
+          type: 'monomerTemplate',
+          id: 'CHEM5',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 5',
+          name: 'CHEM5',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM5',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM5',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBase1',
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
+      ).toThrow(/Alias collision detected/);
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected'),
+      );
+    });
   });
 });

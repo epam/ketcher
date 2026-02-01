@@ -460,18 +460,24 @@ export class CoreEditor {
         return;
       }
 
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      if (!templateDefinition.name?.trim()) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Monomer group template name is required for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
       if (
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         !this._monomersLibraryParsedJson!.root.templates.find(
           (existingTemplateRef) =>
             existingTemplateRef.$ref === templateRef.$ref,
         )
       ) {
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
+
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
     });
 
     this.events.updateMonomersLibrary.dispatch();

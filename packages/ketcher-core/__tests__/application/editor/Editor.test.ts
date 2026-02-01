@@ -179,12 +179,12 @@ describe('CoreEditor', () => {
           fullName: 'Test Chem 4',
           name: 'CHEM4',
           naturalAnalogShort: 'X',
-          aliasHELM: 'INV ALID',
           props: {
             MonomerName: 'CHEM4',
             MonomerClass: 'CHEM',
             Name: 'CHEM4',
             MonomerNaturalAnalogCode: 'X',
+            aliasHELM: 'INV ALID',
           },
         },
       };

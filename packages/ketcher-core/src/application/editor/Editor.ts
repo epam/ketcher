@@ -363,13 +363,10 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
-      const aliasHELM =
-        newMonomer.props?.aliasHELM ??
-        (newMonomer as { aliasHELM?: string }).aliasHELM;
+      const aliasHELM = newMonomer.props?.aliasHELM;
       const monomerName = newMonomer.props?.MonomerName ?? 'Unknown';
       if (
         aliasHELM !== undefined &&
-        aliasHELM !== null &&
         /[^A-Za-z0-9_*\-]/.test(aliasHELM)
       ) {
         KetcherLogger.error(

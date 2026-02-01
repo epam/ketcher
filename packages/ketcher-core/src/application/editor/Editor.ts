@@ -364,15 +364,16 @@ export class CoreEditor {
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const aliasHELM =
-        newMonomer.props?.aliasHELM ||
+        newMonomer.props?.aliasHELM ??
         (newMonomer as { aliasHELM?: string }).aliasHELM;
+      const monomerName = newMonomer.props?.MonomerName ?? 'Unknown';
       if (
         aliasHELM !== undefined &&
         aliasHELM !== null &&
         /[^A-Za-z0-9_*\-]/.test(aliasHELM)
       ) {
         KetcherLogger.error(
-          `Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.`,
+          `Load of "${monomerName}" monomer has failed, monomer definition contains invalid HELM alias value. The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.`,
         );
         return;
       }

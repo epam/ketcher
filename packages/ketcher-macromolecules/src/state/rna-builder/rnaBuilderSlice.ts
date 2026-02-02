@@ -505,7 +505,7 @@ export const selectFilteredPresets = createSelector(
         phosphateName?.includes(searchText) ||
         baseName?.includes(searchText) ||
         transformedIdtText?.toLowerCase().includes(searchText) ||
-        axoLabsAlias?.toLowerCase().includes(searchText)
+        axoLabsAlias.includes(searchText)
       );
     });
   },

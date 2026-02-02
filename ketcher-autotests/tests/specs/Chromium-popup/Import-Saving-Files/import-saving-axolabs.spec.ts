@@ -248,7 +248,7 @@ const badAxoLabsStrings = [
     description: 'No opening token',
     axoLabsString: "AAA-3'",
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error', 'SEQUENCE loader: Sequence too short: 'AAA-3''', 'molecule auto loader: SMILES loader: invalid character within atom description: '''', 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error'",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Sequence too short: 'AAA-3'''",
   },
   {
     description: 'No closing token',
@@ -377,7 +377,7 @@ const monomerWithNoAxoLabsAlias = [
     description: 'Monomer: Sugar _12ddR has no AxoLabs alias',
     monomer: Sugar._12ddR,
     expectedErrorMessage:
-      "Convert error! Sequence saver: Monomer group '12ddR()P' has no AxoLabs alias.",
+      'Convert error! Sequence saver: Sugar:12ddR has no AxoLabs alias.',
   },
   {
     description: 'Monomer: Base _2imen2 has no AxoLabs alias',

@@ -3018,7 +3018,7 @@ function setHover(ci: any, visible: any, render: any) {
       });
 
       const hoversToCombine = hoveredRenderers
-        .map((r) => r?.makeHoverPlate(render))
+        .map((r) => r?.makeHoverPlate?.(render))
         .filter(Boolean);
 
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas

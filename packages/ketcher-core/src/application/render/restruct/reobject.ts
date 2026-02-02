@@ -37,7 +37,6 @@ class ReObject {
     if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
         'fill-opacity': this.selected ? 1 : 0,
-        stroke: drawOutline ? hoverStyle.stroke : 'none',
       });
     } else {
       this.hovering?.attr({

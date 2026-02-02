@@ -72,9 +72,7 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase)),
-      ).toThrow(/Base IDT alias is required/);
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -218,9 +216,7 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithAlias));
 
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
-      ).toThrow(/Alias collision detected/);
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision));
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
@@ -284,9 +280,7 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
 
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
-      ).toThrow(/Alias collision detected/);
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision));
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );

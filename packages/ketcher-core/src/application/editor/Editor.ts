@@ -360,7 +360,6 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const validationErrors: string[] = [];
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -430,7 +429,6 @@ export class CoreEditor {
           aliasDetails ? ` (${aliasDetails})` : ''
         }. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
         return;
       }
 
@@ -438,7 +436,6 @@ export class CoreEditor {
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
         return;
       }
 
@@ -521,10 +518,6 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
-
-    if (validationErrors.length > 0) {
-      throw new Error(validationErrors.join('\n'));
-    }
   }
 
   public get monomersLibraryParsedJson() {

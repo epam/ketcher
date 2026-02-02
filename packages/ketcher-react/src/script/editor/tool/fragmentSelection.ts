@@ -37,10 +37,13 @@ export default class FragmentSelectionTool implements Tool {
   private dragCtx?: {
     item?: { map: string; id: number };
     xy0: Vec2;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     action?: any;
     mergeItems?: ReturnType<typeof getItemsToFuse>;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     copyAction?: any;
     stopTapping?: () => void;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     closestItem?: any;
   } | null;
 

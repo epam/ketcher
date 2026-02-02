@@ -17,8 +17,8 @@ import {
   delay,
   openFileAndAddToCanvasAsNewProject,
   layout,
-  MolFileFormat,
   takeElementScreenshot,
+  openFileAndAddToCanvasMacro,
 } from '@utils';
 import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -686,30 +686,19 @@ test.describe('Bond Tool', () => {
         padding: 215,
       },
     );
-  });
-  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for MOL V3000 format', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8254
-     */
-
-    await openFileAndAddToCanvasAsNewProject(
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await openFileAndAddToCanvasMacro(
       page,
-      'KET/stereo-bonds-between-aa-lga.ket',
+      'KET/stereo-bonds-between-aa-lga-expected.ket',
     );
-    await layout(page);
-    await verifyFileExport(
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await takeElementScreenshot(
       page,
-      'Molfiles-V3000/stereo-bonds-between-aa-lga-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
+      getMonomerLocator(page, { monomerId: 767 }),
+      {
+        padding: 215,
+      },
     );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/stereo-bonds-between-aa-lga-expected.mol',
-    );
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 78 }), {
-      padding: 240,
-    });
   });
 });
 

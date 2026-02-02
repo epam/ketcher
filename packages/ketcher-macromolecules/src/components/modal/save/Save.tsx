@@ -85,6 +85,13 @@ const StyledModal = styled(Modal)({
   },
 });
 
+const StyledTextInputField = styled(TextInputField)({
+  '& input': {
+    height: '24px',
+    padding: '1px 7px',
+  },
+});
+
 export const Save = ({
   onClose,
   isModalOpen,
@@ -239,7 +246,7 @@ export const Save = ({
         <Form onSubmit={handleSave} id="save">
           <Row style={{ padding: '12px 12px 10px' }}>
             <div>
-              <TextInputField
+              <StyledTextInputField
                 value={currentFileName}
                 id="filename"
                 onChange={handleInputChange}

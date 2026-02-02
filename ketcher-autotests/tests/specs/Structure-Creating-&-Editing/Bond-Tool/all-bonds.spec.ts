@@ -652,6 +652,8 @@ test.describe('Bond Tool', () => {
     await layout(page);
     await verifyPNGExport(page);
     await verifySVGExport(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await verifySVGExport(page);
   });
 
   test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for KET format', async () => {

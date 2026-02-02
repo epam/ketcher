@@ -1466,7 +1466,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const canvasLocator = page
       .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(5).click();
+    await canvasLocator.locator('path').nth(6).click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1501,7 +1501,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const canvasLocator = page
       .getByTestId(KETCHER_CANVAS)
       .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(5).click();
+    await canvasLocator.locator('path').nth(6).click();
     await takeEditorScreenshot(page);
   });
 

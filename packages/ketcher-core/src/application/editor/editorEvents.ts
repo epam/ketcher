@@ -195,7 +195,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
 const selectTools = [
   ToolName.selectRectangle,
   ToolName.selectLasso,
-  ToolName.selectFragment,
+  ToolName.selectStructure,
 ];
 let currentSelectToolIdx = 0;
 

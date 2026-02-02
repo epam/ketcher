@@ -444,11 +444,10 @@ export const selectFilteredPresets = createSelector(
       const phosphateName = item.phosphate?.label?.toLowerCase();
       const baseName = item.base?.label?.toLowerCase();
       const idtName = item.idtAliases?.base?.toLowerCase();
-      const axoLabsAlias = (
+      const axoLabsAlias =
         item.aliasAxoLabs ??
         (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
-        ''
-      ).toLowerCase();
+        '';
       const modifications = item.idtAliases?.modifications;
       let transformedIdtText = idtName;
 
@@ -506,7 +505,7 @@ export const selectFilteredPresets = createSelector(
         phosphateName?.includes(searchText) ||
         baseName?.includes(searchText) ||
         transformedIdtText?.toLowerCase().includes(searchText) ||
-        axoLabsAlias?.includes(searchText)
+        axoLabsAlias?.toLowerCase().includes(searchText)
       );
     });
   },

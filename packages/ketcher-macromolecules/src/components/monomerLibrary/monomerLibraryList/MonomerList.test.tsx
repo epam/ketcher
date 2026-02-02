@@ -105,7 +105,7 @@ describe('Monomer List', () => {
                 aliasAxoLabs: '(5MdC)',
               },
             ],
-            searchFilter: '(5MdC)',
+            searchFilter: '(5mdc)',
           },
           rnaBuilder: {
             ...initialState.rnaBuilder,

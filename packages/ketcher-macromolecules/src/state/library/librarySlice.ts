@@ -196,7 +196,10 @@ export const selectAxoLabsAliasesByPresetName = createSelector(
   (defaultPresets) => {
     return defaultPresets.reduce((aliases, preset) => {
       if (preset.aliasAxoLabs && preset.name) {
-        aliases.set(preset.name.toLowerCase(), preset.aliasAxoLabs);
+        aliases.set(
+          preset.name.toLowerCase(),
+          preset.aliasAxoLabs.toLowerCase(),
+        );
       }
       return aliases;
     }, new Map<string, string>());

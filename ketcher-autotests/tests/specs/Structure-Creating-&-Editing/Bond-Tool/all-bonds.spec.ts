@@ -15,6 +15,10 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   delay,
+  openFileAndAddToCanvasAsNewProject,
+  layout,
+  MolFileFormat,
+  takeElementScreenshot,
 } from '@utils';
 import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -44,6 +48,14 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import {
+  FileType,
+  verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -626,6 +638,78 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
+  });
+
+  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8254
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/stereo-bonds-between-aa-lga.ket',
+    );
+    await layout(page);
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for KET format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8254
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/stereo-bonds-between-aa-lga.ket',
+    );
+    await layout(page);
+    await verifyFileExport(
+      page,
+      'KET/stereo-bonds-between-aa-lga-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/stereo-bonds-between-aa-lga-expected.ket',
+    );
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 90 }), {
+      padding: 240,
+    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerId: 617 }),
+      {
+        padding: 215,
+      },
+    );
+  });
+  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for MOL V3000 format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8254
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/stereo-bonds-between-aa-lga.ket',
+    );
+    await layout(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/stereo-bonds-between-aa-lga-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/stereo-bonds-between-aa-lga-expected.mol',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 78 }), {
+      padding: 240,
+    });
   });
 });
 

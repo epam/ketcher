@@ -976,7 +976,7 @@ test.describe('Selection tools', () => {
     */
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.keyboard.press('Shift+Tab');
       await takeLeftToolbarScreenshot(page);
     }

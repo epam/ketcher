@@ -324,6 +324,28 @@ class ReStruct {
     });
   }
 
+  moveReObjectOnTopOfLayer(visel: Visel, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    visel.paths.forEach((path) => {
+      path.insertBefore(layer);
+    });
+  }
+
+  movePathOnTopOfLayer(path, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    path.insertBefore(layer);
+  }
+
   clearMarks(): void {
     Object.keys(ReStruct.maps).forEach((map) => {
       this[map + 'Changed'] = new Map();

@@ -12,6 +12,7 @@ import RotateTool from './rotate';
 import SelectTool from './select/select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
 import { normalizeAngle } from '../utils/normalizeAngle';
+import FragmentSelectionTool from './fragmentSelection';
 
 type RaphaelElement = {
   [key: string]: any;
@@ -164,9 +165,11 @@ class RotateController {
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
         .length > 1;
 
+    const currentTool = this.editor.tool();
     const enable =
       isMoreThanOneItemBeingSelected &&
-      this.editor.tool() instanceof SelectTool &&
+      (currentTool instanceof SelectTool ||
+        currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
 
     if (!enable) {

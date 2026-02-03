@@ -79,6 +79,7 @@ type ToolVariant =
   | 'rgroup-fragment'
   | 'rgroup-label'
   | 'save'
+  | 'select-structure'
   | 'select-fragment'
   | 'select-lasso'
   | 'select-rectangle'

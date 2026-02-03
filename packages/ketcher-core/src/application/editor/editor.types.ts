@@ -62,6 +62,7 @@ export interface Editor {
   errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;

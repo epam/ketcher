@@ -51,7 +51,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^16.1.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.6",
     "postcss-less": "^6.0.0",
     "prettier": "2.8.0",
     "prettier-config-standard": "^5.0.0",
@@ -64,7 +64,7 @@
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=16.0.0",
+    "node": ">=22.0.0",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
@@ -75,6 +75,8 @@
     "minimatch": "^10.0.3",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
+    "react-router": "^7.13.0",
+    "react-router-dom": "^7.13.0",
     "serve-handler": "^6.1.6"
   },
   "stylelint": {

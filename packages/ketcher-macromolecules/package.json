@@ -1,6 +1,6 @@
 {
   "name": "ketcher-macromolecules",
-  "version": "3.12.0-rc.1",
+  "version": "3.13.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",

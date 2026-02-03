@@ -30,7 +30,7 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.preset]: RnaPresetTool,
   [ToolName.selectRectangle]: SelectRectangle,
   [ToolName.selectLasso]: SelectLasso,
-  [ToolName.selectFragment]: SelectFragment,
+  [ToolName.selectStructure]: SelectFragment,
   [ToolName.bondSingle]: PolymerBond,
   [ToolName.bondHydrogen]: PolymerBond,
   [ToolName.erase]: EraserTool,

@@ -131,8 +131,8 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
     },
     {
       tool: SelectionToolType.Fragment,
-      testId: 'select-fragment',
-      title: 'Fragment selection (Shift+Tab)',
+      testId: 'select-structure',
+      title: 'Structure Selection (Shift+Tab)',
     },
   ];
   for (const c of cases) {

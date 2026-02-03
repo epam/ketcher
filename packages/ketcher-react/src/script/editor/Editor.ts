@@ -75,6 +75,9 @@ import {
   MonomerCreationComponentStructureUpdateEvent,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
+  LayerMap,
+  Visel,
+  paperPathFromSVGElement,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -92,6 +95,7 @@ import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
 import {
+  HoverTarget,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
@@ -99,6 +103,7 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
+import paperjs from 'paper';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -138,7 +143,6 @@ const highlightTargets = [
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];
-
 function selectStereoFlagsIfNecessary(
   atoms: Pool<Atom>,
   explicitlySelectedAtoms: number[],
@@ -196,6 +200,7 @@ class Editor implements KetcherEditor {
   rotateController: RotateController;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
@@ -257,6 +262,7 @@ class Editor implements KetcherEditor {
 
     this.event = {
       message: new Subscription(),
+      tooltip: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
       zoomIn: new PipelineSubscription(),
@@ -322,7 +328,8 @@ class Editor implements KetcherEditor {
       return null;
     }
 
-    const isSelectToolChosen = name === 'select';
+    const isSelectToolChosen =
+      name === 'select' || name === 'fragmentSelection';
     if (!isSelectToolChosen) {
       this.rotateController.clean();
     }
@@ -1174,6 +1181,7 @@ class Editor implements KetcherEditor {
     monomerStructure?: Selection,
     forceAddNewLeavingGroupAtom = false,
     leavingAtomLabel: AtomLabel = AtomLabel.H,
+    leavingAtomPosition?: Vec2,
   ) {
     assert(this.monomerCreationState);
 
@@ -1210,6 +1218,8 @@ class Editor implements KetcherEditor {
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },
         atomId,
         { label: leavingAtomLabel },
+        undefined,
+        leavingAtomPosition,
       );
 
       additionalAction = bondAdditionAction;
@@ -2491,19 +2501,17 @@ class Editor implements KetcherEditor {
     return this._selection; // eslint-disable-line
   }
 
-  hover(
-    ci: { id: number; map: string } | null,
-    newTool?: any,
-    event?: PointerEvent,
-  ) {
+  hover(ci: HoverTarget | null, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool; // eslint-disable-line
 
-    if (
-      'ci' in tool &&
-      (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
-    ) {
-      setHover(tool.ci, false, this.render);
-      delete tool.ci;
+    const hoverState = (tool as { ci?: HoverTarget }).ci;
+    if (hoverState) {
+      const previousId = this.getHoverId(hoverState);
+      const nextId = this.getHoverId(ci);
+      if (!ci || hoverState.map !== ci.map || previousId !== nextId) {
+        setHover(hoverState, false, this.render);
+        delete (tool as { ci?: HoverTarget }).ci;
+      }
     }
 
     if (ci && setHover(ci, true, this.render)) {
@@ -2525,6 +2533,10 @@ class Editor implements KetcherEditor {
         isShow: true,
       });
     }
+  }
+
+  private getHoverId(target: HoverTarget | null | undefined) {
+    return target && 'id' in target ? target.id : undefined;
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
@@ -2993,10 +3005,78 @@ function setHover(ci: any, visible: any, render: any) {
         item = render.ctab[mp].get(dstId)!;
 
         if (item) {
-          item.setHover(visible, render);
+          item.setHover(visible, render, false);
         }
       });
     });
+
+    if (visible) {
+      const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
+        return ci.items[mp].flatMap((dstId) => {
+          return render.ctab[mp].get(dstId);
+        });
+      });
+
+      const hoversToCombine = hoveredRenderers
+        .map((r) => r?.makeHoverPlate?.(render))
+        .filter(Boolean);
+
+      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
+
+      // Generate Paper.js paths from all SVG elements
+      let combinedPath: any = null;
+      const options = render.options;
+      const hoverVisel = new Visel('mergedHover');
+      const elements: Element[] = [];
+
+      hoversToCombine.forEach((item) => {
+        if (item?.node) {
+          elements.push(item.node);
+          item.node.remove();
+        }
+      });
+
+      elements.forEach((element) => {
+        const paperPath = paperPathFromSVGElement(element);
+
+        if (!paperPath) {
+          return;
+        }
+
+        if (!paperPath.closed) {
+          paperPath.closePath();
+        }
+
+        if (!combinedPath) {
+          combinedPath = paperPath;
+        } else {
+          combinedPath = combinedPath.unite(paperPath);
+        }
+      });
+
+      if (!combinedPath) {
+        return;
+      }
+
+      const combinedPathD = combinedPath.pathData;
+
+      render.ctab.addReObjectPath(
+        LayerMap.hovering,
+        hoverVisel,
+        render.paper.path(combinedPathD).attr({
+          stroke: options.hoverStyle.stroke,
+          'stroke-width': options.hoverStyle['stroke-width'],
+        }),
+      );
+
+      render.combinedHover = hoverVisel;
+    } else {
+      render.combinedHover?.paths.forEach((path) => {
+        path.remove();
+      });
+
+      render.combinedHover = null;
+    }
 
     return true;
   }
@@ -3025,5 +3105,6 @@ function setHover(ci: any, visible: any, render: any) {
   } else {
     item.setHover(visible, render);
   }
+
   return true;
 }

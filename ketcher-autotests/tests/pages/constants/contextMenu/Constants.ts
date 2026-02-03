@@ -40,6 +40,7 @@ export enum SuperatomOption {
 
 export enum MacroBondOption {
   EditAttachmentPoints = 'edit_attachment_points',
+  Delete = 'delete',
 }
 
 export enum SequenceSymbolOption {

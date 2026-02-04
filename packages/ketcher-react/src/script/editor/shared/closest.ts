@@ -197,6 +197,7 @@ function findClosestBond(
   minDist = Math.min(minDist, maxMinDist);
 
   let minCDist = minDist;
+  let minFoundCDist = Infinity;
 
   restruct.visibleBonds.forEach((bond, bid) => {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
@@ -217,8 +218,9 @@ function findClosestBond(
     const position = Scale.modelToCanvas(pos, options);
     const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints);
 
-    if (isPosInsidePolygon) {
+    if (isPosInsidePolygon && cdist < minFoundCDist) {
       minCDist = cdist;
+      minFoundCDist = cdist;
       closestBondCenter = bid;
     }
 

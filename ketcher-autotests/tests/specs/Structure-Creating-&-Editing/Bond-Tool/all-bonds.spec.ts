@@ -16,7 +16,6 @@ import {
   clickOnCanvas,
   delay,
   openFileAndAddToCanvasAsNewProject,
-  layout,
   takeElementScreenshot,
   openFileAndAddToCanvasMacro,
 } from '@utils';
@@ -655,7 +654,7 @@ test.describe('Bond Tool', () => {
       page,
       'KET/stereo-bonds-between-aa-lga.ket',
     );
-    await layout(page);
+    await IndigoFunctionsToolbar(page).layout();
     await verifyPNGExport(page);
     await verifySVGExport(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -677,7 +676,7 @@ test.describe('Bond Tool', () => {
       page,
       'KET/stereo-bonds-between-aa-lga.ket',
     );
-    await layout(page);
+    await IndigoFunctionsToolbar(page).layout();
     await verifyFileExport(
       page,
       'KET/stereo-bonds-between-aa-lga-expected.ket',
@@ -695,7 +694,7 @@ test.describe('Bond Tool', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerId: 617 }),
+      getMonomerLocator(page, { monomerId: 467 }),
       {
         padding: 215,
       },
@@ -708,7 +707,7 @@ test.describe('Bond Tool', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerId: 767 }),
+      getMonomerLocator(page, { monomerId: 617 }),
       {
         padding: 215,
       },

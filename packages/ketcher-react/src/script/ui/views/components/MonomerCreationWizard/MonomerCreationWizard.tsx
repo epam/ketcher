@@ -1134,6 +1134,37 @@ const MonomerCreationWizard = () => {
       });
     }
 
+    if (
+      assignedAttachmentPointsByMonomer
+        .get(rnaPresetWizardState.sugar)
+        ?.get(AttachmentPointName.R2) ||
+      assignedAttachmentPointsByMonomer
+        .get(rnaPresetWizardState.phosphate)
+        ?.get(AttachmentPointName.R1) ||
+      assignedAttachmentPointsByMonomer
+        .get(rnaPresetWizardState.sugar)
+        ?.get(AttachmentPointName.R3) ||
+      assignedAttachmentPointsByMonomer
+        .get(rnaPresetWizardState.base)
+        ?.get(AttachmentPointName.R1)
+    ) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'invalidRnaPresetStructure',
+            {
+              type: 'error',
+              message: NotificationMessages.attachmentPointsNotUnique,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
     // check rna preset code
     const presetCode = rnaPresetWizardState.preset.name?.trim();
     if (!presetCode) {

@@ -88,6 +88,7 @@ abstract class SelectBase implements BaseTool {
   protected rotationCenter: Vec2 | null = null;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
+  protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = new EditorHistory(this.editor);
@@ -1195,8 +1196,11 @@ abstract class SelectBase implements BaseTool {
       angleDelta = (angleDeltaDegrees * Math.PI) / 180;
     }
 
-    // Only update if angle changed
-    if (Math.abs(angleDeltaDegrees - this.currentRotationAngle) < 0.001) {
+    // Only update if angle changed significantly
+    if (
+      Math.abs(angleDeltaDegrees - this.currentRotationAngle) <
+      SelectBase.ROTATION_ANGLE_EPSILON
+    ) {
       return;
     }
 
@@ -1244,7 +1248,10 @@ abstract class SelectBase implements BaseTool {
   }
 
   protected finishRotation() {
-    if (!this.rotationCenter || Math.abs(this.currentRotationAngle) < 0.001) {
+    if (
+      !this.rotationCenter ||
+      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
+    ) {
       this.mode = 'standby';
       this.rotationCenter = null;
       this.currentRotationAngle = 0;
@@ -1252,12 +1259,14 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    // Create the final rotation command for history
+    // The rotation was already applied incrementally during handleRotationMove.
+    // We record the full rotation in history so undo/redo works correctly.
+    // Pass 0 as partOfMovement (already applied) and false for isPartialRotation
+    // so the DrawingEntityMoveOperation stores the proper inverse operation.
     const modelChanges =
-      this.editor.drawingEntitiesManager.rotateSelectedDrawingEntities(
-        this.rotationCenter,
-        0, // We've already applied all rotation, just need to update history
-        false,
+      this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+        new Vec2(0, 0), // No additional movement needed
+        new Vec2(0, 0), // Rotation tracking handled separately
       );
 
     this.history.update(modelChanges);

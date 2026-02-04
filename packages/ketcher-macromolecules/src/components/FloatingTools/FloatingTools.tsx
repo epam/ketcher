@@ -88,7 +88,12 @@ export const FloatingTools = () => {
           const centerX = (bbox.left + bbox.right) / 2;
           const topY = bbox.top;
           // Convert from model coordinates to view coordinates
-          const viewPos = new Vec2(centerX * 40, topY * 40);
+          // Scale factor matches the macroModeScale in editorSettings.ts
+          const MODEL_TO_VIEW_SCALE = 40;
+          const viewPos = new Vec2(
+            centerX * MODEL_TO_VIEW_SCALE,
+            topY * MODEL_TO_VIEW_SCALE,
+          );
           setPosition(viewPos);
           setVisible(true);
         }

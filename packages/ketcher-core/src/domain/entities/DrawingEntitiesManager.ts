@@ -638,7 +638,7 @@ export class DrawingEntitiesManager {
   public rotateSelectedDrawingEntities(
     center: Vec2,
     angleInDegrees: number,
-    isPartialRotation: boolean = true,
+    isPartialRotation = true,
   ) {
     const command = new Command();
 

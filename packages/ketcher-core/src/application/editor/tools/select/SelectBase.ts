@@ -1066,6 +1066,51 @@ abstract class SelectBase implements BaseTool {
     this.editor.events.selectEntities.dispatch(
       this.previousSelectedEntities.map((entity) => entity[1]),
     );
+    this.updateRotationView();
+  }
+
+  protected updateRotationView() {
+    const selectedMonomers =
+      this.editor.drawingEntitiesManager.selectedMonomers;
+
+    if (
+      selectedMonomers.length < 2 ||
+      this.editor.mode.modeName === 'sequence-layout-mode' ||
+      this.mode !== 'standby'
+    ) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const bbox =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+    const center =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+
+    if (!bbox || !center) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const canvasCenter = Coordinates.modelToCanvas(center);
+    const topLeft = Coordinates.modelToCanvas(new Vec2(bbox.left, bbox.top));
+    const bottomRight = Coordinates.modelToCanvas(
+      new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
+    );
+    const canvasBbox = {
+      left: topLeft.x,
+      top: topLeft.y,
+      width: bottomRight.x - topLeft.x,
+      height: bottomRight.y - topLeft.y,
+    };
+
+    this.editor.transientDrawingView.showRotation({
+      center: canvasCenter,
+      boundingBox: canvasBbox,
+    });
+    this.editor.transientDrawingView.update();
   }
 
   destroy() {

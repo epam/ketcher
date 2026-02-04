@@ -115,6 +115,7 @@ import { MacromoleculePropertiesWindow } from 'components/macromoleculePropertie
 import { RulerArea } from 'components/Ruler/RulerArea';
 import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
+import { FloatingTools } from 'components/FloatingTools';
 
 import './theme.less';
 
@@ -398,6 +399,7 @@ function Editor({
               />
             )}
           </CanvasWrapper>
+          <FloatingTools />
           {isLoading && <Loader />}
         </Layout.Main>
 

@@ -889,6 +889,46 @@ export class CoreEditor {
     this.events.removeAutochainPreview.add(() =>
       this.onRemoveAutochainPreview(),
     );
+    this.events.flipHorizontal.add(() => this.onFlipHorizontal());
+    this.events.flipVertical.add(() => this.onFlipVertical());
+  }
+
+  private onFlipHorizontal() {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const command = new Command();
+    const history = new EditorHistory(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('horizontal'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
+  }
+
+  private onFlipVertical() {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const command = new Command();
+    const history = new EditorHistory(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('vertical'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
   }
 
   public getDataForAutochain() {

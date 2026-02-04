@@ -228,9 +228,13 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Convert: {
       const data: ConvertCommandData = message.data as ConvertCommandData;
+      const struct = data.struct;
+      const outputFormat = data.format;
       handle(
         (indigo, indigoOptions) =>
-          indigo.convert(data.struct, data.format, indigoOptions),
+          Array.isArray(struct)
+            ? struct.map((v) => indigo.convert(v, outputFormat, indigoOptions))
+            : indigo.convert(struct, outputFormat, indigoOptions),
         data.options,
         Command.Convert,
         data.struct,

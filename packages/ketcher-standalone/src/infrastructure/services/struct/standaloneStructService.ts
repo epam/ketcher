@@ -25,7 +25,7 @@ import {
   CleanCommandData,
   Command,
   CommandOptions,
-  ConvertCommandData,
+  ConvertCombinedCommandData,
   DearomatizeCommandData,
   ExplicitHydrogensCommandData,
   GenerateImageCommandData,
@@ -50,8 +50,8 @@ import {
   CheckResult,
   ChemicalMimeType,
   CleanData,
+  ConvertCombinedData,
   CleanResult,
-  ConvertData,
   ConvertResult,
   CoreEditor,
   DearomatizeData,
@@ -306,7 +306,7 @@ class IndigoService implements StructService {
   }
 
   convert(
-    data: ConvertData,
+    data: ConvertCombinedData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const {
@@ -320,16 +320,14 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
-        if (msg.inputData === struct) {
-          if (!msg.hasError) {
-            const result: ConvertResult = {
-              struct: msg.payload,
-              format: outputFormat,
-            };
-            resolve(result);
-          } else {
-            reject(msg.error);
-          }
+        if (!msg.hasError) {
+          const result: ConvertResult = {
+            struct: msg.payload,
+            format: outputFormat,
+          };
+          resolve(result);
+        } else {
+          reject(msg.error);
         }
       };
       const monomerLibrary = JSON.stringify(
@@ -353,13 +351,13 @@ class IndigoService implements StructService {
         monomerLibrary,
       };
 
-      const commandData: ConvertCommandData = {
+      const commandData: ConvertCombinedCommandData = {
         struct,
         format,
         options: commandOptions,
       };
 
-      const inputMessage: InputMessage<ConvertCommandData> = {
+      const inputMessage: InputMessage<ConvertCombinedCommandData> = {
         type: Command.Convert,
         data: commandData,
       };

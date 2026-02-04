@@ -21,11 +21,16 @@ import { StructServiceOptions } from 'domain/services';
 import { EditorSelection } from 'application/editor';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (
+  getStructureFromStructAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,
-  ) => Promise<string>;
+  ): Promise<string>;
+  getStructureFromStructAsync(
+    struct: Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string[]>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
   parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }

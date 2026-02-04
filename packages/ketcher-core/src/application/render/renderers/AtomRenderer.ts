@@ -766,7 +766,7 @@ export class AtomRenderer extends BaseRenderer {
         direction.negated(),
         Box2Abs.fromRelBox(modifiedTextBBox),
       );
-    const shiftVector = direction.scaled(3 + shiftDistance);
+    const shiftVector = direction.scaled(baseDistance + shiftDistance);
 
     const stereoPosition = this.scaledPosition.add(
       new Vec2(

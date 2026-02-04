@@ -643,6 +643,12 @@ test.describe('Bond Tool', () => {
   test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8254
+     * Requirements:
+     * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
+     * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
+     * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
+     * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
+     * Expected result: The schema with different connection should save in PNG and SVG format
      */
 
     await openFileAndAddToCanvasAsNewProject(
@@ -659,6 +665,12 @@ test.describe('Bond Tool', () => {
   test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for KET format', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8254
+     * Requirements:
+     * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
+     * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
+     * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
+     * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
+     * Expected result: The schema with different connection should save in KET format
      */
 
     await openFileAndAddToCanvasAsNewProject(

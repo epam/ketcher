@@ -4301,6 +4301,11 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  /**
+   * Gets the stereo flag associated with a monomer.
+   * Note: Linear search is acceptable here as stereo flags are rare
+   * (typically one per fragment with stereo atoms).
+   */
   public getStereoFlagForMonomer(
     monomer: BaseMonomer,
   ): CoreStereoFlag | undefined {

@@ -152,9 +152,15 @@ test.describe('Selection tools', () => {
     SequenceCanvas: _,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled
+     * Steps:
+     * 1. Paste a HELM sequence into the macromolecules canvas.
+     * 2. Switch to micromolecules editor, select the structure and expand a monomer.
+     * 3. Select the expanded monomer and apply horizontal flip.
+     * 4. Take a screenshot, undo the action and take another screenshot.
+     * Expected result: The expanded monomer is flipped horizontally, and undo restores the original orientation.
+     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -187,9 +193,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in KET format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and KET format file is as required
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and KET format file is as required
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported KET matches the expected file and the flipped monomer renders correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
@@ -210,9 +222,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in MOL V3000 format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and MOL V3000 format file is as required
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and MOL V3000 format file is as required
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported MOL V3000 matches the expected file and the flipped monomer renders correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
@@ -234,9 +252,14 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in SVG and PNG format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and MOL V3000 format file is as required
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain the horizontally flipped monomer.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await getAtomLocator(page, { atomId: 7 }).click();
     await horizontalFlip(page);
@@ -246,9 +269,14 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of one expanded monomer in a structure', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Take a screenshot, undo and redo the action, then take another screenshot.
+     * Expected result: The expanded monomer is flipped vertically, and undo/redo restores and re-applies the flip.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
@@ -265,9 +293,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of one expanded monomer in a structure and save/paste in KET format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in KET format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported KET matches the expected file and the flipped monomer renders correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
@@ -288,9 +322,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of one expanded monomer in a structure and save/paste in MOL V3000 format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in MOL V3000 format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported MOL V3000 matches the expected file and the flipped monomer renders correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
@@ -312,9 +352,14 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of one expanded monomer in a structure and save in SVG and PNG format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save in SVG and PNG format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain the vertically flipped monomer.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await getAtomLocator(page, { atomId: 7 }).click();
     await verticalFlip(page);
@@ -324,9 +369,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of more than one expanded monomers in a structure', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection.
+     * 3. Apply horizontal flip.
+     * 4. Take a screenshot.
+     * Expected result: All selected expanded monomers are flipped horizontally.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -352,9 +403,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of more than one expanded monomers in a structure and save/paste in KET format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in KET format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported KET matches the expected file and flipped monomers render correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -389,9 +446,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of more than one expanded monomers in a structure and save/paste in MOL V3000 format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in MOL V3000 format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported MOL V3000 matches the expected file and flipped monomers render correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -427,9 +490,14 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping horizontally of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save in SVG and PNG format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain horizontally flipped monomers.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -454,9 +522,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of more than one expanded monomers in a structure', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection.
+     * 3. Apply vertical flip.
+     * 4. Take a screenshot.
+     * Expected result: All selected expanded monomers are flipped vertically.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -482,9 +556,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of more than one expanded monomers in a structure and save/paste in KET format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in KET format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported KET matches the expected file and flipped monomers render correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -519,9 +599,15 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of more than one expanded monomers in a structure and save/paste in MOL V3000 format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in MOL V3000 format
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported MOL V3000 matches the expected file and flipped monomers render correctly.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 
@@ -557,9 +643,14 @@ test.describe('Selection tools', () => {
 
   test('Verify flipping vertically of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/7915
-    Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled
-    */
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain vertically flipped monomers.
+     */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
 

@@ -25,7 +25,7 @@ import {
   CleanCommandData,
   Command,
   CommandOptions,
-  ConvertCommandData,
+  ConvertCombinedCommandData,
   DearomatizeCommandData,
   ExplicitHydrogensCommandData,
   GenerateImageCommandData,
@@ -50,8 +50,8 @@ import {
   CheckResult,
   ChemicalMimeType,
   CleanData,
+  ConvertCombinedData,
   CleanResult,
-  ConvertData,
   ConvertResult,
   CoreEditor,
   DearomatizeData,
@@ -306,7 +306,7 @@ class IndigoService implements StructService {
   }
 
   convert(
-    data: ConvertData,
+    data: ConvertCombinedData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const {
@@ -353,13 +353,13 @@ class IndigoService implements StructService {
         monomerLibrary,
       };
 
-      const commandData: ConvertCommandData = {
+      const commandData: ConvertCombinedCommandData = {
         struct,
         format,
         options: commandOptions,
       };
 
-      const inputMessage: InputMessage<ConvertCommandData> = {
+      const inputMessage: InputMessage<ConvertCombinedCommandData> = {
         type: Command.Convert,
         data: commandData,
       };

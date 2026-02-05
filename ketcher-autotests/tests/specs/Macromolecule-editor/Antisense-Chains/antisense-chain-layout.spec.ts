@@ -12,10 +12,12 @@ import {
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
+  getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -939,3 +941,94 @@ for (const leftMonomer of shortMonomerList) {
     );
   }
 }
+
+test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that no-shift complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with no-shift complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-UGCp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 47 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 47 }), {
+    padding: 55,
+  });
+});
+
+test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (AUGCA/UGC) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'
+5'-UGC-3'`,
+  );
+  await CommonTopRightToolbar(page).setZoomInputValue('50');
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 65 }),
+    {
+      padding: 125,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 65 }), {
+    padding: 55,
+  });
+});
+
+test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-ACGp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 50 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 48 }), {
+    padding: 55,
+  });
+});

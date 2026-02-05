@@ -42,6 +42,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   noAttachmentPoints: 'The monomer must have at least one attachment point.',
   incorrectAttachmentPointsOrder:
     'Attachment point numbers must be in order, but R1 and R2 may be skipped.',
+  attachmentPointsNotUnique:
+    'Only one attachment point can have the same number.',
   creationSuccessful: 'The monomer was successfully added to the library.',
   creationRNASuccessful: 'The preset was successfully added to the library.',
   incontinuousStructure: 'All monomers must have a continuous structure.',
@@ -72,6 +74,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   editingIsNotAllowed: 'error',
   noAttachmentPoints: 'error',
   incorrectAttachmentPointsOrder: 'error',
+  attachmentPointsNotUnique: 'error',
   creationSuccessful: 'info',
   creationRNASuccessful: 'info',
   incontinuousStructure: 'error',

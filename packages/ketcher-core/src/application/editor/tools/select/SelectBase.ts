@@ -80,10 +80,15 @@ abstract class SelectBase implements BaseTool {
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
-  protected mode: 'moving' | 'selecting' | 'standby' = 'standby';
+  protected mode: 'moving' | 'selecting' | 'standby' | 'rotating' = 'standby';
   private readonly canvasResizeObserver?: ResizeObserver;
   private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
+  protected rotationStartAngle = 0;
+  protected rotationCenter: Vec2 | null = null;
+  protected currentRotationAngle = 0;
+  protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
+  protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = new EditorHistory(this.editor);
@@ -103,6 +108,23 @@ abstract class SelectBase implements BaseTool {
     if (shouldStartMove) this.mode = 'moving';
   }
 
+  private isRotationHandleClicked(event: MouseEvent): boolean {
+    const target = event.target as Element | null;
+    if (!target) return false;
+
+    try {
+      const hasClosest =
+        typeof target.closest === 'function' &&
+        target.closest('.rotation-handle') !== null;
+      const hasTestId =
+        typeof target.getAttribute === 'function' &&
+        target.getAttribute('data-testid') === 'rotation-handle';
+      return hasClosest || hasTestId;
+    } catch {
+      return false;
+    }
+  }
+
   mousedown(event: MouseEvent) {
     if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
@@ -111,6 +133,12 @@ abstract class SelectBase implements BaseTool {
     this.selectionStartCanvasPosition = Coordinates.viewToCanvas(
       this.editor.lastCursorPosition,
     );
+
+    // Check if rotation handle was clicked
+    if (this.isRotationHandleClicked(event)) {
+      this.startRotation(event);
+      return;
+    }
 
     if (event.target === this.editor.canvas) {
       if (!event.shiftKey) {
@@ -138,6 +166,30 @@ abstract class SelectBase implements BaseTool {
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
       this.mousedownEntity(renderer, event.shiftKey, modKey);
     }
+  }
+
+  protected startRotation(event: MouseEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.mode = 'rotating';
+    this.rotationCenter =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+
+    if (!this.rotationCenter) {
+      this.mode = 'standby';
+      return;
+    }
+
+    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
+    const cursorPos = this.editor.lastCursorPositionOfCanvas;
+    this.rotationStartAngle = Math.atan2(
+      cursorPos.y - canvasCenter.y,
+      cursorPos.x - canvasCenter.x,
+    );
+    this.currentRotationAngle = 0;
+    this.editor.transientDrawingView.hideRotation();
+    this.editor.transientDrawingView.update();
   }
 
   protected mousedownEntity(
@@ -849,6 +901,11 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'rotating') {
+      this.handleRotationMove(event);
+      return;
+    }
+
     if (!this.firstMonomerPositionBeforeMove) {
       this.firstMonomerPositionBeforeMove = this.editor.drawingEntitiesManager
         .selectedMonomers[0]?.position
@@ -959,6 +1016,11 @@ abstract class SelectBase implements BaseTool {
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
     try {
+      if (this.mode === 'rotating') {
+        this.finishRotation();
+        return;
+      }
+
       if (
         this.mode === 'moving' &&
         (renderer?.drawingEntity?.selected ||
@@ -1066,6 +1128,153 @@ abstract class SelectBase implements BaseTool {
     this.editor.events.selectEntities.dispatch(
       this.previousSelectedEntities.map((entity) => entity[1]),
     );
+    this.updateRotationView();
+  }
+
+  protected updateRotationView() {
+    const selectedMonomers =
+      this.editor.drawingEntitiesManager.selectedMonomers;
+
+    if (
+      selectedMonomers.length < 2 ||
+      this.editor.mode.modeName === 'sequence-layout-mode' ||
+      this.mode !== 'standby'
+    ) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const bbox =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+    const center =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+
+    if (!bbox || !center) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const canvasCenter = Coordinates.modelToCanvas(center);
+    const topLeft = Coordinates.modelToCanvas(new Vec2(bbox.left, bbox.top));
+    const bottomRight = Coordinates.modelToCanvas(
+      new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
+    );
+    const canvasBbox = {
+      left: topLeft.x,
+      top: topLeft.y,
+      width: bottomRight.x - topLeft.x,
+      height: bottomRight.y - topLeft.y,
+    };
+
+    this.editor.transientDrawingView.showRotation({
+      center: canvasCenter,
+      boundingBox: canvasBbox,
+    });
+    this.editor.transientDrawingView.update();
+  }
+
+  protected handleRotationMove(event: MouseEvent) {
+    if (!this.rotationCenter) return;
+
+    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
+    const cursorPos = this.editor.lastCursorPositionOfCanvas;
+
+    const currentAngle = Math.atan2(
+      cursorPos.y - canvasCenter.y,
+      cursorPos.x - canvasCenter.x,
+    );
+
+    let angleDelta = currentAngle - this.rotationStartAngle;
+    let angleDeltaDegrees = (angleDelta * 180) / Math.PI;
+
+    // Snap to 15 degree increments (the default rotation angle from requirements)
+    if (!event.ctrlKey) {
+      const snapAngle = SelectBase.ROTATION_SNAP_ANGLE;
+      angleDeltaDegrees = Math.round(angleDeltaDegrees / snapAngle) * snapAngle;
+      angleDelta = (angleDeltaDegrees * Math.PI) / 180;
+    }
+
+    // Only update if angle changed significantly
+    if (
+      Math.abs(angleDeltaDegrees - this.currentRotationAngle) <
+      SelectBase.ROTATION_ANGLE_EPSILON
+    ) {
+      return;
+    }
+
+    // Calculate the incremental rotation needed
+    const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
+    this.currentRotationAngle = angleDeltaDegrees;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.rotateSelectedDrawingEntities(
+        this.rotationCenter,
+        incrementalDegrees,
+        true,
+      );
+
+    requestAnimationFrame(() => {
+      this.editor.renderersContainer.update(modelChanges);
+      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+
+      // Update rotation view with current angle
+      const bbox =
+        this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+      if (bbox && this.rotationCenter) {
+        const topLeft = Coordinates.modelToCanvas(
+          new Vec2(bbox.left, bbox.top),
+        );
+        const bottomRight = Coordinates.modelToCanvas(
+          new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
+        );
+        const canvasBbox = {
+          left: topLeft.x,
+          top: topLeft.y,
+          width: bottomRight.x - topLeft.x,
+          height: bottomRight.y - topLeft.y,
+        };
+
+        this.editor.transientDrawingView.showRotation({
+          center: canvasCenter,
+          boundingBox: canvasBbox,
+          rotationAngle: angleDelta,
+          isRotating: true,
+        });
+        this.editor.transientDrawingView.update();
+      }
+    });
+  }
+
+  protected finishRotation() {
+    if (
+      !this.rotationCenter ||
+      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
+    ) {
+      this.mode = 'standby';
+      this.rotationCenter = null;
+      this.currentRotationAngle = 0;
+      this.updateRotationView();
+      return;
+    }
+
+    // The rotation was already applied incrementally during handleRotationMove.
+    // We record the full rotation in history so undo/redo works correctly.
+    // Pass 0 as partOfMovement (already applied) and false for isPartialRotation
+    // so the DrawingEntityMoveOperation stores the proper inverse operation.
+    const modelChanges =
+      this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+        new Vec2(0, 0), // No additional movement needed
+        new Vec2(0, 0), // Rotation tracking handled separately
+      );
+
+    this.history.update(modelChanges);
+
+    this.mode = 'standby';
+    this.rotationCenter = null;
+    this.currentRotationAngle = 0;
+    this.updateRotationView();
   }
 
   destroy() {

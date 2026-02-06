@@ -12,10 +12,14 @@ import {
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
+  takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
+  dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
+  getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -32,6 +36,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -939,3 +944,174 @@ for (const leftMonomer of shortMonomerList) {
     );
   }
 }
+
+test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that no-shift complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with no-shift complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-UGCp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 47 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 47 }), {
+    padding: 55,
+  });
+});
+
+test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (AUGCA/UGC) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'
+5'-UGC-3'`,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getMonomerLocator(page, { monomerId: 66 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 66 }),
+    {
+      padding: 255,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 65 }), {
+    padding: 55,
+  });
+});
+
+test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-ACGp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 50 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 48 }), {
+    padding: 55,
+  });
+});
+
+test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC) establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'
+5'-UGC-3'
+5'-ACGp-3'
+5'-UGC-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 108 }),
+    {
+      padding: 310,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getSymbolLocator(page, { symbolId: 92 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 106 }), {
+    padding: 135,
+  });
+});
+
+test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that odd number of strings leaves last unpaired (ACG/UGC + ACG) establishes partial hydrogen bonds only for first two pairs, but not for the third one
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) and one additional string on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-UGCp-3'
+5'-ACGp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 78 }),
+    {
+      padding: 310,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getSymbolLocator(page, { symbolId: 76 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 76 }), {
+    padding: 130,
+  });
+});

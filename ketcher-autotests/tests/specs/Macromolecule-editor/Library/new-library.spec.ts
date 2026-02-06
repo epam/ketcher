@@ -1946,3 +1946,56 @@ for (const monomer of monomerToDrag) {
     await resetZoomLevelToDefault(page);
   });
 }
+
+test('39 Verify library searching using HELM aliases', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some HELM alias to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using HELM aliases
+   */
+
+  await Library(page).setSearchValue('5eU');
+  await Library(page).openRNASection(RNASection.Bases);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).setSearchValue('Hyl_5xi');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('40 Verify library searching using AxoLabs aliases', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some AxoLabs alias to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using AxoLabs aliases
+   */
+
+  await Library(page).setSearchValue('invdC');
+  await Library(page).openRNASection(RNASection.Nucleotides);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).switchToCHEMTab();
+  await Library(page).setSearchValue('(NHC');
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('41 Verify library searching using modification types', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some modification types to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using modification types
+   */
+
+  await Library(page).setSearchValue('Side chain acetylation');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});

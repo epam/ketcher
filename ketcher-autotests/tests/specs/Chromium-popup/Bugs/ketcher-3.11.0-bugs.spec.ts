@@ -80,6 +80,7 @@ import {
   takeElementScreenshot,
   SdfFileFormat,
   dragMouseAndMoveTo,
+  getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -884,6 +885,11 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
     const chainlocator = getSymbolLocator(page, { symbolId: 7 });
+    const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await CommonLeftToolbar(page).handTool();
+    await chainlocator.hover({ force: true });
+    await dragMouseTo(locators.x, locators.y, page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, chainlocator, {

@@ -5,6 +5,7 @@ import { BaseBond } from 'domain/entities/BaseBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private readonly drawingEntity: DrawingEntity) {}
 
@@ -62,7 +63,8 @@ export class DrawingEntityMoveOperation implements Operation {
       this.drawingEntity instanceof BaseBond ||
       this.drawingEntity instanceof RxnArrow ||
       this.drawingEntity instanceof MultitailArrow ||
-      this.drawingEntity instanceof RxnPlus
+      this.drawingEntity instanceof RxnPlus ||
+      this.drawingEntity instanceof CoreStereoFlag
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
@@ -75,7 +77,8 @@ export class DrawingEntityMoveOperation implements Operation {
       this.drawingEntity instanceof BaseBond ||
       this.drawingEntity instanceof RxnArrow ||
       this.drawingEntity instanceof MultitailArrow ||
-      this.drawingEntity instanceof RxnPlus
+      this.drawingEntity instanceof RxnPlus ||
+      this.drawingEntity instanceof CoreStereoFlag
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {

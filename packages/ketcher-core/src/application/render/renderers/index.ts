@@ -9,4 +9,5 @@ export { RNABaseRenderer } from './RNABaseRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
+export { StereoFlagRenderer } from './StereoFlagRenderer';
 export * from './sequence';

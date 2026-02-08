@@ -40,6 +40,8 @@ import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { BaseSequenceItemRenderer } from 'application/render';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { Scale } from 'domain/helpers';
@@ -447,6 +449,16 @@ export class RenderersManager {
 
   public deleteRxnPlus(rxnPlus: RxnPlus) {
     rxnPlus.renderer?.remove();
+  }
+
+  public addStereoFlag(stereoFlag: CoreStereoFlag) {
+    const stereoFlagRenderer = new StereoFlagRenderer(stereoFlag);
+
+    stereoFlagRenderer.show();
+  }
+
+  public deleteStereoFlag(stereoFlag: CoreStereoFlag) {
+    stereoFlag.renderer?.remove();
   }
 
   private renderAromaticCircles() {

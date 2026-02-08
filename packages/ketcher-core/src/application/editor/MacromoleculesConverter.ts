@@ -2,6 +2,7 @@ import {
   AmbiguousMonomer,
   Atom as MicromoleculesAtom,
   Bond,
+  Fragment,
   FunctionalGroup,
   Pile,
   RxnArrow as MicromoleculesRxnArrow,
@@ -571,6 +572,28 @@ export class MacromoleculesConverter {
               bond.cip,
             ),
           );
+        });
+
+        // Add stereo flag if the fragment has an enhanced stereo flag
+        monomer.monomerItem.struct.frags.forEach((fragment) => {
+          if (fragment && fragment.enhancedStereoFlag) {
+            const stereoFlagPosition =
+              fragment.stereoFlagPosition ||
+              Fragment.getDefaultStereoFlagPosition(
+                monomer.monomerItem.struct,
+                0,
+              );
+
+            if (stereoFlagPosition) {
+              command.merge(
+                drawingEntitiesManager.addStereoFlag(
+                  stereoFlagPosition,
+                  fragment.enhancedStereoFlag,
+                  monomer,
+                ),
+              );
+            }
+          }
         });
       }
       fragmentNumber++;

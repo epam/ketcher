@@ -14,14 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  DraftInlineStyleType,
-  RawDraftContentBlock,
-  RawDraftContentState,
-  RawDraftInlineStyleRange,
-} from 'draft-js';
-import { Box2Abs, Text, TextCommand, Vec2 } from 'domain/entities';
-import { flatten, isEqual } from 'lodash/fp';
+import { Box2Abs, Text, Vec2 } from 'domain/entities';
+import { flatten } from 'lodash/fp';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
@@ -29,14 +23,42 @@ import ReStruct from './restruct';
 import { Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
 
-interface CustomRawDraftInlineStyleRange
-  extends Omit<RawDraftInlineStyleRange, 'style'> {
-  style:
-    | DraftInlineStyleType
-    | TextCommand.Subscript
-    | TextCommand.Superscript
-    | TextCommand.FontSize;
+interface SerializedTextNode {
+  detail?: number;
+  format: number;
+  mode?: string;
+  style: string;
+  text: string;
+  type: string;
+  version?: number;
 }
+
+interface SerializedParagraphNode {
+  children: Array<SerializedTextNode>;
+  direction?: string;
+  format?: string | number;
+  indent?: number;
+  type: string;
+  version?: number;
+}
+
+interface SerializedRootNode {
+  children: Array<SerializedParagraphNode>;
+  direction?: string;
+  format?: string | number;
+  indent?: number;
+  type: string;
+  version?: number;
+}
+
+interface SerializedEditorState {
+  root: SerializedRootNode;
+}
+
+const IS_BOLD = 1;
+const IS_ITALIC = 2;
+const IS_SUBSCRIPT = 32;
+const IS_SUPERSCRIPT = 64;
 
 const SCALE = 40; // from ketcher-core
 
@@ -146,42 +168,66 @@ class ReText extends ReObject {
     let shiftY = 0;
     this.paths = [];
     // TODO: create parser in ketcher-core package
-    const rawContentState: RawDraftContentState | null = this.item.content
-      ? (JSON.parse(this.item.content) as RawDraftContentState)
+    const editorState: SerializedEditorState | null = this.item.content
+      ? (JSON.parse(this.item.content) as SerializedEditorState)
       : null;
-    if (!rawContentState) {
+    if (!editorState?.root) {
       return;
     }
 
-    rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
-      const ranges: Array<[number, number, Record<string, any>]> =
-        this.getRanges(block, options);
+    const paragraphs = editorState.root.children.filter(
+      (child) => child.type === 'paragraph',
+    );
+
+    paragraphs.forEach((paragraph: SerializedParagraphNode) => {
+      const textNodes = (
+        paragraph.children as SerializedTextNode[]
+      ).filter((child) => child.type === 'text');
+
       let shiftX = 0;
       const row: Array<RaphaelBaseElement> = [];
-      ranges.forEach(([start, end, styles]) => {
-        block.text = block.text.replace(/[^\S\r\n]/g, '\u00a0');
+
+      if (textNodes.length === 0) {
         const path = paper
-          .text(
-            paperScale.x,
-            paperScale.y,
-            block.text.substring(start, end + 1) || '\u00a0',
-          )
+          .text(paperScale.x, paperScale.y, '\u00a0')
           .attr({
             font: options.font,
             'font-size': options.fontszInPx,
             'text-anchor': 'start',
             fill: '#000000',
-            ...styles,
           });
         path.node.setAttribute('data-testid', 'text-label');
         path.node.setAttribute(
           'data-text-id',
           restruct.molecule.texts.keyOf(this.item),
         );
-        path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
+        path.translateAbs(0, shiftY);
         row.push(path);
-        shiftX += path.getBBox().width;
-      });
+      } else {
+        textNodes.forEach((textNode: SerializedTextNode) => {
+          const styles = this.getStylesFromTextNode(textNode, options);
+          const text =
+            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+
+          const path = paper
+            .text(paperScale.x, paperScale.y, text)
+            .attr({
+              font: options.font,
+              'font-size': options.fontszInPx,
+              'text-anchor': 'start',
+              fill: '#000000',
+              ...styles,
+            });
+          path.node.setAttribute('data-testid', 'text-label');
+          path.node.setAttribute(
+            'data-text-id',
+            restruct.molecule.texts.keyOf(this.item),
+          );
+          path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
+          row.push(path);
+          shiftX += path.getBBox().width;
+        });
+      }
 
       this.paths.push(row);
 
@@ -200,89 +246,45 @@ class ReText extends ReObject {
     );
   }
 
-  getRanges(
-    block: RawDraftContentBlock,
+  getStylesFromTextNode(
+    textNode: SerializedTextNode,
     options: any,
-  ): Array<[number, number, Record<string, any>]> {
-    const ranges: Array<[number, number, Record<string, any>]> = [];
+  ): Record<string, any> {
+    const styles: Record<string, any> = {};
+    const format = textNode.format || 0;
 
-    let start = 0;
-    let styles: Record<string, any> = this.getStyles(block, start, options);
-    for (let i = 1; i < block.text.length; i++) {
-      const nextStyles = this.getStyles(block, i, options);
-
-      if (!isEqual(styles, nextStyles)) {
-        ranges.push([start, i - 1, styles]);
-        styles = nextStyles;
-        start = i;
+    // Parse font-size from style string
+    let customFontSize: number | null = null;
+    if (textNode.style) {
+      const fontSizeMatch = textNode.style.match(/font-size:\s*(\d+)px/);
+      if (fontSizeMatch) {
+        customFontSize = parseInt(fontSizeMatch[1], 10);
+        styles['font-size'] = customFontSize + 'px';
       }
     }
-    ranges.push([start, block.text.length - 1, styles]);
 
-    return ranges;
-  }
+    if (format & IS_BOLD) {
+      styles['font-weight'] = 'bold';
+    }
 
-  getStyles(
-    block: RawDraftContentBlock,
-    index: number,
-    options: any,
-  ): Record<string, string> {
-    const ranges = block.inlineStyleRanges.filter(
-      (inlineRange: CustomRawDraftInlineStyleRange) =>
-        inlineRange.offset <= index &&
-        index < inlineRange.offset + inlineRange.length,
-    );
+    if (format & IS_ITALIC) {
+      styles['font-style'] = 'italic';
+    }
 
-    const customFontSize: number | null = ranges.reduce(
-      (acc: number | null, range: any) => {
-        if (range.style.includes(TextCommand.FontSize)) {
-          return range.style.match(/\d+/)?.[0];
-        }
-        return acc;
-      },
-      null,
-    );
+    const fontsz = customFontSize ?? options.fontszInPx;
+    const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
 
-    // Sort to apply font size styles first and then override it by subscript/superscript styles
-    ranges.sort((_, nextRange) => {
-      return nextRange.style.includes(TextCommand.FontSize) ? 1 : -1;
-    });
+    if (format & IS_SUBSCRIPT) {
+      styles['font-size'] = fontszsub + 'px';
+      styles.shiftY = fontsz / 4;
+    }
 
-    return ranges.reduce(
-      (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize ?? options.fontszInPx;
-        const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
-        switch (textRange.style) {
-          case TextCommand.Bold:
-            styles['font-weight'] = 'bold';
-            break;
+    if (format & IS_SUPERSCRIPT) {
+      styles['font-size'] = fontszsub + 'px';
+      styles.shiftY = -fontsz / 3;
+    }
 
-          case TextCommand.Italic:
-            styles['font-style'] = 'italic';
-            break;
-
-          case TextCommand.Subscript:
-            styles['font-size'] = fontszsub + 'px';
-            styles.shiftY = fontsz / 4;
-
-            break;
-
-          case TextCommand.Superscript:
-            styles['font-size'] = fontszsub + 'px';
-            styles.shiftY = -fontsz / 3;
-            break;
-
-          case `${TextCommand.FontSize}_${customFontSize}px`:
-            styles['font-size'] = customFontSize + 'px';
-            break;
-
-          default:
-        }
-
-        return styles;
-      },
-      {},
-    );
+    return styles;
   }
 }
 

@@ -16,12 +16,21 @@
 
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useClickOutside } from '../../../../../../../hooks/useClickOutside';
+import {
+  $getSelection,
+  $isRangeSelection,
+  LexicalEditor,
+} from 'lexical';
+import {
+  $patchStyleText,
+  $getSelectionStyleValueForProperty,
+} from '@lexical/selection';
 
 import classes from './FontControl.module.less';
 
 import { range } from 'lodash/fp';
 
-export const FontControl = ({ editorState, setEditorState, styles }) => {
+export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
   const defaultFontSize = '13px';
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false);
   const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize);
@@ -34,19 +43,33 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   // @ts-ignore
   useClickOutside(wrapperRef, onClickOutsideCloseDrowndown);
 
-  const setFontSize = (e, value) => {
+  const setFontSize = (e, value: string) => {
     e.preventDefault();
     setCurrentFontSize(value);
-    const newEditorState = styles.fontSize.remove(editorState);
-    setEditorState(styles.fontSize.add(newEditorState, value));
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        $patchStyleText(selection, { 'font-size': value });
+      }
+    });
     setIsShowingFontSizeMenu(false);
   };
 
-  const currentStyle = styles.fontSize.current(editorState);
-
   useEffect(() => {
-    setCurrentFontSize(currentStyle || defaultFontSize);
-  }, [currentStyle]);
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const fontSize = $getSelectionStyleValueForProperty(
+            selection,
+            'font-size',
+            defaultFontSize,
+          );
+          setCurrentFontSize(fontSize);
+        }
+      });
+    });
+  }, [editor]);
 
   const MIN_FONT_SIZE = 4;
   const MAX_FONT_SIZE = 144;

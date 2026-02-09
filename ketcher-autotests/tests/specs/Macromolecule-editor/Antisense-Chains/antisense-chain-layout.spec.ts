@@ -1115,3 +1115,69 @@ test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', 
     padding: 130,
   });
 });
+
+test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/TT)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that DNA complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with DNA complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AATm-3'
+5'-TmTm-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 35 }),
+    {
+      padding: 135,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 34 }), {
+    padding: 55,
+  });
+});
+
+test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that tie in alignment index chooses the left-most position
+   * Steps:
+   * 1. Load macro with tie alignment case on the canvas
+   * 2. Take screenshot to validate placement and hydrogen bonds
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-GAGp-3'
+5'-Cp-3'`,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getMonomerLocator(page, { monomerId: 27 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 27 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 32 }), {
+    padding: 55,
+  });
+});

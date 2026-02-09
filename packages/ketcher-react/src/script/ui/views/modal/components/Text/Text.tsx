@@ -235,7 +235,7 @@ const TextEditorInner = (props: {
 const Text = (props: TextProps) => {
   const { formState, position, id } = props;
 
-  const initialEditorState = props.content ? props.content : undefined;
+  const initialEditorState = props.content || undefined;
 
   const initialConfig = {
     namespace: 'KetcherTextEditor',

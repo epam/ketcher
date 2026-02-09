@@ -34,7 +34,7 @@ interface SerializedTextNode {
 }
 
 interface SerializedParagraphNode {
-  children: Array<SerializedTextNode>;
+  children: Array<SerializedTextNode | { type: string }>;
   direction?: string;
   format?: string | number;
   indent?: number;
@@ -180,9 +180,9 @@ class ReText extends ReObject {
     );
 
     paragraphs.forEach((paragraph: SerializedParagraphNode) => {
-      const textNodes = (
-        paragraph.children as SerializedTextNode[]
-      ).filter((child) => child.type === 'text');
+      const textNodes = paragraph.children.filter(
+        (child): child is SerializedTextNode => child.type === 'text',
+      );
 
       let shiftX = 0;
       const row: Array<RaphaelBaseElement> = [];
@@ -256,9 +256,9 @@ class ReText extends ReObject {
     // Parse font-size from style string
     let customFontSize: number | null = null;
     if (textNode.style) {
-      const fontSizeMatch = textNode.style.match(/font-size:\s*(\d+)px/);
+      const fontSizeMatch = textNode.style.match(/font-size:\s*(\d+\.?\d*)px/);
       if (fontSizeMatch) {
-        customFontSize = parseInt(fontSizeMatch[1], 10);
+        customFontSize = parseFloat(fontSizeMatch[1]);
         styles['font-size'] = customFontSize + 'px';
       }
     }

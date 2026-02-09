@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -29,13 +30,19 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
 test.describe('Copy/Cut/Paste Actions', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Cut part of structures', async ({ page }) => {
+  test('Cut part of structures', async () => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -54,7 +61,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut all structures', async ({ page }) => {
+  test('Cut all structures', async () => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -70,7 +77,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut one Atom on structure', async ({ page }) => {
+  test('Cut one Atom on structure', async () => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -88,7 +95,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut one Bond on structure', async ({ page }) => {
+  test('Cut one Bond on structure', async () => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -104,7 +111,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
+  test('Cut all structures via hotkey (CTRL+X)', async () => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -119,7 +126,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste structure and edit', async ({ page }) => {
+  test('Cut and Paste structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-1713
     Description: The correct structure is pasted on the canvas.
@@ -141,7 +148,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut the reaction', async ({ page }) => {
+  test('Cut the reaction', async () => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -159,7 +166,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut the Atom from reaction', async ({ page }) => {
+  test('Cut the Atom from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -183,7 +190,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut the Bond from reaction', async ({ page }) => {
+  test('Cut the Bond from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -205,7 +212,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut the reaction with hotkey', async ({ page }) => {
+  test('Cut the reaction with hotkey', async () => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -226,7 +233,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy structure', async ({ page }) => {
+  test('Copy structure', async () => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -237,7 +244,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy the Atom from reaction', async ({ page }) => {
+  test('Copy the Atom from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -247,10 +254,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
       force: true,
     });
     await MoleculesTopToolbar(page).copy();
-    await takeEditorScreenshot(page);
+    await expect(page).toHaveScreenshot();
   });
 
-  test('Copy the Bond from reaction', async ({ page }) => {
+  test('Copy the Bond from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -261,7 +268,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy the reaction with hotkey', async ({ page }) => {
+  test('Copy the reaction with hotkey', async () => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -272,7 +279,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and Paste structure and edit', async ({ page }) => {
+  test('Copy and Paste structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -295,7 +302,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the reaction', async ({ page }) => {
+  test('Copy and paste the reaction', async () => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -309,7 +316,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the Atom from reaction', async ({ page }) => {
+  test('Copy and paste the Atom from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1717
     Description: Atom from reaction is copy and pasted.
@@ -326,7 +333,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the Bond from reaction', async ({ page }) => {
+  test('Copy and paste the Bond from reaction', async () => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -344,7 +351,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the reaction with hotkey', async ({ page }) => {
+  test('Copy and paste the reaction with hotkey', async () => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -358,7 +365,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple Paste action', async ({ page }) => {
+  test('Multiple Paste action', async () => {
     /*
     Test case: EPMLSOPKET-1718
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -377,7 +384,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the Generic S-Group structure', async ({ page }) => {
+  test('Copy and paste the Generic S-Group structure', async () => {
     /*
     Test case: EPMLSOPKET-1726
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -391,9 +398,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste the Generic S-Group structure and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste the Generic S-Group structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-1726
     Description: The correct structure is pasted on the canvas.
@@ -412,7 +417,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste and Edit the pasted Structure', async ({ page }) => {
+  test('Copy and paste and Edit the pasted Structure', async () => {
     /*
     Test case: EPMLSOPKET-1719
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -430,7 +435,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste and Edit the pasted Structure', async ({ page }) => {
+  test('Cut and Paste and Edit the pasted Structure', async () => {
     /*
     Test case: EPMLSOPKET-1719
     Description: The correct structure is pasted on the canvas.
@@ -449,7 +454,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste R-Group structure', async ({ page }) => {
+  test('Copy and paste R-Group structure', async () => {
     /*
     Test case: EPMLSOPKET-1724
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -463,7 +468,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste R-Group structure', async ({ page }) => {
+  test('Cut and Paste R-Group structure', async () => {
     /*
     Test case: EPMLSOPKET-1724
     Description: The correct structure is pasted on the canvas.
@@ -485,7 +490,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the S-Group structure', async ({ page }) => {
+  test('Copy and paste the S-Group structure', async () => {
     /*
     Test case: EPMLSOPKET-1725
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -499,7 +504,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste the S-Group structure and edit', async ({ page }) => {
+  test('Cut and Paste the S-Group structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-1725
     Description: The correct structure is pasted on the canvas.
@@ -519,7 +524,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste the structure with attached data', async ({ page }) => {
+  test('Copy and paste the structure with attached data', async () => {
     /*
     Test case: EPMLSOPKET-1727
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -533,9 +538,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste structure with attached data and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste structure with attached data and edit', async () => {
     /*
     Test case: EPMLSOPKET-1727
     Description: The correct structure is pasted on the canvas.
@@ -557,7 +560,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste Stereo structure with Chiral flag', async ({ page }) => {
+  test('Copy and paste Stereo structure with Chiral flag', async () => {
     /*
     Test case: EPMLSOPKET-1728
     Description: Copied objects are pasted correctly.
@@ -571,9 +574,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste structure with Stereo and Chiral flag and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste structure with Stereo and Chiral flag and edit', async () => {
     /*
     Test case: EPMLSOPKET-1728
     Description: Copied objects are pasted correctly.
@@ -593,7 +594,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste reaction by hotkeys', async ({ page }) => {
+  test('Copy and paste reaction by hotkeys', async () => {
     /*
     Test case: EPMLSOPKET-1730
     Description: Copied objects are pasted correctly.
@@ -607,7 +608,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
+  test('Cut and Paste reaction by hotkeys and edit', async () => {
     /*
     Test case: EPMLSOPKET-1730
     Description: Copied objects are pasted correctly.
@@ -628,7 +629,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Cut/Paste reaction at the same canvas', async ({ page }) => {
+  test('Copy/Cut/Paste reaction at the same canvas', async () => {
     /*
     Test case: EPMLSOPKET-1739
     Description: The whole reaction is copied and pasted correctly.
@@ -658,7 +659,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste reaction with changed arrow', async ({ page }) => {
+  test('Copy and paste reaction with changed arrow', async () => {
     /*
     Test case: EPMLSOPKET-2873
     Description: Copied reaction has Failed Arrow with default size and position.
@@ -675,9 +676,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste reaction with changed arrow and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste reaction with changed arrow and edit', async () => {
     /*
     Test case: EPMLSOPKET-2873
     Description: Cut reaction has Failed Arrow with default size and position.
@@ -699,7 +698,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste reaction with multiple arrows', async ({ page }) => {
+  test('Copy and paste reaction with multiple arrows', async () => {
     /*
     Test case: EPMLSOPKET-2874
     Description: Copied reaction has plus sign and one arrow.
@@ -715,9 +714,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste reaction with multiple arrows and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste reaction with multiple arrows and edit', async () => {
     /*
     Test case: EPMLSOPKET-2874
     Description: Cut reaction has plus sign and one arrow.
@@ -739,7 +736,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste all kind of S-groups', async ({ page }) => {
+  test('Copy and paste all kind of S-groups', async () => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
@@ -756,7 +753,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
+  test('Cut and Paste all kind of S-groups and edit', async () => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
@@ -780,7 +777,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste Mapped reaction', async ({ page }) => {
+  test('Copy and paste Mapped reaction', async () => {
     /*
     Test case: EPMLSOPKET-2883
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
@@ -794,7 +791,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste Mapped reaction and edit', async ({ page }) => {
+  test('Cut and Paste Mapped reaction and edit', async () => {
     /*
     Test case: EPMLSOPKET-2883
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
@@ -811,7 +808,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste All kinds of bonds', async ({ page }) => {
+  test('Copy and paste All kinds of bonds', async () => {
     /*
     Test case: EPMLSOPKET-2945
     Description: Copied bonds are pasted as one object and correctly displayed without data loss.
@@ -827,7 +824,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste structure with Stereochemistry', async ({ page }) => {
+  test('Copy and paste structure with Stereochemistry', async () => {
     /*
     Test case: EPMLSOPKET-2946
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
@@ -840,9 +837,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste structure with Stereochemistry and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste structure with Stereochemistry and edit', async () => {
     /*
     Test case: EPMLSOPKET-2946
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
@@ -863,7 +858,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste complex R-Group structure', async ({ page }) => {
+  test('Copy and paste complex R-Group structure', async () => {
     /*
     Test case: EPMLSOPKET-2947
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -881,7 +876,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste complex R-Group structure and edit', async ({ page }) => {
+  test('Cut and Paste complex R-Group structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-2947
     Description: The correct structure is pasted on the canvas.
@@ -907,9 +902,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste Structure with Simple objects and text', async ({
-    page,
-  }) => {
+  test('Copy and paste Structure with Simple objects and text', async () => {
     /*
     Test case: EPMLSOPKET-2948
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -926,9 +919,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste Structure with Simple objects and text and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste Structure with Simple objects and text and edit', async () => {
     /*
     Test case: EPMLSOPKET-2948
     Description: The correct structure is pasted on the canvas.
@@ -954,7 +945,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste Aromatic structure', async ({ page }) => {
+  test('Copy and paste Aromatic structure', async () => {
     /*
     Test case: EPMLSOPKET-2949
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -971,7 +962,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste Aromatic structure and edit', async ({ page }) => {
+  test('Cut and Paste Aromatic structure and edit', async () => {
     /*
     Test case: EPMLSOPKET-2949
     Description: The correct structure is pasted on the canvas.
@@ -996,9 +987,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy and paste expanded and contracted Functional Froups', async ({
-    page,
-  }) => {
+  test('Copy and paste expanded and contracted Functional Froups', async () => {
     /*
     Test case: EPMLSOPKET-2952
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -1012,9 +1001,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste expanded and contracted Functional Froups and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste expanded and contracted Functional Froups and edit', async () => {
     /*
     Test case: EPMLSOPKET-2952
     Description: The correct structure is pasted on the canvas.
@@ -1033,11 +1020,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
       force: true,
     });
     await takeEditorScreenshot(page);
+    await EditAbbreviationDialog(page).cancel();
   });
 
-  test('Copy and paste expanded and contracted Salts and Solvents', async ({
-    page,
-  }) => {
+  test('Copy and paste expanded and contracted Salts and Solvents', async () => {
     /*
     Test case: EPMLSOPKET-2871
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -1054,9 +1040,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cut and Paste expanded and contracted Salts and Solvents and edit', async ({
-    page,
-  }) => {
+  test('Cut and Paste expanded and contracted Salts and Solvents and edit', async () => {
     /*
     Test case: EPMLSOPKET-2871
     Description: The correct structure is pasted on the canvas.
@@ -1082,11 +1066,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async () => {
     await waitForPageInit(page);
   });
 
-  test('Copy button', async ({ page }) => {
+  test('Copy button', async () => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -1107,7 +1091,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Cut button', async ({ page }) => {
+  test('Cut button', async () => {
     /*
     Test case: EPMLSOPKET-1710
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
@@ -1123,7 +1107,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Paste button', async ({ page }) => {
+  test('Paste button', async () => {
     /*
     Test case: EPMLSOPKET-1711
     Description: The 'Paste' button is always enabled.
@@ -1142,9 +1126,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async ({
-    page,
-  }) => {
+  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async () => {
     /*
     Description:
     Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393
@@ -1162,9 +1144,26 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).cancel();
     await page.keyboard.press('Control+Alt+v');
-    await clickInTheMiddleOfTheScreen(page, 'left', {
-      waitForMergeInitialization: true,
-    });
+    // await clickInTheMiddleOfTheScreen(page, 'left', {
+    //   waitForMergeInitialization: true,
+    // });
+    // await expect(
+    //   CommonLeftToolbar(page).areaSelectionDropdownButton,
+    // ).toHaveClass(/ActionButton-module_selected__/);
+    for (let i = 0; i < 3; i++) {
+      await clickInTheMiddleOfTheScreen(page, 'left', {
+        waitForMergeInitialization: true,
+      });
+
+      try {
+        await expect(
+          CommonLeftToolbar(page).areaSelectionDropdownButton,
+        ).toHaveClass(/ActionButton-module_selected__/, {
+          timeout: 200,
+        });
+        break;
+      } catch {}
+    }
     await expect(page).toHaveScreenshot();
   });
 });

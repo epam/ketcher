@@ -130,15 +130,18 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SRU': {
-          let connectivity: string = sgroup.data.connectivity || 'eu';
-          if (connectivity === 'ht') connectivity = '';
+          const connectivity: string = (
+            sgroup.data.connectivity || 'eu'
+          ).toUpperCase();
           const subscript = sgroup.data.subscript || 'n';
           SGroupdrawBracketsOptions.lowerIndexText = subscript;
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
           break;
         }
         case 'COP': {
-          const connectivity: string = sgroup.data.connectivity || 'eu';
+          const connectivity: string = (
+            sgroup.data.connectivity || 'eu'
+          ).toUpperCase();
           SGroupdrawBracketsOptions.upperIndexText = connectivity;
           const subtype = sgroup.data.subtype;
           if (sgroup.data.subtype) {

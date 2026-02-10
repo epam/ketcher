@@ -29,7 +29,7 @@ function Sgroup({ formState, ...props }) {
   const type = result.type;
   const isCopolymerEnabled = (props.selectedSruCount ?? 0) >= 2;
   const availableSchemes = useMemo(() => {
-    if (isCopolymerEnabled || type === 'COP') {
+    if (isCopolymerEnabled) {
       return schemes;
     }
     return Object.fromEntries(

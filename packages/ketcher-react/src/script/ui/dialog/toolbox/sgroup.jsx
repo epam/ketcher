@@ -32,8 +32,9 @@ function Sgroup({ formState, ...props }) {
     if (isCopolymerEnabled || type === 'COP') {
       return schemes;
     }
-    const { COP, ...rest } = schemes;
-    return rest;
+    return Object.fromEntries(
+      Object.entries(schemes).filter(([key]) => key !== 'COP'),
+    );
   }, [isCopolymerEnabled, schemes, type]);
 
   const serialize = useMemo(

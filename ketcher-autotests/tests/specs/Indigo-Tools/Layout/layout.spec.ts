@@ -175,13 +175,12 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Clean reaction with Layout tool', async ({ page }) => {
+  test('Clean reaction with Layout tool', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-2878
-    Description: After Layout action structures are undistorted. 
-    Position of the reaction does not change.
-    We have a bug https://github.com/epam/Indigo/issues/2229
-    */
+     * Test case: EPMLSOPKET-2878
+     * Description: After Layout action structures are undistorted.
+     * Position of the reaction does not change.
+     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/distorted-reaction.rxn');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

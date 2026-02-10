@@ -32,9 +32,6 @@ function Sgroup({ formState, ...props }) {
     if (isCopolymerEnabled || type === 'COP') {
       return schemes;
     }
-    if (!Object.prototype.hasOwnProperty.call(schemes, 'COP')) {
-      return schemes;
-    }
     const { COP, ...rest } = schemes;
     return rest;
   }, [isCopolymerEnabled, schemes, type]);

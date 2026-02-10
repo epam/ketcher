@@ -28,14 +28,11 @@ function Sgroup({ formState, ...props }) {
 
   const type = result.type;
   const isCopolymerEnabled = (props.selectedSruCount ?? 0) >= 2;
-  const availableSchemes = useMemo(() => {
-    if (isCopolymerEnabled) {
-      return schemes;
-    }
-    return Object.fromEntries(
-      Object.entries(schemes).filter(([key]) => key !== 'COP'),
-    );
-  }, [isCopolymerEnabled, schemes]);
+  const availableSchemes = isCopolymerEnabled
+    ? schemes
+    : Object.fromEntries(
+        Object.entries(schemes).filter(([key]) => key !== 'COP'),
+      );
 
   const serialize = useMemo(
     () =>

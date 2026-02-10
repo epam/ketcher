@@ -161,5 +161,119 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
+
+    it('should reject monomer with empty modificationTypes value', () => {
+      const monomerWithEmptyModificationTypes = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-TEST_MOD_EMPTY',
+            },
+          ],
+        },
+        'monomerTemplate-TEST_MOD_EMPTY': {
+          type: 'monomerTemplate',
+          id: 'TEST_MOD_EMPTY',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Mod Empty',
+          name: 'TEST_MOD_EMPTY',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'TEST_MOD_EMPTY',
+            MonomerClass: 'CHEM',
+            Name: 'TEST_MOD_EMPTY',
+            MonomerNaturalAnalogCode: 'X',
+            modificationTypes: ['   '],
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomerWithEmptyModificationTypes),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Load of "TEST_MOD_EMPTY" monomer has failed, monomer definition contains invalid modificationTypes value. The modificationTypes couldn\'t be empty',
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should reject monomer with formatting characters in modificationTypes', () => {
+      const monomerWithFormattingCharacters = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-TEST_MOD_FORMAT',
+            },
+          ],
+        },
+        'monomerTemplate-TEST_MOD_FORMAT': {
+          type: 'monomerTemplate',
+          id: 'TEST_MOD_FORMAT',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Mod Format',
+          name: 'TEST_MOD_FORMAT',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'TEST_MOD_FORMAT',
+            MonomerClass: 'CHEM',
+            Name: 'TEST_MOD_FORMAT',
+            MonomerNaturalAnalogCode: 'X',
+            modificationTypes: ['Bad\tType'],
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomerWithFormattingCharacters),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Load of "TEST_MOD_FORMAT" monomer has failed, monomer definition contains invalid modificationTypes value. The modificationTypes value contains formatting characters',
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should accept monomer with valid modificationTypes', () => {
+      const monomerWithValidModificationTypes = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-TEST_MOD_VALID',
+            },
+          ],
+        },
+        'monomerTemplate-TEST_MOD_VALID': {
+          type: 'monomerTemplate',
+          id: 'TEST_MOD_VALID',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Mod Valid',
+          name: 'TEST_MOD_VALID',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'TEST_MOD_VALID',
+            MonomerClass: 'CHEM',
+            Name: 'TEST_MOD_VALID',
+            MonomerNaturalAnalogCode: 'X',
+            modificationTypes: ['Natural amino acid'],
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomerWithValidModificationTypes),
+      );
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('invalid modificationTypes value'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
   });
 });

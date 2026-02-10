@@ -37,7 +37,7 @@ describe('Multiple repeating S-groups limitations should be in [1, 200]', () => 
 });
 
 describe('Copolymer S-Group type availability', () => {
-  const openTypeSelect = (selectedSruCount) => {
+  const renderAndOpenTypeSelect = (selectedSruCount) => {
     renderWithMockStore(
       <SGroup type="MUL" selectedSruCount={selectedSruCount} />,
     );
@@ -46,12 +46,12 @@ describe('Copolymer S-Group type availability', () => {
   };
 
   it('should hide Copolymer option when fewer than two SRUs are selected', () => {
-    openTypeSelect(1);
+    renderAndOpenTypeSelect(1);
     expect(screen.queryByTestId('Copolymer-option')).not.toBeInTheDocument();
   });
 
   it('should show Copolymer option when at least two SRUs are selected', () => {
-    openTypeSelect(2);
+    renderAndOpenTypeSelect(2);
     expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
 });

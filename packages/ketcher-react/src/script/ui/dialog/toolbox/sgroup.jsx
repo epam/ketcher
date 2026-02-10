@@ -34,7 +34,7 @@ function Sgroup({ formState, ...props }) {
     }
     const { COP, ...rest } = schemes;
     return rest;
-  }, [isCopolymerEnabled, type]);
+  }, [isCopolymerEnabled, schemes, type]);
 
   const serialize = useMemo(
     () =>

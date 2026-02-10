@@ -35,7 +35,7 @@ function Sgroup({ formState, ...props }) {
     return Object.fromEntries(
       Object.entries(schemes).filter(([key]) => key !== 'COP'),
     );
-  }, [isCopolymerEnabled, schemes, type]);
+  }, [isCopolymerEnabled, schemes]);
 
   const serialize = useMemo(
     () =>

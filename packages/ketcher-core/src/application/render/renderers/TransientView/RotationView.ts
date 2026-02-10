@@ -37,7 +37,7 @@ const STYLE = {
   INITIAL_COLOR: '#B4B9D6',
   ACTIVE_COLOR: '#365CFF',
   RECT_RADIUS: 20,
-  RECT_PADDING: 10,
+  RECT_PADDING: 30,
 };
 
 const LEFT_ARROW_PATH =
@@ -79,7 +79,7 @@ export class RotationView extends TransientView {
         .attr('ry', STYLE.RECT_RADIUS)
         .attr('fill', 'none')
         .attr('stroke', STYLE.INITIAL_COLOR)
-        .attr('stroke-dasharray', '4,4')
+        .attr('stroke-dasharray', '3,1')
         .attr('style', 'pointer-events: none');
     }
 

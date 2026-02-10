@@ -686,7 +686,7 @@ export class DrawingEntitiesManager {
         drawingEntity.firstMonomer.selected ||
         drawingEntity.secondMonomer?.selected
       ) {
-        // Bonds are updated when monomers are moved, no separate operation needed
+        command.addOperation(this.movePolymerBond(drawingEntity));
       }
     });
 
@@ -1101,9 +1101,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public movePolymerBond(polymerBond: PolymerBond, position: Vec2) {
+  public movePolymerBond(polymerBond: PolymerBond, position?: Vec2) {
     const command = new Command();
-    polymerBond.moveBondEndAbsolute(position.x, position.y);
+
+    if (position) {
+      polymerBond.moveBondStartAbsolute(position.x, position.y);
+    } else {
+      polymerBond.moveToLinkedEntities();
+    }
 
     const operation = new PolymerBondMoveOperation(polymerBond);
 

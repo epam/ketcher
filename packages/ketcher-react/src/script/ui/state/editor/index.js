@@ -46,9 +46,13 @@ export default function initEditor(dispatch, getState) {
     const editor = getState().editor;
     if (!editor?.structSelected) return 0;
     const selectedStruct = editor.structSelected();
-    return Array.from(selectedStruct.sgroups.values()).filter(
-      (sgroup) => sgroup.type === 'SRU',
-    ).length;
+    let count = 0;
+    for (const sgroup of selectedStruct.sgroups.values()) {
+      if (sgroup.type === 'SRU') {
+        count += 1;
+      }
+    }
+    return count;
   };
 
   const resetToSelect =

@@ -415,6 +415,20 @@ describe('Atom', () => {
       expect(litium.valence).toBe(1);
     });
 
+    it('should allow nitrogen valence 5 with five connections', () => {
+      const nitrogenParams = {
+        ...hydrogenParams,
+        label: 'N',
+        implicitH: 0,
+      };
+
+      const nitrogen = new Atom(nitrogenParams);
+      expect(nitrogen.calcValence(5)).toBe(true);
+      expect(nitrogen.valence).toBe(5);
+      expect(nitrogen.implicitH).toBe(0);
+      expect(nitrogen.badConn).toBe(false);
+    });
+
     it('should set valence = 2 for Platinum with 2 or fewer connections', () => {
       const platinumParams = {
         ...hydrogenParams,

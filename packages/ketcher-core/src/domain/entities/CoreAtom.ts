@@ -318,10 +318,7 @@ export class Atom extends DrawingEntity {
         } else if (charge === 2) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount;
-        } else if (
-          label === AtomLabel.N ||
-          radicalAmount + connectionAmount + absCharge <= 3
-        ) {
+        } else if (radicalAmount + connectionAmount + absCharge <= 3) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount - absCharge;
         } else {

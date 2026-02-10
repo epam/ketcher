@@ -37,7 +37,7 @@ describe('Multiple repeating S-groups limitations should be in [1, 200]', () => 
 });
 
 describe('Copolymer S-Group type availability', () => {
-  const renderAndOpenTypeSelect = (selectedSruCount) => {
+  const renderAndOpenTypeSelect = (selectedSruCount: number) => {
     renderWithMockStore(
       <SGroup type="MUL" selectedSruCount={selectedSruCount} />,
     );

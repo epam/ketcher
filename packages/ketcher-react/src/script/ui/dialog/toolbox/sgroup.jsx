@@ -27,8 +27,8 @@ function Sgroup({ formState, ...props }) {
   const { result, valid } = formState;
 
   const type = result.type;
-  const isCopolymerEnabled = (props.selectedSruCount ?? 0) >= 2;
-  const availableSchemes = isCopolymerEnabled
+  const canEnableCopolymer = (props.selectedSruCount ?? 0) >= 2;
+  const availableSchemes = canEnableCopolymer
     ? schemes
     : Object.fromEntries(
         Object.entries(schemes).filter(([key]) => key !== 'COP'),

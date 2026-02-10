@@ -27,6 +27,14 @@ function Sgroup({ formState, ...props }) {
   const { result, valid } = formState;
 
   const type = result.type;
+  const isCopolymerEnabled = (props.selectedSruCount ?? 0) >= 2;
+  const availableSchemes = useMemo(() => {
+    if (isCopolymerEnabled || type === 'COP') {
+      return schemes;
+    }
+    const { COP, ...rest } = schemes;
+    return rest;
+  }, [isCopolymerEnabled, type]);
 
   const serialize = useMemo(
     () =>
@@ -63,7 +71,7 @@ function Sgroup({ formState, ...props }) {
         <SelectOneOf
           title="Type"
           name="type"
-          schema={schemes}
+          schema={availableSchemes}
           data-testid="s-group-type"
         />
 

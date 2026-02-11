@@ -250,7 +250,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      // Keep Delete/Backspace for sequence editing when sequence mode is active.
+      // Sequence layout mode handles Delete/Backspace itself, so skip tool switching here.
       if (editor.isSequenceMode) return;
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;

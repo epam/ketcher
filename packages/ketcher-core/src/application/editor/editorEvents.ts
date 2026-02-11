@@ -250,7 +250,8 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      // Sequence layout mode handles Delete/Backspace itself, so skip tool switching here.
+      // Sequence layout mode handles Delete/Backspace itself (even when not editing),
+      // so skip tool switching here.
       if (editor.isSequenceMode) return;
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
@@ -264,6 +265,7 @@ export const hotkeysConfiguration = {
     shortcut: '1',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
+      // The bond tool requires toolName in options to select the bond type.
       editor.events.selectTool.dispatch([
         ToolName.bondSingle,
         { toolName: ToolName.bondSingle },
@@ -274,6 +276,7 @@ export const hotkeysConfiguration = {
     shortcut: '2',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
+      // The bond tool requires toolName in options to select the bond type.
       editor.events.selectTool.dispatch([
         ToolName.bondHydrogen,
         { toolName: ToolName.bondHydrogen },

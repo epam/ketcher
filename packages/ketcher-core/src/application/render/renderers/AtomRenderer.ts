@@ -729,7 +729,7 @@ export class AtomRenderer extends BaseRenderer {
       ?.append('text')
       .text(stereoLabel)
       .attr('font-family', 'Arial')
-      .attr('font-size', '10px')
+      .attr('font-size', '13px')
       .attr('fill', this.getStereoLabelColor())
       .attr('pointer-events', 'none');
 

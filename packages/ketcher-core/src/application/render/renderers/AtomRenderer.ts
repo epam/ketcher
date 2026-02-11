@@ -714,12 +714,26 @@ export class AtomRenderer extends BaseRenderer {
     }
   }
 
-  private appendStereoLabel() {
+  private shouldDisplayStereoLabel(): boolean {
     const stereoLabel = this.atom.properties.stereoLabel;
-
     if (!stereoLabel) {
+      return false;
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    return (
+      stereoLabelType === StereoLabel.And || stereoLabelType === StereoLabel.Or
+    );
+  }
+
+  private appendStereoLabel() {
+    if (!this.shouldDisplayStereoLabel()) {
       return;
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const stereoLabel = this.atom.properties.stereoLabel!;
 
     this.stereoLabelElement = this.canvas
       ?.append('g')

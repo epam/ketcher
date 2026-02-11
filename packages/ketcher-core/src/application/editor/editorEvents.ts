@@ -250,9 +250,27 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      if (editor.isSequenceEditMode) return;
+      if (editor.isSequenceMode) return;
+      const hasSelectedEntities =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
       editor.events.selectTool.dispatch([ToolName.erase]);
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      if (hasSelectedEntities) {
+        editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      }
+    },
+  },
+  bondSingle: {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      editor.events.selectTool.dispatch([ToolName.bondSingle]);
+    },
+  },
+  bondHydrogen: {
+    shortcut: '2',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      editor.events.selectTool.dispatch([ToolName.bondHydrogen]);
     },
   },
   clear: {

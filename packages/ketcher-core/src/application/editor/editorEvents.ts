@@ -199,6 +199,7 @@ const selectTools = [
 ];
 let currentSelectToolIdx = 0;
 
+// Bond tools require toolName in options to select the bond type.
 const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
   editor.events.selectTool.dispatch([toolName, { toolName }]);
 };
@@ -254,7 +255,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      // Sequence layout mode handles Delete/Backspace itself (even when not editing),
+      // Sequence mode handles Delete/Backspace itself (even when not editing),
       // so skip tool switching here.
       if (editor.isSequenceMode) return;
       const hasSelectedEntities =
@@ -269,7 +270,6 @@ export const hotkeysConfiguration = {
     shortcut: '1',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
-      // The bond tool requires toolName in options to select the bond type.
       selectBondTool(editor, ToolName.bondSingle);
     },
   },
@@ -277,7 +277,6 @@ export const hotkeysConfiguration = {
     shortcut: '2',
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
-      // The bond tool requires toolName in options to select the bond type.
       selectBondTool(editor, ToolName.bondHydrogen);
     },
   },

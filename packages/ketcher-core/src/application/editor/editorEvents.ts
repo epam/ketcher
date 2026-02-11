@@ -199,6 +199,10 @@ const selectTools = [
 ];
 let currentSelectToolIdx = 0;
 
+const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
+  editor.events.selectTool.dispatch([toolName, { toolName }]);
+};
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -266,10 +270,7 @@ export const hotkeysConfiguration = {
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
       // The bond tool requires toolName in options to select the bond type.
-      editor.events.selectTool.dispatch([
-        ToolName.bondSingle,
-        { toolName: ToolName.bondSingle },
-      ]);
+      selectBondTool(editor, ToolName.bondSingle);
     },
   },
   bondHydrogen: {
@@ -277,10 +278,7 @@ export const hotkeysConfiguration = {
     handler: (editor: CoreEditor) => {
       if (editor.isSequenceMode) return;
       // The bond tool requires toolName in options to select the bond type.
-      editor.events.selectTool.dispatch([
-        ToolName.bondHydrogen,
-        { toolName: ToolName.bondHydrogen },
-      ]);
+      selectBondTool(editor, ToolName.bondHydrogen);
     },
   },
   clear: {

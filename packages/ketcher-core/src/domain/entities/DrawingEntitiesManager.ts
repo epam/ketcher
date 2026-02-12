@@ -2709,6 +2709,10 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
     });
 
+    this.stereoFlags.forEach((stereoFlag) => {
+      editor.renderersContainer.deleteStereoFlag(stereoFlag);
+    });
+
     SequenceRenderer.clear();
   }
 

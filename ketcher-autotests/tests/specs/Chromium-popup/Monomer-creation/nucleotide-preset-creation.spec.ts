@@ -37,9 +37,15 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
+let dialog: ReturnType<typeof CreateMonomerDialog>;
+let presetSection: ReturnType<typeof NucleotidePresetSection>;
+let confirmModal: ReturnType<typeof ConfirmationMessageDialog>;
 
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
+  dialog = CreateMonomerDialog(page);
+  presetSection = NucleotidePresetSection(page);
+  confirmModal = ConfirmationMessageDialog(page);
 });
 
 test.afterAll(async ({ closePage }) => {
@@ -67,9 +73,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -134,9 +137,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -198,9 +198,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -255,9 +252,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -314,9 +308,6 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -399,9 +390,6 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -443,13 +431,11 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-    const confirmModal = ConfirmationMessageDialog(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
+    await expect(dialog.typeCombobox).toContainText('Nucleotide (monomer)');
+    await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
     await presetSection.setName('Preset');
     await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });
     await dialog.selectType(MonomerTypeInDropdown.Sugar);
@@ -484,10 +470,6 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-    const confirmModal = ConfirmationMessageDialog(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -528,10 +510,6 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
-    const confirmModal = ConfirmationMessageDialog(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -580,8 +558,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -622,14 +598,11 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
-    const dialog = CreateMonomerDialog(page);
-    const preset = NucleotidePresetSection(page);
-
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     // Ensure Preset tab is initially opened
-    await preset.openTab(NucleotidePresetTab.Preset);
+    await presetSection.openTab(NucleotidePresetTab.Preset);
     await selectAtomAndBonds(page, { atomIds: [2, 3], bondIds: [2] });
     await ContextMenu(page, getAtomLocator(page, { atomId: 2 })).click([
       MonomerWizardOption.MarkAs,
@@ -654,8 +627,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -683,8 +654,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -714,9 +683,6 @@ test.describe('Preset code formatting and default component code behavior', () =
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -750,9 +716,6 @@ test.describe('Preset code formatting and default component code behavior', () =
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -790,9 +753,6 @@ test.describe('Preset code formatting and default component code behavior', () =
      * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    const dialog = CreateMonomerDialog(page);
-    const presetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);

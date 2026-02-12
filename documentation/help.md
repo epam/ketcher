@@ -45,7 +45,7 @@ Using the _Tool palette_, you can:
 - Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options <img src=images/3_lasso_menu.png width = "100"/>):
   - To select **one atom or bond**, click _Lasso_ (1) or _Rectangle Selection tool_ (2), and then click the atom or bond;
   - To select the **entire structure**:
-      - Select the _Fragment Selection tool_ (3) and then click the object;
+      - Select the _Structure Selection tool_ (3) and then click the object;
       - Select the _Lasso_ or _Rectangle Selection tool_, and then drag the mouse to select the object;
       -`Ctrl-click`with the _Lasso_ or _Rectangle Selection tool_.
   - To select **multiple atoms, bonds, structures, or other objects**, do one of the following:
@@ -224,12 +224,13 @@ If there are two attachment points on an R-Group member, there must be two corre
 
 To mark S-Groups, use the _S-Group tool_ <img src=images/29_sgroup_icon.png width = "35"/> and the following dialog that appears after selecting a fragment with this tool:
 
-<img src=images/S-Group-Properties-3.6.png width = "250"/>
+<img src=images/S-Group-Properties-3.12..png width = "250"/>
 
 Available S-Group types:
 - _Data_ - an atom, a fragment, a multifragment, a single bond, or a group without the square brackets representation;
 - _Multiple group_ - indicates a number of replications of a fragment or a part of a structure in contracted form;
 - _SRU Polymer_ - the Structural Repeating Unit (SRU) brackets enclose the structural repeating of a polymer. You have three available patterns: head-to-tail (the default), head-to-head, and either/unknown;
+- _Copolymer_ - indicates a polymer made up of different repeating units. There are four subtypes: alternating, block, random, and not specified. Repeat patterns available for SRU polymers are also available for copolymers;
 - _Superatom_ - part of the structure or the whole structure that will be abbreviated to a text label or expanded to see the group chemistry surrounded with square brackets;
 - _Query component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties;
 - _Nucleotide Component_ - a special kind of superatom S-group used to indicate if a structure is a sugar, a base, or a phosphate.
@@ -1035,7 +1036,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | Shortcut             | Action                                                                             |
 | -------------------- | ---------------------------------------------------------------------------------- |
 | `Mod+h`              | Hand tool                                                                          |
-| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection           |
+| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Structure Selection, Fragment Selection           |
 | `Delete, Backspace`  | Erase                                                                              |
 | `Alt+e`              | Stereochemistry                                                                    |
 | `+`                  | Charge Plus                                                                        |

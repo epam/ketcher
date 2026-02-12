@@ -83,7 +83,6 @@ export const FloatingTools = () => {
       if (shouldShow) {
         const bbox =
           editor.drawingEntitiesManager?.getSelectedEntitiesBoundingBox();
-        console.log('bbox', bbox);
 
         if (bbox) {
           // Position the floating tools above the bounding box center
@@ -96,7 +95,6 @@ export const FloatingTools = () => {
             centerX * MODEL_TO_VIEW_SCALE,
             topY * MODEL_TO_VIEW_SCALE,
           );
-          console.log('viewPos', viewPos);
           setPosition(viewPos);
           setVisible(true);
         }
@@ -127,7 +125,6 @@ export const FloatingTools = () => {
   if (!visible) {
     return null;
   }
-  console.log(position);
 
   return (
     <FloatingToolsWrapper left={position.x} top={position.y}>

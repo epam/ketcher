@@ -1171,6 +1171,7 @@ abstract class SelectBase implements BaseTool {
     this.editor.transientDrawingView.showRotation({
       center: canvasCenter,
       boundingBox: canvasBbox,
+      cursor: this.editor.lastCursorPosition,
     });
     this.editor.transientDrawingView.update();
   }
@@ -1197,12 +1198,12 @@ abstract class SelectBase implements BaseTool {
     }
 
     // Only update if angle changed significantly
-    if (
-      Math.abs(angleDeltaDegrees - this.currentRotationAngle) <
-      SelectBase.ROTATION_ANGLE_EPSILON
-    ) {
-      return;
-    }
+    // if (
+    //   Math.abs(angleDeltaDegrees - this.currentRotationAngle) <
+    //   SelectBase.ROTATION_ANGLE_EPSILON
+    // ) {
+    //   return;
+    // }
 
     // Calculate the incremental rotation needed
     const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
@@ -1235,12 +1236,15 @@ abstract class SelectBase implements BaseTool {
           width: bottomRight.x - topLeft.x,
           height: bottomRight.y - topLeft.y,
         };
-
         this.editor.transientDrawingView.showRotation({
-          center: canvasCenter,
+          center: new Vec2(
+            canvasBbox.left + canvasBbox.width / 2,
+            canvasBbox.top + canvasBbox.height / 2,
+          ),
           boundingBox: canvasBbox,
           rotationAngle: angleDelta,
           isRotating: true,
+          cursor: this.editor.lastCursorPosition,
         });
         this.editor.transientDrawingView.update();
       }

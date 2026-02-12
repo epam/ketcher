@@ -18,6 +18,7 @@ import { TransientView } from 'application/render/renderers/TransientView/Transi
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { arc as d3Arc } from 'd3';
+import { Coordinates } from 'application/editor';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -29,6 +30,7 @@ export type RotationViewParams = {
   };
   rotationAngle?: number;
   isRotating?: boolean;
+  cursor?: Vec2;
 };
 
 const STYLE = {
@@ -38,6 +40,8 @@ const STYLE = {
   ACTIVE_COLOR: '#365CFF',
   RECT_RADIUS: 20,
   RECT_PADDING: 30,
+  // Small step to snap the protractor radius for a steadier UI.
+  PROTRACTOR_RADIUS_STEP: 5,
 };
 
 const LEFT_ARROW_PATH =
@@ -60,6 +64,7 @@ export class RotationView extends TransientView {
       boundingBox,
       rotationAngle = 0,
       isRotating = false,
+      cursor,
     } = params;
 
     const rectStartX = boundingBox.left - STYLE.RECT_PADDING;
@@ -144,13 +149,25 @@ export class RotationView extends TransientView {
 
     // Draw rotation protractor and arc when rotating
     if (isRotating && Math.abs(rotationAngle) > 0.001) {
-      const radius =
+      const centerInView = Coordinates.canvasToView(center);
+      const fallbackRadius =
         Math.sqrt(
-          Math.pow(handleCenterY - center.y, 2) +
-            Math.pow(handleCenterX - center.x, 2),
+          Math.pow(handleCenterY - centerInView.y, 2) +
+            Math.pow(handleCenterX - centerInView.x, 2),
         ) -
         STYLE.HANDLE_MARGIN -
         STYLE.HANDLE_RADIUS;
+
+      const rawRadius = cursor
+        ? Math.sqrt(
+            Math.pow(cursor.x - centerInView.x, 2) +
+              Math.pow(cursor.y - centerInView.y, 2),
+          )
+        : fallbackRadius;
+
+      const radius =
+        Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
+        STYLE.PROTRACTOR_RADIUS_STEP;
 
       if (radius > 0) {
         // Draw protractor circle

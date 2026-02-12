@@ -167,6 +167,16 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     drawingEntitiesManager.monomers.forEach((monomer) => {
+      const stereoFlag =
+        drawingEntitiesManager.getStereoFlagForMonomer(monomer);
+      if (stereoFlag) {
+        monomer.monomerItem.struct.frags.forEach((fragment) => {
+          if (fragment?.enhancedStereoFlag) {
+            fragment.stereoFlagPosition = new Vec2(stereoFlag.position);
+          }
+        });
+      }
+
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         const atomIdMap = new Map<number, number>();
         monomer.monomerItem.struct.mergeInto(

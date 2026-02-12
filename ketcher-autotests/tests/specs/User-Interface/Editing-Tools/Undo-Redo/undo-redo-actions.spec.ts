@@ -1,11 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvas,
-  waitForPageInit,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
@@ -57,13 +57,19 @@ import {
   BondTopologyOption,
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
 test.describe('Undo/Redo Actions', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Undo/Redo Erase template action', async ({ page }) => {
+  test('Undo/Redo Erase template action', async () => {
     /*
     Test case: EPMLSOPKET-1732
     Description: Undo/Redo actions work correctly:
@@ -86,7 +92,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Atom template action', async ({ page }) => {
+  test('Undo/Redo Atom template action', async () => {
     /*
     Test case: EPMLSOPKET-1740
     Description: Undo/Redo actions work correctly:
@@ -111,7 +117,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Atom Properties template action', async ({ page }) => {
+  test('Undo/Redo Atom Properties template action', async () => {
     /*
     Test case: EPMLSOPKET-1741
     Description: Undo/Redo actions work correctly:
@@ -141,7 +147,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Bond Properties template action', async ({ page }) => {
+  test('Undo/Redo Bond Properties template action', async () => {
     /*
     Test case: EPMLSOPKET-1742
     Description: Undo/Redo actions work correctly:
@@ -169,7 +175,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Bond template action', async ({ page }) => {
+  test('Undo/Redo Single Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1743
     Description: Undo/Redo action should work correctly:
@@ -192,7 +198,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double Bond template action', async ({ page }) => {
+  test('Undo/Redo Double Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1744
     Description: Undo/Redo action should work correctly:
@@ -214,7 +220,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Triple Bond template action', async ({ page }) => {
+  test('Undo/Redo Triple Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1750
     Description: Undo/Redo action should work correctly:
@@ -236,7 +242,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Chain template action', async ({ page }) => {
+  test('Undo/Redo Chain template action', async () => {
     /*
     Test case: EPMLSOPKET-1751
     Description: Undo/Redo action should work correctly:
@@ -260,7 +266,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Up stereobond template action', async ({ page }) => {
+  test('Undo/Redo Single Up stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -283,7 +289,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Down stereobond template action', async ({ page }) => {
+  test('Undo/Redo Single Down stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -306,9 +312,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Up/Down stereobond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single Up/Down stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -331,9 +335,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double Cis/Trans stereobond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Double Cis/Trans stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -356,7 +358,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Any Query Bond template action', async ({ page }) => {
+  test('Undo/Redo Any Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -379,7 +381,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Aromatic Query Bond template action', async ({ page }) => {
+  test('Undo/Redo Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -402,9 +404,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single/Double Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single/Double Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -427,9 +427,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single/Aromatic Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single/Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -452,9 +450,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double/Aromatic Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Double/Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -477,7 +473,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Mapping tool template action', async ({ page }) => {
+  test('Undo/Redo Mapping tool template action', async () => {
     /*
     Test case: EPMLSOPKET-1754
     Description: Undo/Redo action should work correctly:
@@ -497,7 +493,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Data S-Group tool', async ({ page }) => {
+  test('Undo/Redo Data S-Group tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -522,7 +518,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Multiple Group tool', async ({ page }) => {
+  test('Undo/Redo Multiple Group tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -544,7 +540,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo SRU Polymer tool', async ({ page }) => {
+  test('Undo/Redo SRU Polymer tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -567,7 +563,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Superatom tool', async ({ page }) => {
+  test('Undo/Redo Superatom tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -589,7 +585,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo R-Group Label tool', async ({ page }) => {
+  test('Undo/Redo R-Group Label tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -610,7 +606,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo R-Group Fragment tool', async ({ page }) => {
+  test('Undo/Redo R-Group Fragment tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -631,7 +627,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Attachment Point tool', async ({ page }) => {
+  test('Undo/Redo Attachment Point tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -652,7 +648,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple Undo/Redo', async ({ page }) => {
+  test('Multiple Undo/Redo', async () => {
     /*
     Test case: EPMLSOPKET-1757
     Description: Undo/Redo action should work correctly
@@ -685,7 +681,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Copy/Paste', async ({ page }) => {
+  test('Undo/Redo Copy/Paste', async () => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -708,7 +704,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Cut/Paste', async ({ page }) => {
+  test('Undo/Redo Cut/Paste', async () => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -731,7 +727,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Hotkeys', async ({ page }) => {
+  test('Undo/Redo Hotkeys', async () => {
     /*
     Test case: EPMLSOPKET-1759
     Description: Undo/Redo hotkeys action should work correctly
@@ -752,7 +748,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Zoom In/Zoom Out', async ({ page }) => {
+  test('Undo/Redo Zoom In/Zoom Out', async () => {
     /*
     Test case: EPMLSOPKET-1760
     Description: Undo/Redo hotkeys action should work correctly
@@ -776,7 +772,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo S-Group , Structure, Chain', async ({ page }) => {
+  test('Undo/Redo S-Group , Structure, Chain', async () => {
     /*
     Test case: EPMLSOPKET-2960
     Description: Undo/Redo action should work correctly
@@ -811,14 +807,8 @@ test.describe('Undo/Redo Actions', () => {
     }
     await takeEditorScreenshot(page);
   });
-});
 
-test.describe('Undo/Redo Actions', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Undo/Redo paste template action', async ({ page }) => {
+  test('Undo/Redo paste template action', async () => {
     /*
     Test case: EPMLSOPKET-1731
     Description: Undo/Redo actions work correctly:
@@ -830,12 +820,12 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).undo();
-    await expect(page).toHaveScreenshot();
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
-    await expect(page).toHaveScreenshot();
+    await takeEditorScreenshot(page);
   });
 
-  test('When mouse hovering - hotkey CTRL+Z is working', async ({ page }) => {
+  test('When mouse hovering - hotkey CTRL+Z is working', async () => {
     /*
     Test case: EPMLSOPKET-11847
     Description:
@@ -849,13 +839,16 @@ test.describe('Undo/Redo Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
-    await page.getByTestId('canvas').hover();
+    await page
+      .getByTestId(KETCHER_CANVAS)
+      .filter({ has: page.locator(':visible') })
+      .hover({ force: true });
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Undo deletes previously placed template', async ({ page }) => {
+  test('Undo deletes previously placed template', async () => {
     /*
     Test case: EPMLSOPKET-16939
     Description:

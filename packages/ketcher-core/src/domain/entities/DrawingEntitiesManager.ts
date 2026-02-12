@@ -581,6 +581,7 @@ export class DrawingEntitiesManager {
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
+      ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&

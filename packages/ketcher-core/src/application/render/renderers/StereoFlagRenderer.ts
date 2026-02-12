@@ -17,6 +17,7 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor';
+import { editorEvents } from 'application/editor/editorEvents';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
 import { Vec2 } from 'domain/entities';
@@ -109,11 +110,16 @@ export class StereoFlagRenderer extends BaseRenderer {
       return;
     }
 
+    if (this.hoverElement) {
+      return;
+    }
+
     this.hoverElement = this.rootElement
       .insert('rect', ':first-child')
       .attr('fill', 'none')
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
+      .attr('pointer-events', 'none')
       .attr('class', 'dynamic-element');
 
     this.setSelectionContourAttributes(this.hoverElement);
@@ -129,15 +135,30 @@ export class StereoFlagRenderer extends BaseRenderer {
       .attr('fill', 'none')
       .attr('stroke', 'none')
       .attr('pointer-events', 'all')
-      .attr('class', 'dynamic-element');
+      .attr('class', 'dynamic-element') as D3SvgElementSelection<
+      SVGRectElement,
+      void
+    >;
 
     this.setSelectionContourAttributes(this.hoverAreaElement);
 
+    type RendererDataNode = Omit<SVGRectElement, '__data__'> & {
+      __data__?: unknown;
+    };
+
+    this.hoverAreaElement.each((_, index, nodes) => {
+      // Make sure selection tools can access renderer through event.target.__data__
+      const node = nodes[index] as RendererDataNode;
+      node.__data__ = this;
+    });
+
     this.hoverAreaElement
-      ?.on('mouseover', () => {
+      .on('mouseover', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
-      .on('mouseout', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

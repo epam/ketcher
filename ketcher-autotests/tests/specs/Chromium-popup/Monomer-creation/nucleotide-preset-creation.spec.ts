@@ -433,8 +433,9 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerTypeInDropdown.NucleotideMonomer);
+    await expect(dialog.typeCombobox).toHaveText('Nucleotide (monomer)');
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await expect(dialog.typeCombobox).toContainText('Nucleotide (monomer)');
     await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
     await presetSection.setName('Preset');
     await presetSection.setupSugar({ atomIds: [2, 3], bondIds: [2] });

@@ -1,10 +1,9 @@
 /* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForPageInit,
   waitForRender,
   clickOnCanvas,
   resetZoomLevelToDefault,
@@ -47,12 +46,17 @@ import {
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-test.describe('Right-click menu', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Check right-click menu for bonds', async ({ page }) => {
+test.describe('Right-click menu', () => {
+  test('Check right-click menu for bonds', async () => {
     /*
      * Test case: EPMLSOPKET-5872
      * Description: The menu has appeared and contains the list of Bonds.
@@ -72,7 +76,7 @@ test.describe('Right-click menu', () => {
     await takeElementScreenshot(page, ContextMenu(page, point).contextMenuBody);
   });
 
-  test('Check right-click submenu for Query bonds', async ({ page }) => {
+  test('Check right-click submenu for Query bonds', async () => {
     /*
     Test case: EPMLSOPKET-5876
     Description: The menu has appeared and contains the list of Query Bonds.
@@ -83,7 +87,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check editing for bonds', async ({ page }) => {
+  test('Check editing for bonds', async () => {
     /*
     Test case: EPMLSOPKET-5873
     Description: Single Bond changes on Double Bond.
@@ -96,7 +100,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check selecting Bond type for bonds', async ({ page }) => {
+  test('Check selecting Bond type for bonds', async () => {
     /*
     Test case: EPMLSOPKET-5874
     Description: Single Bond changes on Double Bond.
@@ -107,7 +111,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check deleting for bonds', async ({ page }) => {
+  test('Check deleting for bonds', async () => {
     /*
     Test case: EPMLSOPKET-5875
     Description: Bond is deleted
@@ -118,9 +122,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that right-click menu does not cancel selected tool', async ({
-    page,
-  }) => {
+  test('Check that right-click menu does not cancel selected tool', async () => {
     /*
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
@@ -141,7 +143,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check right-click menu for atoms', async ({ page }) => {
+  test('Check right-click menu for atoms', async () => {
     /*
      * Test case: EPMLSOPKET-5879
      * Description: The menu has appeared and contains the following items:
@@ -172,7 +174,7 @@ test.describe('Right-click menu', () => {
     );
   });
 
-  test('Check right-click menu for S-Groups selection', async ({ page }) => {
+  test('Check right-click menu for S-Groups selection', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7391
      * Test case: Verify that Delete option in small molecules mode has an icon in right-click menu for S-Groups selection
@@ -201,7 +203,7 @@ test.describe('Right-click menu', () => {
     );
   });
 
-  test('Check right-click property change for atoms', async ({ page }) => {
+  test('Check right-click property change for atoms', async () => {
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await ContextMenu(
@@ -219,7 +221,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check editing for atoms', async ({ page }) => {
+  test('Check editing for atoms', async () => {
     /*
     Test case: EPMLSOPKET-5880
     Description: Carbon atom changes to Oxygen.
@@ -236,9 +238,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that menu Enhanced stereochemistry is grayed out if atom does not have enhanced stereochemistry', async ({
-    page,
-  }) => {
+  test('Check that menu Enhanced stereochemistry is grayed out if atom does not have enhanced stereochemistry', async () => {
     /*
     Test case: EPMLSOPKET-5881
     Description: The menu has appeared and contains the following items:
@@ -255,9 +255,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the menu Enhanced stereochemistry is NOT grayed out if the atom have enhanced stereochemistry', async ({
-    page,
-  }) => {
+  test('Check that the menu Enhanced stereochemistry is NOT grayed out if the atom have enhanced stereochemistry', async () => {
     /*
     Test case: EPMLSOPKET-5882
     Description: 'Enhanced stereochemistry' is NOT grayed out (User can add Enhanced stereochemistry)
@@ -271,9 +269,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check creating new AND Group from Enhanced stereochemistry item', async ({
-    page,
-  }) => {
+  test('Check creating new AND Group from Enhanced stereochemistry item', async () => {
     /*
     Test case: EPMLSOPKET-5884
     Description: Near the atom with the stereochemistry the '&1' and '&2' is displayed.
@@ -294,9 +290,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check creating new OR Group from Enhanced stereochemistry item', async ({
-    page,
-  }) => {
+  test('Check creating new OR Group from Enhanced stereochemistry item', async () => {
     /*
     Test case: EPMLSOPKET-5885
     Description: Near the atom with the stereochemistry the '&1' and 'or1' is displayed.
@@ -318,7 +312,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check deleting for atoms', async ({ page }) => {
+  test('Check deleting for atoms', async () => {
     /*
     Test case: EPMLSOPKET-5883
     Description: Atom is deleted by right-click menu
@@ -332,9 +326,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that there are no error when deleting few stereo bond via context-menu', async ({
-    page,
-  }) => {
+  test('Check that there are no error when deleting few stereo bond via context-menu', async () => {
     /*
     Test case: EPMLSOPKET-8926
     Description: Only selected atoms and bonds are deleted. No error is thrown.
@@ -354,7 +346,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Close menu by clicking on canvas', async ({ page }) => {
+  test('Close menu by clicking on canvas', async () => {
     /*
     Test case: EPMLSOPKET-10075
     Description: Menu is closed, no new atoms or structures are added to canvas
@@ -374,9 +366,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Right click on an Atom with selected S-Group tool not opens S-Group Properties window', async ({
-    page,
-  }) => {
+  test('Right click on an Atom with selected S-Group tool not opens S-Group Properties window', async () => {
     /*
     Test case: EPMLSOPKET-10082
     Description: Opens right-click menu for atom
@@ -391,9 +381,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Right click on a Bond with selected S-Group tool not opens S-Group Properties window', async ({
-    page,
-  }) => {
+  test('Right click on a Bond with selected S-Group tool not opens S-Group Properties window', async () => {
     /*
     Test case: EPMLSOPKET-10082
     Description: Opens right-click menu for bond
@@ -405,9 +393,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check Attach S-Group for bond by right-click menu', async ({
-    page,
-  }) => {
+  test('Check Attach S-Group for bond by right-click menu', async () => {
     /*
     Test case: EPMLSOPKET-15495
     Description: S-Group for Bond is attached.
@@ -425,7 +411,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple Atom editing by right-click menu', async ({ page }) => {
+  test('Multiple Atom editing by right-click menu', async () => {
     /*
     Test case: EPMLSOPKET-15496
     Description: Three selected Carbon atoms changed to Nitrogen atoms.
@@ -447,7 +433,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple Bond editing by right-click menu', async ({ page }) => {
+  test('Multiple Bond editing by right-click menu', async () => {
     /*
     Test case: EPMLSOPKET-15497
     Description: Three selected Single Bonds changed to Double Bonds.
@@ -467,9 +453,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Add attachment point." for selected atom', async ({
-    page,
-  }) => {
+  test('Verify that the "Highlight" option appears below "Add attachment point." for selected atom', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Add attachment point." for selected atom.
@@ -487,9 +471,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that removed Add attachment point functionality', async ({
-    page,
-  }) => {
+  test('Check that removed Add attachment point functionality', async () => {
     /*
     * Version 3.8
     Test case: https://github.com/epam/ketcher/issues/7683
@@ -508,9 +490,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Attach S-Group." for selected bond', async ({
-    page,
-  }) => {
+  test('Verify that the "Highlight" option appears below "Attach S-Group." for selected bond', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Attach S-Group." for selected bond.
@@ -525,9 +505,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds', async ({
-    page,
-  }) => {
+  test('Verify that the "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds.
@@ -555,9 +533,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click on the "Highlight" option and confirm that the standard colors are displayed (eight colors and a "No highlight" option)', async ({
-    page,
-  }) => {
+  test('Click on the "Highlight" option and confirm that the standard colors are displayed (eight colors and a "No highlight" option)', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option standard colors are displayed (eight colors and a "No highlight" option).
@@ -575,9 +551,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select each color individually and verify that the selected atoms are highlighted with the chosen color', async ({
-    page,
-  }) => {
+  test('Select each color individually and verify that the selected atoms are highlighted with the chosen color', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/4984
       Description: The selected atoms are highlighted with the chosen color.
@@ -612,9 +586,7 @@ test.describe('Right-click menu', () => {
     }
   });
 
-  test('Select each color individually and verify that the selected bonds are highlighted with the chosen color', async ({
-    page,
-  }) => {
+  test('Select each color individually and verify that the selected bonds are highlighted with the chosen color', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/4984
       Description: The selected bonds are highlighted with the chosen color.
@@ -646,9 +618,7 @@ test.describe('Right-click menu', () => {
     }
   });
 
-  test('Select the "No highlight" option and confirm that the highlight is removed from the selected elements', async ({
-    page,
-  }) => {
+  test('Select the "No highlight" option and confirm that the highlight is removed from the selected elements', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlight is removed from the selected elements.
@@ -679,9 +649,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Perform undo and redo operations after applying a highlight and verify that the highlight state is accurately restored', async ({
-    page,
-  }) => {
+  test('Perform undo and redo operations after applying a highlight and verify that the highlight state is accurately restored', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlight state is accurately restored.
@@ -709,9 +677,7 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Apply different highlights to different atoms/bonds and ensure that the highlights do not interfere with each other', async ({
-    page,
-  }) => {
+  test('Apply different highlights to different atoms/bonds and ensure that the highlights do not interfere with each other', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlights do not interfere with each other.

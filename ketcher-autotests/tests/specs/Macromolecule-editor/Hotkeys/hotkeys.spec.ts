@@ -1,4 +1,4 @@
-import { test, expect } from '@fixtures';
+import { test } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -85,14 +85,7 @@ test.describe('Hotkeys', () => {
     */
     await deleteByKeyboard(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await page.keyboard.press('1');
-    await expect(
-      page
-        .getByTestId('single-bond')
-        .filter({ has: page.locator(':visible') })
-        .first(),
-    ).toHaveClass(/active/);
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');

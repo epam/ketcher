@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { setExpandMonomerSGroup } from 'application/editor/actions/sgroup';
+import {
+  fromSgroupDeletion,
+  setExpandMonomerSGroup,
+} from 'application/editor/actions/sgroup';
 import { Render } from 'application/render';
 import { RenderOptions } from 'application/render/render.types';
 import { ReStruct } from 'application/render/restruct';
@@ -154,5 +157,69 @@ describe('setExpandMonomerSGroup', () => {
     setExpandMonomerSGroup(restruct, firstMonomerSGroupId, { expanded: false });
 
     expect(struct.bonds.get(bondId)?.stereo).toBe(Bond.PATTERN.STEREO.DOWN);
+  });
+
+  it('keeps unoccupied leaving-group atoms when removing monomer abbreviation', () => {
+    const struct = new Struct();
+    const atomId = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(0, 0) }),
+    );
+    const leaveAtom1Id = struct.atoms.add(
+      new Atom({ label: 'O', pp: new Vec2(-1, 0) }),
+    );
+    const leaveAtom2Id = struct.atoms.add(
+      new Atom({ label: 'O', pp: new Vec2(1, 0) }),
+    );
+
+    const bond1 = new Bond({
+      begin: atomId,
+      end: leaveAtom1Id,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const bond1Id = struct.bonds.add(bond1);
+    struct.bondInitHalfBonds(bond1Id, bond1);
+
+    const bond2 = new Bond({
+      begin: atomId,
+      end: leaveAtom2Id,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const bond2Id = struct.bonds.add(bond2);
+    struct.bondInitHalfBonds(bond2Id, bond2);
+    struct.initNeighbors();
+
+    const monomer = new Peptide({
+      ...peptideMonomerItem,
+      props: {
+        ...peptideMonomerItem.props,
+        MonomerCaps: {
+          R1: 'O',
+          R2: 'O',
+        },
+      },
+    });
+    const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+    const sgroupId = struct.sgroups.add(sgroup);
+    sgroup.id = sgroupId;
+    struct.atomAddToSGroup(sgroupId, atomId);
+    sgroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(atomId, leaveAtom1Id, '', 1),
+    );
+    sgroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(atomId, leaveAtom2Id, '', 2),
+    );
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    fromSgroupDeletion(restruct, sgroupId);
+
+    expect(struct.atoms.get(leaveAtom1Id)).toBeDefined();
+    expect(struct.atoms.get(leaveAtom2Id)).toBeDefined();
   });
 });

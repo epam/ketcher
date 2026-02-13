@@ -607,6 +607,11 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
     leaveAtomId: ap.leaveAtomId,
     attachmentPointNumber: ap.attachmentPointNumber,
   }));
+  const allLeaveAtomIds = new Set(
+    cachedAttachmentPoints
+      ?.map(({ leaveAtomId }) => leaveAtomId)
+      .filter((leaveAtomId) => isNumber(leaveAtomId)),
+  );
 
   action.addOp(new SGroupRemoveFromHierarchy(id));
 
@@ -652,6 +657,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
             const otherAtomId =
               bondBegin === attachmentAtomId ? bondEnd : bondBegin;
             if (otherAtomId === leaveAtomId) return false;
+            if (allLeaveAtomIds.has(otherAtomId)) return false;
             return !atoms.includes(otherAtomId);
           },
         );

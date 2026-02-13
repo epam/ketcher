@@ -537,6 +537,8 @@ export class DrawingEntitiesManager {
       }
     });
 
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
@@ -555,6 +557,7 @@ export class DrawingEntitiesManager {
       }
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     });
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
     return command;
   }
 
@@ -1102,7 +1105,14 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     this.stereoFlags.forEach((stereoFlag) => {
-      const shouldBeSelected = stereoFlag.relatedMonomer.selected;
+      const relatedMonomer = stereoFlag.relatedMonomer;
+      const monomerAtoms = [...this.atoms.values()].filter(
+        (atom) => atom.monomer === relatedMonomer,
+      );
+      const allMonomerAtomsSelected =
+        monomerAtoms.length > 0 && monomerAtoms.every((atom) => atom.selected);
+      const shouldBeSelected =
+        relatedMonomer.selected || allMonomerAtomsSelected;
 
       if (stereoFlag.selected !== shouldBeSelected) {
         if (shouldBeSelected) {

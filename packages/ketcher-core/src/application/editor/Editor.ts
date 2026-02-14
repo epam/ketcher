@@ -460,6 +460,13 @@ export class CoreEditor {
         return;
       }
 
+      if (!templateDefinition.name?.trim()) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (

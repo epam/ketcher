@@ -66,6 +66,9 @@ const getDegreeDifference = (a: number, b: number) => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class RotationView extends TransientView {
+  private static lastSnappingRadius?: number;
+  private static wasRotating = false;
+
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: RotationViewParams,
@@ -77,6 +80,13 @@ export class RotationView extends TransientView {
       isRotating = false,
       cursor,
     } = params;
+
+    if (!isRotating) {
+      RotationView.lastSnappingRadius = undefined;
+    } else if (!RotationView.wasRotating) {
+      RotationView.lastSnappingRadius = undefined;
+    }
+    RotationView.wasRotating = isRotating;
 
     const rectStartX = boundingBox.left - STYLE.RECT_PADDING;
     const rectStartY = boundingBox.top - STYLE.RECT_PADDING;
@@ -163,7 +173,7 @@ export class RotationView extends TransientView {
       .attr('transform', 'translate(-10,-10)');
 
     // Draw rotation protractor and arc when rotating
-    if (isRotating && Math.abs(rotationAngle) > 0.001) {
+    if (isRotating) {
       const centerInView = Coordinates.canvasToView(center);
       const fallbackRadius =
         Math.sqrt(
@@ -180,9 +190,26 @@ export class RotationView extends TransientView {
           )
         : fallbackRadius;
 
-      const radius =
+      const snappedToStep =
         Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
         STYLE.PROTRACTOR_RADIUS_STEP;
+      let radius = snappedToStep > 0 ? snappedToStep : 0;
+
+      const lastSnappingRadius = RotationView.lastSnappingRadius;
+      if (radius > 0) {
+        if (lastSnappingRadius === undefined) {
+          RotationView.lastSnappingRadius = radius;
+        } else {
+          // Keep the radius stable until it grows/shrinks enough (as in rotate-controller).
+          const upperThreshold = lastSnappingRadius * 1.4;
+          const lowerThreshold = lastSnappingRadius / 1.4;
+          if (radius >= upperThreshold || radius <= lowerThreshold) {
+            RotationView.lastSnappingRadius = radius;
+          } else {
+            radius = lastSnappingRadius;
+          }
+        }
+      }
 
       if (radius > 0) {
         // Draw protractor circle

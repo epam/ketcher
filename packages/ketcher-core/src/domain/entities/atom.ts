@@ -670,7 +670,7 @@ export class Atom extends BaseMicromoleculeEntity {
           hydrogenCount: 3 - radicalCount - connectionCount,
         };
       }
-      if (label === 'N' || radicalCount + connectionCount + absCharge <= 3) {
+      if (radicalCount + connectionCount + absCharge <= 3) {
         return {
           valence: 3,
           hydrogenCount: 3 - radicalCount - connectionCount - absCharge,

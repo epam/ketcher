@@ -3,11 +3,14 @@ import CreateMonomerTool from './create-monomer';
 import type Editor from '../Editor';
 
 describe('CreateMonomerTool', () => {
+  const initialSelectionTool = SettingsManager.selectionTool;
+
   beforeEach(() => {
     jest.useFakeTimers();
   });
 
   afterEach(() => {
+    SettingsManager.selectionTool = initialSelectionTool;
     jest.useRealTimers();
   });
 

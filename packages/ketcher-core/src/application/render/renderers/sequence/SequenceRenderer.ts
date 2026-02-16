@@ -1265,6 +1265,17 @@ export class SequenceRenderer {
   }
 }
 
+const getCustomToString = (value: object): string | undefined => {
+  const toStringCandidate = (value as { toString?: () => string }).toString;
+  if (
+    typeof toStringCandidate === 'function' &&
+    toStringCandidate !== Object.prototype.toString
+  ) {
+    return toStringCandidate.call(value);
+  }
+  return undefined;
+};
+
 export function sequenceReplacer(key: string, value: unknown): unknown {
   if (key === 'renderer') {
     return `<${typeof value}>`;
@@ -1283,10 +1294,10 @@ export function sequenceReplacer(key: string, value: unknown): unknown {
     !['Object', 'Array'].includes(value.constructor.name)
   ) {
     const valueObj = value as object;
-    const hasOwnToString = valueObj.toString !== Object.prototype.toString;
+    const repr = getCustomToString(valueObj);
     return {
       ctor: value.constructor.name,
-      ...(hasOwnToString && { repr: valueObj.toString() }),
+      ...(repr && { repr }),
       ...value,
     };
   }

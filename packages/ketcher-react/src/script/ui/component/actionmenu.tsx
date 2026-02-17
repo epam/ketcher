@@ -93,7 +93,7 @@ function isMenuItemWithMenu(item: MenuItem): item is MenuItemWithMenu {
     typeof item === 'object' &&
     item !== null &&
     'menu' in item &&
-    Array.isArray((item as MenuItemWithMenu).menu)
+    Array.isArray(item.menu)
   );
 }
 

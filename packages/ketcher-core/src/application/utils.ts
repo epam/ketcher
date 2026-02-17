@@ -138,6 +138,9 @@ export async function parseAndAddMacromoleculesOnCanvas(
       editor.drawingEntitiesManager,
     );
 
-  EditorHistory.getInstance(editor).update(modelChanges, mergeWithLatestHistoryCommand);
+  EditorHistory.getInstance(editor).update(
+    modelChanges,
+    mergeWithLatestHistoryCommand,
+  );
   editor.renderersContainer.update(modelChanges);
 }

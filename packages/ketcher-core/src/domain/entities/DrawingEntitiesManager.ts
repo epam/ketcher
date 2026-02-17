@@ -3898,4 +3898,95 @@ export class DrawingEntitiesManager {
 
     return connectedMoleculeMonomers;
   }
+
+  public createRotationHistoryCommand(
+    initialPositions: Map<number, Vec2>,
+  ): Command {
+    const command = new Command();
+    const zeroOffset = new Vec2(0, 0);
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (!drawingEntity.selected) {
+        return;
+      }
+
+      const initialPosition = initialPositions.get(drawingEntity.id);
+      if (!initialPosition) {
+        return;
+      }
+
+      const delta = drawingEntity.position.sub(initialPosition);
+      if (delta.length() === 0) {
+        return;
+      }
+
+      command.merge(
+        this.createDrawingEntityMovingCommand(drawingEntity, zeroOffset, delta),
+      );
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    return command;
+  }
 }

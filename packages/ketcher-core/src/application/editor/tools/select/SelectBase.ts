@@ -89,6 +89,7 @@ abstract class SelectBase implements BaseTool {
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
+  protected rotationStartPositions = new Map<number, Vec2>();
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = EditorHistory.getInstance(this.editor);
@@ -178,8 +179,16 @@ abstract class SelectBase implements BaseTool {
 
     if (!this.rotationCenter) {
       this.mode = 'standby';
+      this.rotationStartPositions.clear();
       return;
     }
+
+    this.rotationStartPositions = new Map(
+      this.editor.drawingEntitiesManager.selectedEntitiesArr.map((entity) => [
+        entity.id,
+        new Vec2(entity.position),
+      ]),
+    );
 
     const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
     const cursorPos = this.editor.lastCursorPositionOfCanvas;
@@ -1259,18 +1268,14 @@ abstract class SelectBase implements BaseTool {
       this.mode = 'standby';
       this.rotationCenter = null;
       this.currentRotationAngle = 0;
+      this.rotationStartPositions.clear();
       this.updateRotationView();
       return;
     }
 
-    // The rotation was already applied incrementally during handleRotationMove.
-    // We record the full rotation in history so undo/redo works correctly.
-    // Pass 0 as partOfMovement (already applied) and false for isPartialRotation
-    // so the DrawingEntityMoveOperation stores the proper inverse operation.
     const modelChanges =
-      this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-        new Vec2(0, 0), // No additional movement needed
-        new Vec2(0, 0), // Rotation tracking handled separately
+      this.editor.drawingEntitiesManager.createRotationHistoryCommand(
+        this.rotationStartPositions,
       );
 
     this.history.update(modelChanges);
@@ -1278,6 +1283,7 @@ abstract class SelectBase implements BaseTool {
     this.mode = 'standby';
     this.rotationCenter = null;
     this.currentRotationAngle = 0;
+    this.rotationStartPositions.clear();
     this.updateRotationView();
   }
 

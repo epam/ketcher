@@ -126,9 +126,10 @@ class SGroupTool implements Tool {
             const sgroupBonds =
               actualSgroupId !== undefined &&
               SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
-            atom === sgroupAtoms[0] &&
-              newSelected.atoms.push(...sgroupAtoms) &&
+            if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+              newSelected.atoms.push(...sgroupAtoms);
               newSelected.bonds.push(...sgroupBonds);
+            }
           }
 
           if (atomFromStruct) {
@@ -937,7 +938,8 @@ function countOfSelectedComponents(restruct, atoms): any {
   const atomSet = new Pile(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(
-    (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
+    (acc: number, component) =>
+      acc + (atomSet.isSuperset(component as Pile) ? 1 : 0),
     0,
   );
 }

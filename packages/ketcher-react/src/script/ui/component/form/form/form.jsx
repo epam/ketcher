@@ -418,6 +418,13 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator);
+      const {
+        pattern: _,
+        maxLength: __,
+        enum: ___,
+        enumNames: ____,
+        ...rest
+      } = schemaCopy.properties[formatName];
       schemaCopy.properties[formatName] = {
         ...rest,
         format: formatName,

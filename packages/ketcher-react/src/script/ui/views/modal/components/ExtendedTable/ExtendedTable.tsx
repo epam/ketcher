@@ -37,7 +37,6 @@ interface TableProps {
   disabledQueryElements: Array<string> | null | undefined;
   isNestedModal?: boolean;
   onOk: (result: unknown) => void;
-  onCancel: () => void;
 }
 
 const Table = (props: TableProps) => {
@@ -62,12 +61,19 @@ const Table = (props: TableProps) => {
     }
   };
 
+  // Cast props to satisfy the Dialog component's expectations
+  const dialogParams = props as unknown as {
+    onOk: (result: unknown) => void;
+    onCancel: () => void;
+    isNestedModal?: boolean;
+  };
+
   return (
     <Dialog
       title="Extended Table"
       withDivider
       className={classes.extendedTable}
-      params={props}
+      params={dialogParams}
       result={result}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Add' }}

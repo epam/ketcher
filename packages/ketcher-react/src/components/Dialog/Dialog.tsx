@@ -41,7 +41,7 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
   needMargin?: boolean;
@@ -83,13 +83,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    const current = dialogRef.current;
     if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+      (current as HTMLElement).focus();
     }
 
     return () => {
       (
-        dialogRef.current
+        current
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();
@@ -133,7 +134,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       data-testid={'info-modal-window'}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header

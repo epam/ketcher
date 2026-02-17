@@ -1,4 +1,12 @@
 import { Atom, AttachmentPoints, radicalElectrons } from 'domain/entities/atom';
+import {
+  Bond,
+  MonomerMicromolecule,
+  SGroup,
+  SGroupAttachmentPoint,
+  Struct,
+} from 'domain/entities';
+import { Peptide } from 'domain/entities/Peptide';
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -52,6 +60,52 @@ describe('Atom', () => {
     it('should create getter function "pseudo" and able to call it', () => {
       const atom = new Atom(hydrogenParams);
       expect(atom.pseudo).toBe('');
+    });
+  });
+
+  describe('isHiddenLeavingGroupAtom', () => {
+    it('should return false for malformed attachment point where leaving atom equals attachment atom', () => {
+      const struct = new Struct();
+      const monomer = new Peptide({
+        label: '-Me',
+        attachmentPoints: [],
+        seqId: 1,
+      } as any);
+      const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+      sgroup.id = struct.sgroups.add(sgroup);
+
+      const atomId = struct.atoms.add(
+        new Atom({
+          ...hydrogenParams,
+          label: 'C',
+          fragment: -1,
+        }),
+      );
+      const externalAtomId = struct.atoms.add(
+        new Atom({
+          ...hydrogenParams,
+          label: 'N',
+        }),
+      );
+
+      struct.atomAddToSGroup(sgroup.id, atomId);
+      sgroup.addAttachmentPoint(
+        new SGroupAttachmentPoint(atomId, atomId, 'Al', 1),
+      );
+
+      const bondId = struct.bonds.add(
+        new Bond({
+          begin: atomId,
+          end: externalAtomId,
+          type: Bond.PATTERN.TYPE.SINGLE,
+          beginSuperatomAttachmentPointNumber: 1,
+        }),
+      );
+      const bond = struct.bonds.get(bondId) as Bond;
+      struct.bondInitHalfBonds(bondId, bond);
+      struct.initNeighbors();
+
+      expect(Atom.isHiddenLeavingGroupAtom(struct, atomId)).toBe(false);
     });
   });
 

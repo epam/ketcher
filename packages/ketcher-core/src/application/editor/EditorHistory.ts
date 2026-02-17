@@ -27,6 +27,7 @@ export class EditorHistory {
   historyPointer = 0;
   editor!: CoreEditor;
 
+  // eslint-disable-next-line no-use-before-define
   private static _instance: EditorHistory | null = null;
 
   private constructor(editor: CoreEditor) {

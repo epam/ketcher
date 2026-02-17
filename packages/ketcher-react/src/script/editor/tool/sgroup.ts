@@ -103,7 +103,7 @@ class SGroupTool implements Tool {
             extraAtoms = true;
           }
 
-          const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
+          const atomFromStruct = atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -121,11 +121,13 @@ class SGroupTool implements Tool {
               SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
             const sgroupAtoms =
-              actualSgroupId !== undefined &&
-              SGroup.getAtoms(molecule, sgroups.get(actualSgroupId));
+              actualSgroupId !== undefined
+                ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
+                : undefined;
             const sgroupBonds =
-              actualSgroupId !== undefined &&
-              SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
+              actualSgroupId !== undefined
+                ? SGroup.getBonds(molecule, sgroups.get(actualSgroupId))
+                : undefined;
             atom === sgroupAtoms[0] &&
               newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
               newSelected.bonds.push(...(sgroupBonds as Array<any>));
@@ -180,7 +182,7 @@ class SGroupTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
+      const atomFromStruct = atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
       if (
         atomFromStruct &&
@@ -202,7 +204,7 @@ class SGroupTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
+      const bondFromStruct = bondId !== null ? struct.bonds.get(bondId)?.b : undefined;
 
       if (
         bondFromStruct &&

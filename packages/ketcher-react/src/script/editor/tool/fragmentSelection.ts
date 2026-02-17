@@ -173,8 +173,8 @@ export default class FragmentSelectionTool implements Tool {
     const reAtom = atomItem && restruct.bonds.get(atomItem.id);
 
     if (
-      (reBond && reBond.selected) ||
-      (reAtom && reAtom.selected) ||
+      reBond?.selected ||
+      reAtom?.selected ||
       (!reBond && !reAtom)
     ) {
       handleMovingPosibilityCursor(

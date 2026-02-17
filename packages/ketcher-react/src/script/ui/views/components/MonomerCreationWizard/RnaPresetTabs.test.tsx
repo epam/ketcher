@@ -267,10 +267,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     const allHighlights = createCalls.flat();
 
     const baseHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(1),
+      (h: any) => h.atoms?.includes(1),
     );
     const sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(4),
+      (h: any) => h.atoms?.includes(4),
     );
 
     expect(baseHighlight).toMatchObject({
@@ -322,13 +322,13 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     const allHighlights = createCalls.flat();
 
     const baseHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(1),
+      (h: any) => h.atoms?.includes(1),
     );
     const sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(4),
+      (h: any) => h.atoms?.includes(4),
     );
     const phosphateHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(7),
+      (h: any) => h.atoms?.includes(7),
     );
 
     // Base should have inactive color
@@ -414,10 +414,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     let allHighlights = createCalls.flat();
 
     let baseHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(1),
+      (h: any) => h.atoms?.includes(1),
     );
     let sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(4),
+      (h: any) => h.atoms?.includes(4),
     );
 
     // Base should be active
@@ -437,10 +437,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     allHighlights = createCalls.flat();
 
     baseHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(1),
+      (h: any) => h.atoms?.includes(1),
     );
     sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms && h.atoms.includes(4),
+      (h: any) => h.atoms?.includes(4),
     );
 
     // Now sugar should be active and base should be inactive

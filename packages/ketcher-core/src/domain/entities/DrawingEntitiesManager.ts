@@ -690,6 +690,38 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            new Vec2(0, 0),
+            new Vec2(0, 0),
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            new Vec2(0, 0),
+            new Vec2(0, 0),
+          ),
+        );
+      }
+    });
+
     return command;
   }
 
@@ -746,11 +778,11 @@ export class DrawingEntitiesManager {
   }
 
   public getSelectedEntitiesBoundingBox() {
-    const selectedMonomers = this.selectedMonomers;
-    if (selectedMonomers.length === 0) {
+    const selectedEntities = this.selectedEntitiesArr;
+    if (selectedEntities.length === 0) {
       return null;
     }
-    return DrawingEntitiesManager.getStructureBbox(selectedMonomers);
+    return DrawingEntitiesManager.getStructureBbox(selectedEntities);
   }
 
   public getSelectedEntitiesCenter(): Vec2 | null {

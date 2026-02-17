@@ -1132,11 +1132,11 @@ abstract class SelectBase implements BaseTool {
   }
 
   protected updateRotationView() {
-    const selectedMonomers =
-      this.editor.drawingEntitiesManager.selectedMonomers;
+    const selectedEntities =
+      this.editor.drawingEntitiesManager.selectedEntitiesArr;
 
     if (
-      selectedMonomers.length < 2 ||
+      selectedEntities.length < 2 ||
       this.editor.mode.modeName === 'sequence-layout-mode' ||
       this.mode !== 'standby'
     ) {

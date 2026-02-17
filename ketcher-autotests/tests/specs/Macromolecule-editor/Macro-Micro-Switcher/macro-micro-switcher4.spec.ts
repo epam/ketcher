@@ -435,8 +435,23 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   );
   await CommonLeftToolbar(page).erase();
 
+  const bondWithBiggestId = await page.$$eval(
+    '[data-testid="bond"]',
+    (nodes) => {
+      const withIds = nodes.map((n) => ({
+        id: Number(
+          n.getAttribute('data-bondid') || n.getAttribute('data-bond-id') || 0,
+        ),
+      }));
+      const maxBond = withIds.reduce((max, cur) =>
+        cur.id > max.id ? cur : max,
+      );
+      return maxBond.id;
+    },
+  );
+
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondId: bondWithBiggestId },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
@@ -480,8 +495,27 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   );
   await CommonLeftToolbar(page).erase();
 
+  const bondWithBiggestId = await page.$$eval(
+    '[data-testid="bond"]',
+    (nodes) => {
+      const withIds = nodes.map((n) => ({
+        id: Number(
+          n.getAttribute('data-bondid') || n.getAttribute('data-bond-id') || 0,
+        ),
+      }));
+      const maxBond = withIds.reduce((max, cur) =>
+        cur.id > max.id ? cur : max,
+      );
+      return maxBond.id;
+    },
+  );
+
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    {
+      bondType: BondType.Single,
+      bondStereo: BondStereo.None,
+      bondId: bondWithBiggestId,
+    },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
@@ -595,8 +629,27 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
   );
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
+  const bondWithBiggestId = await page.$$eval(
+    '[data-testid="bond"]',
+    (nodes) => {
+      const withIds = nodes.map((n) => ({
+        id: Number(
+          n.getAttribute('data-bondid') || n.getAttribute('data-bond-id') || 0,
+        ),
+      }));
+      const maxBond = withIds.reduce((max, cur) =>
+        cur.id > max.id ? cur : max,
+      );
+      return maxBond.id;
+    },
+  );
+
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    {
+      bondType: BondType.Single,
+      bondStereo: BondStereo.None,
+      bondId: bondWithBiggestId,
+    },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
@@ -641,8 +694,27 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
   );
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
+  const bondWithBiggestId = await page.$$eval(
+    '[data-testid="bond"]',
+    (nodes) => {
+      const withIds = nodes.map((n) => ({
+        id: Number(
+          n.getAttribute('data-bondid') || n.getAttribute('data-bond-id') || 0,
+        ),
+      }));
+      const maxBond = withIds.reduce((max, cur) =>
+        cur.id > max.id ? cur : max,
+      );
+      return maxBond.id;
+    },
+  );
+
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    {
+      bondType: BondType.Single,
+      bondStereo: BondStereo.None,
+      bondId: bondWithBiggestId,
+    },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },

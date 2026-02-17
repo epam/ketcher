@@ -135,12 +135,11 @@ class SGroupTool implements Tool {
             }
           }
 
-          if (atomFromStruct) {
+          if (atomFromStruct && atomId !== null) {
             atomsResult.push(atomId);
           }
         }
       }
-
       if (extraAtoms) {
         atomsResult = [];
       }
@@ -189,6 +188,7 @@ class SGroupTool implements Tool {
 
       if (
         atomFromStruct &&
+        atomId !== null &&
         !(
           FunctionalGroup.isAtomInContractedFunctionalGroup(
             atomFromStruct,
@@ -212,6 +212,7 @@ class SGroupTool implements Tool {
 
       if (
         bondFromStruct &&
+        bondId !== null &&
         !(
           FunctionalGroup.isBondInContractedFunctionalGroup(
             bondFromStruct,

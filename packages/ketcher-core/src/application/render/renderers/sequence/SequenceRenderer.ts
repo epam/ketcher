@@ -1266,7 +1266,7 @@ export class SequenceRenderer {
 }
 
 const getCustomToString = (value: object): string | undefined => {
-  const toStringCandidate = (value as { toString?: () => string }).toString;
+  const toStringCandidate = (value as { toString: () => string }).toString;
   if (
     typeof toStringCandidate === 'function' &&
     toStringCandidate !== Object.prototype.toString

@@ -188,14 +188,12 @@ class ReText extends ReObject {
       const row: Array<RaphaelBaseElement> = [];
 
       if (textNodes.length === 0) {
-        const path = paper
-          .text(paperScale.x, paperScale.y, '\u00a0')
-          .attr({
-            font: options.font,
-            'font-size': options.fontszInPx,
-            'text-anchor': 'start',
-            fill: '#000000',
-          });
+        const path = paper.text(paperScale.x, paperScale.y, '\u00a0').attr({
+          font: options.font,
+          'font-size': options.fontszInPx,
+          'text-anchor': 'start',
+          fill: '#000000',
+        });
         path.node.setAttribute('data-testid', 'text-label');
         path.node.setAttribute(
           'data-text-id',
@@ -209,15 +207,13 @@ class ReText extends ReObject {
           const text =
             textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
 
-          const path = paper
-            .text(paperScale.x, paperScale.y, text)
-            .attr({
-              font: options.font,
-              'font-size': options.fontszInPx,
-              'text-anchor': 'start',
-              fill: '#000000',
-              ...styles,
-            });
+          const path = paper.text(paperScale.x, paperScale.y, text).attr({
+            font: options.font,
+            'font-size': options.fontszInPx,
+            'text-anchor': 'start',
+            fill: '#000000',
+            ...styles,
+          });
           path.node.setAttribute('data-testid', 'text-label');
           path.node.setAttribute(
             'data-text-id',
@@ -256,7 +252,9 @@ class ReText extends ReObject {
     // Parse font-size from style string
     let customFontSize: number | null = null;
     if (textNode.style) {
-      const fontSizeMatch = textNode.style.match(/font-size:\s*(\d+\.?\d*)px/);
+      const fontSizeMatch = textNode.style.match(
+        /font-size:\s*(\d+(?:\.\d+)?)px/,
+      );
       if (fontSizeMatch) {
         customFontSize = parseFloat(fontSizeMatch[1]);
         styles['font-size'] = customFontSize + 'px';

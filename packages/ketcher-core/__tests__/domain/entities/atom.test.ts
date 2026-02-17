@@ -7,6 +7,7 @@ import {
   Struct,
 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
+import { peptideMonomerItem } from '../../mock-data';
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -64,13 +65,12 @@ describe('Atom', () => {
   });
 
   describe('isHiddenLeavingGroupAtom', () => {
-    it('should return false for malformed attachment point where leaving atom equals attachment atom', () => {
+    it('should return false when attachment point references itself (self-referential)', () => {
       const struct = new Struct();
       const monomer = new Peptide({
+        ...peptideMonomerItem,
         label: '-Me',
-        attachmentPoints: [],
-        seqId: 1,
-      } as any);
+      });
       const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
       sgroup.id = struct.sgroups.add(sgroup);
 
@@ -90,7 +90,7 @@ describe('Atom', () => {
 
       struct.atomAddToSGroup(sgroup.id, atomId);
       sgroup.addAttachmentPoint(
-        new SGroupAttachmentPoint(atomId, atomId, 'Al', 1),
+        new SGroupAttachmentPoint(atomId, atomId, 'R1', 1),
       );
 
       const bondId = struct.bonds.add(

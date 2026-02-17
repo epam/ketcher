@@ -56,19 +56,25 @@ const shared = combineReducers({
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
+    let updatedState = state;
+
     switch (action.type) {
       case 'INIT': {
         setEditor(action.editor);
+        // Extract action data and merge into state
         const {
           /* eslint-disable @typescript-eslint/no-unused-vars */
           type,
           /* eslint-enable @typescript-eslint/no-unused-vars */
           ...data
         } = action;
-        if (data) state = { ...state, ...data };
-        state = {
-          ...state,
-          server: action.server || state.server,
+        if (data) {
+          updatedState = { ...updatedState, ...data };
+        }
+        // Set server
+        updatedState = {
+          ...updatedState,
+          server: action.server || updatedState.server,
         };
         break;
       }
@@ -80,29 +86,31 @@ function getRootReducer(setEditor) {
           /* eslint-enable @typescript-eslint/no-unused-vars */
           ...data
         } = action;
-        if (data) state = { ...state, ...data };
+        if (data) {
+          updatedState = { ...updatedState, ...data };
+        }
         break;
       }
 
       case SET_SERVER: {
-        state = {
-          ...state,
-          server: action.server || state.server,
+        updatedState = {
+          ...updatedState,
+          server: action.server || updatedState.server,
         };
         break;
       }
     }
 
-    const sh = shared(state, {
+    const sh = shared(updatedState, {
       ...action,
-      ...pick(['editor', 'server', 'options'], state),
+      ...pick(['editor', 'server', 'options'], updatedState),
     });
 
     const finalState =
-      sh === state.shared
-        ? state
+      sh === updatedState.shared
+        ? updatedState
         : {
-            ...state,
+            ...updatedState,
             ...sh,
           };
 

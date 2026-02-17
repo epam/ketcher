@@ -58,6 +58,17 @@ function status(actionName, activeTool, params) {
   });
 }
 
+function buildStateWithStatuses(activeTool, params) {
+  return Object.keys(actions).reduce(
+    (res, actionName) => {
+      const value = status(actionName, res.activeTool, params);
+      if (!isEmpty(value)) res[actionName] = value;
+      return res;
+    },
+    { activeTool },
+  );
+}
+
 export default function (state = null, { type, action, ...params }) {
   let activeTool;
   switch (type) {
@@ -71,14 +82,7 @@ export default function (state = null, { type, action, ...params }) {
       if (activeTool?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
-      return Object.keys(actions).reduce(
-        (res, actionName) => {
-          const value = status(actionName, res.activeTool, params);
-          if (!isEmpty(value)) res[actionName] = value;
-          return res;
-        },
-        { activeTool: activeTool || state?.activeTool },
-      );
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
     }
 
     case 'ACTION': {
@@ -89,25 +93,11 @@ export default function (state = null, { type, action, ...params }) {
       if (activeTool?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
-      return Object.keys(actions).reduce(
-        (res, actionName) => {
-          const value = status(actionName, res.activeTool, params);
-          if (!isEmpty(value)) res[actionName] = value;
-          return res;
-        },
-        { activeTool: activeTool || state?.activeTool },
-      );
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
     }
 
     case 'UPDATE':
-      return Object.keys(actions).reduce(
-        (res, actionName) => {
-          const value = status(actionName, res.activeTool, params);
-          if (!isEmpty(value)) res[actionName] = value;
-          return res;
-        },
-        { activeTool: activeTool || state?.activeTool },
-      );
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
 
     default:
       return state;

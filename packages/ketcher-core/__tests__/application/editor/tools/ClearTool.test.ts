@@ -106,8 +106,9 @@ describe('Clear Tool', () => {
     // Try to clear empty canvas - verify hasDrawingEntities is false
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
 
-    // eslint-disable-next-line no-new
-    new ClearTool(editor);
+    const clearTool = new ClearTool(editor);
+
+    expect(clearTool).toBeInstanceOf(ClearTool);
 
     // transientDrawingView.clear should not be called because we return early
     expect(clearSpy).not.toHaveBeenCalled();

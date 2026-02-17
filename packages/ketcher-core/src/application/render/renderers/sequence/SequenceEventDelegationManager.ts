@@ -64,9 +64,7 @@ export class SequenceEventDelegationManager {
   ): { renderer: BaseSequenceItemRenderer; elementType: ElementType } | null {
     if (!target || !(target instanceof SVGElement)) return null;
 
-    const sequenceItemElement = (target as SVGElement).closest(
-      '.sequence-item',
-    ) as SVGGElement;
+    const sequenceItemElement = target.closest('.sequence-item') as SVGGElement;
 
     if (!sequenceItemElement) return null;
 
@@ -76,7 +74,7 @@ export class SequenceEventDelegationManager {
 
     if (!renderer) return null;
 
-    const elementType = this.getElementType(target as SVGElement);
+    const elementType = this.getElementType(target);
     if (!elementType) return null;
 
     return { renderer, elementType };

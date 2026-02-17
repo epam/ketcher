@@ -266,12 +266,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     // Flatten all calls to get all highlight objects
     const allHighlights = createCalls.flat();
 
-    const baseHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(1),
-    );
-    const sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(4),
-    );
+    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
 
     expect(baseHighlight).toMatchObject({
       atoms: [1, 2, 3],
@@ -321,14 +317,10 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     const createCalls = mockEditor.highlights.create.mock.calls;
     const allHighlights = createCalls.flat();
 
-    const baseHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(1),
-    );
-    const sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(4),
-    );
-    const phosphateHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(7),
+    const baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
+    const sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
+    const phosphateHighlight = allHighlights.find((h: any) =>
+      h.atoms?.includes(7),
     );
 
     // Base should have inactive color
@@ -413,12 +405,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     let createCalls = mockEditor.highlights.create.mock.calls;
     let allHighlights = createCalls.flat();
 
-    let baseHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(1),
-    );
-    let sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(4),
-    );
+    let baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
+    let sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
 
     // Base should be active
     expect(baseHighlight).toBeDefined();
@@ -436,12 +424,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     createCalls = mockEditor.highlights.create.mock.calls;
     allHighlights = createCalls.flat();
 
-    baseHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(1),
-    );
-    sugarHighlight = allHighlights.find(
-      (h: any) => h.atoms?.includes(4),
-    );
+    baseHighlight = allHighlights.find((h: any) => h.atoms?.includes(1));
+    sugarHighlight = allHighlights.find((h: any) => h.atoms?.includes(4));
 
     // Now sugar should be active and base should be inactive
     expect(sugarHighlight).toBeDefined();

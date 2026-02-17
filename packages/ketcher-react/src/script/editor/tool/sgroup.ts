@@ -103,7 +103,8 @@ class SGroupTool implements Tool {
             extraAtoms = true;
           }
 
-          const atomFromStruct = atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
+          const atomFromStruct =
+            atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -182,7 +183,8 @@ class SGroupTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const atomFromStruct = atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
+      const atomFromStruct =
+        atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
       if (
         atomFromStruct &&
@@ -204,7 +206,8 @@ class SGroupTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const bondFromStruct = bondId !== null ? struct.bonds.get(bondId)?.b : undefined;
+      const bondFromStruct =
+        bondId !== null ? struct.bonds.get(bondId)?.b : undefined;
 
       if (
         bondFromStruct &&

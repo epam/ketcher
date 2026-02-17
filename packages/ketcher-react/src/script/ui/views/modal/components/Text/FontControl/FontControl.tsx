@@ -16,11 +16,7 @@
 
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useClickOutside } from '../../../../../../../hooks/useClickOutside';
-import {
-  $getSelection,
-  $isRangeSelection,
-  LexicalEditor,
-} from 'lexical';
+import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical';
 import {
   $patchStyleText,
   $getSelectionStyleValueForProperty,

@@ -129,9 +129,10 @@ class SGroupTool implements Tool {
               actualSgroupId !== undefined
                 ? SGroup.getBonds(molecule, sgroups.get(actualSgroupId))
                 : undefined;
-            atom === sgroupAtoms[0] &&
-              newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
+            if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+              newSelected.atoms.push(...(sgroupAtoms as Array<any>));
               newSelected.bonds.push(...(sgroupBonds as Array<any>));
+            }
           }
 
           if (atomFromStruct) {

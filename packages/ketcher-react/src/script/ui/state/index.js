@@ -61,13 +61,8 @@ function getRootReducer(setEditor) {
     switch (action.type) {
       case 'INIT': {
         setEditor(action.editor);
-        // Extract action data and merge into state
-        const {
-          /* eslint-disable @typescript-eslint/no-unused-vars */
-          type,
-          /* eslint-enable @typescript-eslint/no-unused-vars */
-          ...data
-        } = action;
+        // Extract action data (excluding type) and merge into state
+        const { type: _type, ...data } = action;
         if (data) {
           updatedState = { ...updatedState, ...data };
         }
@@ -80,12 +75,7 @@ function getRootReducer(setEditor) {
       }
 
       case 'UPDATE': {
-        const {
-          /* eslint-disable @typescript-eslint/no-unused-vars */
-          type,
-          /* eslint-enable @typescript-eslint/no-unused-vars */
-          ...data
-        } = action;
+        const { type: _type, ...data } = action;
         if (data) {
           updatedState = { ...updatedState, ...data };
         }

@@ -58,6 +58,12 @@ function status(actionName, activeTool, params) {
   });
 }
 
+/**
+ * Builds the state object with action statuses for all actions
+ * @param {object} activeTool - The currently active tool
+ * @param {object} params - Additional parameters for status computation
+ * @returns {object} State object containing active tool and action statuses
+ */
 function buildStateWithStatuses(activeTool, params) {
   return Object.keys(actions).reduce(
     (res, actionName) => {

@@ -267,7 +267,11 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(msg.payload || '');
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -295,7 +299,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -328,7 +336,11 @@ class IndigoService implements StructService {
             };
             resolve(result);
           } else {
-            reject(new Error(msg.error));
+            reject(
+              (msg.error as unknown) instanceof Error
+                ? msg.error
+                : new Error(msg.error),
+            );
           }
         }
       };
@@ -399,7 +411,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -454,7 +470,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -493,7 +513,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -531,7 +555,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -569,7 +597,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -607,7 +639,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -650,7 +686,11 @@ class IndigoService implements StructService {
           );
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -696,7 +736,11 @@ class IndigoService implements StructService {
           }, {} as CalculateResult);
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -738,7 +782,11 @@ class IndigoService implements StructService {
           if (!msg.hasError) {
             resolve(msg.payload);
           } else {
-            reject(new Error(msg.error));
+            reject(
+              (msg.error as unknown) instanceof Error
+                ? msg.error
+                : new Error(msg.error),
+            );
           }
         }
       };
@@ -805,7 +853,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 
@@ -840,7 +892,11 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(JSON.parse(msg.payload));
         } else {
-          reject(new Error(msg.error));
+          reject(
+            (msg.error as unknown) instanceof Error
+              ? msg.error
+              : new Error(msg.error),
+          );
         }
       };
 

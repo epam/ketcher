@@ -5,9 +5,9 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class EmptySequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;
-  public monomer = new EmptyMonomer();
+  public readonly monomer = new EmptyMonomer();
   // when iterating over large amount of nodes, this saves a lot of GC time
-  private monomersCache = [this.monomer];
+  private readonly monomersCache = [this.monomer];
 
   public get SubChainConstructor() {
     return EmptySubChain;

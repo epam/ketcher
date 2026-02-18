@@ -363,9 +363,9 @@ function parseRxn3000(
   const molLinesAgents = [];
   let current = null;
   const rGroups = [];
-  for (let i = 0; i < ctabLines.length; ++i) {
+  let i = 0;
+  while (i < ctabLines.length) {
     const line = ctabLines[i].trim();
-    let j;
 
     if (line.startsWith('M  V30 COUNTS')) {
       // do nothing
@@ -384,16 +384,19 @@ function parseRxn3000(
     } else if (line === 'M  V30 END AGENT') {
       current = null;
     } else if (line.startsWith('M  V30 BEGIN RGROUP')) {
-      j = findRGroupEnd(i);
+      const j = findRGroupEnd(i);
       rGroups.push(ctabLines.slice(i, j + 1));
-      i = j;
+      i = j + 1;
+      continue;
     } else if (line === 'M  V30 BEGIN CTAB') {
-      j = findCtabEnd(i);
+      const j = findCtabEnd(i);
       current.push(ctabLines.slice(i, j + 1));
-      i = j;
+      i = j + 1;
+      continue;
     } else {
       throw new Error('line unrecognized: ' + line);
     }
+    i++;
   }
   const mols = [];
   const molLines = molLinesReactants
@@ -433,21 +436,25 @@ function spacebarsplit(line) {
   let firstSliceIndex = -1;
   let quoted = false;
 
-  for (currentIndex; currentIndex < line.length; currentIndex += 1) {
+  while (currentIndex < line.length) {
     const currentSymbol = line[currentIndex];
     if (line.slice(currentIndex, currentIndex + 3) === 'NOT') {
       const closingBracketIndex = line.indexOf(']');
       split.push(line.slice(currentIndex, closingBracketIndex + 1));
       currentIndex = closingBracketIndex + 1;
       firstSliceIndex = currentIndex;
-    } else if (currentSymbol === '(') bracketEquality += 1;
-    else if (currentSymbol === ')') bracketEquality -= 1;
-    else if (currentSymbol === '"') quoted = !quoted;
-    else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
-      if (currentIndex > firstSliceIndex + 1) {
-        split.push(line.slice(firstSliceIndex + 1, currentIndex));
+      currentIndex += 1;
+    } else {
+      if (currentSymbol === '(') bracketEquality += 1;
+      else if (currentSymbol === ')') bracketEquality -= 1;
+      else if (currentSymbol === '"') quoted = !quoted;
+      else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
+        if (currentIndex > firstSliceIndex + 1) {
+          split.push(line.slice(firstSliceIndex + 1, currentIndex));
+        }
+        firstSliceIndex = currentIndex;
       }
-      firstSliceIndex = currentIndex;
+      currentIndex += 1;
     }
   }
   if (currentIndex > firstSliceIndex + 1) {
@@ -476,7 +483,8 @@ function splitSGroupDef(line) {
   const split = [];
   let braceBalance = 0;
   let quoted = false;
-  for (let i = 0; i < line.length; ++i) {
+  let i = 0;
+  while (i < line.length) {
     const c = line.charAt(i);
     if (c === '"') {
       quoted = !quoted;
@@ -489,8 +497,10 @@ function splitSGroupDef(line) {
         split.push(line.slice(0, i));
         line = line.slice(i + 1).trim();
         i = 0;
+        continue;
       }
     }
+    i++;
   }
   if (braceBalance !== 0) {
     throw new Error('Brace balance broken. S-group properies invalid!');

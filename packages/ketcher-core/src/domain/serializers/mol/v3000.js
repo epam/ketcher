@@ -443,19 +443,16 @@ function spacebarsplit(line) {
       split.push(line.slice(currentIndex, closingBracketIndex + 1));
       currentIndex = closingBracketIndex + 1;
       firstSliceIndex = currentIndex;
-      currentIndex += 1;
-    } else {
-      if (currentSymbol === '(') bracketEquality += 1;
-      else if (currentSymbol === ')') bracketEquality -= 1;
-      else if (currentSymbol === '"') quoted = !quoted;
-      else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
-        if (currentIndex > firstSliceIndex + 1) {
-          split.push(line.slice(firstSliceIndex + 1, currentIndex));
-        }
-        firstSliceIndex = currentIndex;
+    } else if (currentSymbol === '(') bracketEquality += 1;
+    else if (currentSymbol === ')') bracketEquality -= 1;
+    else if (currentSymbol === '"') quoted = !quoted;
+    else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
+      if (currentIndex > firstSliceIndex + 1) {
+        split.push(line.slice(firstSliceIndex + 1, currentIndex));
       }
-      currentIndex += 1;
+      firstSliceIndex = currentIndex;
     }
+    currentIndex += 1;
   }
   if (currentIndex > firstSliceIndex + 1) {
     split.push(line.slice(firstSliceIndex + 1, currentIndex));

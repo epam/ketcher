@@ -234,7 +234,7 @@ class Editor implements KetcherEditor {
       clientArea,
       {
         microModeScale: SCALE,
-        ...(options || {}),
+        ...(options ?? {}),
       },
       prevEditor?.render,
       options.reuseRestructIfExist !== false,
@@ -376,7 +376,7 @@ class Editor implements KetcherEditor {
     KetcherLogger.log('Editor.struct(), start', value, needToCenterStruct);
 
     this.selection(null);
-    const struct = value || new Struct();
+    const struct = value ?? new Struct();
 
     const molecule = this.renderAndRecoordinateStruct(
       struct,
@@ -436,7 +436,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(this.render.clientArea, {
       microModeScale: SCALE,
-      ...(value || {}),
+      ...(value ?? {}),
     });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
@@ -612,7 +612,7 @@ class Editor implements KetcherEditor {
     const currentState = this.render.monomerCreationState;
     if (!currentState) return;
 
-    const rnaComponentAtoms = currentState.rnaComponentAtoms || new Map();
+    const rnaComponentAtoms = currentState.rnaComponentAtoms ?? new Map();
     rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
 
     this.render.monomerCreationState = {
@@ -1737,7 +1737,7 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
     this.render.update(true);
   }
 
@@ -1837,7 +1837,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const rnaComponentToAssign = beginAtomRnaComponent || endAtomRnaComponent;
+    const rnaComponentToAssign = beginAtomRnaComponent ?? endAtomRnaComponent;
     const struct = this.struct();
     const atomIdToStartFrom = beginAtomRnaComponent ? bond.begin : bond.end;
     const visitedAtomIds = new Set<number>();
@@ -1945,7 +1945,7 @@ class Editor implements KetcherEditor {
 
     const beginAtomComponent = this.getRnaComponentForAtom(bond.begin);
     const endAtomComponent = this.getRnaComponentForAtom(bond.end);
-    const componentToMark = beginAtomComponent || endAtomComponent;
+    const componentToMark = beginAtomComponent ?? endAtomComponent;
 
     if (!componentToMark) {
       return;
@@ -2428,7 +2428,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
   }
 
   public setRnaMonomerCreationMode(isActive: boolean) {
@@ -2502,7 +2502,7 @@ class Editor implements KetcherEditor {
   }
 
   hover(ci: HoverTarget | null, newTool?: any, event?: PointerEvent) {
-    const tool = newTool || this._tool; // eslint-disable-line
+    const tool = newTool ?? this._tool; // eslint-disable-line
 
     const hoverState = (tool as { ci?: HoverTarget }).ci;
     if (hoverState) {
@@ -2719,7 +2719,7 @@ class Editor implements KetcherEditor {
   }
 
   explicitSelected(autoSelectBonds = true) {
-    const selection = this.selection() || {};
+    const selection = this.selection() ?? {};
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : [];
       return acc;
@@ -2732,7 +2732,7 @@ class Editor implements KetcherEditor {
       res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          res.atoms = res.atoms || [];
+          res.atoms = res.atoms ?? [];
           if (res.atoms.indexOf(bond.begin) < 0) {
             res.atoms.push(bond.begin);
           }
@@ -2752,7 +2752,7 @@ class Editor implements KetcherEditor {
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
-          res.bonds = res.bonds || [];
+          res.bonds = res.bonds ?? [];
           res.bonds.push(bid);
         }
       });

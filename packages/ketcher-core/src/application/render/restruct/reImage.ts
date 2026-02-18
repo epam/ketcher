@@ -246,10 +246,12 @@ export class ReImage extends ReObject {
     );
   }
 
-  togglePoints(displayFlag: boolean) {
-    displayFlag
-      ? this.selectionPointsSet?.show()
-      : this.selectionPointsSet?.hide();
+  showPoints() {
+    this.selectionPointsSet?.show();
+  }
+
+  hidePoints() {
+    this.selectionPointsSet?.hide();
   }
 
   calculateDistanceToPoint(point: Vec2, renderOptions: RenderOptions): number {

@@ -51,7 +51,10 @@ import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/utils';
 
 function ensureError(error: unknown): Error {
-  return error instanceof Error ? error : new Error(String(error));
+  if (error instanceof Error) {
+    return error;
+  }
+  return new Error(typeof error === 'string' ? error : String(error));
 }
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {

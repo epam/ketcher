@@ -85,7 +85,10 @@ interface KeyValuePair {
 }
 
 function ensureError(error: unknown): Error {
-  return error instanceof Error ? error : new Error(String(error));
+  if (error instanceof Error) {
+    return error;
+  }
+  return new Error(typeof error === 'string' ? error : String(error));
 }
 
 function convertMimeTypeToOutputFormat(

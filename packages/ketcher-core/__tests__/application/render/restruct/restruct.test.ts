@@ -19,7 +19,8 @@ describe('show selection', () => {
     ],
   };
   const reSimpleObject = new ReSimpleObject(ellipse);
-  reSimpleObject.togglePoints = jest.fn();
+  reSimpleObject.showPoints = jest.fn();
+  reSimpleObject.hidePoints = jest.fn();
   const option = {
     microModeScale: 20,
     width: 100,
@@ -29,11 +30,11 @@ describe('show selection', () => {
   const restruct = new ReStruct(new Struct(), render);
   it('should show selection simple objects correctly when selected', () => {
     restruct.showItemSelection(reSimpleObject, true);
-    expect(reSimpleObject.togglePoints).toHaveBeenCalled();
+    expect(reSimpleObject.showPoints).toHaveBeenCalled();
   });
   it('should show selection simple objects correctly when unselected', () => {
     restruct.showItemSelection(reSimpleObject, false);
-    expect(reSimpleObject.togglePoints).toHaveBeenCalled();
+    expect(reSimpleObject.hidePoints).toHaveBeenCalled();
   });
 });
 

@@ -82,9 +82,17 @@ class Table extends Component<TableProps, TableState> {
   constructor(props: TableProps) {
     super(props);
     const heliumElement = Elements.get(2);
+
+    let initialValue: string | string[] | null = null;
+    if (props.values) {
+      initialValue = props.values;
+    } else if (!props.pseudo && props.label) {
+      initialValue = props.label;
+    }
+
     this.state = {
       type: props.type ?? 'atom',
-      value: props.values || (!props.pseudo ? props.label : null) || null,
+      value: initialValue,
       current: heliumElement || ({} as Element),
       isInfo: false,
     };

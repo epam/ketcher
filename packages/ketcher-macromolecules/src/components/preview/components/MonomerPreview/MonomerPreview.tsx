@@ -77,13 +77,15 @@ const MonomerPreview = ({ className }: Props) => {
         data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
-        data-modificationtype={
-          modificationTypes
-            ? Array.isArray(modificationTypes)
-              ? modificationTypes.join(', ')
-              : modificationTypes
-            : undefined
-        }
+        data-modificationtype={(() => {
+          if (!modificationTypes) {
+            return undefined;
+          }
+          if (Array.isArray(modificationTypes)) {
+            return modificationTypes.join(', ');
+          }
+          return modificationTypes;
+        })()}
       >
         {monomerName && (
           <MonomerName data-testid="preview-tooltip-title">

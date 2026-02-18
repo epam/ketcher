@@ -169,13 +169,15 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
-      data-modificationtype={
-        monomerItem?.props.modificationTypes
-          ? Array.isArray(monomerItem?.props.modificationTypes)
-            ? monomerItem?.props.modificationTypes.join(', ')
-            : monomerItem?.props.modificationTypes
-          : undefined
-      }
+      data-modificationtype={(() => {
+        if (!monomerItem?.props.modificationTypes) {
+          return undefined;
+        }
+        if (Array.isArray(monomerItem.props.modificationTypes)) {
+          return monomerItem.props.modificationTypes.join(', ');
+        }
+        return monomerItem.props.modificationTypes;
+      })()}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (

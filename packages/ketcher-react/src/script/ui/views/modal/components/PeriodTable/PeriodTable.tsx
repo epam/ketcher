@@ -135,12 +135,12 @@ class Table extends Component<TableProps, TableState> {
       }
     } else if (label) {
       const { type, value } = this.state;
-      this.setState({
-        value:
-          type === 'atom' || type === 'gen'
-            ? label
-            : xor([label], Array.isArray(value) ? value : []),
-      });
+      const normalizedValue = Array.isArray(value) ? value : [];
+      const newValue =
+        type === 'atom' || type === 'gen'
+          ? label
+          : xor([label], normalizedValue);
+      this.setState({ value: newValue });
     }
   };
 

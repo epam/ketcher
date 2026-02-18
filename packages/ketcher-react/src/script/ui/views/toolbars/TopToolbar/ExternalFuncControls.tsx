@@ -140,7 +140,7 @@ export const ExternalFuncControls = ({
   return (
     <>
       {firstButtonObj && getButtonElement(firstButtonObj)}
-      {<>{collapsibleElements}</>}
+      {collapsibleElements}
     </>
   );
 };

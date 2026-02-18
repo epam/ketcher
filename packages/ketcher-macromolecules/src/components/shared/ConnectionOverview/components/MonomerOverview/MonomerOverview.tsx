@@ -74,9 +74,7 @@ const MonomerOverview = ({
   return (
     <>
       {monomerPreviewContent}
-      <AttachmentPointList>
-        <>{attachmentPoints}</>
-      </AttachmentPointList>
+      <AttachmentPointList>{attachmentPoints}</AttachmentPointList>
     </>
   );
 };

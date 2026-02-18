@@ -163,9 +163,7 @@ const Top = (
     <div style={{ display: 'flex', position: 'relative' }}>
       <StyledTop {...otherProps} ref={scrollRef}>
         <span ref={startRef}></span>
-        <StyledTopInnerDiv>
-          <>{children}</>
-        </StyledTopInnerDiv>
+        <StyledTopInnerDiv>{children}</StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
       {!startInView || !endInView ? (

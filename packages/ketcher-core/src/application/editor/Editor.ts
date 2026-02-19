@@ -129,6 +129,9 @@ const debouncedTurnOffScrollAnimation = debounce(
   SCROLL_SMOOTHNESS_IM_MS,
 );
 
+interface KetcherTarget extends EventTarget {
+  parent: HTMLElement | SVGElement | null; // Define what parent actually is
+}
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
@@ -610,8 +613,16 @@ export class CoreEditor {
     document.addEventListener('keydown', this.hotKeyEventHandler);
   }
 
+  isKetcherTarget(target: EventTarget | null): target is KetcherTarget {
+    return target !== null && 'parent' in target;
+  }
+
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
+      if (!this.isKetcherTarget(event?.currentTarget)) {
+        return;
+      }
+
       event.preventDefault();
 
       if (this.libraryItemDragState) {

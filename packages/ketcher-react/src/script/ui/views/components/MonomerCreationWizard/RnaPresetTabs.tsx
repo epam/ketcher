@@ -293,7 +293,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           onChange={handleHighlightToggle}
           className={inputStyles.input}
         />
-        <span className={inputStyles.checkbox} /> Highlight
+        <span className={inputStyles.checkbox} />{' '}
+        Highlight
       </label>
     </div>
   );

@@ -46,8 +46,7 @@ const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { onChange, value } = props;
-  const colorPickerId = useId();
-  const paletteId = `${colorPickerId}-palette`;
+  const paletteId = 'color-picker-' + useId();
 
   const handleChange = useCallback(
     (color) => {

@@ -75,7 +75,7 @@ function handle(
       msg = {
         type: messageType,
         hasError: true,
-        error: error as string,
+        error: error instanceof Error ? error.message : String(error),
         inputData,
       };
     }

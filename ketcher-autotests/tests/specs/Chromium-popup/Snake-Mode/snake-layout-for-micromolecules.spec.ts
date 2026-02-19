@@ -22,9 +22,7 @@ test.describe('Snake Layout for Microstructures', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
-  test.afterEach(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
-  });
+  test.afterEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });

@@ -285,46 +285,7 @@ class StructEditor extends Component {
   }
 
   render() {
-    const {
-      Tag = 'div',
-      className,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      ketcherId,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      prevKetcherId,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      struct,
-      indigoVerification,
-      tool,
-      toolOpts,
-      options,
-      onInit,
-      onSelectionChange,
-      onElementEdit,
-      onEnhancedStereoEdit,
-      onQuickEdit,
-      onBondEdit,
-      onZoomIn,
-      onZoomOut,
-      onZoomChanged,
-      onRgroupEdit,
-      onSgroupEdit,
-      onRemoveFG,
-      onMessage,
-      onAromatizeStruct,
-      onDearomatizeStruct,
-      onAttachEdit,
-      onCipChange,
-      onConfirm,
-      onShowInfo,
-      onApiSettings,
-      showAttachmentPoints = true,
-      onUpdateFloatingTools,
-      onShowMacromoleculesErrorMessage,
-      serverSettings,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      ...props
-    } = this.props;
+    const { Tag = 'div', className, indigoVerification, ...props } = this.props;
 
     const { clientX = 0, clientY = 0, tooltip } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;

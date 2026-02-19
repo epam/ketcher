@@ -247,6 +247,7 @@ function Field(props) {
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         data-testid={props['data-testid'] + '-input-span'}
+        role="none"
       >
         {formField}
       </span>
@@ -292,6 +293,7 @@ function FieldWithModal(props) {
         })}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        role="none"
       >
         <Input name={name} schema={desc} {...fieldOpts} {...rest} />
         <IconButton
@@ -363,6 +365,7 @@ function CustomQueryField(props) {
           [classes.dataError]: dataError,
           [classes.inputWrapper]: true,
         })}
+        role="none"
       >
         <Input
           type="textarea"

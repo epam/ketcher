@@ -2946,43 +2946,40 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       updateLastCursorPosition(editor, event);
 
       if (
-        ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-        !isMouseMainButtonPressed(event)
+        !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||
+        isMouseMainButtonPressed(event)
       ) {
-        return true;
-      }
-
-      if (eventName === 'mousemove') {
-        const itemUnderCursor = editor.findItem(event, [
-          'atoms',
-          'bonds',
-          'sgroups',
-        ]);
-        if (!itemUnderCursor) {
-          editor.hover(null);
+        if (eventName === 'mousemove') {
+          const itemUnderCursor = editor.findItem(event, [
+            'atoms',
+            'bonds',
+            'sgroups',
+          ]);
+          if (!itemUnderCursor) {
+            editor.hover(null);
+          }
         }
-      }
 
-      if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
-        // to complete drag actions
-        if (!event.target || event.target.nodeName === 'DIV') {
+        const isScrollClick =
+          eventName !== 'mouseup' &&
+          eventName !== 'mouseleave' &&
+          (!event.target || event.target.nodeName === 'DIV');
+
+        if (isScrollClick) {
           // click on scroll
           editor.hover(null);
-          return true;
+        } else {
+          const isToolUsed = useToolIfNeeded(
+            editor,
+            toolEventHandler,
+            clientArea,
+            event,
+          );
+          if (!isToolUsed) {
+            resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
+          }
         }
       }
-
-      const isToolUsed = useToolIfNeeded(
-        editor,
-        toolEventHandler,
-        clientArea,
-        event,
-      );
-      if (isToolUsed) {
-        return true;
-      }
-
-      resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
 
       return true;
     }, -1);

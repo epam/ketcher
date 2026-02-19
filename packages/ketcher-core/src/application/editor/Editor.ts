@@ -1742,16 +1742,11 @@ export class CoreEditor {
         this.updateLastCursorPosition(event);
 
         if (
-          ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !this.isMouseMainButtonPressed(event)
+          !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||
+          this.isMouseMainButtonPressed(event)
         ) {
-          return true;
-        }
-
-        this.useModeIfNeeded(toolEventHandler, event);
-        const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
-        if (isToolUsed) {
-          return true;
+          this.useModeIfNeeded(toolEventHandler, event);
+          this.useToolIfNeeded(toolEventHandler, event);
         }
 
         return true;

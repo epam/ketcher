@@ -1616,23 +1616,21 @@ export class SequenceMode extends BaseMode {
   public deleteSelection() {
     const selections = SequenceRenderer.selections;
 
-    if (selections.length === 0) {
-      return true;
+    if (selections.length > 0) {
+      const deletionModelChanges = this.deleteSelectedDrawingEntities();
+
+      deletionModelChanges.merge(
+        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+      );
+      deletionModelChanges.merge(
+        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+      );
+      this.finishNodesDeletion(
+        deletionModelChanges,
+        SequenceRenderer.caretPosition,
+        selections[0][0].nodeIndexOverall,
+      );
     }
-
-    const deletionModelChanges = this.deleteSelectedDrawingEntities();
-
-    deletionModelChanges.merge(
-      this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
-    );
-    deletionModelChanges.merge(
-      this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
-    );
-    this.finishNodesDeletion(
-      deletionModelChanges,
-      SequenceRenderer.caretPosition,
-      selections[0][0].nodeIndexOverall,
-    );
 
     return true;
   }
@@ -1658,11 +1656,7 @@ export class SequenceMode extends BaseMode {
       return false;
     }
 
-    if (!this.deleteSelection()) {
-      return false;
-    }
-
-    return true;
+    return this.deleteSelection();
   }
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {

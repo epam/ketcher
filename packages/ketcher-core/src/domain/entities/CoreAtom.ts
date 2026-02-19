@@ -465,9 +465,10 @@ export class Atom extends DrawingEntity {
         } else {
           hydrogenAmount = -1;
         }
+      } else if (connectionAmount + radicalAmount + absCharge === 0) {
+        valence = 1;
       } else {
-        if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-        else hydrogenAmount = -1;
+        hydrogenAmount = -1;
       }
     }
 

@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
-    "minimatch": "^10.0.3",
+    "minimatch": "^10.2.1",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
     "react-router": "^7.13.0",

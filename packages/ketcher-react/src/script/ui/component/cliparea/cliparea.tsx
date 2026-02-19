@@ -83,7 +83,7 @@ interface ClipAreaListeners {
 }
 
 class ClipArea extends Component<ClipAreaProps> {
-  private textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private target: HTMLElement | null = null;
   private listeners: ClipAreaListeners | null = null;
 

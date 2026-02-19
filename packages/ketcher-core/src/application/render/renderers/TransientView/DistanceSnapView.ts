@@ -19,7 +19,7 @@ export class DistanceSnapView extends TransientView {
   ) {
     const { alignment, alignedMonomers } = params;
 
-    if (!alignment || !alignedMonomers) {
+    if (!alignment || !alignedMonomers?.length) {
       return;
     }
 
@@ -43,6 +43,7 @@ export class DistanceSnapView extends TransientView {
             : extremeMonomer;
         }
       },
+      alignedMonomers[0],
     );
 
     const alignerPosition = new Vec2(

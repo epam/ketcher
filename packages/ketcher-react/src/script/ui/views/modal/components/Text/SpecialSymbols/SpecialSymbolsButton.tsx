@@ -56,7 +56,7 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
   };
 
   return (
-    <div onBlur={closeSymbolsList}>
+    <div onBlur={closeSymbolsList} role="group">
       <button
         title="symbols"
         data-testid="special-symbols-button"

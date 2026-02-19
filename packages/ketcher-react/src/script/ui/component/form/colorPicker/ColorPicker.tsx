@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 
 import { HexColorPicker, HexColorInput } from 'react-colorful';
 import classes from './ColorPicker.module.less';
@@ -46,6 +46,8 @@ const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { onChange, value } = props;
+  const colorPickerId = useId();
+  const paletteId = `${colorPickerId}-palette`;
 
   const handleChange = useCallback(
     (color) => {
@@ -107,6 +109,7 @@ const ColorPicker = (props: Props) => {
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
       onKeyDown={handleWrapperKeyDown}
+      role="presentation"
     >
       <button
         type="button"
@@ -114,6 +117,9 @@ const ColorPicker = (props: Props) => {
           [classes.colorPickerInput]: true,
           [classes.selectedInput]: isOpen,
         })}
+        aria-controls={paletteId}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         onClick={handleClick}
         onKeyDown={handleKeyDown}
       >
@@ -137,6 +143,7 @@ const ColorPicker = (props: Props) => {
             classes.colorPickerWrap,
             isPaletteOpen && classes.withPalette,
           )}
+          id={paletteId}
           onBlur={handleBlur}
           data-testid="color-picker-preset"
         >

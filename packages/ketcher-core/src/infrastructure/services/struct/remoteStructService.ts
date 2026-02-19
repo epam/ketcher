@@ -50,6 +50,13 @@ import { KetcherLogger } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/utils';
 
+function ensureError(error: unknown): Error {
+  if (error instanceof Error) {
+    return error;
+  }
+  return new Error(String(error));
+}
+
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
     function iterate() {
@@ -60,10 +67,10 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(error instanceof Error ? error : new Error(String(error)));
+            reject(ensureError(error));
           }
         },
-        (err) => reject(err instanceof Error ? err : new Error(String(err))),
+        (err) => reject(ensureError(err)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);

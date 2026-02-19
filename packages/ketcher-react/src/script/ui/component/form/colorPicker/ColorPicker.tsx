@@ -109,7 +109,7 @@ const ColorPicker = (props: Props) => {
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
       onKeyDown={handleWrapperKeyDown}
-      role="presentation"
+      role="none"
     >
       <button
         type="button"
@@ -146,6 +146,7 @@ const ColorPicker = (props: Props) => {
           id={paletteId}
           onBlur={handleBlur}
           data-testid="color-picker-preset"
+          role="none"
         >
           <div className={classes.presetColors}>
             <button

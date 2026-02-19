@@ -237,8 +237,12 @@ export abstract class BaseMode {
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      let stringError;
+      if (error instanceof Error) {
+        stringError = error.message;
+      } else {
+        stringError = typeof error === 'string' ? error : JSON.stringify(error);
+      }
       const errorMessage = 'Convert error! ' + stringError;
 
       this.unsupportedSymbolsError(errorMessage);

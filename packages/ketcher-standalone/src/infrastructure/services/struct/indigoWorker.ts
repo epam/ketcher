@@ -72,10 +72,16 @@ function handle(
         inputData,
       };
     } catch (error) {
+      let errorMessage: string;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else {
+        errorMessage = String(error);
+      }
       msg = {
         type: messageType,
         hasError: true,
-        error: error as string,
+        error: errorMessage,
         inputData,
       };
     }

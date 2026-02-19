@@ -286,8 +286,12 @@ const onOk = async ({
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
-    const stringError =
-      typeof error === 'string' ? error : JSON.stringify(error);
+    let stringError;
+    if (error instanceof Error) {
+      stringError = error.message;
+    } else {
+      stringError = typeof error === 'string' ? error : JSON.stringify(error);
+    }
     showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {

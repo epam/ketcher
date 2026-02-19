@@ -60,10 +60,10 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(error);
+            reject(error instanceof Error ? error : new Error(String(error)));
           }
         },
-        (err) => reject(err),
+        (err) => reject(err instanceof Error ? err : new Error(String(err))),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);

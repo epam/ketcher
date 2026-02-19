@@ -6,8 +6,7 @@ import { Page, test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { openFileAndAddToCanvasMacro, takeElementScreenshot } from '@utils';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 // import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 // import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -66,11 +65,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // SM expected to appear below the earlier chain monomer — we verify visually
     // target ID may vary depending on import, but SM is usually last monomer
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerId: 0 }),
-      { padding: 180 },
-    );
+    await takeEditorScreenshot(page);
   });
 
   // test('Case 2 — “Field value” textbox is active in “S-Group Properties” modal when “Context” field is empty', async () => {

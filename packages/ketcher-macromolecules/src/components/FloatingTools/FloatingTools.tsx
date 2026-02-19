@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Icon, IconName } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { Vec2 } from 'ketcher-core';
+import { Coordinates, Vec2 } from 'ketcher-core';
 
 const FloatingToolsWrapper = styled.div<{ left: number; top: number }>`
   position: absolute;
@@ -64,10 +64,33 @@ export interface FloatingToolsProps {
   position: Vec2;
 }
 
+const POSITION_EPSILON = 0.1; // view-pixel threshold to avoid noisy updates
+
 export const FloatingTools = () => {
   const editor = useAppSelector(selectEditor);
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState<Vec2>(new Vec2(0, 0));
+  const positionRef = useRef<Vec2>(new Vec2(0, 0));
+
+  const updatePosition = useCallback(() => {
+    if (!editor) return;
+
+    const bbox =
+      editor.drawingEntitiesManager?.getSelectedEntitiesBoundingBox();
+    if (!bbox) return;
+
+    const centerX = (bbox.left + bbox.right) / 2;
+    const topY = bbox.top;
+
+    const viewPos = Coordinates.modelToView(new Vec2(centerX, topY));
+    const dx = Math.abs(viewPos.x - positionRef.current.x);
+    const dy = Math.abs(viewPos.y - positionRef.current.y);
+
+    if (dx > POSITION_EPSILON || dy > POSITION_EPSILON) {
+      positionRef.current = viewPos;
+      setPosition(viewPos);
+    }
+  }, [editor]);
 
   useEffect(() => {
     if (!editor) return;
@@ -81,23 +104,8 @@ export const FloatingTools = () => {
         editor.mode.modeName !== 'sequence-layout-mode';
 
       if (shouldShow) {
-        const bbox =
-          editor.drawingEntitiesManager?.getSelectedEntitiesBoundingBox();
-
-        if (bbox) {
-          // Position the floating tools above the bounding box center
-          const centerX = (bbox.left + bbox.right) / 2;
-          const topY = bbox.top;
-          // Convert from model coordinates to view coordinates
-          // Scale factor matches the macroModeScale in editorSettings.ts
-          const MODEL_TO_VIEW_SCALE = 40;
-          const viewPos = new Vec2(
-            centerX * MODEL_TO_VIEW_SCALE,
-            topY * MODEL_TO_VIEW_SCALE,
-          );
-          setPosition(viewPos);
-          setVisible(true);
-        }
+        updatePosition();
+        setVisible(true);
       } else {
         setVisible(false);
       }
@@ -108,7 +116,20 @@ export const FloatingTools = () => {
     return () => {
       editor.events.selectEntities.remove(handleSelectEntities);
     };
-  }, [editor]);
+  }, [editor, updatePosition]);
+
+  useEffect(() => {
+    if (!editor || !visible) return;
+
+    let rafId = 0;
+    const tick = () => {
+      updatePosition();
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [editor, visible, updatePosition]);
 
   const handleFlipHorizontal = () => {
     editor?.events.flipHorizontal.dispatch();

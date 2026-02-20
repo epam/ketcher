@@ -612,6 +612,10 @@ export class CoreEditor {
 
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
+      if (!this.ketcherRootElement?.contains(event.currentTarget as Node)) {
+        return;
+      }
+
       event.preventDefault();
 
       if (this.libraryItemDragState) {

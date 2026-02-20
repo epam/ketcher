@@ -156,7 +156,7 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: ActionButtonProps) {
+}: Readonly<ActionButtonProps>) {
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
@@ -256,7 +256,7 @@ function ActionMenu({
   className,
   role,
   ...props
-}: ActionMenuProps) {
+}: Readonly<ActionMenuProps>) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = props.status[itemKey];

@@ -39,7 +39,7 @@ interface TypeChoiceProps {
   disabled?: boolean;
 }
 
-function TypeChoice({ value, onChange, disabled }: TypeChoiceProps) {
+function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (

@@ -333,12 +333,12 @@ export default class FragmentSelectionTool implements Tool {
       for (const [id, currentBond] of struct.bonds.entries()) {
         if (id === bondId) continue;
 
-        const nextAtomId =
-          currentBond.begin === atomId
-            ? currentBond.end
-            : currentBond.end === atomId
-            ? currentBond.begin
-            : null;
+        let nextAtomId: number | null = null;
+        if (currentBond.begin === atomId) {
+          nextAtomId = currentBond.end;
+        } else if (currentBond.end === atomId) {
+          nextAtomId = currentBond.begin;
+        }
 
         if (nextAtomId === null || visited.has(nextAtomId)) {
           continue;

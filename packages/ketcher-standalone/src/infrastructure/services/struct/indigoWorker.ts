@@ -72,10 +72,16 @@ function handle(
         inputData,
       };
     } catch (error) {
+      const stringError =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+          ? error
+          : JSON.stringify(error);
       msg = {
         type: messageType,
         hasError: true,
-        error: error instanceof Error ? error.message : String(error),
+        error: stringError,
         inputData,
       };
     }

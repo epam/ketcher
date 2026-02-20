@@ -237,8 +237,8 @@ class StructEditor extends Component {
           this.editorRef.current.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
-            clientX: csr.cursorPosition.clientX,
-            clientY: csr.cursorPosition.clientY,
+            clientX,
+            clientY,
           });
           break;
         }

@@ -34,7 +34,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
     }
 
     return () => {
-      if (dialog && dialog.open) {
+      if (dialog?.open) {
         dialog.close();
       }
     };

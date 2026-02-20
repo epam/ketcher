@@ -20,11 +20,11 @@ import { KetMonomerClass } from 'application/formatters';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleotide {
-  private monomersCache: BaseMonomer[] = [];
+  private readonly monomersCache: BaseMonomer[] = [];
   constructor(
-    public sugar: Sugar,
-    public rnaBase: RNABase | AmbiguousMonomer,
-    public phosphate: Phosphate,
+    public readonly sugar: Sugar,
+    public readonly rnaBase: RNABase | AmbiguousMonomer,
+    public readonly phosphate: Phosphate,
   ) {
     this.monomersCache = [sugar, rnaBase, phosphate];
   }

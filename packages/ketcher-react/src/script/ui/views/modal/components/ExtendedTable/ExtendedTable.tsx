@@ -35,7 +35,6 @@ interface TableProps {
   pseudo?: string;
   label?: string;
   disabledQueryElements: Array<string> | null | undefined;
-  isNestedModal?: boolean;
   onOk: (result: unknown) => void;
   onCancel: () => void;
 }

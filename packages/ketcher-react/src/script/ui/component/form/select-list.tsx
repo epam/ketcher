@@ -49,7 +49,7 @@ function SelectList({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
-}: SelectListProps) {
+}: Readonly<SelectListProps>) {
   const handleKeyDown =
     (opt: string, index: number) =>
     (event: React.KeyboardEvent<HTMLLIElement>) => {

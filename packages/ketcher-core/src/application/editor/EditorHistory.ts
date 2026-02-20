@@ -27,16 +27,20 @@ export class EditorHistory {
   historyPointer = 0;
   editor!: CoreEditor;
 
-  private static _instance;
-  constructor(editor: CoreEditor) {
-    if (EditorHistory._instance) {
-      return EditorHistory._instance;
-    }
+  // eslint-disable-next-line no-use-before-define
+  private static _instance: EditorHistory | null = null;
+
+  private constructor(editor: CoreEditor) {
     this.editor = editor;
     this.historyPointer = 0;
+  }
 
-    EditorHistory._instance = this;
-    return this;
+  static getInstance(editor: CoreEditor): EditorHistory {
+    if (!EditorHistory._instance) {
+      EditorHistory._instance = new EditorHistory(editor);
+    }
+
+    return EditorHistory._instance;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {

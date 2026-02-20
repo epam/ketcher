@@ -58,7 +58,7 @@ class PolymerBond implements BaseTool {
     options: { toolName: ToolName },
   ) {
     this.editor = editor;
-    this.history = new EditorHistory(this.editor);
+    this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE

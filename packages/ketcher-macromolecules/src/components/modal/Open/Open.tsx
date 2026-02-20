@@ -174,7 +174,7 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
-  const editorHistory = new EditorHistory(editor);
+  const editorHistory = EditorHistory.getInstance(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
   const isSnakeMode = editor.mode instanceof SnakeMode;
   const isFlexMode = editor.mode instanceof FlexMode;
@@ -364,7 +364,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const openHandler = () => {
     const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
+    const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
     history.update(modelChanges);

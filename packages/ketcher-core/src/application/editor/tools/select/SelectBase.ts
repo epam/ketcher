@@ -86,7 +86,7 @@ abstract class SelectBase implements BaseTool {
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
 
   constructor(protected readonly editor: CoreEditor) {
-    this.history = new EditorHistory(this.editor);
+    this.history = EditorHistory.getInstance(this.editor);
     this.destroy();
   }
 

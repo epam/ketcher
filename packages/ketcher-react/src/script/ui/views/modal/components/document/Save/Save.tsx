@@ -428,7 +428,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         warnings.push(structWarning);
       }
       if (saveWarning) {
-        warnings.push(saveWarning as string);
+        warnings.push(saveWarning);
       }
     }
 

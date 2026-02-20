@@ -126,9 +126,10 @@ class SGroupTool implements Tool {
             const sgroupBonds =
               actualSgroupId !== undefined &&
               SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
-            atom === sgroupAtoms[0] &&
-              newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
-              newSelected.bonds.push(...(sgroupBonds as Array<any>));
+            if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+              newSelected.atoms.push(...sgroupAtoms);
+              newSelected.bonds.push(...sgroupBonds);
+            }
           }
 
           if (atomFromStruct) {
@@ -382,8 +383,8 @@ class SGroupTool implements Tool {
     );
 
     if (atom === sgroupAtoms[0]) {
-      newSelected.atoms.push(...(sgroupAtoms as Array<any>));
-      newSelected.bonds.push(...(sgroupBonds as Array<any>));
+      newSelected.atoms.push(...sgroupAtoms);
+      newSelected.bonds.push(...sgroupBonds);
     }
   }
 

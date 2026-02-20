@@ -40,10 +40,8 @@ interface TableProps {
 }
 
 const Table = (props: TableProps) => {
-  const { pseudo, label, disabledQueryElements, onOk, onCancel } = props;
-
   const [value, setValue] = useState<string | null>(
-    pseudo ? label ?? null : null,
+    props.pseudo ? props.label ?? null : null,
   );
 
   const selected = (label: string): boolean => value === label;
@@ -59,7 +57,7 @@ const Table = (props: TableProps) => {
     setValue(label);
 
     if (activateImmediately) {
-      onOk(result());
+      props.onOk(result());
     }
   };
 
@@ -68,7 +66,7 @@ const Table = (props: TableProps) => {
       title="Extended Table"
       withDivider
       className={classes.extendedTable}
-      params={{ onOk, onCancel }}
+      params={props}
       result={result}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Add' }}
@@ -77,7 +75,7 @@ const Table = (props: TableProps) => {
       <GenericGroups
         selected={selected}
         onAtomSelect={onAtomSelect}
-        disabledQueryElements={disabledQueryElements ?? null}
+        disabledQueryElements={props.disabledQueryElements ?? null}
       ></GenericGroups>
     </Dialog>
   );

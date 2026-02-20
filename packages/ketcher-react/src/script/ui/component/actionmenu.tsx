@@ -209,7 +209,7 @@ function renderActiveMenuItem(
   item: MenuItemWithMenu,
   props: SharedActionProps,
 ): JSX.Element | null {
-  const menu = item.menu || [];
+  const menu = item.menu ?? [];
   const { opened, status } = props;
   let activeMenuItem: string | null = null;
   if (isOpened(item, opened)) {
@@ -219,7 +219,7 @@ function renderActiveMenuItem(
         (item): item is string => typeof item === 'string',
       );
       activeMenuItem =
-        findActiveMenuItem(stringItems, status) || stringItems[0];
+        findActiveMenuItem(stringItems, status) ?? stringItems[0];
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
@@ -232,7 +232,7 @@ function renderActiveMenuItem(
       }, []);
 
       activeMenuItem =
-        findActiveMenuItem(subMenuItems, status) || subMenuItems[0];
+        findActiveMenuItem(subMenuItems, status) ?? subMenuItems[0];
     }
   }
 
@@ -280,7 +280,7 @@ function ActionMenu({
   return (
     <menu
       className={className}
-      role={role || 'menu'}
+      role={role ?? 'menu'}
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => {

@@ -3,8 +3,9 @@ import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export async function emptyFunction() {}
+export async function emptyFunction() {
+  // Intentionally empty callback used as a default async no-op in wait helpers.
+}
 
 export async function pageReload(page: Page) {
   await page.reload();

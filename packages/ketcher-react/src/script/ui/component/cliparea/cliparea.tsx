@@ -150,7 +150,8 @@ class ClipArea extends Component<ClipAreaProps> {
               },
               { once: true },
             );
-            document.execCommand('copy');
+            // Legacy fallback when Clipboard API is unavailable (e.g. older browsers)
+            document.execCommand('copy'); // NOSONAR
           });
 
           event.preventDefault();
@@ -368,23 +369,15 @@ async function pasteByKeydown(
 export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action: string): boolean {
-  let enabled = document.queryCommandSupported(action);
-  if (enabled) {
-    try {
-      const windowWithClipboardEvent = window as Window & {
-        ClipboardEvent?: typeof ClipboardEvent;
-      };
-      enabled =
-        document.execCommand(action) ||
-        Boolean(windowWithClipboardEvent.ClipboardEvent) ||
-        Boolean(ieCb);
-    } catch (e) {
-      // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
-      enabled = false;
-    }
+  const clipboardAction =
+    action === 'copy' || action === 'cut' || action === 'paste';
+  if (clipboardAction && isClipboardAPIAvailable()) {
+    return true;
   }
-  return enabled;
+  if (!clipboardAction) {
+    return false;
+  }
+  return Boolean(ieCb);
 }
 
 export default ClipArea;

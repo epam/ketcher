@@ -18,8 +18,9 @@ import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
+  // Checking for old circle data format
   const object =
-    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
+    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data; // NOSONAR
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);
   struct.simpleObjects.add(simpleObject);

@@ -35,13 +35,15 @@ interface TableProps {
   pseudo?: string;
   label?: string;
   disabledQueryElements: Array<string> | null | undefined;
-  isNestedModal?: boolean;
   onOk: (result: unknown) => void;
+  onCancel: () => void;
 }
 
 const Table = (props: TableProps) => {
+  const { pseudo, label, disabledQueryElements, onOk, onCancel } = props;
+
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? props.label ?? null : null,
+    pseudo ? label ?? null : null,
   );
 
   const selected = (label: string): boolean => value === label;
@@ -57,15 +59,8 @@ const Table = (props: TableProps) => {
     setValue(label);
 
     if (activateImmediately) {
-      props.onOk(result());
+      onOk(result());
     }
-  };
-
-  // Cast props to satisfy the Dialog component's expectations
-  const dialogParams = props as unknown as {
-    onOk: (result: unknown) => void;
-    onCancel: () => void;
-    isNestedModal?: boolean;
   };
 
   return (
@@ -73,7 +68,7 @@ const Table = (props: TableProps) => {
       title="Extended Table"
       withDivider
       className={classes.extendedTable}
-      params={dialogParams}
+      params={{ onOk, onCancel }}
       result={result}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Add' }}
@@ -82,7 +77,7 @@ const Table = (props: TableProps) => {
       <GenericGroups
         selected={selected}
         onAtomSelect={onAtomSelect}
-        disabledQueryElements={props.disabledQueryElements ?? null}
+        disabledQueryElements={disabledQueryElements ?? null}
       ></GenericGroups>
     </Dialog>
   );

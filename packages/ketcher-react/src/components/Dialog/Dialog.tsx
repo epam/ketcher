@@ -83,14 +83,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    const current = dialogRef.current;
+    const dialogElement = dialogRef.current;
     if (focusable) {
-      (current as HTMLElement).focus();
+      (dialogElement as HTMLElement).focus();
     }
 
     return () => {
       (
-        current
+        dialogElement
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();

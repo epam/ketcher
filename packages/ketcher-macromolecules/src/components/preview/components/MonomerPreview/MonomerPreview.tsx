@@ -23,6 +23,7 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
 import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMonomerPreview';
@@ -77,15 +78,7 @@ const MonomerPreview = ({ className }: Props) => {
         data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
-        data-modificationtype={(() => {
-          if (!modificationTypes) {
-            return undefined;
-          }
-          if (Array.isArray(modificationTypes)) {
-            return modificationTypes.join(', ');
-          }
-          return modificationTypes;
-        })()}
+        data-modificationtype={getModificationTypeAttribute(modificationTypes)}
       >
         {monomerName && (
           <MonomerName data-testid="preview-tooltip-title">

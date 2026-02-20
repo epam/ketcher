@@ -17,6 +17,7 @@ import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
   AutochainIcon,
   AutochainIconWrapper,
@@ -169,15 +170,9 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
-      data-modificationtype={(() => {
-        if (!monomerItem?.props.modificationTypes) {
-          return undefined;
-        }
-        if (Array.isArray(monomerItem.props.modificationTypes)) {
-          return monomerItem.props.modificationTypes.join(', ');
-        }
-        return monomerItem.props.modificationTypes;
-      })()}
+      data-modificationtype={getModificationTypeAttribute(
+        monomerItem?.props.modificationTypes,
+      )}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (

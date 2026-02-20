@@ -16,9 +16,9 @@
 
 import {
   FC,
-  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
@@ -114,24 +114,38 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const { key } = event;
-    const active = document.activeElement;
-    const activeTextarea = active?.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       ref={dialogRef}
       role="dialog"
       data-testid={'info-modal-window'}
-      onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params.className)}
       {...rest}

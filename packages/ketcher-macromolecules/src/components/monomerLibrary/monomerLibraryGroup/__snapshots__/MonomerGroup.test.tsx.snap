@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-1k0tx2a"
+  class="css-cyguzh"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -35,14 +35,13 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
       />
     </svg>
   </div>
-  <div
+  <button
     aria-label="Toggle favorite"
     class="star "
-    role="button"
-    tabindex="0"
+    type="button"
   >
     ★
-  </div>
+  </button>
 </div>
 `;
 
@@ -63,7 +62,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1g314pg"
+            class="css-1vx381w"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -96,17 +95,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-o7i94f"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -139,17 +137,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-u0kww"
+            class="css-1m6zie5"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -182,17 +179,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g314pg"
+            class="css-1vx381w"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -225,17 +221,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-o7i94f"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -268,14 +263,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -294,7 +288,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1g314pg"
+          class="css-1vx381w"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -327,17 +321,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-o7i94f"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -370,17 +363,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-u0kww"
+          class="css-1m6zie5"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -413,17 +405,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g314pg"
+          class="css-1vx381w"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -456,17 +447,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-o7i94f"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -499,14 +489,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -577,7 +566,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1g314pg"
+            class="css-1vx381w"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -610,17 +599,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-o7i94f"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -653,17 +641,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-u0kww"
+            class="css-1m6zie5"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -696,17 +683,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g314pg"
+            class="css-1vx381w"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -739,17 +725,16 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
           <div
-            class="css-1g9muag"
+            class="css-o7i94f"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -782,14 +767,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -803,7 +787,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1g314pg"
+          class="css-1vx381w"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -836,17 +820,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-o7i94f"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -879,17 +862,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-u0kww"
+          class="css-1m6zie5"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -922,17 +904,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g314pg"
+          class="css-1vx381w"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -965,17 +946,16 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
         <div
-          class="css-1g9muag"
+          class="css-o7i94f"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -1008,14 +988,13 @@ Object {
               />
             </svg>
           </div>
-          <div
+          <button
             aria-label="Toggle favorite"
             class="star "
-            role="button"
-            tabindex="0"
+            type="button"
           >
             ★
-          </div>
+          </button>
         </div>
       </div>
     </div>

@@ -106,6 +106,10 @@ export const Card = styled.div<{
     opacity: 0;
     transition: 0.2s ease;
     flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
     &.visible {
       visibility: visible;
       opacity: 1;

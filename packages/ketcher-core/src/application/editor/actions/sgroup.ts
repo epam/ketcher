@@ -88,7 +88,7 @@ export function fromSeveralSgroupAddition(
   atoms,
   attrs,
 ) {
-  const attachmentPoints = [];
+  const attachmentPoints = attrs.attachmentPoints ?? [];
 
   const descriptors = attrs.fieldValue;
   if (typeof descriptors === 'string' || type !== 'DAT') {

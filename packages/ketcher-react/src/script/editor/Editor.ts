@@ -1290,7 +1290,9 @@ class Editor implements KetcherEditor {
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
     const sortedAttachmentPointsData = new Map<string, [number, number]>(
-      [...data.attachmentPoints].sort(),
+      [...data.attachmentPoints].sort(([leftName], [rightName]) =>
+        leftName.localeCompare(rightName),
+      ),
     );
 
     sortedAttachmentPointsData.forEach(

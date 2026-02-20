@@ -46,7 +46,6 @@ class Form extends Component {
     }
     this.updateState = this.updateState.bind(this);
 
-    // Cache the context value to avoid creating new objects on every render
     this._cachedSchema = schema;
     this._contextValue = { schema, stateStore: this };
   }

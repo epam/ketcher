@@ -133,6 +133,12 @@ import {
 } from 'application/editor/operations/coreRxn/rxnPlus';
 import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
+import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import {
+  StereoFlagAddOperation,
+  StereoFlagDeleteOperation,
+} from 'application/editor/operations/stereoFlag';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -167,6 +173,7 @@ export class DrawingEntitiesManager {
   public rxnArrows: Map<number, RxnArrow> = new Map();
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
+  public stereoFlags: Map<number, CoreStereoFlag> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -269,6 +276,7 @@ export class DrawingEntitiesManager {
       ...(this.rxnArrows as Map<number, DrawingEntity>),
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
+      ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
 
@@ -415,6 +423,8 @@ export class DrawingEntitiesManager {
       return this.deleteMultitailArrow(drawingEntity);
     } else if (drawingEntity instanceof RxnPlus) {
       return this.deleteRxnPlus(drawingEntity);
+    } else if (drawingEntity instanceof CoreStereoFlag) {
+      return this.deleteStereoFlag(drawingEntity);
     } else {
       return new Command();
     }
@@ -425,6 +435,9 @@ export class DrawingEntitiesManager {
 
     drawingEntity.turnOnSelection();
     command.merge(this.createDrawingEntitySelectionCommand(drawingEntity));
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
     return command;
   }
@@ -443,6 +456,10 @@ export class DrawingEntitiesManager {
       );
       command.addOperation(operation);
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     return command;
   }
 
@@ -490,6 +507,8 @@ export class DrawingEntitiesManager {
       }
     });
 
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     const editor = CoreEditor.provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
@@ -508,6 +527,7 @@ export class DrawingEntitiesManager {
       }
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     });
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
     return command;
   }
 
@@ -564,6 +584,7 @@ export class DrawingEntitiesManager {
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
+      ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -785,6 +806,10 @@ export class DrawingEntitiesManager {
         command.merge(selectionCommand);
       }
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     return command;
   }
 
@@ -828,6 +853,40 @@ export class DrawingEntitiesManager {
         command.merge(selectionCommand);
       }
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
+    return command;
+  }
+
+  /**
+   * Syncs stereo flag selection with their associated monomers.
+   * When a monomer is selected, its stereo flag should also be selected.
+   */
+  public syncStereoFlagsSelectionWithMonomers(): Command {
+    const command = new Command();
+
+    this.stereoFlags.forEach((stereoFlag) => {
+      const relatedMonomer = stereoFlag.relatedMonomer;
+      const monomerAtoms = [...this.atoms.values()].filter(
+        (atom) => atom.monomer === relatedMonomer,
+      );
+      const allMonomerAtomsSelected =
+        monomerAtoms.length > 0 && monomerAtoms.every((atom) => atom.selected);
+      const shouldBeSelected =
+        relatedMonomer.selected || allMonomerAtomsSelected;
+
+      if (stereoFlag.selected !== shouldBeSelected) {
+        if (shouldBeSelected) {
+          stereoFlag.turnOnSelection();
+        } else {
+          stereoFlag.turnOffSelection();
+        }
+        command.merge(this.createDrawingEntitySelectionCommand(stereoFlag));
+      }
+    });
+
     return command;
   }
 
@@ -2329,6 +2388,10 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
     });
 
+    this.stereoFlags.forEach((stereoFlag) => {
+      editor.renderersContainer.deleteStereoFlag(stereoFlag);
+    });
+
     SequenceRenderer.clear();
   }
 
@@ -3739,5 +3802,83 @@ export class DrawingEntitiesManager {
     }
 
     return connectedMoleculeMonomers;
+  }
+
+  private deleteStereoFlagModelChange(stereoFlag: CoreStereoFlag) {
+    this.stereoFlags.delete(stereoFlag.id);
+  }
+
+  private addStereoFlagModelChange(
+    position: Vec2,
+    flagType: StereoFlagEnum,
+    relatedMonomer: BaseMonomer,
+    _stereoFlag?: CoreStereoFlag,
+  ) {
+    if (_stereoFlag) {
+      this.stereoFlags.set(_stereoFlag.id, _stereoFlag);
+
+      return _stereoFlag;
+    }
+
+    const stereoFlag = new CoreStereoFlag(position, flagType, relatedMonomer);
+
+    this.stereoFlags.set(stereoFlag.id, stereoFlag);
+
+    return stereoFlag;
+  }
+
+  public addStereoFlag(
+    position: Vec2,
+    flagType: StereoFlagEnum,
+    relatedMonomer: BaseMonomer,
+  ) {
+    const command = new Command();
+    const operation = new StereoFlagAddOperation(
+      this.addStereoFlagModelChange.bind(
+        this,
+        position,
+        flagType,
+        relatedMonomer,
+      ),
+      this.deleteStereoFlagModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteStereoFlag(stereoFlag: CoreStereoFlag) {
+    const command = new Command();
+    const operation = new StereoFlagDeleteOperation(
+      stereoFlag,
+      this.deleteStereoFlagModelChange.bind(this),
+      this.addStereoFlagModelChange.bind(
+        this,
+        stereoFlag.position,
+        stereoFlag.flagType,
+        stereoFlag.relatedMonomer,
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  /**
+   * Gets the stereo flag associated with a monomer.
+   * Note: Linear search is acceptable here as stereo flags are rare
+   * (typically one per fragment with stereo atoms).
+   */
+  public getStereoFlagForMonomer(
+    monomer: BaseMonomer,
+  ): CoreStereoFlag | undefined {
+    for (const stereoFlag of this.stereoFlags.values()) {
+      if (stereoFlag.relatedMonomer === monomer) {
+        return stereoFlag;
+      }
+    }
+    return undefined;
   }
 }

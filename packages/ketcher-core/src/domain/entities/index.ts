@@ -64,3 +64,4 @@ export * from './HydrogenBond';
 export * from './BackBoneSequenceNode';
 export * from './DrawingEntitiesManager.replaceMonomer';
 export * from './Command';
+export * from './CoreStereoFlag';

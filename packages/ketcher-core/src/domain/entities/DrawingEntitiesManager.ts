@@ -1715,7 +1715,6 @@ export class DrawingEntitiesManager {
       );
       let hasAntisenseInRow = false;
       let hasRnaInRow = false;
-      let snakeLayoutNodesInRow: ISnakeLayoutMonomersNode[] = [];
       let previousSenseNode: ISnakeLayoutMonomersNode | undefined;
       let previousAntisenseNode: ISnakeLayoutMonomersNode | undefined;
       let newSenseNodePosition = lastPosition;
@@ -1751,7 +1750,6 @@ export class DrawingEntitiesManager {
 
           hasAntisenseInRow = false;
           hasRnaInRow = false;
-          snakeLayoutNodesInRow = [];
 
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
@@ -1798,8 +1796,6 @@ export class DrawingEntitiesManager {
                     ),
                   );
                 }
-
-                snakeLayoutNodesInRow.push(senseNode);
               }
 
               if (antisenseNode) {
@@ -1834,7 +1830,6 @@ export class DrawingEntitiesManager {
                 }
 
                 hasAntisenseInRow = true;
-                snakeLayoutNodesInRow.push(antisenseNode);
               }
 
               previousSenseNode = senseNode || previousSenseNode;

@@ -34,6 +34,7 @@ import {
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 import {
   Loader,
   StyledDropdown as SaveDropdown,
@@ -143,14 +144,6 @@ const peptideLettersFormatOptions: Array<Option> = [
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
-
-export const MODAL_STATES = {
-  openOptions: 'openOptions',
-  textEditor: 'textEditor',
-} as const;
-
-export type MODAL_STATES_VALUES =
-  typeof MODAL_STATES[keyof typeof MODAL_STATES];
 
 const addToCanvas = ({
   ketSerializer,

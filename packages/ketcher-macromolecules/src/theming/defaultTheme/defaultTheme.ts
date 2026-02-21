@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles';
-import { EditorTheme } from '.';
+import { EditorTheme } from './theme.types';
 import { MonomerColorScheme } from 'ketcher-core';
 
 const monomerColors: Record<string, MonomerColorScheme> = {

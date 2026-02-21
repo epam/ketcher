@@ -22,6 +22,7 @@ import {
   GroupCentersnapView,
   GroupCenterSnapViewParams,
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
+import { RotationView, RotationViewParams } from './RotationView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -196,6 +197,18 @@ export class TransientDrawingView {
 
   public hideSelection() {
     this.removeView(SelectionView.viewName);
+  }
+
+  public showRotation(params: RotationViewParams) {
+    this.addView(RotationView.viewName, {
+      show: RotationView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideRotation() {
+    this.removeView(RotationView.viewName);
   }
 
   public clear() {

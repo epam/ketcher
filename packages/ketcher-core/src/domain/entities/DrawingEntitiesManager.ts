@@ -635,6 +635,132 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public rotateSelectedDrawingEntities(
+    center: Vec2,
+    angleInDegrees: number,
+    isPartialRotation = true,
+  ) {
+    const command = new Command();
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (drawingEntity.selected) {
+        const newPosition = drawingEntity.position.rotateAroundOrigin(
+          angleInDegrees,
+          center,
+        );
+        const positionDelta = newPosition.sub(drawingEntity.position);
+
+        if (isPartialRotation) {
+          command.merge(
+            this.createDrawingEntityMovingCommand(drawingEntity, positionDelta),
+          );
+        } else {
+          command.merge(
+            this.createDrawingEntityMovingCommand(
+              drawingEntity,
+              positionDelta,
+              positionDelta,
+            ),
+          );
+        }
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        // Bonds are updated when monomers are moved, no separate operation needed
+      }
+    });
+
+    return command;
+  }
+
+  public flipSelectedDrawingEntities(flipDirection: 'horizontal' | 'vertical') {
+    const command = new Command();
+    const center = this.getSelectedEntitiesCenter();
+
+    if (!center) {
+      return command;
+    }
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (drawingEntity.selected) {
+        let newPosition: Vec2;
+
+        if (flipDirection === 'horizontal') {
+          newPosition = new Vec2(
+            center.x - (drawingEntity.position.x - center.x),
+            drawingEntity.position.y,
+          );
+        } else {
+          newPosition = new Vec2(
+            drawingEntity.position.x,
+            center.y - (drawingEntity.position.y - center.y),
+          );
+        }
+
+        const positionDelta = newPosition.sub(drawingEntity.position);
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            positionDelta,
+            positionDelta,
+          ),
+        );
+      }
+    });
+
+    return command;
+  }
+
+  public getSelectedEntitiesBoundingBox() {
+    const selectedMonomers = this.selectedMonomers;
+    if (selectedMonomers.length === 0) {
+      return null;
+    }
+    return DrawingEntitiesManager.getStructureBbox(selectedMonomers);
+  }
+
+  public getSelectedEntitiesCenter(): Vec2 | null {
+    const bbox = this.getSelectedEntitiesBoundingBox();
+    if (!bbox) {
+      return null;
+    }
+    return new Vec2(bbox.left + bbox.width / 2, bbox.top + bbox.height / 2);
+  }
+
   public createDrawingEntityMovingCommand(
     drawingEntity: DrawingEntity,
     partOfMovementOffset: Vec2,

@@ -268,11 +268,18 @@ const rnaPresetWizardReducer = (
   const { rnaComponentKey, ...restAction } = action;
 
   if (action.type === 'SetNotifications') {
+    // If notifications map is empty, replace (for clearing), otherwise merge
+    const shouldMerge = action.notifications.size > 0;
     return {
       ...state,
       [action.rnaComponentKey]: {
         ...state[action.rnaComponentKey],
-        notifications: action.notifications,
+        notifications: shouldMerge
+          ? new Map([
+              ...state[action.rnaComponentKey].notifications,
+              ...action.notifications,
+            ])
+          : action.notifications,
       },
     };
   }
@@ -955,6 +962,8 @@ const MonomerCreationWizard = () => {
 
     const structure = editor.structSelected(wizardState.structure);
     const { values: valuesToSave } = wizardState;
+
+    // Validate inputs
     const { errors: inputsErrors, notifications: inputsNotifications } =
       validateInputs(valuesToSave);
     if (Object.keys(inputsErrors).length > 0) {
@@ -964,9 +973,9 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: inputsNotifications,
       });
-      return;
     }
 
+    // Validate attachment points
     const {
       notifications: attachmentPointsNotifications,
       problematicAttachmentPoints,
@@ -980,9 +989,9 @@ const MonomerCreationWizard = () => {
         notifications: attachmentPointsNotifications,
       });
       editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-      return;
     }
 
+    // Validate modification types
     const {
       errors: modificationTypesErrors,
       notifications: modificationTypesNotifications,
@@ -997,9 +1006,9 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: modificationTypesNotifications,
       });
-      return;
     }
 
+    // Validate structure
     const structureNotifications = validateStructure(structure, editor);
     if (structureNotifications.size > 0) {
       needSaveMonomers = false;
@@ -1007,9 +1016,9 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: structureNotifications,
       });
-      return;
     }
 
+    // Validate leaving groups
     if (type) {
       const leavingGroupNotifications = validateMonomerLeavingGroups(
         editor,
@@ -1297,7 +1306,6 @@ const MonomerCreationWizard = () => {
             rnaComponentKey,
             editor,
           });
-          return;
         }
       }
       // If no mandatory properties filled, skip validation - properties will be auto-assigned
@@ -1328,8 +1336,35 @@ const MonomerCreationWizard = () => {
   };
 
   const handleSubmit = () => {
+    // Clear all errors and notifications before validation
     wizardStateDispatch({ type: 'ResetErrors' });
+    wizardStateDispatch({ type: 'SetNotifications', notifications: new Map() });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
+    // Clear notifications for all RNA preset components
+    rnaPresetWizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map(),
+      rnaComponentKey: 'preset',
+      editor,
+    });
+    rnaPresetWizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map(),
+      rnaComponentKey: 'base',
+      editor,
+    });
+    rnaPresetWizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map(),
+      rnaComponentKey: 'sugar',
+      editor,
+    });
+    rnaPresetWizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map(),
+      rnaComponentKey: 'phosphate',
+      editor,
+    });
     editor.setProblematicAttachmentPoints(new Set());
 
     const monomersToSave = isRnaPresetType

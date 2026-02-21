@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { EditorState, Modifier } from 'draft-js';
+import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical';
 
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList';
 import classes from './SpecialSymbolsButton.module.less';
 import { useState } from 'react';
 import { Icon } from 'components';
 
-const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
+const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false);
 
   const handleClose = (event) => {
@@ -38,20 +38,12 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
 
   const addSymbol = (e, value) => {
     e.preventDefault();
-    const selection = editorState.getSelection();
-    const contentState = editorState.getCurrentContent();
-    const nextContentState = Modifier.replaceText(
-      contentState,
-      selection,
-      value,
-      styles,
-    );
-    const nextEditorState = EditorState.push(
-      editorState,
-      nextContentState,
-      'insert-characters',
-    );
-    setEditorState(nextEditorState);
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        selection.insertText(value);
+      }
+    });
     setShowSpecialSymbols(false);
   };
 

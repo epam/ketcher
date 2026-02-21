@@ -35,8 +35,8 @@ import {
 } from 'ketcher-core';
 import assert from 'assert';
 import { intersection, throttle } from 'lodash';
-import type Editor from '../Editor';
-import type { Selection } from '../Editor';
+// eslint-disable-next-line import/no-named-default
+import type { default as Editor, Selection } from '../Editor';
 import { Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
 

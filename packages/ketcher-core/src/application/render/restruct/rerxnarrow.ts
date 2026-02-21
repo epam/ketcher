@@ -19,7 +19,7 @@ import { Box2Abs, RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';

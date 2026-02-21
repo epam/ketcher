@@ -46,7 +46,7 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { Action } from './action';
 import { SgContexts } from '../shared/constants';
 import { uniq } from 'lodash/fp';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttrs } from './fromAtomsAttrs';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,

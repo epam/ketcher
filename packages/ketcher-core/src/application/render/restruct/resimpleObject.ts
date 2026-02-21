@@ -18,7 +18,7 @@ import { Box2Abs, SimpleObjectMode, Vec2 } from 'domain/entities';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';

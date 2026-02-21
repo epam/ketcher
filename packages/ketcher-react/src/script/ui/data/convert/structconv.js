@@ -197,7 +197,6 @@ export function toAtom(atom) {
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
       aromaticity,
-      implicitHCount: restAtom.implicitHCount,
       ringMembership,
       ringSize,
       connectivity,

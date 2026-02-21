@@ -31,7 +31,7 @@ import {
   ChemicalMimeType,
   CleanData,
   CleanResult,
-  ConvertData,
+  ConvertCombinedData,
   ConvertResult,
   DearomatizeData,
   DearomatizeResult,
@@ -235,7 +235,7 @@ export class RemoteStructService implements StructService {
   }
 
   convert(
-    data: ConvertData,
+    data: ConvertCombinedData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(

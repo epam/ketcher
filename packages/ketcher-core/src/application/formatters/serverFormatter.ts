@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  ConvertCombinedData,
   ConvertData,
   ConvertResult,
   LayoutData,
@@ -32,7 +33,7 @@ import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
 
 type ConvertPromise = (
-  data: ConvertData,
+  data: ConvertCombinedData,
   options?: StructServiceOptions,
 ) => Promise<ConvertResult>;
 
@@ -59,17 +60,28 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  async getStructureFromStructAsync(
+  public async getStructureFromStructAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
-  ): Promise<string> {
+  ): Promise<string>;
+
+  public async getStructureFromStructAsync(
+    struct: Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string[]>;
+
+  public async getStructureFromStructAsync(
+    struct: Struct | Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string | string[]> {
     const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = this.#ketSerializer.serialize(
-        struct,
-        drawingEntitiesManager,
-      );
+      const stringifiedStruct = Array.isArray(struct)
+        ? struct.map((v) =>
+            this.#ketSerializer.serialize(v, drawingEntitiesManager),
+          )
+        : this.#ketSerializer.serialize(struct, drawingEntitiesManager);
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,

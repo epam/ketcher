@@ -35,9 +35,11 @@ import {
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
+  IKetMonomerNode,
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
+  SupportedFormat,
 } from 'application/formatters';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
@@ -266,6 +268,72 @@ export class CoreEditor {
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
+
+  private saveLibraryToFile() {
+    const ketContent = JSON.stringify(this._monomersLibraryParsedJson, null, 2);
+    const blob = new Blob([ketContent], {
+      type: 'application/json;charset=utf-8',
+    });
+
+    // Create download link and trigger download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = 'monomers.ket';
+    downloadLink.click();
+
+    // Clean up
+    URL.revokeObjectURL(downloadLink.href);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  private addInChIToLibrary = async (ketcherId?: string) => {
+    if (!this._monomersLibraryParsedJson) return;
+    const serverSettings =
+      ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
+    const formatterFactory =
+      ketcherProvider.getKetcher(ketcherId).formatterFactory;
+    const formatter = formatterFactory.create(
+      SupportedFormat.inChI,
+      serverSettings,
+    );
+
+    const monomers = this.monomersLibrary
+      .filter((monomer) => !!monomer.struct)
+      .filter(
+        // this monomers get error in InChI conversion
+        (monomer) =>
+          monomer.label !== 'Bmt' &&
+          monomer.label !== 'D-Bmt' &&
+          monomer.label !== 'vinU' &&
+          monomer.label !== 'PEG-4',
+      );
+    const structures = monomers.map((monomer) => monomer.struct);
+
+    const inChIs = await formatter.getStructureFromStructAsync(structures);
+    const maxlen = monomers.length;
+    for (let i = 0; i < maxlen; i++) {
+      if (monomers[i].props.id) {
+        let find = false;
+        for (const [key, value] of Object.entries(
+          this._monomersLibraryParsedJson,
+        )) {
+          if (value.id === monomers[i].props.id) {
+            (this._monomersLibraryParsedJson[key] as IKetMonomerNode).InChI =
+              inChIs[i];
+            find = true;
+          }
+        }
+        if (!find) {
+          console.log('No entry for monomer', monomers[i]);
+        }
+      } else {
+        console.log('No id for monomer', monomers[i]);
+      }
+    }
+    this.saveLibraryToFile();
+    KetcherLogger.info('CoreEditor::func', inChIs);
+  };
 
   private resetCanvasOffset() {
     this.canvasOffset = this.canvas.getBoundingClientRect();

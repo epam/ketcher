@@ -31,13 +31,29 @@ export class KetFormatter implements StructFormatter {
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,
-  ): Promise<string> {
-    const ket = this.#ketSerializer.serialize(
+  ): Promise<string>;
+
+  async getStructureFromStructAsync(
+    struct: Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string[]>;
+
+  async getStructureFromStructAsync(
+    struct: Struct | Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string | string[]> {
+    if (Array.isArray(struct)) {
+      return struct.map((item) =>
+        this.#ketSerializer.serialize(item, drawingEntitiesManager, selection),
+      );
+    }
+    return this.#ketSerializer.serialize(
       struct,
       drawingEntitiesManager,
       selection,
     );
-    return ket;
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {

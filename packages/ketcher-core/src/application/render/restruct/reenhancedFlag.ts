@@ -19,7 +19,7 @@ import { Box2Abs, Fragment, StereoFlag } from 'domain/entities';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {

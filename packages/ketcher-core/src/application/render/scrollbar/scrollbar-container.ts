@@ -1,4 +1,4 @@
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { ScrollOffset } from './scroll-offset';
 import { VerticalScrollbar } from './scrollbar-vertical';
 import { HorizontalScrollbar } from './scrollbar-horizontal';

@@ -20,7 +20,7 @@ import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
 import ReObject from './reobject';
 import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';

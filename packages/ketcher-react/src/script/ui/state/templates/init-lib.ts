@@ -22,7 +22,6 @@ import {
   SettingsManager,
 } from 'ketcher-core';
 
-import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
 import { AnyAction, Dispatch } from 'redux';
@@ -79,7 +78,8 @@ export default async function initTmplLib(
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
     const lib = res.concat(userTmpls());
     dispatch(initLib(lib));
-    dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
+    dispatch({ type: 'APP_OPTIONS', data: { templates: true } });
+    dispatch({ type: 'UPDATE' });
     if (needReinitializeTemplateLibrary) {
       reinitializeTemplateLibrary();
       needReinitializeTemplateLibrary = false;

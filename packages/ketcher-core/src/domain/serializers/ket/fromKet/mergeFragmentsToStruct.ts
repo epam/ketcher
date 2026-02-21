@@ -1,5 +1,5 @@
 import { Struct } from 'domain/entities';
-import { atomToStruct, bondToStruct } from './moleculeToStruct';
+import { atomToStruct, bondToStruct } from './moleculeToStruct.helpers';
 import { KetItem } from './types';
 
 export function mergeFragmentsToStruct(

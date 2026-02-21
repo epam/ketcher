@@ -1,6 +1,5 @@
 import { BaseMonomer } from './BaseMonomer';
 import { RNABase } from './RNABase';
-import { Phosphate } from './Phosphate';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
@@ -8,6 +7,7 @@ import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubCh
 import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { KetMonomerClass } from 'application/formatters';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer & IVariantMonomer) {
@@ -52,7 +52,8 @@ export class Sugar extends BaseMonomer {
 
     // If other monomer is neither a Phosphate nor RNABase, open modal
     if (
-      !(otherMonomer instanceof Phosphate) &&
+      otherMonomer.monomerItem.props.MonomerClass !==
+        KetMonomerClass.Phosphate &&
       !isRnaBaseOrAmbiguousRnaBase(otherMonomer)
     ) {
       return;

@@ -1,10 +1,10 @@
 import { BaseMonomer } from './BaseMonomer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from './vec2';
-import { Sugar } from './Sugar';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { KetMonomerClass } from 'application/formatters';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
@@ -54,7 +54,7 @@ export class Phosphate extends BaseMonomer {
     }
 
     // If other monomer is not a Sugar, we want to open modal
-    if (!(otherMonomer instanceof Sugar)) {
+    if (otherMonomer.monomerItem.props.MonomerClass !== KetMonomerClass.Sugar) {
       return;
     }
     // If we chose a specific AP on other monomer, we want to determine the correct AP on this one

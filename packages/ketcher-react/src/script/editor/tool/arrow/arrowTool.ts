@@ -1,4 +1,4 @@
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import { CoordinateTransformation, Vec2 } from 'ketcher-core';
 
 export abstract class ArrowTool {

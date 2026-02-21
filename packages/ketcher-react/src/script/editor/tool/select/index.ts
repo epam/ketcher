@@ -1,5 +1,5 @@
 import { Tool, ToolConstructorInterface } from '../Tool';
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 import { SelectViewOnlyTool } from './selectViewOnly';
 import SelectTool from './select';
 import { SelectMode } from './select.types';

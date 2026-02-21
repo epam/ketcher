@@ -9,7 +9,7 @@ import {
 } from 'ketcher-core';
 import { dropAndMerge } from '../tool/helper/dropAndMerge';
 
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 import { selMerge } from './select';
 import { handleMovingPosibilityCursor } from '../utils';

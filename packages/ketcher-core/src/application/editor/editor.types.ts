@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions';
+import type { Action } from './actions/action';
 import { MonomerCreationState, Render } from 'application/render';
 import { Struct } from 'domain/entities';
 import { selectionKeys } from './shared/constants';

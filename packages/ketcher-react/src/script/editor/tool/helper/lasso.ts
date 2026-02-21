@@ -16,7 +16,7 @@
 
 import { CoordinateTransformation, Scale } from 'ketcher-core';
 import locate from './locate';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 
 class LassoHelper {
   mode: any;

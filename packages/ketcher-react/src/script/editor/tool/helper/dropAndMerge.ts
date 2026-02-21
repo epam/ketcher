@@ -8,7 +8,7 @@ import {
   SGroup,
   ReBond,
 } from 'ketcher-core';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems';
 
 type MergeItems = {

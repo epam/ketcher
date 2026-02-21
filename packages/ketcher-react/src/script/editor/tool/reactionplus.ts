@@ -19,7 +19,7 @@ import {
   fromPlusAddition,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 

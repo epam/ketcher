@@ -25,7 +25,7 @@ import {
   fromMultipleMove,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { MODES } from 'src/constants';
 import { getAngleFromEvent, getBondFlipSign } from './template';
 

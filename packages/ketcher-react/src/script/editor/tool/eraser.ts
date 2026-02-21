@@ -35,7 +35,7 @@ import {
 
 import LassoHelper from './helper/lasso';
 import { selMerge } from './select';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 
 class EraserTool implements Tool {

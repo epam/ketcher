@@ -22,7 +22,7 @@ import {
   FunctionalGroup,
   KetcherLogger,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 
 class RGroupFragmentTool implements Tool {

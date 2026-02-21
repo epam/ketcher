@@ -16,7 +16,7 @@
 
 import { Vec2 } from 'domain/entities';
 import utils from '../editor/shared/utils';
-import { ShowHydrogenLabels } from './restruct/reatom';
+import { ShowHydrogenLabels } from './restruct/generalEnumTypes';
 import { RenderOptions } from './render.types';
 
 function defaultOptions(renderOptions: RenderOptions): RenderOptions {

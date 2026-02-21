@@ -7,7 +7,7 @@ import {
   fromArrowDeletion,
   fromArrowResizing,
 } from 'ketcher-core';
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 import assert from 'assert';
 import { ArrowAddTool } from './arrow.types';
 

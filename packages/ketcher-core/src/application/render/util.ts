@@ -17,7 +17,8 @@
 import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
 import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import assert from 'assert';
-import { ReStruct, LayerMap } from './restruct';
+import { LayerMap } from './restruct/generalEnumTypes';
+import type ReStruct from './restruct/restruct';
 import Visel from './restruct/visel';
 import {
   RelativeBox,

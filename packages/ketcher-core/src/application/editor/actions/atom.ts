@@ -38,12 +38,12 @@ import {
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
-export { fromAtomsAttrs } from './fromAtomsAttrs';
 
 import { Action } from './action';
 import { fromBondStereoUpdate } from './bond';
 import { without } from 'lodash/fp';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
+export { fromAtomsAttrs } from './fromAtomsAttrs';
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = { ...(atom || {}) };

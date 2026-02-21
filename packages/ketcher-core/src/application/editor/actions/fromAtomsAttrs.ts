@@ -8,7 +8,7 @@ import assert from 'assert';
 export function fromAtomsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
-  attrs: any,
+  attrs: Partial<Record<string, unknown>>,
   reset: boolean | null,
 ) {
   const action = new Action();

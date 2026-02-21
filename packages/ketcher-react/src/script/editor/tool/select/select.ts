@@ -41,7 +41,7 @@ import LassoHelper from '../helper/lasso';
 import { isMergingToMacroMolecule } from '../helper/isMacroMolecule';
 import { atomLongtapEvent } from '../atom';
 import SGroupTool from '../sgroup';
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';

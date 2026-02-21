@@ -31,7 +31,7 @@ import {
   CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';

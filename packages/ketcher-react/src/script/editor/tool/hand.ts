@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { CoordinateTransformation, Vec2 } from 'ketcher-core';
 import { Tool } from './Tool';
 

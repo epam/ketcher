@@ -46,6 +46,9 @@ def build_graph(files):
     for file_path in files:
         with open(file_path, encoding='utf-8', errors='ignore') as source:
             for line in source:
+                if line.lstrip().startswith('import type '):
+                    continue
+
                 match = IMPORT_RE.match(line)
                 if not match:
                     continue

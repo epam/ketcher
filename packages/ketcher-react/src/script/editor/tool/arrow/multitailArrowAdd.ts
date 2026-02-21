@@ -4,7 +4,7 @@ import {
   fromMultitailArrowCreation,
 } from 'ketcher-core';
 import { ArrowAddTool } from './arrow.types';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 
 export class MultitailArrowAddTool implements ArrowAddTool {
   static readonly MIN_HEIGHT = 2.5;

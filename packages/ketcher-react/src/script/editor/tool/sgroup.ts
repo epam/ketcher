@@ -31,7 +31,8 @@ import {
 import LassoHelper from './helper/lasso';
 import { isEqual } from 'lodash/fp';
 import { selMerge } from './select';
-import Editor, { Selection } from '../Editor';
+import type Editor from '../Editor';
+import type { Selection } from '../Editor';
 import { Tool } from './Tool';
 import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';
 

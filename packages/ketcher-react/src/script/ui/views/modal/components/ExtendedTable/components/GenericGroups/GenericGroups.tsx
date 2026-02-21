@@ -19,7 +19,7 @@ import { HorizontalBoxWithLines, VerticalBoxWithLines } from './BoxWithLines';
 import { GenGroup } from './GenGroup';
 import { Generics } from 'ketcher-core';
 import classes from './GenericGroups.module.less';
-import { groupNames } from './groupNames';
+import { groupNames } from './';
 
 type GenericGroupsProps = {
   selected: (label: string) => boolean;

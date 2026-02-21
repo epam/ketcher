@@ -1,6 +1,6 @@
 import { AttachmentPointName, FunctionalGroup } from 'ketcher-core';
 import type { TriggerEvent, PredicateParams } from 'react-contexify';
-import type { Selection } from '../../../../editor/Editor';
+import { Selection } from '../../../../editor/Editor';
 
 export enum CONTEXT_MENU_ID {
   FOR_BONDS = 'context-menu-for-bonds',

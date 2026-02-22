@@ -1,6 +1,6 @@
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
-import { StereLabelStyleType } from 'application/render/restruct';
+import type { StereLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 
 export type RenderOptionStyles = Record<string, string | number>;
 

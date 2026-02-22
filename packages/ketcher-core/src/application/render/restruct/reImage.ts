@@ -1,4 +1,6 @@
-import { LayerMap, ReObject, ReStruct } from 'application/render/restruct';
+import { LayerMap } from './generalEnumTypes';
+import ReObject from './reobject';
+import type ReStruct from './restruct';
 import {
   Image,
   ImageReferenceName,

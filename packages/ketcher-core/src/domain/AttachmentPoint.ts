@@ -15,7 +15,8 @@ import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditor, SnakeMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {

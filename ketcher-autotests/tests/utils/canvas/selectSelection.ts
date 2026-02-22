@@ -4,10 +4,10 @@ import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  moveMouseAway,
   pasteFromClipboardByKeyboard,
-  waitForRender,
-} from '..';
+} from '../keyboard';
+import { moveMouseAway } from '../moveMouseAway';
+import { waitForRender } from '../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 

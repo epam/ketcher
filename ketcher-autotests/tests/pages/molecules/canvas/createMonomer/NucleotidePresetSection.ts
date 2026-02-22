@@ -2,7 +2,7 @@
 import { Locator, Page } from '@playwright/test';
 import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Constants';
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { selectAtomAndBonds } from '../CreateMonomerDialog';
+import { selectAtomAndBonds } from './selectAtomAndBonds';
 
 type AliasesSectionLocators = {
   helmAliasEditbox: Locator;

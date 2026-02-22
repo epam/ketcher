@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { delay } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
+import { delay } from '../../../canvas/helpers';
+import { waitForRender } from '../waitForRender';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 /**

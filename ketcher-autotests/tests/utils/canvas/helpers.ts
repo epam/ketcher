@@ -7,8 +7,9 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
-import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { emptyFunction } from '@utils/common/helpers';
+import { emptyFunction } from '../common/helpers';
+import { waitForRender } from '../common/loaders/waitForRender';
+import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
 import {

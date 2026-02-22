@@ -6,11 +6,10 @@ import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  MacroFileType,
-  delay,
-  StructureFormat,
-  waitForSpinnerFinishedWork,
-} from '@utils';
+} from '../clicks';
+import { delay } from '../canvas/helpers';
+import { MacroFileType, StructureFormat } from '../canvas/types';
+import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { MolfileFormat } from 'ketcher-core';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -21,7 +20,6 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
-import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 
 export function getTestDataDirectory() {
@@ -129,7 +127,7 @@ export async function openImageAndAddToCanvas(
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
   await CommonLeftToolbar(page).handTool();
-  await LeftToolbar(page).image();
+  await page.getByTestId('images').click();
 
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });

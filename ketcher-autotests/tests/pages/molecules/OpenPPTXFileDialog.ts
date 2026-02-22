@@ -1,7 +1,8 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { CommonTopLeftToolbar } from '../common/CommonTopLeftToolbar';
-import { openFile } from '@utils/files';
+import { OpenStructureDialog } from '../common/OpenStructureDialog';
+import * as path from 'path';
 
 type OpenPPTXFileDialogLocators = {
   closeWindowButton: Locator;
@@ -62,9 +63,18 @@ export async function openPPTXFile(
     Structure: number;
   } = { Structure: 1 },
 ) {
+  const openFile = async (fileName: string) => {
+    const testDataDirectory = path.resolve(__dirname, '../../../test-data');
+    const resolvedFilePath = path.resolve(testDataDirectory, fileName);
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await OpenStructureDialog(page).openFromFile();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(resolvedFilePath);
+  };
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
-    await openFile(page, filePath);
+    await openFile(filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
   if (numberOf.Structure !== 1) {

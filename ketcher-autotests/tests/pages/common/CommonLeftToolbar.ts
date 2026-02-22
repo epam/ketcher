@@ -6,7 +6,6 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
-import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   handToolButton: Locator;
@@ -73,7 +72,7 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       try {
-        await delay(0.2);
+        await page.waitForTimeout(200);
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',

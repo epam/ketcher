@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrow, RxnPlus, Struct } from 'domain/entities';
+import { RxnArrow } from 'domain/entities/rxnArrow';
+import { RxnPlus } from 'domain/entities/rxnPlus';
+import { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function rxnToStruct(ketItem: any, struct: Struct): Struct {

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
+import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {

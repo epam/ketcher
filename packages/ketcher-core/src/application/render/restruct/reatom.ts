@@ -14,17 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  StereoFlag,
-  StereoLabel,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom, StereoLabel } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { StereoFlag } from 'domain/entities/fragment';
+import { Vec2 } from 'domain/entities/vec2';
 import { ElementColor, Elements } from 'domain/constants';
 import {
   LayerMap,

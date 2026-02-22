@@ -14,15 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  FunctionalGroup,
-  HalfBond,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { HalfBond } from 'domain/entities/halfBond';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap, StereoColoringType } from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 

@@ -14,15 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Bond,
-  Vec2,
-  AtomAttributes,
-  BondAttributes,
-  FunctionalGroup,
-  SGroupAttachmentPoint,
-  SGroup,
-} from 'domain/entities';
+import { AtomAttributes } from 'domain/entities/atom';
+import { Bond, BondAttributes } from 'domain/entities/bond';
+import { Vec2 } from 'domain/entities/vec2';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
 import {
   AtomAdd,
   BondAdd,

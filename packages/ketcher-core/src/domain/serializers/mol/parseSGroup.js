@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pool, SGroup, Vec2, SGroupAttachmentPoint } from 'domain/entities';
+import { Pool } from 'domain/entities/pool';
+import { SGroup } from 'domain/entities/sgroup';
+import { Vec2 } from 'domain/entities/vec2';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 
 import utils from './utils';
 import assert from 'assert';

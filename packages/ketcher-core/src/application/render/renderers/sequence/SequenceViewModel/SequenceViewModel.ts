@@ -2,13 +2,11 @@ import {
   ChainsCollection,
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
-import {
-  EmptySequenceNode,
-  BaseMonomer,
-  SubChainNode,
-  BackBoneSequenceNode,
-  RNABase,
-} from 'domain/entities';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { RNABase } from 'domain/entities/RNABase';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
   ISequenceViewModelRow,

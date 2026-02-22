@@ -1,4 +1,4 @@
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from 'application/editor';
 import { Scale } from 'domain/helpers';
 import { ReStruct } from 'application/render';

@@ -2,7 +2,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates, provideEditorSettings } from 'application/editor';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class RxnPlusRenderer extends BaseRenderer {
   private selectionElement:

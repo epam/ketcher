@@ -7,7 +7,7 @@ import {
   isBondBetweenSugarAndBaseOfRna,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
-} from 'domain/helpers/monomers';
+} from 'domain/helpers/polymerBondMonomerConnections';
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';

@@ -1,14 +1,8 @@
-import {
-  AmbiguousMonomer,
-  BaseMonomer,
-  HydrogenBond,
-  MONOMER_CLASS_TO_CONSTRUCTOR,
-  Peptide,
-  Phosphate,
-  RNABase,
-  Sugar,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { Peptide } from 'domain/entities/Peptide';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Sugar } from 'domain/entities/Sugar';
 import {
   AttachmentPointName,
   MonomerItemType,
@@ -20,9 +14,86 @@ import { IVariantMonomer } from 'domain/entities/types';
 import {
   KetMonomerClass,
   KetMonomerTemplateAtom,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { IRnaPreset } from 'application/editor';
+
+/**
+ * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
+ * and creating extra dependency edges in core entity/helper graph.
+ */
+type AmbiguousMonomerEntity = BaseMonomer &
+  IVariantMonomer & {
+    isAmbiguous: true;
+    monomerClass: KetMonomerClass;
+  };
+
+type AmbiguousMonomerLike = {
+  isAmbiguous?: boolean;
+  monomerClass?: KetMonomerClass;
+};
+
+/**
+ * Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
+ * to avoid introducing an additional dependency edge into the entity graph.
+ */
+const isAmbiguousMonomerEntity = (
+  monomer?: BaseMonomer,
+): monomer is AmbiguousMonomerEntity => {
+  const ambiguousMonomer = monomer as AmbiguousMonomerLike | undefined;
+
+  return Boolean(
+    ambiguousMonomer?.isAmbiguous && ambiguousMonomer?.monomerClass,
+  );
+};
+
+const getMonomerClass = (
+  monomer?: BaseMonomer,
+): KetMonomerClass | string | undefined => {
+  const monomerLike = monomer as
+    | {
+        monomerItem?: { class?: KetMonomerClass | string };
+        monomerClass?: KetMonomerClass | string;
+      }
+    | undefined;
+
+  return monomerLike?.monomerItem?.class ?? monomerLike?.monomerClass;
+};
+
+const isMonomerOfClass = (
+  monomer: BaseMonomer | undefined,
+  monomerClass: KetMonomerClass,
+): boolean => getMonomerClass(monomer) === monomerClass;
+
+/**
+ * Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
+ * This keeps runtime checks independent from the AmbiguousMonomer class constructor.
+ */
+type ChainMonomerType = 'Peptide' | 'Phosphate' | 'Sugar' | 'UnsplitNucleotide';
+const CHAIN_MONOMER_TYPE_TO_CLASS: Record<ChainMonomerType, KetMonomerClass> = {
+  Peptide: KetMonomerClass.AminoAcid,
+  Phosphate: KetMonomerClass.Phosphate,
+  Sugar: KetMonomerClass.Sugar,
+  UnsplitNucleotide: KetMonomerClass.RNA,
+};
+
+const isMonomerClassCompatible = (
+  monomer: AmbiguousMonomerEntity,
+  monomerType: ChainMonomerType,
+): boolean => {
+  switch (monomerType) {
+    case 'Peptide':
+      return monomer.monomerClass === KetMonomerClass.AminoAcid;
+    case 'Phosphate':
+      return monomer.monomerClass === KetMonomerClass.Phosphate;
+    case 'Sugar':
+      return monomer.monomerClass === KetMonomerClass.Sugar;
+    case 'UnsplitNucleotide':
+      return monomer.monomerClass === KetMonomerClass.RNA;
+    default:
+      return false;
+  }
+};
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -123,7 +194,8 @@ export function getNextMonomerInChain(
 }
 
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
-  if (!monomer || !(monomer instanceof Sugar)) return undefined;
+  if (!monomer || !isMonomerOfClass(monomer, KetMonomerClass.Sugar))
+    return undefined;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
   const r3ConnectedMonomer =
     r3PolymerBond instanceof PolymerBond
@@ -166,7 +238,8 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
       : undefined;
 
-  return r1ConnectedMonomer instanceof Sugar && r3ConnectedMonomer === monomer
+  return isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar) &&
+    r3ConnectedMonomer === monomer
     ? r1ConnectedMonomer
     : undefined;
 }
@@ -176,9 +249,9 @@ export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
     (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
       isRnaBaseOrAmbiguousRnaBase(polymerBond.firstMonomer) &&
       polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
-      polymerBond.secondMonomer instanceof Sugar) ||
+      isMonomerOfClass(polymerBond.secondMonomer, KetMonomerClass.Sugar)) ||
     (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
-      polymerBond.firstMonomer instanceof Sugar &&
+      isMonomerOfClass(polymerBond.firstMonomer, KetMonomerClass.Sugar) &&
       polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
       isRnaBaseOrAmbiguousRnaBase(polymerBond.secondMonomer))
   );
@@ -188,16 +261,14 @@ export function getPhosphateFromSugar(monomer?: BaseMonomer) {
   if (!monomer) return undefined;
   const nextMonomerInChain = getNextMonomerInChain(monomer);
 
-  return nextMonomerInChain instanceof Phosphate
+  return isMonomerOfClass(nextMonomerInChain, KetMonomerClass.Phosphate)
     ? nextMonomerInChain
     : undefined;
 }
 
 export function isMonomerBeginningOfChain(
   monomer: BaseMonomer,
-  MonomerTypes: Array<
-    typeof Peptide | typeof Phosphate | typeof Sugar | typeof UnsplitNucleotide
-  >,
+  MonomerTypes: Array<ChainMonomerType>,
 ) {
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
 
@@ -210,10 +281,12 @@ export function isMonomerBeginningOfChain(
     previousMonomer &&
     !MonomerTypes.some(
       (MonomerType) =>
-        previousMonomer instanceof MonomerType ||
-        (previousMonomer instanceof AmbiguousMonomer &&
-          MONOMER_CLASS_TO_CONSTRUCTOR[previousMonomer.monomerClass] ===
-            MonomerType),
+        isMonomerOfClass(
+          previousMonomer,
+          CHAIN_MONOMER_TYPE_TO_CLASS[MonomerType],
+        ) ||
+        (isAmbiguousMonomerEntity(previousMonomer) &&
+          isMonomerClassCompatible(previousMonomer, MonomerType)),
     );
   const previousConnectionNotR2 =
     r1PolymerBond &&
@@ -224,7 +297,7 @@ export function isMonomerBeginningOfChain(
   return (
     ((monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
       !monomer.hasAttachmentPoint(AttachmentPointName.R1)) &&
-      (monomer.hasBonds || monomer instanceof UnsplitNucleotide)) ||
+      (monomer.hasBonds || isMonomerOfClass(monomer, KetMonomerClass.RNA))) ||
     previousConnectionNotR2 ||
     isPreviousMonomerPartOfChain
   );
@@ -304,27 +377,27 @@ export const libraryItemHasR1AttachmentPoint = (
 
 export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,
-): monomer is Peptide | AmbiguousMonomer {
+): monomer is Peptide | AmbiguousMonomerEntity {
   return (
-    monomer instanceof Peptide ||
-    (monomer instanceof AmbiguousMonomer &&
+    isMonomerOfClass(monomer, KetMonomerClass.AminoAcid) ||
+    (isAmbiguousMonomerEntity(monomer) &&
       monomer.monomerClass === KetMonomerClass.AminoAcid)
   );
 }
 
 export function isRnaBaseOrAmbiguousRnaBase(
   monomer?: BaseMonomer,
-): monomer is RNABase | AmbiguousMonomer {
+): monomer is RNABase | AmbiguousMonomerEntity {
   return (
-    monomer instanceof RNABase ||
-    (monomer instanceof AmbiguousMonomer &&
+    isMonomerOfClass(monomer, KetMonomerClass.Base) ||
+    (isAmbiguousMonomerEntity(monomer) &&
       monomer.monomerClass === KetMonomerClass.Base)
   );
 }
 
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (
-    monomer instanceof UnsplitNucleotide ||
+    isMonomerOfClass(monomer, KetMonomerClass.RNA) ||
     (isRnaBaseOrAmbiguousRnaBase(monomer) &&
       Boolean(getSugarFromRnaBase(monomer)))
   );

@@ -1,4 +1,4 @@
-import { KetSerializer } from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { IKetMacromoleculesContent } from 'application/formatters';
 
 export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {

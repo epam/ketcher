@@ -15,7 +15,8 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { SimpleObject, SimpleObjectMode, Vec2 } from 'domain/entities';
+import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import { Vec2 } from 'domain/entities/vec2';
 
 import Base from './base';
 import { OperationType } from './OperationType';

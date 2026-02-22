@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerMoveOperation implements Operation {

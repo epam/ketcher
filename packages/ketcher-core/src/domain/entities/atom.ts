@@ -25,9 +25,8 @@ import {
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { AtomCIP } from './types';
-import { SGroup } from 'domain/entities/sgroup';
+import type { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
 /**
@@ -950,10 +949,9 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
+    const sgroup = Atom.isSGroup(structOrSgroup)
+      ? structOrSgroup
+      : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
 
     return sgroup
       ?.getAttachmentPoints()
@@ -1069,7 +1067,7 @@ export class Atom extends BaseMicromoleculeEntity {
       atomId,
     );
     const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
-    const isMonomer = sGroup instanceof MonomerMicromolecule;
+    const isMonomer = sGroup?.isMonomer;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
@@ -1084,6 +1082,15 @@ export class Atom extends BaseMicromoleculeEntity {
           : bond.endSuperatomAttachmentPointNumber ===
             attachmentPoint?.attachmentPointNumber,
       )
+    );
+  }
+
+  private static isSGroup(
+    structOrSgroup: Struct | SGroup,
+  ): structOrSgroup is SGroup {
+    return (
+      'getAttachmentPoints' in structOrSgroup &&
+      'getContractedPosition' in structOrSgroup
     );
   }
 }

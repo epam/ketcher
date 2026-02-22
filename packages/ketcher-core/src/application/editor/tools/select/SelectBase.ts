@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   CoreEditor,
   EditorHistory,

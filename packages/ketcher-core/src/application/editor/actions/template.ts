@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct, Vec2 } from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
 import { fromAtomsAttrs, mergeSgroups } from './atom';

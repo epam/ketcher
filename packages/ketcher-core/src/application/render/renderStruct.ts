@@ -1,8 +1,9 @@
-import { Struct, Vec2 } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
 import ReAtom from './restruct/reatom';
-import { Coordinates } from 'application/editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog

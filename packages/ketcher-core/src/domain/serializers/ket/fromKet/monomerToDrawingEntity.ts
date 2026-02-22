@@ -5,7 +5,8 @@ import {
   IKetAmbiguousMonomerNode,
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct, Vec2 } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   modifyTransformation,

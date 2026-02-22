@@ -17,7 +17,7 @@
 import BaseOperation from 'application/editor/operations/base';
 import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
-import { MonomerMicromolecule } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type ShiftMonomerData = {
   id: number;

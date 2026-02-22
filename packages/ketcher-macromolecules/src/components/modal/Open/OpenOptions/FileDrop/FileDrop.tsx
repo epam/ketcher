@@ -17,7 +17,7 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
-import { OpenOptionText, DisabledText } from '../OpenOptions';
+import { OpenOptionText, DisabledText } from '../sharedStyles';
 
 export type FileDropProps = {
   buttonLabel: string;

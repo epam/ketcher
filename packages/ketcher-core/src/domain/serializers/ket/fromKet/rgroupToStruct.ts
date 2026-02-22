@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup, Struct } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
+import { Struct } from 'domain/entities/struct';
 
 import { ifDef } from 'utilities';
 import { moleculeToStruct } from './moleculeToStruct';

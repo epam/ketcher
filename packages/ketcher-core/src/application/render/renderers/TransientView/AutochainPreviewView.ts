@@ -7,7 +7,8 @@ import {
   monomerFactory,
 } from 'application/editor';
 import { MonomerItemType } from 'domain/types';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { KetcherLogger } from 'utilities';
 import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseTool } from 'application/editor/tools/Tool';
-import { BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import {
   BaseMonomerRenderer,

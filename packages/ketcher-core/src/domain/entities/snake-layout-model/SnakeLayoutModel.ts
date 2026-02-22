@@ -1,13 +1,11 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import {
-  BaseMonomer,
-  Chain,
-  LinkerSequenceNode,
-  Nucleoside,
-  Nucleotide,
-  RNABase,
-  SubChainNode,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { RNABase } from 'domain/entities/RNABase';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';

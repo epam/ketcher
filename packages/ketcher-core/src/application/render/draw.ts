@@ -15,7 +15,9 @@
  ***************************************************************************/
 
 import { RaphaelPaper, Element } from 'raphael';
-import { HalfBond, RxnArrowMode, Vec2 } from 'domain/entities';
+import { HalfBond } from 'domain/entities/halfBond';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { getOptionsWithConvertedUnits } from './options';
 import Raphael from './raphael-ext';

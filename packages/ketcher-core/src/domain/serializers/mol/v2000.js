@@ -16,19 +16,15 @@
 
 /* eslint-disable guard-for-in */ // todo
 
-import {
-  Atom,
-  AtomList,
-  AttachmentPoints,
-  Bond,
-  Pool,
-  RGroup,
-  RGroupAttachmentPoint,
-  SGroup,
-  StereoLabel,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
+import { AtomList } from 'domain/entities/atomList';
+import { Bond } from 'domain/entities/bond';
+import { Pool } from 'domain/entities/pool';
+import { RGroup } from 'domain/entities/rgroup';
+import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';

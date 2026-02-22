@@ -3,8 +3,7 @@ import assert from 'assert';
 import {
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
-} from 'domain/entities';
-import { RGroupAttachmentPointRemove } from '.';
+} from 'domain/entities/rgroupAttachmentPoint';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../base';
 
@@ -56,6 +55,9 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     if (this.data.attachmentPointId === undefined) {
       throw Error(`Inverted attachmentPointId doesn't exist`);
     }
+    const {
+      RGroupAttachmentPointRemove,
+    } = require('./RGroupAttachmentPointRemove');
     return new RGroupAttachmentPointRemove(this.data.attachmentPointId);
   }
 }

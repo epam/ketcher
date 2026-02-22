@@ -1,6 +1,5 @@
 import { ReStruct } from 'application/render';
 import assert from 'assert';
-import { RGroupAttachmentPointAdd } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../base';
 
@@ -44,6 +43,7 @@ class RGroupAttachmentPointRemove extends BaseOperation {
   }
 
   invert() {
+    const { RGroupAttachmentPointAdd } = require('./RGroupAttachmentPointAdd');
     return new RGroupAttachmentPointAdd(this.data);
   }
 }

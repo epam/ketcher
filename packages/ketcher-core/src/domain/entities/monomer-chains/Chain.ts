@@ -1,20 +1,18 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import {
-  BaseMonomer,
-  Peptide,
-  Phosphate,
-  SubChainNode,
-  Sugar,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-  Nucleoside,
-  Nucleotide,
-  MonomerSequenceNode,
-  EmptySequenceNode,
-  LinkerSequenceNode,
-  AmbiguousMonomer,
-  PolymerBond,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   getNextMonomerInChain,
   isValidNucleoside,

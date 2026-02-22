@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerMicromolecule, Pile, SGroup } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Pile } from 'domain/entities/pile';
+import { SGroup } from 'domain/entities/sgroup';
 
 import utils from './utils';
 import v2000 from './v2000';

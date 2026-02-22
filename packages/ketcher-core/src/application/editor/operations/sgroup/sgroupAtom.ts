@@ -18,7 +18,7 @@
 import { BaseOperation } from '../base';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
-import { SGroup } from 'domain/entities';
+import { SGroup } from 'domain/entities/sgroup';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

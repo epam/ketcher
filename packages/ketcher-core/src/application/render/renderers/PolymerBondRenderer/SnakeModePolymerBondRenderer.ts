@@ -7,7 +7,8 @@ import { SideChainConnectionBondRendererUtility } from 'application/render/rende
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,

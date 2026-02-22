@@ -7,7 +7,7 @@ import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export interface IBaseRenderer {
   show(theme): void;

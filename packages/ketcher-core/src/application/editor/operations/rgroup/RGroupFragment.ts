@@ -18,7 +18,7 @@ import { ReRGroup, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
-import { RGroup } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
 
 export class RGroupFragment extends BaseOperation {
   rgid_new: any;

@@ -26,16 +26,14 @@ import {
   UnsplitNucleotideRenderer,
 } from 'application/render/renderers';
 import { MonomerOrAmbiguousType } from 'domain/types';
-import {
-  AmbiguousMonomer,
-  Chem,
-  Peptide,
-  Phosphate,
-  RNABase,
-  Sugar,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import {

@@ -17,7 +17,7 @@
 import { AtomAdd, FragmentAdd } from '../operations';
 
 import { Action } from './action';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
 import { ReAtom, ReStruct } from 'application/render';

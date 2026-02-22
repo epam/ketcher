@@ -9,7 +9,8 @@ import {
   MultitailArrowResizeTailHead,
   MultitailArrowMoveHeadTail,
 } from 'application/editor';
-import { Vec2, MultitailArrow } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
+import { MultitailArrow } from 'domain/entities/multitailArrow';
 
 export function fromMultitailArrowCreation(
   reStruct: ReStruct,

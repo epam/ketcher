@@ -50,16 +50,16 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { Phosphate } from 'domain/entities/Phosphate';
 import {
-  ChainsCollection,
-  MonomerToAtomBond,
-  Phosphate,
   SequenceType,
-  Struct,
   SubChainNode,
-  Sugar,
-  Vec2,
-} from 'domain/entities';
+} from 'domain/entities/monomer-chains/types';
+import { Sugar } from 'domain/entities/Sugar';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -112,7 +112,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 

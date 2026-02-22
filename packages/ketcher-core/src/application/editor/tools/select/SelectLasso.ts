@@ -16,7 +16,7 @@
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import { CoreEditor } from 'application/editor';
 import { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class SelectLasso extends SelectBase {
   selectionViewParams: SelectionLassoViewParams = {

@@ -1,5 +1,5 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectBase } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -69,7 +69,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = getCoreEditor().provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -413,7 +413,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
+    if (isSelectTool(this.editor.selectedTool)) cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)
@@ -667,3 +667,39 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 }
+
+function getCoreEditor() {
+  if (!cachedCoreEditor) {
+    const { CoreEditor } = require('application/editor/Editor') as {
+      CoreEditor: typeof import('application/editor/Editor').CoreEditor;
+    };
+    cachedCoreEditor = CoreEditor;
+  }
+  return cachedCoreEditor;
+}
+
+function isSelectTool(selectedTool: unknown) {
+  if (!selectedTool) {
+    return false;
+  }
+  const SelectBase = getSelectBase();
+  return selectedTool instanceof SelectBase;
+}
+
+function getSelectBase() {
+  if (!cachedSelectBase) {
+    const { SelectBase } =
+      require('application/editor/tools/select/SelectBase') as {
+        SelectBase: typeof import('application/editor/tools/select/SelectBase').SelectBase;
+      };
+    cachedSelectBase = SelectBase;
+  }
+  return cachedSelectBase;
+}
+
+let cachedCoreEditor:
+  | typeof import('application/editor/Editor').CoreEditor
+  | undefined = undefined;
+let cachedSelectBase:
+  | typeof import('application/editor/tools/select/SelectBase').SelectBase
+  | undefined = undefined;

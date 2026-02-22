@@ -1,3 +1,5 @@
+import { CoreEditor } from 'application/editor/Editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
@@ -9,7 +11,6 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';

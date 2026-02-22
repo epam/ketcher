@@ -20,7 +20,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
-import { ReStruct } from './restruct';
+import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';

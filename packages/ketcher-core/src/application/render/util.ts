@@ -21,7 +21,8 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 import { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
-import { ReStruct, LayerMap } from './restruct';
+import { LayerMap } from './restruct/generalEnumTypes';
+import ReStruct from './restruct/restruct';
 import Visel from './restruct/visel';
 import {
   RelativeBox,

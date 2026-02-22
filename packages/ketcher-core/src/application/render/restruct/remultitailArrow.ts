@@ -1,7 +1,9 @@
 import ReObject from './reobject';
 import { Line, MultitailArrow } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
-import { LayerMap, Render, ReStruct } from 'application/render';
+import { LayerMap } from './generalEnumTypes';
+import { Render } from '../raphaelRender';
+import ReStruct from './restruct';
 import { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';

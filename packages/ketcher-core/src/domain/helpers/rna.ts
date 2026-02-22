@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   MONOMER_CONST,

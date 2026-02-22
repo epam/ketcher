@@ -11,7 +11,7 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import draw from 'application/render/draw';
 import { IMAGE_KEY } from 'domain/constants';
-import { Render } from 'application/render';
+import { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;

@@ -48,6 +48,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import { ShowHydrogenLabels } from './showHydrogenLabels';
 
 interface ElemAttr {
   text: string;
@@ -57,14 +58,6 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
-
-export enum ShowHydrogenLabels {
-  Off = 'off',
-  Hetero = 'Hetero',
-  Terminal = 'Terminal',
-  TerminalAndHetero = 'Terminal and Hetero',
-  On = 'all',
-}
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',

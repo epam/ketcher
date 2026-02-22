@@ -33,8 +33,8 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
-import { Visel } from 'application/render';
-import { Coordinates } from 'application/editor';
+import Visel from './visel';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 class ReBond extends ReObject {
   b: Bond;

@@ -47,7 +47,8 @@ import {
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,

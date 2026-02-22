@@ -16,6 +16,7 @@
 import { Icon, IconName } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { FileDrop } from './FileDrop';
+import { OpenOptionText } from './sharedStyles';
 
 const ICON_NAMES: Record<string, IconName> = {
   PASTE: 'open-window-paste-icon',
@@ -28,24 +29,6 @@ export type OpenOptionsProps = {
   errorHandler: (err: string) => void;
   fileLoadHandler: (files: File[]) => void;
 };
-
-export const OpenOptionText = styled.p`
-  font-size: 10px;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.ketcher.color.text.light};
-  margin: 0;
-  text-align: center;
-  line-height: 12px;
-`;
-
-export const DisabledText = styled.p`
-  font-size: 10px;
-  margin: 0;
-  text-align: center;
-  color: ${({ theme }) => theme.ketcher.color.text.primary};
-  opacity: 50%;
-  line-height: 12px;
-`;
 
 const RootContainer = styled.div`
   display: flex;

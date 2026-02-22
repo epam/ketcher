@@ -23,7 +23,7 @@ import {
   KetMonomerClass,
   KetTemplateType,
   MonomerTransformation,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 import { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';

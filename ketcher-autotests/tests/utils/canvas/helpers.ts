@@ -223,12 +223,6 @@ export async function getEditorScreenshot(
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
 }
 
-export async function delay(seconds = 1) {
-  const msInSecond = 1000;
-  return new Promise((resolve) =>
-    setTimeout(() => resolve(true), seconds * msInSecond),
-  );
-}
 
 export async function addBondedMonomersToCanvas(
   page: Page,

@@ -9,7 +9,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
-  delay,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
@@ -282,7 +281,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       symbolAlias: 'A',
       nodeIndexOverall: 11,
     }).click();
-    await delay(2);
+    await page.waitForTimeout(2 * 1000);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 11,

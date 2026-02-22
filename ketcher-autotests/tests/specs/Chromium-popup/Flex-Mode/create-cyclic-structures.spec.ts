@@ -7,8 +7,7 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import {
-  delay,
+import { 
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -128,7 +127,7 @@ test.describe('Cyclic structures', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, sugar).open();
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
       ContextMenu(page, sugar).contextMenuBody,

@@ -1,4 +1,4 @@
-﻿/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
@@ -20,7 +20,6 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
-import { delay } from '@utils/canvas';
 import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -471,7 +470,7 @@ export const CreateMonomerDialog = (page: Page) => {
       // to avoid helm alias lost on submit due to async validation
       await this.collapseAliasesSection();
       await this.expandAliasesSection();
-      await delay(0.3);
+      await page.waitForTimeout(0.3 * 1000);
     },
 
     async waitForTerminalIndicatorTooltip(

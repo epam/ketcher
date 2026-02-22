@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { delay } from '../../../canvas/helpers';
 import { waitForRender } from '../waitForRender';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
@@ -22,7 +21,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   const loadingSpinner = page.getByTestId('loading-spinner').first();
 
   callback();
-  await delay(0.3);
+  await page.waitForTimeout(0.3 * 1000);
   while (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }

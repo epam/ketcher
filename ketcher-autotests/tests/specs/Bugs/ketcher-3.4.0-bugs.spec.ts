@@ -19,7 +19,6 @@ import {
   MolFileFormat,
   clickOnCanvas,
   openFile,
-  delay,
 } from '@utils';
 import {
   copyAndPaste,
@@ -574,7 +573,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takeEditorScreenshot(page);
     await page.keyboard.press('Alt+C');
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
   });
 

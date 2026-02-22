@@ -4,8 +4,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
-import {
-  delay,
+import { 
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
   MacroFileType,
@@ -296,7 +295,7 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page, async () => {
       await keyboardTypeOnCanvas(page, 'AA');
     });
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1.584',
     );
@@ -1620,7 +1619,7 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page);
     // Dirty hack
     await CalculateVariablesPanel(page).closeWindow();
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
 

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Struct, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';

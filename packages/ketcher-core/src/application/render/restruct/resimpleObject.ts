@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, SimpleObjectMode, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { SimpleObjectMode } from 'domain/entities/simpleObject';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';

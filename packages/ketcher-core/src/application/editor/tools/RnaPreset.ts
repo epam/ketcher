@@ -15,7 +15,8 @@
  ***************************************************************************/
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';

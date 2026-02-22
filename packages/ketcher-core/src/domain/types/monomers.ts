@@ -1,13 +1,11 @@
-import {
-  BaseMonomer,
-  Chem,
-  Peptide,
-  Phosphate,
-  RNABase,
-  Struct,
-  Sugar,
-  PolymerBond,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { Struct } from 'domain/entities/struct';
+import { Sugar } from 'domain/entities/Sugar';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   AmbiguousMonomerTransformation,
   IKetAttachmentPoint,

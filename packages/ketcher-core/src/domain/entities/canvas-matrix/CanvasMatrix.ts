@@ -1,4 +1,6 @@
-import { BaseMonomer, MonomerToAtomBond, SubChainNode } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { PolymerBond } from 'domain/entities/PolymerBond';

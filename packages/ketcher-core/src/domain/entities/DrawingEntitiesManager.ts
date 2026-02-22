@@ -9,21 +9,19 @@ import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
-import {
-  BaseMonomer,
-  Chem,
-  KetFileMultitailArrowNode,
-  LinkerSequenceNode,
-  MonomerSequenceNode,
-  Phosphate,
-  Pool,
-  RNABase,
-  RxnArrowMode,
-  SGroupForest,
-  Struct,
-  SubChainNode,
-  Sugar,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chem } from 'domain/entities/Chem';
+import { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Pool } from 'domain/entities/pool';
+import { RNABase } from 'domain/entities/RNABase';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { SGroupForest } from 'domain/entities/sgroupForest';
+import { Struct } from 'domain/entities/struct';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Sugar } from 'domain/entities/Sugar';
 import { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,

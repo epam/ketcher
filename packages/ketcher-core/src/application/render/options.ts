@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import utils from '../editor/shared/utils';
 import { ShowHydrogenLabels } from './restruct/reatom';
 import { RenderOptions } from './render.types';

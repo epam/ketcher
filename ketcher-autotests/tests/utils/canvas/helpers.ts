@@ -223,7 +223,6 @@ export async function getEditorScreenshot(
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
 }
 
-
 export async function addBondedMonomersToCanvas(
   page: Page,
   monomerType: Monomer,

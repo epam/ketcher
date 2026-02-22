@@ -1,8 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  dragMouseTo,
-} from '../clicks';
+import { dragMouseTo } from '../clicks';
 import { Monomer, MonomerType, SymbolType } from '../types';
 import { waitForRender } from '../common/loaders/waitForRender';
 import {

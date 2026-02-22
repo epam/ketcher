@@ -112,7 +112,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 

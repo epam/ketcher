@@ -19,7 +19,7 @@ import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
-import { KetSerializer } from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';

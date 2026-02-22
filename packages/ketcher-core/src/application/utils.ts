@@ -8,7 +8,7 @@ import {
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
 import { CoreEditor, EditorHistory } from './editor/internal';
-import { KetSerializer } from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
 

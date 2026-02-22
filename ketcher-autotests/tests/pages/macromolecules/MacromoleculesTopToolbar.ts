@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import {  waitForRender } from '@utils/index';
+import { waitForRender } from '@utils/index';
 import {
   AntisenseStrandType,
   LayoutMode,

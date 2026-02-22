@@ -8,7 +8,7 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { MacroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import {  takeElementScreenshot } from '@utils/canvas';
+import { takeElementScreenshot } from '@utils/canvas';
 import { openFileAndAddToCanvasMacro } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {

@@ -10,7 +10,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils/files/readFile';
-import { 
+import {
   MacroFileType,
   takeEditorScreenshot,
   takeElementScreenshot,

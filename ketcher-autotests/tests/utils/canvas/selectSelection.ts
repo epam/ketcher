@@ -5,7 +5,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-} from '../keyboard';
+} from './helpers';
 import { moveMouseAway } from '../moveMouseAway';
 import { waitForRender } from '../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

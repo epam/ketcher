@@ -9,7 +9,7 @@ export async function emptyFunction() {
 
 export async function pageReload(page: Page) {
   const { CommonTopRightToolbar } = await import(
-    '@tests/pages/common/CommonTopRightToolbar'
+    './../../pages/common/CommonTopRightToolbar'
   );
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });

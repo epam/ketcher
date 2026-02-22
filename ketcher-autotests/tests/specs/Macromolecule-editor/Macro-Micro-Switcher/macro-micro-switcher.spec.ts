@@ -30,7 +30,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {  MacroFileType } from '@utils/canvas';
+import { MacroFileType } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import {

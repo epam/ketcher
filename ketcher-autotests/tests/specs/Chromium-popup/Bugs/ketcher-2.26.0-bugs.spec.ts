@@ -32,7 +32,7 @@ import {
   MolFileFormat,
   ZoomOutByKeyboard,
 } from '@utils';
-import {  selectAllStructuresOnCanvas } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

@@ -7,7 +7,7 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { 
+import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,

@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
-import { 
+import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
   MacroFileType,

@@ -31,16 +31,13 @@ import {
   BondAdd,
   FragmentAdd,
 } from '../operations';
-import {
-  BaseMonomer,
-  Pile,
-  SGroup,
-  SGroupAttachmentPoint,
-  Vec2,
-  BondAttributes,
-  Bond,
-  Struct,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Pile } from 'domain/entities/pile';
+import { SGroup } from 'domain/entities/sgroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
+import { Bond, BondAttributes } from 'domain/entities/bond';
+import { Struct } from 'domain/entities/struct';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';

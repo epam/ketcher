@@ -3,16 +3,14 @@ import {
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
-import {
-  BaseMonomer,
-  HydrogenBond,
-  MonomerToAtomBond,
-  Nucleotide,
-  Phosphate,
-  Pool,
-  Sugar,
-  Vec2,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Pool } from 'domain/entities/pool';
+import { Sugar } from 'domain/entities/Sugar';
+import { Vec2 } from 'domain/entities/vec2';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {

@@ -1,5 +1,7 @@
 import { D3SvgElementSelection } from 'application/render/types';
-import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   SubChainNode,
   SequenceNode,

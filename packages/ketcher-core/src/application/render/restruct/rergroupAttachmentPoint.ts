@@ -1,12 +1,12 @@
 import { RaphaelPaper } from 'raphael';
+import { AttachmentPoints } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
 import {
-  AttachmentPoints,
-  Bond,
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+} from 'domain/entities/rgroupAttachmentPoint';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
 import { ReAtom, ReObject, ReStruct } from '.';
 import draw from '../draw';

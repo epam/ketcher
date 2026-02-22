@@ -31,7 +31,8 @@ import {
 import { CoreEditor, Editor, getSelectionFromStruct } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
-import { SGroup, Struct } from 'domain/entities';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
 import assert from 'assert';
 import { EventEmitter } from 'events';
 import {

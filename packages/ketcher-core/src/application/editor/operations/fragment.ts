@@ -18,7 +18,8 @@
 import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 
 import { BaseOperation } from './base';
-import { Fragment, StructProperty } from 'domain/entities';
+import { Fragment } from 'domain/entities/fragment';
+import { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method

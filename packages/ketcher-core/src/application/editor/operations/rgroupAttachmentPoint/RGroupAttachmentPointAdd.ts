@@ -3,7 +3,7 @@ import assert from 'assert';
 import {
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
-} from 'domain/entities';
+} from 'domain/entities/rgroupAttachmentPoint';
 import { RGroupAttachmentPointRemove } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../base';

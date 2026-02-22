@@ -1,6 +1,8 @@
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer, HydrogenBond, PolymerBond } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Coordinates } from 'application/editor';
 import { arc } from 'd3';
 

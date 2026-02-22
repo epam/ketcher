@@ -20,11 +20,9 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import {
-  AmbiguousMonomer,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';

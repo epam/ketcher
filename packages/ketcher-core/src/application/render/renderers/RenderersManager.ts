@@ -6,17 +6,15 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import {
-  Chem,
-  HydrogenBond,
-  LinkerSequenceNode,
-  MonomerSequenceNode,
-  Nucleoside,
-  Nucleotide,
-  Sugar,
-  UnsplitNucleotide,
-  Vec2,
-} from 'domain/entities';
+import { Chem } from 'domain/entities/Chem';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';

@@ -1,17 +1,15 @@
-import {
-  AmbiguousMonomer,
-  Atom as MicromoleculesAtom,
-  Bond,
-  FunctionalGroup,
-  Pile,
-  RxnArrow as MicromoleculesRxnArrow,
-  MultitailArrow as MicromoleculesMultitailArrow,
-  RxnPlus as MicromoleculesRxnPlus,
-  SGroup,
-  SGroupAttachmentPoint,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { Pile } from 'domain/entities/pile';
+import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
+import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
+import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
+import { SGroup } from 'domain/entities/sgroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   ReAtom,

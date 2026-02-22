@@ -1,15 +1,13 @@
-import {
-  Chem,
-  Peptide,
-  Phosphate,
-  Vec2,
-  Nucleotide,
-  Nucleoside,
-  EmptySequenceNode,
-  LinkerSequenceNode,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   PeptideSequenceItemRenderer,
   ChemSequenceItemRenderer,

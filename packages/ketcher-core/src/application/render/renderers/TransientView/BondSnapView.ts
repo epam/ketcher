@@ -1,6 +1,7 @@
 import { Coordinates } from 'application/editor';
 import { D3SvgElementSelection } from 'application/render/types';
-import { HydrogenBond, PolymerBond } from 'domain/entities';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { TransientView } from './TransientView';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

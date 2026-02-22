@@ -16,7 +16,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { ReRxnPlus, ReStruct } from '../../../../render';
-import { RxnPlus, Vec2 } from 'domain/entities';
+import { RxnPlus } from 'domain/entities/rxnPlus';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { BaseOperation } from '../../base';
 import { OperationType } from '../../OperationType';

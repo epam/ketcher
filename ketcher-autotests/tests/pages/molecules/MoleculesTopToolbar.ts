@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/canvas';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
 
 type MoleculesTopToolbarLocators = {
@@ -68,7 +67,7 @@ export const MoleculesTopToolbar = (page: Page) => {
       const copyToolbar = page.getByTestId('selection-toolbar');
 
       try {
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await locators.copyButton
           .locator('..')
           .getByTestId('copy-button-dropdown-triangle')

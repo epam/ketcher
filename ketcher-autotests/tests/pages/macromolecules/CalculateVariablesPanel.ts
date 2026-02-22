@@ -8,8 +8,6 @@ import {
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-import { delay } from '@utils/canvas';
-
 type PeptidesTabLocators = {
   isoelectricPointValue: Locator;
   isoelectricPointInfoButton: Locator;
@@ -105,7 +103,7 @@ export const CalculateVariablesPanel = (page: Page) => {
     },
 
     async getMolecularMassValue() {
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
       return await locators.molecularMassValue.innerText();
     },
 

@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacroFileType,
-  delay,
   StructureFormat,
   waitForSpinnerFinishedWork,
 } from '@utils';
@@ -127,7 +126,7 @@ export async function openImageAndAddToCanvas(
   const debugDelay = 0.15;
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await delay(debugDelay);
+  await page.waitForTimeout(debugDelay * 1000);
   await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 

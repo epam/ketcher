@@ -5,7 +5,6 @@ import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  delay,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -1498,7 +1497,7 @@ async function callContextMenuForSelectedAllSymbol(
     }
     attempts++;
     await closeContextMenu(page);
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await selectAllStructuresOnCanvas(page);
   }
   logTestWarning(

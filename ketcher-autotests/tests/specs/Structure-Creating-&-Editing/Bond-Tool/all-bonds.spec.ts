@@ -14,7 +14,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  delay,
   openFileAndAddToCanvasAsNewProject,
   takeElementScreenshot,
   openFileAndAddToCanvasMacro,
@@ -446,7 +445,7 @@ test.describe('Bond Tool', () => {
       // Delay prevents the search field from opening after the hotkey press
       // (otherwise the main window is blocked and the panel tools can't be selected)
       if (index > 0) {
-        await delay(1);
+        await page.waitForTimeout(1 * 1000);
       }
 
       await page.keyboard.press(hotKey);

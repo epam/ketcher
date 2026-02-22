@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
@@ -46,7 +45,7 @@ export const EnhancedStereochemistry = (page: Page) => {
     },
 
     async apply() {
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });

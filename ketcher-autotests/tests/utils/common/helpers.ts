@@ -1,13 +1,16 @@
 import { Page } from '@playwright/test';
-import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
+import { waitForKetcherInit } from './loaders/waitForKetcherInit/waitForKetcherInit';
+import { waitForIndigoToLoad } from './loaders/waitForIndigoToLoad';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 export async function emptyFunction() {
   // Intentionally empty callback used as a default async no-op in wait helpers.
 }
 
 export async function pageReload(page: Page) {
+  const { CommonTopRightToolbar } = await import(
+    './../../pages/common/CommonTopRightToolbar'
+  );
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);

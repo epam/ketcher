@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
+import { getAtomsCoordinatesByAttributes } from '../getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
 import { AtomAttributes, AtomXy } from '@utils/canvas/types';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '@utils/canvas/constants';

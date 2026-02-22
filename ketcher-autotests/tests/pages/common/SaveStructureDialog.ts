@@ -1,7 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { MoleculesFileFormatType } from '../constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFileFormats';
-import { delay } from '@utils/canvas';
 
 type SaveStructureDialogLocators = {
   window: Locator;
@@ -19,6 +18,8 @@ type SaveStructureDialogLocators = {
 };
 
 export const SaveStructureDialog = (page: Page) => {
+  const millisecondsInSecond = 1000;
+
   const locators: SaveStructureDialogLocators = {
     window: page.getByTestId('save-structure-dialog'),
     fileNameEditbox: page.getByTestId('filename-input'),
@@ -42,7 +43,7 @@ export const SaveStructureDialog = (page: Page) => {
     ) {
       const delayTime = 0.15;
       await locators.fileFormatDropdownList.click();
-      await delay(delayTime);
+      await page.waitForTimeout(delayTime * millisecondsInSecond);
       await page.getByTestId(format).click({ force: true });
       const loadingSpinner = page.getByTestId('loading-spinner');
       if (await loadingSpinner.isVisible()) {

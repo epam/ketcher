@@ -16,7 +16,7 @@
 
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';
 
 class SelectRectangle extends SelectBase {

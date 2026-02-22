@@ -1,4 +1,4 @@
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { atomToStruct, bondToStruct } from './moleculeToStruct';
 import { KetItem } from './types';
 

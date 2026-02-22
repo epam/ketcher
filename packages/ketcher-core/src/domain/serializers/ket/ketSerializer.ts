@@ -14,16 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  SGroupAttachmentPoint,
-  Struct,
-  Vec2,
-  RxnArrow as MicromoleculeRxnArrow,
-  MultitailArrow as MicromoleculeMultitailArrow,
-  RxnPlus as MicromoleculeRxnPlus,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import { RxnArrow as MicromoleculeRxnArrow } from 'domain/entities/rxnArrow';
+import { MultitailArrow as MicromoleculeMultitailArrow } from 'domain/entities/multitailArrow';
+import { RxnPlus as MicromoleculeRxnPlus } from 'domain/entities/rxnPlus';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';

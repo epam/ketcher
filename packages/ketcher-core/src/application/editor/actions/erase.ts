@@ -27,7 +27,7 @@ import {
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
-import { RGroup } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';

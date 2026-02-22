@@ -2,7 +2,7 @@
 import { BaseOperation } from 'application/editor/operations/base';
 import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
-import { FixedPrecisionCoordinates } from 'domain/entities';
+import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export class MultitailArrowAddTail extends BaseOperation {
   constructor(

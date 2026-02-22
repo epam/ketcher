@@ -25,7 +25,7 @@ import {
 import { StructFormatter, SupportedFormat } from './structFormatter.types';
 
 import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';

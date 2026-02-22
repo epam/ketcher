@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { StructFormatter } from './structFormatter.types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { EditorSelection } from 'application/editor';

@@ -16,7 +16,7 @@
 
 // Single entry point to Raphaël library
 
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let Raphael: any;

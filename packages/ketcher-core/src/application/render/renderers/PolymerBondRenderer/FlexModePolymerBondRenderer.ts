@@ -4,7 +4,7 @@ import type { PolymerBondRendererStartAndEndPositions } from 'application/render
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';

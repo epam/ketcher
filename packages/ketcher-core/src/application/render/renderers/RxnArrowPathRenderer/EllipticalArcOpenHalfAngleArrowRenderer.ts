@@ -1,7 +1,7 @@
 import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { tfx } from 'utilities';
 
 export class EllipticalArcOpenHalfAngleArrowRenderer {

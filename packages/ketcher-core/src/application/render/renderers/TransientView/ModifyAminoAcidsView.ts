@@ -1,6 +1,6 @@
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,

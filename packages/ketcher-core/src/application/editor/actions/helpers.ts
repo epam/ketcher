@@ -1,4 +1,6 @@
-import { Atom, Bond, Neighbor, StereoLabel, Struct } from 'domain/entities';
+import { Atom, StereoLabel } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import type { Neighbor, Struct } from 'domain/entities/struct';
 import { StereoValidator } from 'domain/helpers';
 
 export function getStereoAtomsMap(

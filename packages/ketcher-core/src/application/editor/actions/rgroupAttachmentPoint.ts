@@ -7,7 +7,7 @@ import {
   RGroupAttachmentPointRemove,
 } from '../operations';
 import { Action } from './action';
-import { fromAtomsAttrs } from '.';
+import { fromAtomsAttrs } from './atom';
 
 export function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,

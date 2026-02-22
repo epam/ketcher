@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from 'domain/serializers';
+import { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
 import { Struct } from 'domain/entities/struct';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { StructServiceOptions } from 'domain/services';

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer } from 'domain/serializers';
+import { MolSerializer } from 'domain/serializers/mol/molSerializer';
 import { Struct } from 'domain/entities/struct';
 import { StructFormatter } from './structFormatter.types';
 

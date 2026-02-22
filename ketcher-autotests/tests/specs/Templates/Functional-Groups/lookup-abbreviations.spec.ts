@@ -6,7 +6,6 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  delay,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -45,7 +44,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15525, EPMLSOPKET-15533
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('d');
-    await delay(5);
+    await page.waitForTimeout(5 * 1000);
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);

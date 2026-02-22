@@ -4,7 +4,7 @@ import {
   ClickTarget,
   MonomerOnMicroOption,
 } from '@tests/pages/constants/contextMenu/Constants';
-import { waitForRender } from '@utils/common';
+import { waitForRender } from '../../common/loaders/waitForRender';
 
 export async function expandMonomer(page: Page, monomer: ClickTarget) {
   await waitForRender(page, async () => {

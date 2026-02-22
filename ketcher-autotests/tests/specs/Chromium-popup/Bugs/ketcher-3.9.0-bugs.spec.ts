@@ -58,7 +58,6 @@ import {
   clickOnCanvas,
   clickOnMiddleOfCanvas,
   copyToClipboardByKeyboard,
-  delay,
   dragMouseTo,
   keyboardTypeOnCanvas,
   MacroFileType,
@@ -267,7 +266,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       'RNA1{r(A)p}$$$$V2.0',
     );
     await ContextMenu(page, getMonomerLocator(page, Base.A).first()).open();
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(page, page.getByTestId(MonomerOption.Paste), {
       padding: 10,
     });
@@ -299,7 +298,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       getSymbolLocator(page, { symbolAlias: 'A' }),
     ).open();
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
       page.getByTestId(SequenceSymbolOption.Delete),
@@ -383,7 +382,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.RingBondCount]);
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
       page.getByTestId(RingBondCountOption.Six),

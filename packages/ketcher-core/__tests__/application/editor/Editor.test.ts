@@ -202,5 +202,41 @@ describe('CoreEditor', () => {
         expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
       },
     );
+
+    it('should accept monomer with brackets and dots in HELM alias', () => {
+      const monomerWithBracketAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE2',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE2': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE2',
+          class: 'PEPTIDE',
+          classHELM: 'PEPTIDE',
+          fullName: 'Test Peptide 2',
+          name: 'PEPTIDE2',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'PEPTIDE2',
+            MonomerClass: 'PEPTIDE',
+            Name: 'PEPTIDE2',
+            MonomerNaturalAnalogCode: 'A',
+            aliasHELM: 'A.(B)[C]{D}<E>',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithBracketAlias));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('invalid HELM alias value'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
   });
 });

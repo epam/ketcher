@@ -1,5 +1,5 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { LayoutMode } from 'application/editor/modes';
+import { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
 import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';

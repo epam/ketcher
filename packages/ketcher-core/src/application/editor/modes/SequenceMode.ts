@@ -1,9 +1,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import {
-  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
-  LayoutMode,
-} from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
+import { LayoutMode } from 'application/editor/modes/types';
+import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {

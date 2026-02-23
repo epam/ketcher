@@ -7,7 +7,6 @@ import {
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
@@ -15,7 +14,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor/modes/SequenceMode';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -120,23 +118,21 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return getEditorInstance()?.isSequenceEditMode ?? false;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return getEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return Boolean(
+      getSequenceModeState('isAntisenseEditMode')?.isAntisenseEditMode,
+    );
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return Boolean(getSequenceModeState('isSyncEditMode')?.isSyncEditMode);
   }
 
   protected appendRootElement() {
@@ -816,4 +812,35 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 function getSequenceRenderer() {
   return require('application/render/renderers/sequence/SequenceRenderer')
     .SequenceRenderer;
+}
+
+function getEditorInstance() {
+  const coreEditor = require('application/editor/internal').CoreEditor;
+  if (typeof coreEditor?.provideEditorInstance !== 'function') {
+    return null;
+  }
+
+  const editorInstance = coreEditor.provideEditorInstance();
+
+  return editorInstance && typeof editorInstance === 'object'
+    ? editorInstance
+    : null;
+}
+
+function getSequenceModeState(
+  modeStateName: 'isAntisenseEditMode' | 'isSyncEditMode',
+) {
+  const editorMode = getEditorInstance()?.mode;
+  if (
+    !editorMode ||
+    typeof editorMode !== 'object' ||
+    !(modeStateName in editorMode)
+  ) {
+    return null;
+  }
+
+  return editorMode as {
+    isAntisenseEditMode?: boolean;
+    isSyncEditMode?: boolean;
+  };
 }

@@ -38,6 +38,11 @@ type RotationHandleEvent = {
   event: PointerEvent;
 };
 
+type RotationCenterEvent = {
+  type: 'down' | 'drag';
+  event: PointerEvent;
+};
+
 const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
@@ -77,11 +82,22 @@ export class RotationView extends TransientView {
     (payload: RotationHandleEvent) => void
   >();
 
+  private static readonly rotationCenterSubscribers = new Set<
+    (payload: RotationCenterEvent) => void
+  >();
+
   public static subscribeRotationHandle(
     listener: (payload: RotationHandleEvent) => void,
   ) {
     RotationView.rotationHandleSubscribers.add(listener);
     return () => RotationView.rotationHandleSubscribers.delete(listener);
+  }
+
+  public static subscribeRotationCenter(
+    listener: (payload: RotationCenterEvent) => void,
+  ) {
+    RotationView.rotationCenterSubscribers.add(listener);
+    return () => RotationView.rotationCenterSubscribers.delete(listener);
   }
 
   public static show(
@@ -147,9 +163,28 @@ export class RotationView extends TransientView {
       .attr('fill', 'none')
       .attr('style', 'pointer-events: none');
 
-    // Draw cross at center
+    // Draw cross at center (draggable)
     const crossColor = isRotating ? STYLE.ACTIVE_COLOR : STYLE.INITIAL_COLOR;
-    transientLayer
+    const crossGroup = transientLayer
+      .append('g')
+      .attr('class', 'rotation-center-handle')
+      .attr('data-testid', 'rotation-center-handle')
+      .attr('style', 'pointer-events: all')
+      .on('mousedown', (event: PointerEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+        RotationView.rotationCenterSubscribers.forEach((listener) =>
+          listener({ type: 'down', event }),
+        );
+      })
+      .on('mousemove', (event: PointerEvent) => {
+        if (event.buttons !== 1) return;
+        RotationView.rotationCenterSubscribers.forEach((listener) =>
+          listener({ type: 'drag', event }),
+        );
+      });
+
+    crossGroup
       .append('path')
       .attr(
         'd',
@@ -157,8 +192,7 @@ export class RotationView extends TransientView {
       )
       .attr('stroke', crossColor)
       .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'round')
-      .attr('style', 'pointer-events: none');
+      .attr('stroke-linecap', 'round');
 
     // Draw handle circle
     const handleGroup = transientLayer

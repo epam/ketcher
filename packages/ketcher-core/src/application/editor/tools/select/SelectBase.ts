@@ -81,17 +81,25 @@ abstract class SelectBase implements BaseTool {
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
-  protected mode: 'moving' | 'selecting' | 'standby' | 'rotating' = 'standby';
   private readonly canvasResizeObserver?: ResizeObserver;
   private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
+  protected mode:
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center' = 'standby';
+
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
+  protected userRotationCenter: Vec2 | null = null;
   private rotationHandleUnsubscribe?: () => void;
+  private rotationCenterUnsubscribe?: () => void;
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = EditorHistory.getInstance(this.editor);
@@ -101,6 +109,12 @@ abstract class SelectBase implements BaseTool {
         if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
         if (this.mode === 'rotating') return;
         this.startRotation(payload.event);
+      },
+    );
+    this.rotationCenterUnsubscribe = RotationView.subscribeRotationCenter(
+      (payload) => {
+        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+        this.startRotationCenterDrag(payload.event);
       },
     );
   }
@@ -161,6 +175,7 @@ abstract class SelectBase implements BaseTool {
 
     this.mode = 'rotating';
     this.rotationCenter =
+      this.userRotationCenter ??
       this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
 
     if (!this.rotationCenter) {
@@ -185,6 +200,18 @@ abstract class SelectBase implements BaseTool {
     this.currentRotationAngle = 0;
     this.editor.transientDrawingView.hideRotation();
     this.editor.transientDrawingView.update();
+  }
+
+  protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.mode = 'rotating-center';
+    const cursorCanvas = Coordinates.viewToCanvas(
+      this.editor.lastCursorPosition,
+    );
+    this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
+    this.updateRotationView();
   }
 
   protected mousedownEntity(
@@ -901,6 +928,15 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'rotating-center') {
+      const cursorCanvas = Coordinates.viewToCanvas(
+        this.editor.lastCursorPosition,
+      );
+      this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
+      this.updateRotationView();
+      return;
+    }
+
     if (!this.firstMonomerPositionBeforeMove) {
       this.firstMonomerPositionBeforeMove = this.editor.drawingEntitiesManager
         .selectedMonomers[0]?.position
@@ -1013,6 +1049,12 @@ abstract class SelectBase implements BaseTool {
     try {
       if (this.mode === 'rotating') {
         this.finishRotation();
+        return;
+      }
+
+      if (this.mode === 'rotating-center') {
+        this.mode = 'standby';
+        this.updateRotationView();
         return;
       }
 
@@ -1133,7 +1175,7 @@ abstract class SelectBase implements BaseTool {
     if (
       selectedEntities.length < 2 ||
       this.editor.mode.modeName === 'sequence-layout-mode' ||
-      this.mode !== 'standby'
+      (this.mode !== 'standby' && this.mode !== 'rotating-center')
     ) {
       this.editor.transientDrawingView.hideRotation();
       this.editor.transientDrawingView.update();
@@ -1143,6 +1185,7 @@ abstract class SelectBase implements BaseTool {
     const bbox =
       this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
     const center =
+      this.userRotationCenter ??
       this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
 
     if (!bbox || !center) {
@@ -1276,6 +1319,7 @@ abstract class SelectBase implements BaseTool {
   destroy() {
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
+    this.rotationCenterUnsubscribe?.();
 
     if (!(this.editor.selectedTool instanceof EraserTool)) {
       const modelChanges =

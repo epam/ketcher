@@ -3,20 +3,20 @@
 exports[`AbbreviationLookup Utils highlightOptionLabel Should ignore space at the beginning and the end 1`] = `"SHORTABBR (Very long test name)"`;
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should mark abbreviation because it shorter (bigger similarity) 1`] = `
-Object {
+{
   "$$typeof": Symbol(react.transitional.element),
   "_owner": null,
-  "_store": Object {},
+  "_store": {},
   "key": null,
-  "props": Object {
-    "children": Array [
+  "props": {
+    "children": [
       "",
-      Object {
+      {
         "$$typeof": Symbol(react.transitional.element),
         "_owner": null,
-        "_store": Object {},
+        "_store": {},
         "key": null,
-        "props": Object {
+        "props": {
           "children": "SHORT",
         },
         "type": "mark",
@@ -29,20 +29,20 @@ Object {
 `;
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should mark name because substring at the beginning 1`] = `
-Object {
+{
   "$$typeof": Symbol(react.transitional.element),
   "_owner": null,
-  "_store": Object {},
+  "_store": {},
   "key": null,
-  "props": Object {
-    "children": Array [
+  "props": {
+    "children": [
       "ASHORTABBR (",
-      Object {
+      {
         "$$typeof": Symbol(react.transitional.element),
         "_owner": null,
-        "_store": Object {},
+        "_store": {},
         "key": null,
-        "props": Object {
+        "props": {
           "children": "Short",
         },
         "type": "mark",
@@ -57,20 +57,20 @@ Object {
 exports[`AbbreviationLookup Utils highlightOptionLabel Should not highlight if lookup value length is short 1`] = `"SHORTABBR (Very long test name)"`;
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked abbreviation 1`] = `
-Object {
+{
   "$$typeof": Symbol(react.transitional.element),
   "_owner": null,
-  "_store": Object {},
+  "_store": {},
   "key": null,
-  "props": Object {
-    "children": Array [
+  "props": {
+    "children": [
       "SHORT",
-      Object {
+      {
         "$$typeof": Symbol(react.transitional.element),
         "_owner": null,
-        "_store": Object {},
+        "_store": {},
         "key": null,
-        "props": Object {
+        "props": {
           "children": "ABBR",
         },
         "type": "mark",
@@ -83,20 +83,20 @@ Object {
 `;
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked name 1`] = `
-Object {
+{
   "$$typeof": Symbol(react.transitional.element),
   "_owner": null,
-  "_store": Object {},
+  "_store": {},
   "key": null,
-  "props": Object {
-    "children": Array [
+  "props": {
+    "children": [
       "SHORTABBR (Very ",
-      Object {
+      {
         "$$typeof": Symbol(react.transitional.element),
         "_owner": null,
-        "_store": Object {},
+        "_store": {},
         "key": null,
-        "props": Object {
+        "props": {
           "children": "long",
         },
         "type": "mark",

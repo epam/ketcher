@@ -1,5 +1,5 @@
 import { Tool } from './Tool';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 
 class CreateMonomerTool implements Tool {
   constructor(private readonly editor: Editor) {

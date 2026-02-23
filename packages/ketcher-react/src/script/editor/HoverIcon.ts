@@ -5,7 +5,7 @@ import {
   CoordinateTransformation,
   getOptionsWithConvertedUnits,
 } from 'ketcher-core';
-import Editor from './Editor';
+import type Editor from './Editor';
 
 const HOVER_ICON_OPACITY = 0.7;
 

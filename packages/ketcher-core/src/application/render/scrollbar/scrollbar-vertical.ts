@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { ScrollOffset } from './scroll-offset';
 import { Scrollbar } from './scrollbar';
 import { RaphaelRectAttr } from './types';

@@ -1,5 +1,5 @@
 import { Tool } from '../Tool';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import {
   MULTITAIL_ARROW_KEY,
   MULTITAIL_ARROW_TOOL_NAME,

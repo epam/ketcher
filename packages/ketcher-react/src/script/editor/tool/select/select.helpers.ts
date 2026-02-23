@@ -1,6 +1,6 @@
 import { xor } from 'lodash/fp';
 import { Atom, Bond, SGroup } from 'ketcher-core';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 

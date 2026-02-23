@@ -1,4 +1,4 @@
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { ViewBox } from '../render.types';
 import { RaphaelElement, RaphaelRectAttr } from './types';
 

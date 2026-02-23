@@ -30,7 +30,7 @@ import {
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 

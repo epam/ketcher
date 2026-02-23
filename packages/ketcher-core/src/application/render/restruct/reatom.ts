@@ -28,13 +28,14 @@ import {
 import { ElementColor, Elements } from 'domain/constants';
 import {
   LayerMap,
+  ShowHydrogenLabels,
   StereLabelStyleType,
   StereoColoringType,
 } from './generalEnumTypes';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
@@ -60,14 +61,6 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
-
-export enum ShowHydrogenLabels {
-  Off = 'off',
-  Hetero = 'Hetero',
-  Terminal = 'Terminal',
-  TerminalAndHetero = 'Terminal and Hetero',
-  On = 'all',
-}
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',

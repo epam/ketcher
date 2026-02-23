@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 

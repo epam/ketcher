@@ -32,6 +32,7 @@ import {
   FragmentAdd,
 } from '../operations';
 import {
+  Atom,
   BaseMonomer,
   Pile,
   SGroup,
@@ -44,9 +45,9 @@ import {
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
-import { SgContexts } from '..';
+import { SgContexts } from '../shared/constants';
 import { uniq } from 'lodash/fp';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttrs } from './fromAtomsAttrs';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
@@ -147,8 +148,13 @@ export function setExpandSGroup(
   const atoms = SGroup.getAtoms(struct, sgroup);
 
   atoms.forEach((aid) => {
+    const atom = restruct.atoms.get(aid)?.a;
+    if (!atom) {
+      return;
+    }
+
     action.mergeWith(
-      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false),
+      fromAtomsAttrs(restruct, aid, Atom.getAttrHash(atom), false),
     );
   });
 
@@ -541,8 +547,13 @@ export function setExpandMonomerSGroup(
   });
 
   sGroupAtoms.forEach((aid) => {
+    const atom = restruct.atoms.get(aid)?.a;
+    if (!atom) {
+      return;
+    }
+
     action.mergeWith(
-      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false),
+      fromAtomsAttrs(restruct, aid, Atom.getAttrHash(atom), false),
     );
   });
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Elements, FunctionalGroup } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 
 class AttachTool implements Tool {

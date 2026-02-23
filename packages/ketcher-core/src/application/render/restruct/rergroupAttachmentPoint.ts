@@ -8,9 +8,11 @@ import {
   Vec2,
 } from 'domain/entities';
 import { Scale } from 'domain/helpers';
-import { ReAtom, ReObject, ReStruct } from '.';
+import type ReAtom from './reatom';
+import ReObject from './reobject';
+import type ReStruct from './restruct';
 import draw from '../draw';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { LayerMap } from './generalEnumTypes';
 import Visel from './visel';

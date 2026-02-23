@@ -22,7 +22,7 @@ import {
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { Tool } from './Tool';
 
 class RGroupAtomTool implements Tool {

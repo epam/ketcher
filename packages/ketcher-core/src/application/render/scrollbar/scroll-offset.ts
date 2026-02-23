@@ -1,5 +1,5 @@
 import { Box2Abs, Vec2 } from 'domain/entities';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 export class ScrollOffset {

@@ -161,5 +161,41 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
+
+    it('should reject monomer with invalid aliasHELM', () => {
+      const monomerWithInvalidAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM4',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM4': {
+          type: 'monomerTemplate',
+          id: 'CHEM4',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 4',
+          name: 'CHEM4',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM4',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM4',
+            MonomerNaturalAnalogCode: 'X',
+            aliasHELM: 'INV ALID',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidAlias));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Load of "CHEM4" monomer has failed, monomer definition contains invalid HELM alias value. The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.',
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
   });
 });

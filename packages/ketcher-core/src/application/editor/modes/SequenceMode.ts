@@ -69,6 +69,7 @@ import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
+import { registerMode } from './modesRegistry';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -2890,3 +2891,5 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.clear();
   }
 }
+
+registerMode('sequence-layout-mode', SequenceMode);

@@ -8,6 +8,7 @@ import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { registerMode } from './modesRegistry';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -92,3 +93,5 @@ export class SnakeMode extends BaseMode {
     return true;
   }
 }
+
+registerMode('snake-layout-mode', SnakeMode);

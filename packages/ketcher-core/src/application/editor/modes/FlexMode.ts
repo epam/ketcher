@@ -4,6 +4,7 @@ import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { registerMode } from './modesRegistry';
 
 export class FlexMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -66,3 +67,5 @@ export class FlexMode extends BaseMode {
 
   scrollForView(): void {}
 }
+
+registerMode('flex-layout-mode', FlexMode);

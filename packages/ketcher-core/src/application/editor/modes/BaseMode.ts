@@ -2,11 +2,8 @@ import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { CoreEditor } from '../Editor';
 import { EditorHistory } from '../EditorHistory';
-import {
-  DEFAULT_LAYOUT_MODE,
-  LayoutMode,
-  modesMap,
-} from 'application/editor/modes';
+import { DEFAULT_LAYOUT_MODE, LayoutMode } from './types';
+import { getModeConstructor } from './modesRegistry';
 import {
   getStructStringFromClipboardData,
   initHotKeys,
@@ -33,7 +30,7 @@ export abstract class BaseMode {
 
   private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
-    const ModeConstructor = modesMap[modeName];
+    const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);

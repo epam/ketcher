@@ -1,5 +1,5 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import type { CoreEditor } from 'application/editor/Editor';
+import { CoreEditor, SelectBase } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -18,6 +18,7 @@ import {
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
@@ -68,7 +69,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = getCoreEditor().provideEditorInstance();
+    this.editor = CoreEditor.provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -379,12 +380,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    const monomerClass =
+    const [, , monomerClass] = monomerFactory(
       this.monomer instanceof AmbiguousMonomer
-        ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
-        : this.monomer.monomerItem.props.MonomerClass ??
-          this.monomer.monomerItem.props.MonomerType ??
-          '';
+        ? this.monomer.variantMonomerItem
+        : this.monomer.monomerItem,
+    );
     const monomerUniqueKey = this.monomer.label + monomerClass;
 
     if (!labelPositions[monomerUniqueKey]) {
@@ -413,7 +413,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (isSelectTool(this.editor.selectedTool)) cursor = 'move';
+    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)
@@ -667,39 +667,3 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 }
-
-function getCoreEditor() {
-  if (!cachedCoreEditor) {
-    const { CoreEditor } = require('application/editor/Editor') as {
-      CoreEditor: typeof import('application/editor/Editor').CoreEditor;
-    };
-    cachedCoreEditor = CoreEditor;
-  }
-  return cachedCoreEditor;
-}
-
-function isSelectTool(selectedTool: unknown) {
-  if (!selectedTool) {
-    return false;
-  }
-  const SelectBase = getSelectBase();
-  return selectedTool instanceof SelectBase;
-}
-
-function getSelectBase() {
-  if (!cachedSelectBase) {
-    const { SelectBase } =
-      require('application/editor/tools/select/SelectBase') as {
-        SelectBase: typeof import('application/editor/tools/select/SelectBase').SelectBase;
-      };
-    cachedSelectBase = SelectBase;
-  }
-  return cachedSelectBase;
-}
-
-let cachedCoreEditor:
-  | typeof import('application/editor/Editor').CoreEditor
-  | undefined = undefined;
-let cachedSelectBase:
-  | typeof import('application/editor/tools/select/SelectBase').SelectBase
-  | undefined = undefined;

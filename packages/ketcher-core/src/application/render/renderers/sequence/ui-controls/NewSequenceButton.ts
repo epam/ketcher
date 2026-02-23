@@ -1,6 +1,9 @@
-import { BaseSequenceItemRenderer } from '../BaseSequenceItemRenderer';
+import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
+import { CoreEditor } from 'application/editor';
+import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
@@ -16,15 +19,13 @@ export class NewSequenceButton {
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
   constructor(private readonly indexOfRowBefore: number) {
-    this.canvas =
-      getZoomTool().instance?.canvas || select(getDrawnStructuresSelector());
+    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
   public show() {
-    const editor = getEditorInstance();
-    const sequenceRenderer = getSequenceRendererClass();
+    const editor = CoreEditor.provideEditorInstance();
     const chain =
-      sequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
+      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =
       chain.lastNode?.antisenseNode?.renderer ||
       chain.lastNode?.senseNode?.renderer;
@@ -159,20 +160,4 @@ export class NewSequenceButton {
     );
     rectElement?.attr('width', computedWidthPx);
   }
-}
-
-function getSequenceRendererClass() {
-  return require('../SequenceRenderer').SequenceRenderer;
-}
-
-function getEditorInstance() {
-  return require('application/editor/Editor').CoreEditor.provideEditorInstance();
-}
-
-function getZoomTool() {
-  return require('../../../../editor/tools/Zoom').default;
-}
-
-function getDrawnStructuresSelector() {
-  return require('application/editor/constants').drawnStructuresSelector;
 }

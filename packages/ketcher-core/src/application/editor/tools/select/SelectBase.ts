@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Vec2 } from 'domain/entities/vec2';
-import type { CoreEditor } from 'application/editor/Editor';
-import type { EditorHistory } from 'application/editor/EditorHistory';
+import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
+import {
+  CoreEditor,
+  EditorHistory,
+  SelectRectangle,
+} from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
@@ -33,8 +33,7 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment } from 'application/editor/tools/types';
-import { vectorUtils } from 'application/editor/shared/vectorUtils';
+import { MonomersAlignment, vectorUtils } from 'application/editor';
 import {
   HalfMonomerSize,
   MonomerSize,
@@ -42,21 +41,6 @@ import {
 } from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-
-const getSelectRectangle = () => {
-  const { SelectRectangle } = require('./SelectRectangle');
-  return SelectRectangle;
-};
-
-const getCoreEditorInstance = () => {
-  const { CoreEditor } = require('application/editor/Editor');
-  return CoreEditor.provideEditorInstance();
-};
-
-const createEditorHistory = (editor: CoreEditor): EditorHistory => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -102,7 +86,7 @@ abstract class SelectBase implements BaseTool {
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
 
   constructor(protected readonly editor: CoreEditor) {
-    this.history = createEditorHistory(this.editor);
+    this.history = new EditorHistory(this.editor);
     this.destroy();
   }
 
@@ -120,7 +104,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mousedown(event: MouseEvent) {
-    if (getCoreEditorInstance().isSequenceAnyEditMode) return;
+    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -312,7 +296,7 @@ abstract class SelectBase implements BaseTool {
       return { bondLengthSnapPosition: null };
     }
 
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     let angle: number;
     if (editor.mode.modeName === 'snake-layout-mode') {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
@@ -379,7 +363,7 @@ abstract class SelectBase implements BaseTool {
         );
 
         if (
-          getSelectRectangle().needApplyGroupCenterSnapForOneAxis(
+          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -398,7 +382,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          getSelectRectangle().needApplyGroupCenterSnapForOneAxis(
+          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -835,7 +819,7 @@ abstract class SelectBase implements BaseTool {
         ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
       );
       const groupCenterSnapResult =
-        getSelectRectangle().calculateGroupCenterSnapPosition(
+        SelectRectangle.calculateGroupCenterSnapPosition(
           selectedMonomers,
           connectedMonomers,
           movementDelta,

@@ -1,11 +1,11 @@
-import { Struct } from 'domain/entities/struct';
+import { Struct } from 'domain/entities';
+import { atomToStruct, bondToStruct } from './moleculeToStruct';
 import { KetItem } from './types';
 
 export function mergeFragmentsToStruct(
   ketItem: KetItem,
   struct: Struct,
 ): Struct {
-  const { atomToStruct, bondToStruct } = getMoleculeToStructHelpers();
   let atomsOffset = 0;
   if (ketItem.fragments) {
     ketItem.fragments.forEach((fragment) => {
@@ -17,8 +17,4 @@ export function mergeFragmentsToStruct(
     });
   }
   return struct;
-}
-
-function getMoleculeToStructHelpers() {
-  return require('./moleculeToStruct');
 }

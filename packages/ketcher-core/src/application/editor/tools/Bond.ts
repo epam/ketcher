@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor } from 'application/editor/Editor';
-import type { EditorHistory } from 'application/editor/EditorHistory';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import {
+  AmbiguousMonomer,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
@@ -38,17 +39,9 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import {
-  MACROMOLECULES_BOND_TYPES,
-  ToolName,
-} from 'application/editor/tools/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-
-const createEditorHistory = (editor: CoreEditor): EditorHistory => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -65,7 +58,7 @@ class PolymerBond implements BaseTool {
     options: { toolName: ToolName },
   ) {
     this.editor = editor;
-    this.history = createEditorHistory(this.editor);
+    this.history = new EditorHistory(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE

@@ -2,11 +2,13 @@ import {
   ChainsCollection,
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { RNABase } from 'domain/entities/RNABase';
+import {
+  EmptySequenceNode,
+  BaseMonomer,
+  SubChainNode,
+  BackBoneSequenceNode,
+  RNABase,
+} from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
   ISequenceViewModelRow,
@@ -18,6 +20,7 @@ import {
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import { CoreEditor } from 'application/editor';
 import { SettingsManager } from 'utilities';
 
 interface IForEachNodeParams {
@@ -81,7 +84,7 @@ export class SequenceViewModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -530,8 +533,4 @@ export class SequenceViewModel {
 
     return nodeIndex;
   }
-}
-
-function getEditorInstance() {
-  return require('application/editor').CoreEditor.provideEditorInstance();
 }

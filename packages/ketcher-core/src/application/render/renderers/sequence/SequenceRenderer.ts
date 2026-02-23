@@ -3,14 +3,16 @@ import {
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { Pool } from 'domain/entities/pool';
-import { Sugar } from 'domain/entities/Sugar';
-import { Vec2 } from 'domain/entities/vec2';
+import {
+  BaseMonomer,
+  HydrogenBond,
+  MonomerToAtomBond,
+  Nucleotide,
+  Phosphate,
+  Pool,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
@@ -30,6 +32,8 @@ import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
+import { CoreEditor } from 'application/editor/internal';
+import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
@@ -40,7 +44,9 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
+import ZoomTool from 'application/editor/tools/Zoom';
 import { select } from 'd3';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -167,7 +173,7 @@ export class SequenceRenderer {
     let hasAntisenseInRow = false;
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
-      getEditorInstance().isSequenceEditInRNABuilderMode;
+      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
@@ -440,7 +446,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: number) {
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
@@ -718,9 +724,7 @@ export class SequenceRenderer {
   }
 
   public static moveCaretForward() {
-    const RestoreSequenceCaretPositionOperationClass =
-      getRestoreSequenceCaretPositionOperation();
-    const operation = new RestoreSequenceCaretPositionOperationClass(
+    const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition ?? this.caretPosition,
     );
@@ -730,9 +734,7 @@ export class SequenceRenderer {
   }
 
   public static moveCaretBack() {
-    const RestoreSequenceCaretPositionOperationClass =
-      getRestoreSequenceCaretPositionOperation();
-    const operation = new RestoreSequenceCaretPositionOperationClass(
+    const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition ?? this.caretPosition,
     );
@@ -884,7 +886,7 @@ export class SequenceRenderer {
   }
 
   public static startNewSequence(indexOfRowBefore?: number) {
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const oldNewSequenceChainIndex =
       SequenceRenderer.sequenceViewModel.chains.findIndex((chain) => {
         return chain.isNewSequenceChain;
@@ -975,7 +977,7 @@ export class SequenceRenderer {
   }
 
   public static shiftArrowSelectionInEditMode(event) {
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
 
@@ -1057,7 +1059,7 @@ export class SequenceRenderer {
   }
 
   private static getShiftArrowChanges(
-    editor: ReturnType<typeof getEditorInstance>,
+    editor: CoreEditor,
     twoStrandedNode: ITwoStrandedChainItem,
   ) {
     const modelChanges = new Command();
@@ -1102,7 +1104,7 @@ export class SequenceRenderer {
 
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
         twoStrandedNode.senseNode instanceof EmptySequenceNode ||
@@ -1131,7 +1133,7 @@ export class SequenceRenderer {
   }
 
   public static get selections() {
-    const editor = getEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;
@@ -1254,8 +1256,7 @@ export class SequenceRenderer {
   }
 
   private static attachDelegatedEvents() {
-    const canvas =
-      getZoomTool().instance?.canvas || select(getDrawnStructuresSelector());
+    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
     SequenceEventDelegationManager.instance.attachDelegatedEvents(canvas);
   }
 
@@ -1290,21 +1291,4 @@ export function sequenceReplacer(key: string, value: unknown): unknown {
     };
   }
   return value;
-}
-
-function getEditorInstance() {
-  return require('application/editor/internal').CoreEditor.provideEditorInstance();
-}
-
-function getRestoreSequenceCaretPositionOperation() {
-  return require('application/editor/operations/modes')
-    .RestoreSequenceCaretPositionOperation;
-}
-
-function getZoomTool() {
-  return require('application/editor/tools/Zoom').default;
-}
-
-function getDrawnStructuresSelector() {
-  return require('application/editor/constants').drawnStructuresSelector;
 }

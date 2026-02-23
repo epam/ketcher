@@ -14,15 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor/Editor';
-import type { EditorHistory } from 'application/editor/EditorHistory';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-
-const createEditorHistory = (editor: CoreEditor): EditorHistory => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 class ClearTool implements BaseTool {
   private readonly history: EditorHistory | undefined;
@@ -35,7 +29,7 @@ class ClearTool implements BaseTool {
       return;
     }
 
-    this.history = createEditorHistory(editor);
+    this.history = new EditorHistory(editor);
     const mode = editor.mode;
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();

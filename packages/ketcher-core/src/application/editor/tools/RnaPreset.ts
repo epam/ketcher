@@ -15,11 +15,9 @@
  ***************************************************************************/
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Vec2 } from 'domain/entities/vec2';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 
-import { CoreEditor } from 'application/editor/Editor';
-import type { EditorHistory } from 'application/editor/EditorHistory';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -28,11 +26,6 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
-
-const createEditorHistory = (editor: CoreEditor): EditorHistory => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
@@ -64,7 +57,7 @@ class RnaPresetTool implements Tool {
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
-    this.history = createEditorHistory(this.editor);
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {

@@ -1,6 +1,8 @@
-import type { CoreEditor } from 'application/editor/Editor';
-import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from 'application/editor/modes/helpers';
-import { LayoutMode } from 'application/editor/modes/types';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import {
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  LayoutMode,
+} from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -10,18 +12,16 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
 import {
-  SequenceNode,
+  AmbiguousMonomer,
+  BaseMonomer,
+  LinkerSequenceNode,
+  Phosphate,
+  RNABase,
   SequenceType,
-  SubChainNode,
-} from 'domain/entities/monomer-chains/types';
-import { Vec2 } from 'domain/entities/vec2';
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
@@ -44,6 +44,10 @@ import {
   rnaDnaAmbiguousSymbols,
   RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {
   ChainsCollection,
@@ -63,8 +67,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { KetMonomerClass } from 'application/formatters';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -77,16 +81,6 @@ enum Direction {
   Left = 'left',
   Right = 'right',
 }
-
-const getCoreEditorInstance = () => {
-  const { CoreEditor } = require('application/editor/Editor');
-  return CoreEditor.provideEditorInstance();
-};
-
-const createEditorHistory = (editor: CoreEditor) => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 export interface StartNewSequenceEventData {
   indexOfRowBefore: number;
@@ -179,7 +173,7 @@ export class SequenceMode extends BaseMode {
     needReArrangeChains = true,
   ) {
     const command = super.initialize(needRemoveSelection);
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
 
@@ -234,7 +228,7 @@ export class SequenceMode extends BaseMode {
     sequenceItemRenderer?: BaseSequenceItemRenderer,
     needToRemoveSelection = true,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionNextToMonomer(
@@ -249,7 +243,7 @@ export class SequenceMode extends BaseMode {
 
   public turnOffEditMode() {
     if (!this.isEditMode) return;
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
     this.initialize(false, true, true);
@@ -257,7 +251,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOnSequenceEditInRNABuilderMode() {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = true;
     this.initialize(false, false, false);
@@ -266,7 +260,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOffSequenceEditInRNABuilderMode() {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
     this.initialize(false, true, false);
@@ -274,7 +268,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public startNewSequence(eventData?: StartNewSequenceEventData) {
-    if (getCoreEditorInstance()?.isSequenceEditInRNABuilderMode) {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode) {
       return;
     }
     const currentChainIndex = this.isEditMode
@@ -300,8 +294,8 @@ export class SequenceMode extends BaseMode {
   public modifySequenceInRnaBuilder(
     updatedSelection: LabeledNodesWithPositionInSequence[],
   ) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
     // Update Nucleotides one by one
@@ -525,7 +519,7 @@ export class SequenceMode extends BaseMode {
       this.selectionStarted &&
       this.mousemoveCounter > 1
     ) {
-      const editor = getCoreEditorInstance();
+      const editor = CoreEditor.provideEditorInstance();
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
 
       let startCaretPosition = this.selectionStartCaretPosition;
@@ -577,7 +571,7 @@ export class SequenceMode extends BaseMode {
     nextMonomer?: BaseMonomer,
     phosphate?: string,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
       phosphate ?? RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -613,7 +607,7 @@ export class SequenceMode extends BaseMode {
     previousNodeToConnect?: SequenceNode,
   ) {
     const modelChanges = new Command();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const newPeptideLibraryItem = getPeptideLibraryItem(editor, enteredSymbol);
 
     // If no library item found for the symbol, return undefined
@@ -653,7 +647,7 @@ export class SequenceMode extends BaseMode {
     nextNodeToConnect?: SequenceNode | null,
     previousNodeToConnect?: SequenceNode,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
       nextNodeToConnect instanceof Nucleotide ||
@@ -710,7 +704,7 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const nodeR2Bond =
       firstNodeToConnect.lastMonomerInNode.attachmentPointsToBonds?.R2;
     const nextNodeR1Bond =
@@ -754,7 +748,7 @@ export class SequenceMode extends BaseMode {
     node: SequenceNode | undefined,
     modelChanges: Command,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const nodeR2Bond = node?.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     if (!nodeR2Bond || nodeR2Bond instanceof MonomerToAtomBond) {
@@ -771,8 +765,8 @@ export class SequenceMode extends BaseMode {
     previousCaretPosition: number,
     newCaretPosition?: number,
   ) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
       previousCaretPosition,
       isNumber(newCaretPosition)
@@ -791,7 +785,7 @@ export class SequenceMode extends BaseMode {
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     const isConnectionPossible = this.areR1R2Free(secondMonomer, firstMonomer);
 
@@ -810,8 +804,8 @@ export class SequenceMode extends BaseMode {
 
   private splitCurrentChain() {
     const modelChanges = new Command();
-    const editor = getCoreEditorInstance();
-    const editorHistory = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const editorHistory = new EditorHistory(editor);
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
@@ -861,7 +855,7 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
@@ -1147,7 +1141,7 @@ export class SequenceMode extends BaseMode {
   get keyboardEventHandlers() {
     const deleteNode = (direction: Direction) => {
       if (this.isEditInRNABuilderMode) return;
-      const editor = getCoreEditorInstance();
+      const editor = CoreEditor.provideEditorInstance();
       const nodeToDelete =
         direction === Direction.Left
           ? SequenceRenderer.previousNode
@@ -1302,8 +1296,8 @@ export class SequenceMode extends BaseMode {
           if (this.isSyncEditMode) return;
 
           const modelChanges = new Command();
-          const editor = getCoreEditorInstance();
-          const history = createEditorHistory(editor);
+          const editor = CoreEditor.provideEditorInstance();
+          const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
@@ -1330,8 +1324,8 @@ export class SequenceMode extends BaseMode {
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
           const modelChanges = new Command();
-          const editor = getCoreEditorInstance();
-          const history = createEditorHistory(editor);
+          const editor = CoreEditor.provideEditorInstance();
+          const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
@@ -1465,8 +1459,8 @@ export class SequenceMode extends BaseMode {
           }
 
           const enteredSymbol = event.code.replace('Key', '');
-          const editor = getCoreEditorInstance();
-          const history = createEditorHistory(editor);
+          const editor = CoreEditor.provideEditorInstance();
+          const history = new EditorHistory(editor);
           const modelChanges = new Command();
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
@@ -1644,7 +1638,7 @@ export class SequenceMode extends BaseMode {
   }
 
   isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
@@ -1841,7 +1835,7 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     previousSelectionNode?: SequenceNode,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
       selectedTwoStrandedNode,
     );
@@ -1940,8 +1934,8 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
   ) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
@@ -2155,8 +2149,8 @@ export class SequenceMode extends BaseMode {
   }
 
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
 
@@ -2245,7 +2239,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private createRnaPresetNode(preset: IRnaPreset, position: Vec2) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const { base: rnaBase, sugar, phosphate } = preset;
 
     assert(sugar);
@@ -2296,7 +2290,7 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     previousSelectionNode?: SequenceNode,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(
       selectedTwoStrandedNode,
     );
@@ -2427,8 +2421,8 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     preset: IRnaPreset,
   ) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
@@ -2461,8 +2455,8 @@ export class SequenceMode extends BaseMode {
   }
 
   public insertPresetFromLibrary(preset: IRnaPreset) {
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
 
@@ -2632,7 +2626,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private showMergeWarningModal(message?: string | null) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error Message',
@@ -2718,7 +2712,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private deleteSelectedDrawingEntities() {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
       modelChanges.merge(
@@ -2774,7 +2768,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private unselectAllEntities() {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges =
       editor.drawingEntitiesManager.unselectAllDrawingEntities();
     modelChanges.merge(
@@ -2787,7 +2781,7 @@ export class SequenceMode extends BaseMode {
     twoStrandedNode: ITwoStrandedChainItem,
   ) {
     const command = new Command();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const senseNode = twoStrandedNode.senseNode;
     const antisenseNode = twoStrandedNode.antisenseNode;
 
@@ -2819,7 +2813,7 @@ export class SequenceMode extends BaseMode {
 
   private deleteHydrogenBondsForNode(node: SequenceNode | undefined) {
     const command = new Command();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     node?.monomers.forEach((monomer) => {
       monomer.hydrogenBonds.forEach((hydrogenBond) => {
@@ -2834,8 +2828,8 @@ export class SequenceMode extends BaseMode {
 
   public establishHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
     const modelChanges = new Command();
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const selections = SequenceRenderer.selections;
 
     if (selections.length) {
@@ -2865,8 +2859,8 @@ export class SequenceMode extends BaseMode {
 
   public deleteHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
     const modelChanges = new Command();
-    const editor = getCoreEditorInstance();
-    const history = createEditorHistory(editor);
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
     const selections = SequenceRenderer.selections;
 
     if (selections.length) {

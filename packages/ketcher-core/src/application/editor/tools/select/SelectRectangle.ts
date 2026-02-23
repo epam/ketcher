@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { CoreEditor } from 'application/editor/Editor';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from 'domain/entities';
 import { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';
 
 class SelectRectangle extends SelectBase {
@@ -30,11 +29,6 @@ class SelectRectangle extends SelectBase {
 
   constructor(readonly editor: CoreEditor) {
     super(editor);
-  }
-
-  private static provideEditorInstance() {
-    const { CoreEditor } = require('application/editor/Editor');
-    return CoreEditor.provideEditorInstance();
   }
 
   protected updateSelectionViewParams() {
@@ -59,7 +53,7 @@ class SelectRectangle extends SelectBase {
   }
 
   protected onSelectionMove(isShiftPressed: boolean) {
-    const editor = SelectRectangle.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
     requestAnimationFrame(() => {

@@ -9,12 +9,14 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { SugarRenderer } from 'application/render';
+import { KetMonomerClass } from 'application/formatters';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleotide {
@@ -61,7 +63,7 @@ export class Nucleotide {
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
-    const editor = getCoreEditor().provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
@@ -85,11 +87,8 @@ export class Nucleotide {
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
-      getCoordinates().canvasToModel(
-        new Vec2(
-          0,
-          SnakeLayoutCellWidth + getSugarRenderer().monomerSize.height,
-        ),
+      Coordinates.canvasToModel(
+        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
       ),
     );
 
@@ -101,7 +100,7 @@ export class Nucleotide {
         rnaBasePosition: bottomItemPosition,
         phosphate: phosphateLibraryItem,
         phosphatePosition: topLeftItemPosition.add(
-          getCoordinates().canvasToModel(new Vec2(SnakeLayoutCellWidth, 0)),
+          Coordinates.canvasToModel(new Vec2(SnakeLayoutCellWidth, 0)),
         ),
       });
 
@@ -145,16 +144,4 @@ export class Nucleotide {
       this.phosphate.isModification
     );
   }
-}
-
-function getCoreEditor() {
-  return require('application/editor/Editor').CoreEditor;
-}
-
-function getCoordinates() {
-  return require('application/editor/shared/coordinates').Coordinates;
-}
-
-function getSugarRenderer() {
-  return require('application/render/renderers/SugarRenderer').SugarRenderer;
 }

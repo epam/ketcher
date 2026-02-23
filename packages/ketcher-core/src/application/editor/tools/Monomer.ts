@@ -14,11 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseTool } from 'application/editor/tools/Tool';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { Vec2 } from 'domain/entities/vec2';
-import { CoreEditor } from 'application/editor/Editor';
-import type { EditorHistory } from 'application/editor/EditorHistory';
+import { BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import {
   BaseMonomerRenderer,
   AmbiguousMonomerRenderer,
@@ -28,11 +25,6 @@ import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
 import { Coordinates } from '../shared/coordinates';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-
-const createEditorHistory = (editor: CoreEditor): EditorHistory => {
-  const { EditorHistory } = require('application/editor/EditorHistory');
-  return new EditorHistory(editor);
-};
 
 class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
@@ -52,7 +44,7 @@ class MonomerTool implements BaseTool {
   ) {
     this.editor = editor;
     this.monomer = monomer;
-    this.history = createEditorHistory(this.editor);
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {

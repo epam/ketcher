@@ -14,24 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import {
+  AmbiguousMonomerRenderer,
+  BaseMonomerRenderer,
+  ChemRenderer,
+  PeptideRenderer,
+  PhosphateRenderer,
+  RNABaseRenderer,
+  SugarRenderer,
+  UnresolvedMonomerRenderer,
+  UnsplitNucleotideRenderer,
+} from 'application/render/renderers';
 import { MonomerOrAmbiguousType } from 'domain/types';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { Chem } from 'domain/entities/Chem';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import {
+  AmbiguousMonomer,
+  Chem,
+  Peptide,
+  Phosphate,
+  RNABase,
+  Sugar,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { resolveMonomerClass } from './resolveMonomerClass';
 import {
   MONOMER_CONST,
   rnaDnaNaturalAnalogues,
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
-import { resolveMonomerClass } from './resolveMonomerClass';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 
@@ -55,21 +67,21 @@ export const monomerFactory = (
 
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     Monomer = AmbiguousMonomer;
-    MonomerRenderer = getAmbiguousMonomerRenderer();
+    MonomerRenderer = AmbiguousMonomerRenderer;
     ketMonomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA
   ) {
     Monomer = UnsplitNucleotide;
-    MonomerRenderer = getUnsplitNucleotideRenderer();
+    MonomerRenderer = UnsplitNucleotideRenderer;
     ketMonomerClass = KetMonomerClass.RNA;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
     monomer.props.MonomerType === MONOMER_CONST.PEPTIDE
   ) {
     Monomer = Peptide;
-    MonomerRenderer = getPeptideRenderer();
+    MonomerRenderer = PeptideRenderer;
     ketMonomerClass = KetMonomerClass.AminoAcid;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.Sugar ||
@@ -77,7 +89,7 @@ export const monomerFactory = (
       monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R)
   ) {
     Monomer = Sugar;
-    MonomerRenderer = getSugarRenderer();
+    MonomerRenderer = SugarRenderer;
     ketMonomerClass = KetMonomerClass.Sugar;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.Phosphate ||
@@ -85,7 +97,7 @@ export const monomerFactory = (
       monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P)
   ) {
     Monomer = Phosphate;
-    MonomerRenderer = getPhosphateRenderer();
+    MonomerRenderer = PhosphateRenderer;
     ketMonomerClass = KetMonomerClass.Phosphate;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.Base ||
@@ -95,55 +107,17 @@ export const monomerFactory = (
       ))
   ) {
     Monomer = RNABase;
-    MonomerRenderer = getRNABaseRenderer();
+    MonomerRenderer = RNABaseRenderer;
     ketMonomerClass = KetMonomerClass.Base;
   } else if (monomer.props.unresolved) {
     Monomer = UnresolvedMonomer;
-    MonomerRenderer = getUnresolvedMonomerRenderer();
+    MonomerRenderer = UnresolvedMonomerRenderer;
     ketMonomerClass = KetMonomerClass.CHEM;
   } else {
     Monomer = Chem;
-    MonomerRenderer = getChemRenderer();
+    MonomerRenderer = ChemRenderer;
     ketMonomerClass = resolveMonomerClass(monomer);
   }
 
   return [Monomer, MonomerRenderer, ketMonomerClass];
 };
-
-function getAmbiguousMonomerRenderer() {
-  return require('application/render/renderers/AmbiguousMonomerRenderer')
-    .AmbiguousMonomerRenderer;
-}
-
-function getChemRenderer() {
-  return require('application/render/renderers/ChemRenderer').ChemRenderer;
-}
-
-function getPeptideRenderer() {
-  return require('application/render/renderers/PeptideRenderer')
-    .PeptideRenderer;
-}
-
-function getPhosphateRenderer() {
-  return require('application/render/renderers/PhosphateRenderer')
-    .PhosphateRenderer;
-}
-
-function getRNABaseRenderer() {
-  return require('application/render/renderers/RNABaseRenderer')
-    .RNABaseRenderer;
-}
-
-function getSugarRenderer() {
-  return require('application/render/renderers/SugarRenderer').SugarRenderer;
-}
-
-function getUnresolvedMonomerRenderer() {
-  return require('application/render/renderers/UnresolvedMonomerRenderer')
-    .UnresolvedMonomerRenderer;
-}
-
-function getUnsplitNucleotideRenderer() {
-  return require('application/render/renderers/UnsplitNucleotideRenderer')
-    .UnsplitNucleotideRenderer;
-}

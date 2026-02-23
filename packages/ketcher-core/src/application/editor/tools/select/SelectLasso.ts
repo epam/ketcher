@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import type { CoreEditor } from 'application/editor/Editor';
+import { CoreEditor } from 'application/editor';
 import { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from 'domain/entities';
 
 export class SelectLasso extends SelectBase {
   selectionViewParams: SelectionLassoViewParams = {
@@ -26,11 +26,6 @@ export class SelectLasso extends SelectBase {
 
   constructor(readonly editor: CoreEditor) {
     super(editor);
-  }
-
-  private static provideEditorInstance() {
-    const { CoreEditor } = require('application/editor/Editor');
-    return CoreEditor.provideEditorInstance();
   }
 
   protected createSelectionView(): void {
@@ -46,7 +41,7 @@ export class SelectLasso extends SelectBase {
   }
 
   protected onSelectionMove(isShiftPressed: boolean) {
-    const editor = SelectLasso.provideEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
 

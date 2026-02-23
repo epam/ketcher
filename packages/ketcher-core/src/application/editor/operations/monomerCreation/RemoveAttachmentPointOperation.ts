@@ -1,6 +1,9 @@
 import { BaseOperation } from 'application/editor/operations/base';
 import { MonomerCreationState } from 'application/render';
-import { OperationType } from 'application/editor/operations/OperationType';
+import {
+  OperationType,
+  AssignLeavingGroupAtomOperation,
+} from 'application/editor';
 import assert from 'assert';
 import { AttachmentPointName } from 'domain/types';
 import Restruct from 'application/render/restruct/restruct';
@@ -57,9 +60,6 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
 
   invert() {
     const leavingAtomId = this.atomPair[1];
-    const {
-      AssignLeavingGroupAtomOperation,
-    } = require('./AssignLeavingGroupAtomOperation');
 
     return new AssignLeavingGroupAtomOperation(
       this.monomerCreationState,

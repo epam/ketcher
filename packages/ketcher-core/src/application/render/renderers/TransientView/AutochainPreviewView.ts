@@ -1,20 +1,16 @@
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Coordinates } from 'application/editor/shared/coordinates';
-import type { CoreEditor } from 'application/editor/Editor';
-import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  Coordinates,
+  CoreEditor,
+  IRnaPreset,
+  monomerFactory,
+} from 'application/editor';
 import { MonomerItemType } from 'domain/types';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Vec2 } from 'domain/entities/vec2';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { KetcherLogger } from 'utilities';
 import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
-
-const getCoreEditorInstance = (): CoreEditor => {
-  const { CoreEditor } = require('application/editor/Editor');
-  return CoreEditor.provideEditorInstance();
-};
 
 export type AutochainPreviewViewParams = {
   monomerOrRnaItem: MonomerItemType | IRnaPreset;
@@ -32,7 +28,7 @@ export class AutochainPreviewView extends TransientView {
     monomerOrRnaItem: MonomerItemType,
     scaledPosition: Vec2,
   ) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const [Monomer, MonomerRenderer] = monomerFactory(monomerOrRnaItem);
     const monomerInstance = new Monomer(monomerOrRnaItem);
     const monomerRenderer = new MonomerRenderer(monomerInstance);

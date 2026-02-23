@@ -1,14 +1,13 @@
-import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { SnakeMode } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
-import type { CoreEditor } from 'application/editor/Editor';
+import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Vec2 } from 'domain/entities/vec2';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,
@@ -32,11 +31,6 @@ import {
   generateCornerFromTopToRight,
 } from './helpers';
 import { SnakeLayoutCellWidth } from 'domain/constants';
-
-const getCoreEditorInstance = (): CoreEditor => {
-  const { CoreEditor } = require('application/editor/Editor');
-  return CoreEditor.provideEditorInstance();
-};
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -114,7 +108,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
     const startCellDirection = cells?.[0].connections?.find(
@@ -172,7 +166,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
@@ -1033,7 +1027,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
@@ -1062,7 +1056,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(

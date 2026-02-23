@@ -1,39 +1,50 @@
-import { Struct } from 'domain/entities/struct';
+import { Struct } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import type { FormatterFactory } from './formatters/formatterFactory';
-import { SupportedFormat } from './formatters/structFormatter.types';
+import {
+  FormatterFactory,
+  SupportedFormat,
+  identifyStructFormat,
+} from './formatters';
 import { Ketcher } from './ketcher';
-import { ketcherProvider } from './ketcherProvider';
 import { ChemicalMimeType, StructService } from 'domain/services';
+import { CoreEditor, EditorHistory } from './editor/internal';
+import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
-import type { CoreEditor } from './editor/internal';
 
-const getCoreEditorInstance = () => {
-  const { CoreEditor } = require('./editor/internal');
-  return CoreEditor.provideEditorInstance();
-};
+class KetcherProvider {
+  private readonly ketcherInstances = new Map<string, Ketcher>();
 
-const updateEditorHistory = (
-  editor: CoreEditor,
-  modelChanges: unknown,
-  mergeWithLatestHistoryCommand = false,
-): void => {
-  const { EditorHistory } = require('./editor/internal');
-  new EditorHistory(editor).update(modelChanges, mergeWithLatestHistoryCommand);
-};
+  addKetcherInstance(instance: Ketcher) {
+    this.ketcherInstances.set(instance.id, instance);
+  }
 
-const identifyStructFormat = (structStr: string) => {
-  const { identifyStructFormat } = require('./formatters/identifyStructFormat');
-  return identifyStructFormat(structStr);
-};
+  removeKetcherInstance(id: string) {
+    this.ketcherInstances.delete(id);
+  }
 
-const createFormatterFactory = (
-  structService: StructService,
-): FormatterFactory => {
-  const { FormatterFactory } = require('./formatters/formatterFactory');
-  return new FormatterFactory(structService);
-};
+  getIndexById(id: string) {
+    return Array.from(this.ketcherInstances.keys()).indexOf(id);
+  }
+
+  getKetcher(id?: string) {
+    if (!id) {
+      return [...this.ketcherInstances.values()][
+        this.ketcherInstances.size - 1
+      ];
+    }
+
+    const ketcher = this.ketcherInstances.get(id);
+
+    if (!ketcher) {
+      throw Error(`Could not find Ketcher instance with ID: ${id}`);
+    }
+
+    return ketcher;
+  }
+}
+
+const ketcherProvider = new KetcherProvider();
 
 export { ketcherProvider };
 
@@ -84,7 +95,7 @@ export function parseStruct(
   ketcherInstance: Ketcher,
 ) {
   const format = identifyStructFormat(structStr);
-  const factory = createFormatterFactory(structService);
+  const factory = new FormatterFactory(structService);
   const options = ketcherInstance.editor.options();
 
   const service = factory.create(format, {
@@ -95,10 +106,10 @@ export function parseStruct(
 }
 
 export function deleteAllEntitiesOnCanvas() {
-  const editor = getCoreEditorInstance();
+  const editor = CoreEditor.provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
-  updateEditorHistory(editor, modelChanges);
+  new EditorHistory(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
 }
 
@@ -107,8 +118,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
   structService: StructService,
   mergeWithLatestHistoryCommand = false,
 ) {
-  const editor = getCoreEditorInstance();
-  const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
+  const editor = CoreEditor.provideEditorInstance();
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct);
   let ketStruct = struct;
@@ -128,6 +138,6 @@ export async function parseAndAddMacromoleculesOnCanvas(
       editor.drawingEntitiesManager,
     );
 
-  updateEditorHistory(editor, modelChanges, mergeWithLatestHistoryCommand);
+  new EditorHistory(editor).update(modelChanges, mergeWithLatestHistoryCommand);
   editor.renderersContainer.update(modelChanges);
 }

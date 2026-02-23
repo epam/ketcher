@@ -1,23 +1,13 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { LayoutMode } from 'application/editor/modes/types';
+import { LayoutMode } from 'application/editor/modes';
 import ZoomTool from '../tools/Zoom';
-import { Coordinates } from '../shared/coordinates';
+import { CoreEditor } from '../Editor';
+import { Coordinates } from '../internal';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from 'domain/entities';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-
-const getCoreEditorInstance = () => {
-  const { CoreEditor } = require('../Editor');
-  return CoreEditor.provideEditorInstance();
-};
-
-const getRenderersManager = () => {
-  const {
-    RenderersManager,
-  } = require('application/render/renderers/RenderersManager');
-  return RenderersManager;
-};
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -26,7 +16,7 @@ export class SnakeMode extends BaseMode {
 
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     // Prevent layout to be called if turn on snake mode by undo operation
     // because during undo to flex mode if monomers were not moved
@@ -48,7 +38,7 @@ export class SnakeMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     return Coordinates.modelToCanvas(
       editor.drawingEntitiesManager.bottomRightMonomerPosition,
@@ -58,7 +48,7 @@ export class SnakeMode extends BaseMode {
   scrollForView() {
     const zoom = ZoomTool.instance;
     const drawnEntitiesBoundingBox =
-      getRenderersManager().getRenderedStructuresBbox();
+      RenderersManager.getRenderedStructuresBbox();
 
     if (zoom.isFitToCanvasHeight(drawnEntitiesBoundingBox.height)) {
       zoom.scrollTo(
@@ -82,7 +72,7 @@ export class SnakeMode extends BaseMode {
     mergedDrawingEntities: DrawingEntitiesManager,
   ) {
     const command = new Command();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     command.addOperation(new ReinitializeModeOperation());
     command.merge(

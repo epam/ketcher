@@ -14,14 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
-import { RxnArrow as MicromoleculeRxnArrow } from 'domain/entities/rxnArrow';
-import { MultitailArrow as MicromoleculeMultitailArrow } from 'domain/entities/multitailArrow';
-import { RxnPlus as MicromoleculeRxnPlus } from 'domain/entities/rxnPlus';
+import {
+  Atom,
+  Bond,
+  SGroupAttachmentPoint,
+  Struct,
+  Vec2,
+  RxnArrow as MicromoleculeRxnArrow,
+  MultitailArrow as MicromoleculeMultitailArrow,
+  RxnPlus as MicromoleculeRxnPlus,
+} from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
@@ -50,8 +52,7 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import type { CoreEditor } from 'application/editor/internal';
-import type { EditorSelection } from 'application/editor/editor.types';
+import { CoreEditor, EditorSelection } from 'application/editor/internal';
 import {
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
@@ -97,12 +98,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-
-const provideCoreEditorInstance = () => {
-  const { CoreEditor } = require('application/editor/internal');
-  return CoreEditor.provideEditorInstance();
-};
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -260,7 +256,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = provideCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);

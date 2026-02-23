@@ -5,20 +5,15 @@ import {
   IKetAmbiguousMonomerNode,
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
+import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-
-const getKetSerializerClass = () => {
-  const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
-  return KetSerializer;
-};
+import { KetSerializer } from 'domain/serializers';
+import { monomerFactory } from 'application/editor';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -60,8 +55,7 @@ export function monomerToDrawingEntity(
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
-      attachmentPoints:
-        getKetSerializerClass().getTemplateAttachmentPoints(template),
+      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
         expanded,
@@ -85,13 +79,12 @@ export function createMonomersForVariantMonomer(
     const monomerItem = {
       label: monomerTemplate.alias,
       expanded: false,
-      struct:
-        getKetSerializerClass().convertMonomerTemplateToStruct(monomerTemplate),
+      struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
-    getKetSerializerClass().fillStructRgLabelsByMonomerTemplate(
+    KetSerializer.fillStructRgLabelsByMonomerTemplate(
       monomerTemplate,
       monomerItem,
     );

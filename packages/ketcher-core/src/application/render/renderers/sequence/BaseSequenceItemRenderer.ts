@@ -1,19 +1,20 @@
 import { D3SvgElementSelection } from 'application/render/types';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
-import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
-import { Vec2 } from 'domain/entities/vec2';
+import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
 import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
+import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -70,7 +71,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      getSequenceRenderer().sequenceViewModel.length === 1 &&
+      SequenceRenderer.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -118,21 +119,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return getEditorInstance()?.isSequenceEditMode ?? false;
+    return CoreEditor.provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return getEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
+    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    return Boolean(
-      getSequenceModeState('isAntisenseEditMode')?.isAntisenseEditMode,
-    );
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    return Boolean(getSequenceModeState('isSyncEditMode')?.isSyncEditMode);
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -807,42 +810,4 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {
     this.antisenseNodeRenderer = antisenseNodeRenderer;
   }
-}
-
-function getSequenceRenderer() {
-  return require('application/render/renderers/sequence/SequenceRenderer')
-    .SequenceRenderer;
-}
-
-function getEditorInstance() {
-  const coreEditor = require('application/editor/internal').CoreEditor;
-  if (typeof coreEditor?.provideEditorInstance !== 'function') {
-    return null;
-  }
-
-  const editorInstance = coreEditor.provideEditorInstance();
-
-  return editorInstance && typeof editorInstance === 'object'
-    ? editorInstance
-    : null;
-}
-
-function getSequenceModeState(
-  modePropertyName: 'isAntisenseEditMode' | 'isSyncEditMode',
-) {
-  const editorMode = getEditorInstance()?.mode;
-  if (
-    !editorMode ||
-    typeof editorMode !== 'object' ||
-    !(modePropertyName in editorMode) ||
-    typeof (editorMode as Record<string, unknown>)[modePropertyName] !==
-      'boolean'
-  ) {
-    return null;
-  }
-
-  return editorMode as {
-    isAntisenseEditMode?: boolean;
-    isSyncEditMode?: boolean;
-  };
 }

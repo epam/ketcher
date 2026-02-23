@@ -1,10 +1,6 @@
 import { Operation } from 'domain/entities/Operation';
 import { EditorLineLength, SettingsManager } from 'utilities';
-
-const getCoreEditorInstance = () => {
-  const { CoreEditor } = require('application/editor/Editor');
-  return CoreEditor.provideEditorInstance();
-};
+import { CoreEditor } from 'application/editor';
 
 export class LineLengthChangeOperation implements Operation {
   private readonly previousLineLength: EditorLineLength;
@@ -16,13 +12,13 @@ export class LineLengthChangeOperation implements Operation {
 
   public execute() {
     SettingsManager.editorLineLength = this.lineLengthUpdate;
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     editor.mode.initialize();
   }
 
   public invert() {
     SettingsManager.editorLineLength = this.previousLineLength;
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     editor.mode.initialize();
   }
 }

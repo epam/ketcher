@@ -1,6 +1,11 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
-import { DEFAULT_LAYOUT_MODE, LayoutMode } from './types';
+import { CoreEditor, EditorHistory } from '../internal';
+import {
+  DEFAULT_LAYOUT_MODE,
+  LayoutMode,
+  modesMap,
+} from 'application/editor/modes';
 import {
   getStructStringFromClipboardData,
   initHotKeys,
@@ -10,49 +15,12 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { SequenceType } from 'domain/entities/monomer-chains/types';
-import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
-import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
-import { SupportedFormat } from 'application/formatters/structFormatter.types';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { identifyStructFormat, SupportedFormat } from 'application/formatters';
+import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
+import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-
-function getModeConstructor(modeName: LayoutMode) {
-  switch (modeName) {
-    case 'flex-layout-mode': {
-      const { FlexMode } = require('./FlexMode');
-      return FlexMode;
-    }
-    case 'snake-layout-mode': {
-      const { SnakeMode } = require('./SnakeMode');
-      return SnakeMode;
-    }
-    case 'sequence-layout-mode':
-    default: {
-      const { SequenceMode } = require('./SequenceMode');
-      return SequenceMode;
-    }
-  }
-}
-
-function getCoreEditorInstance() {
-  const { CoreEditor } = require('../Editor');
-  return CoreEditor.provideEditorInstance();
-}
-
-function getKetcherProvider() {
-  const { ketcherProvider } = require('application/utils');
-  return ketcherProvider;
-}
-
-// Intentionally structural typing to avoid reintroducing static CoreEditor imports,
-// which create circular dependencies in this module graph.
-type EditorModeChangeContext = {
-  events: { layoutModeChange: { dispatch: (modeName: LayoutMode) => void } };
-  mode: { destroy: () => void; initialize: (...args: unknown[]) => void };
-  setMode: (mode: unknown) => void;
-};
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -62,13 +30,9 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
-  private changeMode(
-    editor: EditorModeChangeContext,
-    modeName: LayoutMode,
-    isUndo = false,
-  ) {
+  private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
-    const ModeConstructor = getModeConstructor(modeName);
+    const ModeConstructor = modesMap[modeName];
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);
@@ -80,7 +44,7 @@ export abstract class BaseMode {
     _needReArrangeChains = false,
   ) {
     const command = new Command();
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
 
     command.addOperation(
       new SelectLayoutModeOperation(
@@ -101,7 +65,7 @@ export abstract class BaseMode {
   async onKeyDown(event: KeyboardEvent) {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
-        const editor = getCoreEditorInstance();
+        const editor = CoreEditor.provideEditorInstance();
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
           const shortcutKey = keyNorm.lookup(hotKeys, event);
@@ -137,10 +101,9 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const drawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
-    const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
       new Struct(),
@@ -160,13 +123,13 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const isCanvasEmptyBeforePaste =
       !editor.drawingEntitiesManager.hasDrawingEntities;
 
     if (isClipboardAPIAvailable()) {
       const isSequenceEditInRNABuilderMode =
-        getCoreEditorInstance().isSequenceEditInRNABuilderMode;
+        CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
 
       if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
       this._pasteIsInProgress = true;
@@ -200,7 +163,7 @@ export abstract class BaseMode {
 
   async pasteFromClipboard(clipboardData) {
     let modelChanges;
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
@@ -218,14 +181,12 @@ export abstract class BaseMode {
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
-    const { EditorHistory } = require('../EditorHistory');
     new EditorHistory(editor).update(modelChanges);
     this.scrollForView();
   }
 
   pasteKetFormatFragment(pastedStr: string) {
-    const editor = getCoreEditorInstance();
-    const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
+    const editor = CoreEditor.provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
       ketSerializer.deserializeToDrawingEntities(pastedStr);
@@ -266,8 +227,8 @@ export abstract class BaseMode {
     pastedStr: string,
     sequenceType: SequenceType,
   ) {
-    const editor = getCoreEditorInstance();
-    const indigo = getKetcherProvider().getKetcher(editor.ketcherId).indigo;
+    const editor = CoreEditor.provideEditorInstance();
+    const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
         outputFormat: ChemicalMimeType.KET,
@@ -303,7 +264,7 @@ export abstract class BaseMode {
   }
 
   unsupportedSymbolsError(errorMessage: string) {
-    const editor = getCoreEditorInstance();
+    const editor = CoreEditor.provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
       errorMessage,

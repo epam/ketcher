@@ -1258,7 +1258,6 @@ abstract class SelectBase implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
 
-      // Update rotation view with current angle
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
       if (bbox && this.rotationCenter) {
@@ -1275,10 +1274,7 @@ abstract class SelectBase implements BaseTool {
           height: bottomRight.y - topLeft.y,
         };
         this.editor.transientDrawingView.showRotation({
-          center: new Vec2(
-            canvasBbox.left + canvasBbox.width / 2,
-            canvasBbox.top + canvasBbox.height / 2,
-          ),
+          center: Coordinates.modelToCanvas(this.rotationCenter),
           boundingBox: canvasBbox,
           rotationAngle: angleDelta,
           isRotating: true,

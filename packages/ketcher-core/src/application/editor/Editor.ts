@@ -134,8 +134,6 @@ interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
 }
 
 interface ModifyAminoAcidsHandlerParams {
@@ -213,13 +211,9 @@ export class CoreEditor {
     ketcherId,
     theme,
     canvas,
-    monomersLibraryUpdate,
-    monomersLibraryReplace,
     mode,
   }: ICoreEditorConstructorParams) {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
-    const monomersLibraryUpdateData =
-      monomersLibraryUpdate || monomersLibraryReplace;
 
     this._type = EditorType.Micromolecules;
     this.ketcherId = ketcherId;
@@ -236,18 +230,6 @@ export class CoreEditor {
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
-
-    if (monomersLibraryUpdateData) {
-      if (monomersLibraryReplace) {
-        this.clearMonomersLibrary();
-      }
-
-      ketcher
-        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdateData)
-        .then((monomersLibraryUpdateInKetFormat) => {
-          this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-        });
-    }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -324,6 +306,26 @@ export class CoreEditor {
   public clearMonomersLibrary() {
     this._monomersLibrary = [];
     this._monomersLibraryParsedJson = getEmptyMonomersLibraryJson();
+  }
+
+  public async initializeMonomersLibraryFromKetcher(
+    monomersLibraryUpdate?: string | JSON,
+    monomersLibraryReplace?: string | JSON,
+  ): Promise<void> {
+    const monomersLibraryUpdateData =
+      monomersLibraryUpdate || monomersLibraryReplace;
+    if (!monomersLibraryUpdateData) {
+      return;
+    }
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    if (monomersLibraryReplace) {
+      this.clearMonomersLibrary();
+    }
+    const monomersLibraryUpdateInKetFormat =
+      await ketcher.ensureMonomersLibraryDataInKetFormat(
+        monomersLibraryUpdateData,
+      );
+    this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {

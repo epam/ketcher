@@ -828,13 +828,15 @@ function getEditorInstance() {
 }
 
 function getSequenceModeState(
-  modeStateName: 'isAntisenseEditMode' | 'isSyncEditMode',
+  modePropertyName: 'isAntisenseEditMode' | 'isSyncEditMode',
 ) {
   const editorMode = getEditorInstance()?.mode;
   if (
     !editorMode ||
     typeof editorMode !== 'object' ||
-    !(modeStateName in editorMode)
+    !(modePropertyName in editorMode) ||
+    typeof (editorMode as Record<string, unknown>)[modePropertyName] !==
+      'boolean'
   ) {
     return null;
   }

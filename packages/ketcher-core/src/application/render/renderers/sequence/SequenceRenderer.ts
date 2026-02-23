@@ -30,8 +30,6 @@ import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
-import { CoreEditor } from 'application/editor/internal';
-import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
@@ -42,9 +40,7 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
-import ZoomTool from 'application/editor/tools/Zoom';
 import { select } from 'd3';
-import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -171,7 +167,7 @@ export class SequenceRenderer {
     let hasAntisenseInRow = false;
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
-      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+      getEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
@@ -444,7 +440,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
@@ -722,7 +718,9 @@ export class SequenceRenderer {
   }
 
   public static moveCaretForward() {
-    const operation = new RestoreSequenceCaretPositionOperation(
+    const RestoreSequenceCaretPositionOperationClass =
+      getRestoreSequenceCaretPositionOperation();
+    const operation = new RestoreSequenceCaretPositionOperationClass(
       this.caretPosition,
       this.nextCaretPosition ?? this.caretPosition,
     );
@@ -732,7 +730,9 @@ export class SequenceRenderer {
   }
 
   public static moveCaretBack() {
-    const operation = new RestoreSequenceCaretPositionOperation(
+    const RestoreSequenceCaretPositionOperationClass =
+      getRestoreSequenceCaretPositionOperation();
+    const operation = new RestoreSequenceCaretPositionOperationClass(
       this.caretPosition,
       this.previousCaretPosition ?? this.caretPosition,
     );
@@ -884,7 +884,7 @@ export class SequenceRenderer {
   }
 
   public static startNewSequence(indexOfRowBefore?: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getEditorInstance();
     const oldNewSequenceChainIndex =
       SequenceRenderer.sequenceViewModel.chains.findIndex((chain) => {
         return chain.isNewSequenceChain;
@@ -975,7 +975,7 @@ export class SequenceRenderer {
   }
 
   public static shiftArrowSelectionInEditMode(event) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
 
@@ -1057,7 +1057,7 @@ export class SequenceRenderer {
   }
 
   private static getShiftArrowChanges(
-    editor: CoreEditor,
+    editor: ReturnType<typeof getEditorInstance>,
     twoStrandedNode: ITwoStrandedChainItem,
   ) {
     const modelChanges = new Command();
@@ -1102,7 +1102,7 @@ export class SequenceRenderer {
 
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getEditorInstance();
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
         twoStrandedNode.senseNode instanceof EmptySequenceNode ||
@@ -1131,7 +1131,7 @@ export class SequenceRenderer {
   }
 
   public static get selections() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getEditorInstance();
     const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;
@@ -1254,7 +1254,8 @@ export class SequenceRenderer {
   }
 
   private static attachDelegatedEvents() {
-    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const canvas =
+      getZoomTool().instance?.canvas || select(getDrawnStructuresSelector());
     SequenceEventDelegationManager.instance.attachDelegatedEvents(canvas);
   }
 
@@ -1289,4 +1290,21 @@ export function sequenceReplacer(key: string, value: unknown): unknown {
     };
   }
   return value;
+}
+
+function getEditorInstance() {
+  return require('application/editor/internal').CoreEditor.provideEditorInstance();
+}
+
+function getRestoreSequenceCaretPositionOperation() {
+  return require('application/editor/operations/modes')
+    .RestoreSequenceCaretPositionOperation;
+}
+
+function getZoomTool() {
+  return require('application/editor/tools/Zoom').default;
+}
+
+function getDrawnStructuresSelector() {
+  return require('application/editor/constants').drawnStructuresSelector;
 }

@@ -41,6 +41,7 @@ import {
 } from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -90,10 +91,18 @@ abstract class SelectBase implements BaseTool {
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
+  private rotationHandleUnsubscribe?: () => void;
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = EditorHistory.getInstance(this.editor);
     this.destroy();
+    this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
+      (payload) => {
+        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+        if (this.mode === 'rotating') return;
+        this.startRotation(payload.event);
+      },
+    );
   }
 
   // TODO: This type is only to resolve the TS error below. Ideally restructure the if-else order so it won't be called for sequence item at all
@@ -109,23 +118,6 @@ abstract class SelectBase implements BaseTool {
     if (shouldStartMove) this.mode = 'moving';
   }
 
-  private isRotationHandleClicked(event: MouseEvent): boolean {
-    const target = event.target as Element | null;
-    if (!target) return false;
-
-    try {
-      const hasClosest =
-        typeof target.closest === 'function' &&
-        target.closest('.rotation-handle') !== null;
-      const hasTestId =
-        typeof target.getAttribute === 'function' &&
-        target.getAttribute('data-testid') === 'rotation-handle';
-      return hasClosest || hasTestId;
-    } catch {
-      return false;
-    }
-  }
-
   mousedown(event: MouseEvent) {
     if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
@@ -134,12 +126,6 @@ abstract class SelectBase implements BaseTool {
     this.selectionStartCanvasPosition = Coordinates.viewToCanvas(
       this.editor.lastCursorPosition,
     );
-
-    // Check if rotation handle was clicked
-    if (this.isRotationHandleClicked(event)) {
-      this.startRotation(event);
-      return;
-    }
 
     if (event.target === this.editor.canvas) {
       if (!event.shiftKey) {
@@ -169,7 +155,7 @@ abstract class SelectBase implements BaseTool {
     }
   }
 
-  protected startRotation(event: MouseEvent) {
+  protected startRotation(event: MouseEvent | PointerEvent) {
     event.stopPropagation();
     event.preventDefault();
 
@@ -1289,6 +1275,7 @@ abstract class SelectBase implements BaseTool {
 
   destroy() {
     this.canvasResizeObserver?.disconnect();
+    this.rotationHandleUnsubscribe?.();
 
     if (!(this.editor.selectedTool instanceof EraserTool)) {
       const modelChanges =

@@ -33,6 +33,11 @@ export type RotationViewParams = {
   cursor?: Vec2;
 };
 
+type RotationHandleEvent = {
+  type: 'down' | 'drag';
+  event: PointerEvent;
+};
+
 const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
@@ -68,6 +73,16 @@ const getDegreeDifference = (a: number, b: number) => {
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
+  private static readonly rotationHandleSubscribers = new Set<
+    (payload: RotationHandleEvent) => void
+  >();
+
+  public static subscribeRotationHandle(
+    listener: (payload: RotationHandleEvent) => void,
+  ) {
+    RotationView.rotationHandleSubscribers.add(listener);
+    return () => RotationView.rotationHandleSubscribers.delete(listener);
+  }
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
@@ -150,7 +165,20 @@ export class RotationView extends TransientView {
       .append('g')
       .attr('class', 'rotation-handle')
       .attr('data-testid', 'rotation-handle')
-      .attr('transform', `translate(${handleCenterX},${handleCenterY})`);
+      .attr('transform', `translate(${handleCenterX},${handleCenterY})`)
+      .on('mousedown', (event: PointerEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+        RotationView.rotationHandleSubscribers.forEach((listener) =>
+          listener({ type: 'down', event }),
+        );
+      })
+      .on('mousedown', (event: PointerEvent) => {
+        if (event.buttons !== 1) return;
+        RotationView.rotationHandleSubscribers.forEach((listener) =>
+          listener({ type: 'drag', event }),
+        );
+      });
 
     handleGroup
       .append('circle')

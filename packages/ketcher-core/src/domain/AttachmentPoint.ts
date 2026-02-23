@@ -15,8 +15,6 @@ import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditor } from 'application/editor/Editor';
-import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
@@ -245,7 +243,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditor().provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
@@ -263,7 +261,7 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode instanceof SnakeMode && polymerBond.isSideChainConnection))
+        (isSnakeMode(editor.mode) && polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;
@@ -473,4 +471,42 @@ export class AttachmentPoint {
     }
     return this.initialAngle;
   }
+}
+
+let cachedCoreEditor:
+  | typeof import('application/editor/Editor').CoreEditor
+  | undefined;
+let cachedSnakeMode:
+  | typeof import('application/editor/modes/SnakeMode').SnakeMode
+  | undefined;
+
+function getCoreEditor() {
+  if (!cachedCoreEditor) {
+    const { CoreEditor } = require('application/editor/Editor') as {
+      CoreEditor: typeof import('application/editor/Editor').CoreEditor;
+    };
+    cachedCoreEditor = CoreEditor;
+  }
+
+  return cachedCoreEditor;
+}
+
+function isSnakeMode(mode: unknown): boolean {
+  if (!mode) {
+    return false;
+  }
+
+  const SnakeMode = getSnakeMode();
+  return mode instanceof SnakeMode;
+}
+
+function getSnakeMode() {
+  if (!cachedSnakeMode) {
+    const { SnakeMode } = require('application/editor/modes/SnakeMode') as {
+      SnakeMode: typeof import('application/editor/modes/SnakeMode').SnakeMode;
+    };
+    cachedSnakeMode = SnakeMode;
+  }
+
+  return cachedSnakeMode;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
 import {
   AromatizeData,
   AromatizeResult,

@@ -1,5 +1,5 @@
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render';
 
 export class SelectFragment extends SelectBase {

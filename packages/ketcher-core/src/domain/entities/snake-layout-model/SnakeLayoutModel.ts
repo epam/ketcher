@@ -10,7 +10,6 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { CoreEditor, provideEditorSettings } from 'application/editor';
 import { SettingsManager } from 'utilities';
 import {
   ISnakeLayoutModelRow,
@@ -19,12 +18,61 @@ import {
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
 import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
+
+const getStructureBbox = (drawingEntities: DrawingEntity[]) => {
+  let left = Infinity;
+  let right = -Infinity;
+  let top = Infinity;
+  let bottom = -Infinity;
+
+  if (!drawingEntities.length) {
+    return {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: 0,
+      height: 0,
+    };
+  }
+
+  drawingEntities.forEach((drawingEntity) => {
+    const monomerPosition = drawingEntity.position;
+
+    left = Math.min(left, monomerPosition.x);
+    right = Math.max(right, monomerPosition.x);
+    top = Math.min(top, monomerPosition.y);
+    bottom = Math.max(bottom, monomerPosition.y);
+  });
+
+  return {
+    left,
+    right,
+    top,
+    bottom,
+    width: right - left,
+    height: bottom - top,
+  };
+};
+
+const getCoreEditorInstance = () => {
+  const { CoreEditor } = require('application/editor/internal');
+  return CoreEditor.provideEditorInstance();
+};
+
+const getEditorSettings = () => {
+  const {
+    provideEditorSettings,
+  } = require('application/editor/editorSettings');
+  return provideEditorSettings();
+};
 
 export class SnakeLayoutModel {
   private readonly nodes: ITwoStrandedSnakeLayoutNode[] = [];
@@ -114,7 +162,7 @@ export class SnakeLayoutModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -460,7 +508,7 @@ export class SnakeLayoutModel {
         }
 
         // Place collected molecules in additional rows below the current one
-        const editorSettings = provideEditorSettings();
+        const editorSettings = getEditorSettings();
         const cellSizeInAngstroms =
           SnakeLayoutCellWidth / editorSettings.macroModeScale;
         let currentRowToHandle: ISnakeLayoutModelRow = {
@@ -472,8 +520,7 @@ export class SnakeLayoutModel {
 
         nodeIndexToMolecules.forEach((molecules) => {
           molecules.forEach((molecule) => {
-            const moleculeBbox =
-              DrawingEntitiesManager.getStructureBbox(molecule);
+            const moleculeBbox = getStructureBbox(molecule);
             const cellsNeededHorizontally = Math.ceil(
               (moleculeBbox.width + cellSizeInAngstroms / 2) /
                 cellSizeInAngstroms,

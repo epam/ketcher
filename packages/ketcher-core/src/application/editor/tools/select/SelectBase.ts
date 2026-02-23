@@ -36,7 +36,8 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment, vectorUtils } from 'application/editor';
+import { MonomersAlignment } from 'application/editor/tools/types';
+import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,

@@ -18,7 +18,7 @@ import { Axis, Axises } from 'domain/entities/Axis';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { cloneDeep, cloneDeepWith } from 'lodash';
-import { EditorSelection } from 'application/editor';
+import { EditorSelection } from 'application/editor/editor.types';
 import {
   KetMonomerClass,
   KetTemplateType,

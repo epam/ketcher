@@ -18,7 +18,7 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { Struct } from 'domain/entities/struct';
 import { StructFormatter } from './structFormatter.types';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { EditorSelection } from 'application/editor';
+import { EditorSelection } from 'application/editor/editor.types';
 
 export class KetFormatter implements StructFormatter {
   readonly #ketSerializer: KetSerializer;

@@ -13,8 +13,12 @@ import {
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
-import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { monomerFactory } from 'application/editor';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+
+const getKetSerializerClass = () => {
+  const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
+  return KetSerializer;
+};
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -56,7 +60,8 @@ export function monomerToDrawingEntity(
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
-      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
+      attachmentPoints:
+        getKetSerializerClass().getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
         expanded,
@@ -80,12 +85,13 @@ export function createMonomersForVariantMonomer(
     const monomerItem = {
       label: monomerTemplate.alias,
       expanded: false,
-      struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
+      struct:
+        getKetSerializerClass().convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
-    KetSerializer.fillStructRgLabelsByMonomerTemplate(
+    getKetSerializerClass().fillStructRgLabelsByMonomerTemplate(
       monomerTemplate,
       monomerItem,
     );

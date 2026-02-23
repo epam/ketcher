@@ -40,8 +40,8 @@ import {
 import { Action } from './action';
 import { ReSGroup, ReStruct } from '../../render';
 import utils from '../shared/utils';
-import { fromSgroupAttachmentPointRemove } from 'application/editor';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 
 export function fromBondAddition(
   reStruct: ReStruct,

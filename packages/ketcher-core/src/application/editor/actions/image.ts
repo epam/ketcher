@@ -2,12 +2,12 @@ import { ReStruct } from 'application/render';
 import { Image, ImageReferencePositionInfo } from 'domain/entities/image';
 import { Vec2 } from 'domain/entities/vec2';
 import {
-  Action,
   ImageDelete,
   ImageMove,
   ImageResize,
   ImageUpsert,
-} from 'application/editor';
+} from '../operations/image';
+import { Action } from './action';
 
 export function fromImageCreation(
   reStruct: ReStruct,

@@ -16,7 +16,7 @@ import {
   KetMonomerTemplateAtom,
 } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { IRnaPreset } from 'application/editor';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
 
 /**
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class

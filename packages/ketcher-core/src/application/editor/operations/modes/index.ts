@@ -18,20 +18,30 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+
+const getCoreEditorInstance = () => {
+  const { CoreEditor } = require('application/editor/internal');
+  return CoreEditor.provideEditorInstance();
+};
+
+const setCaretPosition = (position: number) => {
+  const {
+    SequenceRenderer,
+  } = require('application/render/renderers/sequence/SequenceRenderer');
+  SequenceRenderer.setCaretPosition(position);
+};
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
   public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditorInstance();
 
     editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditorInstance();
 
     editor.mode.initialize(false);
   }
@@ -46,10 +56,10 @@ export class RestoreSequenceCaretPositionOperation implements Operation {
   }
 
   public execute() {
-    SequenceRenderer.setCaretPosition(this.nextPosition);
+    setCaretPosition(this.nextPosition);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    SequenceRenderer.setCaretPosition(this.previousPosition);
+    setCaretPosition(this.previousPosition);
   }
 }

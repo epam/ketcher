@@ -37,7 +37,10 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import {
+  MACROMOLECULES_BOND_TYPES,
+  ToolName,
+} from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 

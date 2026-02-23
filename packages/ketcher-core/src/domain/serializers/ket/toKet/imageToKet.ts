@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
-import { KetFileNode } from 'domain/serializers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { KetFileImageNode } from 'domain/entities/image';
 
 export function imageToKet(imageNode: KetFileNode) {

@@ -1,4 +1,4 @@
-import type { LayoutMode } from 'application/editor/modes/types';
+import { LayoutMode } from 'application/editor/modes/types';
 import { BaseMode } from 'application/editor/modes/internal';
 import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';

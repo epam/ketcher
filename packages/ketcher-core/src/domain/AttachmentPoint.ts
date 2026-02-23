@@ -1,6 +1,6 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import type { D3SvgElementSelection } from 'application/render/types';
+import { D3SvgElementSelection } from 'application/render/types';
 import { line, Selection } from 'd3';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';

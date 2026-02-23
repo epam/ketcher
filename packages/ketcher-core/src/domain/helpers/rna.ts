@@ -6,7 +6,7 @@ import {
   RnaDnaBaseNames,
 } from 'domain/constants/monomers';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 
 export function getRnaPartLibraryItem(

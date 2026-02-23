@@ -31,7 +31,7 @@ import {
   getAttachmentPointNumberFromLabel,
 } from 'domain/helpers/attachmentPointCalculations';
 import { invert, isNumber } from 'lodash';
-import { IKetAttachmentPoint } from 'application/formatters';
+import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { CoreEditor } from 'application/editor/Editor';
 import { Atom } from 'domain/entities/CoreAtom';

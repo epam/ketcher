@@ -1,5 +1,3 @@
-import { CoreEditor } from 'application/editor/Editor';
-import { Coordinates } from 'application/editor/shared/coordinates';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
@@ -16,9 +14,8 @@ import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleoside {
@@ -50,7 +47,7 @@ export class Nucleoside {
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
     isAntisense = false,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditor().provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
@@ -69,8 +66,11 @@ export class Nucleoside {
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
-      Coordinates.canvasToModel(
-        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
+      getCoordinates().canvasToModel(
+        new Vec2(
+          0,
+          SnakeLayoutCellWidth + getSugarRenderer().monomerSize.height,
+        ),
       ),
     );
     const modelChanges = new Command();
@@ -140,4 +140,16 @@ export class Nucleoside {
       this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
     );
   }
+}
+
+function getCoreEditor() {
+  return require('application/editor/Editor').CoreEditor;
+}
+
+function getCoordinates() {
+  return require('application/editor/shared/coordinates').Coordinates;
+}
+
+function getSugarRenderer() {
+  return require('application/render/renderers/SugarRenderer').SugarRenderer;
 }

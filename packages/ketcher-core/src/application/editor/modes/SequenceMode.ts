@@ -66,7 +66,7 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,

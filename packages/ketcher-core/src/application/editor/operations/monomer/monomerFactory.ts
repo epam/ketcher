@@ -31,6 +31,7 @@ import {
   rnaDnaNaturalAnalogues,
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
+import { resolveMonomerClass } from './resolveMonomerClass';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 
@@ -103,7 +104,7 @@ export const monomerFactory = (
   } else {
     Monomer = Chem;
     MonomerRenderer = getChemRenderer();
-    ketMonomerClass = KetMonomerClass.CHEM;
+    ketMonomerClass = resolveMonomerClass(monomer);
   }
 
   return [Monomer, MonomerRenderer, ketMonomerClass];

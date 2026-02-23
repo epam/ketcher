@@ -38,7 +38,7 @@ import { AttachmentPointName } from 'domain/types';
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =

@@ -1,6 +1,5 @@
 import { BaseMonomer } from './BaseMonomer';
 import { RNABase } from './RNABase';
-import { Phosphate } from './Phosphate';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
@@ -52,7 +51,7 @@ export class Sugar extends BaseMonomer {
 
     // If other monomer is neither a Phosphate nor RNABase, open modal
     if (
-      !(otherMonomer instanceof Phosphate) &&
+      !otherMonomer.isPhosphate &&
       !isRnaBaseOrAmbiguousRnaBase(otherMonomer)
     ) {
       return;

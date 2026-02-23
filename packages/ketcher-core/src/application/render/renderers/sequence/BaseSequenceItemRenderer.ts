@@ -9,14 +9,13 @@ import {
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
+import { SequenceMode } from 'application/editor/modes/SequenceMode';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -73,7 +72,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      getSequenceRenderer().sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -812,4 +811,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {
     this.antisenseNodeRenderer = antisenseNodeRenderer;
   }
+}
+
+function getSequenceRenderer() {
+  return require('application/render/renderers/sequence/SequenceRenderer')
+    .SequenceRenderer;
 }

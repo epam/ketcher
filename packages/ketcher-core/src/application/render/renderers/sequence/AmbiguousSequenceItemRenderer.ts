@@ -1,5 +1,5 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {

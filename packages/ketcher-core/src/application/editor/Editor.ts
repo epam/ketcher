@@ -668,10 +668,15 @@ export class CoreEditor {
       ) {
         this.events.rightClickPolymerBond.dispatch([event, eventData]);
       } else if (
-        (eventData instanceof BaseMonomerRenderer &&
-          eventData.monomer.selected) ||
-        (hasSelectedEntities && eventData?.drawingEntity?.selected)
+        eventData instanceof BaseMonomerRenderer &&
+        eventData.monomer.selected
       ) {
+        this.events.rightClickSelectedMonomers.dispatch([event]);
+        this.events.rightClickSelectedMonomers.dispatch([
+          event,
+          selectedMonomers,
+        ]);
+      } else if (hasSelectedEntities && eventData?.drawingEntity?.selected) {
         // Handle right-click on selected microstructures (atoms, bonds, arrows, etc.)
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([

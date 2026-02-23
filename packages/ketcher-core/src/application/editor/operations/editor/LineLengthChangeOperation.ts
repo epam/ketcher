@@ -1,6 +1,6 @@
 import { Operation } from 'domain/entities/Operation';
 import { EditorLineLength, SettingsManager } from 'utilities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
 
 export class LineLengthChangeOperation implements Operation {
   private readonly previousLineLength: EditorLineLength;

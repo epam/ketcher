@@ -1862,6 +1862,7 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+    this.viewModel.initialize([...this.drawingEntitiesManager.bonds.values()]);
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(

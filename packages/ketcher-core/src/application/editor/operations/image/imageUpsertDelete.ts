@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
+import { OperationType } from 'application/editor/operations/OperationType';
 import { Image } from 'domain/entities/image';
 import { ReStruct } from 'application/render';
 import { ReImage } from 'application/render/restruct/reImage';

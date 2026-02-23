@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define,@typescript-eslint/no-non-null-assertion */
 import { BaseOperation } from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
+import { OperationType } from 'application/editor/operations/OperationType';
 import { ReStruct } from 'application/render';
 import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 

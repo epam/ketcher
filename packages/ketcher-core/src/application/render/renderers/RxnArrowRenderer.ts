@@ -19,7 +19,7 @@ import { UnbalancedEquilibriumFilledHalfBowArrowRenderer } from 'application/ren
 import { UnbalancedEquilibriumOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumOpenHalfAngleArrowRenderer';
 import { UnbalancedEquilibriumFilledHalfTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumFilledHalfTriangleArrowRenderer';
 import { EllipticalArcFilledBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledBowArrowRenderer';
-import { provideEditorSettings } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { EllipticalArcFilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledTriangleArrowRenderer';
 import { EllipticalArcOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenAngleArrowRenderer';
 import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenHalfAngleArrowRenderer';

@@ -33,7 +33,6 @@ import {
 import { invert, isNumber } from 'lodash';
 import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { CoreEditor } from 'application/editor/Editor';
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
@@ -482,7 +481,6 @@ export class MacromoleculesConverter {
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();
@@ -763,10 +761,6 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
     drawingEntitiesManager.detectBondsOverlappedByMonomers();
-
-    if (editor) {
-      editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
-    }
 
     return {
       drawingEntitiesManager,

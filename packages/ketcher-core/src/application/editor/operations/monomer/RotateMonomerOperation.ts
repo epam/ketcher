@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import BaseOperation from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
+import { OperationType } from 'application/editor/operations/OperationType';
 import { ReStruct } from 'application/render';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 

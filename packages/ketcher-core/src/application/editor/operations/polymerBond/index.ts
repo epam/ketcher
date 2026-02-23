@@ -19,7 +19,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { LayoutMode } from 'application/editor';
+import { LayoutMode } from 'application/editor/modes/types';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;

@@ -62,12 +62,8 @@ import {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import {
-  MACROMOLECULES_BOND_TYPES,
-  provideEditorSettings,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
@@ -139,6 +135,12 @@ export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
   SnakeLayoutCellWidth * 2 + 30;
 export const MONOMER_START_X_POSITION = 20 + SnakeLayoutCellWidth / 2;
 export const MONOMER_START_Y_POSITION = 20 + SnakeLayoutCellWidth / 2;
+
+const isSequenceLayoutMode = (mode: { modeName?: string } | undefined) =>
+  mode?.modeName === 'sequence-layout-mode';
+
+const isSnakeLayoutMode = (mode: { modeName?: string } | undefined) =>
+  mode?.modeName === 'snake-layout-mode';
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -765,7 +767,7 @@ export class DrawingEntitiesManager {
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        isSequenceLayoutMode(editor.mode) &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -809,7 +811,7 @@ export class DrawingEntitiesManager {
       let isValueChanged;
       const editor = CoreEditor.provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        isSequenceLayoutMode(editor.mode) &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -1056,7 +1058,7 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
-    if (editor.mode instanceof SnakeMode) {
+    if (isSnakeLayoutMode(editor.mode)) {
       command.merge(this.recalculateCanvasMatrix());
     }
 
@@ -2364,7 +2366,7 @@ export class DrawingEntitiesManager {
   public rerenderBondsOverlappedByMonomers() {
     const editor = CoreEditor.provideEditorInstance();
 
-    if (editor.mode instanceof SequenceMode) {
+    if (isSequenceLayoutMode(editor.mode)) {
       return;
     }
 
@@ -2430,7 +2432,7 @@ export class DrawingEntitiesManager {
 
     const editor = CoreEditor.provideEditorInstance();
     if (
-      !(editor.mode instanceof SequenceMode) ||
+      !isSequenceLayoutMode(editor.mode) ||
       drawingEntity instanceof PolymerBond
     ) {
       return { command, drawingEntities };
@@ -3404,7 +3406,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.applySnakeLayout(true, true));
 
-    if (editor.mode instanceof SequenceMode) {
+    if (isSequenceLayoutMode(editor.mode)) {
       command.addOperation(new ReinitializeModeOperation());
     }
 
@@ -3435,7 +3437,7 @@ export class DrawingEntitiesManager {
     monomers?: BaseMonomer[],
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    if (!editor || editor.mode instanceof SequenceMode) {
+    if (!editor || isSequenceLayoutMode(editor.mode)) {
       return false;
     }
 

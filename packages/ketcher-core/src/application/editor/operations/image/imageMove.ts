@@ -1,6 +1,6 @@
 import { BaseOperation } from 'application/editor/operations/base';
 import { Vec2 } from 'domain/entities/vec2';
-import { OperationType } from 'application/editor';
+import { OperationType } from 'application/editor/operations/OperationType';
 import { ReStruct } from 'application/render';
 import { Scale } from 'domain/helpers';
 

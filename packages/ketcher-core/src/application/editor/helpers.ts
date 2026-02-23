@@ -1,4 +1,3 @@
-import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { IKetMacromoleculesContent } from 'application/formatters/types/ket';
 
 export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
@@ -6,6 +5,7 @@ export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
     typeof monomersDataRaw === 'string'
       ? JSON.parse(monomersDataRaw)
       : monomersDataRaw;
+  const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
   const serializer = new KetSerializer();
   const monomersLibrary = serializer.convertMonomersLibrary(
     monomersLibraryParsedJson,

@@ -1,6 +1,6 @@
 import { LayoutMode } from 'application/editor/modes/types';
-import { BaseMode } from 'application/editor/modes/internal';
-import { Coordinates } from '../internal';
+import { BaseMode } from 'application/editor/modes/BaseMode';
+import { Coordinates } from '../shared/coordinates';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 

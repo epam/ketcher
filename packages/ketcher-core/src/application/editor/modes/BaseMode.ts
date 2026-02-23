@@ -16,7 +16,6 @@ import { Vec2 } from 'domain/entities/vec2';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { ChemicalMimeType } from 'domain/services';
-import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 function getModeConstructor(modeName: LayoutMode) {
@@ -40,6 +39,11 @@ function getModeConstructor(modeName: LayoutMode) {
 function getCoreEditorInstance() {
   const { CoreEditor } = require('../Editor');
   return CoreEditor.provideEditorInstance();
+}
+
+function getKetcherProvider() {
+  const { ketcherProvider } = require('application/utils');
+  return ketcherProvider;
 }
 
 // Intentionally structural typing to avoid reintroducing static CoreEditor imports,
@@ -263,7 +267,7 @@ export abstract class BaseMode {
     sequenceType: SequenceType,
   ) {
     const editor = getCoreEditorInstance();
-    const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+    const indigo = getKetcherProvider().getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
         outputFormat: ChemicalMimeType.KET,

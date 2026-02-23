@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import type { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
@@ -44,6 +45,11 @@ import {
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
+const createEditorHistory = (editor: CoreEditor): EditorHistory => {
+  const { EditorHistory } = require('application/editor/EditorHistory');
+  return new EditorHistory(editor);
+};
+
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
@@ -59,7 +65,7 @@ class PolymerBond implements BaseTool {
     options: { toolName: ToolName },
   ) {
     this.editor = editor;
-    this.history = new EditorHistory(this.editor);
+    this.history = createEditorHistory(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE

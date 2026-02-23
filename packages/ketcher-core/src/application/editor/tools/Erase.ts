@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import type { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { SequenceMode } from '../modes';
+
+const createEditorHistory = (editor: CoreEditor): EditorHistory => {
+  const { EditorHistory } = require('application/editor/EditorHistory');
+  return new EditorHistory(editor);
+};
 
 class EraserTool implements BaseTool {
   private readonly history: EditorHistory;
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(editor);
+    this.history = createEditorHistory(editor);
     if (
       this.editor.drawingEntitiesManager.selectedEntities.length &&
-      !(this.editor.mode instanceof SequenceMode)
+      this.editor.mode.modeName !== 'sequence-layout-mode'
     ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();

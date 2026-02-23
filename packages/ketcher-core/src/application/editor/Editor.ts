@@ -38,17 +38,17 @@ import {
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager as RenderersManagerType } from 'application/render/renderers/RenderersManager';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   NodeSelection,
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 import assert from 'assert';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
@@ -165,7 +165,7 @@ export class CoreEditor {
   public ketcherId?: string;
 
   public _type: EditorType;
-  public renderersContainer: RenderersManager;
+  public renderersContainer: RenderersManagerType;
   public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
@@ -249,6 +249,9 @@ export class CoreEditor {
         });
     }
     this.subscribeEvents();
+    const {
+      RenderersManager,
+    } = require('application/render/renderers/RenderersManager');
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
@@ -1897,6 +1900,9 @@ export class CoreEditor {
     ) {
       return;
     }
+    const {
+      RenderersManager,
+    } = require('application/render/renderers/RenderersManager');
     const structureBbox = RenderersManager.getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
@@ -1904,7 +1910,7 @@ export class CoreEditor {
 
   public scrollToTopLeftCorner() {
     const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+      require('application/render/renderers/RenderersManager').RenderersManager.getRenderedStructuresBbox();
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),

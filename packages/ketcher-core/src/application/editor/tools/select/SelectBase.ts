@@ -18,11 +18,8 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Vec2 } from 'domain/entities/vec2';
-import {
-  CoreEditor,
-  EditorHistory,
-  SelectRectangle,
-} from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
@@ -45,6 +42,21 @@ import {
 } from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+
+const getSelectRectangle = () => {
+  const { SelectRectangle } = require('./SelectRectangle');
+  return SelectRectangle;
+};
+
+const getCoreEditorInstance = () => {
+  const { CoreEditor } = require('application/editor/Editor');
+  return CoreEditor.provideEditorInstance();
+};
+
+const createEditorHistory = (editor: CoreEditor): EditorHistory => {
+  const { EditorHistory } = require('application/editor/EditorHistory');
+  return new EditorHistory(editor);
+};
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -90,7 +102,7 @@ abstract class SelectBase implements BaseTool {
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
 
   constructor(protected readonly editor: CoreEditor) {
-    this.history = new EditorHistory(this.editor);
+    this.history = createEditorHistory(this.editor);
     this.destroy();
   }
 
@@ -108,7 +120,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mousedown(event: MouseEvent) {
-    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+    if (getCoreEditorInstance().isSequenceAnyEditMode) return;
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -300,7 +312,7 @@ abstract class SelectBase implements BaseTool {
       return { bondLengthSnapPosition: null };
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = getCoreEditorInstance();
     let angle: number;
     if (editor.mode.modeName === 'snake-layout-mode') {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
@@ -367,7 +379,7 @@ abstract class SelectBase implements BaseTool {
         );
 
         if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          getSelectRectangle().needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -386,7 +398,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          getSelectRectangle().needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -823,7 +835,7 @@ abstract class SelectBase implements BaseTool {
         ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
       );
       const groupCenterSnapResult =
-        SelectRectangle.calculateGroupCenterSnapPosition(
+        getSelectRectangle().calculateGroupCenterSnapPosition(
           selectedMonomers,
           connectedMonomers,
           movementDelta,

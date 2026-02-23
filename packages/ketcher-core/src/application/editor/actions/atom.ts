@@ -37,13 +37,15 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { fromBondStereoUpdate } from './bond';
 import { without } from 'lodash/fp';
 import ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 const getSgroupModule = () => require('./sgroup');
+const fromBondStereoUpdate = (
+  ...args: Parameters<typeof import('./bond').fromBondStereoUpdate>
+) => require('./bond').fromBondStereoUpdate(...args);
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = { ...(atom || {}) };

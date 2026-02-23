@@ -3,8 +3,8 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import type { FormatterFactory } from './formatters/formatterFactory';
 import { SupportedFormat } from './formatters/structFormatter.types';
 import { Ketcher } from './ketcher';
+import { ketcherProvider } from './ketcherProvider';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
 import type { CoreEditor } from './editor/internal';
@@ -34,40 +34,6 @@ const createFormatterFactory = (
   const { FormatterFactory } = require('./formatters/formatterFactory');
   return new FormatterFactory(structService);
 };
-
-class KetcherProvider {
-  private readonly ketcherInstances = new Map<string, Ketcher>();
-
-  addKetcherInstance(instance: Ketcher) {
-    this.ketcherInstances.set(instance.id, instance);
-  }
-
-  removeKetcherInstance(id) {
-    this.ketcherInstances.delete(id);
-  }
-
-  getIndexById(id: string) {
-    return Array.from(this.ketcherInstances.keys()).indexOf(id);
-  }
-
-  getKetcher(id?: string) {
-    if (!id) {
-      return [...this.ketcherInstances.values()][
-        this.ketcherInstances.size - 1
-      ];
-    }
-
-    const ketcher = this.ketcherInstances.get(id);
-
-    if (!ketcher) {
-      throw Error(`couldnt find ketcher instance ${id}`);
-    }
-
-    return ketcher;
-  }
-}
-
-const ketcherProvider = new KetcherProvider();
 
 export { ketcherProvider };
 
@@ -142,6 +108,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
   mergeWithLatestHistoryCommand = false,
 ) {
   const editor = getCoreEditorInstance();
+  const { KetSerializer } = require('domain/serializers/ket/ketSerializer');
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct);
   let ketStruct = struct;

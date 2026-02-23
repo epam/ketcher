@@ -3,7 +3,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Coordinates } from 'application/editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { arc } from 'd3';
 
 export type AngleSnapViewParams = {

@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
-import { IRnaPreset, ZoomTool } from 'application/editor';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
+import ZoomTool from 'application/editor/tools/Zoom';
 import { drawnStructuresSelector } from 'application/editor/constants';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';

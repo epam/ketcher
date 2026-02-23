@@ -3,7 +3,14 @@ module.exports = {
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   transform: {
     '\\.js?$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          warnOnly: true,
+        },
+      },
+    ],
     '\\.ket': '<rootDir>/textFileTransformer.js',
   },
   moduleNameMapper: {
@@ -14,11 +21,6 @@ module.exports = {
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   globals: {
-    'ts-jest': {
-      diagnostics: {
-        warnOnly: true,
-      },
-    },
     ketcher: {},
   },
   setupFiles: ['./jest.setup.js'],

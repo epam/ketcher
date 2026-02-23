@@ -1,8 +1,7 @@
 import { Selection } from 'd3';
-import { BaseMonomerRenderer } from 'application/render/renderers';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { monomerFactory } from 'application/editor';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
@@ -166,3 +165,26 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     return undefined;
   }
 }
+
+function monomerFactory(
+  ...args: Parameters<
+    typeof import('application/editor/operations/monomer/monomerFactory').monomerFactory
+  >
+) {
+  return getMonomerFactory()(...args);
+}
+
+function getMonomerFactory() {
+  if (!cachedMonomerFactory) {
+    const { monomerFactory } =
+      require('application/editor/operations/monomer/monomerFactory') as {
+        monomerFactory: typeof import('application/editor/operations/monomer/monomerFactory').monomerFactory;
+      };
+    cachedMonomerFactory = monomerFactory;
+  }
+  return cachedMonomerFactory;
+}
+
+let cachedMonomerFactory:
+  | typeof import('application/editor/operations/monomer/monomerFactory').monomerFactory
+  | undefined = undefined;

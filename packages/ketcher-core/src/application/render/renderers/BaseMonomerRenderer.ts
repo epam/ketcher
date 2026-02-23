@@ -18,7 +18,6 @@ import {
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
@@ -380,11 +379,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    const [, , monomerClass] = monomerFactory(
+    const monomerClass =
       this.monomer instanceof AmbiguousMonomer
-        ? this.monomer.variantMonomerItem
-        : this.monomer.monomerItem,
-    );
+        ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
+        : this.monomer.monomerItem.props.MonomerClass ??
+          this.monomer.monomerItem.props.MonomerType ??
+          '';
     const monomerUniqueKey = this.monomer.label + monomerClass;
 
     if (!labelPositions[monomerUniqueKey]) {

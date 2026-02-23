@@ -1,5 +1,5 @@
 import { LayoutMode } from 'application/editor/modes/types';
-import { BaseMode } from 'application/editor/modes/internal';
+import { BaseMode } from 'application/editor/modes/BaseMode';
 import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';
 import { Command } from 'domain/entities/Command';

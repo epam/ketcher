@@ -1,8 +1,8 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
-import { CoreEditor } from '../Editor';
 import { Coordinates } from '../internal';
+import { provideEditorInstance } from '../editorInstanceProvider';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
@@ -17,7 +17,7 @@ export class SnakeMode extends BaseMode {
 
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     // Prevent layout to be called if turn on snake mode by undo operation
     // because during undo to flex mode if monomers were not moved
@@ -39,7 +39,7 @@ export class SnakeMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     return Coordinates.modelToCanvas(
       editor.drawingEntitiesManager.bottomRightMonomerPosition,
@@ -73,7 +73,7 @@ export class SnakeMode extends BaseMode {
     mergedDrawingEntities: DrawingEntitiesManager,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     command.addOperation(new ReinitializeModeOperation());
     command.merge(

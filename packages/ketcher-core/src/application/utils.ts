@@ -10,7 +10,7 @@ import { ChemicalMimeType, StructService } from 'domain/services';
 import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
-import { EditorSelection } from './editor/editor.types';
+import type { EditorSelection } from './editor/editor.types';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();

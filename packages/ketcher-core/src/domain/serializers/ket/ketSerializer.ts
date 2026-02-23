@@ -25,7 +25,7 @@ import {
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
-import { Serializer } from '../serializers.types';
+import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
@@ -52,7 +52,8 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditor, EditorSelection } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/internal';
+import type { EditorSelection } from 'application/editor/internal';
 import {
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,

@@ -1,6 +1,7 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
-import { CoreEditor, EditorHistory } from '../internal';
+import { CoreEditor } from '../Editor';
+import { EditorHistory } from '../EditorHistory';
 import {
   DEFAULT_LAYOUT_MODE,
   LayoutMode,

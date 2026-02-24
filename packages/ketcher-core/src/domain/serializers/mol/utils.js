@@ -65,9 +65,11 @@ function partitionLineFixed(
 ) {
   /* reader */
   const res = [];
-  for (let shift = 0; shift < str.length; shift += itemLength) {
+  const step = withspace ? itemLength + 1 : itemLength;
+  let shift = 0;
+  while (shift < str.length) {
     res.push(str.slice(shift, shift + itemLength));
-    if (withspace) shift++;
+    shift += step;
   }
   return res;
 }

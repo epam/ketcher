@@ -27,8 +27,7 @@ export class EditorHistory {
   historyPointer = 0;
   editor!: CoreEditor;
 
-  // eslint-disable-next-line no-use-before-define
-  private static _instance: EditorHistory | null = null;
+  private static _instance: object | null = null;
 
   private constructor(editor: CoreEditor) {
     this.editor = editor;
@@ -36,11 +35,19 @@ export class EditorHistory {
   }
 
   static getInstance(editor: CoreEditor): EditorHistory {
-    if (!EditorHistory._instance) {
-      EditorHistory._instance = new EditorHistory(editor);
+    const instance = EditorHistory._instance;
+    if (EditorHistory.isInstance(instance)) {
+      return instance;
     }
 
-    return EditorHistory._instance;
+    const createdInstance = new EditorHistory(editor);
+    EditorHistory._instance = createdInstance;
+
+    return createdInstance;
+  }
+
+  private static isInstance(value: object | null): value is EditorHistory {
+    return value instanceof EditorHistory;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {

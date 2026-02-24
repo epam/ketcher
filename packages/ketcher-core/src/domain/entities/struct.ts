@@ -1210,13 +1210,11 @@ export class Struct {
       components[j] = components[j].union(component);
     });
 
-    const submolTexts: Array<string> = [];
     const reactants: Array<any> = [];
     const products: Array<any> = [];
 
     components.forEach((component) => {
       if (!component) {
-        submolTexts.push('');
         return;
       }
 

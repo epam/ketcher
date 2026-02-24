@@ -123,7 +123,6 @@ export default class FragmentSelectionTool implements Tool {
       this.dragCtx = null;
       editor.event.message.dispatch({ info: false });
       editor.rotateController.rerender();
-      return true;
     }
     // No action needed on mouseup for this tool
     // But this method is defined to prevent editor from dropping selection in case if method is absent

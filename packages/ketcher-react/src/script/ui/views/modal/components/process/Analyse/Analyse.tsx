@@ -69,6 +69,32 @@ function roundOff(value: string | number, round: number): string {
 
 const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
 
+const analyseItems: AnalyseItem[] = [
+  {
+    name: 'Chemical Formula',
+    key: 'gross',
+    withSelector: false,
+  },
+  {
+    name: 'Molecular Weight',
+    key: 'molecular-weight',
+    round: 'roundWeight',
+    withSelector: true,
+  },
+  {
+    name: 'Exact Mass',
+    key: 'monoisotopic-mass',
+    round: 'roundMass',
+    withSelector: true,
+  },
+  {
+    name: 'Elemental Analysis',
+    key: 'mass-composition',
+    round: 'roundElAnalysis',
+    withSelector: false,
+  },
+];
+
 function renderInputComponent(
   item: AnalyseItem,
   values: AnalyseValues | null,
@@ -121,32 +147,6 @@ function AnalyseDialog({
   useEffect(() => {
     onAnalyse();
   }, [onAnalyse]);
-
-  const analyseItems: AnalyseItem[] = [
-    {
-      name: 'Chemical Formula',
-      key: 'gross',
-      withSelector: false,
-    },
-    {
-      name: 'Molecular Weight',
-      key: 'molecular-weight',
-      round: 'roundWeight',
-      withSelector: true,
-    },
-    {
-      name: 'Exact Mass',
-      key: 'monoisotopic-mass',
-      round: 'roundMass',
-      withSelector: true,
-    },
-    {
-      name: 'Elemental Analysis',
-      key: 'mass-composition',
-      round: 'roundElAnalysis',
-      withSelector: false,
-    },
-  ];
 
   return (
     <Dialog

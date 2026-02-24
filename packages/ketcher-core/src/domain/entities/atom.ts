@@ -339,7 +339,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: any = {};
+    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attr in Atom.attrlist) {
       if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr];
     }
@@ -767,16 +767,14 @@ export class Atom extends BaseMicromoleculeEntity {
       let valence = connectionCount;
       let hydrogenCount = 0;
 
-      if (charge === -1) {
-        if (connectionCount <= 2) {
-          valence = 2;
-          hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
-        }
+      if (
+        (charge === -1 || charge === 0 || charge === 2) &&
+        connectionCount <= 2
+      ) {
+        valence = 2;
+        hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
       } else if (charge === 0 || charge === 2) {
-        if (connectionCount <= 2) {
-          valence = 2;
-          hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
-        } else if (connectionCount <= 4) {
+        if (connectionCount <= 4) {
           valence = 4;
           hydrogenCount = 4 - radicalCount - connectionCount - absCharge;
         } else if (charge === 0 && connectionCount <= 6) {
@@ -1088,12 +1086,12 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 }
 
-export function radicalElectrons(radical: any) {
-  radical -= 0;
-  if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1;
+export function radicalElectrons(radical: unknown) {
+  const normalizedRadical = Number(radical);
+  if (normalizedRadical === Atom.PATTERN.RADICAL.DOUPLET) return 1;
   else if (
-    radical === Atom.PATTERN.RADICAL.SINGLET ||
-    radical === Atom.PATTERN.RADICAL.TRIPLET
+    normalizedRadical === Atom.PATTERN.RADICAL.SINGLET ||
+    normalizedRadical === Atom.PATTERN.RADICAL.TRIPLET
   ) {
     return 2;
   } else {

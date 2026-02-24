@@ -1,7 +1,7 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
-import { Coordinates } from '../internal';
+import { Coordinates } from '../shared/coordinates';
 import { provideEditorInstance } from '../editorInstanceProvider';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';

@@ -13,7 +13,6 @@ import {
 import {
   AttachmentPointName,
   MonomerItemType,
-  SequenceType,
 } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
@@ -48,6 +47,7 @@ import {
 import {
   SubChainNode,
   SequenceNode,
+  SequenceType,
 } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {

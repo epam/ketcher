@@ -54,7 +54,6 @@ interface TableOwnProps {
   pseudo?: string;
   isNestedModal?: boolean;
   onOk: (result: PeriodTableResult) => void;
-  onCancel: () => void;
 }
 
 interface TableStateProps {

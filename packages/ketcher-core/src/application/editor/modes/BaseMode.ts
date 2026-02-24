@@ -17,7 +17,9 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { SequenceType } from 'domain/types';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';

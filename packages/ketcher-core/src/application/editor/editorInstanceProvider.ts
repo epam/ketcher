@@ -1,9 +1,8 @@
 import type { CoreEditor } from './Editor';
+import type { Ketcher } from '../ketcher';
 
 export type KetcherInstanceLike = {
-  indigo: {
-    convert: (...args: unknown[]) => Promise<{ struct: string }>;
-  };
+  indigo: Ketcher['indigo'];
 };
 
 let editorInstance: CoreEditor | undefined;

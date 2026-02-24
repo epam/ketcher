@@ -18,7 +18,7 @@ import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export abstract class BaseMode {

@@ -161,5 +161,82 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
+
+    it.each(['Bad Alias', 'Bad@Alias'])(
+      'should reject monomer with invalid HELM alias "%s"',
+      (aliasHELM) => {
+        const monomerWithInvalidHelmAlias = {
+          root: {
+            templates: [
+              {
+                $ref: 'monomerTemplate-PEPTIDE1',
+              },
+            ],
+          },
+          'monomerTemplate-PEPTIDE1': {
+            type: 'monomerTemplate',
+            id: 'PEPTIDE1',
+            class: 'PEPTIDE',
+            classHELM: 'PEPTIDE',
+            fullName: 'Test Peptide',
+            name: 'PEPTIDE1',
+            naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'PEPTIDE1',
+            MonomerClass: 'PEPTIDE',
+            Name: 'PEPTIDE1',
+            MonomerNaturalAnalogCode: 'A',
+            aliasHELM,
+          },
+        },
+      };
+
+        const initialLibrarySize = editor.monomersLibrary.length;
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidHelmAlias));
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          expect.stringContaining(
+            'Load of "PEPTIDE1" monomer has failed, monomer definition contains invalid HELM alias value',
+          ),
+        );
+        expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      },
+    );
+
+    it('should accept monomer with brackets and dots in HELM alias', () => {
+      const monomerWithBracketAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE2',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE2': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE2',
+          class: 'PEPTIDE',
+          classHELM: 'PEPTIDE',
+          fullName: 'Test Peptide 2',
+          name: 'PEPTIDE2',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'PEPTIDE2',
+            MonomerClass: 'PEPTIDE',
+            Name: 'PEPTIDE2',
+            MonomerNaturalAnalogCode: 'A',
+            aliasHELM: 'A.(B)[C]{D}<E>',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithBracketAlias));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('invalid HELM alias value'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
   });
 });

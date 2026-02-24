@@ -1,11 +1,11 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
-import { Coordinates } from '../shared/coordinates';
+import { Coordinates } from '../internal';
 import { provideEditorInstance } from '../editorInstanceProvider';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';

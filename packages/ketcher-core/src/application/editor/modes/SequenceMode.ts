@@ -10,18 +10,18 @@ import {
   SequenceRenderer,
   TwoStrandedNodesSelection,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import {
-  AttachmentPointName,
-  MonomerItemType,
-} from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { Vec2 } from 'domain/entities/vec2';
+import {
+  AmbiguousMonomer,
+  BaseMonomer,
+  LinkerSequenceNode,
+  Phosphate,
+  RNABase,
+  SequenceType,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
@@ -47,7 +47,6 @@ import {
 import {
   SubChainNode,
   SequenceNode,
-  SequenceType,
 } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {

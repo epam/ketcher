@@ -2,10 +2,7 @@ import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import type { CoreEditor } from '../Editor';
 import { EditorHistory } from '../EditorHistory';
-import {
-  provideEditorInstance,
-  provideKetcherInstance,
-} from '../editorInstanceProvider';
+import { provideEditorInstance } from '../editorInstanceProvider';
 import { DEFAULT_LAYOUT_MODE, LayoutMode } from './types';
 import { getModeConstructor } from './modesRegistry';
 import {
@@ -17,12 +14,11 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { SequenceType } from 'domain/types';
-import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
+import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export abstract class BaseMode {
@@ -231,7 +227,7 @@ export abstract class BaseMode {
     sequenceType: SequenceType,
   ) {
     const editor = provideEditorInstance();
-    const indigo = provideKetcherInstance(editor.ketcherId).indigo;
+    const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
         outputFormat: ChemicalMimeType.KET,

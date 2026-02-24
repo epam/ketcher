@@ -6,15 +6,47 @@ import {
   identifyStructFormat,
 } from './formatters';
 import { Ketcher } from './ketcher';
-import { ketcherProvider } from './ketcherProvider';
 import { ChemicalMimeType, StructService } from 'domain/services';
 import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
 
-export { ketcherProvider };
+class KetcherProvider {
+  private readonly ketcherInstances = new Map<string, Ketcher>();
 
+  addKetcherInstance(instance: Ketcher) {
+    this.ketcherInstances.set(instance.id, instance);
+  }
+
+  removeKetcherInstance(id: string) {
+    this.ketcherInstances.delete(id);
+  }
+
+  getIndexById(id: string) {
+    return Array.from(this.ketcherInstances.keys()).indexOf(id);
+  }
+
+  getKetcher(id?: string) {
+    if (!id) {
+      return [...this.ketcherInstances.values()][
+        this.ketcherInstances.size - 1
+      ];
+    }
+
+    const ketcher = this.ketcherInstances.get(id);
+
+    if (!ketcher) {
+      throw Error(`Could not find Ketcher instance with ID: ${id}`);
+    }
+
+    return ketcher;
+  }
+}
+
+const ketcherProvider = new KetcherProvider();
+
+export { ketcherProvider };
 
 export function getStructure(
   ketcherId: string,

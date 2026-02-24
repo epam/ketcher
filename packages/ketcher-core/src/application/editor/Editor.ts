@@ -105,7 +105,6 @@ import { LineLengthChangeOperation } from 'application/editor/operations/editor/
 import {
   resetEditorInstance,
   setEditorInstance,
-  setKetcherInstanceProvider,
 } from 'application/editor/editorInstanceProvider';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
@@ -269,7 +268,6 @@ export class CoreEditor {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     setEditorInstance(this);
-    setKetcherInstanceProvider((id?: string) => ketcherProvider.getKetcher(id));
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }

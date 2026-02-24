@@ -46,7 +46,7 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/utils';
 
@@ -60,10 +60,10 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(error instanceof Error ? error : new Error(String(error)));
+            reject(normalizeError(error));
           }
         },
-        (err) => reject(err instanceof Error ? err : new Error(String(err))),
+        (err) => reject(normalizeError(err)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);

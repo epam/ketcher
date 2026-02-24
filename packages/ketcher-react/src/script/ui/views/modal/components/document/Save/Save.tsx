@@ -233,9 +233,9 @@ const PreviewContent = ({
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static contextType = ErrorsContext;
   declare context: React.ContextType<typeof ErrorsContext>;
-  private isRxn: boolean;
-  private textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  private saveSchema: typeof saveSchema;
+  private readonly isRxn: boolean;
+  private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  private readonly saveSchema: typeof saveSchema;
 
   constructor(props: SaveDialogProps) {
     super(props);
@@ -428,7 +428,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         warnings.push(structWarning);
       }
       if (saveWarning) {
-        warnings.push(saveWarning as string);
+        warnings.push(saveWarning);
       }
     }
 

@@ -2,7 +2,6 @@
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
-  delay,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   MolFileFormat,
@@ -71,13 +70,13 @@ test.describe('Bond Properties', () => {
     let i = 0;
     while (i < 5) {
       await page.keyboard.press('ArrowDown');
-      await delay(0.1);
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
 
     while (i < 7) {
       await page.keyboard.press('ArrowUp');
-      await delay(0.1);
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
     await takeEditorScreenshot(page);

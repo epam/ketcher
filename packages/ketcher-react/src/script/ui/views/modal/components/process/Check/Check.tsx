@@ -151,7 +151,7 @@ interface FooterContentProps {
   handleCheck: () => void;
   handleApply: () => void;
   onCancel: () => void;
-  isStuctureChecking: boolean;
+  isStructureChecking: boolean;
   isCheckedWithNewSettings: boolean;
 }
 
@@ -159,7 +159,7 @@ const FooterContent: FC<FooterContentProps> = ({
   handleCheck,
   handleApply,
   onCancel,
-  isStuctureChecking,
+  isStructureChecking,
   isCheckedWithNewSettings,
 }) => {
   return (
@@ -172,7 +172,7 @@ const FooterContent: FC<FooterContentProps> = ({
               : style.buttonPrimary
           }
           onClick={handleCheck}
-          disabled={!isStuctureChecking}
+          disabled={!isStructureChecking}
           data-testid="Check"
         >
           Check
@@ -189,7 +189,7 @@ const FooterContent: FC<FooterContentProps> = ({
         <button
           className={style.buttonPrimary}
           onClick={handleApply}
-          disabled={!isStuctureChecking}
+          disabled={!isStructureChecking}
           data-testid="Apply"
         >
           Apply
@@ -203,7 +203,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props;
   const { result = checkState, moleculeErrors } = formState;
-  const [isStuctureChecking, setIsStructureChecking] = useState(false);
+  const [isStructureChecking, setIsStructureChecking] = useState(false);
   const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
@@ -237,7 +237,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
           handleCheck={handleCheck}
           handleApply={handleApply}
           onCancel={onCancel}
-          isStuctureChecking={isStuctureChecking}
+          isStructureChecking={isStructureChecking}
           isCheckedWithNewSettings={isCheckedWithNewSettings}
         />
       }
@@ -255,7 +255,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
           <div className={style.settings}>
             <span className={style.sectionTitle}>Settings</span>
             <div
-              className={!isStuctureChecking ? style.checkBoxesDisabled : ''}
+              className={!isStructureChecking ? style.checkBoxesDisabled : ''}
             >
               <Field
                 name="checkOptions"
@@ -264,7 +264,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
                 // @ts-ignore - multiple and onChange props are not in FieldProps type definition but are accepted by the component
                 multiple
                 type="checkbox"
-                disabled={!isStuctureChecking}
+                disabled={!isStructureChecking}
                 onChange={handleSettingsChange}
               />
             </div>
@@ -276,13 +276,13 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </span>
             <div
               className={
-                !Object.keys(moleculeErrors).length || !isStuctureChecking
+                !Object.keys(moleculeErrors).length || !isStructureChecking
                   ? style.centeredContainer
                   : style.warnings
               }
               data-testid={'checkInfo-messages'}
             >
-              {isStuctureChecking ? (
+              {isStructureChecking ? (
                 <div
                   className={
                     Object.keys(moleculeErrors).length

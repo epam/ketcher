@@ -53,7 +53,7 @@ function ButtonList({
   multiple,
   classes,
   testId,
-}: ButtonListProps) {
+}: Readonly<ButtonListProps>) {
   let className: string;
   const selected = classes.selected ?? 'selected';
   return (

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
+import { getBondsCoordinatesByAttributes } from '../getBondsCoordinatesByAttributes/getBondsCoordinatesByAttributes';
 import { BondAttributes, BondXy } from '@utils/canvas/types';
 
 /**

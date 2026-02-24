@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
+import { getAtomsCoordinatesByAttributes } from '../getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
 import { AtomAttributes, SORT_TYPE, AtomXy } from '@utils/canvas/types';
 
 /**

@@ -58,15 +58,37 @@ function status(actionName, activeTool, params) {
   });
 }
 
-// TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
-// F.e. when it gets action: INIT it will call all cases below - INIT+ACTION+UPDATE
-/* eslint-disable no-fallthrough */
+/**
+ * Builds the state object with action statuses for all actions
+ * @param {object} activeTool - The currently active tool
+ * @param {object} params - Additional parameters for status computation
+ * @returns {object} State object containing active tool and action statuses
+ */
+function buildStateWithStatuses(activeTool, params) {
+  return Object.keys(actions).reduce(
+    (res, actionName) => {
+      const value = status(actionName, res.activeTool, params);
+      if (!isEmpty(value)) res[actionName] = value;
+      return res;
+    },
+    { activeTool },
+  );
+}
+
 export default function (state = null, { type, action, ...params }) {
   let activeTool;
   switch (type) {
     case 'INIT': {
       const savedSelectedTool = SettingsManager.selectionTool;
       action = savedSelectedTool || actions['select-rectangle'].action;
+      activeTool = execute(state?.activeTool, {
+        ...params,
+        action,
+      });
+      if (activeTool?.tool === 'select') {
+        SettingsManager.selectionTool = activeTool;
+      }
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
     }
 
     case 'ACTION': {
@@ -77,20 +99,13 @@ export default function (state = null, { type, action, ...params }) {
       if (activeTool?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
     }
 
     case 'UPDATE':
-      return Object.keys(actions).reduce(
-        (res, actionName) => {
-          const value = status(actionName, res.activeTool, params);
-          if (!isEmpty(value)) res[actionName] = value;
-          return res;
-        },
-        { activeTool: activeTool || state?.activeTool },
-      );
+      return buildStateWithStatuses(activeTool || state?.activeTool, params);
 
     default:
       return state;
   }
 }
-/* eslint-enable no-fallthrough */

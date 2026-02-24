@@ -93,7 +93,7 @@ function isMenuItemWithMenu(item: MenuItem): item is MenuItemWithMenu {
     typeof item === 'object' &&
     item !== null &&
     'menu' in item &&
-    Array.isArray((item as MenuItemWithMenu).menu)
+    Array.isArray(item.menu)
   );
 }
 
@@ -156,7 +156,7 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: ActionButtonProps) {
+}: Readonly<ActionButtonProps>) {
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
@@ -209,7 +209,7 @@ function renderActiveMenuItem(
   item: MenuItemWithMenu,
   props: SharedActionProps,
 ): JSX.Element | null {
-  const menu = item.menu || [];
+  const menu = item.menu ?? [];
   const { opened, status } = props;
   let activeMenuItem: string | null = null;
   if (isOpened(item, opened)) {
@@ -219,7 +219,7 @@ function renderActiveMenuItem(
         (item): item is string => typeof item === 'string',
       );
       activeMenuItem =
-        findActiveMenuItem(stringItems, status) || stringItems[0];
+        findActiveMenuItem(stringItems, status) ?? stringItems[0];
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
@@ -232,7 +232,7 @@ function renderActiveMenuItem(
       }, []);
 
       activeMenuItem =
-        findActiveMenuItem(subMenuItems, status) || subMenuItems[0];
+        findActiveMenuItem(subMenuItems, status) ?? subMenuItems[0];
     }
   }
 
@@ -256,7 +256,7 @@ function ActionMenu({
   className,
   role,
   ...props
-}: ActionMenuProps) {
+}: Readonly<ActionMenuProps>) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = props.status[itemKey];
@@ -280,7 +280,7 @@ function ActionMenu({
   return (
     <menu
       className={className}
-      role={role || 'menu'}
+      role={role ?? 'menu'}
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => {

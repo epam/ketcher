@@ -161,5 +161,38 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
+
+    it('should reject monomer group template without name', () => {
+      const unnamedPreset = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-',
+            },
+          ],
+        },
+        'monomerGroupTemplate-': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: '   ',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
   });
 });

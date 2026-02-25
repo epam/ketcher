@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
@@ -418,11 +418,12 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator);
 
-      const rest = { ...schemaCopy.properties[formatName] };
-      delete rest.pattern;
-      delete rest.maxLength;
-      delete rest.enum;
-      delete rest.enumNames;
+      const rest = omit(schemaCopy.properties[formatName], [
+        'pattern',
+        'maxLength',
+        'enum',
+        'enumNames',
+      ]);
 
       schemaCopy.properties[formatName] = {
         ...rest,

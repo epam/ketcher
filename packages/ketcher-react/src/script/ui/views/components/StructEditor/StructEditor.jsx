@@ -21,6 +21,7 @@ import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash/fp';
+import { omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
@@ -285,15 +286,7 @@ class StructEditor extends Component {
   }
 
   render() {
-    const {
-      Tag = 'div',
-      className,
-      indigoVerification,
-      ...restProps
-    } = this.props;
-
-    const props = { ...restProps };
-    [
+    const omittedProps = [
       'ketcherId',
       'prevKetcherId',
       'struct',
@@ -324,9 +317,14 @@ class StructEditor extends Component {
       'onUpdateFloatingTools',
       'onShowMacromoleculesErrorMessage',
       'serverSettings',
-    ].forEach((propName) => {
-      delete props[propName];
-    });
+    ];
+
+    const {
+      Tag = 'div',
+      className,
+      indigoVerification,
+      ...props
+    } = omit(this.props, omittedProps);
 
     const { clientX = 0, clientY = 0, tooltip } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;

@@ -97,7 +97,11 @@ class ReText extends ReObject {
   }
 
   getVBoxObj(): Box2Abs {
-    const [leftTopPoint, _, rightBottomPoint] = this.getReferencePoints();
+    const refPoints = this.getReferencePoints();
+    if (refPoints.length < 3) {
+      return new Box2Abs();
+    }
+    const [leftTopPoint, _, rightBottomPoint] = refPoints;
     return new Box2Abs(leftTopPoint, rightBottomPoint);
   }
 

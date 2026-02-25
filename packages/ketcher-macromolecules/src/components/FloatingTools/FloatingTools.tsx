@@ -114,8 +114,8 @@ export const FloatingTools = () => {
       const shouldShow =
         selectedMonomersAndAtoms.length >= 2 &&
         editor.mode.modeName !== 'sequence-layout-mode' &&
-        editor.tool instanceof SelectBase &&
-        editor.tool.mode !== 'rotating';
+        editor.selectedTool instanceof SelectBase &&
+        editor.selectedTool.mode !== 'rotating';
 
       if (shouldShow) {
         updatePosition();
@@ -138,7 +138,8 @@ export const FloatingTools = () => {
     let rafId = 0;
     const tick = () => {
       const isRotating =
-        editor.tool instanceof SelectBase && editor.tool.mode === 'rotating';
+        editor.selectedTool instanceof SelectBase &&
+        editor.selectedTool.mode === 'rotating';
       if (isRotating) {
         setVisible(false);
         return;
@@ -161,6 +162,7 @@ export const FloatingTools = () => {
 
   const handleDelete = () => {
     editor?.events.deleteSelectedStructure.dispatch();
+    setVisible(false);
   };
 
   if (!visible) {

@@ -783,6 +783,7 @@ export class CoreEditor {
       this.events.selectEntities.dispatch(
         this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
       );
+      this.clearTransientViews();
     });
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {

@@ -701,10 +701,12 @@ export class CoreEditor {
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
-  private onLayoutCircular() {
+  private async onLayoutCircular() {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
-    ketcher.circularLayoutMonomers();
+    await ketcher.circularLayoutMonomers();
+    this.clearTransientViews();
+    this.clearSelection();
   }
 
   private subscribeEvents() {
@@ -1258,6 +1260,17 @@ export class CoreEditor {
     };
   }
 
+  private clearTransientViews() {
+    this.transientDrawingView.clear();
+    this.transientDrawingView.update();
+  }
+
+  private clearSelection() {
+    const turnOffSelectionCommand =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.renderersContainer.update(turnOffSelectionCommand);
+  }
+
   public calculateAndStoreNextAutochainPosition(
     drawingEntitiesManagerOrMonomer: DrawingEntitiesManager | BaseMonomer,
   ) {
@@ -1666,8 +1679,10 @@ export class CoreEditor {
     const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
       history.undo();
+      this.clearTransientViews();
     } else if (name === 'redo') {
       history.redo();
+      this.clearTransientViews();
     }
   }
 
@@ -1675,6 +1690,7 @@ export class CoreEditor {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 
+    this.clearTransientViews();
     this.tool = new ToolConstructor(this, options);
 
     if (isBaseTool(oldTool)) {
@@ -1846,6 +1862,9 @@ export class CoreEditor {
     const reStruct = this.micromoleculesEditor.render.ctab;
     const zoomTool = ZoomTool.instance;
 
+    this.clearTransientViews();
+    this.clearSelection();
+
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
@@ -1891,6 +1910,8 @@ export class CoreEditor {
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
     this.resetModeIfNeeded();
+    this.clearTransientViews();
+    this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);

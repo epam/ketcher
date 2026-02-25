@@ -52,6 +52,8 @@ const STYLE = {
   RECT_PADDING: 30,
   // Small step to snap the protractor radius for a steadier UI.
   PROTRACTOR_RADIUS_STEP: 5,
+  // Keep the protractor slightly inside the cursor-to-center line.
+  PROTRACTOR_CURSOR_OFFSET: 12,
   // Protractor helpers styling, aligned with rotate-controller.
   PROTRACTOR_COLOR: '#E1E5EA',
   DEGREE_FONT_SIZE: 12,
@@ -274,12 +276,17 @@ export class RotationView extends TransientView {
         STYLE.HANDLE_MARGIN -
         STYLE.HANDLE_RADIUS;
 
-      const rawRadius = cursor
+      const cursorDistance = cursor
         ? Math.sqrt(
             Math.pow(cursor.x - centerInView.x, 2) +
               Math.pow(cursor.y - centerInView.y, 2),
           )
-        : fallbackRadius;
+        : undefined;
+
+      const rawRadius =
+        cursorDistance === undefined
+          ? fallbackRadius
+          : Math.max(cursorDistance - STYLE.PROTRACTOR_CURSOR_OFFSET, 0);
 
       const snappedToStep =
         Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
@@ -381,7 +388,7 @@ export class RotationView extends TransientView {
           .attr('transform', `translate(${center.x},${center.y})`)
           .attr('fill', 'none')
           .attr('stroke', STYLE.ACTIVE_COLOR)
-          .attr('stroke-width', 2)
+          .attr('stroke-width', 1)
           .attr('style', 'pointer-events: none');
 
         // Draw angle text

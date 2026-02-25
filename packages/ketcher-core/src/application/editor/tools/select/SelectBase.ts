@@ -83,7 +83,6 @@ abstract class SelectBase implements BaseTool {
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   private readonly canvasResizeObserver?: ResizeObserver;
-  private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
     | 'moving'
@@ -103,7 +102,6 @@ abstract class SelectBase implements BaseTool {
   private readonly rotationCenterUnsubscribe?: () => void;
 
   constructor(protected readonly editor: CoreEditor) {
-    this.history = EditorHistory.getInstance(this.editor);
     this.destroy();
     this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
       (payload) => {
@@ -1095,6 +1093,8 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
+    const history = EditorHistory.getInstance(this.editor);
+
     try {
       if (this.mode === 'rotating') {
         this.finishRotation();
@@ -1134,7 +1134,7 @@ abstract class SelectBase implements BaseTool {
               new Vec2(0, 0),
               actualMovementDelta,
             );
-          this.history.update(modelChanges);
+          history.update(modelChanges);
         } else {
           const canvasDelta = Vec2.diff(
             this.mousePositionAfterMove,
@@ -1150,7 +1150,7 @@ abstract class SelectBase implements BaseTool {
               new Vec2(0, 0),
               fullMovementOffset,
             );
-          this.history.update(modelChanges);
+          history.update(modelChanges);
         }
       }
     } finally {
@@ -1313,6 +1313,8 @@ abstract class SelectBase implements BaseTool {
   }
 
   protected finishRotation() {
+    const history = EditorHistory.getInstance(this.editor);
+
     if (
       !this.rotationCenter ||
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
@@ -1331,7 +1333,7 @@ abstract class SelectBase implements BaseTool {
         this.rotationStartPositions,
       );
 
-    this.history.update(modelChanges);
+    history.update(modelChanges);
 
     this.mode = 'standby';
     this.rotationCenter = null;

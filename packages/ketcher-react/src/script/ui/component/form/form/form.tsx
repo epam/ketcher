@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useCallback, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { Component, useCallback, useState } from 'react';
 
 import Ajv from 'ajv';
 import { ErrorPopover } from './errorPopover';
@@ -31,8 +32,88 @@ import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
-class Form extends Component {
-  constructor(props) {
+type FormState = Record<string, any>;
+type FormErrors = Record<string, string>;
+
+interface FormSchema {
+  key?: string;
+  title?: string;
+  default?: any;
+  properties: Record<string, any>;
+  [key: string]: any;
+}
+
+interface FormProps {
+  children?: React.ReactNode;
+  customValid?: Record<string, any>;
+  deserialize?: Record<string, string>;
+  errors?: Record<string, string>;
+  init?: FormState | null;
+  onUpdate: (result: FormState, valid: boolean, errors: FormErrors) => void;
+  result: FormState;
+  schema: FormSchema;
+  serialize?: Record<string, string>;
+}
+
+interface FieldProps {
+  className?: string;
+  component?: any;
+  extraLabel?: React.ReactNode;
+  extraName?: string;
+  labelPos?: string | boolean;
+  name?: string;
+  onChange?: (value: any) => void;
+  schema?: Record<string, any>;
+  title?: React.ReactNode;
+  tooltip?: any;
+  'data-testid'?: string;
+  [key: string]: any;
+}
+
+interface FieldWithModalProps extends FieldProps {
+  onEdit?: (onChange: (value: any) => void) => void;
+}
+
+interface CustomQueryFieldProps extends FieldProps {
+  checkboxValue?: boolean;
+  onCheckboxChange?: (
+    value: any,
+    formState: any,
+    onFieldChange: any,
+    onFormUpdate: any,
+  ) => void;
+}
+
+interface SelectOneOfProps extends Omit<FieldProps, 'component'> {
+  schema: Record<string, { title?: string; [key: string]: any }>;
+}
+
+interface FieldState {
+  dataError?: string;
+  extraValue: any;
+  onChange: (value: any) => void;
+  onExtraChange: (value: any) => void;
+  value: any;
+}
+
+interface FormStateStore {
+  field: (
+    name: string,
+    onChange?: (value: any) => void,
+    extraName?: string,
+  ) => FieldState;
+  props: FormProps;
+  updateState: (newState: FormState) => void;
+}
+
+class Form extends Component<FormProps> {
+  schema: ReturnType<typeof propSchema>;
+
+  _cachedSchema: FormSchema;
+
+  _contextValue: { schema: FormSchema; stateStore: FormStateStore };
+
+  constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
 
@@ -50,7 +131,7 @@ class Form extends Component {
     this._contextValue = { schema, stateStore: this };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: FormProps) {
     const {
       schema,
       result,
@@ -68,19 +149,22 @@ class Form extends Component {
     }
   }
 
-  updateState(newState) {
+  updateState(newState: FormState) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
     const errs = getErrorsObj(errors);
     onUpdate(instance, valid, errs);
   }
 
-  field(name, onChange, extraName) {
+  field(name: string, onChange?: (value: any) => void, extraName?: string) {
     const { result, errors } = this.props;
     const value = result[name];
     const extraValue = extraName ? result[extraName] : null;
 
-    const handleOnChange = (name, value) => {
+    const handleOnChange = (name: string | undefined, value: any) => {
+      if (!name) {
+        return;
+      }
       const newState = { ...this.props.result, [name]: value };
       this.updateState(newState);
       if (onChange) onChange(value);
@@ -106,7 +190,7 @@ class Form extends Component {
 
     return (
       <form>
-        <FormContext.Provider value={this._contextValue}>
+        <FormContext.Provider value={this._contextValue as any}>
           {children}
         </FormContext.Provider>
       </form>
@@ -114,13 +198,18 @@ class Form extends Component {
   }
 }
 
-export default connect(null, (dispatch) => ({
+const ConnectedForm: any = connect(null, (dispatch) => ({
   onUpdate: (result, valid, errors) => {
     dispatch(updateFormState({ result, valid, errors }));
   },
-}))(Form);
+}))(Form as any);
 
-function renderLabelContent(title, tooltip) {
+export default ConnectedForm;
+
+function renderLabelContent(
+  title?: React.ReactNode,
+  tooltip?: React.ReactNode,
+) {
   if (!title) {
     return '';
   }
@@ -133,7 +222,7 @@ function renderLabelContent(title, tooltip) {
         })}
       >
         <span>{title}</span>
-        <Tooltip title={tooltip}>
+        <Tooltip title={tooltip as any}>
           <div>
             <Icon name="about"></Icon>
           </div>
@@ -145,7 +234,10 @@ function renderLabelContent(title, tooltip) {
   return <span>{title}</span>;
 }
 
-function renderLabelContentAfter(title, tooltip) {
+function renderLabelContentAfter(
+  title?: React.ReactNode,
+  tooltip?: React.ReactNode,
+) {
   if (!title) {
     return '';
   }
@@ -157,7 +249,7 @@ function renderLabelContentAfter(title, tooltip) {
           [classes.divWithTooltipAndAboutIcon]: true,
         })}
       >
-        <Tooltip title={tooltip}>
+        <Tooltip title={tooltip as any}>
           <div>
             <Icon name="about"></Icon>
           </div>
@@ -170,7 +262,18 @@ function renderLabelContentAfter(title, tooltip) {
   return <span>{title}</span>;
 }
 
-function Label({ labelPos, title, children, ...props }) {
+interface LabelProps {
+  children?: React.ReactNode;
+  className?: string;
+  error?: string;
+  'data-testid'?: string;
+  [key: string]: any;
+  labelPos?: string | boolean;
+  title?: any;
+  tooltip?: any;
+}
+
+function Label({ labelPos, title, children, ...props }: LabelProps) {
   const tooltip = props.tooltip ? props.tooltip : null;
   return (
     <label {...props}>
@@ -181,7 +284,7 @@ function Label({ labelPos, title, children, ...props }) {
   );
 }
 
-function Field(props) {
+function Field(props: FieldProps) {
   const {
     name,
     extraName,
@@ -192,25 +295,32 @@ function Field(props) {
     extraLabel,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const fieldName = name as string;
+  const handlePopoverOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    [],
+  );
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
+  const { schema, stateStore } = useFormContext() as unknown as {
+    schema: FormSchema;
+    stateStore: FormStateStore;
+  };
+  const desc = rest.schema || schema.properties[fieldName];
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
-    stateStore.field(name, onChange, extraName);
+    stateStore.field(fieldName, onChange, extraName);
 
   const getExtraSchema = () => {
-    return rest.extraSchema || schema.properties[extraName];
+    return rest.extraSchema || schema.properties[extraName as string];
   };
 
-  const Component = component;
-  const formField = component ? (
-    <Component
+  const CustomComponent = component;
+  const formField = CustomComponent ? (
+    <CustomComponent
       name={name}
       schema={desc}
       className={className}
@@ -225,8 +335,8 @@ function Field(props) {
       {...(extraLabel && { className: classes.inputWithExtraLabel })}
       name={name}
       schema={desc}
-      {...fieldOpts}
-      {...rest}
+      {...(fieldOpts as any)}
+      {...(rest as any)}
       data-testid={props['data-testid'] ?? `${name}-input`}
     />
   );
@@ -263,15 +373,22 @@ function Field(props) {
   );
 }
 
-function FieldWithModal(props) {
+function FieldWithModal(props: FieldWithModalProps) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
-  const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const fieldName = name as string;
+  const { schema, stateStore } = useFormContext() as unknown as {
+    schema: FormSchema;
+    stateStore: FormStateStore;
+  };
+  const desc = rest.schema || schema.properties[fieldName];
+  const { dataError, ...fieldOpts } = stateStore.field(fieldName, onChange);
+  const handlePopoverOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    [],
+  );
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
@@ -294,15 +411,22 @@ function FieldWithModal(props) {
         onMouseLeave={handlePopoverClose}
         role="none"
       >
-        <Input name={name} schema={desc} {...fieldOpts} {...rest} />
+        <Input
+          name={fieldName}
+          schema={desc}
+          {...(fieldOpts as any)}
+          {...(rest as any)}
+        />
         <IconButton
-          onClick={() => {
-            onEdit(fieldOpts.onChange);
-          }}
-          name="testname"
-          iconName="edit"
-          className={classes.editButton}
-          testId={`edit-button`}
+          {...({
+            onClick: () => {
+              onEdit?.(fieldOpts.onChange);
+            },
+            name: 'testname',
+            iconName: 'edit',
+            className: classes.editButton,
+            testId: 'edit-button',
+          } as any)}
         />
       </span>
       {dataError && anchorEl && (
@@ -317,7 +441,7 @@ function FieldWithModal(props) {
   );
 }
 
-function CustomQueryField(props) {
+function CustomQueryField(props: CustomQueryFieldProps) {
   const {
     name,
     onChange,
@@ -327,18 +451,25 @@ function CustomQueryField(props) {
     checkboxValue,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
-  const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const fieldName = name as string;
+  const { schema, stateStore } = useFormContext() as unknown as {
+    schema: FormSchema;
+    stateStore: FormStateStore;
+  };
+  const desc = rest.schema || schema.properties[fieldName];
+  const { dataError, ...fieldOpts } = stateStore.field(fieldName, onChange);
+  const handlePopoverOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    [],
+  );
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const handleCheckboxChange = (value) => {
-    onCheckboxChange(
+  const handleCheckboxChange = (value: any) => {
+    onCheckboxChange?.(
       value,
       stateStore.props.result,
       fieldOpts.onChange,
@@ -350,11 +481,13 @@ function CustomQueryField(props) {
     <>
       <Label className={className} title={desc.title} labelPos={labelPos}>
         <Input
-          name="customQueryCheckBox"
-          schema={{ default: false, type: 'boolean' }}
-          value={checkboxValue}
-          onChange={handleCheckboxChange}
-          data-testid="custom-query-checkbox"
+          {...({
+            name: 'customQueryCheckBox',
+            schema: { default: false, type: 'boolean' },
+            value: checkboxValue as boolean,
+            onChange: handleCheckboxChange,
+            'data-testid': 'custom-query-checkbox',
+          } as any)}
         />
       </Label>
       <span
@@ -369,10 +502,10 @@ function CustomQueryField(props) {
         <Input
           type="textarea"
           data-testid="custom-query-value"
-          name={name}
+          name={fieldName}
           schema={desc}
-          {...fieldOpts}
-          {...rest}
+          {...(fieldOpts as any)}
+          {...(rest as any)}
         />
       </span>
       {dataError && anchorEl && (
@@ -387,10 +520,10 @@ function CustomQueryField(props) {
   );
 }
 
-const SelectOneOf = (props) => {
+const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
 
-  const selectDesc = {
+  const selectDesc: { title: any; enum: string[]; enumNames: string[] } = {
     title,
     enum: [],
     enumNames: [],
@@ -413,7 +546,14 @@ const SelectOneOf = (props) => {
   );
 };
 
-function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
+function propSchema(
+  schema: FormSchema,
+  {
+    customValid,
+    serialize = {},
+    deserialize = {},
+  }: Pick<FormProps, 'customValid' | 'serialize' | 'deserialize'>,
+) {
   const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
   const schemaCopy = cloneDeep(schema);
 
@@ -439,7 +579,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 
   return {
     key: schema.key || '',
-    serialize: (inst) => {
+    serialize: (inst: FormState) => {
       validate(inst);
 
       return {
@@ -448,40 +588,49 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
         errors: validate.errors || [],
       };
     },
-    deserialize: (inst) => {
+    deserialize: (inst: FormState) => {
       validate(inst);
       return deserializeRewrite(deserialize, inst);
     },
   };
 }
 
-function serializeRewrite(serializeMap, instance, schema) {
-  const res = {};
+function serializeRewrite(
+  serializeMap: Record<string, string>,
+  instance: FormState,
+  schema: FormSchema,
+) {
+  const res: FormState = {};
   if (typeof instance !== 'object' || !schema.properties) {
     return instance !== undefined ? instance : schema.default;
   }
 
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instance) res[p] = instance[serializeMap[p]] || instance[p];
+    if (p in instance)
+      res[p] =
+        (instance as Record<string, unknown>)[serializeMap[p]] || instance[p];
   });
 
   return res;
 }
 
-function deserializeRewrite(deserializeMap, instance) {
+function deserializeRewrite(
+  _deserializeMap: Record<string, string>,
+  instance: FormState,
+) {
   return instance;
 }
 
-function getInvalidMessage(item) {
-  if (!item.parentSchema.invalidMessage) return item.message;
+function getInvalidMessage(item: any) {
+  if (!item.parentSchema?.invalidMessage) return item.message;
   return typeof item.parentSchema.invalidMessage === 'function'
     ? item.parentSchema.invalidMessage(item.data)
     : item.parentSchema.invalidMessage;
 }
 
-function getErrorsObj(errors) {
-  const errs = {};
-  let field;
+function getErrorsObj(errors: any[]) {
+  const errs: FormErrors = {};
+  let field: string;
 
   errors.forEach((item) => {
     field = item.instancePath.slice(1);

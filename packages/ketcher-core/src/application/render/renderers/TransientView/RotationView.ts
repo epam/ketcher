@@ -157,7 +157,7 @@ export class RotationView extends TransientView {
           STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
         }`;
 
-    transientLayer
+    const link = transientLayer
       .append('path')
       .attr('d', linkPath)
       .attr('stroke', isRotating ? STYLE.ACTIVE_COLOR : STYLE.INITIAL_COLOR)
@@ -171,6 +171,17 @@ export class RotationView extends TransientView {
       .append('g')
       .attr('class', 'rotation-center-handle')
       .attr('data-testid', 'rotation-center-handle')
+      .attr('style', 'pointer-events: all');
+
+    const crossHitBoxSize = 24; // bbox size to make the center cross easier to grab
+    crossGroup
+      .append('rect')
+      .attr('x', center.x - crossHitBoxSize / 2)
+      .attr('y', center.y - crossHitBoxSize / 2)
+      .attr('width', crossHitBoxSize)
+      .attr('height', crossHitBoxSize)
+      .attr('fill', 'transparent')
+      .attr('stroke', 'none')
       .attr('style', 'pointer-events: all')
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
@@ -186,7 +197,7 @@ export class RotationView extends TransientView {
         );
       });
 
-    crossGroup
+    const crossPath = crossGroup
       .append('path')
       .attr(
         'd',
@@ -194,7 +205,23 @@ export class RotationView extends TransientView {
       )
       .attr('stroke', crossColor)
       .attr('stroke-width', 2)
-      .attr('stroke-linecap', 'round');
+      .attr('stroke-linecap', 'round')
+      .attr('style', 'pointer-events: none');
+
+    if (!isRotating) {
+      const hoverLinkPath = `M${center.x},${center.y}L${handleCenterX},${handleCenterY}`;
+      const defaultLinkPath = linkPath;
+
+      crossGroup
+        .on('mouseenter', () => {
+          crossPath.attr('stroke', STYLE.ACTIVE_COLOR);
+          link.attr('d', hoverLinkPath).attr('stroke', STYLE.ACTIVE_COLOR);
+        })
+        .on('mouseleave', () => {
+          crossPath.attr('stroke', STYLE.INITIAL_COLOR);
+          link.attr('d', defaultLinkPath).attr('stroke', STYLE.INITIAL_COLOR);
+        });
+    }
 
     // Draw handle circle
     const handleGroup = transientLayer

@@ -19,7 +19,13 @@ import styled from '@emotion/styled';
 import { Icon, IconName } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { Coordinates, Vec2 } from 'ketcher-core';
+import {
+  Coordinates,
+  Vec2,
+  SelectBase,
+  CoreAtom,
+  BaseMonomer,
+} from 'ketcher-core';
 
 const FloatingToolsWrapper = styled.div<{ left: number; top: number }>`
   position: absolute;
@@ -80,7 +86,8 @@ export const FloatingTools = () => {
     if (!bbox) return;
 
     const centerX = (bbox.left + bbox.right) / 2;
-    const topY = bbox.top;
+    const yOffset = 1.7; // angstrom offset to position the tools slightly above the selected entities
+    const topY = bbox.top - yOffset;
 
     const viewPos = Coordinates.modelToView(new Vec2(centerX, topY));
     const dx = Math.abs(viewPos.x - positionRef.current.x);
@@ -96,12 +103,17 @@ export const FloatingTools = () => {
     if (!editor) return;
 
     const handleSelectEntities = () => {
-      // Show floating tools only when 2+ monomers are selected
-      const selectedMonomers = editor.drawingEntitiesManager?.selectedMonomers;
+      const selectedEntities =
+        editor.drawingEntitiesManager?.selectedEntitiesArr ?? [];
+      const selectedMonomersAndAtoms = selectedEntities.filter(
+        (entity) => entity instanceof CoreAtom || entity instanceof BaseMonomer,
+      );
+
       const shouldShow =
-        selectedMonomers &&
-        selectedMonomers.length >= 2 &&
-        editor.mode.modeName !== 'sequence-layout-mode';
+        selectedMonomersAndAtoms.length >= 2 &&
+        editor.mode.modeName !== 'sequence-layout-mode' &&
+        editor.tool instanceof SelectBase &&
+        editor.tool.mode !== 'rotating';
 
       if (shouldShow) {
         updatePosition();
@@ -123,6 +135,12 @@ export const FloatingTools = () => {
 
     let rafId = 0;
     const tick = () => {
+      const isRotating =
+        editor.tool instanceof SelectBase && editor.tool.mode === 'rotating';
+      if (isRotating) {
+        setVisible(false);
+        return;
+      }
       updatePosition();
       rafId = requestAnimationFrame(tick);
     };

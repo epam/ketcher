@@ -728,6 +728,7 @@ export class DrawingEntitiesManager {
   public flipSelectedDrawingEntities(flipDirection: 'horizontal' | 'vertical') {
     const command = new Command();
     const center = this.getSelectedEntitiesCenter();
+    const zeroOffset = new Vec2(0, 0);
 
     if (!center) {
       return command;
@@ -769,6 +770,54 @@ export class DrawingEntitiesManager {
             drawingEntity,
             positionDelta,
             positionDelta,
+          ),
+        );
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
           ),
         );
       }

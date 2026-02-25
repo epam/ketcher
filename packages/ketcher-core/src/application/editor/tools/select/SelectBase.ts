@@ -42,6 +42,7 @@ import {
 import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
+import { Atom } from 'domain/entities/CoreAtom';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -84,7 +85,7 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
-  protected mode:
+  public mode:
     | 'moving'
     | 'selecting'
     | 'standby'
@@ -98,8 +99,8 @@ abstract class SelectBase implements BaseTool {
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
   protected userRotationCenter: Vec2 | null = null;
-  private rotationHandleUnsubscribe?: () => void;
-  private rotationCenterUnsubscribe?: () => void;
+  private readonly rotationHandleUnsubscribe?: () => void;
+  private readonly rotationCenterUnsubscribe?: () => void;
 
   constructor(protected readonly editor: CoreEditor) {
     this.history = EditorHistory.getInstance(this.editor);
@@ -169,6 +170,41 @@ abstract class SelectBase implements BaseTool {
     }
   }
 
+  private getCanvasBbox(bbox: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }) {
+    const topLeft = Coordinates.modelToCanvas(new Vec2(bbox.left, bbox.top));
+    const bottomRight = Coordinates.modelToCanvas(
+      new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
+    );
+
+    return {
+      left: topLeft.x,
+      top: topLeft.y,
+      width: bottomRight.x - topLeft.x,
+      height: bottomRight.y - topLeft.y,
+    };
+  }
+
+  private buildRotationViewParams(
+    center: Vec2,
+    bbox: {
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+    },
+  ) {
+    return {
+      center: Coordinates.modelToCanvas(center),
+      boundingBox: this.getCanvasBbox(bbox),
+      cursor: this.editor.lastCursorPosition,
+    };
+  }
+
   protected startRotation(event: MouseEvent | PointerEvent) {
     event.stopPropagation();
     event.preventDefault();
@@ -198,8 +234,21 @@ abstract class SelectBase implements BaseTool {
       cursorPos.x - canvasCenter.x,
     );
     this.currentRotationAngle = 0;
-    this.editor.transientDrawingView.hideRotation();
-    this.editor.transientDrawingView.update();
+
+    const bbox =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+    if (bbox) {
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: 0,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
+    }
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
@@ -1171,9 +1220,12 @@ abstract class SelectBase implements BaseTool {
   protected updateRotationView() {
     const selectedEntities =
       this.editor.drawingEntitiesManager.selectedEntitiesArr;
+    const selectedMonomersAndAtoms = selectedEntities.filter(
+      (entity) => entity instanceof BaseMonomer || entity instanceof Atom,
+    );
 
     if (
-      selectedEntities.length < 2 ||
+      selectedMonomersAndAtoms.length < 2 ||
       this.editor.mode.modeName === 'sequence-layout-mode' ||
       (this.mode !== 'standby' && this.mode !== 'rotating-center')
     ) {
@@ -1194,23 +1246,8 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const canvasCenter = Coordinates.modelToCanvas(center);
-    const topLeft = Coordinates.modelToCanvas(new Vec2(bbox.left, bbox.top));
-    const bottomRight = Coordinates.modelToCanvas(
-      new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
-    );
-    const canvasBbox = {
-      left: topLeft.x,
-      top: topLeft.y,
-      width: bottomRight.x - topLeft.x,
-      height: bottomRight.y - topLeft.y,
-    };
-
-    this.editor.transientDrawingView.showRotation({
-      center: canvasCenter,
-      boundingBox: canvasBbox,
-      cursor: this.editor.lastCursorPosition,
-    });
+    const viewParams = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParams);
     this.editor.transientDrawingView.update();
   }
 
@@ -1261,24 +1298,14 @@ abstract class SelectBase implements BaseTool {
       const bbox =
         this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
       if (bbox && this.rotationCenter) {
-        const topLeft = Coordinates.modelToCanvas(
-          new Vec2(bbox.left, bbox.top),
+        const viewParams = this.buildRotationViewParams(
+          this.rotationCenter,
+          bbox,
         );
-        const bottomRight = Coordinates.modelToCanvas(
-          new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
-        );
-        const canvasBbox = {
-          left: topLeft.x,
-          top: topLeft.y,
-          width: bottomRight.x - topLeft.x,
-          height: bottomRight.y - topLeft.y,
-        };
         this.editor.transientDrawingView.showRotation({
-          center: Coordinates.modelToCanvas(this.rotationCenter),
-          boundingBox: canvasBbox,
+          ...viewParams,
           rotationAngle: angleDelta,
           isRotating: true,
-          cursor: this.editor.lastCursorPosition,
         });
         this.editor.transientDrawingView.update();
       }
@@ -1292,6 +1319,7 @@ abstract class SelectBase implements BaseTool {
     ) {
       this.mode = 'standby';
       this.rotationCenter = null;
+      this.userRotationCenter = null;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1307,6 +1335,7 @@ abstract class SelectBase implements BaseTool {
 
     this.mode = 'standby';
     this.rotationCenter = null;
+    this.userRotationCenter = null;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();

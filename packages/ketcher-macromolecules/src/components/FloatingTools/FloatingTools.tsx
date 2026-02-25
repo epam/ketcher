@@ -33,7 +33,7 @@ const FloatingToolsWrapper = styled.div<{ left: number; top: number }>`
   top: ${(props) => props.top}px;
   display: flex;
   flex-direction: row;
-  gap: 4px;
+  gap: 8px;
   transform: translate(-50%, -100%) translateY(-10px);
   z-index: 100;
 `;
@@ -45,23 +45,25 @@ const ToolButton = styled.button`
   align-items: center;
   justify-content: center;
   background: white;
-  border: 1px solid #b4b9d6;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
   padding: 0;
+  color: #2b2f3a;
+  box-shadow: 0 6px 10px rgba(103, 104, 132, 0.15);
 
   &:hover {
-    background: #e1e5ea;
-    border-color: #365cff;
+    color: #188794;
   }
 
   &:active {
-    background: #ccd4ff;
+    background: #167782;
+    color: #fff;
   }
 
-  svg {
-    width: 16px;
-    height: 16px;
+  & > svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 

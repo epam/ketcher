@@ -1272,14 +1272,6 @@ abstract class SelectBase implements BaseTool {
       angleDelta = (angleDeltaDegrees * Math.PI) / 180;
     }
 
-    // Only update if angle changed significantly
-    // if (
-    //   Math.abs(angleDeltaDegrees - this.currentRotationAngle) <
-    //   SelectBase.ROTATION_ANGLE_EPSILON
-    // ) {
-    //   return;
-    // }
-
     // Calculate the incremental rotation needed
     const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
     this.currentRotationAngle = angleDeltaDegrees;

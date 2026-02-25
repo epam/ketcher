@@ -30,6 +30,7 @@ import {
   ModeTypes,
   SnakeMode,
   FlexMode,
+  normalizeError,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -286,12 +287,7 @@ const onOk = async ({
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
-    let stringError;
-    if (error instanceof Error) {
-      stringError = error.message;
-    } else {
-      stringError = typeof error === 'string' ? error : JSON.stringify(error);
-    }
+    const stringError = normalizeError(error).message;
     showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {

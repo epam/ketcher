@@ -40,6 +40,17 @@ import {
 // @ts-ignore
 import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
+const normalizeError = (error: unknown): Error => {
+  if (error instanceof Error) return error;
+  if (typeof error === 'string') return new Error(error);
+
+  try {
+    return new Error(JSON.stringify(error));
+  } catch {
+    return new Error(String(error));
+  }
+};
+
 interface IndigoOptions {
   set: (key: string, value: string) => void;
 }
@@ -72,12 +83,7 @@ function handle(
         inputData,
       };
     } catch (error) {
-      let errorMessage: string;
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else {
-        errorMessage = String(error);
-      }
+      const errorMessage = normalizeError(error).message;
       msg = {
         type: messageType,
         hasError: true,

@@ -14,6 +14,7 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  normalizeError,
 } from 'utilities';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
@@ -237,12 +238,7 @@ export abstract class BaseMode {
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
-      let stringError;
-      if (error instanceof Error) {
-        stringError = error.message;
-      } else {
-        stringError = typeof error === 'string' ? error : JSON.stringify(error);
-      }
+      const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
 
       this.unsupportedSymbolsError(errorMessage);

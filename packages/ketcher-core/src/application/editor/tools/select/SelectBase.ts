@@ -100,6 +100,9 @@ abstract class SelectBase implements BaseTool {
   protected userRotationCenter: Vec2 | null = null;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
+  private readonly selectEntitiesHandler = () => {
+    this.updateRotationView();
+  };
 
   constructor(protected readonly editor: CoreEditor) {
     this.destroy();
@@ -116,6 +119,7 @@ abstract class SelectBase implements BaseTool {
         this.startRotationCenterDrag(payload.event);
       },
     );
+    this.editor.events.selectEntities.add(this.selectEntitiesHandler);
   }
 
   // TODO: This type is only to resolve the TS error below. Ideally restructure the if-else order so it won't be called for sequence item at all
@@ -1339,6 +1343,7 @@ abstract class SelectBase implements BaseTool {
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
+    this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
     if (!(this.editor.selectedTool instanceof EraserTool)) {
       const modelChanges =

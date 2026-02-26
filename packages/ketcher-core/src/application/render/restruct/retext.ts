@@ -62,6 +62,76 @@ const IS_SUPERSCRIPT = 64;
 
 const SCALE = 40; // from ketcher-core
 
+interface DraftBlock {
+  text: string;
+  type: string;
+  inlineStyleRanges?: Array<{ offset: number; length: number; style: string }>;
+  entityRanges?: Array<any>;
+  data?: Record<string, any>;
+}
+
+interface DraftEditorState {
+  blocks?: DraftBlock[];
+  entityMap?: Record<string, any>;
+}
+
+// Convert Draft.js format to Lexical format
+function convertDraftToLexical(
+  draftState: DraftEditorState,
+): SerializedEditorState {
+  if (!draftState.blocks || draftState.blocks.length === 0) {
+    return {
+      root: {
+        type: 'root',
+        children: [],
+      },
+    };
+  }
+
+  const children: SerializedParagraphNode[] = draftState.blocks.map((block) => {
+    const textChildren: (SerializedTextNode | { type: string })[] = [];
+
+    if (block.text.length === 0) {
+      // Empty block
+      textChildren.push({ type: 'br' });
+    } else {
+      // Build text node with style ranges
+      const styleRanges = block.inlineStyleRanges || [];
+      let format = 0;
+
+      // Simple approach: if there are bold/italic styles, apply them to whole text
+      styleRanges.forEach((range) => {
+        if (range.style === 'BOLD') format |= IS_BOLD;
+        if (range.style === 'ITALIC') format |= IS_ITALIC;
+        if (range.style === 'SUBSCRIPT') format |= IS_SUBSCRIPT;
+        if (range.style === 'SUPERSCRIPT') format |= IS_SUPERSCRIPT;
+      });
+
+      textChildren.push({
+        type: 'text',
+        text: block.text,
+        format,
+        style: '',
+        version: 1,
+      });
+    }
+
+    return {
+      type: 'paragraph',
+      children: textChildren,
+      version: 1,
+    };
+  });
+
+  return {
+    root: {
+      type: 'root',
+      children,
+      version: 1,
+    },
+  };
+}
+
 class ReText extends ReObject {
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
@@ -168,10 +238,29 @@ class ReText extends ReObject {
     let shiftY = 0;
     this.paths = [];
     // TODO: create parser in ketcher-core package
-    const editorState: SerializedEditorState | null = this.item.content
-      ? (JSON.parse(this.item.content) as SerializedEditorState)
-      : null;
+
+    let editorState: SerializedEditorState | null = null;
+    try {
+      if (this.item.content) {
+        const parsed = JSON.parse(this.item.content);
+
+        // Detect if it's Draft.js format (has 'blocks') or Lexical format (has 'root')
+        if (parsed.blocks && !parsed.root) {
+          // Old Draft.js format - convert to Lexical
+          console.log('Converting Draft.js format to Lexical');
+          editorState = convertDraftToLexical(parsed as DraftEditorState);
+        } else {
+          // Already Lexical format
+          editorState = parsed as SerializedEditorState;
+        }
+        console.log('Final editorState:', editorState);
+      }
+    } catch (error) {
+      console.error('Error processing text content:', error);
+    }
+
     if (!editorState?.root) {
+      console.log('No valid editorState, skipping render');
       return;
     }
 

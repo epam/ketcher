@@ -111,11 +111,16 @@ export const FloatingTools = () => {
         (entity) => entity instanceof CoreAtom || entity instanceof BaseMonomer,
       );
 
+      const isTransforming =
+        editor.selectedTool instanceof SelectBase &&
+        (editor.selectedTool.mode === 'rotating' ||
+          editor.selectedTool.mode === 'moving');
+
       const shouldShow =
         selectedMonomersAndAtoms.length >= 2 &&
         editor.mode.modeName !== 'sequence-layout-mode' &&
         editor.selectedTool instanceof SelectBase &&
-        editor.selectedTool.mode !== 'rotating';
+        !isTransforming;
 
       if (shouldShow) {
         updatePosition();
@@ -137,10 +142,11 @@ export const FloatingTools = () => {
 
     let rafId = 0;
     const tick = () => {
-      const isRotating =
+      const isTransforming =
         editor.selectedTool instanceof SelectBase &&
-        editor.selectedTool.mode === 'rotating';
-      if (isRotating) {
+        (editor.selectedTool.mode === 'rotating' ||
+          editor.selectedTool.mode === 'moving');
+      if (isTransforming) {
         setVisible(false);
         return;
       }

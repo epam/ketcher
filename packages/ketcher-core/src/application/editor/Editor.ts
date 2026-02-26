@@ -1418,6 +1418,7 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();
+    this.clearTransientViews();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

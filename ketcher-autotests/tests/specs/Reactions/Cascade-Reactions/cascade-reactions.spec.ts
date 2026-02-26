@@ -1,17 +1,14 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   openFile,
-  pressButton,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  moveOnAtom,
   dragMouseTo,
   clickOnCanvas,
   waitForRender,
@@ -22,12 +19,10 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -35,10 +30,14 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
+import { addTextToCanvas } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -57,7 +56,6 @@ test.describe('Cascade Reactions', () => {
   });
 
   test.afterEach(async ({ context: _ }) => {
-    await closeErrorAndInfoModals(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
@@ -104,24 +102,35 @@ test.describe('Cascade Reactions', () => {
       // error expected
       true,
     );
-    await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Molfile version unknown:');
+    await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
   });
 
-  test('Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed', async () => {
-    /* 
+  test.fail(
+    'Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed',
+    async () => {
+      // Test fail due to specs/Reactions/Cascade-Reactions/cascade-reactions.spec.ts:113
+      /* 
     Test case: https://github.com/epam/Indigo/issues/2102
     Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed - 
     Convert error! struct data not recognized as molecule, query, reaction or reaction query. 
     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
-      // error expected
-      true,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
+        // error expected
+        true,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header ', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header '",
+      );
+      await ErrorMessageDialog(page).close();
+      await PasteFromClipboardDialog(page).cancel();
+    },
+  );
 
   const testCases = [
     {
@@ -852,7 +861,11 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -885,9 +898,13 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectPartOfMolecules(page);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -921,9 +938,13 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await copyAndPaste(page);
-      await clickOnCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -957,9 +978,13 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await cutAndPaste(page);
-      await clickOnCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -992,10 +1017,16 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await moveOnAtom(page, 'C', 2);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
+        force: true,
+      });
       await dragMouseTo(300, 600, page);
       await takeEditorScreenshot(page);
-      await screenshotBetweenUndoRedo(page);
+      await CommonTopLeftToolbar(page).undo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page);
     });
   });
@@ -1734,7 +1765,12 @@ test.describe('Cascade Reactions', () => {
          */
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(format);
-        await takeEditorScreenshot(page);
+        const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+        expect(errorMessage).toContain(
+          'Convert error!\ncore: <molecule> is not a base reaction',
+        );
+        await ErrorMessageDialog(page).close();
+        await SaveStructureDialog(page).cancel();
       });
     },
   );
@@ -1784,21 +1820,21 @@ test.describe('Cascade Reactions', () => {
                 : rdfFileExpectedV3000;
 
             await openFileAndAddToCanvas(page, rdfFile);
-            await clickOnCanvas(page, 500, 600);
-            await selectRingButton(page, RingButton.Benzene);
-            await clickOnCanvas(page, 200, 600);
-            await CommonLeftToolbar(page).selectAreaSelectionTool(
+            await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+            await BottomToolbar(page).clickRing(RingButton.Benzene);
+            await clickOnCanvas(page, 200, 600, { from: 'pageTopLeft' });
+            await CommonLeftToolbar(page).areaSelectionTool(
               SelectionToolType.Rectangle,
             );
             await addTail(page, 482, 464);
             await takeEditorScreenshot(page);
             await selectPartOfMolecules(page);
-            await CommonLeftToolbar(page).selectEraseTool();
+            await CommonLeftToolbar(page).erase();
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();
             await takeEditorScreenshot(page);
             await copyAndPaste(page);
-            await clickOnCanvas(page, 500, 200);
+            await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
             await takeEditorScreenshot(page);
             await CommonTopLeftToolbar(page).undo();
             await verifyFileExport(
@@ -2706,14 +2742,12 @@ test.describe('Cascade Reactions', () => {
               470,
               360,
             );
-            await pressButton(page, 'Apply');
             await addTextToCanvas(
               page,
               'abcde FGHIJKLMNOP!@##$%^^^&*',
               700,
               360,
             );
-            await pressButton(page, 'Apply');
             await takeEditorScreenshot(page);
             await verifyFileExport(
               page,

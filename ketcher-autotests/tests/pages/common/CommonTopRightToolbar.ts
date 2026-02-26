@@ -1,12 +1,15 @@
 import { Page, Locator } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
+import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
   fullScreenButton: Locator;
+  helpButton: Locator;
+  aboutButton: Locator;
   zoomSelector: Locator;
 };
 
@@ -25,6 +28,12 @@ export const CommonTopRightToolbar = (page: Page) => {
     fullScreenButton: page
       .getByTestId('fullscreen-mode-button')
       .filter({ has: page.locator(':visible') }),
+    helpButton: page
+      .getByTestId('help-button')
+      .filter({ has: page.locator(':visible') }),
+    aboutButton: page
+      .getByTestId('about-button')
+      .filter({ has: page.locator(':visible') }),
     zoomSelector: page
       .getByTestId('zoom-selector')
       .filter({ has: page.locator(':visible') }),
@@ -41,13 +50,21 @@ export const CommonTopRightToolbar = (page: Page) => {
     ...locators,
     ...zoomLocators,
 
+    async help() {
+      await locators.helpButton.click();
+    },
+
+    async about() {
+      await locators.aboutButton.click();
+    },
+
     async setZoomInputValue(value: string) {
       await locators.zoomSelector.click();
       await zoomLocators.zoomValueEditbox.fill(value);
       await waitForRender(page, async () => {
         await page.keyboard.press('Enter');
       });
-      await locators.zoomSelector.click({ force: true });
+      await locators.zoomSelector.click({ force: true, delay: 100 });
       await zoomLocators.zoomOutButton.waitFor({ state: 'detached' });
     },
 
@@ -103,17 +120,24 @@ export const CommonTopRightToolbar = (page: Page) => {
           window._ketcher_isChainLengthRulerDisabled = true;
         });
       }
-
       const switcher = locators.ketcherModeSwitcherCombobox;
-      await switcher.waitFor({ state: 'visible' });
-      await switcher.click();
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      await macroOption.waitFor({ state: 'visible' });
-      await macroOption.click();
-      await page.getByTestId('layout-mode').waitFor({ state: 'visible' });
+      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
+
+      if (!(await macromoleculesCanvas.isVisible())) {
+        await switcher.waitFor({ state: 'visible' });
+        await switcher.click();
+        await macroOption.waitFor({ state: 'visible' });
+        await macroOption.click();
+        await MacromoleculesTopToolbar(
+          page,
+        ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
+      }
 
       if (options.enableFlexMode) {
-        await selectFlexLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
       } else if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {
@@ -134,12 +158,16 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
-      await switcher.waitFor({ state: 'visible' });
-      await switcher.click();
-
       const microOption = page.getByTestId(Mode.Molecules);
-      await microOption.waitFor({ state: 'visible' });
-      await microOption.click();
+      const moleculesCanvas = page.getByTestId('canvas');
+
+      if (!(await moleculesCanvas.isVisible())) {
+        await switcher.waitFor({ state: 'visible' });
+        await switcher.click();
+
+        await microOption.waitFor({ state: 'visible' });
+        await microOption.click();
+      }
     },
   };
 };

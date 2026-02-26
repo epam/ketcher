@@ -1,25 +1,12 @@
-import { Page, test } from '@playwright/test';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   waitForPageInit,
 } from '@utils';
-import { AtomExtendedType, AtomLabelType } from '@utils/clicks/types';
-
-async function selectExtendedAtom(
-  page: Page,
-  extendedAtom: AtomExtendedType,
-  atomToClick: AtomLabelType,
-) {
-  const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-  await extendedTableButton.click();
-  await page.getByRole('button', { name: extendedAtom, exact: true }).click();
-  await page.getByTestId('OK').click();
-  await clickOnAtom(page, atomToClick, 0);
-}
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Generic nodes', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,10 +21,22 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1503
       */
-    await selectExtendedAtom(page, 'G', 'O');
-    await selectExtendedAtom(page, 'GH', 'S');
-    await selectExtendedAtom(page, 'G*', 'F');
-    await selectExtendedAtom(page, 'GH*', 'I');
+    await selectExtendedTableElement(page, ExtendedTableButton.G);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.GH);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.G_STAR);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -45,8 +44,14 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1505
       */
-    await selectExtendedAtom(page, 'ACY', 'S');
-    await selectExtendedAtom(page, 'ACH', 'F');
+    await selectExtendedTableElement(page, ExtendedTableButton.ACY);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ACH);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -56,14 +61,38 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1508
       */
-    await selectExtendedAtom(page, 'ABC', 'S');
-    await selectExtendedAtom(page, 'ABH', 'F');
-    await selectExtendedAtom(page, 'AYH', 'I');
-    await selectExtendedAtom(page, 'AYL', 'O');
-    await selectExtendedAtom(page, 'ALK', 'H');
-    await selectExtendedAtom(page, 'ALH', 'P');
-    await selectExtendedAtom(page, 'AEL', 'Br');
-    await selectExtendedAtom(page, 'AEH', 'Cl');
+    await selectExtendedTableElement(page, ExtendedTableButton.ABC);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ABH);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AYH);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AYL);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ALK);
+    await getAtomLocator(page, { atomLabel: 'H' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ALH);
+    await getAtomLocator(page, { atomLabel: 'P' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AEL);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AEH);
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -73,10 +102,22 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1512
       */
-    await selectExtendedAtom(page, 'AHC', 'S');
-    await selectExtendedAtom(page, 'AHH', 'O');
-    await selectExtendedAtom(page, 'AOX', 'Br');
-    await selectExtendedAtom(page, 'AOH', 'Cl');
+    await selectExtendedTableElement(page, ExtendedTableButton.AHC);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AHH);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AOX);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.AOH);
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -84,10 +125,22 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1516
       */
-    await selectExtendedAtom(page, 'CYC', 'S');
-    await selectExtendedAtom(page, 'CYH', 'O');
-    await selectExtendedAtom(page, 'CXX', 'Cl');
-    await selectExtendedAtom(page, 'CXH', 'Br');
+    await selectExtendedTableElement(page, ExtendedTableButton.CYC);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CYH);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CXX);
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CXH);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -97,14 +150,38 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1524
       */
-    await selectExtendedAtom(page, 'CBC', 'S');
-    await selectExtendedAtom(page, 'CBH', 'O');
-    await selectExtendedAtom(page, 'ARY', 'Cl');
-    await selectExtendedAtom(page, 'ARH', 'Br');
-    await selectExtendedAtom(page, 'CAL', 'H');
-    await selectExtendedAtom(page, 'CAH', 'P');
-    await selectExtendedAtom(page, 'CEL', 'I');
-    await selectExtendedAtom(page, 'CEH', 'N');
+    await selectExtendedTableElement(page, ExtendedTableButton.CBC);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CBH);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ARY);
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.ARH);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CAL);
+    await getAtomLocator(page, { atomLabel: 'H' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CAH);
+    await getAtomLocator(page, { atomLabel: 'P' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CEL);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CEH);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -114,10 +191,22 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1526
       */
-    await selectExtendedAtom(page, 'CHC', 'S');
-    await selectExtendedAtom(page, 'CHH', 'O');
-    await selectExtendedAtom(page, 'HAR', 'Cl');
-    await selectExtendedAtom(page, 'HAH', 'Br');
+    await selectExtendedTableElement(page, ExtendedTableButton.CHC);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.CHH);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.HAR);
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().click({
+      force: true,
+    });
+    await selectExtendedTableElement(page, ExtendedTableButton.HAH);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

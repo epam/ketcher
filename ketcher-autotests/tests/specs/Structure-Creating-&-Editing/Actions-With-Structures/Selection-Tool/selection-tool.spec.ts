@@ -1,53 +1,82 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
-  moveOnAtom,
-  moveOnBond,
-  BondType,
-  pressButton,
-  fillFieldByPlaceholder,
   dragMouseTo,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
+  keyboardPressOnCanvas,
+  MacroFileType,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  clickOnCanvas,
+  takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
+  selectWithLasso,
+  openFileAndAddToCanvasAsNewProject,
+  MolFileFormat,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import {
+  ContextOption,
+  PropertyLabelType,
+  TypeOption,
+} from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { horizontalFlip, verticalFlip } from '../Rotation/utils';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Selection tools', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Selection is not reset when using context menu', async ({ page }) => {
+  test('Selection is not reset when using context menu', async () => {
     /*
     Test case: EPMLSOPKET-8925
     Description: Selection is not reset. User can use right-click menu in order to perform actions.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
-  test('Using rounded rectangles for selection of bonds and atom labels', async ({
-    page,
-  }) => {
+  test('Using rounded rectangles for selection of bonds and atom labels', async () => {
     /*
     Test case: EPMLSOPKET-12975
     Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3")
@@ -58,7 +87,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Pressing atoms hotkey when atoms are selected', async ({ page }) => {
+  test('Pressing atoms hotkey when atoms are selected', async () => {
     /*
     Test case: EPMLSOPKET-12979
     Description: Selected atoms are replaces with those assigned to the hotkey.
@@ -66,61 +95,585 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('o');
+    await keyboardPressOnCanvas(page, 'o');
     await takeEditorScreenshot(page);
   });
 
-  test('Hovering of selected Atom', async ({ page }) => {
+  test('Hovering of selected Atom', async () => {
     /*
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Atom becomes lighter than the rest of the structure.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Hovering of selected Bond', async ({ page }) => {
+  test('Hovering of selected Bond', async () => {
     /*
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Bond becomes lighter than the rest of the structure.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    const bondLocator = getBondLocator(page, { bondId: 7 });
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await moveOnBond(page, BondType.SINGLE, 0);
+    await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
-  test('Verify flipping horizontally with multiple disconnected structures selected', async ({
-    page,
-  }) => {
+  test('Verify flipping horizontally with multiple disconnected structures selected', async () => {
     /*
     Test case: EPMLSOPKET-15508
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await horizontalFlip(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Verify flipping vertically with multiple disconnected structures selected', async ({
-    page,
-  }) => {
+  test('Verify flipping vertically with multiple disconnected structures selected', async () => {
     /*
     Test case: EPMLSOPKET-15509
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
+    await verticalFlip(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Verify deletion of selected structures', async ({ page }) => {
+  test('Verify flipping horizontally of one expanded monomer in a structure', async ({
+    SequenceCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled
+     * Steps:
+     * 1. Paste a HELM sequence into the macromolecules canvas.
+     * 2. Switch to micromolecules editor, select the structure and expand a monomer.
+     * 3. Select the expanded monomer and apply horizontal flip.
+     * 4. Take a screenshot, undo the action and take another screenshot.
+     * Expected result: The expanded monomer is flipped horizontally, and undo restores the original orientation.
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      `PEPTIDE1{[Abu].[2Nal].[D-3Pal]}$$$$V2.0`,
+    );
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, getAbbreviationLocator(page, { id: '1' })).click(
+      MonomerOnMicroOption.ExpandMonomers,
+    );
+    await CommonLeftToolbar(page).handTool();
+    await getAtomLocator(page, { atomId: 11 }).hover({
+      force: true,
+    });
+    const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    await dragMouseTo(locators.x, locators.y, page);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await clickOnCanvas(page, 100, 100);
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await horizontalFlip(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 210,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in KET format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and KET format file is as required
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported KET matches the expected file and the flipped monomer renders correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await horizontalFlip(page);
+    await verifyFileExport(
+      page,
+      'KET/flipping-horizontally-one-monomer-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/flipping-horizontally-one-monomer-expected.ket',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 210,
+    });
+  });
+
+  test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in MOL V3000 format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and MOL V3000 format file is as required
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported MOL V3000 matches the expected file and the flipped monomer renders correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await horizontalFlip(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/flipping-horizontally-one-monomer-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/flipping-horizontally-one-monomer-expected.mol',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 210,
+    });
+  });
+
+  test('Verify flipping horizontally of one expanded monomer in a structure and save/paste in SVG and PNG format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options horizontal enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply horizontal flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain the horizontally flipped monomer.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await horizontalFlip(page);
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Verify flipping vertically of one expanded monomer in a structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Take a screenshot, undo and redo the action, then take another screenshot.
+     * Expected result: The expanded monomer is flipped vertically, and undo/redo restores and re-applies the flip.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await verticalFlip(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of one expanded monomer in a structure and save/paste in KET format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported KET matches the expected file and the flipped monomer renders correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await verticalFlip(page);
+    await verifyFileExport(
+      page,
+      'KET/flipping-vertically-one-monomer-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/flipping-vertically-one-monomer-expected.ket',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of one expanded monomer in a structure and save/paste in MOL V3000 format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot of the flipped structure.
+     * Expected result: Exported MOL V3000 matches the expected file and the flipped monomer renders correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await verticalFlip(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/flipping-vertically-one-monomer-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/flipping-vertically-one-monomer-expected.mol',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of one expanded monomer in a structure and save in SVG and PNG format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes one continuous monomer, flipping options vertical enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomer.
+     * 2. Select the expanded monomer and apply vertical flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain the vertically flipped monomer.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await getAtomLocator(page, { atomId: 7 }).click();
+    await verticalFlip(page);
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Verify flipping horizontally of more than one expanded monomers in a structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection.
+     * 3. Apply horizontal flip.
+     * 4. Take a screenshot.
+     * Expected result: All selected expanded monomers are flipped horizontally.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await horizontalFlip(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 210,
+    });
+  });
+
+  test('Verify flipping horizontally of more than one expanded monomers in a structure and save/paste in KET format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported KET matches the expected file and flipped monomers render correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await horizontalFlip(page);
+    await verifyFileExport(
+      page,
+      'KET/flipping-horizontally-monomers-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/flipping-horizontally-monomers-expected.ket',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 210,
+    });
+  });
+
+  test('Verify flipping horizontally of more than one expanded monomers in a structure and save/paste in MOL V3000 format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported MOL V3000 matches the expected file and flipped monomers render correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await horizontalFlip(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/flipping-horizontally-monomers-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/flipping-horizontally-monomers-expected.mol',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
+      padding: 190,
+    });
+  });
+
+  test('Verify flipping horizontally of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options horizontal enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply horizontal flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain horizontally flipped monomers.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await horizontalFlip(page);
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Verify flipping vertically of more than one expanded monomers in a structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection.
+     * 3. Apply vertical flip.
+     * 4. Take a screenshot.
+     * Expected result: All selected expanded monomers are flipped vertically.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await verticalFlip(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of more than one expanded monomers in a structure and save/paste in KET format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in KET format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to KET and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported KET matches the expected file and flipped monomers render correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await verticalFlip(page);
+    await verifyFileExport(
+      page,
+      'KET/flipping-vertically-monomers-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/flipping-vertically-monomers-expected.ket',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of more than one expanded monomers in a structure and save/paste in MOL V3000 format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and save/paste in MOL V3000 format
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to MOL V3000 and reopen the expected file.
+     * 4. Take a screenshot.
+     * Expected result: Exported MOL V3000 matches the expected file and flipped monomers render correctly.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await verticalFlip(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/flipping-vertically-monomers-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/flipping-vertically-monomers-expected.mol',
+    );
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 250,
+    });
+  });
+
+  test('Verify flipping vertically of more than one expanded monomers in a structure and save in SVG and PNG format', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7915
+     * Description: Check that for any selection that includes more than continuous monomers, flipping options vertical enabled and image exports are correct
+     * Steps:
+     * 1. Open the source KET file with expanded monomers.
+     * 2. Select multiple expanded monomers with lasso selection and apply vertical flip.
+     * 3. Export to PNG and SVG.
+     * Expected result: PNG and SVG exports contain vertically flipped monomers.
+     */
+    await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
+    await CommonTopRightToolbar(page).setZoomInputValue('70');
+
+    const locator1 = await getAtomLocator(page, { atomId: 22 }).boundingBox();
+    const locator2 = await getAtomLocator(page, { atomId: 37 }).boundingBox();
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    if (!locator1 || !locator2) throw new Error('No bounding box');
+    const padding = 10;
+    await selectWithLasso(page, locator1.x - padding, locator1.y - padding, [
+      { x: locator2.x + locator2.width + padding, y: locator1.y - padding },
+      {
+        x: locator2.x + locator2.width + padding,
+        y: locator2.y + locator2.height + padding,
+      },
+      { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
+      { x: locator1.x - padding, y: locator1.y - padding },
+    ]);
+    await verticalFlip(page);
+    await verifyPNGExport(page);
+    await verifySVGExport(page);
+  });
+
+  test('Verify deletion of selected structures', async () => {
     /*
     Test case: EPMLSOPKET-15510
     Description: All selected structures are deleted from the canvas.
@@ -131,9 +684,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async ({
-    page,
-  }) => {
+  test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -153,7 +704,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -178,7 +729,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -203,7 +754,7 @@ test.describe('Selection tools', () => {
     {
       tag: ['@SlowTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
@@ -223,9 +774,7 @@ test.describe('Selection tools', () => {
     },
   );
 
-  test('(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -244,9 +793,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -265,9 +812,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -286,9 +831,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
-    page,
-  }) => {
+  test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async () => {
     /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
@@ -307,9 +850,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Field value text when placed on a structure becomes hard to access', async ({
-    page,
-  }) => {
+  test('Field value text when placed on a structure becomes hard to access', async () => {
     /*
     Test case: EPMLSOPKET-12974
     Description: User can easily select 'Field value' text and move to desired location.
@@ -321,12 +862,17 @@ test.describe('Selection tools', () => {
     const pointy1 = 300;
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 0);
-    await fillFieldByPlaceholder(page, 'Enter name', 'Test');
-    await fillFieldByPlaceholder(page, 'Enter value', '33');
-    await pressButton(page, 'Apply');
-
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 16 }).click({
+      force: true,
+    });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.Data,
+      Context: ContextOption.Fragment,
+      FieldName: 'Test',
+      FieldValue: '33',
+      PropertyLabelType: PropertyLabelType.Absolute,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.getByText('33', { exact: true }).click();
@@ -340,19 +886,22 @@ test.describe('Selection tools', () => {
 });
 
 test.describe('Selection tools', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Selection tools is not change when user press ESC button', async ({
-    page,
-  }) => {
+  test('Selection tools is not change when user press ESC button', async () => {
     /*
     Test case: EPMLSOPKET-10074
     Description: If user presses esc, then last chosen selected tool must be
     selected and pressing esc doesn't choose another mode of selection tool
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 2; i++) {
@@ -361,9 +910,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Verify removal of current flip and rotation buttons in the left toolbar', async ({
-    page,
-  }) => {
+  test('Verify removal of current flip and rotation buttons in the left toolbar', async () => {
     /*
     Test case: EPMLSOPKET-15511
     Description: The flip and rotation buttons are no longer present in the left toolbar.
@@ -371,18 +918,16 @@ test.describe('Selection tools', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Down', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Down', async () => {
     /*
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
-    await clickOnAtom(page, 'N', 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowDown');
@@ -391,18 +936,16 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Up', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Up', async () => {
     /*
     Test case: EPMLSOPKET-15514
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
-    await clickOnAtom(page, 'N', 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowUp');
@@ -411,18 +954,16 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Right', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Right', async () => {
     /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
-    await clickOnAtom(page, 'N', 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
       await page.keyboard.press('ArrowRight');
@@ -431,18 +972,16 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Left', async ({
-    page,
-  }) => {
+  test('Canvas Expansion when Structure is Moved Outside Left', async () => {
     /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
-    await clickOnAtom(page, 'N', 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -451,17 +990,17 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Move structure over the border of the canvas', async ({ page }) => {
+  test('Move structure over the border of the canvas', async () => {
     /*
     Test case: EPMLSOPKET-10068
     Description: The canvas should automatically expand in the direction the structure is being moved.
     Structure is visible on the canvas.
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
-    await clickOnAtom(page, 'N', 0);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 22 }).click({
+      force: true,
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 100; i++) {
       await page.keyboard.press('ArrowDown');
@@ -470,7 +1009,7 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Selection Drop-down list', async ({ page }) => {
+  test('Selection Drop-down list', async () => {
     /*
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.
@@ -479,22 +1018,26 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Selection when hovering atom and bond', async ({ page }) => {
+  test('Selection when hovering atom and bond', async () => {
     /*
     Test case: EPMLSOPKET-16944
     Description: When mouse hover on Benzene ring atom or bond, selection appears.
     */
+
+    const bondLocator = getBondLocator(page, { bondId: 7 });
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await moveOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await moveOnBond(page, BondType.SINGLE, 0);
+    await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
-  test('Selection for several templates', async ({ page }) => {
+  test('Selection for several templates', async () => {
     /*
     Test case: EPMLSOPKET-16945
     Description: All structures selected on the canvas are highlighted in green.
@@ -507,7 +1050,7 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selection for chain structure', async ({ page }) => {
+  test('Selection for chain structure', async () => {
     /*
     Test case: EPMLSOPKET-17668
     Description: All chain structures selected on the canvas are highlighted in green.
@@ -517,34 +1060,14 @@ test.describe('Selection tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async ({
-    page,
-  }) => {
-    /*
-    Test case: EPMLSOPKET-18046
-    Description: Shift+Tab switch selection tools after pressing ESC button.
-    */
-    await LeftToolbar(page).chain();
-    await page.keyboard.press('Escape');
-    await takeLeftToolbarScreenshot(page);
-    for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Shift+Tab');
-      await takeLeftToolbarScreenshot(page);
-    }
-  });
-
-  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async ({
-    page,
-  }) => {
+  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async () => {
     /*
     Test case: EPMLSOPKET-18047
     Description: Shift+Tab switch selection tools after selecting Lasso.
     */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       await page.keyboard.press('Shift+Tab');
       await takeLeftToolbarScreenshot(page);
     }

@@ -1,13 +1,9 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import {
-  clickInTheMiddleOfTheScreen,
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
-import { hideMonomerPreview } from '@utils/macromolecules';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({
   page,
@@ -15,10 +11,16 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-  await Library(page).addMonomerToFavorites(Peptides.A);
-  await Library(page).selectMonomer(Peptides.A, true);
-  await clickInTheMiddleOfTheScreen(page);
-  await hideMonomerPreview(page);
-
+  await Library(page).addMonomerToFavorites(Peptide.A);
+  await Library(page).dragMonomerOnCanvas(
+    Peptide.A,
+    {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    },
+    true,
+  );
+  await MonomerPreviewTooltip(page).hide();
   await takeEditorScreenshot(page);
 });

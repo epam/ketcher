@@ -1,9 +1,5 @@
 import { useMemo } from 'react';
-import {
-  LibraryNameType,
-  MonomerCodeToGroup,
-  MonomerGroups,
-} from 'src/constants';
+import { LibraryNameType, MonomerGroups } from 'src/constants';
 import {
   RnaBuilderPresetsItem,
   selectFilteredPresets,
@@ -35,36 +31,38 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
       {
         groupName: MonomerGroups.SUGARS,
         iconName: 'sugar',
-        groups: groups.filter(
-          (group) =>
-            MonomerCodeToGroup[group.groupTitle as string] ===
-            MonomerGroups.SUGARS,
-        ),
+        groups: groups
+          .map((group) => ({
+            ...group,
+            groupItems: group.groupItems.filter(
+              (item) => item.props?.MonomerClass === KetMonomerClass.Sugar,
+            ),
+          }))
+          .filter((group) => group.groupItems.length),
       },
       {
         groupName: MonomerGroups.BASES,
         iconName: 'base',
         groups: groups
-          .filter(
-            (group) =>
-              MonomerCodeToGroup[group.groupTitle as string] ===
-              MonomerGroups.BASES,
-          )
           .map((group) => ({
             ...group,
             groupItems: group.groupItems.filter(
-              (item) => item.props?.MonomerClass !== KetMonomerClass.RNA,
+              (item) => item.props?.MonomerClass === KetMonomerClass.Base,
             ),
-          })),
+          }))
+          .filter((group) => group.groupItems.length),
       },
       {
         groupName: MonomerGroups.PHOSPHATES,
         iconName: 'phosphate',
-        groups: groups.filter(
-          (group) =>
-            MonomerCodeToGroup[group.groupTitle as string] ===
-            MonomerGroups.PHOSPHATES,
-        ),
+        groups: groups
+          .map((group) => ({
+            ...group,
+            groupItems: group.groupItems.filter(
+              (item) => item.props?.MonomerClass === KetMonomerClass.Phosphate,
+            ),
+          }))
+          .filter((group) => group.groupItems.length),
       },
       {
         groupName: MonomerGroups.NUCLEOTIDES,

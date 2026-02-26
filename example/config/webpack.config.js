@@ -88,6 +88,7 @@ module.exports = override(
       main: './src/index.tsx',
       popup: './src/popupIndex.tsx',
       duo: './src/duoIndex.tsx',
+      closable: './src/closableIndex.tsx',
     };
     return config;
   },

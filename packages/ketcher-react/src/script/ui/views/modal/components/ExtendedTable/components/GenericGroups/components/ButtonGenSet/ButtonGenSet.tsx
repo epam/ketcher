@@ -33,7 +33,7 @@ const ButtonGenSet = ({
 }: ButtonGenSetProps) => {
   const titleText = disabled
     ? `${button.label} is disabled`
-    : button.description || button.label;
+    : button.description ?? button.label;
 
   return (
     <button

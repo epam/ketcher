@@ -13,12 +13,14 @@ import {
   Sugar,
   getAminoAcidsToModify,
   canModifyAminoAcid,
+  compareByTitleWithNaturalFirst,
+  MonomerToAtomBond,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
   return monomers
     .map((monomer) => monomer.monomerItem.props.MonomerNaturalAnalogCode)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .join('');
 };
 
@@ -133,8 +135,6 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
 export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =
   'aminoAcidModification-';
 
-const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
-
 export const getModifyAminoAcidsMenuItems = (
   selectedMonomers: BaseMonomer[],
 ) => {
@@ -170,34 +170,36 @@ export const getModifyAminoAcidsMenuItems = (
       return;
     }
 
-    const modificationType = monomerLibraryItem.props.modificationType;
+    const modificationTypes = monomerLibraryItem.props.modificationTypes;
 
-    if (!modificationType) {
+    if (!modificationTypes) {
       return;
     }
 
-    // If modification does not have R1 or R2 attachment points to persist connection
-    if (
-      monomersWithSameNaturalAnalogCode.some(
-        (monomer: BaseMonomer) =>
-          monomer.label !== monomerLibraryItem.label &&
-          !canModifyAminoAcid(monomer, monomerLibraryItem),
-      )
-    ) {
-      modificationTypesDisabledByAttachmentPoints.add(modificationType);
+    modificationTypes.forEach((modificationType) => {
+      // If modification does not have R1 or R2 attachment points to persist connection
+      if (
+        monomersWithSameNaturalAnalogCode.some(
+          (monomer: BaseMonomer) =>
+            monomer.label !== monomerLibraryItem.label &&
+            !canModifyAminoAcid(monomer, monomerLibraryItem),
+        )
+      ) {
+        modificationTypesDisabledByAttachmentPoints.add(modificationType);
 
-      return;
-    }
+        return;
+      }
 
-    if (
-      monomersWithSameNaturalAnalogCode.every(
-        (monomer) => monomer.label === monomerLibraryItem.label,
-      )
-    ) {
-      return;
-    }
+      if (
+        monomersWithSameNaturalAnalogCode.every(
+          (monomer) => monomer.label === monomerLibraryItem.label,
+        )
+      ) {
+        return;
+      }
 
-    modificationsForSelection.add(modificationType);
+      modificationsForSelection.add(modificationType);
+    });
   });
 
   const menuItems = [...modificationsForSelection.values()]
@@ -228,16 +230,7 @@ export const getModifyAminoAcidsMenuItems = (
       };
     });
 
-  menuItems.sort((a, b) => {
-    const aTitle = a.title.toLowerCase();
-    const bTitle = b.title.toLowerCase();
-    const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
-
-    if (aTitle === naturalType) return -1;
-    if (bTitle === naturalType) return 1;
-
-    return aTitle.localeCompare(bTitle);
-  });
+  menuItems.sort(compareByTitleWithNaturalFirst);
 
   return menuItems;
 };
@@ -249,13 +242,92 @@ export const getMonomersForAminoAcidModification = (
   const clickedSequenceItemRenderer: BaseSequenceItemRenderer | undefined =
     contextMenuEvent?.target?.__data__;
   const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
-  const monomersForAminoAcidModification = (
-    selectedMonomers.length
-      ? selectedMonomers
-      : clickedMonomer
-      ? [clickedMonomer]
-      : []
-  ).filter((monomer) => monomer instanceof Peptide);
+  let monomerCandidates: BaseMonomer[] = [];
+
+  if (selectedMonomers.length) {
+    monomerCandidates = selectedMonomers;
+  } else if (clickedMonomer) {
+    monomerCandidates = [clickedMonomer];
+  }
+
+  const monomersForAminoAcidModification = monomerCandidates.filter(
+    (monomer) => {
+      return monomer instanceof Peptide;
+    },
+  );
 
   return monomersForAminoAcidModification;
+};
+
+export const isCycleExistsForSelectedMonomers = (
+  selectedMonomers: BaseMonomer[],
+): boolean => {
+  if (selectedMonomers.length < 3) {
+    return false;
+  }
+
+  const monomerSet = new Set(selectedMonomers);
+  const visited = new Set<BaseMonomer>();
+  const inRecursionStack = new Set<BaseMonomer>();
+
+  const getNeighbors = (monomer: BaseMonomer): BaseMonomer[] => {
+    const neighbors: BaseMonomer[] = [];
+
+    monomer.forEachBond((bond) => {
+      if (bond instanceof MonomerToAtomBond) {
+        return;
+      }
+
+      const firstMonomer = bond.firstMonomer;
+      const secondMonomer = bond.secondMonomer;
+
+      if (!firstMonomer || !secondMonomer) {
+        return;
+      }
+
+      const neighbor = bond.getAnotherMonomer(monomer);
+
+      if (neighbor && monomerSet.has(neighbor)) {
+        neighbors.push(neighbor);
+      }
+    });
+
+    return neighbors;
+  };
+
+  const dfs = (monomer: BaseMonomer, parent: BaseMonomer | null): boolean => {
+    visited.add(monomer);
+    inRecursionStack.add(monomer);
+
+    const neighbors = getNeighbors(monomer);
+
+    for (const neighbor of neighbors) {
+      if (neighbor === parent) {
+        continue;
+      }
+
+      if (inRecursionStack.has(neighbor)) {
+        return true;
+      }
+
+      if (!visited.has(neighbor)) {
+        if (dfs(neighbor, monomer)) {
+          return true;
+        }
+      }
+    }
+
+    inRecursionStack.delete(monomer);
+    return false;
+  };
+
+  for (const monomer of selectedMonomers) {
+    if (!visited.has(monomer)) {
+      if (dfs(monomer, null)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 };

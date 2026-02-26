@@ -17,7 +17,7 @@ export function polymerBondToDrawingEntity(
   const command = new Command();
 
   const firstAttachmentPoint =
-    connection.endpoint1.attachmentPointId ||
+    connection.endpoint1.attachmentPointId ??
     getAttachmentPointLabel(
       firstMonomer.monomerItem.struct.sgroups
         .get(0)
@@ -36,7 +36,7 @@ export function polymerBondToDrawingEntity(
         )?.attachmentPointNumber as number,
     );
   const secondAttachmentPoint =
-    connection.endpoint2.attachmentPointId ||
+    connection.endpoint2.attachmentPointId ??
     getAttachmentPointLabel(
       secondMonomer.monomerItem.struct.sgroups
         .get(0)

@@ -200,6 +200,7 @@
         "id": "U___Selenocysteine",
         "fullName": "Selenocysteine",
         "alias": "U",
+        "aliasHELM": "seC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -1,19 +1,16 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  pressButton,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
-  waitForPageInit,
   MolFileFormat,
 } from '@utils';
 
@@ -33,24 +30,30 @@ import {
   SettingsSection,
   StereochemistrySetting,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import {
+  EnhancedStereochemistry,
+  applyEnhancedStereochemistry,
+} from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
+import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
-async function selectRadioButtonForNewGroup(
-  page: Page,
-  selectRadioButton: string,
-  cancelChanges = false,
-) {
-  await LeftToolbar(page).stereochemistry();
-  await page.getByLabel(selectRadioButton).check();
-
-  await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
-}
-
+let page: Page;
 test.describe('Enhanced Stereochemistry Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await EnhancedStereochemistry(page).isVisible()) {
+      await EnhancedStereochemistry(page).closeWindow();
+    }
   });
 
-  test('OR stereo mark assignment', async ({ page }) => {
+  test('OR stereo mark assignment', async () => {
     /*
     Test case: EPMLSOPKET-2219
     Description: The 'Enhanced Stereochemistry' window is closed. The 'or1' stereo mark appears
@@ -60,14 +63,20 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group', true);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewOrGroup();
+    await EnhancedStereochemistry(page).cancel();
 
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('OR stereo mark assignment to two stereocenters', async ({ page }) => {
+  test('OR stereo mark assignment to two stereocenters', async () => {
     /*
     Test case: EPMLSOPKET-2219
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
@@ -76,15 +85,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
-    await clickOnAtom(page, 'C', 3);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Add to OR stereo mark assignment', async ({ page }) => {
+  test('Add to OR stereo mark assignment', async () => {
     /*
     Test case: EPMLSOPKET-2219
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
@@ -93,15 +110,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Add to OR1Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.AddToOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Add AND and OR stereo mark assignment', async ({ page }) => {
+  test('Add AND and OR stereo mark assignment', async () => {
     /*
     Test case: EPMLSOPKET-2221
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
@@ -110,15 +135,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Check Enhanced Stereochemistry modal window', async ({ page }) => {
+  test('Check Enhanced Stereochemistry modal window', async () => {
     /*
     Test case: EPMLSOPKET-2221
     Description: The 'Enhanced Stereochemistry' window is opened.
@@ -127,14 +160,14 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
   });
 
-  test('Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async ({
-    page,
-  }) => {
+  test('Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async () => {
     /*
     Test case: EPMLSOPKET-2222
     Description: The ‘Enhanced Stereochemistry’ window appears when a
@@ -144,31 +177,31 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/two-stereostructures.mol',
     );
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('(Select part of structure)Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async ({
-    page,
-  }) => {
+  test('(Select part of structure)Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async () => {
     /*
     Test case: EPMLSOPKET-2222
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
     And above one structure appears 'Mixed' stereo flag.
     */
-    const xDelta = 300;
-    const yDelta = 600;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/two-stereostructures.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y - yDelta, page);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await dragMouseTo(x + 300, y - 600, page);
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Radio buttons: checked', async ({ page }) => {
+  test('Radio buttons: checked', async () => {
     /*
     Test case: EPMLSOPKET-2223
     Description: The appropriate radiobutton in the ‘Enhanced Stereochemistry’ window is checked if:
@@ -183,7 +216,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Radio buttons: unchecked', async ({ page }) => {
+  test('Radio buttons: unchecked', async () => {
     /*
     Test case: EPMLSOPKET-2223
     Description: All radiobuttons in the ‘Enhanced Stereochemistry’ window are unchecked if:
@@ -198,7 +231,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('AND stereo mark assignment', async ({ page }) => {
+  test('AND stereo mark assignment', async () => {
     /*
     Test case: EPMLSOPKET-2224
     Description: The 'Enhanced Stereochemistry' window is closed. The '&1' stereo mark appears
@@ -208,14 +241,20 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group', true);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await LeftToolbar(page).stereochemistry();
+    await EnhancedStereochemistry(page).selectCreateNewAndGroup();
+    await EnhancedStereochemistry(page).cancel();
 
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('AND stereo mark assignment to two stereocenters', async ({ page }) => {
+  test('AND stereo mark assignment to two stereocenters', async () => {
     /*
     Test case: EPMLSOPKET-2224
     Description: The '&1' and '&2' stereo marks appear next to the selected stereocenter.
@@ -224,15 +263,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
-    await clickOnAtom(page, 'C', 3);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Add to AND stereo mark assignment', async ({ page }) => {
+  test('Add to AND stereo mark assignment', async () => {
     /*
     Test case: EPMLSOPKET-2224
     Description: The '&1' and '&1' stereo marks appear next to the selected stereocenter.
@@ -241,15 +288,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Add to AND1Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.AddToAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('AND stereo marks - Save as *.ket file and edit', async ({ page }) => {
+  test('AND stereo marks - Save as *.ket file and edit', async () => {
     /*
     Test case: EPMLSOPKET-2261
     Description: The structure is saved/opened correctly as *.ket file.
@@ -264,15 +319,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('OR stereo marks - Save as *.ket file and edit', async ({ page }) => {
+  test('OR stereo marks - Save as *.ket file and edit', async () => {
     /*
     Test case: EPMLSOPKET-2262
     Description: The structure is saved/opened correctly as *.ket file.
@@ -287,15 +350,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Mixed stereo marks - Save as *.ket file and edit', async ({ page }) => {
+  test('Mixed stereo marks - Save as *.ket file and edit', async () => {
     /*
     Test case: EPMLSOPKET-2263
     Description: The structure is saved/opened correctly as *.ket file.
@@ -310,17 +381,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Mixed AND stereo marks - Save as *.ket file and edit', async ({
-    page,
-  }) => {
+  test('Mixed AND stereo marks - Save as *.ket file and edit', async () => {
     /*
     Test case: EPMLSOPKET-2264
     Description: The structure is saved/opened correctly as *.ket file.
@@ -335,17 +412,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Mixed OR stereo marks - Save as *.ket file and edit', async ({
-    page,
-  }) => {
+  test('Mixed OR stereo marks - Save as *.ket file and edit', async () => {
     /*
     Test case: EPMLSOPKET-2265
     Description: The structure is saved/opened correctly as *.ket file.
@@ -360,15 +443,23 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
 
-    await clickOnAtom(page, 'C', 4);
-    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await applyEnhancedStereochemistry(page, {
+      selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Label display styles - Classic', async ({ page }) => {
+  test('Label display styles - Classic', async () => {
     /*
     Test case: EPMLSOPKET-2267
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
@@ -385,7 +476,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Label display styles - On', async ({ page }) => {
+  test('Label display styles - On', async () => {
     /*
     Test case: EPMLSOPKET-2268
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
@@ -402,7 +493,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Label display styles - Off', async ({ page }) => {
+  test('Label display styles - Off', async () => {
     /*
     Test case: EPMLSOPKET-2269
     Description: Only stereo flag displays near the structure.
@@ -419,7 +510,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Color stereogenic centers - Off', async ({ page }) => {
+  test('Color stereogenic centers - Off', async () => {
     /*
     Test case: EPMLSOPKET-2270
     Description: When 'Off' is selected - Stereobonds and stereo labels are displayed in black.
@@ -436,7 +527,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Color stereogenic centers - Labels and Bonds', async ({ page }) => {
+  test('Color stereogenic centers - Labels and Bonds', async () => {
     /*
     Test case: EPMLSOPKET-2270
     Description: When 'Labels and Bonds' is selected - Stereobonds and stereo labels are displayed in color.
@@ -453,7 +544,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Color stereogenic centers - Bonds Only', async ({ page }) => {
+  test('Color stereogenic centers - Bonds Only', async () => {
     /*
     Test case: EPMLSOPKET-2270
     Description: When 'Bonds Only' is selected - Stereobonds are displayed in color
@@ -471,7 +562,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Hide/show the stereo flag', async ({ page }) => {
+  test('Hide/show the stereo flag', async () => {
     /*
     Test case: EPMLSOPKET-2273
     Description: It's possible to hide the stereo flag by selecting the "off"
@@ -488,22 +579,19 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Label display styles - IUPAC style selected by default in settings', async ({
-    page,
-  }) => {
+  test('Label display styles - IUPAC style selected by default in settings', async () => {
     /*
     Test case: EPMLSOPKET-2266
     Description: “IUPAC style” in Label display at stereogenic centers is selected by default.
     */
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).reset();
     await SettingsDialog(page).openSection(SettingsSection.General);
     await SettingsDialog(page).openSection(SettingsSection.Stereochemistry);
     await takeEditorScreenshot(page);
   });
 
-  test('Save in Molfile V2000 - If one of the saved structures had the ABS (Chiral) Flag', async ({
-    page,
-  }) => {
+  test('Save in Molfile V2000 - If one of the saved structures had the ABS (Chiral) Flag', async () => {
     /*
     Test case: EPMLSOPKET-2276
     Description: If one of the saved structures had the ABS (Chiral) Flag, then after
@@ -522,9 +610,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save in Molfile V2000 - If none of the structures had the ABS (Chiral) Flag', async ({
-    page,
-  }) => {
+  test('Save in Molfile V2000 - If none of the structures had the ABS (Chiral) Flag', async () => {
     /*
     Test case: EPMLSOPKET-2276
     Description: If none of the structures had the ABS (Chiral) Flag, then after opening
@@ -543,9 +629,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check modal when AND/OR Group not added to structure', async ({
-    page,
-  }) => {
+  test('Check modal when AND/OR Group not added to structure', async () => {
     /*
     Test case: EPMLSOPKET-2277
     Description: When no AND/OR group is present on the canvas only three settings are available:
@@ -561,7 +645,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check modal when AND/OR Group added to structure', async ({ page }) => {
+  test('Check modal when AND/OR Group added to structure', async () => {
     /*
     Test case: EPMLSOPKET-2277
     Description: 'Add to AND [ ] Group' setting becomes available when at least
@@ -574,7 +658,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Auto fade And/Or center labels', async ({ page }) => {
+  test('Auto fade And/Or center labels', async () => {
     /*
     Test case: EPMLSOPKET-2862
     Description: Labels (&) are colored and color intensity is decreasing with the number.
@@ -592,7 +676,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Edit Absolute flag text', async ({ page }) => {
+  test('Edit Absolute flag text', async () => {
     /*
     Test case: EPMLSOPKET-2863
     Description: Stereo flag is presented as changed - ABS (Chiral)1
@@ -609,7 +693,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Edit Mixed flag text', async ({ page }) => {
+  test('Edit Mixed flag text', async () => {
     /*
     Test case: EPMLSOPKET-2863
     Description: Stereo flag - Mixed2
@@ -623,32 +707,37 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('No overlapping of Stereo flag and structure', async ({ page }) => {
+  test('No overlapping of Stereo flag and structure', async () => {
     /*
     Test case: EPMLSOPKET-2924
     Description: Values 'ABS' and "CH3" aren't overlapped on canvas.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 3);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+
     await takeEditorScreenshot(page);
   });
 
-  test('Check removing "Chiral" label from text of absolute flag', async ({
-    page,
-  }) => {
+  test('Check removing "Chiral" label from text of absolute flag', async () => {
     /*
     Test case: EPMLSOPKET-8917
     Description: Stereo flag is presented as 'ABS' without 'Chiral'
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

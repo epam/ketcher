@@ -14,15 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
-import { useAppDispatch } from 'hooks';
-import { useCallback, MouseEvent, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
-import { Card, CardTitle, NumberCircle } from './styles';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
+import {
+  AutochainIcon,
+  AutochainIconWrapper,
+  Card,
+  CardTitle,
+  NumberCircle,
+} from './styles';
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
+import { selectEditor, selectIsSequenceMode } from 'state/common';
+import Tooltip from '@mui/material/Tooltip';
+import {
+  cardMouseOverHandler,
+  getAutochainErrorMessage,
+} from 'components/monomerLibrary/monomerLibraryItem/shared';
+
+export const AUTOCHAIN_ELEMENT_CLASSNAME = 'autochain';
 
 const MonomerItem = ({
   item,
@@ -34,16 +49,23 @@ const MonomerItem = ({
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
+  const editor = useAppSelector(selectEditor);
+  const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const [autochainErrorMessage, setAutochainErrorMessage] =
+    useState<string>('');
 
   const cardRef = useRef<HTMLDivElement>(null);
 
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
-  const colorCode = isAmbiguousMonomerLibraryItem(item)
-    ? ''
-    : item.props.MonomerType === MONOMER_TYPES.CHEM
-    ? item.props.MonomerType
-    : item.props.MonomerNaturalAnalogCode;
+  let colorCode = '';
+
+  if (!isAmbiguousMonomerLibraryItem(item)) {
+    colorCode =
+      item.props.MonomerType === MONOMER_TYPES.CHEM
+        ? item.props.MonomerType
+        : item.props.MonomerNaturalAnalogCode;
+  }
 
   const monomerKey: string = getMonomerUniqueKey(item);
   const monomerItem = isAmbiguousMonomerLibraryItem(item)
@@ -58,6 +80,64 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
+  const handleFavoriteKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        event.stopPropagation();
+        dispatch(toggleMonomerFavorites(item));
+      }
+    },
+    [dispatch, item],
+  );
+
+  const onAutochainIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+
+      // Validate before executing autochain to ensure validation runs even on consecutive clicks
+      if (editor) {
+        const errorMessage = getAutochainErrorMessage(editor, item);
+        setAutochainErrorMessage(errorMessage);
+
+        // If there's an error, don't proceed with autochain
+        if (errorMessage) {
+          return;
+        }
+      }
+
+      editor?.events.autochain.dispatch(item);
+    },
+    [editor, item],
+  );
+
+  const onMouseOver = useCallback(
+    () =>
+      editor && cardMouseOverHandler(editor, item, setAutochainErrorMessage),
+    [editor, item],
+  );
+
+  const onAutochainIconMouseOver = useCallback(() => {
+    // Re-validate on hover to ensure tooltip shows current validation state
+    if (editor) {
+      const errorMessage = getAutochainErrorMessage(editor, item);
+      setAutochainErrorMessage(errorMessage);
+
+      if (errorMessage) {
+        return;
+      }
+    }
+
+    editor?.events.previewAutochain.dispatch(item);
+  }, [editor, item]);
+
+  const onAutochainIconMouseOut = useCallback(() => {
+    editor?.events.removeAutochainPreview.dispatch(item);
+  }, [editor, item]);
+
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   useLibraryItemDrag(item, cardRef);
 
   return (
@@ -69,19 +149,60 @@ const MonomerItem = ({
       item={monomerItem}
       isVariantMonomer={item.isAmbiguous}
       code={colorCode}
+      onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onDoubleClick={(e) => {
+        onAutochainIconClick(e);
+        onAutochainIconMouseOut();
+      }}
       {...(!isDisabled ? { onClick } : {})}
       ref={cardRef}
+      data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
+      data-idtalias-modifications-endpoint5={
+        monomerItem?.props.idtAliases?.modifications?.endpoint5 ?? undefined
+      }
+      data-idtalias-modifications-endpoint3={
+        monomerItem?.props.idtAliases?.modifications?.endpoint3 ?? undefined
+      }
+      data-idtalias-modifications-internal={
+        monomerItem?.props.idtAliases?.modifications?.internal ?? undefined
+      }
+      data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
+      data-helm={monomerItem?.props.aliasHELM ?? undefined}
+      data-modificationtype={getModificationTypeAttribute(
+        monomerItem?.props.modificationTypes,
+      )}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
-        <div
-          onClick={addFavorite}
-          className={`star ${item.favorite ? 'visible' : ''}`}
-        >
-          {FavoriteStarSymbol}
-        </div>
+        <>
+          {!isSequenceMode && (
+            <Tooltip title={autochainErrorMessage}>
+              <AutochainIconWrapper>
+                <AutochainIcon
+                  className={AUTOCHAIN_ELEMENT_CLASSNAME}
+                  name="monomer-autochain"
+                  disabled={Boolean(autochainErrorMessage)}
+                  onMouseOver={onAutochainIconMouseOver}
+                  onMouseOut={onAutochainIconMouseOut}
+                  onClick={onAutochainIconClick}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                />
+              </AutochainIconWrapper>
+            </Tooltip>
+          )}
+          <div
+            onClick={addFavorite}
+            onKeyDown={handleFavoriteKeyDown}
+            className={`star ${item.favorite ? 'visible' : ''}`}
+            role="button"
+            tabIndex={0}
+            aria-label="Toggle favorite"
+          >
+            {FavoriteStarSymbol}
+          </div>
+        </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (
         <NumberCircle

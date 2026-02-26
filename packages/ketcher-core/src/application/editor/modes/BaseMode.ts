@@ -14,6 +14,7 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  normalizeError,
 } from 'utilities';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
@@ -56,7 +57,7 @@ export abstract class BaseMode {
     );
 
     if (needRemoveSelection) {
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      editor.events.selectSelectionTool.dispatch();
     }
 
     return command;
@@ -211,6 +212,8 @@ export abstract class BaseMode {
     }
 
     this.updateEntitiesPosition(drawingEntitiesManager);
+    editor.calculateAndStoreNextAutochainPosition(drawingEntitiesManager);
+
     const { command: modelChanges, mergedDrawingEntities } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
 
@@ -235,8 +238,7 @@ export abstract class BaseMode {
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
 
       this.unsupportedSymbolsError(errorMessage);
@@ -273,7 +275,8 @@ export abstract class BaseMode {
     return (
       event.target instanceof HTMLElement &&
       (event.target?.nodeName === 'INPUT' ||
-        event.target?.nodeName === 'TEXTAREA')
+        event.target?.nodeName === 'TEXTAREA' ||
+        event.target.contentEditable === 'true')
     );
   }
 

@@ -419,6 +419,7 @@
         "id": "R___Arginine",
         "fullName": "Arginine",
         "alias": "R",
+        "aliasHELM": "R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,

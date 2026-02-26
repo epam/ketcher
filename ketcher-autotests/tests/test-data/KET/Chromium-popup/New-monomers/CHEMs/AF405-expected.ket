@@ -1,0 +1,700 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-AF405___Alexa Fluor 405 dye"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "AF405",
+        "templateId": "AF405___Alexa Fluor 405 dye"
+    },
+    "monomerTemplate-AF405___Alexa Fluor 405 dye": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.33,
+                    0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.33,
+                    -0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.464,
+                    -1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    -0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.464,
+                    1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    -1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    -0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    2.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.464,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.464,
+                    -2,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    -2.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    -2,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    4.33,
+                    -2.5,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    0.866,
+                    -2.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.196,
+                    -2,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.33,
+                    -3.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.196,
+                    -3,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.866,
+                    -3.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0,
+                    -2,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0,
+                    -3,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "S",
+                "location": [
+                    4.33,
+                    2.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.866,
+                    2.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.33,
+                    3.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.196,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.196,
+                    3,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    2.5,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.732,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.866,
+                    3.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.732,
+                    1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.598,
+                    0.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.464,
+                    1,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.464,
+                    2,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.598,
+                    2.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.33,
+                    0.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.33,
+                    -0.5,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -5.196,
+                    1,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    20
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    21
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    23
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    25
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    24,
+                    26
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    24,
+                    27
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    28
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    29
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    29,
+                    30
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    30,
+                    31
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    30,
+                    32
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    37,
+                    31
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    31,
+                    33
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    33,
+                    34
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    34,
+                    35
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    35,
+                    36
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    36,
+                    37
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    35,
+                    38
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    38,
+                    39
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    38,
+                    40
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "AF405___Alexa Fluor 405 dye",
+        "fullName": "Alexa Fluor 405 dye",
+        "alias": "AF405",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 38,
+                "leavingGroup": {
+                    "atoms": [
+                        40
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "Alex405N",
+            "modifications": {
+                "endpoint5": "/5Alex405N/"
+            }
+        }
+    }
+}

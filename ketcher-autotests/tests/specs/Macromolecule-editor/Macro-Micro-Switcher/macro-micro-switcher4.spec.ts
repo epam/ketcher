@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -13,23 +13,17 @@ import {
   moveMouseAway,
   MolFileFormat,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   BondType,
   BondStereo,
-  clickOnMicroBondByIndex,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
@@ -37,6 +31,9 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
@@ -77,7 +74,7 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
 
   // Test should be skipped if related bug exists
   test.fixme(
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5961 issue(s).`,
   );
 });
@@ -143,15 +140,12 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
   );
   await takeEditorScreenshot(page);
 
-  await CommonLeftToolbar(page).selectEraseTool();
-  // removing single bond
-  await clickOnMicroBondByIndex(page, 41);
-  // removing double bond
-  await clickOnMicroBondByIndex(page, 47);
-  // removing single up bond
-  await clickOnMicroBondByIndex(page, 53);
-  // removing single down bond
-  await clickOnMicroBondByIndex(page, 53);
+  await CommonLeftToolbar(page).erase();
+  // 106 113 120 121
+  await getBondLocator(page, { bondId: 106 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 113 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 120 }).first().click({ force: true });
+  await getBondLocator(page, { bondId: 121 }).first().click({ force: true });
 
   await takeEditorScreenshot(page);
 });
@@ -274,7 +268,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (1-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -287,9 +281,11 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
-  await takeEditorScreenshot(page);
-
-  await closeErrorMessage(page);
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+  );
+  await ErrorMessageDialog(page).close();
   await SaveStructureDialog(page).cancel();
 });
 
@@ -301,7 +297,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to Sequence (3-letter code)
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -314,15 +310,13 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
-  await takeEditorScreenshot(page);
-
-  // await closeErrorMessage(page);
-  await SaveStructureDialog(page).cancel();
-  test.fixme(
-    true,
-    `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
-     Test should be updated after fix`,
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
   );
+
+  await ErrorMessageDialog(page).close();
+  await SaveStructureDialog(page).cancel();
 });
 
 test(`Verify that all 16 bond types can't be saved correctly in macromolecules mode into IDT`, async () => {
@@ -347,8 +341,6 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
     MacromoleculesFileFormatType.IDT,
   );
   await takeEditorScreenshot(page);
-
-  // await closeErrorMessage(page);
   await SaveStructureDialog(page).cancel();
   test.fixme(
     true,
@@ -441,7 +433,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -486,7 +478,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -575,13 +567,15 @@ test(`Verify that switching between different visualization modes (e.g., flex, s
     'KET/Micro-Macro-Switcher/Switching between different visualization modes.ket',
   );
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test(`Verify the behavior when bonds are dragged and moved in macromolecules mode (e.g., ensuring they stay connected)`, async () => {
@@ -599,9 +593,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -647,9 +639,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
     page,
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
   );
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -693,19 +683,21 @@ test(`Check that when entering macromolecules mode all standard stereo-labels ar
     page,
     'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -733,21 +725,23 @@ test(`Check that visible stereo-labels in macromolecules mode get selected with 
     page,
     'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
   );
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

@@ -25,7 +25,6 @@ import {
 } from 'domain/entities';
 import {
   AtomAdd,
-  AtomAttr,
   BondAdd,
   BondAttr,
   BondDelete,
@@ -109,7 +108,6 @@ export function fromBondAddition(
         endAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId);
@@ -142,7 +140,6 @@ export function fromBondAddition(
         beginAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId);
@@ -172,14 +169,6 @@ export function fromBondAddition(
         }
       });
     }
-  }
-
-  if (atomGetAttr(reStruct, beginAtomId, 'label') === '*') {
-    action.addOp(new AtomAttr(beginAtomId, 'label', 'C').perform(reStruct));
-  }
-
-  if (atomGetAttr(reStruct, endAtomId, 'label') === '*') {
-    action.addOp(new AtomAttr(endAtomId, 'label', 'C').perform(reStruct));
   }
 
   const newBondId = (
@@ -400,7 +389,7 @@ export function removeAttachmentPointFromSuperatom(
         fromSgroupAttachmentPointRemove(
           restruct,
           sgroup.item?.id as number,
-          atomId as number,
+          atomId,
           anotherSideAtomId,
           false,
         ),

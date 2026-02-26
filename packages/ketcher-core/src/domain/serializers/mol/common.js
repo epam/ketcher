@@ -87,6 +87,7 @@ const prepareForSaving = {
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
+  COP: prepareCopForSaving,
   queryComponent: prepareQueryComponentForSaving,
 };
 
@@ -105,13 +106,31 @@ function prepareSruForSaving(sgroup, mol) {
     }
   }, sgroup);
   if (xBonds.length !== 0 && xBonds.length !== 2) {
-    // TODO fix this eslint error
-    // eslint-disable-next-line no-throw-literal
-    throw {
-      id: sgroup.id,
-      'error-type': 'cross-bond-number',
-      message: 'Unsupported cross-bonds number',
-    };
+    const error = new Error('Unsupported cross-bonds number');
+    error.id = sgroup.id;
+    error['error-type'] = 'cross-bond-number';
+    throw error;
+  }
+  sgroup.bonds = xBonds;
+}
+
+function prepareCopForSaving(sgroup, mol) {
+  const xBonds = [];
+  mol.bonds.forEach((bond, bid) => {
+    const a1 = mol.atoms.get(bond.begin);
+    const a2 = mol.atoms.get(bond.end);
+    if (
+      (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
+      (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
+    ) {
+      xBonds.push(bid);
+    }
+  }, sgroup);
+  if (xBonds.length !== 0 && xBonds.length !== 2) {
+    const error = new Error('Unsupported cross-bonds number');
+    error.id = sgroup.id;
+    error['error-type'] = 'cross-bond-number';
+    throw error;
   }
   sgroup.bonds = xBonds;
 }
@@ -151,6 +170,7 @@ function prepareDatForSaving(sgroup, mol) {
 const saveToMolfile = {
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
+  COP: saveCopToMolfile,
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
@@ -185,6 +205,17 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 }
 
 function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveCopToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   // eslint-disable-line max-params
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -319,14 +350,13 @@ function bracketsToMolfile(mol, sg, idstr) {
     n,
   );
   const lines = [];
-  for (let i = 0; i < brackets.length; ++i) {
-    const bracket = brackets[i];
+  for (const bracket of brackets) {
     const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
     const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
     let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3);
     const coord = [a0.x, a0.y, a1.x, a1.y];
-    for (let j = 0; j < coord.length; ++j) {
-      line += utils.paddedNum(coord[j], 10, 4);
+    for (const coordValue of coord) {
+      line += utils.paddedNum(coordValue, 10, 4);
     }
     lines.push(line);
   }

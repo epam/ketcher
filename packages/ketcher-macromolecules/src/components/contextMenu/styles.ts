@@ -34,4 +34,10 @@ export const StyledMenu = styled(Menu)`
     align-items: center;
     line-height: ${({ theme }) => theme.ketcher.font.size.regular};
   }
+  .context_menu-delete-text {
+    display: flex;
+    align-items: center;
+    line-height: ${({ theme }) => theme.ketcher.font.size.regular};
+    margin-left: -3px;
+  }
 `;

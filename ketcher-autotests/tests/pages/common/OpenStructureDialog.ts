@@ -6,6 +6,7 @@ type OpenStructureDialogLocators = {
   openFromImageButton: Locator;
   closeWindowButton: Locator;
   window: Locator;
+  previewTextArea: Locator;
 };
 
 export const OpenStructureDialog = (page: Page) => {
@@ -15,12 +16,16 @@ export const OpenStructureDialog = (page: Page) => {
     openFromImageButton: page.getByTestId('open-from-image-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     window: page.getByTestId('openStructureModal'),
+    previewTextArea: page.getByTestId('open-structure-textarea'),
   };
 
   return {
     ...locators,
+    async isVisible() {
+      return await locators.window.isVisible();
+    },
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

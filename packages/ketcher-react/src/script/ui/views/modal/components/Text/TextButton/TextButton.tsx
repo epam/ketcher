@@ -44,6 +44,7 @@ export const TextButton = (props: Props) => {
     <button
       className={clsx(styles.textButton, { [styles.isActive]: props.active })}
       title={props.button.command.toLowerCase()}
+      data-testid={props.button.name}
       onMouseDown={(event) => {
         toggleStyle(event, props.button.command);
       }}

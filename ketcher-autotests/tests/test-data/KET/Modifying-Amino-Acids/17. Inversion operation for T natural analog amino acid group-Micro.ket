@@ -325,6 +325,7 @@
         "id": "dT___D-Threonine",
         "fullName": "D-Threonine",
         "alias": "dT",
+        "aliasHELM": "dT",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -353,6 +354,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "T"
     },

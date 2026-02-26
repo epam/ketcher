@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -13,12 +13,7 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
-import {
-  selectRectangleArea,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { selectSequenceRangeInEditMode } from '@utils/macromolecules/sequence';
 import {
   keyboardPressOnCanvas,
@@ -29,6 +24,9 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -38,7 +36,9 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
   });
@@ -59,14 +59,14 @@ test.describe('Sequence mode copy&paste for view mode', () => {
   test('Select entire chain with Ctrl+Lclick then copy and paste and undo', async ({
     page,
   }) => {
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
     })
       .first()
       .click();
-    await page.keyboard.up('Control');
-    await waitForMonomerPreview(page);
+    await page.keyboard.up('ControlOrMeta');
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -80,13 +80,13 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     'Verify that when there is at least one sequence on canvas, ' +
       'pasting is performed in next row, and canvas is moved to make newly added sequence visible',
     async ({ page }) => {
-      await page.keyboard.down('Control');
+      await page.keyboard.down('ControlOrMeta');
       await getSymbolLocator(page, {
         symbolAlias: 'G',
       })
         .first()
         .click();
-      await page.keyboard.up('Control');
+      await page.keyboard.up('ControlOrMeta');
       await copyToClipboardByKeyboard(page);
 
       for (let i = 0; i < 10; i++) {
@@ -104,7 +104,9 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
@@ -198,7 +200,9 @@ test.describe('Sequence-edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   test('Check If cursor is located in the first cell of empty row of a grid, then pasted fragment is considered as new chain', async ({
@@ -210,18 +214,18 @@ test.describe('Sequence-edit mode', () => {
     */
     await keyboardTypeOnCanvas(page, 'tcgtuctucc');
     await keyboardPressOnCanvas(page, 'Escape');
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 2,
     }).click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await copyToClipboardByKeyboard(page);
     await keyboardPressOnCanvas(page, 'Enter');
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -290,7 +294,7 @@ test.describe('Sequence-edit mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -361,7 +365,7 @@ test.describe('Sequence-edit mode', () => {
     await waitForRender(page, async () => {
       await takeEditorScreenshot(page);
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

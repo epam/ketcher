@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   MolecularMassUnit,
   NucleotideNaturalAnalogCount,
@@ -8,7 +8,6 @@ import {
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-
 type PeptidesTabLocators = {
   isoelectricPointValue: Locator;
   isoelectricPointInfoButton: Locator;
@@ -27,9 +26,11 @@ type RNATabLocators = {
 };
 
 type CalculateVariablesPanelLocators = {
+  panel: Locator;
   molecularFormula: Locator;
   molecularMassValue: Locator;
   molecularMassUnitsCombobox: Locator;
+  molecularMassUnitDropDownList: Locator;
   peptidesTab: Locator & PeptidesTabLocators;
   rnaTab: Locator & RNATabLocators;
   closeButton: Locator;
@@ -68,6 +69,7 @@ export const CalculateVariablesPanel = (page: Page) => {
   );
 
   const locators: CalculateVariablesPanelLocators = {
+    panel: page.getByTestId('macromolecule-properties-window'),
     peptidesTab,
     rnaTab,
     molecularFormula: page.getByTestId('Gross-formula'),
@@ -75,13 +77,20 @@ export const CalculateVariablesPanel = (page: Page) => {
     molecularMassUnitsCombobox: page
       .getByTestId('Molecular Mass Unit')
       .getByRole('combobox'),
+    molecularMassUnitDropDownList: page
+      .getByTestId(MolecularMassUnit.Da)
+      .locator('../..'),
     closeButton: page.getByTestId('macromolecule-properties-close'),
   };
 
   return {
     ...locators,
 
-    async close() {
+    async isVisible() {
+      return await locators.panel.isVisible();
+    },
+
+    async closeWindow() {
       await locators.closeButton.click();
       await locators.closeButton.waitFor({ state: 'hidden' });
     },
@@ -94,6 +103,7 @@ export const CalculateVariablesPanel = (page: Page) => {
     },
 
     async getMolecularMassValue() {
+      await page.waitForTimeout(0.2 * 1000);
       return await locators.molecularMassValue.innerText();
     },
 
@@ -165,10 +175,10 @@ export const CalculateVariablesPanel = (page: Page) => {
     async getNaturalAnalogCount(
       countValue: PeptideNaturalAnalogCount | NucleotideNaturalAnalogCount,
     ) {
-      return (await page.getByTestId(countValue).innerText()).replace(
-        /(\r\n|\n|\r)/gm,
-        '',
-      );
+      const naturalAnalog = page.getByTestId(countValue);
+      await naturalAnalog.waitFor({ state: 'visible', timeout: 5000 });
+      expect(await naturalAnalog.count()).toBeGreaterThan(0);
+      return (await naturalAnalog.innerText()).replace(/(\r\n|\n|\r)/gm, '');
     },
 
     async getPeptideNaturalAnalogCountList() {

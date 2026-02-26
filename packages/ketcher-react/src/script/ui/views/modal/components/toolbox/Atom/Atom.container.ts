@@ -18,10 +18,13 @@ import Atom from './Atom';
 import { BaseProps } from '../../../modal.types';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
+type StateProps = Pick<BaseProps, 'formState'> & {
+  isMonomerCreationWizardActive?: boolean;
+};
 
 const mapStateToProps = (state: any): StateProps => ({
   formState: state.modal.form,
+  isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
 });
 
 const AtomContainer = connect(mapStateToProps)(Atom);

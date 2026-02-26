@@ -17,6 +17,7 @@ interface Props {
   connectedAttachmentPoints?: string[];
   selectedAttachmentPoint?: string | null;
   expanded?: boolean;
+  testId?: string;
 }
 
 const MonomerMiniature = ({
@@ -25,6 +26,7 @@ const MonomerMiniature = ({
   selectedAttachmentPoint,
   connectedAttachmentPoints,
   usage,
+  testId,
 }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -56,7 +58,7 @@ const MonomerMiniature = ({
   }, [selectedAttachmentPoint, connectedAttachmentPoints]);
 
   return (
-    <Container expanded={expanded}>
+    <Container expanded={expanded} data-testid={testId}>
       <svg ref={svgRef} />
     </Container>
   );

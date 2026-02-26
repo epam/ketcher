@@ -76,7 +76,7 @@ export class RxnArrowRenderer extends BaseRenderer {
     const { length, angle } = this.getArrowParams();
     const startPosition = new Vec2(0, 0);
     const macroModeScale = provideEditorSettings().macroModeScale;
-    const height = (this.arrow.height || 0) * macroModeScale;
+    const height = (this.arrow.height ?? 0) * macroModeScale;
 
     let paths: SVGPathAttributes[] = [];
 
@@ -221,10 +221,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   private getSelectionContour(startPosition?: Vec2): string {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const { length, angle } = this.getArrowParams();
-    const height = (this.arrow.height || 0) * macroModeScale;
-    const start = startPosition || new Vec2(0, 0);
+    const height = (this.arrow.height ?? 0) * macroModeScale;
+    const start = startPosition ?? new Vec2(0, 0);
     const endX = start.x + length;
-    const [wOffset, hOffset] = [5, height || 8];
+    const normalizedHeight = height === 0 ? undefined : height;
+    const [wOffset, hOffset] = [5, normalizedHeight ?? 8];
 
     const path =
       `M${tfx(start.x - wOffset)},${tfx(start.y)}` +
@@ -240,7 +241,6 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
-      .attr('data-testid', 'rxn-arrow')
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
@@ -252,8 +252,8 @@ export class RxnArrowRenderer extends BaseRenderer {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
-        .attr('data-testid', 'rxn-arrow-path')
-        .attr('data-arrow-type', this.arrow.type)
+        .attr('data-testid', 'rxn-arrow')
+        .attr('data-arrowtype', this.arrow.type + '-arrow')
         .attr('fill', 'none')
         .attr('stroke', '#000')
         .attr('stroke-width', ARROW_STROKE_WIDTH)

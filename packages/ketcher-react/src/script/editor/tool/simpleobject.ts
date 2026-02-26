@@ -20,6 +20,7 @@ import {
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
   SimpleObjectMode,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -37,7 +38,7 @@ class SimpleObjectTool implements Tool {
 
   mousedown(event) {
     const rnd = this.editor.render;
-    const p0 = rnd.page2obj(event);
+    const p0 = CoordinateTransformation.pageToModel(event, rnd);
     this.dragCtx = { p0 };
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
@@ -56,7 +57,7 @@ class SimpleObjectTool implements Tool {
     const rnd = this.editor.render;
 
     if (this.dragCtx) {
-      const current = rnd.page2obj(event);
+      const current = CoordinateTransformation.pageToModel(event, rnd);
       const diff = current.sub(this.dragCtx.p0);
       this.dragCtx.previous = current;
 

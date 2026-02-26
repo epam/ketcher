@@ -26,15 +26,24 @@ export async function getBondsCoordinatesByAttributes(
   sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
 ): Promise<BondXy[] | []> {
   const { bonds, scale, offset } = await page.evaluate(() => {
+    const editor = window.ketcher?.editor;
+    const struct =
+      typeof editor?.struct === 'function' ? editor.struct() : null;
+    const options =
+      typeof editor?.options === 'function' ? editor.options() : null;
+    const bondsIterator = struct?.bonds?.values();
+
     return {
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      bonds: [...window.ketcher?.editor?.struct()?.bonds?.values()],
-      scale: window.ketcher?.editor?.options()?.microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
+      bonds: bondsIterator ? [...bondsIterator] : [],
+      scale: options?.microModeScale ?? null,
+      offset: options?.offset ?? null,
     };
   });
 
   if (bonds.length === 0) {
+    throw new Error(NO_STRUCTURE_AT_THE_CANVAS_ERROR);
+  }
+  if (scale === null || offset === null) {
     throw new Error(NO_STRUCTURE_AT_THE_CANVAS_ERROR);
   }
 

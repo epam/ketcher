@@ -4,7 +4,7 @@ import { D3DragEvent, drag, DragBehavior, select } from 'd3';
 export class HandTool implements BaseTool {
   private readonly dragBehavior: DragBehavior<SVGSVGElement, unknown, unknown>;
 
-  constructor(private editor: CoreEditor) {
+  constructor(private readonly editor: CoreEditor) {
     this.editor.canvas.classList.add('handCursor');
 
     this.dragBehavior = drag<SVGSVGElement, unknown, unknown>()

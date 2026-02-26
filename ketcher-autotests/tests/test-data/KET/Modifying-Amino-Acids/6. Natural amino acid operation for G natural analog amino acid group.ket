@@ -465,6 +465,7 @@
         "id": "G___Glycine",
         "fullName": "Glycine",
         "alias": "G",
+        "aliasHELM": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -484,6 +485,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "G"
     },

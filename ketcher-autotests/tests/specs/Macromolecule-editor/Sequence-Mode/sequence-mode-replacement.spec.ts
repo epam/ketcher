@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -13,22 +13,14 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
-import {
-  pressCancelInConfirmYourActionDialog,
-  pressYesInConfirmYourActionDialog,
-} from '@utils/macromolecules/sequence';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Chem } from '@constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   FileType,
   verifyFileExport,
@@ -38,6 +30,10 @@ import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -132,12 +128,12 @@ enum monomerIDs {
 const replaceMonomers: IReplaceMonomer[] = [
   {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   },
   {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   },
   {
@@ -158,28 +154,28 @@ const replaceMonomers: IReplaceMonomer[] = [
   },
   {
     Id: <number>monomerIDs.sugar_R,
-    Monomer: Sugars.R,
+    Monomer: Sugar.R,
     MonomerDescription: 'sugar (R)',
   },
   {
     Id: <number>monomerIDs.base_oC64m,
-    Monomer: Bases.oC64m5,
+    Monomer: Base.oC64m5,
     MonomerDescription: 'base (oC64m5)',
   },
   {
     Id: <number>monomerIDs.phosphate_P,
-    Monomer: Phosphates.P,
+    Monomer: Phosphate.P,
     MonomerDescription: 'phosphate (P)',
   },
   {
     Id: <number>monomerIDs.nucleotide_AmMC6T,
-    Monomer: Nucleotides.AmMC6T,
+    Monomer: Nucleotide.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
     // Nucleotide without natural analog
     Id: <number>monomerIDs.nucleotide_5NitInd,
-    Monomer: Nucleotides._5NitInd,
+    Monomer: Nucleotide._5NitInd,
     MonomerDescription: 'nucleotide (5NitInd)',
   },
   {
@@ -502,11 +498,9 @@ function filterBugsInTests(
       item.TestNameContains === undefined ||
       item.TestNameContains.some((substring) => testName.includes(substring));
     const sequenceIdMatch =
-      // item.SequenceId === undefined || item.SequenceId === sequenceId;
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
       item.ReplaceMonomerId === undefined ||
-      // item.ReplaceMonomerId === replaceMonomerId;
       item.ReplaceMonomerId === undefined ||
       item.ReplaceMonomerId.includes(replaceMonomerId);
 
@@ -520,53 +514,53 @@ async function createTestPresets(page: Page) {
   // Create preset without base
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars.R);
+  await Library(page).selectMonomer(Sugar.R);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.P);
+  await Library(page).selectMonomer(Phosphate.P);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset without phosphate
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars.R);
+  await Library(page).selectMonomer(Sugar.R);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.A);
+  await Library(page).selectMonomer(Base.A);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.nC6n5C);
+  await Library(page).selectMonomer(Base.nC6n5C);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.Test_6_Ph);
+  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r(nC6n5C)
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Bases.nC6n5C);
+  await Library(page).selectMonomer(Base.nC6n5C);
 
   await Library(page).rnaBuilder.addToPresets();
 
   // Create preset 25mo3r()Test-6-Ph
   await Library(page).newPreset();
   await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugars._25mo3r);
+  await Library(page).selectMonomer(Sugar._25mo3r);
 
   await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphates.Test_6_Ph);
+  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
   await Library(page).rnaBuilder.addToPresets();
 }
@@ -585,13 +579,15 @@ async function selectAndReplaceSymbol(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -600,7 +596,9 @@ async function selectAndReplaceSymbolWithError(
   replaceMonomer: IReplaceMonomer,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).click();
@@ -612,7 +610,9 @@ async function selectAndReplaceAllSymbols(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -628,12 +628,14 @@ async function selectAndReplaceAllSymbols(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
 async function selectAllSymbols(page: Page, sequence: ISequence) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -653,7 +655,9 @@ async function selectAndReplaceAllSymbolsWithError(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllSymbols(page, sequence);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
@@ -663,7 +667,9 @@ async function selectAndReplaceAllSymbolsInEditMode(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -679,7 +685,7 @@ async function selectAndReplaceAllSymbolsInEditMode(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -688,7 +694,9 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   replaceMonomer: IReplaceMonomer,
   sequence: ISequence,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
@@ -711,16 +719,18 @@ async function selectAndReplaceSymbolInEditMode(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
   await moveMouseToTheMiddleOfTheScreen(page);
-  await clickOnCanvas(page, 400, 400);
+  await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
 }
 
 async function selectAndReplaceSymbolInEditModeWithError(
@@ -728,7 +738,9 @@ async function selectAndReplaceSymbolInEditModeWithError(
   replaceMonomer: IReplaceMonomer,
   replacementPosition: number,
 ) {
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: replacementPosition,
   }).dblclick();
@@ -768,18 +780,6 @@ async function checkForKnownBugs(
   }
 }
 
-async function closeErrorMessage(page: Page) {
-  const errorMessage = page.getByText('Error message', {
-    exact: true,
-  });
-  const closeWindowButton = page.getByRole('button', {
-    name: 'Close window',
-  });
-
-  await closeWindowButton.click();
-  await errorMessage.waitFor({ state: 'hidden' });
-}
-
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
     test(`Case 1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
@@ -805,7 +805,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -844,7 +846,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -883,7 +887,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -921,7 +927,9 @@ for (const replaceMonomer of replaceMonomers) {
         sequence.ReplacementPositions.LeftEnd,
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -959,7 +967,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -998,7 +1008,9 @@ for (const replaceMonomer of replaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1012,20 +1024,20 @@ for (const replaceMonomer of replaceMonomers) {
   }
 }
 
-const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
+const noR2AttachmentPointReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: 11,
-    Monomer: Peptides.Ala_al,
+    Monomer: Peptide.Ala_al,
     MonomerDescription: 'peptide w/o R2 (Ala-al)',
   },
   {
     Id: 12,
-    Monomer: Peptides._NHBn,
+    Monomer: Peptide._NHBn,
     MonomerDescription: 'peptide w/o natural analog w/o R2 (-NHBn)',
   },
   {
     Id: 13,
-    Monomer: Bases._5meC,
+    Monomer: Base._5meC,
     MonomerDescription: 'base w/o R2 (5meC)',
   },
   {
@@ -1035,10 +1047,10 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
   },
 ];
 
-for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
+for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
-      Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+    test(`Case 7-${sequence.Id}-${noR2AttachmentPointReplaceMonomer.Id}.
+      Can't replace first symbol at ${sequence.SequenceName} on ${noR2AttachmentPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 7
         Description: User can't replace first symbol (of every type) in sequence with another monomer (of every type) with no R2 in view mode
@@ -1053,19 +1065,19 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
-        noR2ConnectionPointReplaceMonomer,
+        noR2AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR2ConnectionPointReplaceMonomer,
+        noR2AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
@@ -1073,33 +1085,33 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
   }
 }
 
-const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
+const noR1AttachmentPointReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: <number>monomerIDs.peptide_w_o_R1_D_OAla,
-    Monomer: Peptides.D_OAla,
+    Monomer: Peptide.D_OAla,
     MonomerDescription: 'peptide w/o R1 (D-OAla)',
   },
   {
     Id: <number>monomerIDs.peptide_w_o_R1_Boc_,
-    Monomer: Peptides.Boc_,
+    Monomer: Peptide.Boc_,
     MonomerDescription: 'peptide w/o R1 (Boc-)',
   },
   {
     Id: <number>monomerIDs.sugar_w_o_R1_5cGT,
-    Monomer: Sugars._5cGT,
+    Monomer: Sugar._5cGT,
     MonomerDescription: 'sugar w/o R1 (5cGT)',
   },
 ];
 
-const noR1orR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
-  ...noR2ConnectionPointReplaceMonomers,
-  ...noR1ConnectionPointReplaceMonomers,
+const noR1orR2AttachmentPointReplaceMonomers: IReplaceMonomer[] = [
+  ...noR2AttachmentPointReplaceMonomers,
+  ...noR1AttachmentPointReplaceMonomers,
 ];
 
-for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
+for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
-      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+    test(`Case 8-${sequence.Id}-${noR1orR2AttachmentPointReplaceMonomer.Id}.
+      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2AttachmentPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 8
         Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in view mode
@@ -1116,19 +1128,18 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
-        noR1orR2ConnectionPointReplaceMonomer,
+        noR1orR2AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.Center,
       );
-
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1orR2ConnectionPointReplaceMonomer,
+        noR1orR2AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.Center,
       );
@@ -1136,10 +1147,10 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
   }
 }
 
-for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
-      Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+    test(`Case 9-${sequence.Id}-${noR1AttachmentPointReplaceMonomer.Id}.
+      Can't replace last symbol at ${sequence.SequenceName} on ${noR1AttachmentPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 9
         Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in view mode
@@ -1156,19 +1167,19 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
@@ -1176,10 +1187,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
   }
 }
 
-for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
+for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
-      Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+    test(`Case 10-${sequence.Id}-${noR2AttachmentPointReplaceMonomer.Id}.
+      Can't replace first symbol at ${sequence.SequenceName} on ${noR2AttachmentPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 10
         Description: User can't replace first symbol (of every type) in sequence with another monomer (of every type) with no R2 in edit mode
@@ -1194,19 +1205,19 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolInEditModeWithError(
         page,
-        noR2ConnectionPointReplaceMonomer,
+        noR2AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR2ConnectionPointReplaceMonomer,
+        noR2AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
@@ -1214,10 +1225,10 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
   }
 }
 
-for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
+for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
-      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+    test(`Case 11-${sequence.Id}-${noR1orR2AttachmentPointReplaceMonomer.Id}.
+      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2AttachmentPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 11
         Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in edit mode
@@ -1234,19 +1245,19 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
-        noR1orR2ConnectionPointReplaceMonomer,
+        noR1orR2AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.Center,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1orR2ConnectionPointReplaceMonomer,
+        noR1orR2AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.Center,
       );
@@ -1254,10 +1265,10 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
   }
 }
 
-for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
-      Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+    test(`Case 12-${sequence.Id}-${noR1AttachmentPointReplaceMonomer.Id}.
+      Can't replace last symbol at ${sequence.SequenceName} on ${noR1AttachmentPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 12
         Description: User can't replace last symbol (of every type) of sequence with another monomer (of every type) with no R1 or R2 in edit mode
@@ -1274,19 +1285,19 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceSymbolWithError(
         page,
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence.ReplacementPositions.RightEnd,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
@@ -1315,7 +1326,9 @@ for (const replaceMonomer of replaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1354,7 +1367,9 @@ for (const replaceMonomer of replaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1368,10 +1383,10 @@ for (const replaceMonomer of replaceMonomers) {
   }
 }
 
-for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
-      Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+    test(`Case 15-${sequence.Id}-${noR1AttachmentPointReplaceMonomer.Id}.
+      Can't replace all symbols at ${sequence.SequenceName} on ${noR1AttachmentPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 15
         Description: User can't replace all symbols (of every type) of sequence with another monomer (of every type) with no R1 or R2 in view mode
@@ -1384,28 +1399,23 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
-      // const title = test.info().title;
-      // // If (for some reasons) on random test ErrorMessage doesn't work - use that dirty hack - page reload helps
-      // if (title.includes('Case 15-1-17.')) {
-      //   await pageReload(page);
-      // }
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(
         page,
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
@@ -1413,10 +1423,10 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
   }
 }
 
-for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
-      Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+    test(`Case 16-${sequence.Id}-${noR1AttachmentPointReplaceMonomer.Id}.
+      Can't replace all symbols at ${sequence.SequenceName} on ${noR1AttachmentPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 16
         Description: User can't replace all symbols (of every type) of sequence with another monomer (of every type) with no R1 or R2 in edit mode
@@ -1433,19 +1443,19 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsInEditModeWithError(
         page,
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
       );
 
-      const fullErrorMessage = page.getByText(
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       );
-      await expect(fullErrorMessage).toBeVisible();
 
-      await closeErrorMessage(page);
+      await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
       await checkForKnownBugs(
-        noR1ConnectionPointReplaceMonomer,
+        noR1AttachmentPointReplaceMonomer,
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
@@ -1588,12 +1598,12 @@ const twoSequences: ISequence[] = [
 const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   {
     Id: 11,
-    Monomer: Peptides.Hcy,
+    Monomer: Peptide.Hcy,
     MonomerDescription: 'peptide (Hcy)',
   },
   {
     Id: 12,
-    Monomer: Peptides.Test_6_P,
+    Monomer: Peptide.Test_6_P,
     MonomerDescription: 'peptide w/o natural analog(Test-6-P)',
   },
   {
@@ -1622,22 +1632,22 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   },
   {
     Id: 16,
-    Monomer: Sugars._5formD,
+    Monomer: Sugar._5formD,
     MonomerDescription: 'sugar (5formD)',
   },
   {
     Id: 17,
-    Monomer: Bases.nC6n2G,
+    Monomer: Base.nC6n2G,
     MonomerDescription: 'base (nC6n2G)',
   },
   {
     Id: 18,
-    Monomer: Phosphates.Test_6_Ph,
+    Monomer: Phosphate.Test_6_Ph,
     MonomerDescription: 'phosphate (Test-6-Ph)',
   },
   {
     Id: 19,
-    Monomer: Nucleotides.AmMC6T,
+    Monomer: Nucleotide.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
@@ -1676,7 +1686,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1719,7 +1731,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1762,7 +1776,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await moveMouseAway(page);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1803,7 +1819,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1843,7 +1861,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1883,7 +1903,9 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -1922,23 +1944,22 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
   await openFileAndAddToCanvasMacro(page, sequence.FileName);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await getSymbolLocator(page, {
     nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -1976,12 +1997,14 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
   await openFileAndAddToCanvasMacro(page, sequence.FileName);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await page.keyboard.down('Shift');
   await getSymbolLocator(page, {
     nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
@@ -1995,12 +2018,9 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -2036,7 +2056,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2084,7 +2104,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2097,7 +2117,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await checkForKnownBugs(
@@ -2132,7 +2152,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.peptide_Cys_Bn,
-    Monomer: Peptides.Cys_Bn,
+    Monomer: Peptide.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2177,7 +2197,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2221,7 +2241,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2267,7 +2287,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2310,7 +2330,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2358,7 +2378,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
 
   const replaceMonomer: IReplaceMonomer = {
     Id: <number>monomerIDs.preset_C,
-    Monomer: Presets.C,
+    Monomer: Preset.C,
     MonomerDescription: 'preset (C)',
   };
 

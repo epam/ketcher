@@ -26,13 +26,7 @@ import {
   convertToRaw,
   getDefaultKeyBinding,
 } from 'draft-js';
-import React, {
-  useCallback,
-  useState,
-  useRef,
-  MutableRefObject,
-  useEffect,
-} from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 
 import { Dialog } from '../../../components';
 import { DialogParams } from '../../../../../../components/Dialog/Dialog';
@@ -153,10 +147,18 @@ const Text = (props: TextProps) => {
     },
   };
 
-  const refEditor = useRef() as MutableRefObject<Editor>;
+  const refEditor = useRef<Editor | null>(null);
   const setFocusInEditor = useCallback(() => {
-    refEditor.current.focus();
+    refEditor.current?.focus();
+    refEditor.current?.editor?.setAttribute('data-testid', 'text-editor');
   }, [refEditor]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setFocusInEditor();
+    }
+  };
 
   // set focut on component mount
   useEffect(() => {
@@ -174,7 +176,14 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div className={classes.controlPanel} onClick={setFocusInEditor}>
+      <div
+        className={classes.controlPanel}
+        onClick={setFocusInEditor}
+        onKeyDown={handleKeyDown}
+        role="toolbar"
+        tabIndex={0}
+        aria-label="Text formatting toolbar"
+      >
         {buttons.map((button) => {
           return (
             <TextButton
@@ -210,4 +219,4 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store) => ({ formState: (store as any).modal }))(Text);
+export default connect((store: any) => ({ formState: store.modal }))(Text);

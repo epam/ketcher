@@ -243,6 +243,7 @@
         "id": "dN___D-Asparagine",
         "fullName": "D-Asparagine",
         "alias": "dN",
+        "aliasHELM": "dN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -271,6 +272,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "N"
     },

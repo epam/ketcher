@@ -15,7 +15,14 @@
  ***************************************************************************/
 
 import { Provider } from 'react-redux';
-import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  PointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  RefObject,
+} from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -87,6 +94,7 @@ import {
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
+import { useMacromoleculesHotkeys } from './hooks/useMacromoleculesHotkeys';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
@@ -106,6 +114,7 @@ import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 import { RulerArea } from 'components/Ruler/RulerArea';
 import { DragGhost } from 'components/DragGhost/DragGhost';
+import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 
 import './theme.less';
 
@@ -116,6 +125,7 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
   onInit?: (editor: CoreEditor) => void;
 }
 
@@ -130,8 +140,9 @@ function EditorContainer({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
-}: EditorContainerProps) {
+}: Readonly<EditorContainerProps>) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -141,14 +152,16 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  store.dispatch(initKetcherId(ketcherId));
+  useEffect(() => {
+    store.dispatch(initKetcherId(ketcherId));
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <RootSizeProvider
-          rootRef={rootElRef}
+          rootRef={rootElRef as RefObject<HTMLDivElement>}
           isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
@@ -157,6 +170,7 @@ function EditorContainer({
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              monomersLibraryReplace={monomersLibraryReplace}
               onInit={onInit}
             />
           </EditorWrapper>
@@ -170,8 +184,9 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  monomersLibraryReplace,
   onInit,
-}: EditorProps) {
+}: Readonly<EditorProps>) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
@@ -196,6 +211,7 @@ function Editor({
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
+        monomersLibraryReplace,
         onInit,
       }),
     );
@@ -206,6 +222,7 @@ function Editor({
   }, [dispatch]);
 
   useSetRnaPresets();
+  useMacromoleculesHotkeys();
 
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
@@ -313,7 +330,7 @@ function Editor({
     <>
       <Layout>
         <Layout.Top
-          shortened={isMonomerLibraryHidden}
+          shortened={!isMonomerLibraryHidden}
           data-testid="top-toolbar"
         >
           <TopMenuComponent />
@@ -330,6 +347,8 @@ function Editor({
             >
               {togglerComponent}
             </TogglerComponentWrapper>
+            <VerticalDivider />
+            <ButtonsComponents />
             <FullscreenButton />
             <VerticalDivider />
             <ZoomControls />
@@ -346,6 +365,7 @@ function Editor({
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            data-canvasmode="macromolecules-mode"
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
@@ -366,7 +386,7 @@ function Editor({
               <SequenceStartArrow />
               <ArrowMarker />
             </defs>
-            <g className="drawn-structures" />
+            <g className="drawn-structures" data-testid="drawn-structures" />
             {isHandToolSelected && (
               <rect
                 x={0}

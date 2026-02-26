@@ -9,7 +9,7 @@ import {
 } from '../contextMenu.types';
 
 export function MultitailArrowMenuItems(
-  props: MenuItemsProps<MultitailArrowContextMenuProps>,
+  props: Readonly<MenuItemsProps<MultitailArrowContextMenuProps>>,
 ) {
   const { addTail, isAddTailDisabled } = useMultitailArrowTailsAdd();
   const { removeTail, removeTailHidden } = useMultitailArrowTailsRemove();

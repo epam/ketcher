@@ -33,7 +33,7 @@
 
 **Ketcher molecules mode** consists of the following elements:
 
-<img src=images/Ketcher-Micro-Whole-Canvas.png width = "1000"/>
+<img src=images/Ketcher-Micro-Whole-Canvas-3.7..png width = "1000"/>
 
 **Note**: Depending on the screen size, some tools on the _Tool palette_ can be displayed in expanded or collapsed forms.
 
@@ -42,10 +42,10 @@ Using the _Tool palette_, you can:
 - Delete any element of the drawing (atom or bond) by clicking on it with the _Erase tool_;
 - Delete the entire molecule or its fragment using the _Lasso_, _Rectangle_, or _Fragment selection tool_ and the _Erase tool_;
 - Draw special structures (see the following sections);
-- Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options ![image]<img src=images/3_lasso_menu.png width = "100"/>):
+- Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options <img src=images/3_lasso_menu.png width = "100"/>):
   - To select **one atom or bond**, click _Lasso_ (1) or _Rectangle Selection tool_ (2), and then click the atom or bond;
   - To select the **entire structure**:
-      - Select the _Fragment Selection tool_ (3) and then click the object;
+      - Select the _Structure Selection tool_ (3) and then click the object;
       - Select the _Lasso_ or _Rectangle Selection tool_, and then drag the mouse to select the object;
       -`Ctrl-click`with the _Lasso_ or _Rectangle Selection tool_.
   - To select **multiple atoms, bonds, structures, or other objects**, do one of the following:
@@ -128,7 +128,7 @@ To draw/edit atoms you can:
 
 - Click on the <img src=images/14.png width = "35"/> button to use the _Extended table_ and select a corresponding _Generic group_ or _Special Node_;
 
-<img src=images/14_ext_tablen.png width = "400"/>
+<img src=images/Extended-Table-3.7..png width = "400"/>
 
 ## Drawing Bonds
 
@@ -224,14 +224,16 @@ If there are two attachment points on an R-Group member, there must be two corre
 
 To mark S-Groups, use the _S-Group tool_ <img src=images/29_sgroup_icon.png width = "35"/> and the following dialog that appears after selecting a fragment with this tool:
 
-<img src=images/S-Group-Properties-3.0..png width = "250"/>
+<img src=images/S-Group-Properties-3.12..png width = "250"/>
 
 Available S-Group types:
 - _Data_ - an atom, a fragment, a multifragment, a single bond, or a group without the square brackets representation;
 - _Multiple group_ - indicates a number of replications of a fragment or a part of a structure in contracted form;
 - _SRU Polymer_ - the Structural Repeating Unit (SRU) brackets enclose the structural repeating of a polymer. You have three available patterns: head-to-tail (the default), head-to-head, and either/unknown;
+- _Copolymer_ - indicates a polymer made up of different repeating units. There are four subtypes: alternating, block, random, and not specified. Repeat patterns available for SRU polymers are also available for copolymers;
 - _Superatom_ - part of the structure or the whole structure that will be abbreviated to a text label or expanded to see the group chemistry surrounded with square brackets;
-- _Queary component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties.
+- _Query component_ - a pair of square brackets enclosing the selected part(s) of the structure or whole structure(s), can be used to support SMARTS query properties;
+- _Nucleotide Component_ - a special kind of superatom S-group used to indicate if a structure is a sugar, a base, or a phosphate.
 
 ### Superatom S-Group
 
@@ -407,7 +409,7 @@ To add a functional group to the canvas and join it to the structure do the foll
    - Select _Single Bond_ tool in the left Ketcher toolbar;
    - Drag bond **from** the connection atom and drop it **to** the Functional Group on the canvas.
 
-<img src = images/FG_chain.gif width = "400"/>
+<img src = images/FG_chain-3.9..gif width = "400"/>
 
 #### Contracted S-group Tooltip
 
@@ -423,11 +425,11 @@ You can also **Remove the Abbreviation** on the group - it will allow you to wor
 
 1. Click on the functional group with right mouse button: 
 
-<img src=images/FG_context_menu.png width = "350">
+<img src=images/Expand-Functional-Group-1-3.8..png width = "350">
 
 2. Select the command from the context menu
 
-<img src=images/FG_contract.gif width = "400"/>
+<img src=images/Expand-Functional-Group-2-3.8..gif width = "400"/>
 
 #### Inability to Change S-group
 
@@ -457,7 +459,7 @@ In the _Stereochemistry tab_ in _Settings_ you can:
 - Choose one of the four color display modes;
 - Enable/disable option when Chiral flag is ignored.
 
-<img src=images/49_sett_stereon.png width = "300"/>
+<img src=images/Ignore-Chilar-Flag-3.7..png width = "300"/>
 
 When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V2000 and MDL V3000 files, as well as the display of labels at stereogenic centers and stereo flags:
 
@@ -473,11 +475,11 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-canvas-3.5..png width = "1000"/>
+<img src=images/Macro-canvas-3.9..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
-<img src=images/Macro-Toolbar-3.4..png width = "1000"/>
+<img src=images/Macro-Toolbar-3.7..png width = "1000"/>
 
 - **Clear Canvas** (1) button to clear the drawing area;
 - **Open…** (2) and **Save As…** (3) buttons to import a drawing from a molecular file or save it to a supported molecular file format;
@@ -491,21 +493,26 @@ You can use the buttons on the main toolbar:
 
 - **Sequence mode typing type switcher** (10) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
 - **Molecules/Macromolecules switcher** (11) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
-- **Fullscreen mode** (12) button allows to initiate displaying Ketcher window in the fullscreen mode;
-- **Zoom panel** (13) displays the current zoom percentage.
+- **Help** button (12) to view Help;
+- **About** button (13) to display version and copyright information of the program;
+- **Fullscreen mode** (14) button allows to initiate displaying Ketcher window in the fullscreen mode;
+- **Zoom panel** (15) displays the current zoom percentage.
 
 The left toolbar consists of the following elements:
 
-<img src=images/Macro-Left-Toolbar-3.0..png width = "50"/>
+<img src=images/Macro-Left-Toolbar-3.8..png width = "50"/>
 
 - **Hand tool** (1) used to adjust the view and move around the canvas;
-- **Rectangle selection tool** (2) used to select elements on the canvas;
+- **Selection tools** (2) used to select elements on the canvas (_Rectange selection tool_ (1), _Lasso selection tool_ (2), and _Fragment selection tool_ (3) are available);
+
+<img src=images/Selection-tools-macro-3.8..png width = "150"/>
+
 - **Eraser** (3) used to delete elements on the canvas (disabled in sequence layout mode);
 - **Bond tool** (4) used to establish bonds (both single covalent (1) and hydrogen (2)) between elements on canvas in snake and flex layout modes:
 
 <img src=images/Macro-Bonds-3.0..png width = "100"/>
 
-Below the main toolbar a handle and the input feild are visible:
+Below the main toolbar a handle and the input field are visible:
 
 <img src=images/Ruler-Handle-3.5..png width = "50"/>
 
@@ -513,9 +520,9 @@ When hovered, the ruler is visible – it can be used to change the number of mo
 
 <img src=images/Ruler-Hover-3.5..png width = "800"/>
 
-<img src=images/Ruler-Snake-3.5..gif width = "500"/>
+<img src=images/Ruler-Snake-3.7..gif width = "500"/>
 
-<img src=images/Ruler-Sequence-3.5..gif width = "500"/>
+<img src=images/Ruler-Sequence-3.7..gif width = "500"/>
 
 Different numbers for monomers in a line can be set in different layout modes. The numbers are saved in browser cache, and will be applied upon opening Ketcher again.
 
@@ -527,28 +534,28 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.3..png width = "800"/>
+<img src=images/Library-Tabs-3.9..png width = "800"/>
 
 **Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
 
-<img src=images/Library-Search-3.3..png width = "600"/>
+<img src=images/Library-Search-3.8..png width = "600"/>
 
 Depending on the size of the Ketcher window, the library might have a slightly different apperance to fit more information into a smaller space:
 
-<img src=images/Compacted-Library-3.3..png width = "400"/>
+<img src=images/Compacted-Library-3.8..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
-In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, and the IDT alias(es) (if the monomer has IDT alias(es)):
+In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, HELM alias, modification type(s), AxoLabs alias(es), and the IDT alias(es) (if the monomer has HELM alias, modification type(s), AxoLabs and IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.3..png width = "600"/>
+<img src=images/Monomer-Preview-3.10..png width = "600"/>
 
-In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as IDT alias(es) (if the preset has IDT alias(es)):
+In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as AxoLabs and IDT alias(es) (if the preset has AxoLabs and IDT alias(es)):
 
-<img src=images/Preset-Preview-3.0..png width = "200"/>
+<img src=images/Preset-Preview-3.8..png width = "200"/>
 
 In case of an ambiguous monomer, names of monomers making up that ambiguous monomer will be shown, as well as a type of ambiguous monomer (alternatives or mixed):
 
-<img src=images/Ambiguous-Preview-3.0..png width = "125"/>
+<img src=images/Ambiguous-Preview-3.7..png width = "125"/>
 
 ### RNA Builder
 
@@ -558,11 +565,11 @@ RNA builder can be found in the RNA section of the library. It can be used to cr
 
 To create a preset either click on the downwards pointing arrow to open RNA Builder or on _New Preset_ in the Presets section of the library:
 
-<img src=images/Create-Preset-3.3..png width = "200"/>
+<img src=images/Create-Preset-3.8..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will open appropriate sections of the library where monomers can be picked. Library search is also available while RNA builder is active. 
 
-<img src=images/Create-Preset-2-3.3..png width = "200"/>
+<img src=images/Create-Preset-2-3.8..png width = "200"/>
 
 Name of the preset can be changed from the default form that is made up from symbols of the components in the format sugar(base)phosphate.
 
@@ -574,7 +581,7 @@ Clicking on _Add to Presets_ will save the preset and add it to the Presets sect
 
 Right clicking on selected presets in sequence mode gives the option to _Modify in RNA Builder..._
 
-<img src=images/Modify-in-RNA-Builder-3.3..png width = "200"/>
+<img src=images/Modify-in-RNA-Builder-3.6..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-2-3.0..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will again open appropriate sections of the library so that selected nucleotides can be conveniently modified.
@@ -586,7 +593,58 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 ### Adding Custom Monomers to the Library
 
-New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/6247-update-the-help-document/README.md))
+#### Monomer Creation Wizard
+
+A chemical structure can be loaded into the monomer creation wizard in molecules mode, after a selection is made, and the _Create a monomer_ button on the left toolbar is clicked:
+
+<img src=images/Monomer-Creation-Wizard-3.9..png width = "450"/>
+<img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
+<img src=images/Monomer-Creation-Wizard-2-3.11..png width = "450"/>
+
+The selected structure can contain bonds to non-selected parts of the structure and/or R-groups. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
+
+Using the `Attributes` panel, the user is able to define following monomer properties:
+- Monomer type (amino acid, sugar, base, phosphate, nucleotide or CHEM);
+- Monomer symbol (used on library cards, appears on canvas, and is used during HELM export if a different HELM alias is not specified);
+- Monomer name (appears on monomer preview);
+- Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides);
+- Monomer modification type (optional property used for modifying amino acids);
+- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids).
+
+<img src=images/Monomer-Creation-Wizard-3-3.11..png width = "450"/>
+
+User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by switching between the atoms:
+
+<img src=images/Monomer-Creation-Wizard-4-3.9..png width = "200"/>
+
+New attachment points can be added by right-clicking on atoms and selecting _Mark as a leaving group_:
+
+<img src=images/Monomer-Creation-Wizard-5-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-6-3.9..png width = "200"/>
+
+or _Mark as a connection point_:
+
+<img src=images/Monomer-Creation-Wizard-7-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-8-3.9..png width = "200"/>
+
+The Attachment points section of the _Attributes_ panel allows the users to delete an already set attachment point, change the R-number, or change the leaving group atom(s):
+
+<img src=images/Monomer-Creation-Wizard-9-3.11..png width = "450"/>
+
+After _Submit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an appropriate shape and colour) in macromolecules mode, and that monomer in the library:
+
+<img src=images/Monomer-Creation-Wizard-11-3.11..png width = "500"/>
+
+In addition to adding single monomers, users are able to define three monomers (sugar, base, and phosphate) and save a preset containing them:
+
+<img src=images/Monomer-Creation-Wizard-12-3.11..png width = "450"/>
+
+Nucleotide components are defined by selecting their atoms and marking them as base, sugar, and phosphate in appropriate tabs:
+<img src=images/Monomer-Creation-Wizard-13-3.11..png width = "450"/>
+
+#### Monomer Addition Through API
+
+New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/master/README.md))
 
 ## Sequence Mode
 
@@ -614,7 +672,7 @@ In addition to typing and pasting text or formats who always result in natural m
 
 Already existing monomers can also be replaced by selecting them and clicking on a library card. Nuclotides can be modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above), and amino acids can be modified by choosing an appropriate modification from the right-click drop-down menu:
 
-<img src=images/Modify-AAs-Sequence-3.5..png width = "500"/>
+<img src=images/Modify-AAs-Sequence-3.6..png width = "500"/>
 
 ## Snake and Flex Modes
 
@@ -626,11 +684,11 @@ In sequence mode:
 
 In snake/flex mode:
 
-<img src=images/Snake-and-Flex-2-3.0..png width = "300"/>
+<img src=images/Snake-and-Flex-2-3.8..png width = "300"/>
 
 Different shapes of monomers indicate different monomer types:
 
-<img src=images/Snake-and-Flex-3-3.0..png width = "500"/>
+<img src=images/Snake-and-Flex-3-3.8..png width = "500"/>
 
 - **Hexagons** (1) represent amino acids; different natural analogues are coloured differently - acidic ones with shades of red, basic ones with shades of blue, polar neutral ones with shades of purple, and non-polar ones with shades of yellow and green;
 - **White boxes with a black outline** (2) represent CHEMs;
@@ -638,11 +696,24 @@ Different shapes of monomers indicate different monomer types:
 - **Rhombuses** (4) represent bases; purines are shades of gray and pyrimidines are yellow (C), light orange (T), or dark purple (U);
 - **Coral circles** (5) represent phosphates;
 - **Pentagons** (6) represent unsplit nucleotides; logic for the colouring is the same as for bases;
-- **Dark rounded squares** (7) represent unresolved IDT nucleotides (see section _Working with files_).
+- **Dark rounded squares** (7) represent unresolved IDT or AxoLabs nucleotides (see section _Working with files_).
 
 Modifications are also noted for amino acids, sugars, bases and phosphates using a banner over the monomer symbol:
 
-<img src=images/Snake-and-Flex-4-3.0..png width = "500"/>
+<img src=images/Snake-and-Flex-4-3.8..png width = "500"/>
+
+Monomers/presets/structures can be added to snake and flex modes by:
+- Opening them from a file;
+- Pasting them on the canvas;
+- Adding them from the library though drag and drop:
+
+<img src=images/Drag-and-drop-3.8..gif width = "500"/>
+
+- Using the _arrow icon_ on the monomer/preset library card:
+
+<img src=images/Autochain-3.8..gif width = "500"/>
+
+**Note**: If the _arrow icon_ is clicked while a selection on canvas exists, the new monomer/preset will be added with a bond to the selected structure. If no selection exists, the new element will be added near the last added structure on canvas.
 
 ### Establishing Bonds
 
@@ -666,7 +737,7 @@ Covalent bonds can be **created** by connecting monomers with the _Bond tool_ ei
 
 <img src=images/Center-to-Center-3.0..gif width = "400"/>
 
-If a default bond cannot be established a _Select Connection Points_ dialog will open. Default bonds are:
+If a default bond cannot be established a _Select Attachment Points_ dialog will open. Default bonds are:
 - R1-R2 between amino acids;
 - R1-R2 between sugars and phosphates;
 - R3-R1 between sugars and bases;
@@ -679,39 +750,49 @@ _Select Connection Point_ dialog contains structures of both monomers and allows
 <img src=images/Select-Connection-Points-3.0..gif width = "400"/>
 <img src=images/Select-Connectio-Points-2-3.0..png width = "350"/>
 
-Covalent bonds can be **eddited** by choosing _Edit Connection Points..._ from the right-click menu. _Edit Connection Points..._ allows the user to change the attachment points and reestablish the bond.
+Covalent bonds can be **eddited** by choosing _Edit Attachment Points..._ from the right-click menu. _Edit Attachment Points..._ allows the user to change the attachment points and reestablish the bond.
 
-<img src=images/Edit-CP-3.0..png width = "250"/>
+<img src=images/Edit-CP-3.6..png width = "250"/>
 <img src=images/Edit-CP-2-3.0..png width = "350"/>
 
 #### Hydrogen Bonds
 
 Hydrogen bonds can only be **created** between monomer centers as they do not require attachment points. 
 
-<img src=images/H-Bond-3.0..gif width = "150"/>
+<img src=images/H-Bond-3.8..gif width = "150"/>
 
-Bond preview and _Edit Connection Points..._ dialog are not available for hydrogen bonds.
+Bond preview and _Edit Attachment Points..._ dialog are not available for hydrogen bonds.
 
 ### Monomer modification and replacement
 
 Similarely to sequence layout mode, amino acids in snake and flex modes can be modified from the context menu:
 
-<img src=images/Modify-AAs-Snake-3.5..png width = "500"/>
+<img src=images/Modify-AAs-Snake-3.6..png width = "500"/>
 
 ### Snake and Flex Modes Differences
 
 There are two differences between snake and flex modes:
 1. **Different bond appearance** - all bonds in flex mode (left) are straight lines connecting monomer centers whereas in snake mode (right) some bonds are "snake-like" bonds with joints that do not overlap with other monomers:
 
-<img src=images/Snake-Flex-Diff-3.0..png width = "500"/>
+<img src=images/Snake-Flex-Diff-3.8..png width = "500"/>
 
-2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers on canvas get layouted; when flex mode is entered, no layout is applied.
+2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers and small molecules on canvas get layouted; when flex mode is entered, no layout is applied.
 
 ### Custom Chain Geometry
 
+#### Arrangement of monomers in a ring 
+
+After a selection of a circular structure is made, in _Flex layout mode_, a new option in the context menu and on the top toolbar exists: _Arrange as a Ring_:
+
+<img src=images/Arrange-as-ring-3.10..png width = "500"/>
+
+When the option is chosen, the selected monomers get arranged in a regular n-agon where the monomers occupy the vertices:
+
+<img src=images/Arrange-as-ring-2-3.10..png width = "200"/>
+
 #### Monomer Snapping
 
-In flex layout mode, monomers connected via bonds can be snapped in relation to each other every thirty degrees with an additional snapping area at one bond lenght:
+In flex layout mode, monomers or groups of monomers connected via bonds can be snapped in relation to each other every thirty degrees with an additional snapping area at one bond lenght:
 
 <img src=images/Snapp-To-Angle-3.2..gif width = "500"/>
 
@@ -729,13 +810,13 @@ Antisense chains can be created in all layout modes from a right-click drop-down
 
 Creation of an RNA antisense strand in sequence layout mode from the right-click drop-down menu:
 
-<img src=images/Create-AS-In-Sequence-1-3.3..png width = "300"/>
+<img src=images/Create-AS-In-Sequence-1-3.6..png width = "300"/>
 <img src=images/Create-AS-In-Sequence-2-3.2..png width = "125"/>
 
 Creation of a DNA antisense strand in flex layout mode using the _Create Antisense Strand_ icon:
 
-<img src=images/Create-AS-In-Flex-1-3.3..png width = "300"/>
-<img src=images/Create-AS-In-Flex-2-3.2..png width = "300"/>
+<img src=images/Create-AS-In-Flex-1-3.8..png width = "300"/>
+<img src=images/Create-AS-In-Flex-2-3.8..png width = "300"/>
 
 ### Working with Antisense Chains in Sequence Layout Mode
 
@@ -743,7 +824,7 @@ In sequence layout mode, a new symbol can be encountered when dealing with doubl
 
 In flex layout mode:
 
-<img src=images/Buldge-Loop-In-Flex-3.2.png width = "400"/>
+<img src=images/Buldge-Loop-In-Flex-3.8..png width = "400"/>
 
 In sequence layout mode:
 
@@ -751,12 +832,12 @@ In sequence layout mode:
 
 Hydrogen bond establishment/deletion is available in the right-click drop-down menu. When deleting, all hydrogen bonds that the selected monomers participate in will be removed:
 
-<img src=images/Delete-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Delete-H-Bonds-1-3.6..png width = "250"/>
 <img src=images/Delete-H-Bonds-2-3.2..png width = "125"/>
 
 When establishing, hydrogen bonds will be established with the monomers represented on the other side of the double-stranded sequence:
 
-<img src=images/Establish-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Establish-H-Bonds-1-3.6..png width = "250"/>
 <img src=images/Establish-H-Bonds-2-3.2..png width = "125"/>
 
 Depending on if the sync/non-sync toggle on the main toolbar is on or off, editing of the double-stranded sequence will happen differently.
@@ -788,13 +869,13 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
      - *Hydrophobicity* - Represented as a graph with the x-axis signifying amino-acid count, and the y-axis the hydrophobicity score of the natural analogue; The method used is from _Black S.D. and Mould D.R. (1991)_;
      - *Amino Acid Count* - Represents the count of every amino acid with the same natural analogue.
 
-<img src=images/Calculate-Properties-3.5..png width = "800"/>
+<img src=images/Calculate-Properties-3.7..png width = "800"/>
 
 - Nucleic acid specific properties are:
      - *Melting temperature* - Calculated only for double stranded sequences, and only taking natural analogues into account; The user is able to modify the variables of oligonucleotide concentration and unipositive ion concentration; Method from _Khandelwal G. and Bhyravabhotla J. (2010)_;
      - *Nucleotide count* - Represents the count of every base making up a nucleotide/nucleozide.
  
-<img src=images/Calculate-Properties-2-3.5..png width = "800"/>
+<img src=images/Calculate-Properties-2-3.8..png width = "800"/>
 
 The *Calculate Properties* window is available in all modes.
 
@@ -850,7 +931,7 @@ Expanded monomers behave like S-groups.
 
 Hovering over expanded monomers highlights the attachment atoms in blue and the leaving group atoms in yellow:
 
-<img src=images/Expand-Monomer-3-3.4..png width = "250"/>
+<img src=images/Expand-Monomer-3-3.8..png width = "250"/>
 
 # Working with Files
 
@@ -881,10 +962,11 @@ In **macromolecules mode**, the supported file formats are:
 - Sequence (3-letter code);
 - FASTA;
 - IDT*;
+- AxoLabs*,
 - SVG Document;
 - HELM;
 
-* _IDT is a vendor of oligonucleotides where modifications are indicated in their own format._
+* _IDT and AxoLabs are vendors of oligonucleotides where modifications are indicated in their own formats._
 
 Structures can be opened using the _Open..._ button on the main toolbars of both modes:
 
@@ -892,7 +974,7 @@ Structures can be opened using the _Open..._ button on the main toolbars of both
 
 - _Paste From Clipboard_ allows pasting of the file contents (for both modes) and selecting of the format (only for macromolecules mode - in molecules mode the recondition of the format is possible unambiguously);
 
-<img src=images/Open-Structure-Macro-2-3.0..png width = "350"/>
+<img src=images/Open-Structure-Macro-2-3.10..png width = "350"/>
 
 - _Open from File_ allows browsing for a file. After the file is selected editable file contents are visible before the structure is added to the canvas;
 
@@ -926,7 +1008,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `Mod+x`              | Cut                |
 | `Mod+c`              | Copy               |
 | `Mod+Shift+f`        | Copy Image         |
-| `Mod+m`              | Copy as MOL        |
+| `Mod+Shift+m`        | Copy as MOL        |
 | `Mod+Shift+k`        | Copy as KET        |
 | `Mod+v`              | Paste              |
 | `Mod+a`              | Select All         |
@@ -954,7 +1036,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | Shortcut             | Action                                                                             |
 | -------------------- | ---------------------------------------------------------------------------------- |
 | `Mod+h`              | Hand tool                                                                          |
-| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection           |
+| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Structure Selection, Fragment Selection           |
 | `Delete, Backspace`  | Erase                                                                              |
 | `Alt+e`              | Stereochemistry                                                                    |
 | `+`                  | Charge Plus                                                                        |
@@ -971,6 +1053,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `4`                  | Aromatic Bond                                                                      |
 | `0`                  | Any Bond                                                                           |
 | `Alt+t`              | Add text                                                                           |
+| `Mod+M`              | Open the _Monomer Creation Wizard_                                                 |
 
 **Atoms**
 | Shortcut  | Action                                 |

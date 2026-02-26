@@ -27,6 +27,7 @@ import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
+import { SELECT_SUBMENU_ID } from 'components/menu/constants';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -39,6 +40,13 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.microMol]: 10 ** 6,
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
+
+interface AppMeta {
+  buildDate: string;
+  indigoVersion: string;
+  indigoMachine: string;
+  version: string;
+}
 
 interface EditorState {
   ketcherId: string;
@@ -56,6 +64,8 @@ interface EditorState {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
   unipositiveIonsValue: number;
   oligonucleotidesValue: number;
+  app: AppMeta;
+  selectedMenuGroupItems: Record<string, string>;
 }
 
 const initialState: EditorState = {
@@ -78,6 +88,13 @@ const initialState: EditorState = {
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
+  app: {
+    buildDate: process.env.BUILD_DATE || '',
+    indigoVersion: process.env.INDIGO_VERSION || '',
+    indigoMachine: process.env.INDIGO_MACHINE || '',
+    version: process.env.VERSION || '',
+  },
+  selectedMenuGroupItems: {},
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -109,6 +126,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
+        monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
       }>,
     ) => {
@@ -116,6 +134,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
+        monomersLibraryReplace: action.payload.monomersLibraryReplace,
       });
 
       // TODO: Figure out proper typing here and below
@@ -183,6 +202,18 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
+    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
+      state.app = action.payload;
+    },
+    setSelectedMenuGroupItem: (
+      state,
+      action: PayloadAction<{ groupName: string; activeItemName: string }>,
+    ) => {
+      state.selectedMenuGroupItems = {
+        ...state.selectedMenuGroupItems,
+        [action.payload.groupName]: action.payload.activeItemName,
+      };
+    },
   },
 });
 
@@ -205,7 +236,8 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
-  setLibraryItemDrag,
+  setAppMeta,
+  setSelectedMenuGroupItem,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
@@ -274,5 +306,21 @@ export const selectMonomers = (state: RootState) =>
 
 export const selectEditorLineLength = (state: RootState): EditorLineLength =>
   state.editor.editorLineLength;
+
+export const selectAppMeta = (state: RootState): AppMeta => state.editor.app;
+
+export const selectSelectedMenuGroupItemsState = (state: RootState) =>
+  state.editor.selectedMenuGroupItems;
+
+export const selectSelectedMenuGroupItem =
+  (groupItemName: string) => (state: RootState) => {
+    return state.editor.selectedMenuGroupItems[groupItemName];
+  };
+
+export const selectLastSelectedSelectionMenuItem = (state): string => {
+  return (
+    state.editor.selectedMenuGroupItems[SELECT_SUBMENU_ID] || 'select-rectangle'
+  );
+};
 
 export const editorReducer = editorSlice.reducer;

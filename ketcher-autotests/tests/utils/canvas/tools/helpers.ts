@@ -1,61 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { SequenceType, waitForRender } from '@utils';
+import { takeEditorScreenshot } from '../helpers';
+import { waitForRender } from '../../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-
-export async function openLayoutModeMenu(page: Page) {
-  const modeSelectorButton = page.getByTestId('layout-mode');
-  await modeSelectorButton.click();
-}
-
-export async function selectSnakeLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const snakeModeButton = page.getByTestId('snake-layout-mode').first();
-
-  await snakeModeButton.waitFor({ state: 'visible' });
-  await snakeModeButton.click();
-}
-
-export async function selectSequenceLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const sequenceModeButton = page.getByTestId('sequence-layout-mode').first();
-
-  await sequenceModeButton.waitFor({ state: 'visible' });
-  await sequenceModeButton.click();
-}
-
-export async function switchSequenceEnteringType(
-  page: Page,
-  sequenceEnteringType: SequenceType,
-) {
-  await page.getByTestId('sequence-type-dropdown').click();
-  await page.getByRole('option').getByText(sequenceEnteringType).click();
-}
-
-export async function switchSequenceEnteringButtonType(
-  page: Page,
-  sequenceEnteringType: SequenceType,
-) {
-  await page.getByTestId(`${sequenceEnteringType}Btn`).click();
-}
-
-export async function selectFlexLayoutModeTool(page: Page) {
-  await openLayoutModeMenu(page);
-  const flexModeButton = page.getByTestId('flex-layout-mode').first();
-
-  await flexModeButton.waitFor({ state: 'visible' });
-  await flexModeButton.click();
-}
-
-export async function selectImageTool(page: Page) {
-  const bondToolButton = page.getByTestId('images');
-  await bondToolButton.click();
-}
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 export async function selectRectangleArea(
   page: Page,
@@ -64,18 +16,11 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);
   await page.mouse.up();
-}
-
-export async function selectButtonById(buttonId: 'OK', page: Page) {
-  const element = page.getByTestId(buttonId);
-  await element.click();
 }
 
 export async function saveStructureWithReaction(
@@ -87,18 +32,6 @@ export async function saveStructureWithReaction(
     await SaveStructureDialog(page).chooseFileFormat(format);
   }
   await SaveStructureDialog(page).save();
-}
-
-export async function typeAllEnglishAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-}
-
-export async function typeRNADNAAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ATGCU');
-}
-
-export async function typePeptideAlphabet(page: Page) {
-  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function selectWithLasso(
@@ -117,12 +50,39 @@ export async function selectWithLasso(
   });
 }
 
-export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+export async function selectAndDeselectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  const steps = 14;
+  const dx = 1;
+  const dy = 1;
 
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const p of coords) {
+    await page.mouse.move(p.x, p.y, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.move(startX + dx, startY + dy, { steps });
+  for (const p of coords) {
+    await page.mouse.move(p.x + dx, p.y + dy, { steps });
+  }
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+}
+
+export async function saveToTemplates(page: Page, templateName: string) {
   await CommonTopLeftToolbar(page).saveFile();
-  await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill(templateName);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await SaveStructureDialog(page).saveToTemplates();
+  await TemplateEditDialog(page).setMoleculeName(templateName);
+  await TemplateEditDialog(page).save();
 }

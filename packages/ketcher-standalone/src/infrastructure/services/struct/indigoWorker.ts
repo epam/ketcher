@@ -32,7 +32,6 @@ import {
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  IndigoStandalone,
   ExplicitHydrogensCommandData,
   CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
@@ -41,12 +40,24 @@ import {
 // @ts-ignore
 import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
+const normalizeError = (error: unknown): Error => {
+  if (error instanceof Error) return error;
+  if (typeof error === 'string') return new Error(error);
+
+  try {
+    return new Error(JSON.stringify(error));
+  } catch {
+    return new Error(String(error));
+  }
+};
+
 interface IndigoOptions {
   set: (key: string, value: string) => void;
 }
 
 type HandlerType = (
-  indigo: IndigoStandalone,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  indigo: any,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -58,7 +69,8 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  module.then((indigo: IndigoStandalone) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  module.then((indigo: any) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options || {});
     let msg: OutputMessage<string>;
@@ -71,10 +83,11 @@ function handle(
         inputData,
       };
     } catch (error) {
+      const errorMessage = normalizeError(error).message;
       msg = {
         type: messageType,
         hasError: true,
-        error: error as string,
+        error: errorMessage,
         inputData,
       };
     }

@@ -92,8 +92,9 @@ function ellipse(paper: RaphaelPaper, points: [Vec2, Vec2]) {
 
 function polyline(paper: RaphaelPaper, points: Vec2[]) {
   const path = ['M', points[0].x, points[0].y];
-  for (let i = 1; i < points.length; i++)
-    path.push('L', points[i].x, points[i].y);
+  for (const point of points.slice(1)) {
+    path.push('L', point.x, point.y);
+  }
   return paper.path(path);
 }
 
@@ -1410,11 +1411,49 @@ function bondDative(
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
+
+  if (isNaN(a.x) || isNaN(a.y) || isNaN(b.x) || isNaN(b.y)) {
+    return paper.path('');
+  }
+
+  const directionVec = Vec2.diff(b, a);
+  // if bond is too short, draw a symbol instead
+  if (directionVec.length() < 5) {
+    const angleDegrees =
+      Math.atan2(directionVec.y, directionVec.x) * (180 / Math.PI);
+    return drawArrowSymbol(paper, b, options, angleDegrees);
+  }
+
+  // For normal-length bonds, draw with an arrow
   return paper
     .path(makeStroke(a, b))
     .attr(options.lineattr)
     .attr({ 'arrow-end': 'block-midium-long' })
     .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
+function drawArrowSymbol(
+  paper: RaphaelPaper,
+  point: Vec2,
+  options: RenderOptions,
+  angleDegrees: number,
+) {
+  const baseSize = options.microModeScale * 0.1;
+  const arrowHalfWidth = baseSize / 1.32;
+  const arrowHeight = baseSize * 2.5;
+
+  const arrowBasePath = `M0,0 L${-arrowHeight},${-arrowHalfWidth} L${-arrowHeight},${arrowHalfWidth} Z`;
+
+  const finalPath = svgPath(arrowBasePath)
+    .rotate(angleDegrees, 0, 0)
+    .translate(point.x, point.y)
+    .toString();
+
+  return paper.path(finalPath).attr({
+    ...options.lineattr,
+    'stroke-width': 0,
+    fill: options.lineattr.stroke,
+  });
 }
 
 function reactingCenter(
@@ -1423,8 +1462,13 @@ function reactingCenter(
   options: RenderOptions,
 ) {
   let pathDesc = '';
-  for (let i = 0; i < points.length / 2; ++i) {
-    pathDesc += makeStroke(points[2 * i], points[2 * i + 1]);
+  for (const [index, point] of points.entries()) {
+    if (index % 2 === 0) {
+      const nextPoint = points[index + 1];
+      if (nextPoint) {
+        pathDesc += makeStroke(point, nextPoint);
+      }
+    }
   }
   return paper.path(pathDesc).attr(options.lineattr);
 }
@@ -1486,34 +1530,19 @@ function bracket(
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
-  isBracketContainAttachment = false,
 ) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
   const halfBracketHeight = 0.5;
-  let bracketPoint0, bracketPoint1;
-  if (isBracketContainAttachment) {
-    const longHalfBracketHeight = -0.8;
-    const shortHalfBracketHeight = 0.2;
-    bracketPoint0 = bondCenter.addScaled(
-      bracketDirection,
-      shortHalfBracketHeight * bracketHeight,
-    );
-    bracketPoint1 = bondCenter.addScaled(
-      bracketDirection,
-      longHalfBracketHeight * bracketHeight,
-    );
-  } else {
-    bracketPoint0 = bondCenter.addScaled(
-      bracketDirection,
-      -halfBracketHeight * bracketHeight,
-    );
-    bracketPoint1 = bondCenter.addScaled(
-      bracketDirection,
-      halfBracketHeight * bracketHeight,
-    );
-  }
+  const bracketPoint0 = bondCenter.addScaled(
+    bracketDirection,
+    -halfBracketHeight * bracketHeight,
+  );
+  const bracketPoint1 = bondCenter.addScaled(
+    bracketDirection,
+    halfBracketHeight * bracketHeight,
+  );
   const bracketArc0 = bracketPoint0.addScaled(
     bracketAngleDirection,
     -bracketWidth,
@@ -1561,8 +1590,8 @@ function selectionPolygon(
 ) {
   const v = r[r.length - 1];
   let pstr = 'M' + tfx(v.x) + ',' + tfx(v.y);
-  for (let i = 0; i < r.length; ++i) {
-    pstr += 'L' + tfx(r[i].x) + ',' + tfx(r[i].y);
+  for (const point of r) {
+    pstr += 'L' + tfx(point.x) + ',' + tfx(point.y);
   }
   return paper.path(pstr).attr(options.lassoStyle);
 }
@@ -1677,7 +1706,7 @@ function getSvgCurveShapeAttachmentPoint(
 ): string {
   // declared here https://github.com/epam/ketcher/issues/2165
   // this path has (0,0) in the position of attachment point atom
-  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.8 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
+  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
   const attachmentPointSvgPathSize = 39.8;
 
   const shapeScale = basicSize / attachmentPointSvgPathSize;

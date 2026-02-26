@@ -1,21 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  moveMouseAway,
   pasteFromClipboardByKeyboard,
-  waitForRender,
-} from '..';
+} from './helpers';
+import { moveMouseAway } from '../moveMouseAway';
+import { waitForRender } from '../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 export async function cutAndPaste(page: Page) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await selectAllStructuresOnCanvas(page);
@@ -24,9 +21,7 @@ export async function cutAndPaste(page: Page) {
 }
 
 export async function copyAndPaste(page: Page) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);
@@ -43,10 +38,8 @@ export async function selectAllStructuresOnCanvas(
       }
     | undefined,
 ) {
-  const modifier = getControlModifier();
-
   await waitForRender(
     page,
-    async () => await page.keyboard.press(`${modifier}+KeyA`, options),
+    async () => await page.keyboard.press(`ControlOrMeta+KeyA`, options),
   );
 }

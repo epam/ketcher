@@ -266,6 +266,7 @@
         "id": "M___Methionine",
         "fullName": "Methionine",
         "alias": "M",
+        "aliasHELM": "M",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -1,27 +1,15 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { moveMouseToTheMiddleOfTheScreen, waitForRender } from '@utils';
-
-export async function waitForMonomerPreview(page: Page) {
-  await page
-    .getByTestId('polymer-library-preview')
-    .waitFor({ state: 'visible' });
-}
-
-export async function hideMonomerPreview(page: Page) {
-  await page.mouse.move(9999, 9999);
-  await page
-    .getByTestId('polymer-library-preview')
-    .waitFor({ state: 'detached' });
-}
+import { moveMouseToTheMiddleOfTheScreen } from '../clicks';
+import { waitForRender } from '../common/loaders/waitForRender';
 
 export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await waitForRender(page, async () => {
     await page.mouse.wheel(0, zoomLevelDelta);
   });
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
 }
 
 export async function scrollDown(page: Page, scrollDelta: number) {

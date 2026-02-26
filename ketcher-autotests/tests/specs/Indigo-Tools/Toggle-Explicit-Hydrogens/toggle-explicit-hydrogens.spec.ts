@@ -1,19 +1,19 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  screenshotBetweenUndoRedo,
   clickOnCanvas,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +37,11 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -48,10 +52,8 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     Test case: #4128 https://github.com/epam/ketcher/issues/4128
     Description: Adding hydrogens not moves molecules to center of canvas.
     */
-    const x = 200;
-    const y = 200;
-    await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, x, y);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -123,7 +125,7 @@ test.describe('1. Molecules connected ', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/${fileName}`,
       );
-      await clickOnCanvas(page, 200, 200);
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -161,7 +163,7 @@ test.describe('2. Molecules connected ', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/${fileName}`,
       );
-      await clickOnCanvas(page, 200, 200);
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -220,7 +222,7 @@ test.describe('3. Molecules connected ', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/All types of bond with Query feature atom on the canvas/${fileName}`,
       );
-      await clickOnCanvas(page, 200, 200);
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -278,7 +280,7 @@ test.describe('4. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -323,7 +325,7 @@ test.describe('5. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -362,13 +364,9 @@ test.describe('6. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-       await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -416,7 +414,7 @@ test.describe('7. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -453,13 +451,9 @@ test.describe('8. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -491,13 +485,9 @@ test.describe('9. Fold/unfold hydrogens for', () => {
       page,
       `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`,
     );
-    await clickOnCanvas(page, 20, 20);
+    await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
   });
 });
 
@@ -551,7 +541,7 @@ test.describe('10. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -597,13 +587,9 @@ test.describe('11. Fold/unfold hydrogens for', () => {
           page,
           `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         );
-        await clickOnCanvas(page, 20, 20);
+        await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
         await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
         await takeEditorScreenshot(page);
-        /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
       },
     );
   }
@@ -640,13 +626,9 @@ test.describe('12. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -723,12 +705,11 @@ test.describe('13. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-      // await takeEditorScreenshot(page);
     });
   }
 });
@@ -766,13 +747,9 @@ test.describe('14. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -810,13 +787,9 @@ test.describe('15. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -877,7 +850,7 @@ test.describe('16. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
@@ -924,13 +897,9 @@ test.describe('17. Fold/unfold hydrogens for', () => {
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
       );
-      await clickOnCanvas(page, 20, 20);
+      await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });

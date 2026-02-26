@@ -1,57 +1,45 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import path from 'path';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   dragMouseTo,
   takeEditorScreenshot,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  moveOnBond,
-  BondType,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickOnBond,
-  clickOnAtomById,
   clickOnCanvas,
   waitForRender,
   resetZoomLevelToDefault,
-  takeElementScreenshot,
   getCachedBodyCenter,
   ZoomOutByKeyboard,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
-async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
-  await clickOnAtomById(page, atomId);
-}
-
-async function selectExpandedMonomer(
-  page: Page,
-  bondType: number = BondType.SINGLE,
-  bondNumber = 1,
-) {
-  await clickOnBond(page, bondType, bondNumber);
+async function selectExpandedMonomer(page: Page) {
+  await getBondLocator(page, { bondId: 1 }).click({ force: true });
 }
 
 async function expandMonomer(page: Page, locatorText: string) {
@@ -315,7 +303,8 @@ interface IMonomer {
 // });
 
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
-  await moveOnBond(page, BondType.SINGLE, 1);
+  const bondLocator = getBondLocator(page, { bondId: 7 });
+  await bondLocator.hover({ force: true });
   await dragMouseTo(x, y, page);
 }
 
@@ -383,8 +372,9 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 300, 200);
       await moveMouseToTheMiddleOfTheScreen(page);
+
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -425,7 +415,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveExpandedMonomerOnMicro(page, 250, 400);
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
@@ -493,8 +483,7 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
   await takeEditorScreenshot(page);
 
   test.fixme(
-    // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5849 issue(s).`,
   );
 });
@@ -524,7 +513,7 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
 
@@ -554,7 +543,7 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
 
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 });
 
@@ -579,13 +568,13 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   await selectExpandedMonomer(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
   await takeEditorScreenshot(page);
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
 });
@@ -611,12 +600,12 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   await selectExpandedMonomer(page);
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await clickOnCanvas(page, 200, 200);
+  await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
   );
 });
@@ -649,7 +638,7 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -682,7 +671,7 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -715,7 +704,7 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -747,7 +736,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
-    true === true,
+    true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
@@ -790,12 +779,12 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+      force: true,
     });
-    await pressCancelAtEditAbbreviationDialog(page);
+    await expect(EditAbbreviationDialog(page).window).toBeVisible();
+    await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
   }
 });
@@ -875,7 +864,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       const atomToolbar = RightToolbar(page);
 
 //       await atomToolbar.clickAtom(Atom.Bromine);
-//       await clickOnAtomOfExpandedMonomer(page, 1);
+//       await getAtomLocator(page, { atomId: 1 }).click({ force: true });
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
@@ -928,8 +917,10 @@ test(
 
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
-      await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-      await CommonLeftToolbar(page).selectEraseTool();
+      await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+        force: true,
+      });
+      await CommonLeftToolbar(page).erase();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -1007,17 +998,10 @@ test.describe('Check that in preview expanded monomers exported both to PNG in t
         true,
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
-
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
 
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1047,18 +1031,9 @@ test.describe('Check that in preview expanded monomers exported both to SVG in t
         true,
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
-
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1091,20 +1066,12 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
 
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verticalFlipByKeyboard(page);
+      await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1137,20 +1104,12 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
 
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verticalFlipByKeyboard(page);
+      await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1183,22 +1142,15 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
 
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
       const rotationHandle = page.getByTestId('rotation-handle');
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1231,22 +1183,15 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
         `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
       );
 
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
       const rotationHandle = page.getByTestId('rotation-handle');
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-      await SaveStructureDialog(page).cancel();
+      await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1271,18 +1216,9 @@ test.describe('Check that non-expanded monomers exported as their symbols in PNG
        *       2. Open Save dialog and select PNG Image option
        *       3. Take screenshot to witness export preview
        */
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-
-      await takeElementScreenshot(page, saveStructureArea);
-
-      await SaveStructureDialog(page).cancel();
+      await verifyPNGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1308,17 +1244,9 @@ test.describe('Check that non-expanded monomers exported as their symbols in SVG
        *       2. Open Save dialog and select SVG Document option
        *       3. Take screenshot to witness export preview
        */
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySVGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1384,23 +1312,13 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
        *       2. Open Save dialog and select PNG Image option
        *       3. Take screenshot to witness export preview
        */
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(
         page,
         monomerComposition.KETFile,
       );
-
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-
-      await takeElementScreenshot(page, saveStructureArea);
-
-      await SaveStructureDialog(page).cancel();
+      await verifyPNGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1427,7 +1345,6 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
        *       3. Open Save dialog and select SVG Document option
        *       4. Take screenshot to witness export preview
        */
-      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(
         page,
@@ -1435,14 +1352,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
       );
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeElementScreenshot(page, saveStructureArea);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySVGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1529,9 +1439,9 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       );
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await selectAllStructuresOnCanvas(page);
@@ -1587,18 +1497,22 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await ZoomOutByKeyboard(page);
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
-      await clickOnCanvas(page, 0, 0);
+      await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await page.keyboard.press('Alt+V');
+      await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
       await dragMouseTo(950, 150, page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

@@ -68,10 +68,6 @@ export const monomerFactory = (
     Monomer = AmbiguousMonomer;
     MonomerRenderer = AmbiguousMonomerRenderer;
     ketMonomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
-  } else if (monomer.props.unresolved) {
-    Monomer = UnresolvedMonomer;
-    MonomerRenderer = UnresolvedMonomerRenderer;
-    ketMonomerClass = KetMonomerClass.CHEM;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA
@@ -112,6 +108,10 @@ export const monomerFactory = (
     Monomer = RNABase;
     MonomerRenderer = RNABaseRenderer;
     ketMonomerClass = KetMonomerClass.Base;
+  } else if (monomer.props.unresolved) {
+    Monomer = UnresolvedMonomer;
+    MonomerRenderer = UnresolvedMonomerRenderer;
+    ketMonomerClass = KetMonomerClass.CHEM;
   } else {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;

@@ -239,6 +239,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.atoms) {
     selection.atoms.forEach((aid) => {
       const atom = struct.atoms.get(aid);
+      if (!atom) return;
+
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)));
     });
 

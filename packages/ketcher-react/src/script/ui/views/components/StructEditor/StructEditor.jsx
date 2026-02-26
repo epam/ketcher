@@ -21,12 +21,15 @@ import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash/fp';
+import { omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
+import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';
+import { Tooltip } from '../Tooltip';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -79,6 +82,7 @@ class StructEditor extends Component {
       enableCursor: false,
       clientX: 0,
       clientY: 0,
+      tooltip: '',
     };
     this.editorRef = createRef();
     this.logRef = createRef();
@@ -141,7 +145,8 @@ class StructEditor extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor
+      nextState.enableCursor !== this.state.enableCursor ||
+      nextState.tooltip !== this.state.tooltip
     );
   }
 
@@ -194,6 +199,14 @@ class StructEditor extends Component {
       } else {
         el.classList.remove(classes.visible);
       }
+    });
+
+    this.editor.event.tooltip.add((data) => {
+      const message = data ? data.message : undefined;
+
+      this.setState({
+        tooltip: message,
+      });
     });
 
     this.editor.event.cursor.add((csr) => {
@@ -273,52 +286,55 @@ class StructEditor extends Component {
   }
 
   render() {
+    const omittedProps = [
+      'ketcherId',
+      'prevKetcherId',
+      'struct',
+      'tool',
+      'toolOpts',
+      'options',
+      'onInit',
+      'onSelectionChange',
+      'onElementEdit',
+      'onEnhancedStereoEdit',
+      'onQuickEdit',
+      'onBondEdit',
+      'onZoomIn',
+      'onZoomOut',
+      'onZoomChanged',
+      'onRgroupEdit',
+      'onSgroupEdit',
+      'onRemoveFG',
+      'onMessage',
+      'onAromatizeStruct',
+      'onDearomatizeStruct',
+      'onAttachEdit',
+      'onCipChange',
+      'onConfirm',
+      'onShowInfo',
+      'onApiSettings',
+      'showAttachmentPoints',
+      'onUpdateFloatingTools',
+      'onShowMacromoleculesErrorMessage',
+      'serverSettings',
+    ];
+
     const {
       Tag = 'div',
       className,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      ketcherId,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      struct,
       indigoVerification,
-      tool,
-      toolOpts,
-      options,
-      onInit,
-      onSelectionChange,
-      onElementEdit,
-      onEnhancedStereoEdit,
-      onQuickEdit,
-      onBondEdit,
-      onZoomIn,
-      onZoomOut,
-      onZoomChanged,
-      onRgroupEdit,
-      onSgroupEdit,
-      onRemoveFG,
-      onMessage,
-      onAromatizeStruct,
-      onDearomatizeStruct,
-      onAttachEdit,
-      onCipChange,
-      onConfirm,
-      onShowInfo,
-      onApiSettings,
-      showAttachmentPoints = true,
-      onUpdateFloatingTools,
-      onShowMacromoleculesErrorMessage,
-      serverSettings,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
-    } = this.props;
+    } = omit(this.props, omittedProps);
 
-    const { clientX = 0, clientY = 0 } = this.state;
+    const { clientX = 0, clientY = 0, tooltip } = this.state;
+    const lastCursorPosition = this.editor?.lastCursorPosition;
 
     return (
       <Tag
         className={clsx(classes.canvas, className)}
         {...props}
         data-testid="ketcher-canvas"
+        data-canvasmode="molecules-mode"
       >
         <ContextMenuTrigger>
           <div
@@ -352,6 +368,13 @@ class StructEditor extends Component {
         <FloatingToolContainer />
 
         <ContextMenu />
+
+        <MonomerCreationWizard />
+
+        <Tooltip
+          message={tooltip}
+          position={{ x: lastCursorPosition?.x, y: lastCursorPosition?.y }}
+        />
       </Tag>
     );
   }

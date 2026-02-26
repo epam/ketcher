@@ -29,15 +29,16 @@ Object {
         tabindex="-1"
       >
         <div
-          aria-labelledby=":r0:"
+          aria-labelledby="«r0»"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
+          data-testid="openStructureModal"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
           testid="openStructureModal"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
-            id=":r0:"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            id="«r0»"
           >
             <div
               class="css-1uarmuk"
@@ -116,10 +117,11 @@ Object {
                   class="css-uve29d"
                   data-testid="open-from-file-button"
                 >
-                  <div
-                    role="button"
+                  <button
+                    class="css-1mbhme1"
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
                     tabindex="0"
+                    type="button"
                   >
                     <input
                       autocomplete="off"
@@ -156,15 +158,18 @@ Object {
                     >
                       Open from file
                     </p>
-                  </div>
+                  </button>
                 </div>
                 <div
                   class="css-uve29d"
                   data-testid="open-from-image-button"
                 >
-                  <div
-                    role="button"
+                  <button
+                    class="css-1mbhme1"
+                    disabled=""
                     style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
+                    tabindex="-1"
+                    type="button"
                   >
                     <input
                       accept="image/*"
@@ -207,7 +212,7 @@ Object {
                     >
                       Image Recognition service is not available
                     </p>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

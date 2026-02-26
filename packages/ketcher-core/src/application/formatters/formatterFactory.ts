@@ -30,7 +30,7 @@ import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
 
 export class FormatterFactory {
-  #structService: StructService;
+  readonly #structService: StructService;
 
   constructor(structService: StructService) {
     this.#structService = structService;

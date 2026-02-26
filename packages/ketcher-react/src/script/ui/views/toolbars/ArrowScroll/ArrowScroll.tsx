@@ -17,62 +17,83 @@
 import classes from './ArrowScroll.module.less';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useInterval } from '../../../../../hooks';
+import { useRequestAnimationFrame } from '../../../../../hooks';
 
 interface ArrowScrollProps {
   startInView: boolean;
   endInView: boolean;
-  scrollUp: any;
-  scrollDown: any;
+  scrollForward: (dtMs: number) => void;
+  scrollBack: (dtMs: number) => void;
+  isLeftRight?: boolean;
 }
 
 const ArrowScroll = ({
   startInView,
   endInView,
-  scrollUp,
-  scrollDown,
+  scrollForward,
+  scrollBack,
+  isLeftRight,
 }: ArrowScrollProps) => {
-  const [isScrollDown, setScrollDown] = useState(false);
-  const [isScrollUp, setScrollUp] = useState(false);
-  useInterval(scrollDown, isScrollDown ? 100 : null);
-  useInterval(scrollUp, isScrollUp ? 100 : null);
+  const [isScrollDown, setIsScrollDown] = useState(false);
+  const [isScrollUp, setIsScrollUp] = useState(false);
+  useRequestAnimationFrame(isScrollDown, (dt) => scrollForward(dt));
+  useRequestAnimationFrame(isScrollUp, (dt) => scrollBack(dt));
 
   useEffect(() => {
     return () => {
-      setScrollUp(false);
+      setIsScrollUp(false);
     };
   }, [startInView]);
 
   useEffect(() => {
     return () => {
-      setScrollDown(false);
+      setIsScrollDown(false);
     };
   }, [endInView]);
 
   return (
-    <div className={classes.scroll}>
+    <div
+      className={clsx(
+        classes.scroll,
+        isLeftRight ? classes.leftRight : classes.upDown,
+      )}
+    >
       {endInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollDown()}
-          onMouseUp={() => setScrollDown(false)}
-          onMouseDown={() => setScrollDown(true)}
-          className={clsx(classes.button, classes.down)}
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollForward(100);
+          }}
+          onMouseUp={() => setIsScrollDown(false)}
+          onMouseDown={() => setIsScrollDown(true)}
+          className={clsx(
+            classes.button,
+            isLeftRight ? classes.right : classes.down,
+          )}
+          data-testid="arrow-scroll-right-button"
         >
-          ▼
+          {isLeftRight ? '►' : '▼'}
         </button>
       )}
       {startInView ? (
         <></>
       ) : (
         <button
-          onClick={() => scrollUp()}
-          onMouseUp={() => setScrollUp(false)}
-          onMouseDown={() => setScrollUp(true)}
-          className={clsx(classes.button, classes.up)}
+          onClick={(e) => {
+            e.stopPropagation();
+            scrollBack(100);
+          }}
+          onMouseUp={() => setIsScrollUp(false)}
+          onMouseDown={() => setIsScrollUp(true)}
+          className={clsx(
+            classes.button,
+            isLeftRight ? classes.left : classes.up,
+          )}
+          data-testid="arrow-scroll-left-button"
         >
-          ▲
+          {isLeftRight ? '◄' : '▲'}
         </button>
       )}
     </div>

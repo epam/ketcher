@@ -418,6 +418,7 @@
         "id": "meR___N-Methyl-Arginine",
         "fullName": "N-Methyl-Arginine",
         "alias": "meR",
+        "aliasHELM": "meR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -437,6 +438,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "R"
     },

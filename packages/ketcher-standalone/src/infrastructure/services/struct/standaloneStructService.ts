@@ -154,12 +154,19 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.IDT;
       break;
     }
+    case ChemicalMimeType.AXOLABS: {
+      format = SupportedFormat.AXOLABS;
+      break;
+    }
     case ChemicalMimeType.HELM: {
       format = SupportedFormat.HELM;
       break;
     }
     case ChemicalMimeType.RDF:
       format = SupportedFormat.RDF;
+      break;
+    case ChemicalMimeType.MonomerLibrary:
+      format = SupportedFormat.MonomerLibrary;
       break;
     case ChemicalMimeType.UNKNOWN:
     default: {
@@ -171,33 +178,17 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  let mappedProperty: CalculateProps | undefined;
-  switch (property) {
-    case 'gross-formula': {
-      mappedProperty = 'gross';
-      break;
-    }
-    default:
-      mappedProperty = property;
-      break;
+  if (property === 'gross-formula') {
+    return 'gross';
   }
-
-  return mappedProperty;
+  return property;
 }
 
 function mapWarningGroup(property: string) {
-  let mappedProperty: string | undefined;
-  switch (property) {
-    case 'OVERLAP_BOND': {
-      mappedProperty = 'overlapping_bonds';
-      break;
-    }
-    default:
-      mappedProperty = property.toLowerCase();
-      break;
+  if (property === 'OVERLAP_BOND') {
+    return 'overlapping_bonds';
   }
-
-  return mappedProperty;
+  return property.toLowerCase();
 }
 
 const messageTypeToEventMapping: {
@@ -222,7 +213,7 @@ const messageTypeToEventMapping: {
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private worker: Worker;
+  private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
 
@@ -276,7 +267,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(msg.payload || '');
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -285,8 +276,7 @@ class IndigoService implements StructService {
         data: { struct },
       };
 
-      this.EE.removeListener(WorkerEvent.GetInChIKey, action);
-      this.EE.addListener(WorkerEvent.GetInChIKey, action);
+      this.EE.once(WorkerEvent.GetInChIKey, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -305,12 +295,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
-      this.EE.removeListener(WorkerEvent.Info, action);
-      this.EE.addListener(WorkerEvent.Info, action);
+      this.EE.once(WorkerEvent.Info, action);
 
       this.worker.postMessage({ type: Command.Info });
     });
@@ -339,7 +328,7 @@ class IndigoService implements StructService {
             };
             resolve(result);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
@@ -357,7 +346,10 @@ class IndigoService implements StructService {
         'image-resolution': options?.['image-resolution'],
         'input-format': inputFormat,
         'molfile-saving-mode': options?.['molfile-saving-mode'],
+        'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
+        'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
         'sequence-type': options?.['sequence-type'],
+        'output-content-type': options?.['output-content-type'],
         monomerLibrary,
       };
 
@@ -372,8 +364,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Convert, action);
-      this.EE.addListener(WorkerEvent.Convert, action);
+      this.EE.once(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -408,7 +399,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -443,8 +434,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Layout, action);
-      this.EE.addListener(WorkerEvent.Layout, action);
+      this.EE.once(WorkerEvent.Layout, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -464,7 +454,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -480,8 +470,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Clean, action);
-      this.EE.addListener(WorkerEvent.Clean, action);
+      this.EE.once(WorkerEvent.Clean, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -504,7 +493,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -519,8 +508,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Aromatize, action);
-      this.EE.addListener(WorkerEvent.Aromatize, action);
+      this.EE.once(WorkerEvent.Aromatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -543,7 +531,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -558,8 +546,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Dearomatize, action);
-      this.EE.addListener(WorkerEvent.Dearomatize, action);
+      this.EE.once(WorkerEvent.Dearomatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -582,7 +569,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -597,8 +584,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.CalculateCip, action);
-      this.EE.addListener(WorkerEvent.CalculateCip, action);
+      this.EE.once(WorkerEvent.CalculateCip, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -621,7 +607,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -637,8 +623,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Automap, action);
-      this.EE.addListener(WorkerEvent.Automap, action);
+      this.EE.once(WorkerEvent.Automap, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -665,7 +650,7 @@ class IndigoService implements StructService {
           );
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -680,8 +665,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Check, action);
-      this.EE.addListener(WorkerEvent.Check, action);
+      this.EE.once(WorkerEvent.Check, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -712,7 +696,7 @@ class IndigoService implements StructService {
           }, {} as CalculateResult);
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -728,8 +712,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Calculate, action);
-      this.EE.addListener(WorkerEvent.Calculate, action);
+      this.EE.once(WorkerEvent.Calculate, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -755,7 +738,7 @@ class IndigoService implements StructService {
           if (!msg.hasError) {
             resolve(msg.payload);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
@@ -779,6 +762,7 @@ class IndigoService implements StructService {
         'render-stereo-bond-width': restOptions['render-stereo-bond-width'],
         'render-stereo-bond-width-unit':
           restOptions['render-stereo-bond-width-unit'],
+        'render-stereo-style': restOptions['render-stereo-style'],
         'render-hash-spacing': restOptions['render-hash-spacing'],
         'render-hash-spacing-unit': restOptions['render-hash-spacing-unit'],
         'render-output-sheet-width': restOptions['render-output-sheet-width'],
@@ -797,8 +781,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
-      this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action);
+      this.EE.once(WorkerEvent.GenerateImageAsBase64, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -822,7 +805,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -838,8 +821,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
-      this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
+      this.EE.once(WorkerEvent.ExplicitHydrogens, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -858,7 +840,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(JSON.parse(msg.payload));
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -875,8 +857,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.CalculateMacromoleculeProperties);
-      this.EE.addListener(WorkerEvent.CalculateMacromoleculeProperties, action);
+      this.EE.once(WorkerEvent.CalculateMacromoleculeProperties, action);
       this.worker.postMessage(inputMessage);
     });
   }

@@ -1,6 +1,13 @@
 import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
@@ -8,14 +15,9 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  selectFunctionalGroups,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
-  FunctionalGroups,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 
 test.describe('Click Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,7 +36,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -47,12 +49,15 @@ test.describe('Click Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -63,12 +68,15 @@ test.describe('Click Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -90,7 +98,7 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Iodine);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -103,16 +111,18 @@ test.describe('Click Atom on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnCanvas(page, coordinatesWithShift, y);
-    await resetCurrentTool(page);
+    await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

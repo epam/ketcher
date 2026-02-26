@@ -1,6 +1,6 @@
 import { MonomerType } from '@utils/types';
 
-export const FavoriteStarSymbol = '★' as const;
+export const FavoriteStarSymbol = '★';
 
 export enum LibraryTab {
   Favorites = 'FAVORITES-TAB',
@@ -52,6 +52,10 @@ export const monomerLibraryTypeLocation: Record<
 > = {
   [MonomerType.Peptide]: {
     libraryTab: LibraryTab.Peptides,
+  },
+  [MonomerType.Preset]: {
+    libraryTab: LibraryTab.RNA,
+    rnaSection: RNASection.Presets,
   },
   [MonomerType.Sugar]: {
     libraryTab: LibraryTab.RNA,

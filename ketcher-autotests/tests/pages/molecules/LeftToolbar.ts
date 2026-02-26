@@ -4,7 +4,6 @@ import { RGroupType } from '../constants/rGroupSelectionTool/Constants';
 import { ArrowType } from '../constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '../constants/reactionMappingTool/Constants';
 import { ShapeType } from '../constants/shapeSelectionTool/Constants';
-import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   chainButton: Locator;
@@ -13,6 +12,7 @@ type LeftToolbarLocators = {
   chargeMinusButton: Locator;
   sGroupButton: Locator;
   rGroupToolsButton: Locator;
+  createMonomerButton: Locator;
   reactionPlusToolButton: Locator;
   arrowToolsButton: Locator;
   reactionMappingToolsButton: Locator;
@@ -29,6 +29,7 @@ export const LeftToolbar = (page: Page) => {
     chargeMinusButton: page.getByTestId('charge-minus'),
     sGroupButton: page.getByTestId('sgroup'),
     rGroupToolsButton: page.getByTestId('rgroup-drop-down-button'),
+    createMonomerButton: page.getByTestId('create-monomer'),
     reactionPlusToolButton: page.getByTestId('reaction-plus'),
     arrowToolsButton: page.getByTestId('arrows-drop-down-button'),
     reactionMappingToolsButton: page.getByTestId(
@@ -68,7 +69,7 @@ export const LeftToolbar = (page: Page) => {
       try {
         await this.reactionPlusTool();
         await locators.rGroupToolsButton.click({ force: true });
-        await delay(0.1);
+        await page.waitForTimeout(100);
         await locators.rGroupToolsButton.click({ force: true });
         await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {
@@ -85,6 +86,10 @@ export const LeftToolbar = (page: Page) => {
       await page.getByTestId(rGroupType).first().click();
     },
 
+    async createMonomer() {
+      await locators.createMonomerButton.click();
+    },
+
     async reactionPlusTool() {
       await locators.reactionPlusToolButton.click();
     },
@@ -95,7 +100,7 @@ export const LeftToolbar = (page: Page) => {
       try {
         await this.reactionPlusTool();
         await locators.arrowToolsButton.click();
-        await delay(0.1);
+        await page.waitForTimeout(100);
         await locators.arrowToolsButton.click();
         await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {

@@ -1,11 +1,11 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   waitForPageInit,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
 } from '@utils';
 import { copyAndPaste } from '@utils/canvas/selectSelection';
 import {
@@ -54,8 +54,8 @@ test.describe('General Settings', () => {
     );
     await drawBenzeneRing(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, pointX, pointY);
-    await selectUndoByKeyboard(page);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

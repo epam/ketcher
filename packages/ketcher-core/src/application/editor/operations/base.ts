@@ -99,19 +99,21 @@ class BaseOperation {
 
   protected static invalidateLoop(restruct: ReStruct, bondId: number) {
     const bond = restruct.bonds.get(bondId);
-    if (!bond || !bond.b.hb1 || !bond.b.hb2) {
+    if (!bond?.b.hb1 || !bond.b.hb2) {
       return;
     }
 
     const halfBond1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const halfBond2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
-    if (halfBond1 && halfBond1.loop >= 0) {
-      restruct.loopRemove(halfBond1.loop);
+    const halfBond1Loop = halfBond1?.loop;
+    if (halfBond1Loop !== undefined && halfBond1Loop >= 0) {
+      restruct.loopRemove(halfBond1Loop);
     }
 
-    if (halfBond2 && halfBond2.loop >= 0) {
-      restruct.loopRemove(halfBond2.loop);
+    const halfBond2Loop = halfBond2?.loop;
+    if (halfBond2Loop !== undefined && halfBond2Loop >= 0) {
+      restruct.loopRemove(halfBond2Loop);
     }
   }
 

@@ -46,6 +46,7 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateNucleoElementPreviewTop,
 } from 'ketcher-react';
+import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
@@ -132,6 +133,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     e: React.MouseEvent,
   ): void => {
     handleItemMouseLeave();
+
+    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+      return;
+    }
 
     if (preview.type === PreviewType.Preset || !e.currentTarget) {
       return;

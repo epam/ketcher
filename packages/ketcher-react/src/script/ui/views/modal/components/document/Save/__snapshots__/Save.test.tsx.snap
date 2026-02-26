@@ -11,6 +11,7 @@ Object {
     >
       <div
         class="dialog dialog"
+        data-testid="info-modal-window"
         role="dialog"
         tabindex="-1"
         testid="save-structure-dialog"
@@ -29,13 +30,14 @@ Object {
               data-testid="close-window-button"
             >
               <icon-close.svg
-                classname="closeButton"
+                class="closeButton"
               />
             </button>
           </div>
         </header>
         <div
           class="body"
+          data-testid="info-modal-body"
         >
           <div
             class="formContainer"
@@ -50,6 +52,7 @@ Object {
                 <span
                   class="inputWrapper"
                   data-testid="undefined-input-span"
+                  role="none"
                 >
                   <input
                     class="input genericInput"
@@ -70,13 +73,14 @@ Object {
                 <span
                   class="inputWrapper"
                   data-testid="file-format-list-input-span"
+                  role="none"
                 >
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                     data-testid="file-format-list"
                   >
                     <div
-                      aria-controls=":r0:"
+                      aria-controls="«r0»"
                       aria-expanded="true"
                       aria-haspopup="listbox"
                       class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -93,14 +97,14 @@ Object {
                       value="mol"
                     />
                     <icon-chevron.svg
-                      classname="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon chevronIcon"
+                      class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
                     />
                     <fieldset
                       aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                     >
                       <legend
-                        class="css-ihdtdm"
+                        class="css-1whs34k-MuiNotchedOutlined-root"
                       >
                         <span
                           class="notranslate"
@@ -121,12 +125,14 @@ Object {
                 <li
                   class="tabs"
                 >
-                  <a
+                  <button
                     class="active"
                     data-testid="Preview-tab"
+                    tabindex="0"
+                    type="button"
                   >
                     Preview
-                  </a>
+                  </button>
                 </li>
               </ul>
               <div>
@@ -144,7 +150,7 @@ Object {
                     title="Copy to clipboard"
                   >
                     <icon-copy.svg
-                      classname="css-2ntgcm"
+                      class="css-2ntgcm"
                     />
                   </button>
                 </div>
@@ -165,7 +171,6 @@ Object {
           <button
             class="cancel"
             data-testid="cancel-button"
-            mode="onCancel"
             type="button"
           >
             Cancel
@@ -196,12 +201,12 @@ Object {
       />
       <div
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation8 MuiPopover-paper MuiMenu-paper MuiMenu-paper css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper"
-        style="opacity: 1; transform: scale(1, 1); min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
+        style="opacity: 1; transform: none; min-width: 0; transition: opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; top: 16px; left: 16px; transform-origin: -16px -16px;"
         tabindex="-1"
       >
         <ul
           class="MuiList-root MuiList-padding MuiMenu-list css-6hp17o-MuiList-root-MuiMenu-list"
-          id=":r0:"
+          id="«r0»"
           role="listbox"
           tabindex="-1"
         >
@@ -418,6 +423,7 @@ Object {
   >
     <div
       class="dialog dialog"
+      data-testid="info-modal-window"
       role="dialog"
       tabindex="-1"
       testid="save-structure-dialog"
@@ -436,13 +442,14 @@ Object {
             data-testid="close-window-button"
           >
             <icon-close.svg
-              classname="closeButton"
+              class="closeButton"
             />
           </button>
         </div>
       </header>
       <div
         class="body"
+        data-testid="info-modal-body"
       >
         <div
           class="formContainer"
@@ -457,6 +464,7 @@ Object {
               <span
                 class="inputWrapper"
                 data-testid="undefined-input-span"
+                role="none"
               >
                 <input
                   class="input genericInput"
@@ -477,13 +485,14 @@ Object {
               <span
                 class="inputWrapper"
                 data-testid="file-format-list-input-span"
+                role="none"
               >
                 <div
                   class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                   data-testid="file-format-list"
                 >
                   <div
-                    aria-controls=":r0:"
+                    aria-controls="«r0»"
                     aria-expanded="true"
                     aria-haspopup="listbox"
                     class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -500,14 +509,14 @@ Object {
                     value="mol"
                   />
                   <icon-chevron.svg
-                    classname="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon chevronIcon"
+                    class="MuiSelect-icon MuiSelect-iconOutlined MuiSelect-iconOpen css-10q54uo-MuiSelect-icon"
                   />
                   <fieldset
                     aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                   >
                     <legend
-                      class="css-ihdtdm"
+                      class="css-1whs34k-MuiNotchedOutlined-root"
                     >
                       <span
                         class="notranslate"
@@ -528,12 +537,14 @@ Object {
               <li
                 class="tabs"
               >
-                <a
+                <button
                   class="active"
                   data-testid="Preview-tab"
+                  tabindex="0"
+                  type="button"
                 >
                   Preview
-                </a>
+                </button>
               </li>
             </ul>
             <div>
@@ -551,7 +562,7 @@ Object {
                   title="Copy to clipboard"
                 >
                   <icon-copy.svg
-                    classname="css-2ntgcm"
+                    class="css-2ntgcm"
                   />
                 </button>
               </div>
@@ -572,7 +583,6 @@ Object {
         <button
           class="cancel"
           data-testid="cancel-button"
-          mode="onCancel"
           type="button"
         >
           Cancel

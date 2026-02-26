@@ -55,6 +55,9 @@ type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
   inputFormat?: ChemicalMimeType;
   sequenceType?: SequenceType;
+  outputContentType?: ChemicalMimeType;
+  monomerLibrarySavingMode?: string;
+  molfileSavingSkipDate?: string;
 };
 type AutomapOptions = {
   mode?: AutomapMode;
@@ -89,8 +92,8 @@ function convertStructToString(
 }
 
 export class Indigo {
-  #structService: StructService;
-  #ketSerializer: KetSerializer;
+  readonly #structService: StructService;
+  readonly #ketSerializer: KetSerializer;
 
   constructor(structService) {
     this.#structService = structService;
@@ -105,8 +108,9 @@ export class Indigo {
     struct: StructOrString,
     options?: ConvertOptions,
   ): Promise<ConvertResult> {
-    const outputFormat = options?.outputFormat || ChemicalMimeType.KET;
+    const outputFormat = options?.outputFormat ?? ChemicalMimeType.KET;
     const inputFormat = options?.inputFormat;
+    const outputContentType = options?.outputContentType;
 
     return this.#structService.convert(
       {
@@ -116,6 +120,9 @@ export class Indigo {
       },
       {
         'sequence-type': options?.sequenceType,
+        'output-content-type': outputContentType,
+        'monomer-library-saving-mode': options?.monomerLibrarySavingMode,
+        'molfile-saving-skip-date': options?.molfileSavingSkipDate,
       },
     );
   }
@@ -169,7 +176,7 @@ export class Indigo {
   }
 
   automap(struct: StructOrString, options?: AutomapOptions): Promise<Struct> {
-    const mode = options?.mode || 'discard';
+    const mode = options?.mode ?? 'discard';
 
     return this.#structService
       .automap({
@@ -181,7 +188,7 @@ export class Indigo {
   }
 
   check(struct: StructOrString, options?: CheckOptions): Promise<CheckResult> {
-    const types = options?.types || defaultTypes;
+    const types = options?.types ?? defaultTypes;
 
     return this.#structService.check({
       struct: convertStructToString(struct, this.#ketSerializer),
@@ -193,7 +200,7 @@ export class Indigo {
     struct: StructOrString,
     options?: CalculateOptions,
   ): Promise<CalculateResult> {
-    const properties = options?.properties || defaultCalcProps;
+    const properties = options?.properties ?? defaultCalcProps;
 
     return this.#structService.calculate({
       struct: convertStructToString(struct, this.#ketSerializer),
@@ -202,7 +209,7 @@ export class Indigo {
   }
 
   recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {
-    const version = options?.version || '';
+    const version = options?.version ?? '';
 
     return this.#structService
       .recognize(image, version)
@@ -213,9 +220,9 @@ export class Indigo {
     struct: StructOrString,
     options?: GenerateImageOptions,
   ): Promise<string> {
-    const outputFormat = options?.outputFormat || 'png';
-    const backgroundColor = options?.backgroundColor || '';
-    const bondThickness = options?.bondThickness || defaultBondThickness;
+    const outputFormat = options?.outputFormat ?? 'png';
+    const backgroundColor = options?.backgroundColor ?? '';
+    const bondThickness = options?.bondThickness ?? defaultBondThickness;
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {

@@ -480,6 +480,7 @@
         "id": "meG___Sarcosine",
         "fullName": "Sarcosine",
         "alias": "meG",
+        "aliasHELM": "meG",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -499,6 +500,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "G"
     },

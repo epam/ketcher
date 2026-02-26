@@ -41,6 +41,7 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
           component={ButtonList}
           disabledIds={disabledIds}
           classes={classes}
+          testId="rgroup-item"
         />
       </Form>
     </Dialog>

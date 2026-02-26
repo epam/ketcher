@@ -1,5 +1,5 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -9,13 +9,12 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
 } from '@utils';
-import {
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Snake mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,7 +24,7 @@ test.describe('Snake mode copy&paste', () => {
     const SCROLL_DOWN_VALUE = 250;
 
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
   });
@@ -53,8 +52,8 @@ test.describe('Snake mode copy&paste', () => {
     page,
   }) => {
     await page.keyboard.down('Shift');
-    await getMonomerLocator(page, Peptides.D).click();
-    await getMonomerLocator(page, Peptides.F).first().click();
+    await getMonomerLocator(page, Peptide.D).click();
+    await getMonomerLocator(page, Peptide.F).first().click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

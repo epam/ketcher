@@ -5,9 +5,9 @@ import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export class MultitailArrowResizeTailHead extends BaseOperation {
   constructor(
-    private id: number,
+    private readonly id: number,
     private offset: number,
-    private isHead: boolean,
+    private readonly isHead: boolean,
   ) {
     super(OperationType.MULTITAIL_ARROW_RESIZE_HEAD_TAIL);
   }

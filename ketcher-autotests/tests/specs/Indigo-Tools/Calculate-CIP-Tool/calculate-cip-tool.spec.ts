@@ -1,38 +1,29 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { expect, test, Page } from '@playwright/test';
+import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  BondType,
   clickInTheMiddleOfTheScreen,
   receiveFileComparisonData,
   saveToFile,
-  waitForPageInit,
   waitForRender,
-  clickOnBond,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  clickOnAtom,
-  pressButton,
-  addMonomerToCenterOfCanvas,
+  deleteByKeyboard,
+  moveMouseAway,
 } from '@utils';
-import {
-  selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import {
   copyAndPaste,
   cutAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { resetCurrentTool } from '@utils/canvas/tools';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, MolFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   MacroBondType,
@@ -41,22 +32,32 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
+  horizontalFlip,
   rotateToCoordinates,
+  verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { Peptides } from '@constants/monomers/Peptides';
+import {
+  setACSSettings,
+  SettingsDialog,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -69,13 +70,16 @@ async function connectMonomerToAtom(page: Page) {
 }
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Operation with a structure without stereo properties', async ({
-    page,
-  }) => {
+  test('Operation with a structure without stereo properties', async () => {
     /*
     Test case: EPMLSOPKET-1886
     Description: The structure isn`t changed.
@@ -85,9 +89,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Operation with structure including stereo properties (R/S labels)', async ({
-    page,
-  }) => {
+  test('Operation with structure including stereo properties (R/S labels)', async () => {
     /*
     Test case: EPMLSOPKET-1887
     Description: (R) and (S) stereo labels appear near stereobonds.
@@ -100,22 +102,21 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Operation with empty canvas', async ({ page }) => {
+  test('Operation with empty canvas', async () => {
     /*
     Test case: EPMLSOPKET-1885
     Description: Nothing happens on the canvas when it is empty.
     Ketcher functions work correctly after clicking the 'Calculate CIP' button on the empty canvas.
     */
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
 
-  test('Layout/Undo with structure that contain stereo labels', async ({
-    page,
-  }) => {
+  test('Layout/Undo with structure that contain stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1900
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
@@ -136,49 +137,39 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/Paste of structure that contain stereo labels', async ({
-    page,
-  }) => {
+  test('Copy/Paste of structure that contain stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1896
     Description: The structure is copied.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Cut/Paste of structure that contain stereo labels', async ({
-    page,
-  }) => {
+  test('Cut/Paste of structure that contain stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1898
     Description: The structure is cut.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Operation with structure including stereo properties (E/Z labels)', async ({
-    page,
-  }) => {
+  test('Operation with structure including stereo properties (E/Z labels)', async () => {
     /*
     Test case: EPMLSOPKET-1888
     Description: (E) and (Z) stereo labels appear near stereobonds.
@@ -191,9 +182,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(1 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(1 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -206,9 +195,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(2 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(2 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -221,9 +208,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(3 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(3 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -236,9 +221,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(4 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(4 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -251,9 +234,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(5 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(5 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -266,9 +247,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(6 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(6 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -281,9 +260,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(7 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
-    page,
-  }) => {
+  test('(7 structure) Calculate files that contain stereo labels (various structure combinations)', async () => {
     /*
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
@@ -296,9 +273,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Aromatize/Undo with structure that contain stereo labels', async ({
-    page,
-  }) => {
+  test('Aromatize/Undo with structure that contain stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1910
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
@@ -319,7 +294,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('3D View_structure with stereo labels', async ({ page }) => {
+  test('3D View_structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1919
     Description: Stereo labels appear near stereobonds after the 'Calculate CIP' action.
@@ -330,13 +305,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await takeEditorScreenshot(page);
+    await MiewDialog(page).closeWindow();
   });
 
-  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
-    page,
-  }) => {
+  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1925
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
@@ -349,9 +323,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await waitForRender(page, async () => {
-      await clickOnBond(page, BondType.SINGLE, 3);
+      await getBondLocator(page, { bondId: 2 }).click({ force: true });
     });
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
 
     await takeEditorScreenshot(page);
 
@@ -359,9 +333,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
-    page,
-  }) => {
+  test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1925
     Description: An atom of a stereo bond is deleted after removing by the 'Erase' tool.
@@ -372,19 +344,15 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonLeftToolbar(page).selectEraseTool();
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
-
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 2 }).click();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
-  test('(Rotate structure) Manipulations with structure with stereo labels', async ({
-    page,
-  }) => {
+  test('(Rotate structure) Manipulations with structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1925
     Description: The whole fragment is rotated around the structure center. Stereo labels are rotated with structure.
@@ -393,16 +361,16 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       x: 20,
       y: 160,
     };
+
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    await rotationHandle.hover();
     await page.mouse.down();
     await page.mouse.move(
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -412,9 +380,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(Add a new stereobond to the structure) Manipulations with structure with stereo labels', async ({
-    page,
-  }) => {
+  test('(Add a new stereobond to the structure) Manipulations with structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1925
     Description: New stereobond is added to the Chain structure.
@@ -424,13 +390,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await clickOnCanvas(page, point.x, point.y);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getBondLocator(page, { bondId: 3 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
 
-  test('Check tooltip and labels', async ({ page }) => {
+  test('Check tooltip and labels', async () => {
     /*
     Test case: EPMLSOPKET-11841
     Description: The labels are next to the stereo bonds. When you hover over the label, the tooltip does not appear.
@@ -440,15 +405,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.move(point.x, point.y);
+    await getBondLocator(page, { bondId: 2 }).hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
   test(
     'Validate that the schema with retrosynthetic arrow after clicking on Calculate CIP tool',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
@@ -466,13 +430,16 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 });
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Check .ket file CIP data must be moved from s-group properties to atom properties', async ({
-    page,
-  }) => {
+  test('Check .ket file CIP data must be moved from s-group properties to atom properties', async () => {
     /*
     Test case: EPMLSOPKET-11842
     Description: CIP data located in file at atom properties section
@@ -496,7 +463,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     {
       tag: ['@FlackyTest'],
     },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V2000 file.
@@ -527,9 +494,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     },
   );
 
-  test('Save as .mol V3000 file structure with stereo labels', async ({
-    page,
-  }) => {
+  test('Save as .mol V3000 file structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V3000 file.
@@ -546,7 +511,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
   });
 
-  test('Save as .smi file structure with stereo labels', async ({ page }) => {
+  test('Save as .smi file structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1912
     Description: The file is saved as .smi file.
@@ -563,7 +528,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
   });
 
-  test('Save as .inchi file structure with stereo labels', async ({ page }) => {
+  test('Save as .inchi file structure with stereo labels', async () => {
     /*
     Test case: EPMLSOPKET-1918
     Description: The file is saved as .inchi file.
@@ -580,9 +545,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
   });
 
-  test('Check smart positioning of CIP stereo-labels for atoms on various structures ( rings, chains)', async ({
-    page,
-  }) => {
+  test('Check smart positioning of CIP stereo-labels for atoms on various structures ( rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
@@ -602,9 +565,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in KET ( rings, chains)', async ({
-    page,
-  }) => {
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in KET ( rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
@@ -634,9 +595,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in MOL V3000 (rings, chains)', async ({
-    page,
-  }) => {
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in MOL V3000 (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
@@ -668,9 +627,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in SVG ( rings, chains)', async ({
-    page,
-  }) => {
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in SVG ( rings, chains)', async () => {
+    // Test fails because of the bug: https://github.com/epam/Indigo/issues/3049
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
@@ -688,16 +646,11 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
-  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in PNG ( rings, chains)', async ({
-    page,
-  }) => {
+  test('Save and Open structure with smart positioning of CIP stereo-labels for atoms on various structures in PNG ( rings, chains)', async () => {
+    // Test fails because of the bug: https://github.com/epam/Indigo/issues/3049
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures ( rings, chains) not intersect with atoms and bonds.
@@ -715,16 +668,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'KET/ring-and-chains-with-stereo.ket',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 
-  test('Erase and Undo atoms with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Erase and Undo atoms with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -744,11 +691,19 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnAtom(page, 'C', 1);
-    await clickOnAtom(page, 'C', 4);
-    await clickOnAtom(page, 'C', 6);
-    await clickOnAtom(page, 'C', 9);
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 22 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 27 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -756,9 +711,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Switching and displaying to different views (flex, sequence, snake) smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Switching and displaying to different views (flex, sequence, snake) smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -787,21 +740,21 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
   });
 
-  test('Rotate structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Rotate structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -822,13 +775,11 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Horizontal flip structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Horizontal flip structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -848,14 +799,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Horizontal Flip (Alt+H)');
-    await clickOnCanvas(page, 100, 100);
+    await horizontalFlip(page);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Vertical flip structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Vertical flip structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -878,14 +827,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await pressButton(page, 'Vertical Flip (Alt+V)');
-    await clickOnCanvas(page, 100, 100);
+    await verticalFlip(page);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
-  test('Check zoom in and zoom out change for structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Check zoom in and zoom out change for structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -910,9 +857,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add ACS style in Settings and check structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains) ', async ({
-    page,
-  }) => {
+  test('Add ACS style in Settings and check structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains) ', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -934,16 +879,11 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Add ACS style in Settings and rotate structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Add ACS style in Settings and rotate structure with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -969,17 +909,20 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await SettingsDialog(page).setACSSettings();
     await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    if (await InfoMessageDialog(page).isVisible()) {
+      await InfoMessageDialog(page).ok();
+    }
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
+    if (await InfoMessageDialog(page).isVisible()) {
+      await InfoMessageDialog(page).ok();
+    }
   });
 
-  test('Add ACS style in Settings and check structure with CIP stereo-labels for atoms on various structures and levels of canvas zoom (rings, chains)', async ({
-    page,
-  }) => {
+  test('Add ACS style in Settings and check structure with CIP stereo-labels for atoms on various structures and levels of canvas zoom (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -1002,10 +945,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('150');
     await takeEditorScreenshot(page);
@@ -1013,9 +953,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Connect monomer to atom with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async ({
-    page,
-  }) => {
+  test('Connect monomer to atom with smart positioning of CIP stereo-labels for atoms on various structures (rings, chains)', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7233
      * Description: CIP stereo-labels for atoms on various structures (rings, chains) not intersect with atoms and bonds.
@@ -1038,9 +976,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
     });
-    await addMonomerToCenterOfCanvas(page, Peptides.A);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

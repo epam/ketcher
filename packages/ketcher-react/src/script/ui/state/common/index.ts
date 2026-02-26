@@ -41,20 +41,16 @@ function commonReducer(
   state: CommonState = initialState,
   action: CommonAction,
 ): CommonState {
-  switch (action.type) {
-    case COMMON_ACTIONS.COMMON_UPDATE_CURSOR_POSITION: {
-      return {
-        ...state,
-        cursorPosition: {
-          x: action.data.x,
-          y: action.data.y,
-        },
-      };
-    }
-
-    default:
-      return state;
+  if (action.type === COMMON_ACTIONS.COMMON_UPDATE_CURSOR_POSITION) {
+    return {
+      ...state,
+      cursorPosition: {
+        x: action.data.x,
+        y: action.data.y,
+      },
+    };
   }
+  return state;
 }
 
 export default commonReducer;

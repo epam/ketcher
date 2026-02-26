@@ -30,9 +30,9 @@ export interface MultitailArrowClosestReferencePosition {
 }
 
 export class ReMultitailArrow extends ReObject {
-  static CUBIC_BEZIER_OFFSET = 6;
-  static FRAME_OFFSET = 0.175;
-  static SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
+  static readonly CUBIC_BEZIER_OFFSET = 6;
+  static readonly FRAME_OFFSET = 0.175;
+  static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
 
   static isSelectable(): boolean {
     return true;
@@ -260,7 +260,7 @@ export class ReMultitailArrow extends ReObject {
         fill: 'none',
         stroke: 'none',
       });
-      if (element.node && element.node.setAttribute) {
+      if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
       }
       selectionPointSet.push(element);

@@ -37,6 +37,7 @@ export const MonomerName = styled.p`
   word-break: break-all;
   text-align: left;
   margin: 0;
+  white-space: pre-wrap;
 `;
 
 export const StyledStructRender = styled(StructRender)`

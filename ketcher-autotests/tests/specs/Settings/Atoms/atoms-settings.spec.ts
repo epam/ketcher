@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   AromaticityOption,
@@ -23,23 +22,17 @@ import {
   ShowHydrogenLabelsOption,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   setSettingsOption,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-
-async function selectExtendedTableElements(page: Page, element: string) {
-  const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-  await extendedTableButton.click();
-  await page.getByRole('button', { name: element, exact: true }).click();
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
 test.describe('Atom Settings', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,9 +58,9 @@ test.describe('Atom Settings', () => {
     // Verify if hydrogen labels appear on 'D' and 'T' -> (DH, TH) when default settings are set
     const pointX = 250;
     const pointY = 250;
-    await selectExtendedTableElements(page, 'D');
-    await clickOnCanvas(page, pointX, pointY);
-    await selectExtendedTableElements(page, 'T');
+    await selectExtendedTableElement(page, ExtendedTableButton.D);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
+    await selectExtendedTableElement(page, ExtendedTableButton.T);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -102,10 +95,10 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-
-    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    const point = getAtomLocator(page, { atomLabel: 'C', atomId: 4 });
 
     await ContextMenu(page, point).click([
       MicroAtomOption.QueryProperties,
@@ -127,7 +120,7 @@ test.describe('Atom Settings', () => {
       QueryAtomOption.RingSize,
       RingSizeOption.Eight,
     ]);
-    await clickOnCanvas(page, pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

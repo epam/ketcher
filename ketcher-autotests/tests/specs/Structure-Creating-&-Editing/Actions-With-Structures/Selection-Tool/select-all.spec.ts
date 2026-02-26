@@ -1,6 +1,7 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickOnCanvas,
+  deleteByKeyboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -30,7 +31,7 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x + offset, y + offset, page);
@@ -47,7 +48,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await cutAndPaste(page);
-    await clickOnCanvas(page, offset, offset);
+    await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +62,7 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
     await copyAndPaste(page);
-    await clickOnCanvas(page, offset, offset);
+    await clickOnCanvas(page, offset, offset, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -74,8 +75,8 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
     await selectAllStructuresOnCanvas(page);
-    await commonLeftToolbar.selectHandTool();
-    await page.keyboard.press('Delete');
+    await commonLeftToolbar.handTool();
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -22,7 +22,7 @@ import {
   UnresolvedMonomerSequenceItemRenderer,
   UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { SequenceNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -32,16 +32,16 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 
 export class SequenceNodeRendererFactory {
   static fromNode(
-    node: SubChainNode | BackBoneSequenceNode,
+    node: SequenceNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
     chain: Chain,
     nodeIndexOverall: number,
     editingNodeIndexOverall: number,
-    previousRowsWithAntisense = 0,
     twoStrandedNode: ITwoStrandedChainItem,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
+    previousRowsWithAntisense = 0,
   ): BaseSequenceItemRenderer {
     let RendererClass;
 
@@ -97,8 +97,8 @@ export class SequenceNodeRendererFactory {
       editingNodeIndexOverall,
       renderer?.monomerSize,
       renderer?.scaledMonomerPosition,
-      previousRowsWithAntisense,
       twoStrandedNode,
+      previousRowsWithAntisense,
     );
   }
 }

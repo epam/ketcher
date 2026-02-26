@@ -25,9 +25,9 @@ const mockValue = {
 };
 
 const mockMenuItems = [
-  <Menu.Item itemId="help" />,
-  <Menu.Item itemId="settings" />,
-  <Menu.Item itemId="undo" />,
+  <Menu.Item key="help" itemId="help" />,
+  <Menu.Item key="settings" itemId="settings" />,
+  <Menu.Item key="undo" itemId="undo" />,
 ];
 
 const mockSubMenu = () => {
@@ -40,11 +40,11 @@ const mockSubMenu = () => {
 
 describe('Test SubMenu component', () => {
   it('should be rendered without crashing', () => {
-    const { asFragment } = render(withThemeProvider(mockSubMenu()));
+    const { asFragment } = render(withThemeAndStoreProvider(mockSubMenu()));
     expect(asFragment).toMatchSnapshot();
   });
   it('should call provided callback when header icon is clicked', () => {
-    render(withThemeProvider(mockSubMenu()));
+    render(withThemeAndStoreProvider(mockSubMenu()));
     const button = screen.getByRole('button');
     fireEvent.click(button);
     expect(mockClickHandler).toHaveBeenCalled();

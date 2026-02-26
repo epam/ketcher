@@ -8,7 +8,7 @@ export type LineLengthHighlightViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class LineLengthHighlightView extends TransientView {
-  public static viewName = 'LineLengthHighlightView';
+  public static readonly viewName = 'LineLengthHighlightView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

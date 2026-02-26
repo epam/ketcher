@@ -35,7 +35,12 @@ function ErrorInfoModal(props) {
       className={styles.infoModal}
       params={props}
       buttons={[
-        <button onClick={props.onOk} className={styles.ok} key="ok">
+        <button
+          onClick={props.onOk}
+          className={styles.ok}
+          key="ok"
+          data-testid={props.testId || 'info-modal-close'}
+        >
           {props.button || 'Close'}
         </button>,
       ]}

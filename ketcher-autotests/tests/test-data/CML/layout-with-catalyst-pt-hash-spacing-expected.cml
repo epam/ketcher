@@ -9,7 +9,7 @@
         <atom id="a2" elementType="C" x2="3.95209" y2="-8.39221">
             <atomParity atomRefs4="a1 a10 a3 a2">1</atomParity>
         </atom>
-        <atom id="a3" elementType="C" x2="4.81812" y2="-8.89221">
+        <atom id="a3" elementType="C" x2="4.81811" y2="-8.89221">
             <atomParity atomRefs4="a2 a9 a4 a3">1</atomParity>
         </atom>
         <atom id="a4" elementType="C" x2="5.68414" y2="-8.39221">
@@ -19,7 +19,7 @@
         <atom id="a6" elementType="C" x2="7.41619" y2="-8.39221"/>
         <atom id="a7" elementType="O" x2="8.28222" y2="-8.89221"/>
         <atom id="a8" elementType="O" x2="5.68414" y2="-7.39221"/>
-        <atom id="a9" elementType="O" x2="4.81812" y2="-9.89221"/>
+        <atom id="a9" elementType="O" x2="4.81811" y2="-9.89221"/>
         <atom id="a10" elementType="O" x2="3.95209" y2="-7.39221"/>
     </atomArray>
     <bondArray>
@@ -168,7 +168,7 @@
         <atom id="a0" elementType="C" x2="12.6645" y2="-6.14529"/>
         <atom id="a1" elementType="C" x2="12.1645" y2="-7.68413"/>
         <atom id="a2" elementType="C" x2="11.8555" y2="-6.73308"/>
-        <atom id="a3" elementType="C" x2="13.1645" y2="-7.68413"/>
+        <atom id="a3" elementType="C" x2="13.1645" y2="-7.68414"/>
         <atom id="a4" elementType="C" x2="13.4736" y2="-6.73308"/>
     </atomArray>
     <bondArray>

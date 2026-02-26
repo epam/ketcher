@@ -30,7 +30,6 @@ import { editorOptionsSelector } from '../../../../../../../state/editor/selecto
 export type CDXStructuresViewerProps = {
   structList?: string[];
   inputHandler: (str: string) => void;
-  structStr: string;
   fileName: string;
 };
 

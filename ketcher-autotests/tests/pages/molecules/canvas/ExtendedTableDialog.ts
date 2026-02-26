@@ -1,10 +1,13 @@
 import { Page, Locator } from '@playwright/test';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
+import { RightToolbar } from '../RightToolbar';
 
 type ExtendedTableDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   addButton: Locator;
   cancelButton: Locator;
+  extendedTableWindow: Locator;
 };
 
 export const ExtendedTableDialog = (page: Page) => {
@@ -12,23 +15,31 @@ export const ExtendedTableDialog = (page: Page) => {
     page.getByTestId(dataTestId);
 
   const locators: ExtendedTableDialogLocators = {
+    window: page.getByTestId('extended-table-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     addButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
+    extendedTableWindow: page
+      .getByTestId('extended-table-dialog')
+      .getByRole('dialog'),
   };
 
   return {
     ...locators,
 
-    async closeByX() {
+    async isVisible() {
+      return await locators.extendedTableWindow.isVisible();
+    },
+
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
-    async pressAddButton() {
+    async add() {
       await locators.addButton.click();
     },
 
-    async pressCancelButton() {
+    async cancel() {
       await locators.cancelButton.click();
     },
 
@@ -41,15 +52,10 @@ export const ExtendedTableDialog = (page: Page) => {
 export async function selectExtendedTableElement(
   page: Page,
   name: ExtendedTableButton,
-  action?: 'Add' | 'Cancel',
 ) {
+  await RightToolbar(page).extendedTable();
   await ExtendedTableDialog(page).clickExtendedTableElement(name);
-
-  if (action === 'Add') {
-    await ExtendedTableDialog(page).pressAddButton();
-  } else if (action === 'Cancel') {
-    await ExtendedTableDialog(page).pressCancelButton();
-  }
+  await ExtendedTableDialog(page).add();
 }
 
 export type ExtendedTableDialogType = ReturnType<typeof ExtendedTableDialog>;

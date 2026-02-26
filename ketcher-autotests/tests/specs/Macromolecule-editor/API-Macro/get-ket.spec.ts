@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,

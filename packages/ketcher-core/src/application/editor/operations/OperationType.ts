@@ -96,6 +96,12 @@ export const OperationType = Object.freeze({
   ROTATE_MONOMER: 'Rotate monomer',
   FLIP_MONOMER: 'Flip monomer',
   SHIFT_MONOMER: 'Shift monomer',
+  MONOMER_CREATION_ASSIGN_AA: 'Monomer creation :: Assign attachment atom',
+  MONOMER_CREATION_ASSIGN_LGA: 'Monomer creation :: Assign leaving atom',
+  MONOMER_CREATION_REASSIGN_AP: 'Monomer creation :: Reassign attachment point',
+  MONOMER_CREATION_REASSIGN_LGA:
+    'Monomer creation :: Reassign leaving group atom',
+  MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
 });
 
 export enum OperationPriority {

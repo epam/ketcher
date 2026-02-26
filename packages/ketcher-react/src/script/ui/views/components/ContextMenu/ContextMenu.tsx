@@ -30,6 +30,7 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
 import { ketcherProvider } from 'ketcher-core';
+import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -45,10 +46,10 @@ const ContextMenu: React.FC = () => {
       KETCHER_ROOT_NODE_CSS_SELECTOR,
     );
     const ketcherRootElementRect = ketcherRootElement?.getBoundingClientRect();
-    const ketcherEditorWidth = ketcherRootElementRect?.width || 0;
-    const ketcherEditorHeight = ketcherRootElementRect?.height || 0;
-    const ketcherEditorLeft = ketcherRootElementRect?.left || 0;
-    const ketcherEditorTop = ketcherRootElementRect?.top || 0;
+    const ketcherEditorWidth = ketcherRootElementRect?.width ?? 0;
+    const ketcherEditorHeight = ketcherRootElementRect?.height ?? 0;
+    const ketcherEditorLeft = ketcherRootElementRect?.left ?? 0;
+    const ketcherEditorTop = ketcherRootElementRect?.top ?? 0;
 
     if (rect.right - ketcherEditorLeft > ketcherEditorWidth) {
       submenuElement.style.left = 'auto';
@@ -135,12 +136,11 @@ const ContextMenu: React.FC = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (visible) {
         editor.hoverIcon.hide();
-        const contextMenuElement = document.querySelector(
+        const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',
-        ) as HTMLDivElement | null;
-        const submenuElements = document.querySelectorAll(
-          '.contexify_submenu',
-        ) as NodeListOf<HTMLElement>;
+        );
+        const submenuElements =
+          document.querySelectorAll<HTMLElement>('.contexify_submenu');
         if (contextMenuElement) {
           // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
           // Without timeout library overrides the position of the context menu which we set.
@@ -248,6 +248,19 @@ const ContextMenu: React.FC = () => {
             }
           >
             <MacromoleculeMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+                visible,
+              )
+            }
+          >
+            <AttachmentPointLabelMenuItems />
           </Menu>
         </>,
         ketcherEditorRootElement,

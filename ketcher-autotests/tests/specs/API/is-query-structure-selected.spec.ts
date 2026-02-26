@@ -1,25 +1,20 @@
-import { Page, expect, test } from '@playwright/test';
-import {
-  BondType,
-  BondTypeName,
-  clickOnAtom,
-  doubleClickOnAtom,
-  doubleClickOnBond,
-  pressButton,
-  setAromaticity,
-  setBondType,
-  setCustomQueryForAtom,
-  setCustomQueryForBond,
-  setSubstitutionCount,
-  setUnsaturated,
-  waitForAtomPropsModal,
-  waitForBondPropsModal,
-  waitForPageInit,
-} from '@utils';
+import { Page, expect, test } from '@fixtures';
+import { waitForPageInit } from '@utils';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { selectAllStructuresOnCanvas } from '@tests/utils/canvas';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import {
+  Aromaticity,
+  SubstitutionCount,
+} from '@tests/pages/constants/atomProperties/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import { BondTypeOption } from '@tests/pages/constants/bondProperties/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function isQueryStructureSelected(page: Page): Promise<boolean> {
   return await page.evaluate(() => window.ketcher.isQueryStructureSelected());
@@ -29,7 +24,6 @@ async function checkIsQueryStructureSelected(
   page: Page,
   isQueryStructureSelectedValue: boolean,
 ) {
-  await pressButton(page, 'Apply');
   await selectAllStructuresOnCanvas(page);
   expect(await isQueryStructureSelected(page)).toBe(
     isQueryStructureSelectedValue,
@@ -39,41 +33,57 @@ async function checkIsQueryStructureSelected(
 test.describe('API isQueryStructureSelected for atoms', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    const anyAtom = 0;
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', anyAtom);
-    await waitForAtomPropsModal(page);
-    await page.getByTestId('Query specific-section').click();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('returns true, when atom has custom query', async ({ page }) => {
-    const customQuery = '#6;x9';
-    await setCustomQueryForAtom(page, customQuery);
+    await AtomPropertiesDialog(page).setOptions({
+      CustomQuery: {
+        CustomQueryCheckbox: true,
+        CustomQueryTextArea: '#6;x9',
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom has substitution count', async ({ page }) => {
-    await setSubstitutionCount(page, '4');
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        SubstitutionCount: SubstitutionCount.Four,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is unsaturated', async ({ page }) => {
-    await setUnsaturated(page);
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        UnsaturatedCheckbox: true,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when atom is aromatic', async ({ page }) => {
-    await setAromaticity(page, 'aromatic');
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        Aromaticity: Aromaticity.Aromatic,
+      },
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 
   test('returns true, when structure has "Any" atom', async ({ page }) => {
-    const anyAtomButton = RightToolbar(page).anyAtomButton;
-
-    await pressButton(page, 'Cancel');
-    await anyAtomButton.click();
-    await clickOnAtom(page, 'C', 0);
+    await AtomPropertiesDialog(page).cancel();
+    await RightToolbar(page).anyAtom();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await selectAllStructuresOnCanvas(page);
     expect(await isQueryStructureSelected(page)).toBe(true);
   });
@@ -82,32 +92,34 @@ test.describe('API isQueryStructureSelected for atoms', () => {
 test.describe('API isQueryStructureSelected for bonds', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    const anyBond = 0;
     await drawBenzeneRing(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnBond(page, BondType.SINGLE, anyBond);
-    await waitForBondPropsModal(page);
+    await getBondLocator(page, { bondId: 9 }).dblclick({ force: true });
+    await expect(BondPropertiesDialog(page).window).toBeVisible();
   });
 
-  const queryBonds = [
-    BondTypeName.Any,
-    BondTypeName.SingleDouble,
-    BondTypeName.SingleAromatic,
-    BondTypeName.DoubleAromatic,
-    BondTypeName.Aromatic,
-    BondTypeName.SingleUpDown,
+  const queryBonds: [string, BondTypeOption][] = [
+    ['Any', BondTypeOption.Any],
+    ['Single/Double', BondTypeOption.SingleDouble],
+    ['Single/Aromatic', BondTypeOption.SingleAromatic],
+    ['Double/Aromatic', BondTypeOption.DoubleAromatic],
+    ['Aromatic', BondTypeOption.Aromatic],
+    ['Single/UpDown', BondTypeOption.SingleUpDown],
   ];
 
   for (const queryBond of queryBonds) {
-    test(`returns true for ${queryBond} bond`, async ({ page }) => {
-      await setBondType(page, queryBond);
+    test(`returns true for ${queryBond[0]} bond`, async ({ page }) => {
+      await BondPropertiesDialog(page).setOptions({
+        type: queryBond[1],
+      });
       await checkIsQueryStructureSelected(page, true);
     });
   }
 
   test(`returns true for customQuery bond`, async ({ page }) => {
-    const customQuery = 'x2&D3,D2';
-    await setCustomQueryForBond(page, customQuery);
+    await BondPropertiesDialog(page).setOptions({
+      customQuery: 'x2&D3,D2',
+    });
     await checkIsQueryStructureSelected(page, true);
   });
 });
@@ -118,9 +130,11 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await page.getByTestId('s-group-type-input-span').click();
-    await page.getByRole('option', { name: 'Query component' }).click();
-    await checkIsQueryStructureSelected(page, true);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.QueryComponent,
+    });
+    await selectAllStructuresOnCanvas(page);
+    expect(await isQueryStructureSelected(page)).toBe(true);
   });
 });
 

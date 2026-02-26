@@ -1,16 +1,20 @@
-import { Page, Locator } from '@playwright/test';
-import { Monomer } from '@utils/types';
+import { Page, Locator, expect } from '@playwright/test';
+import { Monomer, PresetType } from '@utils/types';
 import {
   FavoriteStarSymbol,
   LibraryTab,
   monomerLibraryTypeLocation,
-  MonomerTypeLocation,
   RNASection,
   rnaSectionArea,
   rnaTabPresetsSection,
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
+import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
+import { waitForRender } from '../../utils/common/loaders/waitForRender';
+import { moveMouseAway } from '../../utils/moveMouseAway';
+import { KETCHER_CANVAS } from '../constants/canvas/Constants';
+import { Preset } from '../constants/monomers/Presets';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -115,7 +119,7 @@ export const Library = (page: Page) => {
       }
     },
 
-    async clickOnMonomer(monomer: Monomer) {
+    async clickOnMonomer(monomer: Monomer | PresetType) {
       await getElement(monomer.testId).click();
     },
 
@@ -136,6 +140,7 @@ export const Library = (page: Page) => {
 
     async openTab(libraryTab: LibraryTab) {
       if (!(await this.isTabOpened(libraryTab))) {
+        await expect(getElement(libraryTab)).toBeInViewport();
         await getElement(libraryTab).click();
       }
     },
@@ -147,12 +152,24 @@ export const Library = (page: Page) => {
     async openRNASection(rnaSection: RNASection) {
       await this.openTab(LibraryTab.RNA);
       if (!(await this.isRNASectionOpened(rnaSection))) {
+        await expect(getElement(rnaSection)).toBeInViewport();
         await getElement(rnaSection).click();
       }
     },
 
-    async goToMonomerLocation(monomerTypeLocation: MonomerTypeLocation) {
-      const { libraryTab, rnaSection } = monomerTypeLocation;
+    async getMonomerLibraryLocation(monomer: Monomer | PresetType) {
+      return monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+    },
+
+    /**
+     * Navigates to the tab and section (if applicable) where the monomer is located.
+     */
+    async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
+      const { libraryTab, rnaSection } = await this.getMonomerLibraryLocation(
+        monomer,
+      );
 
       await this.openTab(libraryTab);
 
@@ -165,44 +182,169 @@ export const Library = (page: Page) => {
      * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async selectMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
+    async selectMonomer(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ) {
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
-      await getElement(monomer.testId).click();
+      const monomerCard = getElement(monomer.testId);
+      const monomerCardBbox = await monomerCard.boundingBox();
+      await monomerCard.click({
+        position: {
+          // eslint-disable-next-line no-magic-numbers
+          x: monomerCardBbox?.width ? monomerCardBbox.width / 2 : 0,
+          // eslint-disable-next-line no-magic-numbers
+          y: monomerCardBbox?.height ? monomerCardBbox.height - 10 : 0,
+        },
+      });
     },
 
     /**
      * Hovers a monomer by navigating to the corresponding tab and clicking on the monomer.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async hoverMonomer(monomer: Monomer, selectOnFavoritesTab = false) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-
+    async hoverMonomer(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ) {
       if (selectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
       await getElement(monomer.testId).hover();
+    },
+
+    getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId);
+    },
+
+    getMonomerHELMAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-helm');
+    },
+
+    getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-axolabs');
+    },
+
+    getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-idtalias-base');
+    },
+
+    getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint5',
+      );
+    },
+    getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint3',
+      );
+    },
+    getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-internal',
+      );
+    },
+    getMonomerModificationTypes(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-modificationtype');
+    },
+
+    async isMonomerExist(
+      monomer: Monomer | PresetType,
+      selectOnFavoritesTab = false,
+    ): Promise<boolean> {
+      if (selectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLibraryLocation(monomer);
+      }
+
+      return await getElement(monomer.testId).isVisible();
+    },
+
+    /** Locator of the arrow button (autochain) on the monomer card */
+    getMonomerAutochainButton(monomer: Monomer): Locator {
+      return page.getByTestId(monomer.testId).locator('.autochain');
+    },
+
+    /** Hover over the arrow button on the monomer card */
+    async hoverMonomerAutochain(monomer: Monomer) {
+      await this.goToMonomerLibraryLocation(monomer);
+
+      const card = page.getByTestId(monomer.testId);
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.hover();
+    },
+
+    /** Click on the arrow button on the monomer card */
+    async clickMonomerAutochain(monomer: Monomer | PresetType) {
+      await this.goToMonomerLibraryLocation(monomer);
+
+      const card = page.getByTestId(monomer.testId);
+      await card.hover();
+
+      const btn = this.getMonomerAutochainButton(monomer);
+      await btn.waitFor({ state: 'visible' });
+      await btn.click();
+    },
+
+    async dragMonomerOnCanvas(
+      monomer: Monomer | PresetType,
+      coordinates: { x: number; y: number; fromCenter?: boolean },
+      selectOnFavoritesTab = false,
+    ) {
+      const canvas = await page
+        .getByTestId(KETCHER_CANVAS)
+        .filter({ has: page.locator(':visible') })
+        .boundingBox();
+      if (!canvas) {
+        throw new Error('Unable to get boundingBox for canvas');
+      }
+      let x = canvas.x + coordinates.x;
+      let y = canvas.y + coordinates.y;
+
+      if (coordinates.fromCenter) {
+        const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+
+        x = x + centerOfCanvas.x;
+        y = y + centerOfCanvas.y;
+      }
+
+      await this.hoverMonomer(monomer, selectOnFavoritesTab);
+      await page.mouse.down();
+      await page.mouse.move(x, y);
+      await waitForRender(page, async () => {
+        await page.mouse.up();
+      });
     },
 
     /**
      * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
      */
     async selectCustomPreset(presetTestId: string) {
-      await this.goToMonomerLocation(rnaTabPresetsSection);
-      await getElement(presetTestId).click();
+      await this.goToMonomerLibraryLocation(Preset.A);
+
+      const presetCard = getElement(presetTestId);
+      const presetCardBbox = await presetCard.boundingBox();
+
+      await presetCard.click({
+        position: {
+          // eslint-disable-next-line no-magic-numbers
+          x: presetCardBbox?.width ? presetCardBbox.width / 2 : 0,
+          // eslint-disable-next-line no-magic-numbers
+          y: presetCardBbox?.height ? presetCardBbox.height - 10 : 0,
+        },
+      });
     },
 
     async rightClickOnPreset(preset: Monomer) {
@@ -211,7 +353,7 @@ export const Library = (page: Page) => {
           `Given monomer with alias ${preset.alias} is not a Preset`,
         );
       } else {
-        await this.goToMonomerLocation(rnaTabPresetsSection);
+        await this.goToMonomerLibraryLocation(Preset.A);
         await ContextMenu(page, getElement(preset.testId)).open();
       }
     },
@@ -220,11 +362,8 @@ export const Library = (page: Page) => {
      * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
-    async addMonomerToFavorites(monomer: Monomer) {
-      const location = monomer.monomerType
-        ? monomerLibraryTypeLocation[monomer.monomerType]
-        : rnaTabPresetsSection;
-      await this.goToMonomerLocation(location);
+    async addMonomerToFavorites(monomer: Monomer | PresetType) {
+      await this.goToMonomerLibraryLocation(monomer);
 
       const favoritesStar = page
         .getByTestId(monomer.testId)
@@ -242,16 +381,13 @@ export const Library = (page: Page) => {
      * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
      */
     async removeMonomerFromFavorites(
-      monomer: Monomer,
+      monomer: Monomer | PresetType,
       removeFromFavoritesTab = true,
     ) {
       if (removeFromFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
-        const location = monomer.monomerType
-          ? monomerLibraryTypeLocation[monomer.monomerType]
-          : rnaTabPresetsSection;
-        await this.goToMonomerLocation(location);
+        await this.goToMonomerLibraryLocation(monomer);
       }
 
       const favoritesStar = page
@@ -284,6 +420,7 @@ export const Library = (page: Page) => {
      */
     async addMonomersToFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
+        await moveMouseAway(page);
         await this.addMonomerToFavorites(monomer);
       }
     },

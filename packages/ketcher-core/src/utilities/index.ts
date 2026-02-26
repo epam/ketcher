@@ -25,3 +25,5 @@ export * from './keynorm';
 export * from './shortcutsUtil';
 export * from './clipboardUtils';
 export * from './getSvgFromDrawnStructures';
+export * from './ensureString';
+export * from './normalizeError';

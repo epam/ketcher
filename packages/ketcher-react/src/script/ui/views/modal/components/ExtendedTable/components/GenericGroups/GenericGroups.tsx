@@ -61,7 +61,7 @@ function GenericGroups({
   selected,
   onAtomSelect,
   disabledQueryElements,
-}: GenericGroupsProps) {
+}: Readonly<GenericGroupsProps>) {
   return (
     <div className={classes.genericGroups}>
       <div className={classes.topGroupsContainer}>

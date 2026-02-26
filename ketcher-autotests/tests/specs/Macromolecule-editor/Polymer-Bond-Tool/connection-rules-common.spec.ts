@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, chromium, test } from '@playwright/test';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, chromium, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -18,22 +18,14 @@ import {
   MacroFileType,
   MolFileFormat,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import {
-  selectFlexLayoutModeTool,
-  selectRectangleArea,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import { waitForMonomerPreview } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  bondTwoMonomersPointToPoint,
-  pressCancelAtSelectConnectionPointDialog,
-  selectLeftConnectionPointAtSelectConnectionPointDialog,
-  selectRightConnectionPointAtSelectConnectionPointDialog,
-} from '@utils/macromolecules/polymerBond';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Bases } from '@constants/monomers/Bases';
+  getMonomerLocator,
+  AttachmentPoint,
+} from '@utils/macromolecules/monomer';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -43,7 +35,12 @@ import {
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -80,10 +77,9 @@ test.describe('Common connection rules: ', () => {
     const cntxt = page.context();
     await page.close();
     await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
+    browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   async function dragBondFromMonomerCenterAwayTo(
@@ -92,7 +88,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -105,7 +101,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
@@ -122,7 +118,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -133,7 +129,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 
@@ -154,10 +150,10 @@ test.describe('Common connection rules: ', () => {
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
     // removing selections
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
 
     await monomerLocator.click();
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
   }
 
   /*
@@ -181,28 +177,28 @@ test.describe('Common connection rules: ', () => {
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterAwayTo(page, Peptides.LysiPr, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Peptide.LysiPr, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterAwayTo(page, Sugars._12ddR, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Sugar._12ddR, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterAwayTo(page, Phosphates.P, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Phosphate.P, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterAwayTo(page, Bases.c7io7n, 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Base.c7io7n, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -231,28 +227,28 @@ test.describe('Common connection rules: ', () => {
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterTo(page, Peptides.LysiPr, Peptides.Hcy);
+    await dragBondFromMonomerCenterTo(page, Peptide.LysiPr, Peptide.Hcy);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterTo(page, Sugars._12ddR, Sugars.nC62r);
+    await dragBondFromMonomerCenterTo(page, Sugar._12ddR, Sugar.nC62r);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterTo(page, Phosphates.P, Phosphates.mn);
+    await dragBondFromMonomerCenterTo(page, Phosphate.P, Phosphate.mn);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterTo(page, Bases.c7io7n, Bases.nC6n5U);
+    await dragBondFromMonomerCenterTo(page, Base.c7io7n, Base.nC6n5U);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -273,7 +269,7 @@ test.describe('Common connection rules: ', () => {
       page,
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
     // Peptide
     await hoverMouseOverMonomerNTymes(page, Chem.sDBL, 10);
@@ -281,27 +277,27 @@ test.describe('Common connection rules: ', () => {
       hideMonomerPreview: true,
     });
     // CHEM
-    await hoverMouseOverMonomerNTymes(page, Peptides.Hcy, 10);
+    await hoverMouseOverMonomerNTymes(page, Peptide.Hcy, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Sugar
-    await hoverMouseOverMonomerNTymes(page, Sugars.nC62r, 10);
+    await hoverMouseOverMonomerNTymes(page, Sugar.nC62r, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Phosphate
-    await hoverMouseOverMonomerNTymes(page, Phosphates.mn, 10);
+    await hoverMouseOverMonomerNTymes(page, Phosphate.mn, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Base
-    await hoverMouseOverMonomerNTymes(page, Bases.nC6n5U, 10);
+    await hoverMouseOverMonomerNTymes(page, Base.nC6n5U, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   /*
@@ -396,20 +392,20 @@ test.describe('Common connection rules: ', () => {
     await bondTwoMonomersByCenterToCenterByNames(
       page,
       Chem.Test_6_Ch,
-      Phosphates.Test_6_Ph,
+      Phosphate.Test_6_Ph,
     );
     // Case 8-9
-    await page.getByTitle('expand window').click();
+    await AttachmentPointsDialog(page).expandWindow();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Case 10
-    await page.getByTitle('expand window').click();
+    await AttachmentPointsDialog(page).expandWindow();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
 
-    await pressCancelAtSelectConnectionPointDialog(page);
+    await AttachmentPointsDialog(page).cancel();
   });
 
   // test(`Check that preview window of micro structure not shows pieces of macro structures and vice versa`, async () => {
@@ -433,8 +429,8 @@ test.describe('Common connection rules: ', () => {
   //     page,
   //     leftMonomerLocator,
   //     rightMonomerLocator,
-  //     'R1',
-  //     'R1',
+  //     AttachmentPoint.R1,
+  //     AttachmentPoint.R1,
   //   );
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
@@ -464,8 +460,8 @@ test.describe('Common connection rules: ', () => {
       MacroFileType.MOLv3000,
     );
 
-    await hoverMouseOverMonomer(page, Peptides.C);
-    await waitForMonomerPreview(page);
+    await hoverMouseOverMonomer(page, Peptide.C);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -484,17 +480,12 @@ test.describe('Common connection rules: ', () => {
       MacroFileType.MOLv3000,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('C', { exact: true })
-      .first()
-      .hover();
-    await waitForMonomerPreviewMicro(page);
+    await getAbbreviationLocator(page, { name: 'C' }).first().hover();
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
 
     await takeElementScreenshot(
       page,
-      page.getByTestId('monomer-preview-micro'),
+      AbbreviationPreviewTooltip(page).abbreviationPreviewTooltipPicture,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
@@ -514,29 +505,26 @@ test.describe('Common connection rules: ', () => {
     await bondTwoMonomersByCenterToCenterByNames(
       page,
       Chem.Test_6_Ch,
-      Phosphates.Test_6_Ph,
+      Phosphate.Test_6_Ph,
     );
 
-    const connectionPoints = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
+    const attachmentPoints = [
+      AttachmentPoint.R1,
+      AttachmentPoint.R2,
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
+      AttachmentPoint.R5,
+      AttachmentPoint.R6,
+    ];
 
-    for (const connectionPoint of connectionPoints) {
-      await selectLeftConnectionPointAtSelectConnectionPointDialog(
-        page,
-        connectionPoint,
-      );
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
-      //   });
-
-      await selectRightConnectionPointAtSelectConnectionPointDialog(
-        page,
-        connectionPoint,
-      );
-      //         await takeEditorScreenshot(page, {
-      //     hideMonomerPreview: true,
-      //   });
+    for (const attachmentPoint of attachmentPoints) {
+      await AttachmentPointsDialog(page).selectAttachmentPoints({
+        leftMonomer: attachmentPoint,
+        rightMonomer: attachmentPoint,
+      });
+      await takeElementScreenshot(page, AttachmentPointsDialog(page).window);
     }
 
-    await pressCancelAtSelectConnectionPointDialog(page);
+    await AttachmentPointsDialog(page).cancel();
   });
 });

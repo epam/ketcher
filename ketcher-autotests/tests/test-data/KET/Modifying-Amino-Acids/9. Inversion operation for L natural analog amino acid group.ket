@@ -358,6 +358,7 @@
         "id": "dL___D-Leucine",
         "fullName": "D-Leucine",
         "alias": "dL",
+        "aliasHELM": "dL",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -377,6 +378,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "L"
     },

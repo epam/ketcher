@@ -1,16 +1,18 @@
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
+  Monomer,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -30,17 +32,19 @@ test.describe('Macromolecules custom presets', () => {
   });
 
   test('Add new preset and duplicate it', async ({ page }) => {
-    await Library(page).selectMonomers([Sugars._25R, Bases.baA, Phosphates.bP]);
+    await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
     await moveMouseToTheMiddleOfTheScreen(page);
     await Library(page).rnaBuilder.addToPresets();
-
+    await Library(page).hoverMonomer(Preset.MyRNA);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).rnaBuilder.duplicateAndEdit();
 
-    await Library(page).selectMonomers([Sugars._12ddR, Bases.A, Phosphates.P]);
+    await Library(page).selectMonomers([Sugar._12ddR, Base.A, Phosphate.P]);
     await Library(page).rnaBuilder.save();
-
+    await Library(page).hoverMonomer(Preset.MyRNA);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -66,17 +70,24 @@ test.describe('Macromolecules custom presets', () => {
     // Press Enter on input
     await page.press('[placeholder="Name your structure"]', 'Enter');
 
-    await Library(page).selectMonomers([Sugars._25R, Bases.baA]);
+    await Library(page).selectMonomers([Sugar._25R, Base.baA]);
 
     // Click on <button> "Add to Presets"
     await Library(page).rnaBuilder.addToPresets();
 
     await takeMonomerLibraryScreenshot(page);
 
-    await Library(page).selectCustomPreset('MyRNA_baA_25R_.');
-    await page.click('#polymer-editor-canvas');
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: 'MyRNA_baA_25R_.',
+        testId: 'MyRNA_baA_25R_.',
+      } as Monomer,
+      {
+        x: 100,
+        y: 100,
+      },
+    );
 
-    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });

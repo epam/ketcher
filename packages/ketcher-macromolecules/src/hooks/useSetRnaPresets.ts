@@ -15,18 +15,22 @@ import {
 } from 'state/rna-builder';
 import {
   loadMonomerLibrary,
+  selectDefaultRnaPresets,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
 
 function useSetRnaPresets() {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
+  const defaultRnaPresets = useAppSelector(selectDefaultRnaPresets);
 
   useEffect(() => {
     if (!editor) return;
 
     const monomersLibrary = editor.monomersLibrary;
-    const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
+    const defaultPresetsTemplates = defaultRnaPresets.length
+      ? defaultRnaPresets
+      : editor.defaultRnaPresetsLibraryItems;
     const defaultPresets: IRnaPreset[] = [
       ...getPresets(monomersLibrary, defaultPresetsTemplates, true),
     ];
@@ -69,7 +73,7 @@ function useSetRnaPresets() {
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [editor]);
+  }, [editor, defaultRnaPresets]);
 }
 
 export default useSetRnaPresets;

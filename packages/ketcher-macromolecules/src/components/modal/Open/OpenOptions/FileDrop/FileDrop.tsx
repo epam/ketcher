@@ -64,6 +64,21 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const DropzoneButton = styled.button`
+  all: unset;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+`;
+
 const FileDrop = ({
   textLabel,
   iconName,
@@ -86,8 +101,25 @@ const FileDrop = ({
     [isDragActive],
   ) as React.CSSProperties;
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (!disabled) {
+        open();
+      }
+    }
+  };
+
   return (
-    <div {...getRootProps({ style })} onClick={open}>
+    <DropzoneButton
+      {...getRootProps({ style })}
+      role={undefined}
+      onClick={open}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : 0}
+      disabled={disabled}
+      type="button"
+    >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
       {disabled ? (
@@ -100,7 +132,7 @@ const FileDrop = ({
           <OpenOptionText>Open from file</OpenOptionText>
         </>
       )}
-    </div>
+    </DropzoneButton>
   );
 };
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { test, expect, Page } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { test, expect, Page } from '@fixtures';
 import {
   moveMouseAway,
   openFileAndAddToCanvas,
@@ -14,17 +14,14 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
+  takeElementScreenshot,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  waitForMonomerPreview,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   markResetToDefaultState,
@@ -33,10 +30,14 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { closeErrorMessage } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -127,8 +128,7 @@ test.describe('Import-Saving .ket Files', () => {
       'KET/hundred-monomers-expected.ket',
       FileType.KET,
     );
-
-    const numberOfPressZoomOut = 7;
+    const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
@@ -150,16 +150,19 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    await Library(page).selectMonomer(Peptides.bAla);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await resetZoomLevelToDefault(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await CommonTopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro(page, 'KET/monomer-expected.ket');
     await resetZoomLevelToDefault(page);
-    await getMonomerLocator(page, Peptides.bAla).hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
+    await getMonomerLocator(page, Peptide.bAla).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {
@@ -193,8 +196,11 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     await resetZoomLevelToDefault(page);
-    await Library(page).selectMonomer(Sugars._25R);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Sugar._25R, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });
 
@@ -203,8 +209,11 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    await Library(page).selectMonomer(Peptides.D_2Nal);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.D_2Nal, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
   });
 
@@ -226,13 +235,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
-    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'KET/corrupted-file.ket');
-    await addToCanvasButton.click();
-    await takeEditorScreenshot(page);
-    await closeErrorMessage(page);
+    await PasteFromClipboardDialog(page).addToCanvas();
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {
@@ -243,7 +252,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -376,9 +385,9 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         page,
         `KET/Base-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -403,9 +412,9 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         page,
         `KET/CHEM-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -430,9 +439,9 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         page,
         `KET/Peptide-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -457,9 +466,9 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         page,
         `KET/Phosphate-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -484,9 +493,9 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         page,
         `KET/Sugar-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
       await verifyFileExport(

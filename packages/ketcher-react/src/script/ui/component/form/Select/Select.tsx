@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -17,7 +18,7 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -25,6 +26,7 @@ import { Icon } from 'components';
 export interface Option {
   value: string;
   label: string;
+  children?: ReactNode;
 }
 
 interface Props {
@@ -36,11 +38,13 @@ interface Props {
   disabled?: boolean;
   formName?: string;
   name?: string;
+  placeholder?: string;
   'data-testid'?: string;
+  error?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
-  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+  <Icon name="chevron" className={className} />
 );
 
 const Select = ({
@@ -52,7 +56,9 @@ const Select = ({
   options,
   formName,
   name,
+  placeholder,
   'data-testid': testId,
+  error,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
 
@@ -73,35 +79,44 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
+      renderValue={(selected: string) =>
+        (currentValue?.children ??
+          currentValue?.label ??
+          placeholder ??
+          selected ??
+          '') as any
+      }
+      displayEmpty
       multiple={multiple}
       disabled={disabled}
+      placeholder={placeholder}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
       data-testid={testId}
+      error={error}
     >
-      {options &&
-        options.map((option) => {
-          const isDivider: boolean =
-            typeof option?.value === 'string'
-              ? option.value.includes('Divider')
-              : false;
+      {options?.map((option) => {
+        const isDivider: boolean =
+          typeof option?.value === 'string'
+            ? option.value.includes('Divider')
+            : false;
 
-          return isDivider ? (
-            <Divider className={styles.listDivider} key={option.value} />
-          ) : (
-            <MenuItem
-              value={option.value}
-              key={option.value}
-              disableRipple={true}
-              className={clsx({
-                [`dropdown-${formName}_${name}`]: formName,
-              })}
-              data-testid={`${option.label}-option`}
-            >
-              {option.label}
-            </MenuItem>
-          );
-        })}
+        return isDivider ? (
+          <Divider className={styles.listDivider} key={option.value} />
+        ) : (
+          <MenuItem
+            value={option.value}
+            key={option.value}
+            disableRipple={true}
+            className={clsx({
+              [`dropdown-${formName}_${name}`]: formName,
+            })}
+            data-testid={`${option.label}-option`}
+          >
+            <>{option.children ?? option.label}</>
+          </MenuItem>
+        );
+      })}
     </MuiSelect>
   );
 };

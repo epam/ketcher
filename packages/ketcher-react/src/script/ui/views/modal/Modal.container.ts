@@ -41,17 +41,17 @@ const mergeProps = (
   dispatchProps: BaseCallProps,
   ownProps: ModalContainerProps,
 ): ModalProps => {
-  const prop = stateProps.modal && stateProps.modal.prop;
+  const prop = stateProps.modal?.prop;
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
   return {
     modal: stateProps.modal,
     ...initProps,
     onOk: (result) => {
-      if (prop && prop.onResult) prop.onResult(result);
+      prop?.onResult?.(result);
       dispatchProps.onOk(result);
     },
     onCancel: () => {
-      if (prop && prop.onCancel) prop.onCancel();
+      prop?.onCancel?.();
       dispatchProps.onCancel();
     },
     ...ownProps,

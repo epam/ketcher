@@ -54,6 +54,8 @@ export type MonomerItemType = MonomerItemBase & {
     MonomerName: string;
     MonomerFullName?: string;
     Name: string;
+    aliasHELM?: string;
+    aliasAxoLabs?: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
     MonomerCaps?: Partial<Record<AttachmentPointName, string>>;
@@ -63,7 +65,8 @@ export type MonomerItemType = MonomerItemBase & {
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
-    modificationType?: string;
+    modificationTypes?: string[];
+    hidden?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;

@@ -1,11 +1,12 @@
 import { D3SvgElementSelection } from 'application/render/types';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { editorEvents } from 'application/editor/editorEvents';
-import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
@@ -21,7 +22,6 @@ import { SettingsManager } from 'utilities';
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
-  private editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -31,23 +31,22 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | D3SvgElementSelection<SVGGElement, void>;
 
-  public antisenseNodeRenderer?: this | undefined;
+  public antisenseNodeRenderer?: this;
 
   constructor(
-    public node: SubChainNode | BackBoneSequenceNode,
-    private firstNodeInChainPosition: Vec2,
-    private monomerIndexInChain: number,
-    private isLastMonomerInChain: boolean,
-    private chain: Chain,
-    private nodeIndexOverall: number,
-    private editingNodeIndexOverall: number,
-    public monomerSize: { width: number; height: number },
-    public scaledMonomerPosition: Vec2,
-    private previousRowsWithAntisense = 0,
-    public twoStrandedNode: ITwoStrandedChainItem,
+    public readonly node: SequenceNode,
+    private readonly firstNodeInChainPosition: Vec2,
+    private readonly monomerIndexInChain: number,
+    private readonly isLastMonomerInChain: boolean,
+    private readonly chain: Chain,
+    private readonly nodeIndexOverall: number,
+    private readonly editingNodeIndexOverall: number,
+    public readonly monomerSize: { width: number; height: number },
+    public readonly scaledMonomerPosition: Vec2,
+    public readonly twoStrandedNode: ITwoStrandedChainItem,
+    private readonly previousRowsWithAntisense = 0,
   ) {
     super(node.monomer);
-    this.editorEvents = editorEvents;
   }
 
   abstract get symbolToDisplay(): string;
@@ -96,6 +95,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
+  public get scaledPosition() {
+    return this.scaledMonomerPosition;
+  }
+
   public get scaledMonomerPositionForSequence() {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     const indexInRow = this.monomerIndexInChain % lineLength;
@@ -139,6 +142,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'sequence-item')
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
@@ -150,8 +154,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             acc +
             monomer.covalentBonds.filter(
               (bond) =>
-                bond instanceof PolymerBond &&
-                (bond as PolymerBond).isSideChainConnection,
+                bond instanceof PolymerBond && bond.isSideChainConnection,
             ).length,
           0,
         ),
@@ -194,6 +197,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
+      .attr('data-element-type', 'background')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -209,7 +213,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendSpacerElement() {
     const spacerGroupElement = this.rootElement
       ?.append('g')
-      .attr('transform', 'translate(14, -16)');
+      .attr('transform', 'translate(14, -16)')
+      .attr('data-element-type', 'spacer');
 
     spacerGroupElement
       ?.append('rect')
@@ -266,7 +271,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           }
           return groups;
         },
-        [[]] as (SubChainNode | BackBoneSequenceNode)[][],
+        [[]] as SequenceNode[][],
       );
 
       // Find the group containing the current node
@@ -334,11 +339,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
     this.chain.subChains.some(caclulateNumberToDisplay);
 
-    return isNumber(numberToDisplay)
-      ? numberToDisplay
-      : this.isAntisenseNode && isNumber(antisenseNodeIndex)
-      ? antisenseNodeIndex + 1
-      : senseNodeIndex + 1;
+    if (isNumber(numberToDisplay)) {
+      return numberToDisplay;
+    }
+
+    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
+      return antisenseNodeIndex + 1;
+    }
+
+    return senseNodeIndex + 1;
   }
 
   private appendCounterElement(
@@ -439,7 +448,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  private inIgnoreList(node: SubChainNode | BackBoneSequenceNode): boolean {
+  private inIgnoreList(node: SequenceNode): boolean {
     return (
       // @ LinkerSequenceNode (ex. CHEM)
       // for example, subChain:
@@ -483,8 +492,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // returns non-breaking sequence of ignored nodes before first node in subchain
-  private get ignoredNodesBeforeFirstNodeInSubChain():
-    | (SubChainNode | BackBoneSequenceNode)[] {
+  private get ignoredNodesBeforeFirstNodeInSubChain(): SequenceNode[] {
     if (!this.isSubChainNode(this.node)) return [];
 
     if (!this.subChainWithNode) return [];
@@ -505,8 +513,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
-  private get ignoredNodesAfterLastNodeInSubChain():
-    | (SubChainNode | BackBoneSequenceNode)[] {
+  private get ignoredNodesAfterLastNodeInSubChain(): SequenceNode[] {
     if (!this.isSubChainNode(this.node)) return [];
 
     if (!this.subChainWithNode) return [];
@@ -679,6 +686,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
       )
       .attr('style', 'user-select: none;')
+      .attr('data-element-type', 'text')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -686,7 +694,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           : 'default',
       );
 
-    this.appendEvents();
     this.redrawCounter();
 
     this.drawSelection();
@@ -773,7 +780,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public hoverAttachmentPoint(): void {}
   public updateAttachmentPoints() {}
 
-  private drawBackgroundElementHover() {
+  public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
@@ -788,7 +795,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
   }
 
-  private removeBackgroundElementHover() {
+  public removeBackgroundElementHover() {
     this.backgroundElement?.attr('fill', 'none');
 
     if (this.node.modified) {
@@ -796,47 +803,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
   }
 
-  private appendEvents() {
-    assert(this.textElement);
-
-    this.textElement.on('mouseover', (event) => {
-      this.drawBackgroundElementHover();
-      this.editorEvents.mouseOverSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mousemove', (event) => {
-      this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mouseleave', (event) => {
-      this.removeBackgroundElementHover();
-      this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
-    });
-    this.spacerElement?.on('mousedown', (event) => {
-      this.editorEvents.mousedownBetweenSequenceItems.dispatch(event);
-    });
-    this.backgroundElement?.on('click', (event) => {
-      this.editorEvents.clickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mousedown', (event) => {
-      this.editorEvents.mouseDownOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.textElement.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mouseover', () => {
-      this.drawBackgroundElementHover();
-    });
-    this.backgroundElement?.on('mouseleave', () => {
-      this.removeBackgroundElementHover();
-    });
-  }
-
-  private isSubChainNode(
-    node: SubChainNode | BackBoneSequenceNode,
-  ): node is SubChainNode {
-    return node && node.monomers !== undefined;
+  private isSubChainNode(node: SequenceNode): node is SubChainNode {
+    return node?.monomers !== undefined;
   }
 
   public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {

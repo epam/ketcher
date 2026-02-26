@@ -9,6 +9,7 @@ export interface IEditorEvents {
   selectMonomer: Subscription;
   selectPreset: Subscription;
   selectTool: Subscription;
+  selectSelectionTool: Subscription;
   createBondViaModal: Subscription;
   cancelBondCreationViaModal: Subscription;
   selectMode: Subscription;
@@ -24,6 +25,7 @@ export interface IEditorEvents {
   mouseOnMoveMonomer: Subscription;
   mouseLeaveMonomer: Subscription;
   mouseOverAttachmentPoint: Subscription;
+  mouseMoveAttachmentPoint: Subscription;
   mouseLeaveAttachmentPoint: Subscription;
   mouseUpAttachmentPoint: Subscription;
   mouseDownAttachmentPoint: Subscription;
@@ -68,6 +70,12 @@ export interface IEditorEvents {
   toggleLineLengthHighlighting: Subscription;
   setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
+  autochain: Subscription;
+  previewAutochain: Subscription;
+  removeAutochainPreview: Subscription;
+  switchToMacromoleculesMode: Subscription;
+  switchToMoleculesMode: Subscription;
+  layoutCircular: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -77,6 +85,7 @@ export function resetEditorEvents() {
     selectMonomer: new Subscription(),
     selectPreset: new Subscription(),
     selectTool: new Subscription(),
+    selectSelectionTool: new Subscription(),
     createBondViaModal: new Subscription(),
     cancelBondCreationViaModal: new Subscription(),
     selectMode: new Subscription(),
@@ -92,6 +101,7 @@ export function resetEditorEvents() {
     mouseOnMoveMonomer: new Subscription(),
     mouseLeaveMonomer: new Subscription(),
     mouseOverAttachmentPoint: new Subscription(),
+    mouseMoveAttachmentPoint: new Subscription(),
     mouseLeaveAttachmentPoint: new Subscription(),
     mouseUpAttachmentPoint: new Subscription(),
     mouseDownAttachmentPoint: new Subscription(),
@@ -136,6 +146,12 @@ export function resetEditorEvents() {
     toggleLineLengthHighlighting: new Subscription(),
     setLibraryItemDragState: new Subscription(),
     placeLibraryItemOnCanvas: new Subscription(),
+    autochain: new Subscription(),
+    previewAutochain: new Subscription(),
+    removeAutochainPreview: new Subscription(),
+    switchToMacromoleculesMode: new Subscription(),
+    switchToMoleculesMode: new Subscription(),
+    layoutCircular: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -176,6 +192,18 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'selectEntities',
 ];
 
+const selectTools = [
+  ToolName.selectRectangle,
+  ToolName.selectLasso,
+  ToolName.selectStructure,
+];
+let currentSelectToolIdx = 0;
+
+// Bond tools require toolName in options to select the bond type.
+const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
+  editor.events.selectTool.dispatch([toolName, { toolName }]);
+};
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -196,9 +224,18 @@ export const hotkeysConfiguration = {
     },
   },
   exit: {
-    shortcut: ['Shift+Tab', 'Escape'],
+    shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      currentSelectToolIdx = 0;
+      editor.events.selectSelectionTool.dispatch();
+      editor.cancelLibraryItemDrag();
+    },
+  },
+  switchSelectTool: {
+    shortcut: ['Shift+Tab'],
+    handler: (editor: CoreEditor) => {
+      currentSelectToolIdx = (currentSelectToolIdx + 1) % selectTools.length;
+      editor.events.selectTool.dispatch([selectTools[currentSelectToolIdx]]);
       editor.cancelLibraryItemDrag();
     },
   },
@@ -218,9 +255,29 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      if (editor.isSequenceEditMode) return;
+      // Sequence mode handles Delete/Backspace itself (even when not editing),
+      // so skip tool switching here.
+      if (editor.isSequenceMode) return;
+      const hasSelectedEntities =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
       editor.events.selectTool.dispatch([ToolName.erase]);
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      if (hasSelectedEntities) {
+        editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      }
+    },
+  },
+  bondSingle: {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondSingle);
+    },
+  },
+  bondHydrogen: {
+    shortcut: '2',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondHydrogen);
     },
   },
   clear: {
@@ -231,13 +288,13 @@ export const hotkeysConfiguration = {
     },
   },
   'zoom-plus': {
-    shortcut: 'Mod+=',
+    shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
     handler: () => {
       ZoomTool.instance.zoomIn();
     },
   },
   'zoom-minus': {
-    shortcut: 'Mod+-',
+    shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     handler: () => {
       ZoomTool.instance.zoomOut();
     },
@@ -284,6 +341,12 @@ export const hotkeysConfiguration = {
     shortcut: 'Alt+c',
     handler: (editor: CoreEditor) => {
       editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
+    },
+  },
+  arrangeRing: {
+    shortcut: ['Shift+Alt+c'],
+    handler: (editor: CoreEditor) => {
+      editor.events.layoutCircular.dispatch();
     },
   },
 };

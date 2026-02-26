@@ -2,33 +2,26 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
-  BondType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeLeftToolbarScreenshot,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
-  waitForMonomerPreview,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
-  readFileContent,
-  pasteFromClipboardAndOpenAsNewProject,
-  moveMouseToTheMiddleOfTheScreen,
-  copyToClipboardByIcon,
   moveMouseAway,
   getCachedBodyCenter,
   RxnFileFormat,
@@ -36,50 +29,46 @@ import {
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import { waitForPageInit, waitForRender } from '@utils/common';
+import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { switchToPeptideMode } from '@utils/macromolecules/sequence';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setACSSettings,
+  setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
+  AtomsSetting,
   BondsSetting,
   FontOption,
   GeneralSetting,
@@ -100,11 +89,19 @@ import {
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
-  const n = index !== undefined ? index : 0;
+  const n = index ?? 0;
   await waitForRender(page, async () => {
     await ContextMenu(page, tailElement.nth(n)).click(
       MultiTailedArrowOption.RemoveTail,
@@ -113,28 +110,22 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 }
 
 let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
 
 test.describe('Ketcher bugs in 2.26.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  });
-
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await closeErrorAndInfoModals(page);
+  test.afterEach(async () => {
     await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).reset();
     await SettingsDialog(page).apply();
     await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
-
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    await processResetToDefaultState(test.info(), page);
   });
 
   test('Case 1: The options for layout about smart-layout, aromatize-skip-superatoms and etc is sent as not undefined', async () => {
@@ -181,12 +172,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       { option: BondsSetting.BondThickness, value: '2.6' },
     ]);
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -201,13 +187,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
     const applyButton = MiewDialog(page).applyButton;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await MiewDialog(page).closeWindow();
     await disableViewOnlyModeBySetOptions(page);
   });
 
@@ -226,10 +214,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/equilibrium-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -248,7 +233,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = getBondLocator(page, {
+      bondType: MicroBondDataIds.SingleDown,
+    }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
@@ -312,6 +299,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).cancel();
   });
 
   test('Case 9: The reaction can be saved to MOL V3000', async () => {
@@ -342,7 +330,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5634
@@ -352,8 +342,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Save to MOL V3000
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
@@ -429,7 +417,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5711
@@ -439,8 +429,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -452,7 +440,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5710
@@ -462,8 +452,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -475,7 +463,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async () => {
+  test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5709
@@ -485,8 +475,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from HELM
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -510,11 +498,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).hover([
-      MicroAtomOption.QueryProperties,
-      QueryAtomOption.HCount,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
     await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
     await takeEditorScreenshot(page);
@@ -537,12 +526,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
     await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 18: Single up bond is being painted over correctly', async () => {
@@ -561,7 +545,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -585,7 +569,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    const point = await getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -609,11 +593,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Red,
-    ]);
+
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Red]);
     await takeEditorScreenshot(page);
   });
 
@@ -628,19 +613,17 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to "View Only" mode. ketcher.editor.options({ viewOnlyMode: true })
      * 4. Change the selection mode.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
     await disableViewOnlyModeBySetOptions(page);
   });
 
-  test('Case 22: O and U sumbols are supported in sequence mode', async () => {
+  test('Case 22: O and U sumbols are supported in sequence mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5621
@@ -650,9 +633,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Start new sequence
      * 3. Add O and U symbols to the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
-    await switchToPeptideMode(page);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'OU');
     await takeEditorScreenshot(page);
   });
@@ -675,9 +656,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });
+    await SettingsDialog(page).cancel();
   });
 
-  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async () => {
+  test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5557
@@ -688,23 +672,20 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Hover over the bond/monomer
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond tooltip preview placed wrong in on edge cases.ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await resetCurrentTool(page);
-    await getMonomerLocator(page, Peptides.Cys_Bn).hover();
-    await waitForMonomerPreview(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await getMonomerLocator(page, Peptide.Cys_Bn).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Sugars._25mo3r).hover();
-    await waitForMonomerPreview(page);
+    await getMonomerLocator(page, Sugar._25mo3r).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
-    await getMonomerLocator(page, Phosphates.msp).hover();
-    await waitForMonomerPreview(page);
+    await getMonomerLocator(page, Phosphate.msp).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -730,7 +711,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         MultiTailedArrowOption.AddNewTail,
       );
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
@@ -743,43 +724,44 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async () => {
+  test('Case 26: Edit Attachment Points dialog cant cause invalid connection between monomers', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5205
-     * Description: Edit Connection points dialog cant cause invalid connection between monomers
+     * Description: Edit Attachment Points dialog cant cause invalid connection between monomers
      * Scenario:
      * 1. Go to Macro mode
      * 2. Load from file
-     * 3. Open Edit Connection points dialog
+     * 3. Open Edit Attachment Points dialog
      * 4. Click on ALREADY selected connection points
      * 5. Press Reconnect button
-     * 6. Open Edit Connection points dialog again
+     * 6. Open Edit Attachment Points dialog again
      * 7. Take screenshot
      */
     const bondLine = getBondLocator(page, {});
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasMacro(page, 'KET/two-nucleotides.ket');
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await page.getByRole('button', { name: 'R2' }).first().click();
-    await page.getByRole('button', { name: 'R1' }).nth(1).click();
-    await pressButton(page, 'Reconnect');
+    await AttachmentPointsDialog(page).selectAttachmentPoints({});
+    await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
-      MacroBondOption.EditConnectionPoints,
+      MacroBondOption.EditAttachmentPoints,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
+    await AttachmentPointsDialog(page).reconnect();
   });
 
-  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
+  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5788
@@ -790,9 +772,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Select all
      * 4. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -804,7 +783,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 28: Cursor position is correct when editing sequence in Macro mode', async () => {
+  test('Case 28: Cursor position is correct when editing sequence in Macro mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5725
@@ -814,8 +795,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Add a sequence of monomers to the canvas
      * 3. Right-click on a monomer ( or double click ) in the sequence (e.g., the 8th monomer) and start editing the sequence
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAA');
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
@@ -829,7 +808,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async () => {
+  test('Case 29: Bonds between micro and macro structures can be selected and deleted in Macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5686
@@ -841,9 +822,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Delete the selected structures
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bonds between micro and macro structures can be selected and deleted.ket',
@@ -855,7 +833,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async () => {
+  test('Case 30: Micro structures connected to polymer chains are shown on Sequence mode canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5673
@@ -866,19 +846,20 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to Macro mode - Sequence
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Case 31: Moving of selected microstructures on macro canvas works correct', async () => {
+  test('Case 31: Moving of selected microstructures on macro canvas works correct', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5659
@@ -890,9 +871,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Move selected structures to the right
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -928,12 +906,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).click([
-      MicroBondOption.Highlight,
-      HighlightOption.Green,
-    ]);
-    await clickOnCanvas(page, 100, 100);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 0 }),
+    ).click([MicroBondOption.Highlight, HighlightOption.Green]);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -954,13 +931,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/monomers-cycled.ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('1Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Case 34: Clear canvas work for micro structures on macro mode', async () => {
+  test('Case 34: Clear canvas work for micro structures on macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5657
@@ -970,9 +949,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Press Clear canvas button
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bond properties are not implemented.ket',
@@ -998,10 +974,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/error with cat and arr.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1041,7 +1014,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     });
   });
 
-  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async () => {
+  test('Case 37: Loading a KET file in macro mode, bond connections are preserved and microstructures are not shifted', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5886
@@ -1050,9 +1025,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 1. Open file in macro mode->Flex mode
      * 2. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/monomers-connected-to-microstructures.ket',
@@ -1192,10 +1164,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/5. Unsplit nucleotide 5hMedC (from library).ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('5hMedC'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '5hMedC' }));
     await takeEditorScreenshot(page);
-    const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await ContextMenu(page, point).open();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'N', atomId: 13 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1215,7 +1189,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/monomers-cycled.ket');
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1242,13 +1216,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 650);
+    await clickOnCanvas(page, 500, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 500, 550);
+    await clickOnCanvas(page, 500, 550, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1268,10 +1242,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1316,12 +1287,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
   test('Case 47: "Unordered_map::at: key not found" error is not displayed after adding of specific reactions from the RDF file', async () => {
@@ -1338,7 +1304,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async () => {
+  test('Case 48: System shouldnt allow user to export alternatives ambiguous monomers to IDT (since only mixtures are supported)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2440
@@ -1350,9 +1318,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Click on Save to IDT
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Ambiguous DNA Bases (alternatives).ket',
@@ -1361,10 +1326,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
@@ -1398,55 +1365,55 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 50: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2219
-     * Description: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical
-     * Scenario:
-     * 1. Go to Micro
-     * 2. Load from file
-     * 3. Click on Aromatize
-     * 4. Click on Dearomatize
-     * 5. Click on Calculate CIP
-     * 6. Click on Add explicit hydrogens
-     * 7. Take screenshot
-     */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/arr vert.ket');
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'CDXML/arr vert-expected.cdxml',
-      FileType.CDXML,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'CDXML/arr vert-expected.cdxml',
-    );
-    await takeEditorScreenshot(page);
-  });
+  // test('Case 50: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical', async () => {
+  //   /*
+  //    * Test case: https://github.com/epam/ketcher/issues/6947
+  //    * Bug: https://github.com/epam/Indigo/issues/2219
+  //    * Description: The retrosynthetic arrow is displayed when export file in CDXML format and arrow is vertical
+  //    * Scenario:
+  //    * 1. Go to Micro
+  //    * 2. Load from file
+  //    * 3. Click on Aromatize
+  //    * 4. Click on Dearomatize
+  //    * 5. Click on Calculate CIP
+  //    * 6. Click on Add explicit hydrogens
+  //    * 7. Take screenshot
+  //    */
+  //   await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/arr vert.ket');
+  //   await takeEditorScreenshot(page);
+  //   await verifyFileExport(
+  //     page,
+  //     'CDXML/arr vert-expected.cdxml',
+  //     FileType.CDXML,
+  //   );
+  //   await openFileAndAddToCanvasAsNewProject(
+  //     page,
+  //     'CDXML/arr vert-expected.cdxml',
+  //   );
+  //   await takeEditorScreenshot(page);
+  // });
 
-  test('Case 51: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2217
-     * Description: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows
-     * Scenario:
-     * 1. Go to Micro
-     * 2. Load from file
-     * 3. Export to CDXML
-     * 4. Load exported file
-     * 5. Take screenshot
-     */
-    await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
-    await takeEditorScreenshot(page);
-    await verifyFileExport(page, 'CDXML/4 mol-expected.cdxml', FileType.CDXML);
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'CDXML/4 mol-expected.cdxml',
-    );
-    await takeEditorScreenshot(page);
-  });
+  // test('Case 51: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows', async () => {
+  //   /*
+  //    * Test case: https://github.com/epam/ketcher/issues/6947
+  //    * Bug: https://github.com/epam/Indigo/issues/2217
+  //    * Description: Reaction loaded without changing order of components for CDXML format and two retrosynthetic arrows
+  //    * Scenario:
+  //    * 1. Go to Micro
+  //    * 2. Load from file
+  //    * 3. Export to CDXML
+  //    * 4. Load exported file
+  //    * 5. Take screenshot
+  //    */
+  //   await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
+  //   await takeEditorScreenshot(page);
+  //   await verifyFileExport(page, 'CDXML/4 mol-expected.cdxml', FileType.CDXML);
+  //   await openFileAndAddToCanvasAsNewProject(
+  //     page,
+  //     'CDXML/4 mol-expected.cdxml',
+  //   );
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Case 52: Arrow not changes direction after loading saved RXN single reaction if the elements were too close to single arrow on save', async () => {
     /*
@@ -1512,25 +1479,25 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 55: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2558
-     * Description: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)
-     * Scenario:
-     * 1. Go to Micro
-     * 2. Load from file
-     * 3. Export to CDX
-     * 4. Load exported file
-     * 5. Take screenshot
-     */
-    await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
-    await takeEditorScreenshot(page);
-    await verifyFileExport(page, 'CDX/4 mol-expected.cdx', FileType.CDX);
-    const fileContent = await readFileContent('CDX/4 mol-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
-    await takeEditorScreenshot(page);
-  });
+  // test('Case 55: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)', async () => {
+  //   /*
+  //    * Test case: https://github.com/epam/ketcher/issues/6947
+  //    * Bug: https://github.com/epam/Indigo/issues/2558
+  //    * Description: Able to save canvas to CDX - system not throws an error: Convert error! array: invalid index 2 (size=2)
+  //    * Scenario:
+  //    * 1. Go to Micro
+  //    * 2. Load from file
+  //    * 3. Export to CDX
+  //    * 4. Load exported file
+  //    * 5. Take screenshot
+  //    */
+  //   await openFileAndAddToCanvasAsNewProject(page, 'KET/4 mol.ket');
+  //   await takeEditorScreenshot(page);
+  //   await verifyFileExport(page, 'CDX/4 mol-expected.cdx', FileType.CDX);
+  //   const fileContent = await readFileContent('CDX/4 mol-expected.cdx');
+  //   await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Case 56: Correct length of Multi-Tailed Arrow and Single arrow after loading from RDF', async () => {
     /*
@@ -1619,10 +1586,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/The reaction with reaction mapping tool is displayed incorrect.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1647,12 +1611,11 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
-    await closeErrorAndInfoModals(page);
+    await SaveStructureDialog(page).copyToClipboard();
+    await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await clickOnCanvas(page, 300, 200);
+    await clickOnCanvas(page, 300, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1746,15 +1709,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).setOptionValue(GeneralSetting.SubFontSize, '30');
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
-    await SaveStructureDialog(page).cancel();
+    await verifyPNGExport(page);
   });
 
-  test('Case 65: System should throw an error in case of wrong IUBcode', async () => {
+  test('Case 65: System should throw an error in case of wrong IUBcode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2331
@@ -1763,36 +1723,42 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 1. Toggle to Macro - Flex mode
      * 2. Load IDT from paste from clipboard way: (YY:00330067)
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
     await pasteFromClipboardAndAddToCanvas(page, '(YY:00330067)', true);
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Case 66: Sugar R should not save in the IDT format', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/Indigo/issues/2122
-     * Description: Sugar R should not save in the IDT format.
-     * Scenario:
-     * 1. Toggle to Macro - Flex mode
-     * 2. Add Sugar R to Canvas
-     * 3. Save to IDT
-     * 4. Take screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
-    await Library(page).selectMonomer(Sugars.R);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.IDT,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
+  test.fail(
+    'Case 66: Sugar R should not save in the IDT format',
+    async ({ FlexCanvas: _ }) => {
+      // It fails due to https://github.com/epam/Indigo/issues/3200
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/Indigo/issues/2122
+       * Description: Sugar R should not save in the IDT format.
+       * Scenario:
+       * 1. Toggle to Macro - Flex mode
+       * 2. Add Sugar R to Canvas
+       * 3. Save to IDT
+       * 4. Take screenshot
+       */
+      await Library(page).dragMonomerOnCanvas(Sugar.R, {
+        x: 0,
+        y: 0,
+        fromCenter: true,
+      });
+      await CommonTopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.IDT,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        'Convert error! Sequence saver: Cannot save molecule in IDT format - sugar whithout base.',
+      );
+      await ErrorMessageDialog(page).close();
+      await SaveStructureDialog(page).cancel();
+    },
+  );
 });

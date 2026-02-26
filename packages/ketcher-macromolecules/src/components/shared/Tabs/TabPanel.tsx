@@ -1,5 +1,7 @@
-import { TabPanelBox, TabPanelDiv } from './TabPanel.styles';
 import { ReactNode } from 'react';
+import Box from '@mui/material/Box';
+
+import styles from './TabPanel.module.less';
 
 type TabPanelProps = {
   index: number;
@@ -9,9 +11,18 @@ type TabPanelProps = {
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => {
   return (
-    <TabPanelDiv role="tabpanel" hidden={value !== index} id={index.toString()}>
-      {value === index && <TabPanelBox>{children}</TabPanelBox>}
-    </TabPanelDiv>
+    <div
+      className={styles.tabPanelDiv}
+      role="tabpanel"
+      hidden={value !== index}
+      id={index.toString()}
+    >
+      {value === index && (
+        <Box className={styles.tabPanelBox}>
+          <>{children}</>
+        </Box>
+      )}
+    </div>
   );
 };
 

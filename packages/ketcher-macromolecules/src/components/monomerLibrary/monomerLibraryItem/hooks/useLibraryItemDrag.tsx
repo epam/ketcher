@@ -11,18 +11,21 @@ export const useLibraryItemDrag = (
   const editor = useSelector(selectEditor);
 
   useEffect(() => {
-    if (
-      !editor ||
-      editor.mode.modeName === 'sequence-layout-mode' ||
-      !itemRef.current
-    ) {
+    if (!editor || !itemRef.current) {
       return;
     }
 
     const itemElement = select(itemRef.current);
 
     const dragBehavior = drag<HTMLElement, unknown>()
-      .on('start', null)
+      .on('start', () => {
+        // In sequence layout we do not allow DnD; cancel visual drag early
+        editor.isLibraryItemDragCancelled =
+          editor.mode.modeName === 'sequence-layout-mode';
+        if (!editor.isLibraryItemDragCancelled) {
+          document.body.style.cursor = 'grabbing';
+        }
+      })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
         if (editor.isLibraryItemDragCancelled) {
           return;
@@ -31,7 +34,10 @@ export const useLibraryItemDrag = (
         const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
           item,
-          position: { x, y },
+          position: {
+            x: x - (editor.ketcherRootElementBoundingClientRect?.left || 0),
+            y: y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
+          },
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -43,8 +49,8 @@ export const useLibraryItemDrag = (
             const { top, left, right, bottom } =
               canvasWrapperBoundingClientRect;
             const transform = ZoomTool.instance.zoomTransform;
-            const adjustedX = x - left + 15;
-            const adjustedY = y - top + 15;
+            const adjustedX = x - left + transform.k * 15;
+            const adjustedY = y - top + transform.k * 15;
             const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
@@ -59,6 +65,7 @@ export const useLibraryItemDrag = (
 
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
+        document.body.style.cursor = '';
       });
 
     itemElement.call(dragBehavior);
@@ -66,5 +73,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, editor?.mode.modeName, item, itemRef]);
+  }, [editor, item, itemRef]);
 };

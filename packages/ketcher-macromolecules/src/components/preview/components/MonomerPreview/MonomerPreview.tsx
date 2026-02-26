@@ -23,11 +23,12 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
 import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
-import IDTAliases from '../IDTAliases/IDTAliases';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
 import { preview } from 'ketcher-react';
@@ -42,6 +43,9 @@ const MonomerPreview = ({ className }: Props) => {
   const { monomer, attachmentPointsToBonds } = preview;
 
   const idtAliases = monomer?.props.idtAliases;
+  const axoLabsAlias = monomer?.props.aliasAxoLabs;
+  const aliasHelm = monomer?.props.aliasHELM;
+  const modificationTypes = monomer?.props.modificationTypes;
 
   const { preparedAttachmentPointsData, connectedAttachmentPoints } =
     useAttachmentPoints({
@@ -60,12 +64,27 @@ const MonomerPreview = ({ className }: Props) => {
   }
 
   const isUnresolved = monomer.props.unresolved;
-  const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
+  const monomerName = isUnresolved
+    ? monomer.label
+    : monomer.struct?.name || monomer.label;
+  const isMonomerPreviewPropertiesVisible =
+    idtAliasesText || axoLabsAlias || aliasHelm || modificationTypes;
 
   return (
     (monomer.struct || isUnresolved) && (
-      <Container className={className} data-testid="polymer-library-preview">
-        {monomerName && <MonomerName>{monomerName}</MonomerName>}
+      <Container
+        className={className}
+        data-testid="polymer-library-preview"
+        data-idtaliases={idtAliasesText ?? undefined}
+        data-axolabs={axoLabsAlias ?? undefined}
+        data-helm={aliasHelm ?? undefined}
+        data-modificationtype={getModificationTypeAttribute(modificationTypes)}
+      >
+        {monomerName && (
+          <MonomerName data-testid="preview-tooltip-title">
+            {monomerName}
+          </MonomerName>
+        )}
         {isUnresolved ? (
           <UnresolvedMonomerPreview />
         ) : (
@@ -83,7 +102,18 @@ const MonomerPreview = ({ className }: Props) => {
           <AttachmentPoints
             preparedAttachmentPointsData={preparedAttachmentPointsData}
           />
-          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+          {isMonomerPreviewPropertiesVisible && (
+            <MonomerPreviewProperties
+              idtAliasesText={idtAliasesText ?? undefined}
+              axoLabsText={axoLabsAlias ?? undefined}
+              helmText={aliasHelm ?? undefined}
+              modificationTypeText={
+                Array.isArray(modificationTypes)
+                  ? modificationTypes.join(', ')
+                  : modificationTypes
+              }
+            />
+          )}
         </InfoBlock>
       </Container>
     )

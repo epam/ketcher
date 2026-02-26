@@ -47,7 +47,7 @@ import assert from 'assert';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 export function fromAtomAddition(restruct, pos, atom) {
-  atom = Object.assign({}, atom);
+  atom = { ...(atom || {}) };
   const action = new Action();
   atom.fragment = (
     action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
@@ -79,10 +79,6 @@ export function fromAtomsAttrs(
 
       switch (key) {
         case 'stereoLabel':
-          if (key in attrs && value) {
-            action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
-          }
-          break;
         case 'stereoParity':
           if (key in attrs && value) {
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
@@ -240,8 +236,8 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   const sgroups = atomGetSGroups(restruct, srcId);
   sgroups.forEach((sgroupId: number) => {
     const sgroup = restruct.sgroups.get(sgroupId).item;
-    for (let i = 0; i < sgroup.attachmentPoints.length; ++i) {
-      if (sgroup.attachmentPoints[i].atomId === srcId) {
+    for (const attachmentPoint of sgroup.attachmentPoints) {
+      if (attachmentPoint.atomId === srcId) {
         action.addOp(
           new SGroupAttachmentPointRemove(
             sgroupId,
@@ -268,30 +264,33 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
   const frid = atomGetAttr(restruct, srcId, 'fragment') as number;
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
-  if (frid2 === frid || typeof frid !== 'number' || typeof frid2 !== 'number') {
-    return frid;
+
+  if (frid2 !== frid && typeof frid === 'number' && typeof frid2 === 'number') {
+    const struct = restruct.molecule;
+
+    const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
+    if (typeof rgid !== 'undefined') {
+      action
+        .mergeWith(fromRGroupFragment(restruct, null, frid2))
+        .mergeWith(fromUpdateIfThen(restruct, 0, rgid));
+    }
+
+    const fridAtoms = struct.getFragmentIds(frid);
+
+    const atomsToNewFrag: Array<any> = [];
+    struct.atoms.forEach((atom, aid) => {
+      if (atom.fragment === frid2) atomsToNewFrag.push(aid);
+    });
+    const moveAtomsAction = fromAtomsFragmentAttr(
+      restruct,
+      atomsToNewFrag,
+      frid,
+    );
+
+    mergeSgroups(action, restruct, fridAtoms, dstId);
+    action.addOp(new FragmentDelete(frid2).perform(restruct));
+    action.mergeWith(moveAtomsAction);
   }
-
-  const struct = restruct.molecule;
-
-  const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
-  if (!(typeof rgid === 'undefined')) {
-    action
-      .mergeWith(fromRGroupFragment(restruct, null, frid2))
-      .mergeWith(fromUpdateIfThen(restruct, 0, rgid));
-  }
-
-  const fridAtoms = struct.getFragmentIds(frid);
-
-  const atomsToNewFrag: Array<any> = [];
-  struct.atoms.forEach((atom, aid) => {
-    if (atom.fragment === frid2) atomsToNewFrag.push(aid);
-  });
-  const moveAtomsAction = fromAtomsFragmentAttr(restruct, atomsToNewFrag, frid);
-
-  mergeSgroups(action, restruct, fridAtoms, dstId);
-  action.addOp(new FragmentDelete(frid2).perform(restruct));
-  action.mergeWith(moveAtomsAction);
 
   return frid;
 }

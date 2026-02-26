@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
@@ -45,6 +45,9 @@ class Form extends Component {
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
+
+    this._cachedSchema = schema;
+    this._contextValue = { schema, stateStore: this };
   }
 
   componentDidUpdate(prevProps) {
@@ -78,13 +81,13 @@ class Form extends Component {
     const extraValue = extraName ? result[extraName] : null;
 
     const handleOnChange = (name, value) => {
-      const newState = Object.assign({}, this.props.result, { [name]: value });
+      const newState = { ...this.props.result, [name]: value };
       this.updateState(newState);
       if (onChange) onChange(value);
     };
 
     return {
-      dataError: errors && errors[name],
+      dataError: errors?.[name],
       value,
       extraValue,
       onChange: (val) => handleOnChange(name, val),
@@ -95,9 +98,15 @@ class Form extends Component {
   render() {
     const { schema, children } = this.props;
 
+    // Update the cached context value only if schema has changed
+    if (this._cachedSchema !== schema) {
+      this._cachedSchema = schema;
+      this._contextValue = { schema, stateStore: this };
+    }
+
     return (
       <form>
-        <FormContext.Provider value={{ schema, stateStore: this }}>
+        <FormContext.Provider value={this._contextValue}>
           {children}
         </FormContext.Provider>
       </form>
@@ -111,51 +120,63 @@ export default connect(null, (dispatch) => ({
   },
 }))(Form);
 
+function renderLabelContent(title, tooltip) {
+  if (!title) {
+    return '';
+  }
+
+  if (tooltip) {
+    return (
+      <div
+        className={clsx({
+          [classes.divWithTooltipAndAboutIcon]: true,
+        })}
+      >
+        <span>{title}</span>
+        <Tooltip title={tooltip}>
+          <div>
+            <Icon name="about"></Icon>
+          </div>
+        </Tooltip>
+      </div>
+    );
+  }
+
+  return <span>{title}</span>;
+}
+
+function renderLabelContentAfter(title, tooltip) {
+  if (!title) {
+    return '';
+  }
+
+  if (tooltip) {
+    return (
+      <div
+        className={clsx({
+          [classes.divWithTooltipAndAboutIcon]: true,
+        })}
+      >
+        <Tooltip title={tooltip}>
+          <div>
+            <Icon name="about"></Icon>
+          </div>
+        </Tooltip>
+        <span>{title}</span>
+      </div>
+    );
+  }
+
+  return <span>{title}</span>;
+}
+
 function Label({ labelPos, title, children, ...props }) {
   const tooltip = props.tooltip ? props.tooltip : null;
   return (
     <label {...props}>
-      {title && labelPos !== 'after' ? (
-        tooltip ? (
-          <div
-            className={clsx({
-              [classes.divWithTooltipAndAboutIcon]: true,
-            })}
-          >
-            <span>{title}</span>
-            <Tooltip title={tooltip}>
-              <div>
-                <Icon name="about"></Icon>
-              </div>
-            </Tooltip>
-          </div>
-        ) : (
-          <span>{title}</span>
-        )
-      ) : (
-        ''
-      )}
+      {labelPos !== 'after' && renderLabelContent(title, tooltip)}
       {children}
-      {title && labelPos === 'after' ? (
-        tooltip ? (
-          <div
-            className={clsx({
-              [classes.divWithTooltipAndAboutIcon]: true,
-            })}
-          >
-            <Tooltip title={tooltip}>
-              <div>
-                <Icon name="about"></Icon>
-              </div>
-            </Tooltip>
-            <span>{title}</span>
-          </div>
-        ) : (
-          <span>{title}</span>
-        )
-      ) : (
-        ''
-      )}
+      {labelPos === 'after' && renderLabelContentAfter(title, tooltip)}
     </label>
   );
 }
@@ -206,7 +227,7 @@ function Field(props) {
       schema={desc}
       {...fieldOpts}
       {...rest}
-      data-testid={`${name}-input`}
+      data-testid={props['data-testid'] ?? `${name}-input`}
     />
   );
 
@@ -225,6 +246,7 @@ function Field(props) {
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         data-testid={props['data-testid'] + '-input-span'}
+        role="none"
       >
         {formField}
       </span>
@@ -270,14 +292,17 @@ function FieldWithModal(props) {
         })}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        role="none"
       >
         <Input name={name} schema={desc} {...fieldOpts} {...rest} />
         <IconButton
           onClick={() => {
             onEdit(fieldOpts.onChange);
           }}
+          name="testname"
           iconName="edit"
           className={classes.editButton}
+          testId={`edit-button`}
         />
       </span>
       {dataError && anchorEl && (
@@ -339,6 +364,7 @@ function CustomQueryField(props) {
           [classes.dataError]: dataError,
           [classes.inputWrapper]: true,
         })}
+        role="none"
       >
         <Input
           type="textarea"
@@ -394,15 +420,14 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator);
-      const {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        pattern,
-        maxLength,
-        enum: enumIsReservedWord,
-        enumNames,
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-        ...rest
-      } = schemaCopy.properties[formatName];
+
+      const rest = omit(schemaCopy.properties[formatName], [
+        'pattern',
+        'maxLength',
+        'enum',
+        'enumNames',
+      ]);
+
       schemaCopy.properties[formatName] = {
         ...rest,
         format: formatName,

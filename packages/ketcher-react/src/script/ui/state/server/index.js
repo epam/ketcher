@@ -83,7 +83,13 @@ function ketcherCheck(struct, checkParams) {
 export function check(optsTypes) {
   return (dispatch, getState) => {
     const { editor, server } = getState();
-    const ketcherErrors = ketcherCheck(editor.struct(), optsTypes);
+    const struct = editor.struct();
+
+    // recalculate implicit hydrogens before validation
+    // because for atoms in collapsed sgroups it can be not calculated
+    struct.setImplicitHydrogen(undefined, true);
+
+    const ketcherErrors = ketcherCheck(struct, optsTypes);
 
     const options = getState().options.getServerSettings();
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
@@ -216,22 +222,20 @@ export function serverCall(editor, server, method, options, struct) {
 
   return server.then(() =>
     server[method](
-      Object.assign(
-        {
-          struct: serializedStruct,
-        },
-        method !== 'calculate' && method !== 'check'
+      {
+        struct: serializedStruct,
+        ...(method !== 'calculate' && method !== 'check'
           ? {
               output_format: ChemicalMimeType.KET,
             }
-          : null,
-        selectedAtoms && selectedAtoms.length > 0
+          : null),
+        ...(selectedAtoms && selectedAtoms.length > 0
           ? {
               selected: selectedAtoms,
             }
-          : null,
-        options.data,
-      ),
+          : null),
+        ...options.data,
+      },
       omit('data', options),
     ),
   );

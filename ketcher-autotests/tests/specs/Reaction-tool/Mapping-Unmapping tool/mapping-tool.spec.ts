@@ -1,17 +1,15 @@
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
-  dragMouseTo,
   waitForPageInit,
   mapTwoAtoms,
-  clickOnAtom,
-  clickOnCanvas,
   RxnFileFormat,
+  deleteByKeyboard,
+  dragTo,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   FileType,
   verifyFileExport,
@@ -20,8 +18,9 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,8 +37,8 @@ test.describe('Mapping Tools', () => {
     );
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 10 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 23 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 33 }),
     );
     await takeEditorScreenshot(page);
   });
@@ -51,11 +50,12 @@ test.describe('Mapping Tools', () => {
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
-      const anyAtom = 0;
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionUnmapping,
       );
-      await clickOnAtom(page, 'Br', anyAtom);
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
     });
 
     test('Map ordering', async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe('Mapping Tools', () => {
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -83,10 +83,13 @@ test.describe('Mapping Tools', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await clickOnCanvas(page, point.x, point.y);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 23 }).click();
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 23 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 37 }),
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Undo working in atom mapping, able to remove mapping', async ({
@@ -94,13 +97,12 @@ test.describe('Mapping Tools', () => {
   }) => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -118,7 +120,7 @@ test.describe('Mapping Tools', () => {
         ReactionMappingType.ReactionMapping,
       );
       await page.getByText('CEL').click();
-      await page.keyboard.press('Delete');
+      await deleteByKeyboard(page);
       await takeEditorScreenshot(page);
 
       await CommonTopLeftToolbar(page).undo();

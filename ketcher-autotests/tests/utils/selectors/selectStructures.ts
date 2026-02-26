@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getCoordinatesOfTheMiddleOfTheScreen } from '@utils/clicks';
-import { BondType } from '..';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 export async function selectPartOfMolecules(page: Page, shift = 100) {
   const coordinatesToStartSelection = 70;
@@ -18,12 +17,17 @@ export async function selectPartOfMolecules(page: Page, shift = 100) {
 export async function selectPartOfChain(page: Page) {
   const coordinatesToStartSelection = 70;
   const smallShift = 20;
-  const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+  const doubleBond = await getBondLocator(page, { bondId: 18 });
+  const box = await doubleBond.boundingBox();
+  if (!box) throw new Error('Bond bounding box not found');
+  const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+  const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,
   );
   await page.mouse.down();
-  await page.mouse.move(doubleBond.x + 1, doubleBond.y + smallShift);
+  await page.mouse.move(centerX + 1, centerY + smallShift);
   await page.mouse.up();
 }

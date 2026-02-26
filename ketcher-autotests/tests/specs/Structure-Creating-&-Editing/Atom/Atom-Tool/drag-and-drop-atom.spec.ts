@@ -1,23 +1,24 @@
 import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
-  selectFunctionalGroups,
-  selectSaltsAndSolvents,
-  FunctionalGroups,
-  SaltsAndSolvents,
   getCoordinatesOfTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 const X_DELTA_ONE = 100;
 const X_DELTA_TWO = 150;
@@ -41,14 +42,16 @@ test.describe('Drag and drop Atom on canvas', () => {
     const oxygenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -61,21 +64,26 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -86,21 +94,26 @@ test.describe('Drag and drop Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -124,14 +137,16 @@ test.describe('Drag and drop Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -144,11 +159,15 @@ test.describe('Drag and drop Atom on canvas', () => {
       with bond to another FG it should replace it
     */
     const atomToolbar = RightToolbar(page);
-
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
     await clickInTheMiddleOfTheScreen(page);
-
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -157,14 +176,16 @@ test.describe('Drag and drop Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y, {
+      from: 'pageTopLeft',
+    });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

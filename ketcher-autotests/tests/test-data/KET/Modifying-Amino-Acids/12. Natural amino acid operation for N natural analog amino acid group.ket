@@ -244,6 +244,7 @@
         "id": "N___Asparagine",
         "fullName": "Asparagine",
         "alias": "N",
+        "aliasHELM": "N",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

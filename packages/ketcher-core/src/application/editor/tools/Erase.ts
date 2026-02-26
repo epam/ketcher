@@ -20,8 +20,8 @@ import { BaseSequenceRenderer } from 'application/render/renderers/sequence/Base
 import { SequenceMode } from '../modes';
 
 class EraserTool implements BaseTool {
-  private history: EditorHistory;
-  constructor(private editor: CoreEditor) {
+  private readonly history: EditorHistory;
+  constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
     if (
@@ -35,6 +35,11 @@ class EraserTool implements BaseTool {
       );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 
@@ -49,12 +54,19 @@ class EraserTool implements BaseTool {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteDrawingEntity(
           selectedItemRenderer.drawingEntity,
+          true,
+          true,
         );
       modelChanges.merge(
         this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
       );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 

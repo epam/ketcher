@@ -12,6 +12,7 @@ import RotateTool from './rotate';
 import SelectTool from './select/select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
 import { normalizeAngle } from '../utils/normalizeAngle';
+import FragmentSelectionTool from './fragmentSelection';
 
 type RaphaelElement = {
   [key: string]: any;
@@ -36,8 +37,8 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   isRotating!: boolean;
-  private editor: Editor;
-  private rotateTool: RotateTool;
+  private readonly editor: Editor;
+  private readonly rotateTool: RotateTool;
   private originalCenter!: Vec2;
   private normalizedCenterInitialHandleVec!: Vec2;
   private handleCenter!: Vec2;
@@ -164,9 +165,11 @@ class RotateController {
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
         .length > 1;
 
+    const currentTool = this.editor.tool();
     const enable =
       isMoreThanOneItemBeingSelected &&
-      this.editor.tool() instanceof SelectTool &&
+      (currentTool instanceof SelectTool ||
+        currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
 
     if (!enable) {
@@ -415,15 +418,7 @@ class RotateController {
         break;
       }
 
-      case 'moveCenter': {
-        this.link?.attr({
-          path:
-            `M${this.center.x},${this.center.y}` +
-            `L${this.handleCenter.x},${this.handleCenter.y}`,
-        });
-        break;
-      }
-
+      case 'moveCenter':
       case 'moveHandle': {
         this.link?.attr({
           path:
@@ -473,7 +468,8 @@ class RotateController {
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
       -30,
     ];
-    predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
+    let previousDegree = 0;
+    predefinedDegrees.forEach((currentDegree, currentIndex) => {
       const isDrawingDegree0 = currentIndex === 0;
       const gap = currentDegree - previousDegree;
       const diff = getDifference(currentDegree, structRotateDegree);
@@ -490,26 +486,29 @@ class RotateController {
       this.protractor?.push(degreeLine);
 
       if (radius < 65) {
-        return currentDegree;
+        previousDegree = currentDegree;
+        return;
       }
 
       textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
+      let degreeTextFill = STYLE.INITIAL_COLOR;
+
+      if (diff > 90) {
+        degreeTextFill = 'none';
+      } else if (currentDegree !== 0 && currentDegree === structRotateDegree) {
+        degreeTextFill = STYLE.ACTIVE_COLOR;
+      }
+
       const degreeText = this.paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
-          fill:
-            diff > 90
-              ? 'none'
-              : currentDegree !== 0 && currentDegree === structRotateDegree
-              ? STYLE.ACTIVE_COLOR
-              : STYLE.INITIAL_COLOR,
+          fill: degreeTextFill,
           'font-size': DEGREE_FONT_SIZE,
         });
 
       this.protractor?.push(degreeText);
-
-      return currentDegree;
-    }, 0);
+      previousDegree = currentDegree;
+    });
 
     this.protractor.toBack();
   }
@@ -561,7 +560,7 @@ class RotateController {
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
-  private hoverIn = (event: MouseEvent) => {
+  private readonly hoverIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -570,7 +569,7 @@ class RotateController {
     this.drawHandle('hoverIn');
   };
 
-  private hoverOut = (event: MouseEvent) => {
+  private readonly hoverOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -631,7 +630,7 @@ class RotateController {
     ] as const;
   }
 
-  private dragStart = (event: MouseEvent) => {
+  private readonly dragStart = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1;
@@ -680,7 +679,7 @@ class RotateController {
     this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter);
   };
 
-  private dragMove = () => {
+  private readonly dragMove = () => {
     let lastSnappingRadius: number | undefined;
     return throttle(
       (
@@ -694,8 +693,10 @@ class RotateController {
           return;
         }
 
-        this.handleCenter = this.render
-          .page2obj(event)
+        this.handleCenter = CoordinateTransformation.pageToModel(
+          event,
+          this.render,
+        )
           .scaled(this.render.options.microModeScale)
           .add(this.render.options.offset);
 
@@ -742,14 +743,14 @@ class RotateController {
     );
   };
 
-  private dragEnd = (event: MouseEvent) => {
+  private readonly dragEnd = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mouseup
 
     this.rotateTool.mouseup();
     this.rerender();
   };
 
-  private hoverCrossIn = (event: MouseEvent) => {
+  private readonly hoverCrossIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -759,7 +760,7 @@ class RotateController {
     this.drawLink('long');
   };
 
-  private hoverCrossOut = (event: MouseEvent) => {
+  private readonly hoverCrossOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
       return;
@@ -769,12 +770,12 @@ class RotateController {
     this.drawLink('short');
   };
 
-  private dragCrossStart = (event: MouseEvent) => {
+  private readonly dragCrossStart = (event: MouseEvent) => {
     event.stopPropagation();
     this.isMovingCenter = true;
   };
 
-  private dragCrossMove = throttle(
+  private readonly dragCrossMove = throttle(
     (
       _dxFromStart: number,
       _dyFromStart: number,
@@ -786,7 +787,10 @@ class RotateController {
         return;
       }
 
-      this.originalCenter = this.render.page2obj(event);
+      this.originalCenter = CoordinateTransformation.pageToModel(
+        event,
+        this.render,
+      );
 
       this.drawCross('move');
       this.drawLink('moveCenter');
@@ -794,14 +798,17 @@ class RotateController {
     40,
   );
 
-  private dragCrossEnd = (event: MouseEvent) => {
+  private readonly dragCrossEnd = (event: MouseEvent) => {
     event.stopPropagation();
 
     this.isMovingCenter = false;
-    this.originalCenter = this.render.page2obj(event);
+    this.originalCenter = CoordinateTransformation.pageToModel(
+      event,
+      this.render,
+    );
   };
 
-  private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
+  private readonly dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
     this.isMovingCenter = false;
     this.rerender();
   };
@@ -831,11 +838,13 @@ class RotateController {
     } else {
       const { isSnapping, absoluteAngle, relativeAngle, snapMode } =
         snapAngleDrawingProps;
-      const drawingState: SnapAngleIndicatorState = isSnapping
-        ? 'noLine'
-        : snapMode === 'multiple-bonds'
-        ? 'noText'
-        : 'default';
+      let drawingState: SnapAngleIndicatorState = 'default';
+
+      if (isSnapping) {
+        drawingState = 'noLine';
+      } else if (snapMode === 'multiple-bonds') {
+        drawingState = 'noText';
+      }
       this.drawSnapAngleIndicator(drawingState, absoluteAngle, relativeAngle);
     }
   }

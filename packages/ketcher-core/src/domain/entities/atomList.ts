@@ -34,7 +34,9 @@ export class AtomList {
     const labels: Array<ElementLabel> = [];
     for (const id of this.ids) {
       const currenElement = Elements.get(id);
-      currenElement && labels.push(currenElement!.label);
+      if (currenElement) {
+        labels.push(currenElement.label);
+      }
     }
 
     return labels;
@@ -49,10 +51,12 @@ export class AtomList {
   }
 
   equals(atomList: AtomList) {
+    const getSortedIds = (ids?: Array<number>) =>
+      [...(ids ?? [])].sort((a, b) => a - b).toString();
+
     return (
       this.notList === atomList.notList &&
-      (this.ids || []).sort().toString() ===
-        (atomList.ids || []).sort().toString()
+      getSortedIds(this.ids) === getSortedIds(atomList.ids)
     );
   }
 }

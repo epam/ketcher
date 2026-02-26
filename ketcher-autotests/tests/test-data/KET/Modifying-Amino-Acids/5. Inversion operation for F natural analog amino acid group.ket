@@ -839,6 +839,7 @@
         "id": "dF___D-Phenylalanine",
         "fullName": "D-Phenylalanine",
         "alias": "dF",
+        "aliasHELM": "dF",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -858,6 +859,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "F"
     },

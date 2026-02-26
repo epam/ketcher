@@ -38,7 +38,7 @@ export interface TextAttributes {
 }
 
 function preparePositions(positions?: Array<Point>) {
-  if (!positions || !positions.length) {
+  if (!positions?.length) {
     return [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
   }
 
@@ -53,14 +53,14 @@ export class Text extends BaseMicromoleculeEntity {
   constructor(attributes?: TextAttributes) {
     super(attributes?.initiallySelected);
     this.pos = preparePositions(attributes?.pos);
-    this.content = attributes?.content || '';
+    this.content = attributes?.content ?? '';
     this.position = attributes?.position
       ? new Vec2(attributes.position)
       : new Vec2();
   }
 
   setPos(coords: Array<Vec2>): void {
-    this.pos = coords || [];
+    this.pos = coords ?? [];
   }
 
   clone(): Text {

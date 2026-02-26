@@ -9,7 +9,6 @@ import {
   MonomerToAtomBond,
   Nucleotide,
   Phosphate,
-  Pool,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -25,9 +24,13 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import {
+  SubChainNode,
+  SequenceNode,
+} from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
@@ -39,9 +42,10 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
-
-export type SequencePointer = number;
-export type SequenceLastCaretPosition = number;
+import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
+import ZoomTool from 'application/editor/tools/Zoom';
+import { select } from 'd3';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
@@ -62,12 +66,52 @@ export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
-  public static caretPosition: SequencePointer = -1;
-  public static lastUserDefinedCaretPosition: SequenceLastCaretPosition = 0;
-  public static chainsCollection: ChainsCollection;
-  public static lastChainStartPosition: Vec2;
+  private static caretPositionValue = -1;
+  private static lastUserDefinedCaretPositionValue = 0;
+  private static chainsCollectionValue: ChainsCollection;
+  private static lastChainStartPositionValue: Vec2;
+  private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
-  public static sequenceViewModel: SequenceViewModel;
+
+  public static get caretPosition(): number {
+    return this.caretPositionValue;
+  }
+
+  private static set caretPosition(value: number) {
+    this.caretPositionValue = value;
+  }
+
+  public static get lastUserDefinedCaretPosition(): number {
+    return this.lastUserDefinedCaretPositionValue;
+  }
+
+  private static set lastUserDefinedCaretPosition(value: number) {
+    this.lastUserDefinedCaretPositionValue = value;
+  }
+
+  public static get chainsCollection(): ChainsCollection {
+    return this.chainsCollectionValue;
+  }
+
+  private static set chainsCollection(value: ChainsCollection) {
+    this.chainsCollectionValue = value;
+  }
+
+  public static get lastChainStartPosition(): Vec2 {
+    return this.lastChainStartPositionValue;
+  }
+
+  private static set lastChainStartPosition(value: Vec2) {
+    this.lastChainStartPositionValue = value;
+  }
+
+  public static get sequenceViewModel(): SequenceViewModel {
+    return this.sequenceViewModelValue;
+  }
+
+  private static set sequenceViewModel(value: SequenceViewModel) {
+    this.sequenceViewModelValue = value;
+  }
 
   public static show(
     chainsCollection: ChainsCollection,
@@ -82,6 +126,7 @@ export class SequenceRenderer {
     this.removeNewSequenceButtons();
     this.showNodes(SequenceRenderer.sequenceViewModel);
     this.showBonds(SequenceRenderer.chainsCollection);
+    this.attachDelegatedEvents();
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
@@ -128,7 +173,7 @@ export class SequenceRenderer {
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
-    const handledNodes = new Set<SubChainNode | BackBoneSequenceNode>();
+    const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
@@ -153,12 +198,12 @@ export class SequenceRenderer {
               currentChainStartPosition.add(new Vec2(0, 30)),
               currentMonomerIndexInChain,
               chainItem.antisenseNode === chain.lastNode.senseNode,
-              chainItem.antisenseChain || chainItem.chain,
+              chainItem.antisenseChain ?? chainItem.chain,
               currentMonomerIndexOverall,
               SequenceRenderer.caretPosition,
-              previousRowsWithAntisense,
               chainItem,
               chainItem.antisenseNode?.monomer?.renderer,
+              previousRowsWithAntisense,
             );
 
             antisenseNodeRenderer.show();
@@ -193,9 +238,9 @@ export class SequenceRenderer {
             chainItem.chain,
             currentMonomerIndexOverall,
             SequenceRenderer.caretPosition,
-            previousRowsWithAntisense,
             chainItem,
             node.monomer.renderer,
+            previousRowsWithAntisense,
           );
 
           renderer.show();
@@ -232,7 +277,7 @@ export class SequenceRenderer {
           Math.max(
             chain.lastRow.sequenceViewModelItems.length,
             sequenceViewModel.chains[chainIndex + 1]?.firstRow
-              ?.sequenceViewModelItems.length || 0,
+              ?.sequenceViewModelItems.length ?? 0,
           ),
         );
       }
@@ -319,7 +364,7 @@ export class SequenceRenderer {
               }
 
               if (!subChain.bonds.includes(polymerBond)) {
-                subChain.bonds.push(polymerBond);
+                subChain.addBond(polymerBond);
               }
               if (!polymerBond.isSideChainConnection) {
                 polymerBond.setRenderer(
@@ -399,7 +444,7 @@ export class SequenceRenderer {
     });
   }
 
-  public static setCaretPosition(caretPosition: SequencePointer) {
+  public static setCaretPosition(caretPosition: number) {
     const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -459,7 +504,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPositionBySequenceItemRenderer(
-    sequenceItemRenderer: BaseSequenceItemRenderer,
+    sequenceItemRenderer: IBaseRenderer,
   ) {
     let newCaretPosition = -1;
 
@@ -522,14 +567,14 @@ export class SequenceRenderer {
   }
 
   public static getMonomersByCaretPositionRange(
-    startCaretPosition: SequencePointer,
+    startCaretPosition: number,
     endCaretPosition,
   ) {
     const monomers: BaseMonomer[] = [];
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
         startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition || this.caretPosition)
+        nodeIndexOverall < (endCaretPosition ?? this.caretPosition)
       ) {
         if (twoStrandedNode.senseNode?.monomer) {
           monomers.push(twoStrandedNode.senseNode?.monomer);
@@ -593,7 +638,7 @@ export class SequenceRenderer {
     return (
       this.nodesGroupedByRows.find((idexRow) =>
         idexRow.includes(currentEdittingNode),
-      ) || []
+      ) ?? []
     );
   }
 
@@ -639,7 +684,7 @@ export class SequenceRenderer {
     let newCaretPosition = this.caretPosition;
     const symbolsBeforeCaretInCurrentRow = currentNodeIndexInRow;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ??
       0;
 
     newCaretPosition -= symbolsBeforeCaretInCurrentRow;
@@ -663,7 +708,7 @@ export class SequenceRenderer {
 
     let newCaretPosition = this.caretPosition;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ??
       0;
     const symbolsAfterCaretInCurrentRow =
       this.currentChainRow.length - currentNodeIndexInRow;
@@ -680,7 +725,7 @@ export class SequenceRenderer {
   public static moveCaretForward() {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
-      this.nextCaretPosition || this.caretPosition,
+      this.nextCaretPosition ?? this.caretPosition,
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
@@ -690,9 +735,7 @@ export class SequenceRenderer {
   public static moveCaretBack() {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
-      this.previousCaretPosition === undefined
-        ? this.caretPosition
-        : this.previousCaretPosition,
+      this.previousCaretPosition ?? this.caretPosition,
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
@@ -711,7 +754,7 @@ export class SequenceRenderer {
     return currentChainIndex;
   }
 
-  public static get lastNodeCaretPosition(): SequencePointer | undefined {
+  public static get lastNodeCaretPosition(): number | undefined {
     if (SequenceRenderer.chainsCollection.chains.length === 0) {
       return undefined;
     }
@@ -725,8 +768,8 @@ export class SequenceRenderer {
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
 
-  public static getNodeByPointer(sequencePointer?: SequencePointer) {
-    if (sequencePointer === undefined) return;
+  public static getNodeByPointer(sequencePointer?: number) {
+    if (sequencePointer === undefined) return undefined;
     let nodeToReturn: ITwoStrandedChainItem | undefined;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
@@ -792,7 +835,7 @@ export class SequenceRenderer {
 
   public static get nextNodeInSameChain() {
     if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
-      return;
+      return undefined;
     }
 
     const currentNode = this.currentEdittingNode;
@@ -815,7 +858,7 @@ export class SequenceRenderer {
     return SequenceRenderer.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
-  private static get nextCaretPosition(): SequencePointer | undefined {
+  private static get nextCaretPosition(): number | undefined {
     const nodeOnNextPosition = SequenceRenderer.getNodeByPointer(
       this.caretPosition + 1,
     );
@@ -851,8 +894,6 @@ export class SequenceRenderer {
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
     chainsCollection.rearrange();
-
-    editor.drawingEntitiesManager.clearCanvas();
 
     SequenceRenderer.show(
       chainsCollection,
@@ -1178,7 +1219,7 @@ export class SequenceRenderer {
         twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         rendererToReturn =
-          twoStrandedNode.senseNode?.renderer ||
+          twoStrandedNode.senseNode?.renderer ??
           twoStrandedNode.antisenseNode?.renderer;
       }
     });
@@ -1210,32 +1251,15 @@ export class SequenceRenderer {
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
     this.removeNewSequenceButtons();
+    this.removeDelegatedEvents();
   }
-}
 
-export function sequenceReplacer(key: string, value: unknown): unknown {
-  if (key === 'renderer') {
-    return `<${typeof value}>`;
-  } else if (key === 'baseRenderer') {
-    return `<${typeof value}>`;
-  } else if (['R1', 'R2', 'R3'].includes(key)) {
-    return `<${typeof value}>`;
-  } else if (value instanceof Pool) {
-    return {
-      // eslint-disable-next-line dot-notation
-      nextId: value['nextId'],
-      items: Array.from(value),
-    };
-  } else if (
-    value instanceof Object &&
-    !['Object', 'Array'].includes(value.constructor.name)
-  ) {
-    const valueObj = value as object;
-    return {
-      ctor: value.constructor.name,
-      repr: valueObj.toString(),
-      ...value,
-    };
+  private static attachDelegatedEvents() {
+    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    SequenceEventDelegationManager.instance.attachDelegatedEvents(canvas);
   }
-  return value;
+
+  private static removeDelegatedEvents() {
+    SequenceEventDelegationManager.instance.removeDelegatedEvents();
+  }
 }

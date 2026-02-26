@@ -1,25 +1,28 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
-  FunctionalGroups,
   clickInTheMiddleOfTheScreen,
-  selectFunctionalGroups,
   waitForPageInit,
   takeRightToolbarScreenshot,
-  clickOnAtom,
-  waitForRender,
   waitForIndigoToLoad,
+  keyboardPressOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
+import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,47 +30,48 @@ test.describe('Open Ketcher', () => {
   });
 
   test('Toolbar palette: full screen verification', async ({ page }) => {
-    /* 
-      Test case: EPMLSOPKET-1331
-      Description:  Toolbar - Toolbar palette: full screen verification
-      */
+    /*
+     * Test case: EPMLSOPKET-1331
+     * Description:  Toolbar - Toolbar palette: full screen verification
+     */
     await takeLeftToolbarScreenshot(page);
   });
 
   test('Help: UI Verification', async ({ page }) => {
     /*
-        Test case: Test case: EPMLSOPKET-1328
-        Description: Help button tooltip verification
-        */
-    await page.getByTitle('Help (?)').first().hover();
+     * Test case: Test case: EPMLSOPKET-1328
+     * Description: Help button tooltip verification
+     */
+    await CommonTopRightToolbar(page).helpButton.hover();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });
 
   test('Menu bar: UI Verification', async ({ page }) => {
     /*
-        Test case: Test case: EPMLSOPKET-1330
-        Description: Menu bar buttons verification
-        */
+     * Test case: Test case: EPMLSOPKET-1330
+     * Description: Menu bar buttons verification
+     */
     await takeTopToolbarScreenshot(page);
 
-    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Bn,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });
 
   test('Toolbar palette: minimized screen verification', async ({ page }) => {
     /*
-        Test case: Test case: EPMLSOPKET-1332
-        Description: Toolbar palette in minimized screen verification
-        */
+     * Test case: Test case: EPMLSOPKET-1332
+     * Description: Toolbar palette in minimized screen verification
+     */
 
     await page.setViewportSize({ width: 600, height: 800 });
     await takeLeftToolbarScreenshot(page);
@@ -80,9 +84,9 @@ test.describe('Open Ketcher', () => {
     },
     async ({ page }) => {
       /*
-        Test case: Test case: EPMLSOPKET-3946
-        Description: Hiding item from the toolbar
-        */
+       * Test case: Test case: EPMLSOPKET-3946
+       * Description: Hiding item from the toolbar
+       */
 
       await page.goto('/?hiddenControls=clear');
 
@@ -98,9 +102,9 @@ test.describe('Open Ketcher', () => {
     browser,
   }) => {
     /*
-    Test case: for issue #3094
-    Description: Toolbars (right one and bottom) were not visible if browser zoomed in
-    */
+     * Test case: for issue #3094
+     * Description: Toolbars (right one and bottom) were not visible if browser zoomed in
+     */
     await browser.newContext({ deviceScaleFactor: 1.25 });
     await waitForPageInit(page);
     await page.setViewportSize({ width: 560, height: 380 });
@@ -112,9 +116,9 @@ test.describe('Open Ketcher', () => {
     browser,
   }) => {
     /*
-    Test case: EPMLSOPKET - 4732
-    Description: After clicking on the down row button on the right toolbar to scroll -> the tools should be scrolled to down
-    */
+     * Test case: EPMLSOPKET - 4732
+     * Description: After clicking on the down row button on the right toolbar to scroll -> the tools should be scrolled to down
+     */
     await browser.newContext({ deviceScaleFactor: 1.25 });
     await waitForPageInit(page);
     await page.setViewportSize({ width: 500, height: 500 });
@@ -129,30 +133,30 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET - 5257
-    Description: 
-    Iodine tool is applied
-    Single bond tool kept selected and applied on further mouse clicks
-    */
-    const anyAtom = 2;
-    const secondAtom = 4;
+     * Test case: EPMLSOPKET - 5257
+     * Description:
+     * Iodine tool is applied
+     * Single bond tool kept selected and applied on further mouse clicks
+     */
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', anyAtom);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('n');
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
     });
-    await clickOnAtom(page, 'C', secondAtom);
+    await keyboardPressOnCanvas(page, 'n');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
   });
 
   test('Highlight currently selected tool with mouse cursor and toolbox icons', async ({
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET - 5258
-    Description: 
-    Atom tool icon 'F' is highlighted in the right-hand panel
-    */
+     * Test case: EPMLSOPKET - 5258
+     * Description:
+     * Atom tool icon 'F' is highlighted in the right-hand panel
+     */
     const atomToolbar = RightToolbar(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
     await takeRightToolbarScreenshot(page);
@@ -160,10 +164,10 @@ test.describe('Open Ketcher', () => {
 
   test('Check top toolbar icons', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET - 15545, EPMLSOPKET - 4229
-    Description: 
-    Top toolbar according to mockup design.
-    */
+     * Test case: EPMLSOPKET - 15545, EPMLSOPKET - 4229
+     * Description:
+     * Top toolbar according to mockup design.
+     */
     await takeTopToolbarScreenshot(page);
   });
 
@@ -184,10 +188,10 @@ test.describe('Open Ketcher', () => {
 
   test('Verify Aromatize and Dearomatize icons', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET - 16942, EPMLSOPKET - 16943
-    Description: 
-    Aromatize and Dearomatize icons are on top toolbar and can make Aromatize and Dearomatize actions
-    */
+     * Test case: EPMLSOPKET - 16942, EPMLSOPKET - 16943
+     * Description:
+     * Aromatize and Dearomatize icons are on top toolbar and can make Aromatize and Dearomatize actions
+     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -198,9 +202,9 @@ test.describe('Open Ketcher', () => {
 
   test('Verify Add/Remove explicit hidrogens icon', async ({ page }) => {
     /*
-    Description:
-    show/hide explicit hidrogens icon are on top toolbar and can make actions
-    */
+     * Description:
+     * show/hide explicit hidrogens icon are on top toolbar and can make actions
+     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();

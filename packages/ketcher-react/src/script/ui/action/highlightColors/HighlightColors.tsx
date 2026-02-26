@@ -11,11 +11,16 @@ import { Item, Submenu } from 'react-contexify';
 
 interface HighlightMenuProps {
   onHighlight: (color: string) => void;
+  disabled?: boolean;
 }
 
-const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight }) => {
+const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
   return (
-    <Submenu data-testid="Highlight-option" label="Highlight">
+    <Submenu
+      data-testid="Highlight-option"
+      label="Highlight"
+      disabled={disabled}
+    >
       <ColorContainer>
         {standardColors.map((color) => (
           <ColorItem

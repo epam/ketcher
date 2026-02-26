@@ -20,10 +20,10 @@ class ReRGroupAttachmentPoint extends ReObject {
   reAtom: ReAtom;
   lineDirectionVector: Vec2 = new Vec2();
 
-  static LINE_OUTLINE_WIDTH = 0.36;
-  static OUTLINE_PADDING = 0.15;
-  static CURVE_OUTLINE_WIDTH = 1.0;
-  static CURVE_OUTLINE_HEIGHT = 0.42;
+  static readonly LINE_OUTLINE_WIDTH = 0.36;
+  static readonly OUTLINE_PADDING = 0.15;
+  static readonly CURVE_OUTLINE_WIDTH = 1.0;
+  static readonly CURVE_OUTLINE_HEIGHT = 0.42;
 
   constructor(item: RGroupAttachmentPoint, reAtom: ReAtom) {
     super('rgroupAttachmentPoint');
@@ -154,7 +154,7 @@ class ReRGroupAttachmentPoint extends ReObject {
     return Vec2.dist(destination, this.middlePoint);
   }
 
-  private makeHighlightePlate = (
+  private readonly makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
   ) => {

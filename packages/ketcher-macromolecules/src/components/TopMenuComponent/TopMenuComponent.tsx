@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import { Menu } from 'components/menu';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
+  selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
   selectIsSequenceEditInRNABuilderMode,
@@ -31,6 +32,7 @@ import {
   hasOnlyRiboseSugars,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
+  isCycleExistsForSelectedMonomers,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { useEffect, useState } from 'react';
 import { IconName } from 'ketcher-react';
@@ -41,6 +43,7 @@ export function TopMenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
+  const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
@@ -51,6 +54,18 @@ export function TopMenuComponent() {
     useState<IconName>();
   const activeMenuItems = [activeTool];
   const isDisabled = isSequenceEditInRNABuilderMode;
+  const lastSelectedSelectionMenuItem = useAppSelector(
+    selectLastSelectedSelectionMenuItem,
+  );
+  const isFlexMode = layoutMode === 'flex-layout-mode';
+
+  const selectedMonomers = selectedEntities.filter(
+    (entity) => entity && typeof entity.forEachBond === 'function',
+  );
+
+  const cyclicStructureFormationDisabled =
+    (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
+      0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
@@ -85,14 +100,16 @@ export function TopMenuComponent() {
       editor?.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
       editor?.events.selectTool.dispatch([name]);
-      dispatch(selectTool('select-rectangle'));
-      editor?.events.selectTool.dispatch(['select-rectangle']);
+      dispatch(selectTool(lastSelectedSelectionMenuItem));
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
       editor?.events.createAntisenseChain.dispatch(
         name === 'antisenseDnaStrand',
       );
+    } else if (name === 'arrange-ring') {
+      editor?.events.layoutCircular.dispatch();
     }
   };
 
@@ -130,6 +147,16 @@ export function TopMenuComponent() {
           testId="redo"
         />
       </Menu.Group>
+      {isFlexMode && (
+        <Menu.Group isHorizontal={true} divider={true}>
+          <Menu.Item
+            itemId={'arrange-ring' as IconName}
+            title={`Arrange as a Ring (${hotkeysShortcuts.arrangeRing})`}
+            disabled={cyclicStructureFormationDisabled}
+            testId="arrange-ring"
+          />
+        </Menu.Group>
+      )}
       <Menu.Group isHorizontal={true}>
         <Menu.Submenu
           disabled={
@@ -139,6 +166,7 @@ export function TopMenuComponent() {
           }
           needOpenByMenuItemClick={needOpenByMenuItemClick}
           vertical={true}
+          autoSize={true}
           layoutModeButton={true}
           generalTitle="Create Antisense Strand"
           testId="Create Antisense Strand"

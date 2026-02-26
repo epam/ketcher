@@ -12,6 +12,9 @@ jest.mock('hooks', () => ({
   useAppSelector: jest.fn(),
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const mockUseSelector = useSelector as jest.Mock;
 const mockUseAppSelector = useAppSelector as jest.Mock;
 

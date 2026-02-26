@@ -20,6 +20,7 @@ import {
   findStereoAtoms,
   IMAGE_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
+  CREATE_MONOMER_TOOL_NAME,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -48,10 +49,16 @@ const toolActions = {
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'lasso' },
   },
+  'select-structure': {
+    title: 'Structure Selection',
+    shortcut: ['Shift+Tab', 'Escape'],
+    action: { tool: 'select', opts: 'fragment' },
+    hidden: (options) => isHidden(options, 'select-structure'),
+  },
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: ['Shift+Tab', 'Escape'],
-    action: { tool: 'select', opts: 'fragment' },
+    action: { tool: 'fragmentSelection' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {
@@ -70,6 +77,7 @@ const toolActions = {
     title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' },
     disabled: (editor) =>
+      editor.isMonomerCreationWizardActive ||
       findStereoAtoms(
         editor?.struct(),
         Array.from(editor?.struct().atoms.keys()),
@@ -77,13 +85,13 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {
-    shortcut: '+',
+    shortcut: ['Equal', 'Shift+Equal', 'NumpadAdd'],
     title: 'Charge Plus',
     action: { tool: 'charge', opts: 1 },
     hidden: (options) => isHidden(options, 'charge-plus'),
   },
   'charge-minus': {
-    shortcut: '-',
+    shortcut: ['Minus', 'NumpadSubtract'],
     title: 'Charge Minus',
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus'),
@@ -111,39 +119,47 @@ const toolActions = {
     shortcut: 'Mod+g',
     title: 'S-Group',
     action: { tool: 'sgroup' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'sgroup'),
   },
   arrows: {
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'arrows'),
   },
   'reaction-arrow-open-angle': {
     title: 'Arrow Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
   'reaction-arrow-filled-triangle': {
     title: 'Arrow Filled Triangle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },
   'reaction-arrow-filled-bow': {
     title: 'Arrow Filled Bow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-bow'),
   },
   'reaction-arrow-dashed-open-angle': {
     title: 'Arrow Dashed Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.DashedOpenAngle },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-dashed-open-angle'),
   },
   'reaction-arrow-failed': {
     title: 'Failed Arrow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-failed'),
   },
   'reaction-arrow-retrosynthetic': {
     title: 'Retrosynthetic Arrow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Retrosynthetic },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-arrow-retrosynthetic'),
   },
   'reaction-arrow-both-ends-filled-triangle': {
@@ -152,6 +168,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.BothEndsFilledTriangle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-both-ends-filled-triangle'),
   },
@@ -161,6 +178,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledHalfBow,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow'),
   },
@@ -170,12 +188,14 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledTriangle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-filled-triangle'),
   },
   'reaction-arrow-equilibrium-open-angle': {
     title: 'Arrow Equilibrium Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.EquilibriumOpenAngle },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-equilibrium-open-angle'),
   },
@@ -185,6 +205,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(
         options,
@@ -197,6 +218,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(
         options,
@@ -209,6 +231,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(
         options,
@@ -221,6 +244,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(
         options,
@@ -233,6 +257,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledBow,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow'),
   },
@@ -242,6 +267,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledTriangle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle'),
   },
@@ -251,6 +277,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenAngle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle'),
   },
@@ -260,6 +287,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenHalfAngle,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle'),
   },
@@ -269,69 +297,94 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: MULTITAIL_ARROW_TOOL_NAME,
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, MULTITAIL_ARROW_TOOL_NAME),
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-plus'),
   },
   'reaction-mapping-tools': {
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-mapping-tools'),
   },
   'reaction-map': {
     title: 'Reaction Mapping Tool',
     action: { tool: 'reactionmap' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-map'),
   },
   'reaction-unmap': {
     title: 'Reaction Unmapping Tool',
     action: { tool: 'reactionunmap' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-unmap'),
   },
   rgroup: {
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup'),
   },
   'rgroup-label': {
     shortcut: 'Mod+r',
     title: 'R-Group Label Tool',
     action: { tool: 'rgroupatom' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-label'),
   },
   'rgroup-fragment': {
     shortcut: ['Mod+Shift+r', 'Mod+r'],
     title: 'R-Group Fragment Tool',
     action: { tool: 'rgroupfragment' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-fragment'),
   },
   'rgroup-attpoints': {
     shortcut: 'Mod+r',
     title: 'Attachment Point Tool',
     action: { tool: 'apoint' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'rgroup-attpoints'),
   },
+  [CREATE_MONOMER_TOOL_NAME]: {
+    shortcut: 'Mod+m',
+    title: 'Create a monomer',
+    action: {
+      tool: CREATE_MONOMER_TOOL_NAME,
+    },
+    disabled: (editor) =>
+      editor.isMonomerCreationWizardActive ||
+      !editor.isMonomerCreationWizardEnabled,
+    hidden: (options) => isHidden(options, CREATE_MONOMER_TOOL_NAME),
+  },
   shapes: {
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shapes'),
   },
   'shape-ellipse': {
     title: 'Shape Ellipse',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-ellipse'),
   },
   'shape-rectangle': {
     title: 'Shape Rectangle',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-rectangle'),
   },
   'shape-line': {
     title: 'Shape Line',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'shape-line'),
   },
   text: {
     shortcut: 'Alt+t',
     title: 'Add text',
     action: { tool: 'text' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'text'),
   },
   bonds: {
@@ -340,6 +393,7 @@ const toolActions = {
   [IMAGE_KEY]: {
     title: 'Add Image',
     action: { tool: IMAGE_KEY },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, IMAGE_KEY),
   },
 };

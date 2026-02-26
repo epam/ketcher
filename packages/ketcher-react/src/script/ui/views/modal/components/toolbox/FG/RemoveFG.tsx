@@ -47,6 +47,7 @@ const RemoveFG = (props: Props) => {
       onSubmit={(event) => event.preventDefault()}
       tabIndex={-1}
       className={classes.window}
+      data-testid="edit-abbreviation-window"
     >
       <header className={classes.header}>Edit Abbreviation</header>
       <div className={classes.question}>
@@ -60,10 +61,12 @@ const RemoveFG = (props: Props) => {
           value={'Cancel'}
           className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
+          data-testid="Cancel"
         />
         <input
           type="button"
           value={'Remove Abbreviation'}
+          data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}
         />

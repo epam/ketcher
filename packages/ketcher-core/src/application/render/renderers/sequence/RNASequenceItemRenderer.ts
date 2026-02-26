@@ -19,8 +19,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     _editingNodeIndexOverall: number,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
-    _previousRowsWithAntisense = 0,
     _twoStrandedNode: ITwoStrandedChainItem,
+    _previousRowsWithAntisense = 0,
   ) {
     super(
       node,
@@ -32,8 +32,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
       _editingNodeIndexOverall,
       monomerSize,
       scaledMonomerPosition,
-      _previousRowsWithAntisense,
       _twoStrandedNode,
+      _previousRowsWithAntisense,
     );
   }
 
@@ -45,14 +45,15 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
 
   protected drawCommonModification(node: Nucleoside | Nucleotide) {
     if (node.rnaBase.isModification) {
-      this.backgroundElement?.attr(
-        'fill',
-        this.node.monomer.selected
-          ? this.isSequenceEditInRnaBuilderModeTurnedOn
-            ? '#41A8B2'
-            : '#3ACA6A'
-          : '#CAD3DD',
-      );
+      let modificationFillColor = '#CAD3DD';
+
+      if (this.node.monomer.selected) {
+        modificationFillColor = this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#41A8B2'
+          : '#3ACA6A';
+      }
+
+      this.backgroundElement?.attr('fill', modificationFillColor);
     }
 
     if (node.sugar.isModification) {

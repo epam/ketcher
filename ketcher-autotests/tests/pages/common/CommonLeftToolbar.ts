@@ -6,7 +6,6 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
-import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   handToolButton: Locator;
@@ -46,11 +45,11 @@ export const CommonLeftToolbar = (page: Page) => {
   return {
     ...locators,
 
-    async selectHandTool() {
+    async handTool() {
       await locators.handToolButton.click();
     },
 
-    async selectAreaSelectionTool(
+    async areaSelectionTool(
       toolType: SelectionToolType = SelectionToolType.Rectangle,
     ) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
@@ -65,7 +64,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async selectEraseTool() {
+    async erase() {
       await waitForRender(page, async () => {
         await locators.eraseButton.click();
       });
@@ -73,7 +72,7 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       try {
-        await delay(0.2);
+        await page.waitForTimeout(200);
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',
@@ -84,13 +83,13 @@ export const CommonLeftToolbar = (page: Page) => {
           "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
         );
         // alternative way to open the dropdown (doesn't work on Macro mode)
-        await this.selectHandTool();
+        await this.handTool();
         await locators.bondSelectionDropdownButton.click({ force: true });
         await locators.bondSelectionDropdownButton.click({ force: true });
       }
     },
 
-    async selectBondTool(bondType: MacroBondType | MicroBondType) {
+    async bondTool(bondType: MacroBondType | MicroBondType) {
       let attempts = 0;
       const maxAttempts = 5;
       const bondTypeButton = page
@@ -100,7 +99,7 @@ export const CommonLeftToolbar = (page: Page) => {
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();
-          await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
+          await bondTypeButton.waitFor({ state: 'visible', timeout: 1500 });
           await bondTypeButton.click({ force: true });
           return;
         } catch (error) {

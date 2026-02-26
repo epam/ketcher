@@ -654,8 +654,8 @@
         "type": "ambiguousMonomer",
         "id": "0",
         "position": {
-            "x": 4.109410572100273,
-            "y": -6.699736081673799
+            "x": 4.984410572100273,
+            "y": -7.5747360816738
         },
         "alias": "N",
         "templateId": "alternatives__A___Adenine__C___Cytosine__G___Guanine__T___Thymine_"
@@ -1424,8 +1424,8 @@
         "type": "ambiguousMonomer",
         "id": "1",
         "position": {
-            "x": 5.559410572100271,
-            "y": -6.699736081673797
+            "x": 6.434410572100271,
+            "y": -7.574736081673798
         },
         "alias": "B",
         "templateId": "alternatives__C___Cytosine__G___Guanine__T___Thymine_"
@@ -1451,8 +1451,8 @@
         "type": "ambiguousMonomer",
         "id": "2",
         "position": {
-            "x": 7.044653667075389,
-            "y": -6.8322262173525425
+            "x": 7.919653667075389,
+            "y": -7.707226217352543
         },
         "alias": "D",
         "templateId": "alternatives__A___Adenine__G___Guanine__T___Thymine_"
@@ -1478,8 +1478,8 @@
         "type": "ambiguousMonomer",
         "id": "3",
         "position": {
-            "x": 8.611394789186258,
-            "y": -6.783218325895542
+            "x": 9.486394789186258,
+            "y": -7.658218325895543
         },
         "alias": "H",
         "templateId": "alternatives__A___Adenine__C___Cytosine__T___Thymine_"
@@ -1505,8 +1505,8 @@
         "type": "ambiguousMonomer",
         "id": "4",
         "position": {
-            "x": 10.05115169421113,
-            "y": -6.798967339463418
+            "x": 10.92615169421113,
+            "y": -7.6739673394634185
         },
         "alias": "K",
         "templateId": "alternatives__G___Guanine__T___Thymine_"
@@ -1529,8 +1529,8 @@
         "type": "ambiguousMonomer",
         "id": "5",
         "position": {
-            "x": 11.473398734914754,
-            "y": -6.796214380167039
+            "x": 12.348398734914754,
+            "y": -7.67121438016704
         },
         "alias": "W",
         "templateId": "alternatives__A___Adenine__T___Thymine_"
@@ -1553,8 +1553,8 @@
         "type": "ambiguousMonomer",
         "id": "6",
         "position": {
-            "x": 13.070645775618376,
-            "y": -6.797975230920419
+            "x": 13.945645775618376,
+            "y": -7.67297523092042
         },
         "alias": "Y",
         "templateId": "alternatives__C___Cytosine__T___Thymine_"
@@ -1577,8 +1577,8 @@
         "type": "ambiguousMonomer",
         "id": "7",
         "position": {
-            "x": 4.124167477125152,
-            "y": -8.972751864587789
+            "x": 4.999167477125152,
+            "y": -9.847751864587789
         },
         "alias": "N",
         "templateId": "alternatives__A___Adenine__C___Cytosine__G___Guanine__U___Uracil_"
@@ -1766,8 +1766,8 @@
         "type": "ambiguousMonomer",
         "id": "8",
         "position": {
-            "x": 5.608418463557268,
-            "y": -8.979249891723537
+            "x": 6.483418463557268,
+            "y": -9.854249891723539
         },
         "alias": "B",
         "templateId": "alternatives__C___Cytosine__G___Guanine__U___Uracil_"
@@ -1793,8 +1793,8 @@
         "type": "ambiguousMonomer",
         "id": "9",
         "position": {
-            "x": 7.150159585668147,
-            "y": -9.03299495956291
+            "x": 8.025159585668147,
+            "y": -9.907994959562911
         },
         "alias": "D",
         "templateId": "alternatives__A___Adenine__G___Guanine__U___Uracil_"
@@ -1820,8 +1820,8 @@
         "type": "ambiguousMonomer",
         "id": "10",
         "position": {
-            "x": 8.62890465350752,
-            "y": -9.067245945995037
+            "x": 9.50390465350752,
+            "y": -9.942245945995039
         },
         "alias": "H",
         "templateId": "alternatives__A___Adenine__C___Cytosine__U___Uracil_"
@@ -1847,8 +1847,8 @@
         "type": "ambiguousMonomer",
         "id": "11",
         "position": {
-            "x": 9.997406626371772,
-            "y": -9.130242000266538
+            "x": 10.872406626371772,
+            "y": -10.00524200026654
         },
         "alias": "K",
         "templateId": "alternatives__G___Guanine__U___Uracil_"
@@ -1871,8 +1871,8 @@
         "type": "ambiguousMonomer",
         "id": "12",
         "position": {
-            "x": 11.484410572100275,
-            "y": -9.161740027402285
+            "x": 12.359410572100275,
+            "y": -10.036740027402287
         },
         "alias": "W",
         "templateId": "alternatives__A___Adenine__U___Uracil_"
@@ -1895,8 +1895,8 @@
         "type": "ambiguousMonomer",
         "id": "13",
         "position": {
-            "x": 13.099167477125155,
-            "y": -9.148743973130784
+            "x": 13.974167477125155,
+            "y": -10.023743973130786
         },
         "alias": "Y",
         "templateId": "alternatives__C___Cytosine__U___Uracil_"
@@ -1919,8 +1919,8 @@
         "type": "ambiguousMonomer",
         "id": "14",
         "position": {
-            "x": 14.271269391218835,
-            "y": -8.067988608297867
+            "x": 15.146269391218835,
+            "y": -8.942988608297867
         },
         "alias": "M",
         "templateId": "alternatives__A___Adenine__C___Cytosine_"
@@ -1943,8 +1943,8 @@
         "type": "ambiguousMonomer",
         "id": "15",
         "position": {
-            "x": 15.537787146997092,
-            "y": -8.052239594729993
+            "x": 16.41278714699709,
+            "y": -8.927239594729993
         },
         "alias": "R",
         "templateId": "alternatives__A___Adenine__G___Guanine_"
@@ -1967,8 +1967,8 @@
         "type": "ambiguousMonomer",
         "id": "16",
         "position": {
-            "x": 16.704304902775355,
-            "y": -8.04948663543362
+            "x": 17.579304902775355,
+            "y": -8.92448663543362
         },
         "alias": "S",
         "templateId": "alternatives__C___Cytosine__G___Guanine_"
@@ -1991,8 +1991,8 @@
         "type": "ambiguousMonomer",
         "id": "17",
         "position": {
-            "x": 17.88106575352873,
-            "y": -8.024486635433618
+            "x": 18.75606575352873,
+            "y": -8.899486635433618
         },
         "alias": "V",
         "templateId": "alternatives__A___Adenine__C___Cytosine__G___Guanine_"
@@ -2018,8 +2018,8 @@
         "type": "ambiguousMonomer",
         "id": "18",
         "position": {
-            "x": 4.122902180643269,
-            "y": -7.765757783180555
+            "x": 4.997902180643269,
+            "y": -8.640757783180556
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__G___Guanine__T___Thymine_"
@@ -2048,8 +2048,8 @@
         "type": "ambiguousMonomer",
         "id": "19",
         "position": {
-            "x": 5.584906126371772,
-            "y": -7.778753837452041
+            "x": 6.459906126371772,
+            "y": -8.653753837452042
         },
         "alias": "%",
         "templateId": "mixture__C___Cytosine__G___Guanine__T___Thymine_"
@@ -2075,8 +2075,8 @@
         "type": "ambiguousMonomer",
         "id": "20",
         "position": {
-            "x": 7.089419936421519,
-            "y": -7.92049495956292
+            "x": 7.964419936421519,
+            "y": -8.795494959562921
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__G___Guanine__T___Thymine_"
@@ -2102,8 +2102,8 @@
         "type": "ambiguousMonomer",
         "id": "21",
         "position": {
-            "x": 8.593165004260891,
-            "y": -7.958491013834416
+            "x": 9.468165004260891,
+            "y": -8.833491013834417
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__T___Thymine_"
@@ -2129,8 +2129,8 @@
         "type": "ambiguousMonomer",
         "id": "22",
         "position": {
-            "x": 10.043165004260894,
-            "y": -8.02699298669867
+            "x": 10.918165004260894,
+            "y": -8.901992986698671
         },
         "alias": "%",
         "templateId": "mixture__G___Guanine__T___Thymine_"
@@ -2153,8 +2153,8 @@
         "type": "ambiguousMonomer",
         "id": "23",
         "position": {
-            "x": 11.48567486858216,
-            "y": -8.06873410880954
+            "x": 12.36067486858216,
+            "y": -8.943734108809542
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__T___Thymine_"
@@ -2177,8 +2177,8 @@
         "type": "ambiguousMonomer",
         "id": "24",
         "position": {
-            "x": 13.081930800742755,
-            "y": -8.125232135945282
+            "x": 13.956930800742755,
+            "y": -9.000232135945284
         },
         "alias": "%",
         "templateId": "mixture__C___Cytosine__T___Thymine_"
@@ -2201,8 +2201,8 @@
         "type": "ambiguousMonomer",
         "id": "25",
         "position": {
-            "x": 4.131161058532397,
-            "y": -10.129522579662428
+            "x": 5.006161058532397,
+            "y": -11.00452257966243
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__G___Guanine__U___Uracil_"
@@ -2231,8 +2231,8 @@
         "type": "ambiguousMonomer",
         "id": "26",
         "position": {
-            "x": 5.624663031396647,
-            "y": -10.138773566094553
+            "x": 6.499663031396647,
+            "y": -11.013773566094553
         },
         "alias": "%",
         "templateId": "mixture__C___Cytosine__G___Guanine__U___Uracil_"
@@ -2258,8 +2258,8 @@
         "type": "ambiguousMonomer",
         "id": "27",
         "position": {
-            "x": 7.159682760039155,
-            "y": -10.25551468820542
+            "x": 8.034682760039155,
+            "y": -11.130514688205421
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__G___Guanine__U___Uracil_"
@@ -2285,8 +2285,8 @@
         "type": "ambiguousMonomer",
         "id": "28",
         "position": {
-            "x": 8.656929800742775,
-            "y": -10.255514688205427
+            "x": 9.531929800742775,
+            "y": -11.130514688205428
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__U___Uracil_"
@@ -2312,8 +2312,8 @@
         "type": "ambiguousMonomer",
         "id": "29",
         "position": {
-            "x": 10.044925855014279,
-            "y": -10.251769620366055
+            "x": 10.919925855014279,
+            "y": -11.126769620366057
         },
         "alias": "%",
         "templateId": "mixture__G___Guanine__U___Uracil_"
@@ -2336,8 +2336,8 @@
         "type": "ambiguousMonomer",
         "id": "30",
         "position": {
-            "x": 11.517941637928283,
-            "y": -10.296263701773299
+            "x": 12.392941637928283,
+            "y": -11.171263701773299
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__U___Uracil_"
@@ -2360,8 +2360,8 @@
         "type": "ambiguousMonomer",
         "id": "31",
         "position": {
-            "x": 13.163428827878535,
-            "y": -10.293510742476922
+            "x": 14.038428827878535,
+            "y": -11.168510742476922
         },
         "alias": "%",
         "templateId": "mixture__C___Cytosine__U___Uracil_"
@@ -2384,8 +2384,8 @@
         "type": "ambiguousMonomer",
         "id": "32",
         "position": {
-            "x": 14.306785174132843,
-            "y": -9.143261296236755
+            "x": 15.181785174132843,
+            "y": -10.018261296236757
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine_"
@@ -2408,8 +2408,8 @@
         "type": "ambiguousMonomer",
         "id": "33",
         "position": {
-            "x": 15.577047997750478,
-            "y": -9.222006364076123
+            "x": 16.452047997750476,
+            "y": -10.097006364076124
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__G___Guanine_"
@@ -2432,8 +2432,8 @@
         "type": "ambiguousMonomer",
         "id": "34",
         "position": {
-            "x": 16.761298984182595,
-            "y": -9.237755377643989
+            "x": 17.636298984182595,
+            "y": -10.11275537764399
         },
         "alias": "%",
         "templateId": "mixture__C___Cytosine__G___Guanine_"
@@ -2456,8 +2456,8 @@
         "type": "ambiguousMonomer",
         "id": "35",
         "position": {
-            "x": 17.940589427899724,
-            "y": -9.190508336940372
+            "x": 18.815589427899724,
+            "y": -10.065508336940372
         },
         "alias": "%",
         "templateId": "mixture__A___Adenine__C___Cytosine__G___Guanine_"
@@ -2483,8 +2483,8 @@
         "type": "ambiguousMonomer",
         "id": "36",
         "position": {
-            "x": 6.952541213813097,
-            "y": -4.603736298226703
+            "x": 7.827541213813097,
+            "y": -5.478736298226704
         },
         "alias": "X",
         "templateId": "alternatives__A___Alanine__C___Cysteine__D___Aspartic acid__E___Glutamic acid__F___Phenylalanine__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine__R___Arginine__S___Serine__T___Threonine__U___Selenocysteine__V___Valine__W___Tryptophan__Y___Tyrosine_"
@@ -7058,8 +7058,8 @@
         "type": "ambiguousMonomer",
         "id": "37",
         "position": {
-            "x": 8.45254121381309,
-            "y": -4.603736298226703
+            "x": 9.32754121381309,
+            "y": -5.478736298226704
         },
         "alias": "B",
         "templateId": "alternatives__D___Aspartic acid__N___Asparagine_"
@@ -7082,8 +7082,8 @@
         "type": "ambiguousMonomer",
         "id": "38",
         "position": {
-            "x": 9.952541213813104,
-            "y": -4.603736298226703
+            "x": 10.827541213813104,
+            "y": -5.478736298226704
         },
         "alias": "J",
         "templateId": "alternatives__L___Leucine__I___Isoleucine_"
@@ -7106,8 +7106,8 @@
         "type": "ambiguousMonomer",
         "id": "39",
         "position": {
-            "x": 11.452541213813097,
-            "y": -4.603736298226703
+            "x": 12.327541213813097,
+            "y": -5.478736298226704
         },
         "alias": "Z",
         "templateId": "alternatives__E___Glutamic acid__Q___Glutamine_"
@@ -7130,8 +7130,8 @@
         "type": "ambiguousMonomer",
         "id": "40",
         "position": {
-            "x": 6.956010755504741,
-            "y": -5.627422180138553
+            "x": 7.831010755504741,
+            "y": -6.502422180138554
         },
         "alias": "%",
         "templateId": "mixture__A___Alanine__C___Cysteine__D___Aspartic acid__E___Glutamic acid__F___Phenylalanine__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine__R___Arginine__S___Serine__T___Threonine__U___Selenocysteine__V___Valine__W___Tryptophan__Y___Tyrosine_"
@@ -7214,8 +7214,8 @@
         "type": "ambiguousMonomer",
         "id": "41",
         "position": {
-            "x": 8.456010755504737,
-            "y": -5.627422180138553
+            "x": 9.331010755504737,
+            "y": -6.502422180138554
         },
         "alias": "%",
         "templateId": "mixture__D___Aspartic acid__N___Asparagine_"
@@ -7238,8 +7238,8 @@
         "type": "ambiguousMonomer",
         "id": "42",
         "position": {
-            "x": 9.956010755504737,
-            "y": -5.627422180138553
+            "x": 10.831010755504737,
+            "y": -6.502422180138554
         },
         "alias": "%",
         "templateId": "mixture__L___Leucine__I___Isoleucine_"
@@ -7262,8 +7262,8 @@
         "type": "ambiguousMonomer",
         "id": "43",
         "position": {
-            "x": 11.45601075550473,
-            "y": -5.627422180138553
+            "x": 12.33101075550473,
+            "y": -6.502422180138554
         },
         "alias": "%",
         "templateId": "mixture__E___Glutamic acid__Q___Glutamine_"
@@ -7286,8 +7286,8 @@
         "type": "ambiguousMonomer",
         "id": "44",
         "position": {
-            "x": 12.95601075550473,
-            "y": -5.627422180138553
+            "x": 13.83101075550473,
+            "y": -6.502422180138554
         },
         "alias": "%",
         "templateId": "mixture__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine_"
@@ -7334,8 +7334,8 @@
         "type": "ambiguousMonomer",
         "id": "45",
         "position": {
-            "x": 12.952541213813097,
-            "y": -4.603736298226703
+            "x": 13.827541213813097,
+            "y": -5.478736298226704
         },
         "alias": "%",
         "templateId": "alternatives__G___Glycine__H___Histidine__I___Isoleucine__K___Lysine__L___Leucine__M___Methionine__N___Asparagine__O___Pyrrolysine__P___Proline__Q___Glutamine_"

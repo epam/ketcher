@@ -37,7 +37,7 @@ export const DialogActionButton = ({
     className={styles}
     data-testid={testId}
     value={label}
-    title={title || label}
+    title={title ?? label}
     disabled={disabled}
     onClick={clickHandler}
   />

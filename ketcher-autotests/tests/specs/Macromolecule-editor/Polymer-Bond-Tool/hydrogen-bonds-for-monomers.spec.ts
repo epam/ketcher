@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -13,11 +13,6 @@ import {
   pasteFromClipboardByKeyboard,
   ZoomOutByKeyboard,
 } from '@utils';
-import {
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -34,6 +29,10 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 let page: Page;
 test.setTimeout(40000);
@@ -236,27 +235,13 @@ async function bondTwoMonomersByCenterToCenter(
   );
 }
 
-async function hoverOverConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.hover({ force: true });
-}
-
-async function clickOnConnectionLine(page: Page) {
-  const bondLine = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
-  }).first();
-  await bondLine.click({ force: true });
-}
-
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: 1. Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
      *               2. Verify that hydrogen bonds are highlighted along with monomers when hovered over
-     *               3. Verify that no "Edit Connection Points" dialog appears for hydrogen bonds
+     *               3. Verify that no "Edit Attachment Points" dialog appears for hydrogen bonds
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas
@@ -279,11 +264,10 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await zoomWithMouseWheel(page, -600);
-      await hoverOverConnectionLine(page);
-
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Hydrogen,
       }).first();
+      await bondLine.hover({ force: true });
       await ContextMenu(page, bondLine).open();
 
       await takeEditorScreenshot(page, {
@@ -293,7 +277,7 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
+const monomersWithNoFreeAttachmentPoint: { [monomerName: string]: IMonomer } = {
   Peptide: {
     monomerType: 'peptide',
     fileName:
@@ -368,8 +352,8 @@ const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
   },
 };
 
-Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
-  Object.values(monomersWithNoFreeConnectionPoint).forEach((rightMonomer) => {
+Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
+  Object.values(monomersWithNoFreeAttachmentPoint).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: Verify that hydrogen bonds don't require attachment points and can be established multiple times for one monomer
@@ -445,21 +429,20 @@ Object.values(monomers).forEach((leftMonomer) => {
   });
 });
 
-async function chooseConnectionPointsInConnectionDialog(
+async function chooseAttachmentPointsInConnectionDialog(
   page: Page,
-  leftMonomerConnectionPointName: string,
-  rightMonomerConnectionPointName: string,
+  leftMonomerAttachmentPointName: string,
+  rightMonomerAttachmentPointName: string,
 ) {
   const connectionPointDialog = page.getByRole('dialog');
   if (await connectionPointDialog.isVisible()) {
-    await page.getByTitle(leftMonomerConnectionPointName).first().click();
+    await page.getByTitle(leftMonomerAttachmentPointName).first().click();
 
-    (await page.getByTitle(rightMonomerConnectionPointName).count()) > 1
-      ? await page.getByTitle(rightMonomerConnectionPointName).nth(1).click()
-      : await page.getByTitle(rightMonomerConnectionPointName).first().click();
+    (await page.getByTitle(rightMonomerAttachmentPointName).count()) > 1
+      ? await page.getByTitle(rightMonomerAttachmentPointName).nth(1).click()
+      : await page.getByTitle(rightMonomerAttachmentPointName).first().click();
 
-    const connectButton = page.getByTitle('Connect').first();
-    await connectButton.click();
+    await AttachmentPointsDialog(page).connect();
   }
 }
 
@@ -497,7 +480,11 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Single,
       );
 
-      await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
+      await chooseAttachmentPointsInConnectionDialog(
+        page,
+        AttachmentPoint.R1,
+        AttachmentPoint.R1,
+      );
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
@@ -525,7 +512,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       test.fixme(
         // eslint-disable-next-line no-self-compare
-        true === true,
+        true,
         `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
       );
     });
@@ -560,13 +547,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await zoomWithMouseWheel(page, -600);
 
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
     });
   });
 });
@@ -752,8 +743,8 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       expect(await bondLine.count()).toEqual(1);
 
-      await CommonLeftToolbar(page).selectEraseTool();
-      await clickOnConnectionLine(page);
+      await CommonLeftToolbar(page).erase();
+      await bondLine.click({ force: true });
 
       expect(await bondLine.count()).toEqual(0);
     });
@@ -824,16 +815,17 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const buttonIdToTitle: {
@@ -856,14 +848,14 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
     test.setTimeout(25000);
     const commonLeftToolbar = CommonLeftToolbar(page);
     // to reset Bond tool state
-    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.handTool();
     await commonLeftToolbar.bondSelectionDropdownExpandButton.click();
 
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await commonLeftToolbar.selectHandTool();
-    await commonLeftToolbar.selectBondTool(dataTestId);
+    await commonLeftToolbar.handTool();
+    await commonLeftToolbar.bondTool(dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });
 });
@@ -889,16 +881,17 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await zoomWithMouseWheel(page, 100);
   await takeEditorScreenshot(page);
 
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
 
-  await selectSequenceLayoutModeTool(page);
-  await ZoomOutByKeyboard(page);
-  await ZoomOutByKeyboard(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await ZoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const molecules: { [monomerName: string]: IMonomer } = {

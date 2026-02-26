@@ -5,9 +5,14 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="none"
   >
-    <div
+    <button
+      aria-controls="color-picker-«r0»"
+      aria-expanded="false"
+      aria-haspopup="true"
       class="colorPickerInput"
+      type="button"
     >
       <div
         class="colorPickerPreview"
@@ -15,9 +20,9 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
         style="background-color: rgb(0, 0, 0);"
       />
       <icon-chevron.svg
-        classname="expandIcon turnedIcon"
+        class="expandIcon turnedIcon"
       />
-    </div>
+    </button>
   </div>
 </DocumentFragment>
 `;

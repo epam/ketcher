@@ -41,6 +41,7 @@ import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -49,10 +50,13 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
-  private history: EditorHistory;
-  private bondType: MACROMOLECULES_BOND_TYPES;
+  private readonly history: EditorHistory;
+  private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
-  constructor(private editor: CoreEditor, options: { toolName: ToolName }) {
+  constructor(
+    private readonly editor: CoreEditor,
+    options: { toolName: ToolName },
+  ) {
     this.editor = editor;
     this.history = new EditorHistory(this.editor);
     this.bondType =
@@ -477,7 +481,27 @@ class PolymerBond implements BaseTool {
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
-      ) || monomer?.getValidSourcePoint();
+      ) ?? monomer?.getValidSourcePoint();
+
+    // Check if atom already has a bond with this monomer
+    const atom = atomRenderer.atom;
+    const existingBondWithMonomer = atom.bonds.find(
+      (bond) => bond instanceof MonomerToAtomBond && bond.monomer === monomer,
+    );
+
+    if (existingBondWithMonomer) {
+      this.editor.events.error.dispatch(
+        'Only one connection between monomer and atom is allowed',
+      );
+      // Remove temporary Polymer Bond
+      this.editor.drawingEntitiesManager.deletePolymerBond(
+        this.bondRenderer?.polymerBond,
+      );
+      this.bondRenderer?.remove();
+      this.bondRenderer = undefined;
+      monomer.setChosenFirstAttachmentPoint(null);
+      return;
+    }
 
     // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
@@ -602,7 +626,14 @@ class PolymerBond implements BaseTool {
     }
 
     // Modal: Any or both monomers are Chems
-    if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+    if (
+      firstMonomer instanceof Chem ||
+      secondMonomer instanceof Chem ||
+      (firstMonomer instanceof AmbiguousMonomer &&
+        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
+      (secondMonomer instanceof AmbiguousMonomer &&
+        secondMonomer.monomerClass === KetMonomerClass.CHEM)
+    ) {
       return true;
     }
 
@@ -636,16 +667,6 @@ class PolymerBond implements BaseTool {
     ) {
       return true;
     }
-    // if (
-    //   (firstMonomer instanceof RNABase &&
-    //     secondMonomer instanceof Sugar &&
-    //     secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
-    //   (secondMonomer instanceof RNABase &&
-    //     firstMonomer instanceof Sugar &&
-    //     firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
-    // ) {
-    //   return true;
-    // }
 
     // Modal: special case for Peptide chain
     if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {

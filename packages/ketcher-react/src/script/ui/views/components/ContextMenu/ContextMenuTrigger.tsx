@@ -23,7 +23,11 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import { ContextMenuProps, ContextMenuTriggerType } from './contextMenu.types';
+import {
+  ContextMenuProps,
+  ContextMenuTriggerType,
+  CONTEXT_MENU_ID,
+} from './contextMenu.types';
 import {
   getIsItemInSelection,
   getMenuPropsForClosestItem,
@@ -50,13 +54,18 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         true,
       );
 
-      functionalGroup !== null &&
-        functionalGroup.relatedSGroup &&
-        !functionalGroup.relatedSGroup.isSuperatomWithoutLabel &&
+      const relatedSGroup = functionalGroup?.relatedSGroup;
+
+      if (
+        functionalGroup !== null &&
+        relatedSGroup &&
+        !relatedSGroup.isSuperatomWithoutLabel
+      ) {
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
           functionalGroup,
         );
+      }
 
       const sGroupId = struct.sgroups.find(
         (_, sGroup) =>
@@ -88,6 +97,28 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         currentTool.cancel();
       }
 
+      // TODO: Consider a better approach to handle context menus for auxiliary UI elements
+      const target = event.target as Element;
+      if (editor.isMonomerCreationWizardActive) {
+        const rLabelElement = target.closest('[data-attachment-point-name]');
+        if (rLabelElement) {
+          const attachmentPointName = rLabelElement.getAttribute(
+            'data-attachment-point-name',
+          );
+          if (attachmentPointName) {
+            show({
+              id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+              event,
+              props: {
+                attachmentPointName,
+                ketcherId,
+              },
+            });
+            return;
+          }
+        }
+      }
+
       const closestItem = editor.findItem(event, null);
       const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
@@ -103,6 +134,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           // if it was a click outside of any item
           editor.selection(null);
         }
+
         return;
       } else if (!selection) {
         triggerType = ContextMenuTriggerType.ClosestItem;
@@ -168,7 +200,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div style={{ height: '100%' }} onContextMenu={handleDisplay}>
+    <div
+      style={{ height: '100%' }}
+      onContextMenu={handleDisplay}
+      role="application"
+    >
       {children}
     </div>
   );

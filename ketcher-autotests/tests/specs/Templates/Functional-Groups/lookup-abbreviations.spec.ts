@@ -1,16 +1,15 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
-  delay,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 test.describe('Lookup Abbreviations tests', () => {
@@ -45,7 +44,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15525, EPMLSOPKET-15533
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('d');
-    await delay(5);
+    await page.waitForTimeout(5 * 1000);
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);
@@ -181,12 +180,13 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16926
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
-    const atomC = 0;
     await page.keyboard.type('mer');
     await page.keyboard.press('Enter');
-    await clickOnAtom(page, 'C', atomC);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -195,16 +195,17 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
-    const atomC = 0;
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
-    await clickOnAtom(page, 'C', atomC);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnCanvas(page, 100, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 });

@@ -22,7 +22,7 @@ import 'whatwg-fetch';
 import './index.less';
 
 import init, { Config } from './script';
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 import { Ketcher, StructService } from 'ketcher-core';
@@ -45,7 +45,7 @@ export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onSetKetcherId?: (ketcherId: string) => void;
 }
 
-function MicromoleculesEditor(props: EditorProps) {
+function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
@@ -57,7 +57,7 @@ function MicromoleculesEditor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef,
+    ref: rootElRef as RefObject<HTMLDivElement>,
   });
 
   useEffect(() => {

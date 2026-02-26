@@ -1,61 +1,36 @@
-import { Page, test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
-  doubleClickOnAtom,
-  pressButton,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import {
-  checkSmartsValue,
-  checkSmartsWarnings,
-  setAtomicMass,
-  setCharge,
-  setLabel,
-  setRadical,
-  setValence,
-} from '../utils';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-
-async function drawStructure(page: Page, numberOfClicks: number) {
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-  for (let i = 0; i < numberOfClicks; i++) {
-    await clickInTheMiddleOfTheScreen(page);
-  }
-}
-
-async function setAndCheckAtomProperties(
-  page: Page,
-  setProperty: (arg0: Page, arg1: string) => Promise<void>,
-  value: string,
-  expectedSmarts: string,
-) {
-  await setProperty(page, value);
-  await pressButton(page, 'Apply');
-  await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
-}
+  Radical,
+  Valence,
+} from '@tests/pages/constants/atomProperties/Constants';
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
-    const numberOfBondsAtStructure = 3;
     await waitForPageInit(page);
-    await drawStructure(page, numberOfBondsAtStructure);
-    await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting atom label and checking the atom number', async ({ page }) => {
-    await setAndCheckAtomProperties(
-      page,
-      setLabel,
-      'Cr',
-      '[#6](-[#6])(-[Cr])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Label: 'Cr' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[Cr])-[#6]');
   });
 
   test('Setting charge to zero', async ({ page }) => {
@@ -64,39 +39,35 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
      */
     test.fail();
-    await setAndCheckAtomProperties(
-      page,
-      setCharge,
-      '0',
-      '[#6](-[#6])(-[#6;+0])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Charge: '0' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;+0])-[#6]');
   });
 
   test('Setting positive charge', async ({ page }) => {
-    await setAndCheckAtomProperties(
-      page,
-      setCharge,
-      '10',
-      '[#6](-[#6])(-[#6;+10])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Charge: '10' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;+10])-[#6]');
   });
 
   test('Setting negative charge', async ({ page }) => {
-    await setAndCheckAtomProperties(
-      page,
-      setCharge,
-      '-15',
-      '[#6](-[#6])(-[#6;-15])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Charge: '-15' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;-15])-[#6]');
   });
 
   test('Setting atomic mass', async ({ page }) => {
-    await setAndCheckAtomProperties(
-      page,
-      setAtomicMass,
-      '30',
-      '[#6](-[#6])(-[#6;30])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Isotope: '30' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;30])-[#6]');
   });
 
   test('Setting isotope (atomic mass) to zero', async ({ page }) => {
@@ -105,24 +76,22 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
      */
     test.fail();
-    await setAndCheckAtomProperties(
-      page,
-      setAtomicMass,
-      '0',
-      '[#6](-[#6])(-[#6;0])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Isotope: '0' },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;0])-[#6]');
   });
 
   test('Setting valence', async ({ page }) => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
      */
-    await setAndCheckAtomProperties(
-      page,
-      setValence,
-      'IV',
-      '[#6](-[#6])(-[#6;v4])-[#6]',
-    );
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Valence: Valence.Four },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6;v4])-[#6]');
   });
 
   test('Setting radical', async ({ page }) => {
@@ -130,13 +99,12 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3431
      * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
      */
-    await setAndCheckAtomProperties(
-      page,
-      setRadical,
-      'Monoradical',
-      '[#6](-[#6])(-[#6])-[#6]',
-    );
-    await checkSmartsWarnings(page);
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { Radical: Radical.Monoradical },
+    });
+    await takeEditorScreenshot(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Check that cannot add Charge more than -15', async ({ page }) => {
@@ -144,10 +112,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await setCharge(page, '-16');
-    const applyButton = await page.getByText('Apply');
-    const isDisabled = await applyButton.isDisabled();
-    expect(isDisabled).toBe(true);
+    await AtomPropertiesDialog(page).fillCharge('-16');
+    expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });
 
   test('Check that cannot add Charge more than 15', async ({ page }) => {
@@ -155,9 +121,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
      */
-    await setCharge(page, '16');
-    const applyButton = await page.getByText('Apply');
-    const isDisabled = await applyButton.isDisabled();
-    expect(isDisabled).toBe(true);
+    await AtomPropertiesDialog(page).fillCharge('16');
+    expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });
 });

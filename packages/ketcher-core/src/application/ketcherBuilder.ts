@@ -40,7 +40,7 @@ export class KetcherBuilder {
 
   withStructServiceProvider(
     structServiceProvider: StructServiceProvider,
-  ): KetcherBuilder {
+  ): this {
     this.#structServiceProvider = structServiceProvider;
     return this;
   }

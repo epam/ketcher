@@ -1,18 +1,17 @@
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  moveOnAtom,
   dragMouseTo,
-  clickOnAtom,
   waitForPageInit,
-  takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,7 +23,7 @@ test.describe('Indigo Tools - Layout', () => {
     Test case: EPMLSOPKET-1777
     Description: 'Layout' button is always active and presents in top toolbar panel.
     */
-    await takeTopToolbarScreenshot(page);
+    await expect(IndigoFunctionsToolbar(page).layoutButton).toBeEnabled();
   });
 });
 
@@ -86,26 +85,25 @@ test.describe('Indigo Tools - Layout', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Layout action.
     */
-    const x = 300;
-    const y = 300;
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
+    await dragMouseTo(300, 300, page);
     await IndigoFunctionsToolbar(page).layout();
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
   test('Layout action on part of structure with S-Group', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1812
-    Description: The Layout action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1812
+     * Description: The Layout action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/distorted-Sgroups.mol');
     await selectPartOfMolecules(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -116,9 +114,9 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1813
-    Description: The Layout action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1813
+     * Description: The Layout action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/distorted-r-group-labels.mol',
@@ -132,9 +130,9 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1815
-    Description: The action is implemented for the whole canvas.
-    */
+     * Test case: EPMLSOPKET-1815
+     * Description: The action is implemented for the whole canvas.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/distorted-structure-attachment-points.mol',
@@ -164,10 +162,10 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-1822
-    Description: Layout action is correct for the selected part.
-    Non-selected part is invariable.
-    */
+     * Test case: EPMLSOPKET-1822
+     * Description: Layout action is correct for the selected part.
+     * Non-selected part is invariable.
+     */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-with-stereobonds.mol',
@@ -213,22 +211,20 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Layout action on part of structure with different properties',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
-    Test case: EPMLSOPKET-1823
-    Description: Layout action is implemented for the whole canvas.
-    Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
-    */
-      await openFileAndAddToCanvas(
-        page,
-        'Molfiles-V2000/clean-different-properties.mol',
-      );
-      await selectPartOfMolecules(page);
-      await IndigoFunctionsToolbar(page).layout();
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Layout action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1823
+     * Description: Layout action is implemented for the whole canvas.
+     * Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/clean-different-properties.mol',
+    );
+    await selectPartOfMolecules(page);
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
 });

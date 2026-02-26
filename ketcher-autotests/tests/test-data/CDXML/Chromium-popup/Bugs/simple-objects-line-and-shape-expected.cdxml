@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1" BoundingBox="0.000000 352.500000 567.076111 -0.000000">
+        <fragment id="4"/>
+        <graphic id="5" BoundingBox="369.076080 125.999992 567.076111 252.750000" GraphicType="Line"/>
+        <graphic id="6" BoundingBox="315.076080 352.500000 519.076050 231.750000" Center3D="417.076050 292.125000 0" MajorAxisEnd3D="519.076050 292.125000 0" MinorAxisEnd3D="417.076050 352.500000 0" GraphicType="Oval"/>
+    </page>
+</CDXML>

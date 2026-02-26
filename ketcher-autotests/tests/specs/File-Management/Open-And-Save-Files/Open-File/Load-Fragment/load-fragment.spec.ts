@@ -1,5 +1,8 @@
-import { test, expect, Page } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -9,15 +12,14 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
-  waitForPageInit,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  moveOnAtom,
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  takeElementScreenshot,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
@@ -28,74 +30,74 @@ const testCasesForOpeningFiles = [
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'Molfiles-V2000/cyclopentyl.mol',
     atomType: 'O',
+    atomId: 20,
   },
   {
     firstFile: 'Molfiles-V2000/cyclopentyl.mol',
     secondFile: 'Rxn-V2000/reaction-3.rxn',
     atomType: 'C',
+    atomId: 16,
   },
   {
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'SMILES/1840-cyclopentyl.smi',
     atomType: 'O',
+    atomId: 20,
   },
   {
     firstFile: 'Molfiles-V2000/glutamine.mol',
     secondFile: 'KET/simple-chain.ket',
     atomType: 'O',
+    atomId: 20,
   },
 ];
 
-async function moveElement(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-  xShiftForElement = 350,
-  yShiftForElement = 150,
-) {
-  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-  const pointXToMoveElement = x - xShiftForElement;
-  const pointYToMoveElement = y - yShiftForElement;
-
-  await CommonLeftToolbar(page).handToolButton.click();
-  await moveOnAtom(page, atomLabel, atomNumber);
-  await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
-}
-
 test.describe('load as fragment (Add to Canvas) srtuctures from files with different formats', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
-
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   for (const testCase of testCasesForOpeningFiles) {
     const index = -1;
     const fileExtension = testCase.secondFile.split('.').at(index);
-    test(`Load Fragment - Load as fragment (Add to Canvas) - ${fileExtension}-files`, async ({
-      page,
-    }) => {
+    test(`Load Fragment - Load as fragment (Add to Canvas) - ${fileExtension}-files`, async () => {
       /*
        * Test case: EPMLSOPKET-1860, EPMLSOPKET-1854, EPMLSOPKET-1861, EPMLSOPKET-2933
        */
       await openFileAndAddToCanvas(page, testCase.firstFile);
-      await moveElement(page, testCase.atomType, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, {
+        atomLabel: testCase.atomType,
+        atomId: testCase.atomId,
+      }).hover({
+        force: true,
+      });
+      await dragMouseTo(x - 350, y - 150, page);
       await openFileAndAddToCanvas(page, testCase.secondFile);
     });
   }
 
-  test('Open file - Input SMILE-string - check the preview', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string - check the preview', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
     const smileString = 'C1=CC=CC=C1';
     await openPasteFromClipboard(page, smileString);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      OpenStructureDialog(page).previewTextArea,
+    );
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Open file - Input SMILE-string - open as new project', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string - open as new project', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -105,9 +107,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open file - Input SMILE-string with arrow symbol - open as new project', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string with arrow symbol - open as new project', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -120,9 +120,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open file - Input SMILE-string and try to add incorrect one', async ({
-    page,
-  }) => {
+  test('Open file - Input SMILE-string and try to add incorrect one', async () => {
     /*
      * Test case: EPMLSOPKET-1836
      */
@@ -138,9 +136,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       false,
     );
 
-    const convertErrorMessage = await page
-      .getByTestId('info-modal-body')
-      .textContent();
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
@@ -150,12 +148,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       "'scanner: BufferScanner::read() error'";
 
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    await takeEditorScreenshot(page);
   });
 
-  test('Open/Import structure as a KET file - create KET file', async ({
-    page,
-  }) => {
+  test('Open/Import structure as a KET file - create KET file', async () => {
     /*
      * Test case: EPMLSOPKET-4702 (creating file)
      * Description: Creating a reaction using elements from vertical tool bars
@@ -176,13 +171,21 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickInTheMiddleOfTheScreen(page);
-      await moveElement(page, 'H', 0, shiftForHydrogen, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const pointXToMoveElement = x - shiftForHydrogen;
+      const pointYToMoveElement = y - 0;
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, { atomLabel: 'H' }).first().hover({
+        force: true,
+      });
+      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
     }
 
     async function addAndMovePlusSymbol() {
       await LeftToolbar(page).reactionPlusTool();
       await clickInTheMiddleOfTheScreen(page);
-      await resetCurrentTool(page);
+      await CommonLeftToolbar(page).areaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(x - shiftForReactionPlus, y, page);
@@ -194,13 +197,21 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
       await atomToolbar.clickAtom(Atom.Oxygen);
       await clickInTheMiddleOfTheScreen(page);
-      await moveElement(page, 'O', 0, shiftForOxygen, 0);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const pointXToMoveElement = x - shiftForOxygen;
+      const pointYToMoveElement = y - 0;
+
+      await CommonLeftToolbar(page).handTool();
+      await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+        force: true,
+      });
+      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
     }
 
     async function addArrowSymbol() {
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
       await clickInTheMiddleOfTheScreen(page);
-      await resetCurrentTool(page);
+      await CommonLeftToolbar(page).areaSelectionTool();
     }
 
     async function addSecondHydrogen() {
@@ -209,6 +220,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
+        from: 'pageTopLeft',
       });
     }
 
@@ -220,9 +232,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Open/Import structure as a KET file - open KET file', async ({
-    page,
-  }) => {
+  test('Open/Import structure as a KET file - open KET file', async () => {
     /*
      * Test case: EPMLSOPKET-4702 (opening file)
      * Test is related to the existing bug: https://github.com/epam/ketcher/issues/3153

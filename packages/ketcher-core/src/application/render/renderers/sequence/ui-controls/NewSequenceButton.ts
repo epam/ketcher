@@ -14,11 +14,11 @@ const RECT_MAX_WIDTH = 620;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
-  private canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  private readonly canvas: D3SvgElementSelection<SVGGElement, void>;
   private rootElement?: D3SvgElementSelection<SVGGElement, void>;
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
-  constructor(private indexOfRowBefore: number) {
+  constructor(private readonly indexOfRowBefore: number) {
     this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
@@ -52,7 +52,11 @@ export class NewSequenceButton {
       void
     >;
 
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement.attr('opacity', '0');
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement
       .append('rect')
       .attr('x', '16')

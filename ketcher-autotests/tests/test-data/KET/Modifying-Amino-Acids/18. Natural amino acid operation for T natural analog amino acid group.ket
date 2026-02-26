@@ -326,6 +326,7 @@
         "id": "T___Threonine",
         "fullName": "Threonine",
         "alias": "T",
+        "aliasHELM": "T",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

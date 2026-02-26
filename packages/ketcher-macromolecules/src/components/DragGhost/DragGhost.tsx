@@ -52,14 +52,16 @@ export const DragGhost = () => {
 
     canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
   }, [libraryItemDragData]);
-
+  const leftOffset = editor?.ketcherRootElementBoundingClientRect?.left || 0;
+  const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
   const dragOverCanvas =
     canvasBBoxRef.current &&
     libraryItemDragData &&
-    libraryItemDragData.position.x >= canvasBBoxRef.current.left &&
-    libraryItemDragData.position.x <= canvasBBoxRef.current.right &&
-    libraryItemDragData.position.y >= canvasBBoxRef.current.top &&
-    libraryItemDragData.position.y <= canvasBBoxRef.current.bottom;
+    libraryItemDragData.position.x + leftOffset >= canvasBBoxRef.current.left &&
+    libraryItemDragData.position.x + leftOffset <=
+      canvasBBoxRef.current.right &&
+    libraryItemDragData.position.y + topOffset >= canvasBBoxRef.current.top &&
+    libraryItemDragData.position.y + topOffset <= canvasBBoxRef.current.bottom;
 
   useLayoutEffect(() => {
     const element = ghostWrapperRef.current;
@@ -68,11 +70,16 @@ export const DragGhost = () => {
     }
 
     animateRef.current = requestAnimationFrame(() => {
-      element.style.transform = `translate(${
-        libraryItemDragData.position.x
-      }px, ${libraryItemDragData.position.y}px) scale(${
-        dragOverCanvas ? transform.k : 1
-      })`;
+      const { x, y } = libraryItemDragData.position;
+
+      if (dragOverCanvas && canvasBBoxRef.current) {
+        const scale = transform.k;
+
+        element.style.transformOrigin = '0 0';
+        element.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      } else {
+        element.style.transform = `translate(${x}px, ${y}px)`;
+      }
     });
 
     return () => {
@@ -88,12 +95,13 @@ export const DragGhost = () => {
   }
 
   return (
-    <div className={styles.dragGhost} ref={ghostWrapperRef}>
+    <div
+      className={styles.dragGhost}
+      ref={ghostWrapperRef}
+      data-testid="drag-ghost"
+    >
       {isLibraryItemRnaPreset(libraryItemDragData.item) ? (
-        <GhostRnaPreset
-          preset={libraryItemDragData.item}
-          zoomFactor={transform.k}
-        />
+        <GhostRnaPreset preset={libraryItemDragData.item} />
       ) : (
         <GhostMonomer monomerItem={libraryItemDragData.item} />
       )}

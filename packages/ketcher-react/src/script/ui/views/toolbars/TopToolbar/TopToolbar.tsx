@@ -244,9 +244,6 @@ export const TopToolbar = ({
         {togglerComponent && <Divider />}
 
         <SystemControls
-          onHistoryClick={() => {
-            console.log('History button clicked'); // @TODO Implement handler when History log is ready
-          }}
           onSettingsOpen={onSettingsOpen}
           onFullscreen={onFullscreen}
           onHelp={onHelp}
@@ -257,7 +254,7 @@ export const TopToolbar = ({
         <Divider />
         {!hiddenButtons.includes('zoom-list') && (
           <ZoomControls
-            currentZoom={currentZoom || 1}
+            currentZoom={currentZoom ?? 1}
             onZoomIn={onZoomIn}
             onZoomOut={onZoomOut}
             onZoom={onZoom}

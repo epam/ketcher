@@ -234,8 +234,9 @@ export const rnaBuilderSlice = createSlice({
     },
 
     setFavoritePresetsFromLocalStorage: (state: RootState) => {
-      const favoritesInLocalStorage: null | unknown =
-        localStorageWrapper.getItem(FAVORITE_ITEMS_UNIQUE_KEYS);
+      const favoritesInLocalStorage: unknown = localStorageWrapper.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      );
 
       if (!favoritesInLocalStorage || !Array.isArray(favoritesInLocalStorage)) {
         return;

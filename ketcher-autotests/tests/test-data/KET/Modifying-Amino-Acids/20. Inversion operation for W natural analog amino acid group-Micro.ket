@@ -442,6 +442,7 @@
         "id": "dW___D-Tryptophan",
         "fullName": "D-Tryptophan",
         "alias": "dW",
+        "aliasHELM": "dW",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -470,6 +471,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "W"
     },

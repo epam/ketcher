@@ -33,7 +33,7 @@ export function getStereoAtomsMap(
         ) {
           stereoAtomsMap.set(bond.begin, {
             stereoParity: getStereoParity(bond.stereo),
-            stereoLabel: stereoLabel || `${StereoLabel.Abs}`,
+            stereoLabel: stereoLabel ?? `${StereoLabel.Abs}`,
           });
         }
         correctAtomIds.push(bond.begin);

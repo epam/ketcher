@@ -72,4 +72,8 @@ export class Bond extends DrawingEntity {
       this.moveBondEndAbsolute(secondAtomCenter.x, secondAtomCenter.y);
     }
   }
+
+  public moveToLinkedEntities() {
+    this.moveToLinkedAtoms();
+  }
 }

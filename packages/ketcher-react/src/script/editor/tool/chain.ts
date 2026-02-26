@@ -26,6 +26,7 @@ import {
   SGroup,
   vectorUtils,
   removeInfoLabelFromAtoms,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
@@ -118,11 +119,11 @@ class ChainTool implements Tool {
 
     this.editor.hover(null);
     this.dragCtx = {
-      xy0: rnd.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
       item: ci,
     };
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.selection({ atoms: [ci.id] }); // for change atom
       // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
       atomLongtapEvent(this, rnd);
@@ -157,51 +158,49 @@ class ChainTool implements Tool {
       null,
       event,
     );
-    if (!dragCtx) {
-      return true;
-    }
-
-    if (dragCtx && dragCtx.stopTapping) {
-      dragCtx.stopTapping();
-    }
-
-    editor.selection(null);
-
-    if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-      if (dragCtx.action) {
-        dragCtx.action.perform(restruct);
+    if (dragCtx) {
+      if (dragCtx?.stopTapping) {
+        dragCtx.stopTapping();
       }
 
-      const atoms = restruct.molecule.atoms;
+      editor.selection(null);
 
-      const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id)?.pp : dragCtx.xy0;
+      if (!dragCtx.item || dragCtx.item.map === 'atoms') {
+        if (dragCtx.action) {
+          dragCtx.action.perform(restruct);
+        }
 
-      const pos1 = editor.render.page2obj(event);
-      const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+        const atoms = restruct.molecule.atoms;
 
-      const angle = event.ctrlKey
-        ? vectorUtils.calcAngle(pos0, pos1)
-        : vectorUtils.fracAngle(pos0, pos1);
+        const pos0 = dragCtx.item
+          ? atoms.get(dragCtx.item.id)?.pp
+          : dragCtx.xy0;
 
-      const [action, newItems] = fromChain(
-        restruct,
-        pos0,
-        angle,
-        sectCount,
-        dragCtx.item ? dragCtx.item.id : null,
-      );
+        const pos1 = CoordinateTransformation.pageToModel(event, editor.render);
+        const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
-      editor.event.message.dispatch({
-        info: sectCount + ' sectors',
-      });
+        const angle = event.ctrlKey
+          ? vectorUtils.calcAngle(pos0, pos1)
+          : vectorUtils.fracAngle(pos0, pos1);
 
-      dragCtx.action = action;
-      editor.update(dragCtx.action, true);
+        const [action, newItems] = fromChain(
+          restruct,
+          pos0,
+          angle,
+          sectCount,
+          dragCtx.item ? dragCtx.item.id : null,
+        );
 
-      dragCtx.mergeItems = getItemsToFuse(editor, newItems);
-      editor.hover(getHoverToFuse(dragCtx.mergeItems));
+        editor.event.message.dispatch({
+          info: sectCount + ' sectors',
+        });
 
-      return true;
+        dragCtx.action = action;
+        editor.update(dragCtx.action, true);
+
+        dragCtx.mergeItems = getItemsToFuse(editor, newItems);
+        editor.hover(getHoverToFuse(dragCtx.mergeItems));
+      }
     }
 
     return true;
@@ -218,7 +217,7 @@ class ChainTool implements Tool {
     removeInfoLabelFromAtoms(struct);
     this.editor.render.update(true, null);
 
-    if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
+    if (this.dragCtx?.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;
     }
     if (atom) {
@@ -248,41 +247,39 @@ class ChainTool implements Tool {
     }
     const dragCtx = this.dragCtx;
 
-    if (!dragCtx) {
-      return true;
-    }
+    if (dragCtx) {
+      delete this.dragCtx;
 
-    delete this.dragCtx;
+      const editor = this.editor;
 
-    const editor = this.editor;
+      if (dragCtx.stopTapping) {
+        dragCtx.stopTapping();
+      }
 
-    if (dragCtx.stopTapping) {
-      dragCtx.stopTapping();
-    }
+      if (!dragCtx.action && dragCtx.item?.map === 'bonds') {
+        const bond = molecule.bonds.get(dragCtx.item.id) as Bond;
 
-    if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
-      const bond = molecule.bonds.get(dragCtx.item.id) as Bond;
+        dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
+          type: Bond.PATTERN.TYPE.SINGLE,
+          stereo: Bond.PATTERN.STEREO.NONE,
+        });
+      } else {
+        dragCtx.action = dragCtx.action
+          ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+          : fromItemsFuse(struct, dragCtx.mergeItems);
+      }
 
-      dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
-        type: Bond.PATTERN.TYPE.SINGLE,
-        stereo: Bond.PATTERN.STEREO.NONE,
+      editor.selection(null);
+      editor.hover(null);
+
+      if (dragCtx.action) {
+        editor.update(dragCtx.action);
+      }
+
+      editor.event.message.dispatch({
+        info: false,
       });
-    } else {
-      dragCtx.action = dragCtx.action
-        ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-        : fromItemsFuse(struct, dragCtx.mergeItems);
     }
-
-    editor.selection(null);
-    editor.hover(null);
-
-    if (dragCtx.action) {
-      editor.update(dragCtx.action);
-    }
-
-    editor.event.message.dispatch({
-      info: false,
-    });
 
     return true;
   }

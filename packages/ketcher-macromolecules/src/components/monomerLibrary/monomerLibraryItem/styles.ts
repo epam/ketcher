@@ -15,6 +15,7 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
+import { Icon } from 'ketcher-react';
 
 export const Card = styled.div<{
   code?: string;
@@ -51,7 +52,8 @@ export const Card = styled.div<{
 
   &:hover {
     outline: 1px solid #b4b9d6;
-    > .star {
+    > .star,
+    .autochain {
       visibility: visible;
       opacity: 1;
     }
@@ -95,11 +97,12 @@ export const Card = styled.div<{
     max-width: 85%;
   }
   > .star {
-    color: #e1e5ea;
+    color: #cad3dd;
     position: absolute;
-    top: 12px;
-    right: 3px;
-    font-size: 15px;
+    left: calc(50% - 7px);
+    top: 11px;
+    font-size: 13px;
+    line-height: 13px;
     opacity: 0;
     transition: 0.2s ease;
     flex-shrink: 0;
@@ -139,3 +142,25 @@ export const NumberCircle = styled.div<{
 export const CardTitle = styled.span`
   font-size: 12px;
 `;
+
+export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
+  color: #cad3dd;
+  stroke-width: 0;
+  opacity: 0;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+  width: 13px;
+
+  &:active {
+    transform: scale(1.2);
+  }
+  &:hover {
+    color: ${({ disabled }) => (disabled ? '#cad3dd' : '#333333')};
+  }
+`;
+
+export const AutochainIconWrapper = styled('div')({
+  position: 'absolute',
+  top: '12px',
+  left: '4px',
+});

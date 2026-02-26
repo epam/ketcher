@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, RefObject } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 
@@ -82,7 +82,7 @@ const ShortcutLabel = styled('span')`
 `;
 
 const getIntegerFromString = (zoomInput: string | undefined): number => {
-  const zoomNumber = parseInt(zoomInput || '');
+  const zoomNumber = parseInt(zoomInput ?? '');
   if (isNaN(zoomNumber)) {
     return 0;
   }
@@ -184,7 +184,7 @@ export const ZoomControls = ({
         <DropDownContent>
           <ZoomInput
             onZoomSubmit={onZoomSubmit}
-            inputRef={inputRef}
+            inputRef={inputRef as RefObject<HTMLInputElement>}
             currentZoom={currentZoom}
             shortcuts={shortcuts}
           />

@@ -10,7 +10,7 @@ import {
 } from './utils';
 
 export class VerticalScrollbar extends Scrollbar {
-  #scrollOffset: ScrollOffset;
+  readonly #scrollOffset: ScrollOffset;
 
   constructor(render: Render, scrollOffset: ScrollOffset) {
     super(render);

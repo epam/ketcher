@@ -105,8 +105,8 @@ function postLoadMul(sgroup, mol, atomMap) {
   }, sgroup);
 
   // apply removal lists
-  for (let b = 0; b < bondsToRemove.length; ++b) {
-    mol.bonds.delete(bondsToRemove[b]);
+  for (const bondId of bondsToRemove) {
+    mol.bonds.delete(bondId);
   }
   for (const a in atomReductionMap) {
     mol.atoms.delete(+a);
@@ -120,6 +120,7 @@ function postLoadSru(sgroup) {
   sgroup.data.connectivity = (sgroup.data.connectivity || 'EU')
     .trim()
     .toLowerCase();
+  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
 function postLoadSup(sgroup) {
@@ -127,8 +128,11 @@ function postLoadSup(sgroup) {
   sgroup.data.subscript = '';
 }
 
-function postLoadGen(_sgroup, _mol, _atomMap) {
-  // empty function
+function postLoadGen(sgroup, _mol, _atomMap) {
+  sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
+    .trim()
+    .toLowerCase();
+  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
 function postLoadDat(sgroup, mol) {
@@ -145,8 +149,11 @@ function postLoadMer(_sgroup) {
   // TODO: Implement after adding MER type support
 }
 
-function postLoadCop(_sgroup) {
-  // TODO: Implement after adding COP type support
+function postLoadCop(sgroup) {
+  sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
+    .trim()
+    .toLowerCase();
+  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
 function postLoadCro(_sgroup) {
@@ -177,33 +184,43 @@ function postLoadAny(_sgroup) {
   // TODO: Implement after adding ANY type support
 }
 
-function loadSGroup(mol, sg, atomMap) {
-  const postLoadMap = {
-    SUP: postLoadSup,
-    MUL: postLoadMul,
-    SRU: postLoadSru,
-    MON: postLoadMon,
-    MER: postLoadMer,
-    COP: postLoadCop,
-    CRO: postLoadCro,
-    MOD: postLoadMod,
-    GRA: postLoadGra,
-    COM: postLoadCom,
-    MIX: postLoadMix,
-    FOR: postLoadFor,
-    DAT: postLoadDat,
-    ANY: postLoadAny,
-    GEN: postLoadGen,
-  };
+// Map of allowed SGroup types to their post-load handlers
+const postLoadMap = {
+  SUP: postLoadSup,
+  MUL: postLoadMul,
+  SRU: postLoadSru,
+  MON: postLoadMon,
+  MER: postLoadMer,
+  COP: postLoadCop,
+  CRO: postLoadCro,
+  MOD: postLoadMod,
+  GRA: postLoadGra,
+  COM: postLoadCom,
+  MIX: postLoadMix,
+  FOR: postLoadFor,
+  DAT: postLoadDat,
+  ANY: postLoadAny,
+  GEN: postLoadGen,
+};
 
+// Set of allowed SGroup types for validation to prevent unvalidated dynamic method calls
+const allowedSGroupTypes = new Set(Object.keys(postLoadMap));
+
+function loadSGroup(mol, sg, atomMap) {
   // add the group to the molecule
   sg.id = mol.sgroups.add(sg);
 
   // apply type-specific post-processing
-  postLoadMap[sg.type](sg, mol, atomMap);
+  // Only call handlers for explicitly allowed types
+  if (allowedSGroupTypes.has(sg.type)) {
+    const handler = postLoadMap[sg.type];
+    if (typeof handler === 'function') {
+      handler(sg, mol, atomMap);
+    }
+  }
   // mark atoms in the group as belonging to it
-  for (let s = 0; s < sg.atoms.length; ++s) {
-    if (mol.atoms.has(sg.atoms[s])) mol.atoms.get(sg.atoms[s]).sgs.add(sg.id);
+  for (const atomId of sg.atoms) {
+    if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);
   }
 
   if (sg.type === 'DAT') mol.sGroupForest.insert(sg, -1, []);
@@ -355,12 +372,12 @@ function toIntArray(strArray) {
 }
 
 function trimRight(str) {
-  return str.replace(/\s+$/, '');
+  return str.trimEnd();
 }
 
 function identityMap(array) {
   const map = {};
-  for (let i = 0; i < array.length; ++i) map[array[i]] = array[i];
+  for (const item of array) map[item] = item;
   return map;
 }
 

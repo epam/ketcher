@@ -90,8 +90,13 @@ class ReRxnArrow extends ReObject {
     });
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) =>
-        !acc ? current : acc.minDist < current.minDist ? acc : current,
+      (acc, current) => {
+        if (!acc) {
+          return current;
+        }
+
+        return acc.minDist < current.minDist ? acc : current;
+      },
       null,
     );
 
@@ -205,6 +210,8 @@ class ReRxnArrow extends ReObject {
 
   show(restruct: ReStruct, _id, options) {
     const path = this.generatePath(restruct.render, options, 'arrow');
+    path.node?.setAttribute('data-testid', 'rxn-arrow');
+    path.node?.setAttribute('data-arrowtype', this.item.mode + '-arrow');
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);

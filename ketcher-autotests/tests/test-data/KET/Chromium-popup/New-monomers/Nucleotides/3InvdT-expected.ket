@@ -1,0 +1,323 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-3InvdT___3' Inverted dT"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "3InvdT",
+        "templateId": "3InvdT___3' Inverted dT"
+    },
+    "monomerTemplate-3InvdT___3' Inverted dT": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -2.355,
+                    0.232,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.441,
+                    0.639,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.772,
+                    -0.104,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.272,
+                    -0.97,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.251,
+                    -0.762,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.221,
+                    0.732,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.221,
+                    1.732,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.994,
+                    -1.432,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.221,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.722,
+                    -0.866,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.722,
+                    -0.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.221,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.721,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.721,
+                    0.866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.221,
+                    1.732,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.221,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.222,
+                    -1.732,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    7
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    8
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    11,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    16
+                ]
+            }
+        ],
+        "class": "RNA",
+        "classHELM": "RNA",
+        "id": "3InvdT___3' Inverted dT",
+        "fullName": "3' Inverted dT",
+        "alias": "3InvdT",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 4,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "InvdT",
+            "modifications": {
+                "endpoint3": "/3InvdT/"
+            }
+        },
+        "naturalAnalogShort": "T"
+    }
+}

@@ -1,0 +1,498 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-FAMN___Fluorescein (FAMN)"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "FAMN",
+        "templateId": "FAMN___Fluorescein (FAMN)"
+    },
+    "monomerTemplate-FAMN___Fluorescein (FAMN)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    2.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.598,
+                    1.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    0.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    1.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.866,
+                    2.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.732,
+                    2.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    1.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.866,
+                    2.113,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0,
+                    2.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.732,
+                    0.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.598,
+                    1.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.598,
+                    2.113,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.732,
+                    2.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -0.387,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.985,
+                    -0.56,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.327,
+                    -1.499,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.684,
+                    -2.265,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.301,
+                    -2.092,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.643,
+                    -1.153,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.628,
+                    -0.978,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.97,
+                    -0.038,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.27,
+                    -1.744,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.464,
+                    2.613,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.464,
+                    2.613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.312,
+                    -1.673,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.955,
+                    -0.907,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.654,
+                    -2.613,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    13,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    14
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    20,
+                    22
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    23
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    25
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    25,
+                    26
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    25,
+                    27
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "FAMN___Fluorescein (FAMN)",
+        "fullName": "Fluorescein (FAMN)",
+        "alias": "FAMN",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 25,
+                "leavingGroup": {
+                    "atoms": [
+                        26
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "idtAliases": {
+            "base": "6-FAMN",
+            "modifications": {
+                "endpoint5": "/56-FAMN/",
+                "endpoint3": "/3FAM_N/"
+            }
+        }
+    }
+}

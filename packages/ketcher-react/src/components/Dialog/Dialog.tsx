@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
 import {
   FC,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
@@ -42,7 +41,7 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
   needMargin?: boolean;
@@ -53,6 +52,7 @@ interface DialogProps {
     [key in string]: string;
   };
   focusable?: boolean;
+  primaryButtons?: string[];
 }
 
 interface DialogCallProps {
@@ -77,18 +77,20 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     needMargin = true,
     withDivider = false,
     focusable = true,
+    primaryButtons,
     ...rest
   } = props;
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    const dialogElement = dialogRef.current;
     if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+      (dialogElement as HTMLElement).focus();
     }
 
     return () => {
       (
-        dialogRef.current
+        dialogElement
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();
@@ -99,6 +101,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return button === 'OK' || button === 'Save';
   };
 
+  const isPrimary = (button) => {
+    if (primaryButtons && primaryButtons.length > 0) {
+      return primaryButtons.includes(button);
+    }
+    return isButtonOk(button);
+  };
+
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
@@ -106,25 +115,40 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event) => {
-    const key = KN.keyName(event);
-    const active = document.activeElement;
-    const activeTextarea = active && active.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
     <div
       ref={dialogRef}
       role="dialog"
-      onSubmit={(event) => event.preventDefault()}
-      onKeyDown={keyDown}
+      data-testid={'info-modal-window'}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header
@@ -141,7 +165,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+      <div
+        className={clsx(styles.body, needMargin && styles.withMargin)}
+        data-testid={'info-modal-body'}
+      >
         {children}
       </div>
 
@@ -157,14 +184,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   key={button}
                   type="button"
                   className={clsx(
-                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={
-                    buttonsNameMap && buttonsNameMap[button]
-                      ? buttonsNameMap[button]
-                      : button
-                  }
+                  value={buttonsNameMap?.[button] ?? button}
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}

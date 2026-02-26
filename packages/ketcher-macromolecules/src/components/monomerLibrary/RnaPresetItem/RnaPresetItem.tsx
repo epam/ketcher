@@ -17,13 +17,21 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import { memo, MouseEvent, useCallback, useRef } from 'react';
+import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
 import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
+import {
+  AutochainIcon,
+  AutochainIconWrapper,
+} from 'components/monomerLibrary/monomerLibraryItem/styles';
+import { selectEditor, selectIsSequenceMode } from 'state/common';
+import Tooltip from '@mui/material/Tooltip';
+import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
+import { AUTOCHAIN_ELEMENT_CLASSNAME } from 'components/monomerLibrary/monomerLibraryItem';
 
 const RnaPresetItem = ({
   preset,
@@ -34,6 +42,10 @@ const RnaPresetItem = ({
   onMouseMove = EmptyFunction,
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
+  const editor = useAppSelector(selectEditor);
+  const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const [autochainErrorMessage, setAutochainErrorMessage] =
+    useState<string>('');
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -45,6 +57,40 @@ const RnaPresetItem = ({
     [dispatch, preset],
   );
 
+  const onAutochainIconClick = useCallback(
+    (event) => {
+      event.stopPropagation();
+
+      if (autochainErrorMessage) {
+        return;
+      }
+
+      editor?.events.autochain.dispatch(preset);
+    },
+    [autochainErrorMessage, editor, preset],
+  );
+
+  const onMouseOver = useCallback(
+    () =>
+      editor && cardMouseOverHandler(editor, preset, setAutochainErrorMessage),
+    [editor, preset],
+  );
+
+  const onAutochainIconMouseOver = useCallback(() => {
+    if (autochainErrorMessage) {
+      return;
+    }
+
+    editor?.events.previewAutochain.dispatch(preset);
+  }, [autochainErrorMessage, editor, preset]);
+
+  const onAutochainIconMouseOut = useCallback(() => {
+    editor?.events.removeAutochainPreview.dispatch(preset);
+  }, [editor, preset]);
+
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   useLibraryItemDrag(preset, cardRef);
 
   return (
@@ -52,13 +98,33 @@ const RnaPresetItem = ({
       data-testid={getPresetUniqueKey(preset)}
       onClick={onClick}
       onContextMenu={onContextMenu}
+      onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onDoubleClick={(e) => {
+        onAutochainIconClick(e);
+        onAutochainIconMouseOut();
+      }}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
       ref={cardRef}
     >
+      {!isSequenceMode && (
+        <Tooltip title={autochainErrorMessage}>
+          <AutochainIconWrapper>
+            <AutochainIcon
+              className={AUTOCHAIN_ELEMENT_CLASSNAME}
+              name="monomer-autochain"
+              disabled={Boolean(autochainErrorMessage)}
+              onMouseOver={onAutochainIconMouseOver}
+              onMouseOut={onAutochainIconMouseOut}
+              onClick={onAutochainIconClick}
+              onDoubleClick={(e) => e.stopPropagation()}
+            />
+          </AutochainIconWrapper>
+        </Tooltip>
+      )}
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"

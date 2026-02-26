@@ -280,6 +280,7 @@
         "id": "I___Isoleucine",
         "fullName": "Isoleucine",
         "alias": "I",
+        "aliasHELM": "I",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

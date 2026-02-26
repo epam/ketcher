@@ -1,13 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
-import {
-  getBottomAtomByAttributes,
-  getRightAtomByAttributes,
-} from '@utils/canvas/atoms';
-import { getAtomByIndex } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { BondType } from '@utils/canvas/types';
 import {
   clickOnCanvas,
@@ -16,8 +11,13 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -51,18 +51,28 @@ test.describe('Chain Tool drawing', () => {
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
 
-    await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
+      from: 'pageTopLeft',
+    });
 
     await LeftToolbar(page).chain();
-    point = await getBottomAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
-    await dragMouseTo(point.x, point.y + DELTA, page);
-
-    const size = await page.evaluate(() => {
-      return window.ketcher.editor.struct().bonds.size;
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    const atom = getAtomLocator(page, {
+      atomId: 12,
     });
-    expect(size).toEqual(expectedNumberOfBondsAfterDrag);
+    const atomBoundingBox = await atom.boundingBox();
+    if (!atomBoundingBox) {
+      throw new Error('Unable to determine atom position for dragging');
+    }
+    const { x, y } = atomBoundingBox;
+    await atom.hover();
+    await dragMouseTo(x, y + DELTA, page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+
+    expect(await getBondLocator(page, {}).count()).toEqual(
+      expectedNumberOfBondsAfterDrag,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -72,9 +82,9 @@ test.describe('Chain Tool drawing', () => {
     Description: Drawing the chain on the canvas, selecting and changing atoms
     */
 
-    point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('o');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).hover();
+    await keyboardPressOnCanvas(page, 'o');
     await takeEditorScreenshot(page);
   });
 
@@ -84,15 +94,17 @@ test.describe('Chain Tool drawing', () => {
     Description: After several click the bond type is changed cyclically: single-double-triple-single.
     */
 
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await clickOnCanvas(page, point.x, point.y);
+    await getBondLocator(page, { bondId: 0 }).click({ force: true });
 
-    const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
-    expect(doubleBond.type).toEqual(BondType.DOUBLE);
+    const doubleBond = await getBondLocator(page, { bondId: 0 });
+    const bondTypeAttr = await doubleBond.getAttribute('data-bondtype');
+    expect(Number(bondTypeAttr)).toBe(BondType.DOUBLE);
 
-    await clickOnCanvas(page, point.x, point.y);
-    const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
-    expect(tripleBond.type).toEqual(BondType.TRIPLE);
+    await getBondLocator(page, { bondId: 0 }).click({ force: true });
+
+    const tripleBond = await getBondLocator(page, { bondId: 0 });
+    const bondTypeAttr1 = await tripleBond.getAttribute('data-bondtype');
+    expect(Number(bondTypeAttr1)).toBe(BondType.TRIPLE);
     await takeEditorScreenshot(page);
   });
 });

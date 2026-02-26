@@ -136,9 +136,9 @@ class ReRGroup extends ReObject {
     const logic = [rLogicToString(key, this.item)];
 
     let shift = labelBox.height / 2 + options.lineWidth / 2;
-    for (let i = 0; i < logic.length; ++i) {
+    for (const logicItem of logic) {
       const logicPath = render.paper
-        .text(p0.x, (p0.y + p1.y) / 2, logic[i])
+        .text(p0.x, (p0.y + p1.y) / 2, logicItem)
         .attr(logicStyle);
       const logicBox = util.relBox(logicPath.getBBox());
       shift += logicBox.height / 2;

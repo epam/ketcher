@@ -94,7 +94,7 @@ class ReFrag extends ReObject {
 
   draw(_render) {
     // eslint-disable-line no-unused-vars
-    return null; // this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
+    return null;
   }
 
   drawHover(_render) {

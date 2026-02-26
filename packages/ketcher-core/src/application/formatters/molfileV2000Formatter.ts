@@ -19,7 +19,7 @@ import { Struct } from 'domain/entities';
 import { StructFormatter } from './structFormatter.types';
 
 export class MolfileV2000Formatter implements StructFormatter {
-  #molSerializer: MolSerializer;
+  readonly #molSerializer: MolSerializer;
 
   constructor(molSerializer: MolSerializer) {
     this.#molSerializer = molSerializer;

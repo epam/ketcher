@@ -127,6 +127,9 @@ const MolecularMassAmount = styled('div')(() => ({
   padding: '0 8px',
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const TabsWrapper = styled('div')(() => ({
   width: '100%',
   height: '100%',
@@ -139,6 +142,9 @@ const TabContentWrapper = styled('div')(() => ({
   padding: '0 4px 4px',
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const TabContentErrorWrapper = styled('div')(() => ({
   display: 'flex',
   width: '100%',
@@ -209,6 +215,9 @@ const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const HydrophobicityHintHeader = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
@@ -242,6 +251,9 @@ const PropertyHintIconWrapper = styled('div')(() => ({
   alignItems: 'center',
 }));
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const BasicPropertyDropdown = styled(DropDown)(() => ({
   position: 'relative',
   padding: '0 0 0 5px',
@@ -250,6 +262,9 @@ const BasicPropertyDropdown = styled(DropDown)(() => ({
 
 const inputClassName = 'text-input-field-input';
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const BasicPropertyInput = styled(TextInputField)(() => ({
   margin: 0,
 
@@ -382,43 +397,51 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 const BasicProperty = (props: BasicPropertyProps) => {
   return (
     <StyledBasicProperty data-testid={props.testId} disabled={props.disabled}>
-      <BasicPropertyName>
-        {props.name}
-        {props.value !== undefined && ':'}
-      </BasicPropertyName>
-      {props.onChangeValue ? (
-        <BasicPropertyInput
-          value={props.value ?? ''}
-          id={`macromolecule-property-${props.name}`}
-          data-testid={`${props.testId}-input`}
-          type="number"
-          min={0}
-          inputClassName={inputClassName}
-          onChange={(value) => props?.onChangeValue?.(Number(value))}
-        />
-      ) : (
-        <BasicPropertyValue data-testid={props.testId + '-value'}>
-          {props.value}
-        </BasicPropertyValue>
-      )}
-      {props.hint && (
-        <StyledTooltip title={props.hint}>
-          <PropertyHintIconWrapper>
-            <PropertyHintIcon name="about" dataTestId={props.name + '-info'} />
-          </PropertyHintIconWrapper>
-        </StyledTooltip>
-      )}
-      {props.options && props.selectedOption && props.onChangeOption && (
-        <BasicPropertyDropdown
-          options={props.options.map((option) => ({
-            id: option,
-            label: option,
-          }))}
-          testId={props.testId + '-selector'}
-          currentSelection={props.selectedOption}
-          selectionHandler={props.onChangeOption}
-        />
-      )}
+      <>
+        <BasicPropertyName>
+          {props.name}
+          {props.value !== undefined && ':'}
+        </BasicPropertyName>
+        {props.onChangeValue ? (
+          <BasicPropertyInput
+            value={props.value ?? ''}
+            id={`macromolecule-property-${props.name}`}
+            data-testid={`${props.testId}-input`}
+            type="number"
+            min={0}
+            inputClassName={inputClassName}
+            onChange={(value) => props?.onChangeValue?.(Number(value))}
+          />
+        ) : (
+          <BasicPropertyValue data-testid={props.testId + '-value'}>
+            {props.value}
+          </BasicPropertyValue>
+        )}
+        {props.hint && (
+          // TODO suppressed after upgrade to react 19. Need to fix
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          <StyledTooltip title={props.hint}>
+            <PropertyHintIconWrapper>
+              <PropertyHintIcon
+                name="about"
+                dataTestId={props.name + '-info'}
+              />
+            </PropertyHintIconWrapper>
+          </StyledTooltip>
+        )}
+        {props.options && props.selectedOption && props.onChangeOption && (
+          <BasicPropertyDropdown
+            options={props.options.map((option) => ({
+              id: option,
+              label: option,
+            }))}
+            testId={props.testId + '-selector'}
+            currentSelection={props.selectedOption}
+            selectionHandler={props.onChangeOption}
+          />
+        )}
+      </>
     </StyledBasicProperty>
   );
 };
@@ -431,7 +454,7 @@ const GrossFormulaPart = ({ part }) => {
   return (
     <span>
       {element}
-      <sub>{count}</sub>{' '}
+      <sub>{count}</sub>
     </span>
   );
 };
@@ -902,11 +925,15 @@ const calculateMassMeasurementUnit = (mass?: number) => {
     return MassMeasurementUnit.Da;
   }
 
-  return mass < 1000
-    ? MassMeasurementUnit.Da
-    : mass < 1000000
-    ? MassMeasurementUnit.kDa
-    : MassMeasurementUnit.MDa;
+  if (mass < 1000) {
+    return MassMeasurementUnit.Da;
+  }
+
+  if (mass < 1000000) {
+    return MassMeasurementUnit.kDa;
+  }
+
+  return MassMeasurementUnit.MDa;
 };
 
 let selectEntitiesHandler: () => void;
@@ -1030,14 +1057,12 @@ export const MacromoleculePropertiesWindow = () => {
       <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
-          .map((atomNameWithAmount, i) => {
-            return (
-              <GrossFormulaPart
-                part={atomNameWithAmount}
-                key={i}
-              ></GrossFormulaPart>
-            );
-          })}
+          .map((atomNameWithAmount, index, array) => (
+            <span key={`${atomNameWithAmount}-${index}`}>
+              <GrossFormulaPart part={atomNameWithAmount} />
+              {index < array.length - 1 ? ' ' : ''}
+            </span>
+          ))}
       </GrossFormula>
     );
   }, [firstMacromoleculesProperties?.grossFormula]);
@@ -1067,6 +1092,7 @@ export const MacromoleculePropertiesWindow = () => {
           hasPeptidesTabError) ||
         (selectedTabIndex === PROPERTIES_TABS.RNA && hasNucleotidesTabError)
       }
+      data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
         <WindowDragControl>

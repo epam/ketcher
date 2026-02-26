@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';

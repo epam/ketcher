@@ -20,6 +20,7 @@ interface Props {
   needCache?: boolean;
   update?: boolean;
   expanded?: boolean;
+  testId?: string;
 }
 
 const MonomerOverview = ({
@@ -31,38 +32,51 @@ const MonomerOverview = ({
   needCache,
   update,
   expanded,
+  testId,
 }: Props) => {
   const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
   const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
 
+  let monomerPreviewContent: ReactNode;
+
+  if (isAmbiguousMonomer) {
+    monomerPreviewContent = (
+      <MonomerMiniature
+        monomer={monomer}
+        expanded={expanded}
+        selectedAttachmentPoint={selectedAttachmentPoint}
+        connectedAttachmentPoints={connectedAttachmentPoints}
+        usage={usage}
+        testId={testId}
+      />
+    );
+  } else if (isUnresolvedMonomer) {
+    monomerPreviewContent = <UnresolvedMonomerPreview testId={testId} />;
+  } else {
+    monomerPreviewContent = (
+      <StyledStructRender
+        struct={monomer.monomerItem.struct}
+        options={{
+          connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+          currentlySelectedMonomerAttachmentPoint:
+            selectedAttachmentPoint ?? undefined,
+          usageInMacromolecule: usage,
+          labelInMonomerConnectionsModal: true,
+          needCache: needCache ?? false,
+        }}
+        update={update}
+        isExpanded={expanded}
+        testId={testId}
+      />
+    );
+  }
+
   return (
     <>
-      {isAmbiguousMonomer ? (
-        <MonomerMiniature
-          monomer={monomer}
-          expanded={expanded}
-          selectedAttachmentPoint={selectedAttachmentPoint}
-          connectedAttachmentPoints={connectedAttachmentPoints}
-          usage={usage}
-        />
-      ) : isUnresolvedMonomer ? (
-        <UnresolvedMonomerPreview />
-      ) : (
-        <StyledStructRender
-          struct={monomer.monomerItem.struct}
-          options={{
-            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-            currentlySelectedMonomerAttachmentPoint:
-              selectedAttachmentPoint ?? undefined,
-            usageInMacromolecule: usage,
-            labelInMonomerConnectionsModal: true,
-            needCache: needCache ?? false,
-          }}
-          update={update}
-          isExpanded={expanded}
-        />
-      )}
-      <AttachmentPointList>{attachmentPoints}</AttachmentPointList>
+      {monomerPreviewContent}
+      <AttachmentPointList>
+        <>{attachmentPoints}</>
+      </AttachmentPointList>
     </>
   );
 };

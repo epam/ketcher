@@ -1,11 +1,10 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
-  waitForPageInit,
   openFile,
-  selectOptionInDropdown,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -13,14 +12,12 @@ import {
   readFileContent,
   SequenceFileFormat,
   resetZoomLevelToDefault,
-  delay,
 } from '@utils';
-import { selectSnakeLayoutModeTool } from '@utils/canvas/tools/helpers';
 import {
   FileType,
   verifyFileExport,
+  verifySequence1LetterCodeExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage } from '@utils/common/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
@@ -30,15 +27,24 @@ import {
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
-test.beforeEach(async ({ page }) => {
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+let page: Page;
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+test.beforeEach(async ({ FlexCanvas: _ }) => {
+  // this empty function is needed
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .seq Files', () => {
-  test(`Import .seq RNA file`, async ({ page }) => {
+  test(`Import .seq RNA file`, async () => {
     await openFileAndAddToCanvasMacro(page, `Sequence/sequence-rna.seq`, [
       MacroFileType.Sequence,
       SequenceMonomerType.RNA,
@@ -48,7 +54,7 @@ test.describe('Import-Saving .seq Files', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test(`Import .seq DNA file`, async ({ page }) => {
+  test(`Import .seq DNA file`, async () => {
     await openFileAndAddToCanvasMacro(page, `Sequence/sequence-dna.seq`, [
       MacroFileType.Sequence,
       SequenceMonomerType.DNA,
@@ -58,7 +64,7 @@ test.describe('Import-Saving .seq Files', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test(`Import .seq Peptide file`, async ({ page }) => {
+  test(`Import .seq Peptide file`, async () => {
     await openFileAndAddToCanvasMacro(page, `Sequence/sequence-peptide.seq`, [
       MacroFileType.Sequence,
       SequenceMonomerType.Peptide,
@@ -69,9 +75,7 @@ test.describe('Import-Saving .seq Files', () => {
     });
   });
 
-  test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
-    page,
-  }) => {
+  test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async () => {
     /*
     Test case: #3894
     Description: File pasted to canvas.
@@ -84,13 +88,11 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeEditorScreenshot(page);
   });
 
-  test('Check import of .ket file and save in .seq format', async ({
-    page,
-  }) => {
+  test('Check import of .ket file and save in .seq format', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(
       page,
@@ -100,59 +102,51 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that empty file can be saved in .seq format', async ({
-    page,
-  }) => {
+  test('Check that empty file can be saved in .seq format', async () => {
     await verifyFileExport(page, 'Sequence/sequence-empty.seq', FileType.SEQ);
   });
 
-  test('Check that system does not let importing empty .seq file', async ({
-    page,
-  }) => {
+  test('Check that system does not let importing empty .seq file', async () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'Sequence/sequence-empty.seq');
     await expect(addToCanvasButton).toBeDisabled();
-    await closeErrorMessage(page);
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Check that system does not let uploading corrupted .seq file', async ({
-    page,
-  }) => {
-    const filename = 'Sequence/sequence-corrupted.seq';
-
-    await CommonTopLeftToolbar(page).openFile();
-    await openFile(page, filename);
-    await selectOptionInDropdown(filename, page);
-    await PasteFromClipboardDialog(page).addToCanvasButton.click();
-
-    const errorDialog = page.getByLabel('Unsupported symbols').first();
-    await errorDialog.waitFor({ state: 'visible' });
-    await takeEditorScreenshot(page);
+  test('Check that system does not let uploading corrupted .seq file', async () => {
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Sequence/sequence-corrupted.seq',
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
+      true,
+    );
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid symbols in the sequence:",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Validate correct displaying of snake viewed RNA chain loaded from .seq file format', async ({
-    page,
-  }) => {
+  test('Validate correct displaying of snake viewed RNA chain loaded from .seq file format', async () => {
     await openFileAndAddToCanvasMacro(
       page,
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that you can save snake viewed chain of peptides in a .seq file', async ({
-    page,
-  }) => {
+  test('Check that you can save snake viewed chain of peptides in a .seq file', async () => {
     await openFileAndAddToCanvasMacro(
       page,
       'Sequence/sequence-snake-mode-rna.seq',
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
     );
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await verifyFileExport(
       page,
       'Sequence/sequence-snake-mode-rna-expected.seq',
@@ -160,43 +154,45 @@ test.describe('Import-Saving .seq Files', () => {
     );
   });
 
-  test('Should open .ket file and modify to .seq format in save modal textarea', async ({
-    page,
-  }) => {
+  test('Should open .ket file and modify to .seq format in save modal textarea', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'Sequence/sequence-rna-a.seq', FileType.SEQ);
   });
 
   // Should not convert to Sequence type in case of there are more than one monomer type
-  test('Should not convert .ket file with RNA and Peptide to .seq format in save modal', async ({
-    page,
-  }) => {
+  test('Should not convert .ket file with RNA and Peptide to .seq format in save modal', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   // Should not convert to Sequence type in case of there is any CHEM
-  test('Should not convert .ket file with CHEMs to .seq format in save modal', async ({
-    page,
-  }) => {
+  test('Should not convert .ket file with CHEMs to .seq format in save modal', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test(
     'RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard"',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: #4175
     Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
@@ -222,9 +218,7 @@ test.describe('Import-Saving .seq Files', () => {
     },
   );
 
-  test('RNA and DNA structures not overlay each other on canvas, when adding them through the “Open as file”', async ({
-    page,
-  }) => {
+  test('RNA and DNA structures not overlay each other on canvas, when adding them through the “Open as file”', async () => {
     /*
     Test case: #4175
     Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
@@ -243,9 +237,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Saving ambiguous peptides (with mapping, alternatives) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous peptides (with mapping, alternatives) in Sequence format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.1 Verify saving ambiguous peptides (with mapping, alternatives) in Sequence format (macro mode)
@@ -272,7 +264,7 @@ test.describe('Import-Saving .seq Files', () => {
   test(
     'Saving ambiguous peptides (with mapping, mixed) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.2 Verify saving ambiguous peptides (with mapping, mixed) in Sequence format (macro mode)
@@ -291,20 +283,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
-      await takeEditorScreenshot(page);
-      await closeErrorMessage(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXXX');
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -312,7 +291,7 @@ test.describe('Import-Saving .seq Files', () => {
   test(
     'Saving ambiguous peptides (without mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.3 Verify saving ambiguous peptides (without mapping, alternatives) in Sequence format (macro mode)
@@ -331,20 +310,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
-      await takeEditorScreenshot(page);
-
-      await closeErrorMessage(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXX');
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -352,7 +318,7 @@ test.describe('Import-Saving .seq Files', () => {
   test(
     'Saving ambiguous peptides (without mapping, mixed) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.4 Verify saving ambiguous peptides (without mapping, mixed) in Sequence format (macro mode)
@@ -371,27 +337,12 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-      );
-
-      await takeEditorScreenshot(page);
-      await closeErrorMessage(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXXXXXXXXX XXXXXXXXXX');
       await zoomWithMouseWheel(page, 200);
     },
   );
 
-  test('Saving ambiguous DNA bases (with mapping, alternatives) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous DNA bases (with mapping, alternatives) in Sequence format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in Sequence format (macro mode)
@@ -416,18 +367,17 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 100);
   });
 
-  test('Saving ambiguous DNA bases (with mapping, mixed) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous DNA bases (with mapping, mixed) in Sequence format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.6 Verify saving ambiguous DNA bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose Sequence option
-             (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 15.6 Verify saving ambiguous DNA bases (with mapping, mixed) in Sequence format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose Sequence option
+     *          (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
@@ -441,17 +391,17 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Can't save '%' to sequence format",
+    );
 
-    await closeErrorMessage(page);
-
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
 
-  test('Saving ambiguous RNA bases (with mapping, alternatives) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous RNA bases (with mapping, alternatives) in Sequence format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in Sequence format (macro mode)
@@ -476,18 +426,17 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 100);
   });
 
-  test('Saving ambiguous RNA bases (with mapping, mixed) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous RNA bases (with mapping, mixed) in Sequence format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.8 Verify saving ambiguous RNA bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose Sequence option
-             (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 15.8 Verify saving ambiguous RNA bases (with mapping, mixed) in Sequence format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose Sequence option
+     *          (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
@@ -501,16 +450,16 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-    await takeEditorScreenshot(page);
-
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Can't save '%' to sequence format",
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
 
-  test('Saving ambiguous (common) bases (with mapping, alternatives) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous (common) bases (with mapping, alternatives) in Sequence format', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in Sequence format (macro mode)
@@ -534,18 +483,17 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 200);
   });
 
-  test('Saving ambiguous (common) bases (with mapping, mixed) in Sequence format', async ({
-    page,
-  }) => {
+  test('Saving ambiguous (common) bases (with mapping, mixed) in Sequence format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.10 Verify saving ambiguous (common) bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose Sequence option
-             (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 15.10 Verify saving ambiguous (common) bases (with mapping, mixed) in Sequence format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose Sequence option
+     *          (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
@@ -559,9 +507,11 @@ test.describe('Import-Saving .seq Files', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
-    await takeEditorScreenshot(page);
-
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Can't save '%' to sequence format",
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -620,7 +570,7 @@ test.describe('Import correct Sequence file: ', () => {
   ];
 
   for (const correctSequenceFile of correctSequenceFiles) {
-    test(`${correctSequenceFile.SequenceDescription}`, async ({ page }) => {
+    test(`${correctSequenceFile.SequenceDescription}`, async () => {
       /*
       Description: Verify import of Sequence files works correct
       Case: 1. Load Sequence file 
@@ -647,6 +597,7 @@ interface ISequenceString {
   sequenceType:
     | Exclude<SequenceMonomerType, SequenceMonomerType.Peptide>
     | [SequenceMonomerType.Peptide, PeptideLetterCodeType];
+  expectedErrorMessage?: string;
   HELMString?: string;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
@@ -711,9 +662,7 @@ const correctSequences: ISequenceString[] = [
 ];
 
 for (const correctSequence of correctSequences) {
-  test(`${correctSequence.testCaseDescription} (with ${correctSequence.sequenceDescription})`, async ({
-    page,
-  }) => {
+  test(`${correctSequence.testCaseDescription} (with ${correctSequence.sequenceDescription})`, async () => {
     /*
      * Description: Verify import of Sequence files works correct
      * Case: 1. Load Sequence file
@@ -742,6 +691,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription:
@@ -752,6 +703,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription:
@@ -762,6 +715,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription:
@@ -772,6 +727,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription:
@@ -782,6 +739,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription: '5. Verify error for incorrect formatting in import',
@@ -791,6 +750,8 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Given string cannot be interpreted as a valid three letter sequence because of incorrect formatting.'",
   },
   {
     testCaseDescription:
@@ -801,17 +762,18 @@ const incorrectSequences: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown monomer name 'Alx'.'",
   },
 ];
 
 for (const incorrectSequence of incorrectSequences) {
-  test(`${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`, async ({
-    page,
-  }) => {
+  test(`${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`, async () => {
     /*
      * Description: Verify import of Sequence files works correct
-     * Case: 1. Load Sequence file
-     *       2. Take screenshot to make sure error message is correct
+     * Case: 1. Load incorrect Sequence file
+     *       2. Validate error message
+     *       3. Close all dialogs
      */
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -821,17 +783,15 @@ for (const incorrectSequence of incorrectSequences) {
       true,
     );
 
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(incorrectSequence.expectedErrorMessage);
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 }
 
-test(`7. Verify export option includes both single-letter and three-letter sequence codes)`, async ({
-  page,
-}) => {
+test(`7. Verify export option includes both single-letter and three-letter sequence codes)`, async () => {
   /*
    * Description: Verify export option includes both single-letter and three-letter sequence codes
    * Case: 1. Open Save structure dialog
@@ -840,13 +800,12 @@ test(`7. Verify export option includes both single-letter and three-letter seque
   await CommonTopLeftToolbar(page).saveFile();
 
   // Click on "File format" dropdown
-  await page.getByRole('combobox').click();
-  const dropdown = page.locator('ul[role="listbox"]');
-  const singleLetter = dropdown.locator('li', {
-    hasText: 'Sequence (1-letter code)',
+  await SaveStructureDialog(page).fileFormatDropdownList.click();
+  const singleLetter = page.getByText('Sequence (1-letter code)', {
+    exact: true,
   });
-  const threeLetter = dropdown.locator('li', {
-    hasText: 'Sequence (3-letter code)',
+  const threeLetter = page.getByText('Sequence (3-letter code)', {
+    exact: true,
   });
 
   await expect(singleLetter).toBeVisible();
@@ -890,9 +849,7 @@ const sequencesToExport: ISequenceString[] = [
 ];
 
 for (const sequenceToExport of sequencesToExport) {
-  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
-    page,
-  }) => {
+  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5215
      * Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
@@ -949,7 +906,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    shouldFail: false,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Can't save '%' to sequence format",
   },
   {
     testCaseDescription:
@@ -962,7 +920,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    shouldFail: false,
+    expectedErrorMessage:
+      "Convert error! Sequence saver: Can't save '%' to sequence format",
   },
   {
     testCaseDescription:
@@ -975,7 +934,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    shouldFail: false,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
   },
   {
     testCaseDescription:
@@ -988,8 +948,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    // todo clean this too
-    shouldFail: false,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
   },
   {
     testCaseDescription:
@@ -1002,7 +962,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    shouldFail: false,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
   },
   {
     testCaseDescription:
@@ -1015,21 +976,21 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
       SequenceMonomerType.Peptide,
       PeptideLetterCodeType.threeLetterCode,
     ],
-    shouldFail: false,
+    expectedErrorMessage:
+      'Convert error! Sequence saver: Only amino acids can be saved as three letter amino acid codes.',
   },
 ];
 
 for (const sequenceToExport of nonStandardAmbiguousPeptides) {
-  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
-    page,
-  }) => {
+  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5215
      * Description: Verify export with non-standard ambiguous amino acids(error should appear)
      * Case:
      *     1. Load correct HELM via paste from clipboard way
      *     2. Export canvas to 3-letter sequence
-     *     2. Take a screenshot to ensure error message
+     *     4. Validate error message
+     *     5. Close all dialogs
      *     For ambigous monomer: "Non-standard ambiguous amino acids cannot be exported to the selected format"
      *     For non pure peptide chains: "Convert error! Error during sequence type recognition(RNA, DNA or Peptide)"
      */
@@ -1048,10 +1009,11 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
 
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(sequenceToExport.expectedErrorMessage);
+
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 }
 
@@ -1389,9 +1351,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
 ];
 
 for (const sequenceToExport of nonNaturalPeptideSequences) {
-  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
-    page,
-  }) => {
+  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5215
      * Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template

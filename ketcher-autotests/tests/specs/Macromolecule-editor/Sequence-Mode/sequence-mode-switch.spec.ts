@@ -1,20 +1,21 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
+  keyboardTypeOnCanvas,
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  typeAllEnglishAlphabet,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   const typingModes = [
@@ -32,10 +33,11 @@ test.describe('Sequence edit mode', () => {
       test(`should switch to ${type} mode and verify UI changes`, async ({
         page,
       }) => {
-        /* 
-        Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
-        Description: Verify that clicking on ${type} button switches to the correct typing mode and displays correct title.
-        */
+        /*
+         * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+         * Description: Verify that clicking on ${type} button switches to the correct typing mode and displays correct title.
+         * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+         */
 
         await takeTopToolbarScreenshot(page);
 
@@ -45,7 +47,7 @@ test.describe('Sequence edit mode', () => {
         await button.click();
         await takeTopToolbarScreenshot(page);
 
-        await typeAllEnglishAlphabet(page);
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         await takeEditorScreenshot(page);
       });
     }

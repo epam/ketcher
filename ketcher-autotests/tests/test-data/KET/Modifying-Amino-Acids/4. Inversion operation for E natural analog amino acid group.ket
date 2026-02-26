@@ -295,6 +295,7 @@
         "id": "dE___D-Glutamic acid",
         "fullName": "D-Glutamic acid",
         "alias": "dE",
+        "aliasHELM": "dE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -323,6 +324,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "E"
     },

@@ -1,18 +1,14 @@
-import { Page, test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  TemplateLibrary,
-  selectUserTemplatesAndPlaceInTheMiddle,
   waitForPageInit,
-  clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
-import { resetCurrentTool } from '@utils/canvas/tools/resetCurrentTool';
 import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -20,28 +16,25 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import {
   BottomToolbar,
   drawBenzeneRing,
-  openStructureLibrary,
 } from '@tests/pages/molecules/BottomToolbar';
-
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
+import {
+  TemplateLibraryTab,
+  AromaticsTemplate,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function saveToTemplates(page: Page, shouldSave = true) {
-  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'My Template';
 
   await CommonTopLeftToolbar(page).saveFile();
-  await saveToTemplatesButton.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill('My Template');
+  await SaveStructureDialog(page).saveToTemplates();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
   if (shouldSave) {
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await TemplateEditDialog(page).save();
   }
-}
-
-async function saveUserTemplate(page: Page) {
-  await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-  await CommonTopLeftToolbar(page).saveFile();
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 test.describe('Click User Templates on canvas', () => {
@@ -54,9 +47,13 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-13158
       Description: open template
     */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -67,21 +64,25 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-10073(3)
       Description: spaces in Molecule name field validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = ' name ';
 
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill(' name ');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
-    await openStructureLibrary(page);
-    await pressButton(page, 'User Templates (1)');
-    await page.getByPlaceholder('Search by elements...').fill('name');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('name');
     await takeEditorScreenshot(page);
   });
 
@@ -90,26 +91,26 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-39948
       Description: delete user template validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const structureLibraryDialog = StructureLibraryDialog(page);
+    const inputText = 'to_delete';
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).structureLibrary();
+    await structureLibraryDialog.addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
+
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('to_delete');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page.getByTitle('to_delete').getByRole('button').first().click();
-
-    await openStructureLibrary(page);
-    await page.getByPlaceholder('Search by elements...').fill('to_delete');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).structureLibrary();
+    await structureLibraryDialog.openSection(TemplateLibraryTab.UserTemplate);
+    await structureLibraryDialog.setSearchValue('to_delete');
+    await structureLibraryDialog.deleteMyTemplate();
+    await structureLibraryDialog.setSearchValue('to_delete');
     await takeEditorScreenshot(page);
   });
 
@@ -118,53 +119,49 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-2941
     Description: Creating Template with Simple Objects validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'simple_object_template';
 
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/create-template-with-simple-objects.mol',
     );
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('simple_object_template');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page
-      .getByPlaceholder('Search by elements...')
-      .fill('simple_object_template');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue('simple_object_template');
     await takeEditorScreenshot(page);
   });
 
-  test('Create Template with with Reaction arrow', async ({ page }) => {
+  test('Create Template with Reaction arrow', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'reaction_arrow_template';
 
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
     );
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('reaction_arrow_template');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
     await CommonTopLeftToolbar(page).clearCanvas();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page
-      .getByPlaceholder('Search by elements...')
-      .fill('reaction_arrow_template');
-    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await StructureLibraryDialog(page).setSearchValue(
+      'reaction_arrow_template',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -175,7 +172,9 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 300, 300, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -186,7 +185,9 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 300, 300, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -210,11 +211,13 @@ test.describe('Create and Save Templates', () => {
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
-    await page.getByText('0NNNNHNHNNHNNHNH').click();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
+    await page.getByText('My Template').click();
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -223,23 +226,25 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1722
       Description: saving user template validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'user_template_1';
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
     await IndigoFunctionsToolbar(page).cleanUp();
 
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await page.getByText('user_template_1').click();
     await takeEditorScreenshot(page);
   });
@@ -251,16 +256,19 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1729
       Description: Template attached to structure on canvas.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
-    await openStructureLibrary(page);
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await page.getByText('My Template').click();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -277,7 +285,13 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-11852
       Description: warning message validation
     */
-    await saveUserTemplate(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
     await page.getByRole('button', { name: 'Save to Templates' }).click();
     await getEditorScreenshot(page);
   });
@@ -287,8 +301,14 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(1)
       Description: no mote than 128 symbols error validation
     */
-    await saveUserTemplate(page);
-    await pressButton(page, 'Save to Templates');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).saveToTemplates();
     await page.getByPlaceholder('template').click();
 
     const tooLongValueLength = 130;
@@ -303,11 +323,17 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-10073(2)
       Description: empty field validation
     */
-    await saveUserTemplate(page);
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('name');
-    await page.getByPlaceholder('template').fill('');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Azulene,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).clickMoleculeName();
+    await TemplateEditDialog(page).setMoleculeName('template');
+    await TemplateEditDialog(page).setMoleculeName('');
     await getEditorScreenshot(page);
   });
 
@@ -316,23 +342,22 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-39948
       Description: warning message validation
     */
-    const saveToTemplatesButton =
-      SaveStructureDialog(page).saveToTemplatesButton;
+    const inputText = 'user_template_1';
 
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).addTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.Naphtalene,
     );
+    await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).save();
 
     await CommonTopLeftToolbar(page).saveFile();
-    await saveToTemplatesButton.click();
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
+    await SaveStructureDialog(page).saveToTemplates();
+    await TemplateEditDialog(page).setMoleculeName(inputText);
     await getEditorScreenshot(page);
   });
 

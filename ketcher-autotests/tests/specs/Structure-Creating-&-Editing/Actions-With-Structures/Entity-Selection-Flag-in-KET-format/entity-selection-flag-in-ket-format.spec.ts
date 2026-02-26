@@ -1,5 +1,5 @@
 /* eslint-disable no-inline-comments */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,

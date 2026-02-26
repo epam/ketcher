@@ -1,4 +1,5 @@
-import { Page, test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
@@ -26,11 +27,9 @@ async function selectLineWithSelectionTool(page: Page) {
 }
 
 async function moveLineToNewPosition(page: Page) {
-  const x = 759;
-  const y = 183;
   await clickInTheMiddleOfTheScreen(page);
   await page.mouse.down();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(759, 183, page);
   await page.mouse.up();
 }
 
@@ -41,17 +40,15 @@ async function separetingAndMovingLines(page: Page) {
   const point3 = { x: 267, y: 518 };
   const point4 = { x: 534, y: 467 };
   const point5 = { x: 588, y: 277 };
-  await clickOnCanvas(page, point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
   await dragMouseTo(point1.x, point1.y, page);
-  await clickOnCanvas(page, point2.x, point2.y);
+  await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await selectLineWithSelectionTool(page);
-  await clickOnCanvas(page, point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await dragMouseTo(point5.x, point5.y, page);
 }
 
@@ -94,7 +91,7 @@ test.describe('draw and highlight line', () => {
     const LineCoordinates = await setupLine(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(LineCoordinates.x, LineCoordinates.y);
-    await clickOnCanvas(page, point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
   });
@@ -128,9 +125,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     await setupLine(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
     await moveLineToNewPosition(page);

@@ -2,7 +2,7 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { D3SvgElementSelection } from 'application/render/types';
 
 export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
-  #NO_ANALOGUE_SYMBOL = '@';
+  readonly #NO_ANALOGUE_SYMBOL = '@';
 
   get symbolToDisplay(): string {
     return (

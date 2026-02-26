@@ -1,0 +1,431 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-d2AmPr___2-Aminopurine-2'-deoxyriboside"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 6.275,
+            "y": -8.200000000000001
+        },
+        "alias": "d2AmPr",
+        "templateId": "d2AmPr___2-Aminopurine-2'-deoxyriboside"
+    },
+    "monomerTemplate-d2AmPr___2-Aminopurine-2'-deoxyriboside": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -1.263,
+                    0.833,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.349,
+                    1.24,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.319,
+                    0.497,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.18,
+                    -0.369,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.159,
+                    -0.161,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.129,
+                    1.333,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.129,
+                    2.333,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.995,
+                    2.833,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.902,
+                    -0.831,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    -2.853,
+                    -0.522,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.595,
+                    -1.191,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.06,
+                    0.457,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.645,
+                    -1.5,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.313,
+                    0.601,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.901,
+                    1.41,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    2.853,
+                    1.101,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.853,
+                    0.101,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.901,
+                    -0.208,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.694,
+                    -1.186,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.437,
+                    -1.855,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    3.388,
+                    -1.546,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.595,
+                    -0.568,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    2.228,
+                    -2.833,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    8
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    13
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    17
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    17,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    15
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    15,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    18,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    20,
+                    21
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    21,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    22
+                ]
+            }
+        ],
+        "class": "RNA",
+        "classHELM": "RNA",
+        "id": "d2AmPr___2-Aminopurine-2'-deoxyriboside",
+        "fullName": "2-Aminopurine-2'-deoxyriboside",
+        "alias": "d2AmPr",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "2AmPr",
+            "modifications": {
+                "endpoint5": "/52AmPr/",
+                "internal": "/i2AmPr/",
+                "endpoint3": "/32AmPu/"
+            }
+        },
+        "naturalAnalogShort": "X"
+    }
+}

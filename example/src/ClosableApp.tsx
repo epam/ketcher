@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
 
 import { getStructServiceProvider } from './utils';
+import { safePostMessage } from './utils/safePostMessage';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -37,7 +38,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <StrictMode>
       {!isVisisible ? (
         <>
           <button onClick={() => setIsVisisible(true)}>Show empty</button>
@@ -110,13 +111,9 @@ M  END
           structServiceProvider={structServiceProvider}
           onInit={(ketcher: Ketcher) => {
             window.ketcher = ketcher;
-
-            window.parent.postMessage(
-              {
-                eventType: 'init',
-              },
-              '*',
-            );
+            safePostMessage({
+              eventType: 'init',
+            });
             window.scrollTo(0, 0);
             if (molecule) {
               ketcher.setMolecule(molecule);
@@ -137,7 +134,7 @@ M  END
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

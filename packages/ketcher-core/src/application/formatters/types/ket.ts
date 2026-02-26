@@ -145,6 +145,11 @@ export interface KetAmbiguousMonomerTemplateOption {
   probability?: number;
 }
 
+export type KetMonomerTemplateAtom = {
+  label: string;
+  location: [number, number, number];
+};
+
 export interface IKetMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
   class?: KetMonomerClass;
@@ -161,6 +166,7 @@ export interface IKetMonomerTemplate {
   id: string;
   fullName?: string;
   alias: string;
+  aliasHELM?: string;
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
@@ -170,9 +176,11 @@ export interface IKetMonomerTemplate {
   name?: string;
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
-  atoms: [];
+  aliasAxoLabs?: string;
+  atoms: KetMonomerTemplateAtom[];
   bonds: [];
-  modificationType?: string;
+  modificationTypes?: string[];
+  hidden?: boolean;
 }
 
 export interface IKetAmbiguousMonomerTemplate {

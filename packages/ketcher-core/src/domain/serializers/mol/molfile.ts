@@ -115,8 +115,8 @@ export class Molfile {
       );
     }
 
-    for (let i = 0; i < toRemove.length; ++i) {
-      mol?.sGroupDelete(toRemove[i]);
+    for (const sgroupId of toRemove) {
+      mol?.sGroupDelete(sgroupId);
     }
   }
 
@@ -158,9 +158,9 @@ export class Molfile {
         utils.paddedNum(products.length, 3) +
         utils.paddedNum(0, 3) +
         '\n';
-      for (let i = 0; i < all.length; ++i) {
+      for (const component of all) {
         const saver = new Molfile();
-        const submol = molecule.clone(all[i], null, true);
+        const submol = molecule.clone(component, null, true);
         const molfile = saver.saveMolecule(submol, false, true);
         this.molfile += '$MOL\n' + molfile;
       }
@@ -200,7 +200,7 @@ export class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
     this.writeHeader();
-    this.writeCTab2000(undefined);
+    this.writeCTab2000();
 
     return this.molfile;
   }
@@ -402,8 +402,8 @@ export class Molfile {
     this.writeAtomPropList('M  ISO', isotopeList);
     this.writeAtomPropList('M  RAD', radicalList);
     this.writeAtomPropList('M  RGP', rglabelList);
-    for (let j = 0; j < rglogicList.length; ++j) {
-      this.write('M  LOG' + rglogicList[j] + '\n');
+    for (const logic of rglogicList) {
+      this.write('M  LOG' + logic + '\n');
     }
 
     this.writeAtomPropList('M  APO', aplabelList);
@@ -412,8 +412,7 @@ export class Molfile {
     this.writeAtomPropList('M  UNS', unsaturatedList);
 
     if (atomsIds.length > 0) {
-      for (let j = 0; j < atomsIds.length; ++j) {
-        const atomId = atomsIds[j];
+      for (const atomId of atomsIds) {
         const atomList = this.molecule!.atoms.get(atomId)!.atomList!;
         this.write('M  ALS');
         this.writePaddedNumber(atomId + 1, 4);
@@ -422,9 +421,9 @@ export class Molfile {
         this.write(atomList.notList ? 'T' : 'F');
 
         const labelList = atomList.labelList();
-        for (let k = 0; k < labelList.length; ++k) {
+        for (const label of labelList) {
           this.writeWhiteSpace();
-          this.writePadded(labelList[k], 3);
+          this.writePadded(label, 3);
         }
         this.writeWhiteSpace();
         this.writeCR();
@@ -439,7 +438,10 @@ export class Molfile {
       sgmapback[cnt] = id;
       sgmap[id] = cnt++;
     });
-    for (let sGroupIdInCTab = 1; sGroupIdInCTab < cnt; ++sGroupIdInCTab) {
+    for (const sGroupIdInCTab of Array.from(
+      { length: cnt - 1 },
+      (_, index) => index + 1,
+    )) {
       // each group on its own
       const id = sgmapback[sGroupIdInCTab];
       const sgroup = this.molecule!.sgroups.get(id)!;
@@ -455,7 +457,15 @@ export class Molfile {
       this.writePadded(sgroup.type, 3);
       this.writeCR();
 
-      // TODO: write subtype, M SST
+      if (sgroup.type === 'COP' && sgroup.data.subtype) {
+        this.write('M  SST');
+        this.writePaddedNumber(1, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sGroupIdInCTab, 3);
+        this.writeWhiteSpace(1);
+        this.writePadded(sgroup.data.subtype.toUpperCase(), 3);
+        this.writeCR();
+      }
 
       this.write('M  SLB');
       this.writePaddedNumber(1, 3);
@@ -477,7 +487,7 @@ export class Molfile {
       }
 
       // connectivity
-      if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
+      if (['SRU', 'COP'].includes(sgroup.type) && sgroup.data.connectivity) {
         const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`;

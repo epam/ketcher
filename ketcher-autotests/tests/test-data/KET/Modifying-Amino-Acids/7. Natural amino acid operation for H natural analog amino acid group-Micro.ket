@@ -353,6 +353,7 @@
         "id": "H___Histidine",
         "fullName": "Histidine",
         "alias": "H",
+        "aliasHELM": "H",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

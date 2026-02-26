@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -12,29 +12,31 @@ import {
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
+  takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
+  dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
-import {
   getMonomerLocator,
+  getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Sugars } from '@constants/monomers/Sugars';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Chem } from '@constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -44,7 +46,7 @@ test.beforeAll(async ({ browser }) => {
 
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
 test.afterEach(async () => {
@@ -60,7 +62,7 @@ interface IMonomer {
   monomerDescription: string;
   alias?: string;
   type: MonomerType | 'Nucleotide' | 'Nucleoside';
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   eligibleForAntisense: boolean;
@@ -74,7 +76,7 @@ interface IMonomer {
 
 interface IPolymer {
   polymerDescription?: string;
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   checks: ('side chain' | '')[];
@@ -108,7 +110,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.A,
+    monomerLocatorOptions: Peptide.A,
   },
   {
     id: 2,
@@ -120,7 +122,7 @@ const shortMonomerList: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.X,
+    monomerLocatorOptions: Peptide.X,
   },
   {
     id: 3,
@@ -131,30 +133,30 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Sugars.R,
+    monomerLocatorOptions: Sugar.R,
   },
   {
     id: 4,
     monomerDescription: '4. Base A (from library)',
     alias: 'A',
     type: MonomerType.Base,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
   },
   {
     id: 5,
     monomerDescription: '5. Ambiguous DNA Base N (alternatives, from library)',
     alias: 'N',
     type: MonomerType.Base,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
   },
   {
     id: 6,
@@ -162,10 +164,12 @@ const shortMonomerList: IMonomer[] = [
     alias: 'P',
     type: MonomerType.Phosphate,
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Phosphates.P,
+    monomerLocatorOptions: Phosphate.P,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     id: 7,
@@ -176,14 +180,14 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
   },
   {
     id: 8,
     monomerDescription: '8. Unknown monomer',
     alias: 'Unknown',
     type: MonomerType.UnknownMonomer,
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -212,7 +216,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
   },
   {
     id: 11,
@@ -223,7 +227,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
   },
   {
     id: 12,
@@ -235,7 +239,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
   },
   {
     id: 13,
@@ -248,7 +252,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
   },
   {
     id: 14,
@@ -261,7 +265,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
   },
   {
     id: 15,
@@ -274,7 +278,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
   },
   {
     id: 16,
@@ -287,7 +291,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
   },
 ];
 
@@ -305,6 +309,14 @@ for (const leftMonomer of shortMonomerList) {
        *       4. Take screenshot to validate layout (connection should be considered as side chain)
        */
       test.setTimeout(30000);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+        `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+          leftMonomer.issueNumber ?? ''
+        } issue(s).`,
+      );
 
       await loadMonomerOnCanvas(page, leftMonomer);
       let leftMonomerAlias;
@@ -346,8 +358,12 @@ for (const leftMonomer of shortMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectFlexLayoutModeTool(page);
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
     });
   }
@@ -363,7 +379,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
   },
   {
     id: 2,
@@ -375,7 +391,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_W,
+    monomerLocatorOptions: Base.RNA_W,
   },
   {
     id: 3,
@@ -401,7 +417,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,T)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_H,
+    monomerLocatorOptions: Base.DNA_H,
   },
   {
     id: 5,
@@ -426,7 +442,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
   },
   {
     id: 7,
@@ -438,7 +454,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,U)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_W,
+    monomerLocatorOptions: Base.RNA_W,
   },
   {
     id: 8,
@@ -464,7 +480,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_H,
+    monomerLocatorOptions: Base.DNA_H,
   },
   {
     id: 10,
@@ -490,7 +506,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
     // shouldFail: true,
     // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
   },
@@ -538,8 +554,12 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectFlexLayoutModeTool(page);
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
     });
   }
@@ -582,8 +602,8 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     MacroBondType.Hydrogen,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -631,8 +651,8 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     MacroBondType.Hydrogen,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -653,7 +673,7 @@ const longChain: IMonomer = {
     'RNA3,PEPTIDE3,9:R2-1:R1|PEPTIDE2,RNA3,4:R2-1:R1$$$V2.0',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.U,
+  monomerLocatorOptions: Base.U,
 };
 
 test(`5. Check that backbones should be placed parallel to each other`, async () => {
@@ -833,9 +853,13 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         MacroBondType.Hydrogen,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
     });
   }
 }
@@ -860,6 +884,14 @@ for (const leftMonomer of shortMonomerList) {
          *  Screenshots must be updated after fix and fixme should be removed
          */
         test.setTimeout(20000);
+
+        // Test should be skipped if related bug exists
+        test.fixme(
+          leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+          `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+            leftMonomer.issueNumber ?? ''
+          } issue(s).`,
+        );
 
         await loadMonomerOnCanvas(page, leftMonomer);
         let leftMonomerAlias;
@@ -901,10 +933,251 @@ for (const leftMonomer of shortMonomerList) {
           MacroBondType.Hydrogen,
         );
 
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
         await takeEditorScreenshot(page, { hideMonomerPreview: true });
-        await selectSnakeLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Snake,
+        );
       },
     );
   }
 }
+
+test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that no-shift complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with no-shift complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-UGCp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 47 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 47 }), {
+    padding: 55,
+  });
+});
+
+test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (AUGCA/UGC) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'
+5'-UGC-3'`,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getMonomerLocator(page, { monomerId: 66 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 66 }),
+    {
+      padding: 255,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 65 }), {
+    padding: 55,
+  });
+});
+
+test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-ACGp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 50 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 48 }), {
+    padding: 55,
+  });
+});
+
+test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC) establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'
+5'-UGC-3'
+5'-ACGp-3'
+5'-UGC-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 108 }),
+    {
+      padding: 310,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getSymbolLocator(page, { symbolId: 92 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 106 }), {
+    padding: 135,
+  });
+});
+
+test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that odd number of strings leaves last unpaired (ACG/UGC + ACG) establishes partial hydrogen bonds only for first two pairs, but not for the third one
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) and one additional string on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'
+5'-UGCp-3'
+5'-ACGp-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 78 }),
+    {
+      padding: 310,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getSymbolLocator(page, { symbolId: 76 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 76 }), {
+    padding: 130,
+  });
+});
+
+test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/TT)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that DNA complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with DNA complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AATm-3'
+5'-TmTm-3'`,
+  );
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 35 }),
+    {
+      padding: 135,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 34 }), {
+    padding: 55,
+  });
+});
+
+test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that tie in alignment index chooses the left-most position
+   * Steps:
+   * 1. Load macro with tie alignment case on the canvas
+   * 2. Take screenshot to validate placement and hydrogen bonds
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-GAGp-3'
+5'-Cp-3'`,
+  );
+  await CommonLeftToolbar(page).handTool();
+  await getMonomerLocator(page, { monomerId: 27 }).hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(locators.x, locators.y, page);
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 27 }),
+    {
+      padding: 195,
+    },
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 32 }), {
+    padding: 55,
+  });
+});

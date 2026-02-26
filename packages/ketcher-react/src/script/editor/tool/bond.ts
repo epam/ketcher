@@ -26,6 +26,7 @@ import {
   Struct,
   vectorUtils,
   Atom,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -43,7 +44,7 @@ class BondTool implements Tool {
     this.editor = editor;
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;
-    if (editor.selection() && editor.selection()?.bonds) {
+    if (editor.selection()?.bonds) {
       const action = fromBondsAttrs(
         editor.render.ctab,
         editor.selection().bonds,
@@ -127,7 +128,7 @@ class BondTool implements Tool {
     this.editor.hover(null);
     this.editor.selection(null);
     this.dragCtx = {
-      xy0: rnd.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
       item:
         attachmentAtomId === undefined
           ? ci
@@ -154,21 +155,22 @@ class BondTool implements Tool {
     }
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx;
+      const hasItem = 'item' in dragCtx;
 
-      const pos = rnd.page2obj(event);
+      const pos = CoordinateTransformation.pageToModel(event, rnd);
       let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
       if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
 
       const degrees = vectorUtils.degrees(angle);
       this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-      if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
+      if (!hasItem || dragCtx.item?.map === 'atoms') {
         if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab);
         let beginAtom;
         let endAtom;
         let beginPos;
         let endPos;
-        if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
+        if (hasItem && dragCtx.item?.map === 'atoms') {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id;
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item);
@@ -206,8 +208,7 @@ class BondTool implements Tool {
           const atomResult: Array<number> = [];
           const result: Array<number> = [];
           if (
-            endAtom &&
-            endAtom.map === 'atoms' &&
+            endAtom?.map === 'atoms' &&
             functionalGroups.size &&
             this.dragCtx
           ) {
@@ -251,7 +252,7 @@ class BondTool implements Tool {
           endAtom = endAtom.id;
         } else {
           endAtom = this.atomProps;
-          const xy1 = rnd.page2obj(event);
+          const xy1 = CoordinateTransformation.pageToModel(event, rnd);
           dist = Vec2.dist(dragCtx.xy0, xy1);
           if (beginPos) {
             // rotation only, leght of bond = 1;
@@ -308,19 +309,24 @@ class BondTool implements Tool {
   mouseup(event) {
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx;
+      const hasItem = 'item' in dragCtx;
       const render = this.editor.render;
       const struct = render.ctab.molecule;
       if ('action' in dragCtx) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);
-      } else if (!('item' in dragCtx)) {
+      } else if (!hasItem) {
         const editorOptions = this.editor.options();
         const QUARTER_OF_BOND_WIDTH = 20;
         const QUARTER_OF_BOND_HEIGHT = 5;
-        const xy = render.page2obj({
-          clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
-          clientY: event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
-        });
+        const xy = CoordinateTransformation.pageToModel(
+          {
+            clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
+            clientY:
+              event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
+          },
+          render,
+        );
         const v = new Vec2(1.0 / 2, 0).rotate(
           this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );
@@ -334,7 +340,7 @@ class BondTool implements Tool {
         );
 
         this.editor.update(bondAddition[0]);
-      } else if (dragCtx.item.map === 'atoms') {
+      } else if (hasItem && dragCtx.item.map === 'atoms') {
         // click on atom
         const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
           struct,
@@ -349,7 +355,7 @@ class BondTool implements Tool {
           delete this.dragCtx.existedBond;
         }
       } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = Object.assign({}, this.bondProps);
+        const bondProps = { ...(this.bondProps || {}) };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(

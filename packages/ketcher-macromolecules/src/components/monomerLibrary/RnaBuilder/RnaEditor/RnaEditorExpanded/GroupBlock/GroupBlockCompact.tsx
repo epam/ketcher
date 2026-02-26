@@ -31,7 +31,7 @@ export const GroupBlockCompact = ({
       <CompactGroupConnection />
       <GroupIcon name={iconName} selected={selected} empty={empty} />
       <CompactGroupText selected={selected} empty={empty}>
-        {monomerName || groupNameToRnaEditorItemLabel[groupName]}
+        {monomerName ?? groupNameToRnaEditorItemLabel[groupName]}
       </CompactGroupText>
     </CompactGroupBlockContainer>
   );

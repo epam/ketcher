@@ -17,7 +17,10 @@ import {
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
-import { KetMonomerClass } from 'application/formatters';
+import {
+  KetMonomerClass,
+  KetMonomerTemplateAtom,
+} from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { IRnaPreset } from 'application/editor';
 
@@ -278,6 +281,27 @@ export const isLibraryItemRnaPreset = (
   return 'sugar' in item;
 };
 
+export const libraryItemHasR1AttachmentPoint = (
+  libraryItem: MonomerOrAmbiguousType | IRnaPreset,
+  attachmentPointName: AttachmentPointName = AttachmentPointName.R1,
+) => {
+  // Rely on MonomerCaps field is not the best approach,
+  // but for indeterminate library items it is universal and easy.
+  if (isLibraryItemRnaPreset(libraryItem)) {
+    return Boolean(
+      libraryItem.sugar?.props?.MonomerCaps?.[attachmentPointName],
+    );
+  } else if (isAmbiguousMonomerLibraryItem(libraryItem)) {
+    return libraryItem.monomers.every((monomer) =>
+      monomer.isAttachmentPointExistAndFree(
+        AttachmentPointName[attachmentPointName],
+      ),
+    );
+  } else {
+    return libraryItem.props.MonomerCaps?.[attachmentPointName];
+  }
+};
+
 export function isPeptideOrAmbiguousPeptide(
   monomer?: BaseMonomer,
 ): monomer is Peptide | AmbiguousMonomer {
@@ -360,7 +384,7 @@ export const getAminoAcidsToModify = (
   const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
 
   monomersLibrary.forEach((libraryItem) => {
-    if (libraryItem.props?.modificationType !== modificationType) {
+    if (!libraryItem.props?.modificationTypes?.includes(modificationType)) {
       return;
     }
     const monomerNaturalAnalogCode = libraryItem.props.MonomerNaturalAnalogCode;
@@ -390,4 +414,59 @@ export const getAminoAcidsToModify = (
   });
 
   return aminoAcidsToModify;
+};
+
+export const isHelmCompatible = (
+  monomers: BaseMonomer[],
+  monomersLibrary: MonomerItemType[],
+) => {
+  return monomers
+    .map((monomer) =>
+      monomersLibrary.find((libraryMonomer) =>
+        isAmbiguousMonomerLibraryItem(libraryMonomer)
+          ? libraryMonomer.id === monomer.monomerItem.props.id
+          : libraryMonomer.props?.id === monomer.monomerItem.props.id,
+      ),
+    )
+    .every((monomer) => Boolean(monomer?.props.aliasHELM));
+};
+
+export const normalizeMonomerAtomsPositions = (
+  atoms: KetMonomerTemplateAtom[],
+) => {
+  const bbox = {
+    x: 99999,
+    y: -99999,
+    x2: -9999,
+    y2: 9999,
+  };
+
+  atoms.forEach((atom) => {
+    if (atom.location[0] < bbox.x) {
+      bbox.x = atom.location[0];
+    }
+    if (atom.location[0] > bbox.x2) {
+      bbox.x2 = atom.location[0];
+    }
+    if (atom.location[1] > bbox.y) {
+      bbox.y = atom.location[1];
+    }
+    if (atom.location[1] < bbox.y2) {
+      bbox.y2 = atom.location[1];
+    }
+  });
+
+  const center = {
+    x: (bbox.x2 - bbox.x) / 2,
+    y: (bbox.y2 - bbox.y) / 2,
+  };
+
+  return atoms.map((atom) => ({
+    ...atom,
+    location: [
+      Number((atom.location[0] - bbox.x - center.x).toFixed(3)),
+      Number((atom.location[1] - bbox.y - center.y).toFixed(3)),
+      atom.location[2],
+    ] as [number, number, number],
+  }));
 };

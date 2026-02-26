@@ -132,13 +132,10 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// export type ToolOptions = MonomerItemType;
-// !todo
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ToolOptions = any;
-export type ToolConstructorInterface = {
-  new (editor, ...args: ToolOptions[]): Tool | BaseTool;
-};
+export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
+  | Tool
+  | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;
 

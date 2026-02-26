@@ -689,6 +689,7 @@
         "id": "dY___D-Tyrosine",
         "fullName": "D-Tyrosine",
         "alias": "dY",
+        "aliasHELM": "dY",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -717,6 +718,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "Y"
     },

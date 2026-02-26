@@ -15,7 +15,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
+import { BaseMonomer, FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
 import { ReSGroup, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
@@ -47,6 +47,7 @@ class SGroupCreate extends BaseOperation {
     expanded?: boolean,
     name?: string,
     oldSgroup?: SGroup,
+    private readonly monomer?: BaseMonomer,
   ) {
     super(OperationType.S_GROUP_CREATE);
     this.data = {
@@ -62,16 +63,23 @@ class SGroupCreate extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
     const { sgid, pp, expanded, name, oldSgroup } = this.data;
-    const sgroup =
-      oldSgroup instanceof MonomerMicromolecule
-        ? new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer)
-        : new SGroup(SGROUP_TYPE_MAPPING[this.data.type] || this.data.type);
+    let sgroup: SGroup;
+
+    if (oldSgroup && oldSgroup instanceof MonomerMicromolecule) {
+      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer);
+    } else if (this.monomer) {
+      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, this.monomer);
+    } else {
+      sgroup = new SGroup(
+        SGROUP_TYPE_MAPPING[this.data.type] || this.data.type,
+      );
+    }
 
     sgroup.id = sgid;
     struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      sgroup!.pp = new Vec2(pp);
+      sgroup.pp = new Vec2(pp);
     }
 
     if (expanded) {
@@ -140,7 +148,7 @@ class SGroupDelete extends BaseOperation {
     ) {
       let relatedFGroupId;
       this.data.name = sgroup.item.data.name;
-      this.data.expanded = (sgroup.item as SGroup).isExpanded();
+      this.data.expanded = sgroup.item.isExpanded();
       restruct.molecule.functionalGroups.forEach((fg, fgid) => {
         if (fg.relatedSGroupId === sgid) {
           relatedFGroupId = fgid;

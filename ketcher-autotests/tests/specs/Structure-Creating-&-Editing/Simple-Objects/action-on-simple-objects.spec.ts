@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -10,6 +10,7 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
   ZoomOutByKeyboard,
+  deleteByKeyboard,
 } from '@utils';
 import {
   copyAndPaste,
@@ -31,6 +32,9 @@ import {
   BottomToolbar,
   drawBenzeneRing,
 } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import { TemplateLibraryTab } from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -56,12 +60,12 @@ async function selectAndMoveSimpleObjects(page: Page) {
 
 async function saveToTemplates(page: Page) {
   const saveToTemplates = SaveStructureDialog(page).saveToTemplatesButton;
+  const inputText = 'My New Template';
 
   await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplates.click();
-  await page.getByPlaceholder('template').click();
-  await page.getByPlaceholder('template').fill('My New Template');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await TemplateEditDialog(page).setMoleculeName(inputText);
+  await TemplateEditDialog(page).save();
 }
 
 test.describe('Action on simples objects', () => {
@@ -72,18 +76,10 @@ test.describe('Action on simples objects', () => {
 
   test('Simple Objects - Zoom In, Zoom Out', async ({ page }) => {
     // Test case: EPMLSOPKET-1978
-    const numberOfPressZoomOut = 5;
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await ZoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -113,10 +109,8 @@ test.describe('Action on simples objects', () => {
     await dragMouseTo(point1.x, point1.y, page);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
-    await clickOnCanvas(page, point2.x, point2.y);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     await waitForRender(page, async () => {
       await dragMouseTo(point3.x, point3.y, page);
     });
@@ -129,7 +123,7 @@ test.describe('Action on simples objects', () => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -147,24 +141,19 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1984
-    const numberOfPressZoomOut = 5;
     const numberOfPress = 1;
     const anyPointX = 200;
     const anyPointY = 200;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await ZoomOutByKeyboard(page);
-      });
-    }
+    await ZoomOutByKeyboard(page, { repeat: 5 });
     await copyAndPaste(page);
-    await clickOnCanvas(page, anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await CommonTopLeftToolbar(page).undo();
     }
     await cutAndPaste(page);
-    await clickOnCanvas(page, anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -203,8 +192,10 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await saveToTemplates(page);
     await CommonTopLeftToolbar(page).clearCanvas();
-    await BottomToolbar(page).StructureLibrary();
-    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).openSection(
+      TemplateLibraryTab.UserTemplate,
+    );
     await takeEditorScreenshot(page);
   });
 });

@@ -37,18 +37,24 @@ function GenSet({
   className,
   group,
   disabledQueryElements,
-}: GenSetProps) {
+}: Readonly<GenSetProps>) {
   return (
     <>
-      {labels.map((item, index) => {
+      {labels.map((item) => {
         const buttons = item.items;
         const caption = item.displayName;
+        const fieldsetKey =
+          caption ??
+          buttons
+            .map((b) => b.label)
+            .sort((a, b) => a.localeCompare(b))
+            .join('|');
         return (
-          <fieldset className={className} key={index}>
+          <fieldset className={className} key={fieldsetKey}>
             <div className={classes[getGroupClassName(group)]}>
-              {buttons.map((button, index) => (
+              {buttons.map((button) => (
                 <ButtonGenSet
-                  key={index}
+                  key={button.label}
                   button={button}
                   onAtomSelect={onAtomSelect}
                   selected={selected}

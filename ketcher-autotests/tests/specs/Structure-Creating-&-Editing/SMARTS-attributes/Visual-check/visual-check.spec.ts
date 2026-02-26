@@ -1,58 +1,41 @@
-import { Page, test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
-  doubleClickOnAtom,
-  pressButton,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  setAromaticity,
-  setChirality,
-  setConnectivity,
-  setHCount,
-  setImplicitHCount,
-  setRingBondCount,
-  setRingMembership,
-  setRingSize,
-  setSubstitutionCount,
-  setUnsaturated,
-  setAtomicMass,
-  setCharge,
-  setValence,
-} from '../utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
-
-async function setListOfAtoms(page: Page, atomLabels: string[]) {
-  await selectAtomType(page, 'List');
-  await page.getByTestId('General-section').locator('button').click();
-  for (const label of atomLabels) {
-    await page.getByTestId(`${label}-button`).click();
-  }
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
-
-async function selectAtomType(page: Page, type: string) {
-  await page.locator('label').filter({ hasText: 'Atom Type' }).click();
-  await page.getByRole('option', { name: type, exact: true }).click();
-}
+import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
+import {
+  Aromaticity,
+  AtomType,
+  Chirality,
+  Connectivity,
+  HCount,
+  ImplicitHCount,
+  RingBondCount,
+  RingMembership,
+  RingSize,
+  SubstitutionCount,
+  Valence,
+} from '@tests/pages/constants/atomProperties/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Checking if displaying atom attributes does not broke integrity of the structure', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 3;
     await waitForPageInit(page);
-    await page.getByRole('button', { name: 'Cyclooctane (T)' }).click();
+    await BottomToolbar(page).cyclooctane();
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting all query specific attributes', async ({ page }) => {
@@ -61,18 +44,20 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying all query specific attributes near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '2');
-    await setHCount(page, '3');
-    await setSubstitutionCount(page, '4');
-    await setUnsaturated(page);
-    await setAromaticity(page, 'aliphatic');
-    await setImplicitHCount(page, '5');
-    await setRingMembership(page, '6');
-    await setRingSize(page, '7');
-    await setConnectivity(page, '8');
-    await setChirality(page, 'clockwise');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        RingBondCount: RingBondCount.Two,
+        HCount: HCount.Three,
+        SubstitutionCount: SubstitutionCount.Four,
+        UnsaturatedCheckbox: true,
+        Aromaticity: Aromaticity.Aliphatic,
+        ImplicitHCount: ImplicitHCount.Five,
+        RingMembership: RingMembership.Six,
+        RingSize: RingSize.Seven,
+        Connectivity: Connectivity.Eight,
+        Chirality: Chirality.Clockwise,
+      },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -82,10 +67,13 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying few general atom attributes near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    await setCharge(page, '-8');
-    await setAtomicMass(page, '35');
-    await setValence(page, 'VIII');
-    await pressButton(page, 'Apply');
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: {
+        Charge: '-8',
+        Isotope: '35',
+        Valence: Valence.Eight,
+      },
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -95,21 +83,29 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
     Description: checking if displaying list of atoms near to the lower left atom doesn't broke integrity of the structure
     This test is related to current bug: https://github.com/epam/ketcher/issues/3508
     */
-    const atomLabels = ['Na', 'K', 'B', 'Er', 'Se'];
-    await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
+    const atomLabels = [
+      PeriodicTableElement.Na,
+      PeriodicTableElement.K,
+      PeriodicTableElement.B,
+      PeriodicTableElement.Er,
+      PeriodicTableElement.Se,
+    ];
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
+    await AtomPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Checking if preview of attributes is displayed correctly after hover', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
     await waitForPageInit(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
+      force: true,
+    });
   });
 
   test('Checking preview of general atom and query specific attributes', async ({
@@ -119,16 +115,23 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Test case: https://github.com/epam/ketcher/issues/3327
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await setValence(page, 'VIII');
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '3');
-    await setRingSize(page, '9');
-    await setConnectivity(page, '6');
-    await pressButton(page, 'Apply');
-    await waitForRender(page, async () => {
-      await page.mouse.move(point.x, point.y);
+
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: {
+        Valence: Valence.Eight,
+      },
+      QuerySpecificProperties: {
+        RingBondCount: RingBondCount.Three,
+        RingSize: RingSize.Nine,
+        Connectivity: Connectivity.Six,
+      },
     });
+    if (point) {
+      await page.mouse.move(point.x, point.y);
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -138,25 +141,30 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
     const atomLabels = [
-      'Ca',
-      'Pm',
-      'Ag',
-      'Tc',
-      'He',
-      'Xe',
-      'Li',
-      'Ts',
-      'Nh',
-      'Am',
-      'V',
-      'Fe',
+      PeriodicTableElement.Ca,
+      PeriodicTableElement.Pm,
+      PeriodicTableElement.Ag,
+      PeriodicTableElement.Tc,
+      PeriodicTableElement.He,
+      PeriodicTableElement.Xe,
+      PeriodicTableElement.Li,
+      PeriodicTableElement.Ts,
+      PeriodicTableElement.Nh,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.V,
+      PeriodicTableElement.Fe,
     ];
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await setListOfAtoms(page, atomLabels);
-    await pressButton(page, 'Apply');
-    await waitForRender(page, async () => {
-      await page.mouse.move(point.x, point.y);
-    });
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
+    await AtomPropertiesDialog(page).apply();
+    if (point) {
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x, point.y);
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -167,18 +175,25 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     Test case: https://github.com/epam/ketcher/issues/3327
     Description: when label has more than 3 characters then it should be truncated and pop-up text box should be shown on mouse hover
     */
-    const atomLabels = ['Rb', 'Sm'];
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await setListOfAtoms(page, atomLabels);
-    await page.getByTestId('Query specific-section').click();
-    await setAromaticity(page, 'aromatic');
-    await setImplicitHCount(page, '8');
-    await setRingMembership(page, '7');
-    await setRingSize(page, '6');
-    await pressButton(page, 'Apply');
-    await waitForRender(page, async () => {
-      await page.mouse.move(point.x, point.y);
+    const atomLabels = [PeriodicTableElement.Rb, PeriodicTableElement.Sm];
+    const point = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
+    await AtomPropertiesDialog(page).selectAtomsList({ AtomsList: atomLabels });
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        Aromaticity: Aromaticity.Aromatic,
+        ImplicitHCount: ImplicitHCount.Eight,
+        RingMembership: RingMembership.Seven,
+        RingSize: RingSize.Six,
+      },
     });
+    if (point) {
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x, point.y);
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -191,19 +206,24 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
      * adding SMARTS specific attribute (connectivity) and taking screenshot to check if all properties in the list are displayed in SMARTS notation
      * (now ring bond count should be displayed as x<n>)
      */
-    let correctLabelIsDisplayed = false;
-    await page.getByTestId('Query specific-section').click();
-    await setRingBondCount(page, '3');
-    await pressButton(page, 'Apply');
-    correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        RingBondCount: RingBondCount.Three,
+      },
+    });
+    const correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
     expect(correctLabelIsDisplayed).toBe(true);
     await takeEditorScreenshot(page);
 
-    await doubleClickOnAtom(page, 'C', 0);
-    await waitForAtomPropsModal(page);
-    await page.getByTestId('Query specific-section').click();
-    await setConnectivity(page, '7');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
+    await AtomPropertiesDialog(page).setOptions({
+      QuerySpecificProperties: {
+        Connectivity: Connectivity.Seven,
+      },
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -211,7 +231,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
 test.describe('Checking if atoms are displayed correctly', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
   });
@@ -221,11 +241,8 @@ test.describe('Checking if atoms are displayed correctly', () => {
     Test case: https://github.com/epam/ketcher/issues/3362
     Description: when you replace an atom with the selected one, no additional symbols should appear next to it.
     */
-    const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    const pixelsToMoveMouse = 100;
+    await getAtomLocator(page, { atomId: 0 }).click();
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Ti);
-    await clickOnCanvas(page, point.x, point.y);
-    await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
     await takeEditorScreenshot(page);
   });
 });

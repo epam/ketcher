@@ -81,6 +81,15 @@ export const initOptionsState = {
 };
 
 function getSerilizedServerOptions(options) {
+  let renderStereoStyle;
+  if (!options.showStereoFlags) {
+    renderStereoStyle = 'none';
+  } else if (options.ignoreChiralFlag) {
+    renderStereoStyle = 'ext';
+  } else {
+    renderStereoStyle = 'old';
+  }
+
   let newOptions = {
     'render-coloring': options.atomColoring,
     'render-font-size': options.fontsz,
@@ -100,6 +109,7 @@ function getSerilizedServerOptions(options) {
     'reaction-component-margin-size': options.reactionComponentMarginSize,
     'reaction-component-margin-size-unit':
       options.reactionComponentMarginSizeUnit,
+    'render-stereo-style': renderStereoStyle,
   };
 
   if (options.imageResolution === '600') {

@@ -1,13 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
-  BondType,
   takeLeftToolbarScreenshot,
-  clickOnAtom,
-  clickOnBond,
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -15,6 +12,8 @@ import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -29,7 +28,7 @@ test.describe('Erase Tool', () => {
       'Rxn-V2000/benzene-bromobutane-reaction.rxn',
     );
 
-    await await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
   });
 
   test('Erase atom and bond', async ({ page }) => {
@@ -42,7 +41,9 @@ test.describe('Erase Tool', () => {
     const bondsSizeAfterErase = 18;
 
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'Br', 0);
+      await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+        force: true,
+      });
     });
 
     const atomSize = await page.evaluate(() => {
@@ -52,7 +53,7 @@ test.describe('Erase Tool', () => {
 
     await waitForRender(page, async () => {
       // eslint-disable-next-line no-magic-numbers
-      await clickOnBond(page, BondType.SINGLE, 2);
+      await getBondLocator(page, { bondId: 24 }).click({ force: true });
     });
 
     const bondSize = await page.evaluate(() => {
@@ -89,7 +90,7 @@ test.describe('Erase Tool', () => {
       y: plusElement.pp.y * scale + topBarHeight,
     };
 
-    await clickOnCanvas(page, plusPnt.x, plusPnt.y);
+    await clickOnCanvas(page, plusPnt.x, plusPnt.y, { from: 'pageTopLeft' });
 
     const plusDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -126,7 +127,9 @@ test.describe('Erase Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
 
-    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y);
+    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
+      from: 'pageTopLeft',
+    });
 
     const arrowDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

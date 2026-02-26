@@ -397,6 +397,7 @@
         "id": "meV___N-Methyl-Valine",
         "fullName": "N-Methyl-Valine",
         "alias": "meV",
+        "aliasHELM": "meV",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -416,6 +417,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "V"
     },

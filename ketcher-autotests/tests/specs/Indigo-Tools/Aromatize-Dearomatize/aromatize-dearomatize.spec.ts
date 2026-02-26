@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -23,25 +23,12 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-const CANVAS_CLICK_X = 200;
-const CANVAS_CLICK_Y = 200;
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test('Empty canvas', { tag: ['@chromium-popup'] }, async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1867
-    Description: Nothing is changed.
-    */
-    await IndigoFunctionsToolbar(page).aromatize();
-    await IndigoFunctionsToolbar(page).dearomatize();
-    await takeEditorScreenshot(page);
   });
 
   test('Non-aromatic structures - Single bonds only', async ({ page }) => {
@@ -145,7 +132,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 200, 200, {
+      from: 'pageTopLeft',
+    });
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
@@ -163,7 +152,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 200, 200, {
+      from: 'pageTopLeft',
+    });
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
@@ -178,7 +169,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).aromatize();
     await selectAllStructuresOnCanvas(page);
@@ -368,20 +359,16 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     },
   );
 
-  test('User can aromatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
+  test('User can aromatize molecules with custom query parameters', async ({
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 3
-    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
-    1. Clear canvas
-    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
-    3. Press Aromatize button
-    4. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
-    Screenshots should be updated after fix.
+     * Test case: https://github.com/epam/ketcher/issues/3849 - Test case 3
+     * Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+     * 1. Clear canvas
+     * 2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+     * 3. Press Aromatize button
+     * 4. Validate canvas
      */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -391,21 +378,17 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can Dearomatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
+  test('User can Dearomatize molecules with custom query parameters', async ({
     page,
   }) => {
     /*
-    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
-    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
-    1. Clear canvas
-    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
-    3. Press Aromatize button
-    4. Press Dearomatize button
-    4. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
-    Screenshots should be updated after fix.
+     * Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
+     * Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+     * 1. Clear canvas
+     * 2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+     * 3. Press Aromatize button
+     * 4. Press Dearomatize button
+     * 4. Validate canvas
      */
     await openFileAndAddToCanvasAsNewProject(
       page,

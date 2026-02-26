@@ -854,6 +854,7 @@
         "id": "meF___N-Methyl-Phenylalanine",
         "fullName": "N-Methyl-Phenylalanine",
         "alias": "meF",
+        "aliasHELM": "meF",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -873,6 +874,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "N-methylation"
         ],
         "naturalAnalogShort": "F"
     },

@@ -1,9 +1,10 @@
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
-  screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
@@ -42,15 +43,17 @@ test.describe('R-Group', () => {
   Description: All Rgroup members, Rgroup definition, occurence, brackets, 
   attachment points are rendered correctly in any structure drawing application.
   */
-    const x = 500;
-    const y = 200;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y);
-    await screenshotBetweenUndoRedo(page);
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -60,15 +63,17 @@ test.describe('R-Group', () => {
   Description: All Rgroup members, Rgroup definition, occurence, brackets, 
   attachment points are rendered correctly in any structure drawing application.
   */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y);
-    await screenshotBetweenUndoRedo(page);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

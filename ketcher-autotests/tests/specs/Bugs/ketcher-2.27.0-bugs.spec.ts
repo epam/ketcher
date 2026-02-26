@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -12,18 +12,12 @@ import {
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
-  pressButton,
   takeMonomerLibraryScreenshot,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import {
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-} from '@utils/canvas/tools/helpers';
 import { waitForPageInit } from '@utils/common';
 import {
   connectMonomersWithBonds,
@@ -31,7 +25,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   FileType,
   verifyFileExport,
@@ -50,9 +44,14 @@ import {
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
+  await getMonomerLocator(page, Peptide.A).hover();
   await page
     .getByTestId('monomer')
     .locator('g')
@@ -97,7 +96,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from HELM
      * 3. Try to establish hydrogen bond connection between Cys_Bn and Chg peptides
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -124,7 +123,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from HELM
      * 3. Try to establish hydrogen connection between peptides one more time
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -148,12 +147,12 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Select Single Bond tool
      * 4. Try to establish connection between monomer and molecule
      */
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -171,7 +170,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Take screenshot
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Benzene ring.ket',
@@ -194,7 +193,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 4. Toggle back to Molecules mode
      * 5. Toggle to Sequence mode
      */
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/System should not change monomer position after switching from Molecules to Macromolecules - Sequence.ket',
@@ -203,7 +202,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -211,7 +212,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -244,7 +247,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 4. Toggle back to Flex mode
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
@@ -253,12 +256,14 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -317,7 +322,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
 
     for (const filePath of files) {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await openFileAndAddToCanvasAsNewProjectMacro(page, filePath);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
@@ -385,7 +392,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 5. System opens Flex mode canvas
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
@@ -418,7 +425,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
     );
     await LeftToolbar(page).stereochemistry();
-    await pressButton(page, 'Apply');
+    await EnhancedStereochemistry(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -457,7 +464,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
-    await page.getByText('X').hover();
+    await getAbbreviationLocator(page, { name: 'X' }).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -523,11 +531,11 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Peptides._1Nal).click();
-    await getMonomerLocator(page, Peptides.A).click();
-    await getMonomerLocator(page, Peptides.D).first().click();
-    await getMonomerLocator(page, Peptides.C).first().click();
+    await CommonLeftToolbar(page).erase();
+    await getMonomerLocator(page, Peptide._1Nal).click();
+    await getMonomerLocator(page, Peptide.A).click();
+    await getMonomerLocator(page, Peptide.D).first().click();
+    await getMonomerLocator(page, Peptide.C).first().click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -553,7 +561,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await expandMonomer(page, page.getByText('2Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '2Nal' }));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -581,10 +589,10 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, 570, 400);
-    await clickOnCanvas(page, 600, 360);
-    await clickOnCanvas(page, 600, 420);
+    await CommonLeftToolbar(page).erase();
+    await clickOnCanvas(page, 570, 400, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 360, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 600, 420, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

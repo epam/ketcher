@@ -689,6 +689,7 @@
         "id": "Y___Tyrosine",
         "fullName": "Tyrosine",
         "alias": "Y",
+        "aliasHELM": "Y",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -717,6 +718,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "Y"
     },

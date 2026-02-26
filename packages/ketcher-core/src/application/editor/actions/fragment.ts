@@ -76,7 +76,8 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
 
     loops.forEach((loopId) => {
-      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) {
+      const loop = restruct.reloops.get(loopId);
+      if (loop?.visel) {
         // hack
         action.addOp(new LoopMove(loopId, d));
       }
@@ -86,7 +87,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
     });
 
-    if (lists.sgroupData && lists.sgroupData.length === 0) {
+    if (lists.sgroupData?.length === 0) {
       const sgroups = getRelSGroupsBySelection(struct, lists.atoms);
       sgroups.forEach((sg) => {
         action.addOp(new SGroupDataMove(sg.id, d));

@@ -34,9 +34,7 @@ const Group = ({
 
   return (
     <>
-      <StyledGroup isHorizontal={isHorizontal}>
-        {subComponents.map((component) => component)}
-      </StyledGroup>
+      <StyledGroup isHorizontal={isHorizontal}>{subComponents}</StyledGroup>
       {divider && (isHorizontal ? <VerticalDivider /> : <Divider />)}
     </>
   );
@@ -63,14 +61,14 @@ const Menu = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null;
+      return child && child.type === Group ? child : null;
     },
   );
 
   return (
     <MenuContext.Provider value={context}>
       <MenuLayout data-testid={testId} isHorizontal={isHorizontal}>
-        {subComponents.map((component) => component)}
+        {subComponents}
       </MenuLayout>
     </MenuContext.Provider>
   );

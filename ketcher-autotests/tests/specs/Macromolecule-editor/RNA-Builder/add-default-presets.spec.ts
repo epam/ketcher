@@ -1,15 +1,14 @@
-import { waitForMonomerPreview } from '@utils/macromolecules';
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
   moveMouseAway,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
-import { Presets } from '@constants/monomers/Presets';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,9 +23,9 @@ test.describe('Macromolecules default presets', () => {
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
     */
-    await Library(page).selectMonomer(Presets.G);
-    await Library(page).hoverMonomer(Presets.G);
-    await waitForMonomerPreview(page);
+    await Library(page).selectMonomer(Preset.G);
+    await Library(page).hoverMonomer(Preset.G);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -34,8 +33,11 @@ test.describe('Macromolecules default presets', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await Library(page).selectMonomer(Presets.G);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
 
     await takeEditorScreenshot(page);

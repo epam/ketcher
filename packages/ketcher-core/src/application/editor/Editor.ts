@@ -102,6 +102,10 @@ import {
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import {
+  resetEditorInstance,
+  setEditorInstance,
+} from 'application/editor/editorInstanceProvider';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -263,6 +267,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -1859,6 +1864,7 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+    this.viewModel.initialize([...this.drawingEntitiesManager.bonds.values()]);
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(
@@ -1914,5 +1920,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
+    resetEditorInstance();
   }
 }

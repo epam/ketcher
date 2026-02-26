@@ -1,7 +1,7 @@
 import { BaseOperation } from '../base';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
-import { SGroupAttachmentPoint } from 'domain/entities';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import assert from 'assert';
 
 type Data = {

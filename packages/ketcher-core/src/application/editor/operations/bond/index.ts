@@ -18,7 +18,7 @@
 import { ReBond, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
-import { Bond } from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
 import { OperationPriority, OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method

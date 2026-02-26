@@ -57,7 +57,7 @@ import { useAppSelector, useIsCompactView, useLayoutMode } from 'hooks';
 import {
   scrollToSelectedMonomer,
   scrollToSelectedPreset,
-} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
+} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorScroll';
 import { getMonomerUniqueKey } from 'state/library';
 import {
   selectEditor,

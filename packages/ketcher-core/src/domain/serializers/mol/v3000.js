@@ -14,15 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  AtomList,
-  Bond,
-  RGroup,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { AtomList } from 'domain/entities/atomList';
+import { Bond } from 'domain/entities/bond';
+import { RGroup } from 'domain/entities/rgroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';

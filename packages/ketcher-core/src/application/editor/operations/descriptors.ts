@@ -17,7 +17,7 @@
 import { BaseOperation } from './base';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

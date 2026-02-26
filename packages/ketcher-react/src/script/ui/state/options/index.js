@@ -24,6 +24,9 @@ import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
+import { APP_OPTIONS_ACTION } from './actions';
+
+export { appUpdate } from './actions';
 
 export const initOptionsState = {
   app: {
@@ -124,13 +127,6 @@ function getSerilizedServerOptions(options) {
   return newOptions;
 }
 
-export function appUpdate(data) {
-  return (dispatch) => {
-    dispatch({ type: 'APP_OPTIONS', data });
-    dispatch({ type: 'UPDATE' });
-  };
-}
-
 /* SETTINGS */
 export function saveSettings(newSettings) {
   storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
@@ -201,7 +197,7 @@ export function checkOpts(data) {
 /* REDUCER */
 function optionsReducer(state = {}, action) {
   const { type, data } = action;
-  if (type === 'APP_OPTIONS')
+  if (type === APP_OPTIONS_ACTION)
     return { ...state, app: { ...state.app, ...data } };
 
   if (type === 'SAVE_SETTINGS') {

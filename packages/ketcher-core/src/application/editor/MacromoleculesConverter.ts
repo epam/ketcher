@@ -1,17 +1,15 @@
-import {
-  AmbiguousMonomer,
-  Atom as MicromoleculesAtom,
-  Bond,
-  FunctionalGroup,
-  Pile,
-  RxnArrow as MicromoleculesRxnArrow,
-  MultitailArrow as MicromoleculesMultitailArrow,
-  RxnPlus as MicromoleculesRxnPlus,
-  SGroup,
-  SGroupAttachmentPoint,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { Pile } from 'domain/entities/pile';
+import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
+import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
+import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
+import { SGroup } from 'domain/entities/sgroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   ReAtom,
@@ -33,9 +31,8 @@ import {
   getAttachmentPointNumberFromLabel,
 } from 'domain/helpers/attachmentPointCalculations';
 import { invert, isNumber } from 'lodash';
-import { IKetAttachmentPoint } from 'application/formatters';
+import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { CoreEditor } from 'application/editor/Editor';
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
@@ -478,7 +475,6 @@ export class MacromoleculesConverter {
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();
@@ -759,10 +755,6 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
     drawingEntitiesManager.detectBondsOverlappedByMonomers();
-
-    if (editor) {
-      editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
-    }
 
     return {
       drawingEntitiesManager,

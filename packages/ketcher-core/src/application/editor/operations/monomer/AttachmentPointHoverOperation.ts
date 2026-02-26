@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 

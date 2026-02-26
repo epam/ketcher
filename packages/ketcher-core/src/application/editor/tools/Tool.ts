@@ -3,7 +3,7 @@ import {
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import { IKetMonomerGroupTemplate } from 'application/formatters';
+import { IKetMonomerGroupTemplate } from 'application/formatters/types/ket';
 
 interface ToolEventHandler {
   click?(event: Event): void;

@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import type { EditorSelection } from 'application/editor';
+import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';

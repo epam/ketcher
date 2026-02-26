@@ -69,7 +69,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = CoreEditor.provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;

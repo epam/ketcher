@@ -17,7 +17,7 @@
 import { BaseOperation } from '../base';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
-import { MonomerMicromolecule } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export class SGroupAttr extends BaseOperation {
   data: {

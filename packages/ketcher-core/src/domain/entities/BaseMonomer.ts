@@ -373,6 +373,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Phosphate;
   }
 
+  public get isSugar() {
+    return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Sugar;
+  }
+
   public get usedAttachmentPointsNamesList() {
     const list: AttachmentPointName[] = [];
 

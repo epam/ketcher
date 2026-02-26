@@ -46,6 +46,7 @@ import { openErrorModal } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
 export interface Props {
   onClose: () => void;
@@ -144,14 +145,6 @@ const peptideLettersFormatOptions: Array<Option> = [
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
-
-export const MODAL_STATES = {
-  openOptions: 'openOptions',
-  textEditor: 'textEditor',
-} as const;
-
-export type MODAL_STATES_VALUES =
-  typeof MODAL_STATES[keyof typeof MODAL_STATES];
 
 const addToCanvas = ({
   ketSerializer,

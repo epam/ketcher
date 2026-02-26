@@ -24,7 +24,7 @@ import {
 } from 'react';
 
 import clsx from 'clsx';
-import { Icon } from 'components';
+import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';

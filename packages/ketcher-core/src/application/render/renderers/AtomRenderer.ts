@@ -5,7 +5,8 @@ import { CoreEditor, editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import util from '../util';
 import assert from 'assert';
 import {

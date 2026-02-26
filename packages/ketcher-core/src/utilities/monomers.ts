@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {
   const sgroups = monomer.monomerItem.struct.sgroups;

@@ -15,7 +15,9 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Atom, Pile, Vec2 } from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Pile } from 'domain/entities/pile';
+import { Vec2 } from 'domain/entities/vec2';
 import { ReAtom, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';

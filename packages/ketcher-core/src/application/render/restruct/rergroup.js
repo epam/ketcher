@@ -21,8 +21,6 @@ import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Render } from '../raphaelRender';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);

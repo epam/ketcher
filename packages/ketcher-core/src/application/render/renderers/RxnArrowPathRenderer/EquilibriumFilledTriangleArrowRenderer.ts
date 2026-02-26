@@ -4,8 +4,8 @@ import {
   ARROW_HEAD_WIDTH,
   ARROW_OFFSET,
 } from 'application/render/draw';
-import { provideEditorSettings } from 'application/editor';
-import { Vec2 } from 'domain/entities';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Vec2 } from 'domain/entities/vec2';
 import { tfx } from 'utilities';
 
 export class EquilibriumFilledTriangleArrowRenderer {

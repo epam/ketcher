@@ -24,13 +24,11 @@ import {
   SGroupDataMove,
   TextMove,
 } from '../operations';
-import {
-  Bond,
-  Fragment,
-  MonomerMicromolecule,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
+import { Fragment } from 'domain/entities/fragment';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';

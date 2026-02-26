@@ -1,7 +1,9 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Pool, Vec2 } from 'domain/entities';
-import { Coordinates, provideEditorSettings } from 'application/editor';
+import { Pool } from 'domain/entities/pool';
+import { Vec2 } from 'domain/entities/vec2';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';

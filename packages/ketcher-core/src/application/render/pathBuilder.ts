@@ -1,5 +1,5 @@
 import { tfx } from 'utilities';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 interface Point2D {
   x: number;

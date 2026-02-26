@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';

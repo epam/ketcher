@@ -16,7 +16,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { ReStruct, ReText } from '../../../render';
-import { Text, Vec2 } from 'domain/entities';
+import { Text } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';

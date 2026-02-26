@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { KetcherLogger } from './KetcherLogger';
-import { LayoutMode } from 'application/editor';
+import { LayoutMode } from 'application/editor/modes/types';
 
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';

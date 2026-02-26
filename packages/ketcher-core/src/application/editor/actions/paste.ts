@@ -34,7 +34,10 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { MultitailArrow, SGroup, Struct, Vec2 } from 'domain/entities';
+import { MultitailArrow } from 'domain/entities/multitailArrow';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';

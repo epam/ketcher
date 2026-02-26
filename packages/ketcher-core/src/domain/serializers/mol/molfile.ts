@@ -14,12 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  StereoFlag,
-  Struct,
-  SGroupAttachmentPoint,
-  SGroup,
-} from 'domain/entities';
+import { StereoFlag } from 'domain/entities/fragment';
+import { Struct } from 'domain/entities/struct';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
 
 import { Elements } from 'domain/constants';
 import common from './common';

@@ -20,7 +20,9 @@ import {
   RawDraftContentState,
   RawDraftInlineStyleRange,
 } from 'draft-js';
-import { Box2Abs, Text, TextCommand, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Text, TextCommand } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
 import { flatten, isEqual } from 'lodash/fp';
 
 import { LayerMap } from './generalEnumTypes';

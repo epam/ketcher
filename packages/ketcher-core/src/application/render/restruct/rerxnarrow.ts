@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';

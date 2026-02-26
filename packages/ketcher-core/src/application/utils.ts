@@ -19,7 +19,7 @@ class KetcherProvider {
     this.ketcherInstances.set(instance.id, instance);
   }
 
-  removeKetcherInstance(id) {
+  removeKetcherInstance(id: string) {
     this.ketcherInstances.delete(id);
   }
 
@@ -37,7 +37,7 @@ class KetcherProvider {
     const ketcher = this.ketcherInstances.get(id);
 
     if (!ketcher) {
-      throw Error(`couldnt find ketcher instance ${id}`);
+      throw Error(`Could not find Ketcher instance with ID: ${id}`);
     }
 
     return ketcher;

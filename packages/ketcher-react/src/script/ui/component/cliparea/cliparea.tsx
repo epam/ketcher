@@ -156,20 +156,18 @@ class ClipArea extends Component<ClipAreaProps> {
           event.preventDefault();
         }
       },
-      cut: async (event: ClipboardEvent) => {
+      cut: (event: ClipboardEvent) => {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
         if (isClipboardAPIAvailable()) {
-          this.props.onCut().then((data) => {
-            if (!data) {
-              return;
-            }
-            copy(data).then(() => {
-              event.preventDefault();
-              notifyCopyCut();
-            });
-          });
+          (async () => {
+            const data = await this.props.onCut();
+            if (!data) return;
+            await copy(data);
+            event.preventDefault();
+            notifyCopyCut();
+          })();
         } else {
           const data = this.props.onLegacyCut();
           if (data && event.clipboardData) {
@@ -202,24 +200,26 @@ class ClipArea extends Component<ClipAreaProps> {
           event.preventDefault();
         }
       },
-      keydown: async (event: KeyboardEvent) => {
+      keydown: (event: KeyboardEvent) => {
         if (!this.props.focused() || !this.props.onPaste) {
           return;
         }
 
         if (isControlKey(event) && event.altKey && event.code === 'KeyV') {
-          if (navigator.clipboard?.read) {
-            const clipboardData = await navigator.clipboard.read();
-            const data = await pasteByKeydown(clipboardData);
-            if (data) {
-              this.props.onPaste(data, true);
+          (async () => {
+            if (navigator.clipboard?.read) {
+              const clipboardData = await navigator.clipboard.read();
+              const data = await pasteByKeydown(clipboardData);
+              if (data) {
+                this.props.onPaste(data, true);
+              }
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (window as any).ketcher?.editor?.errorHandler?.(
+                "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
+              );
             }
-          } else {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (window as any).ketcher?.editor?.errorHandler?.(
-              "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
-            );
-          }
+          })();
         }
       },
     };

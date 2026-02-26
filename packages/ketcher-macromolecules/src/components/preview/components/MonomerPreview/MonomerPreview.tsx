@@ -21,7 +21,8 @@ import {
   StyledStructRender,
 } from './MonomerPreview.styles';
 import styled from '@emotion/styled';
-import { selectShowPreview } from 'state/common';
+import { selectEditor, selectShowPreview } from 'state/common';
+import { selectMonomers as selectLibraryMonomerGroups } from 'state/library';
 import { useAppSelector } from 'hooks';
 import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
@@ -32,6 +33,7 @@ import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
 import { preview } from 'ketcher-react';
+import { useMemo } from 'react';
 
 interface Props {
   className?: string;
@@ -39,10 +41,77 @@ interface Props {
 
 const MonomerPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as MonomerPreviewState;
+  const editor = useAppSelector(selectEditor);
+  const libraryMonomerGroups = useAppSelector(selectLibraryMonomerGroups);
 
   const { monomer, attachmentPointsToBonds } = preview;
 
-  const idtAliases = monomer?.props.idtAliases;
+  const fallbackIdtAliases = useMemo(() => {
+    if (!monomer || monomer.props.idtAliases) {
+      return undefined;
+    }
+
+    const { aliasHELM, MonomerClass, Name, MonomerName } = monomer.props;
+    const monomerAlias = aliasHELM || monomer.label;
+
+    if (!monomerAlias) {
+      return undefined;
+    }
+
+    const groupedCandidates = (libraryMonomerGroups ?? [])
+      .flatMap((group) => group?.groupItems ?? [])
+      .filter((libraryItem) => {
+        if (!libraryItem?.props?.idtAliases) {
+          return false;
+        }
+
+        const libraryAlias =
+          libraryItem.props.aliasHELM || libraryItem.props.MonomerName;
+
+        return libraryAlias === monomerAlias;
+      });
+
+    const editorLibraryCandidates = (editor?.monomersLibrary ?? []).filter(
+      (libraryItem) => {
+        if (!libraryItem?.props?.idtAliases) {
+          return false;
+        }
+
+        const libraryAlias =
+          libraryItem.props.aliasHELM || libraryItem.props.MonomerName;
+
+        return libraryAlias === monomerAlias;
+      },
+    );
+
+    const candidates = groupedCandidates.length
+      ? groupedCandidates
+      : editorLibraryCandidates;
+
+    if (!candidates.length) {
+      return undefined;
+    }
+
+    const classMatchedCandidates =
+      MonomerClass === undefined
+        ? candidates
+        : candidates.filter(
+            (libraryItem) => libraryItem.props.MonomerClass === MonomerClass,
+          );
+
+    const nameMatchedCandidates = classMatchedCandidates.filter(
+      (libraryItem) =>
+        libraryItem.props.Name === Name ||
+        libraryItem.props.MonomerName === MonomerName,
+    );
+
+    const libraryMonomer =
+      nameMatchedCandidates[0] ?? classMatchedCandidates[0] ?? candidates[0];
+
+    return libraryMonomer?.props.idtAliases;
+  }, [editor?.monomersLibrary, libraryMonomerGroups, monomer]);
+
+  const idtAliases = monomer?.props.idtAliases ?? fallbackIdtAliases;
   const axoLabsAlias = monomer?.props.aliasAxoLabs;
   const aliasHelm = monomer?.props.aliasHELM;
   const modificationTypes = monomer?.props.modificationTypes;
@@ -56,7 +125,6 @@ const MonomerPreview = ({ className }: Props) => {
   const idtAliasesText = useIDTAliasesTextForMonomer({
     idtAliases,
     attachmentPointsToBonds,
-    monomerClass: monomer?.props.MonomerClass,
   });
 
   if (!monomer) {

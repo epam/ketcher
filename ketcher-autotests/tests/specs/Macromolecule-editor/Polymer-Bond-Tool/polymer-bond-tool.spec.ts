@@ -938,6 +938,7 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     */
   const firstMonomer = getMonomerLocator(page, Peptide.C);
   const secondMonomer = getMonomerLocator(page, Peptide.dC);
+  const thirdMonomer = getMonomerLocator(page, Peptide.meD);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -959,9 +960,8 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     page,
     'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
   );
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
+  await takeElementScreenshot(page, thirdMonomer, {
+    padding: 200,
   });
 });
 

@@ -619,6 +619,10 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that a command icon added to the right of the Undo button and separated from it by a line.(Sequence mode)', async () => {
@@ -847,6 +851,10 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode)', async () => {
@@ -870,6 +878,7 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode)', async () => {
@@ -920,6 +929,7 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode)', async () => {
@@ -945,6 +955,7 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode)', async () => {
@@ -972,6 +983,10 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode)', async () => {
@@ -999,6 +1014,10 @@ test.describe('Sequence Mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   const testCases = [

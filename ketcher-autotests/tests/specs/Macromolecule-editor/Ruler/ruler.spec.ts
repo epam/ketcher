@@ -120,6 +120,9 @@ test.describe('Tests for Ruler', () => {
      * 4. Click on ruler handle and hold it
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).clickAndHold();
     await takeEditorScreenshot(page, {
@@ -159,6 +162,9 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   test('Case 5: Check that in Sequence mode the allowed values on the ruler will be multiples of 10', async () => {
@@ -263,6 +269,10 @@ test.describe('Tests for Ruler', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await Ruler(page).setLength('14');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await Ruler(page).setLength('30');
   });
 
   test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async () => {
@@ -467,6 +477,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await Ruler(page).setLength('14');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await Ruler(page).setLength('30');
   });
 
   test('Case 14: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
@@ -520,6 +535,11 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await Ruler(page).setLength('14');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await Ruler(page).setLength('30');
   });
 
   test('Case 15: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {

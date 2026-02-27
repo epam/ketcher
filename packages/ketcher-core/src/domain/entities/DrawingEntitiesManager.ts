@@ -1186,7 +1186,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     if (position) {
-      polymerBond.moveBondStartAbsolute(position.x, position.y);
+      polymerBond.moveBondEndAbsolute(position.x, position.y);
     } else {
       polymerBond.moveToLinkedEntities();
     }

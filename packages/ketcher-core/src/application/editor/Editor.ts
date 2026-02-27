@@ -904,7 +904,7 @@ export class CoreEditor {
     }
 
     const command = new Command();
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
 
     command.merge(
       this.drawingEntitiesManager.flipSelectedDrawingEntities('horizontal'),
@@ -923,7 +923,7 @@ export class CoreEditor {
     }
 
     const command = new Command();
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
 
     command.merge(
       this.drawingEntitiesManager.flipSelectedDrawingEntities('vertical'),

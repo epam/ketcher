@@ -23,8 +23,8 @@ export default function MonomerPreviewProperties({
   preset,
 }: MonomerPreviewProps) {
   const rows: RowItem[] = [
-    ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),
     ...(idtAliasesText ? [{ label: 'IDT', text: idtAliasesText }] : []),
+    ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),
     ...(helmText ? [{ label: 'HELM', text: helmText }] : []),
     ...(modificationTypeText
       ? [{ label: 'Modification type', text: modificationTypeText }]

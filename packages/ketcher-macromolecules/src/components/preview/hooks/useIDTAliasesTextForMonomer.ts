@@ -23,6 +23,10 @@ const useIDTAliasesTextForMonomer = ({
       return removeSlashesFromIdtAlias(base);
     }
     const { endpoint5, internal, endpoint3 } = modifications;
+    const allAvailableAliases = [endpoint5, internal, endpoint3]
+      .map((alias) => removeSlashesFromIdtAlias(alias))
+      .filter((alias): alias is string => Boolean(alias));
+    const uniqueAvailableAliases = [...new Set(allAvailableAliases)];
 
     // For preview on canvas
     if (attachmentPointsToBonds) {
@@ -37,7 +41,7 @@ const useIDTAliasesTextForMonomer = ({
       } else if (hasR1Connection && hasR2Connection) {
         return removeSlashesFromIdtAlias(internal ?? endpoint5 ?? endpoint3);
       } else {
-        return removeSlashesFromIdtAlias(endpoint5 ?? internal ?? endpoint3);
+        return uniqueAvailableAliases.join(', ');
       }
     }
 

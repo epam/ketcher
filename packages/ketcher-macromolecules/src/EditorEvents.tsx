@@ -280,9 +280,19 @@ export const EditorEvents = () => {
         return;
       }
 
+      const isMultiMonomerLinkerSequenceNode =
+        sequenceNode instanceof LinkerSequenceNode &&
+        sequenceNode.monomers.length > 1;
+
       // If a concrete sequence symbol is hovered (e.g. phosphate "p"),
       // always show monomer preview for that exact symbol.
-      if (hoveredSequenceSymbolType && hoveredSequenceMonomer) {
+      // Do not apply this for multi-monomer linker chains (e.g. "@" in sequence mode),
+      // because they must show a list preview with all chain monomers.
+      if (
+        hoveredSequenceSymbolType &&
+        hoveredSequenceMonomer &&
+        !isMultiMonomerLinkerSequenceNode
+      ) {
         const monomerPreviewData: MonomerPreviewState = {
           type: PreviewType.Monomer,
           monomer: hoveredSequenceMonomer.monomerItem,

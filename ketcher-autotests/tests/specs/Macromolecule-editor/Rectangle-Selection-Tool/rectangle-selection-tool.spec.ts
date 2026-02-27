@@ -37,6 +37,7 @@ async function moveMonomersToNewPosition(
   await selectAllStructuresOnCanvas(page);
   await getMonomerLocator(page, { monomerAlias: monomerName }).click();
   await dragMouseTo(x, y, page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 }
 
@@ -338,7 +339,7 @@ test.describe('Rectangle Selection Tool', () => {
       await moveMonomersToNewPosition(
         page,
         testCase.filePath,
-        'A6OH',
+        'SMPEG2',
         400,
         500,
       );
@@ -356,7 +357,7 @@ test.describe('Rectangle Selection Tool', () => {
       description:
         'Check that you can open .mol file with connected CHEMs structure, select and move it on canvas',
       filePath: 'Molfiles-V3000/chems-connected.mol',
-      monomerName: 'A6OH',
+      monomerName: 'SMPEG2',
     },
     {
       description:

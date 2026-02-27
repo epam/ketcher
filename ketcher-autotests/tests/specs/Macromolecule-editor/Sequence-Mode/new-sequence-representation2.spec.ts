@@ -81,6 +81,10 @@ function filterBugsInTests(
   sequenceId: number,
   monomerId?: number,
 ): string[] {
+  if (FailedTestNewSequenceRepresentation.length === 0) {
+    return [];
+  }
+
   return FailedTestNewSequenceRepresentation.filter((item) => {
     const testNameMatch =
       item.TestNameContains === undefined ||

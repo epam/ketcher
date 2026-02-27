@@ -98,20 +98,40 @@ function convertDraftToLexical(
       // Build text node with style ranges
       const styleRanges = block.inlineStyleRanges || [];
       let format = 0;
+      let cssStyle = '';
 
       // Simple approach: if there are bold/italic styles, apply them to whole text
       styleRanges.forEach((range) => {
-        if (range.style === 'BOLD') format |= IS_BOLD;
-        if (range.style === 'ITALIC') format |= IS_ITALIC;
-        if (range.style === 'SUBSCRIPT') format |= IS_SUBSCRIPT;
-        if (range.style === 'SUPERSCRIPT') format |= IS_SUPERSCRIPT;
+        switch (range.style) {
+          case 'BOLD':
+            format |= IS_BOLD;
+            break;
+          case 'ITALIC':
+            format |= IS_ITALIC;
+            break;
+          case 'SUBSCRIPT':
+            format |= IS_SUBSCRIPT;
+            break;
+          case 'SUPERSCRIPT':
+            format |= IS_SUPERSCRIPT;
+            break;
+          default: {
+            // handle custom font-size styling
+            const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(range.style);
+            if (match) {
+              const size = match[1];
+              cssStyle += `font-size:${size}px;`;
+            }
+            break;
+          }
+        }
       });
 
       textChildren.push({
         type: 'text',
         text: block.text,
         format,
-        style: '',
+        style: cssStyle,
         version: 1,
       });
     }

@@ -703,10 +703,12 @@ export class CoreEditor {
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
-  private onLayoutCircular() {
+  private async onLayoutCircular() {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
-    ketcher.circularLayoutMonomers();
+    await ketcher.circularLayoutMonomers();
+    this.clearTransientViews();
+    this.clearSelection();
   }
 
   private subscribeEvents() {
@@ -783,6 +785,7 @@ export class CoreEditor {
       this.events.selectEntities.dispatch(
         this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
       );
+      this.clearTransientViews();
     });
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
@@ -892,6 +895,46 @@ export class CoreEditor {
     );
     this.events.removeAutochainPreview.add(() =>
       this.onRemoveAutochainPreview(),
+    );
+    this.events.flipHorizontal.add(() => this.onFlipHorizontal());
+    this.events.flipVertical.add(() => this.onFlipVertical());
+  }
+
+  private onFlipHorizontal() {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const command = new Command();
+    const history = EditorHistory.getInstance(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('horizontal'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
+  }
+
+  private onFlipVertical() {
+    if (this.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const command = new Command();
+    const history = EditorHistory.getInstance(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('vertical'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
     );
   }
 
@@ -1220,6 +1263,17 @@ export class CoreEditor {
     };
   }
 
+  private clearTransientViews() {
+    this.transientDrawingView.clear();
+    this.transientDrawingView.update();
+  }
+
+  private clearSelection() {
+    const turnOffSelectionCommand =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.renderersContainer.update(turnOffSelectionCommand);
+  }
+
   public calculateAndStoreNextAutochainPosition(
     drawingEntitiesManagerOrMonomer: DrawingEntitiesManager | BaseMonomer,
   ) {
@@ -1366,6 +1420,7 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();
+    this.clearTransientViews();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -1628,8 +1683,10 @@ export class CoreEditor {
     const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
       history.undo();
+      this.clearTransientViews();
     } else if (name === 'redo') {
       history.redo();
+      this.clearTransientViews();
     }
   }
 
@@ -1637,6 +1694,7 @@ export class CoreEditor {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 
+    this.clearTransientViews();
     this.tool = new ToolConstructor(this, options);
 
     if (isBaseTool(oldTool)) {
@@ -1808,6 +1866,9 @@ export class CoreEditor {
     const reStruct = this.micromoleculesEditor.render.ctab;
     const zoomTool = ZoomTool.instance;
 
+    this.clearTransientViews();
+    this.clearSelection();
+
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
@@ -1853,6 +1914,8 @@ export class CoreEditor {
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
     this.resetModeIfNeeded();
+    this.clearTransientViews();
+    this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);

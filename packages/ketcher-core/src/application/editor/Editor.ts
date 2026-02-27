@@ -773,7 +773,7 @@ export class CoreEditor {
       }
 
       const command = new Command();
-      const history = new EditorHistory(this);
+      const history = EditorHistory.getInstance(this);
 
       command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
       history.update(command);
@@ -802,7 +802,7 @@ export class CoreEditor {
         this.transientDrawingView.update();
 
         const command = new Command();
-        const history = new EditorHistory(this);
+        const history = EditorHistory.getInstance(this);
 
         command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
         history.update(command);
@@ -839,7 +839,7 @@ export class CoreEditor {
         position: { x: number; y: number },
       ) => {
         const modelChanges = new Command();
-        const history = new EditorHistory(this);
+        const history = EditorHistory.getInstance(this);
         const { x, y } = position;
 
         let monomersAddResult: IAutochainMonomerAddResult | undefined;
@@ -969,7 +969,7 @@ export class CoreEditor {
     const canvasWasEmptyBeforeAutochain =
       this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const { selectedMonomerToConnect, newMonomerPosition } =
       this.getDataForAutochain();
 
@@ -1352,7 +1352,7 @@ export class CoreEditor {
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const modelChanges =
       this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
 
@@ -1410,7 +1410,7 @@ export class CoreEditor {
   }) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
-      const history = new EditorHistory(this);
+      const history = EditorHistory.getInstance(this);
 
       if (
         !payload.initialFirstMonomerAttachmentPoint ||
@@ -1466,7 +1466,7 @@ export class CoreEditor {
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
       history.previousCommand?.operations.find((operation) => {
@@ -1536,7 +1536,7 @@ export class CoreEditor {
     modificationType: string,
   ) {
     const modelChanges = new Command();
-    const editorHistory = new EditorHistory(editor);
+    const editorHistory = EditorHistory.getInstance(editor);
     const aminoAcidsToModify = getAminoAcidsToModify(
       monomers,
       modificationType,
@@ -1623,7 +1623,7 @@ export class CoreEditor {
   }
 
   public onSelectHistory(name: HistoryOperationType) {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
       history.undo();
     } else if (name === 'redo') {
@@ -1801,7 +1801,7 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     const zoomTool = ZoomTool.instance;

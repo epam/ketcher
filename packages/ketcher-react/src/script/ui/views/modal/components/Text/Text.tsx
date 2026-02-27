@@ -232,10 +232,57 @@ const TextEditorInner = (props: {
   );
 };
 
+// helper to make sure the incoming JSON is a Lexical editor state.
+// Lexical serializes into an object with a "root" node and every node
+// has a `type` property. Draft.js (used elsewhere in the codebase) uses a
+// completely different shape (`blocks`/`entityMap`), which will blow up in
+// Lexical (the error reported on line 243 is the missing `type`).
+//
+// We perform a quick sanity check and, if necessary, convert the minimal
+// Draft shape into something Lexical understands.  Failing all else we
+// fall back to undefined so Lexical starts with an empty document.
+export const normalizeEditorState = (
+  content: string | undefined,
+): string | undefined => {
+  if (!content) return undefined;
+  try {
+    const parsed = JSON.parse(content);
+
+    // already Lexical?
+    if (
+      parsed &&
+      typeof parsed === 'object' &&
+      parsed.root &&
+      typeof parsed.root === 'object' &&
+      typeof parsed.root.type === 'string'
+    ) {
+      return content;
+    }
+
+    // draft-js style? convert to basic lexical state (paragraphs + text)
+    if (parsed && parsed.blocks && Array.isArray(parsed.blocks)) {
+      const root: any = { type: 'root', version: 1, children: [] };
+      parsed.blocks.forEach((block: any) => {
+        const paragraph: any = { type: 'paragraph', children: [] };
+        if (typeof block.text === 'string') {
+          paragraph.children.push({ type: 'text', text: block.text });
+        }
+        root.children.push(paragraph);
+      });
+      return JSON.stringify({ root });
+    }
+
+    console.warn('Unsupported editor state format, falling back to empty');
+  } catch (e) {
+    console.warn('Failed to parse editor state', e);
+  }
+  return undefined;
+};
+
 const Text = (props: TextProps) => {
   const { formState, position, id } = props;
 
-  const initialEditorState = props.content || undefined;
+  const initialEditorState = normalizeEditorState(props.content);
 
   const initialConfig = {
     namespace: 'KetcherTextEditor',

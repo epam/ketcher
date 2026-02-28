@@ -533,7 +533,7 @@ test(`10. Verify that context menu works correctly on canvas after panning`, asy
   await selectAllStructuresOnCanvas(page);
 
   await page.mouse.move(100, 100);
-  await dragMouseTo(200, 200, page);
+  await dragMouseTo(page, 200, 200);
 
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(

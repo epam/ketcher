@@ -326,7 +326,7 @@ test.describe('Zoom Tool', () => {
       `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
     );
     await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
-    await dragMouseTo(100, 100, page);
+    await dragMouseTo(page, 100, 100);
     await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();

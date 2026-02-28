@@ -257,9 +257,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getMonomerLocator(page, Peptide.A).click();
-    await dragMouseTo(500, 350, page);
+    await dragMouseTo(page, 500, 350);
     await getMonomerLocator(page, Peptide.C).click();
-    await dragMouseTo(600, 350, page);
+    await dragMouseTo(page, 600, 350);
     await getMonomerLocator(page, Peptide.D).click();
     await page.mouse.down();
     await page.mouse.move(700, 350, { steps: 20 });

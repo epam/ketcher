@@ -888,7 +888,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).handTool();
     await chainlocator.hover({ force: true });
-    await dragMouseTo(locators.x, locators.y, page);
+    await dragMouseTo(page, locators.x, locators.y);
     await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1002,9 +1002,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
@@ -1152,9 +1152,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],

@@ -152,7 +152,7 @@ async function loadTwoMonomers(
     .first();
 
   await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(500, 370, page);
+  await dragMouseTo(page, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -175,7 +175,7 @@ async function loadTwoMonomers(
 
   await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-  await dragMouseTo(600, 372, page);
+  await dragMouseTo(page, 600, 372);
   await moveMouseAway(page);
 }
 

@@ -516,7 +516,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 

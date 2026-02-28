@@ -1020,7 +1020,7 @@ test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/U
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, baseCLocator, {
     padding: 255,
   });
@@ -1120,7 +1120,7 @@ test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, phosphatePSymbolLocator, {
     padding: 150,
   });
@@ -1163,7 +1163,7 @@ test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', 
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, baseGSymbolLocator, {
     padding: 150,
   });
@@ -1236,11 +1236,14 @@ test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () =
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(page, phosphatePLocator, {
-    padding: 195,
-  });
-
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(
+    page,
+    getMonomerLocator(page, { monomerId: 27 }),
+    {
+      padding: 195,
+    },
+  );
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );

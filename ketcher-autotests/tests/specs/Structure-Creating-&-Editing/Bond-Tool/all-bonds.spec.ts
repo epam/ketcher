@@ -169,7 +169,7 @@ test.describe(`Bond tool:`, () => {
       await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA, point.y, page);
+      await dragMouseTo(page, point.x + DELTA, point.y);
 
       await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -205,7 +205,7 @@ test.describe(`Bond tool:`, () => {
       await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA, point.y, page);
+      await dragMouseTo(page, point.x + DELTA, point.y);
 
       await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -333,7 +333,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         );
 
         await moveMouseToTheMiddleOfTheScreen(page);
-        await dragMouseTo(point.x + 100, point.y, page);
+        await dragMouseTo(page, point.x + 100, point.y);
         await CommonTopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).areaSelectionTool(
@@ -566,7 +566,7 @@ test.describe('Bond Tool', () => {
     if (point2) {
       await page.mouse.move(point2.x, point2.y);
       const coordinatesWithShift = point2.y + yDelta;
-      await dragMouseTo(point2.x, coordinatesWithShift, page);
+      await dragMouseTo(page, point2.x, coordinatesWithShift);
     }
     await takeEditorScreenshot(page);
   });
@@ -583,7 +583,7 @@ test.describe('Bond Tool', () => {
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await dragMouseTo(x + 50, y, page);
+    await dragMouseTo(page, x + 50, y);
     await takeEditorScreenshot(page);
     const point1 = await getBondLocator(page, { bondId: 13 });
     await ContextMenu(page, point1).click(MicroBondOption.EditSelectedBonds);

@@ -237,7 +237,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/ritalin.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 300, y - 600, page);
+    await dragMouseTo(page, x + 300, y - 600);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -340,7 +340,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 200, y + 200, page);
+    await dragMouseTo(page, x + 200, y + 200);
     await IndigoFunctionsToolbar(page).calculatedValues();
     /*
     TODO:It is necessary to ensure the correctness of the test results.
@@ -381,7 +381,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -413,7 +413,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/attachment-points-structure.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -664,7 +664,7 @@ test.describe('Calculated Values Tools', () => {
      */
     await openFileAndAddToCanvas(page, 'KET/reaction-arrow.ket');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 500, y + 800, page);
+    await dragMouseTo(page, x - 500, y + 800);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,

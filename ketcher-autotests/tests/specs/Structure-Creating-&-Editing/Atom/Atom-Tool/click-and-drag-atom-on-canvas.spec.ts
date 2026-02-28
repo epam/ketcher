@@ -122,7 +122,7 @@ test.describe('Click and drag Atom on canvas', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -158,11 +158,11 @@ test.describe('Click and drag Atom on canvas', () => {
       const previousAtomPosition = await previousAtom.boundingBox();
       if (previousAtomPosition) {
         await dragMouseTo(
+          page,
           previousAtomPosition.x + direction.x + previousAtomPosition.width / 2,
           previousAtomPosition.y +
             direction.y +
             previousAtomPosition.height / 2,
-          page,
         );
       }
     }

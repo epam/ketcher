@@ -305,7 +305,7 @@ interface IMonomer {
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
   const bondLocator = getBondLocator(page, { bondId: 7 });
   await bondLocator.hover({ force: true });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 const movableExpandedMonomers: IMonomer[] = [
@@ -1149,7 +1149,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
-      await dragMouseTo(750, 150, page);
+      await dragMouseTo(page, 750, 150);
       await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1190,7 +1190,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await rotationHandle.hover();
-      await dragMouseTo(750, 150, page);
+      await dragMouseTo(page, 750, 150);
       await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1443,7 +1443,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
-      await dragMouseTo(950, 150, page);
+      await dragMouseTo(page, 950, 150);
       await selectAllStructuresOnCanvas(page);
       const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
@@ -1501,7 +1501,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
       await rotationHandle.hover();
-      await dragMouseTo(950, 150, page);
+      await dragMouseTo(page, 950, 150);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,

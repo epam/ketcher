@@ -951,7 +951,7 @@ test.describe('RNA Library', () => {
         SelectionToolType.Rectangle,
       );
       await clickInTheMiddleOfTheScreen(page);
-      await dragMouseTo(anyPointX, anyPointY, page);
+      await dragMouseTo(page, anyPointX, anyPointY);
       await takeEditorScreenshot(page);
     });
   }
@@ -972,7 +972,7 @@ test.describe('RNA Library', () => {
         SelectionToolType.Rectangle,
       );
       await getMonomerLocator(page, monomer).click();
-      await dragMouseTo(anyPointX, anyPointY, page);
+      await dragMouseTo(page, anyPointX, anyPointY);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
@@ -1118,7 +1118,7 @@ test.describe('RNA Library', () => {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await dragMouseTo(200, 200, page);
+      await dragMouseTo(page, 200, 200);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1247,7 +1247,7 @@ test.describe('RNA Library', () => {
       });
       await page.keyboard.press('Escape');
       await clickOnMiddleOfCanvas(page);
-      await dragMouseTo(200, 200, page);
+      await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();

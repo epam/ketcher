@@ -342,5 +342,5 @@ export async function selectCanvasArea(
 ) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
-  await dragMouseTo(secondCorner.x, secondCorner.y, page);
+  await dragMouseTo(page, secondCorner.x, secondCorner.y);
 }

@@ -176,7 +176,7 @@ test.describe('Selection tools', () => {
       force: true,
     });
     const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-    await dragMouseTo(locators.x, locators.y, page);
+    await dragMouseTo(page, locators.x, locators.y);
     await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
     await CommonTopRightToolbar(page).setZoomInputValue('70');
@@ -876,11 +876,11 @@ test.describe('Selection tools', () => {
       SelectionToolType.Rectangle,
     );
     await page.getByText('33', { exact: true }).click();
-    await dragMouseTo(pointx, pointy, page);
+    await dragMouseTo(page, pointx, pointy);
     await takeEditorScreenshot(page);
 
     await page.getByText('33', { exact: true }).click();
-    await dragMouseTo(pointx1, pointy1, page);
+    await dragMouseTo(page, pointx1, pointy1);
     await takeEditorScreenshot(page);
   });
 });

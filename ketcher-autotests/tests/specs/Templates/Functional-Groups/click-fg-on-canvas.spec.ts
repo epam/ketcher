@@ -121,7 +121,7 @@ test.describe('Click Functional Group on canvas', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Ms,

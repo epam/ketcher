@@ -57,7 +57,7 @@ test.describe('Fragment selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 29 }).dblclick({
       force: true,
     });
-    await dragMouseTo(300, 200, page);
+    await dragMouseTo(page, 300, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -100,7 +100,7 @@ test.describe('Fragment selection tool', () => {
       await getPlusLocator(page).nth(0).click({ force: true });
       await page.mouse.down();
     });
-    await dragMouseTo(300, 200, page);
+    await dragMouseTo(page, 300, 200);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,

@@ -114,7 +114,6 @@ test.describe('Import-Saving .ket Files', () => {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    // await resetZoomLevelToDefault(page);
   });
 
   test('Check save and open of file with 100 monomers saved in KET format', async () => {

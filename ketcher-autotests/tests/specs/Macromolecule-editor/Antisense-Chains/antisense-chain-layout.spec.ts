@@ -976,7 +976,7 @@ test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', asyn
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, baseGLocator, {
     padding: 195,
   });
@@ -1063,7 +1063,7 @@ test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, baseGLocator, {
     padding: 240,
   });
@@ -1194,7 +1194,7 @@ test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/T
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
+  await dragMouseTo(page, locators.x, locators.y);
   await takeElementScreenshot(page, baseTLocator, {
     padding: 135,
   });

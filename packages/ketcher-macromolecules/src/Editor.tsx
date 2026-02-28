@@ -58,6 +58,7 @@ import {
   setContextMenuActive,
   setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
+  selectKetcherId,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -118,11 +119,11 @@ import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponent
 import { FloatingTools } from 'components/FloatingTools';
 
 import './theme.less';
+import assert from 'assert';
 
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
-  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
@@ -131,6 +132,7 @@ interface EditorProps {
 }
 
 interface EditorContainerProps extends EditorProps {
+  ketcherId: string;
   onInit?: (editor: CoreEditor) => void;
   isMacromoleculesEditorTurnedOn?: boolean;
 }
@@ -154,6 +156,7 @@ function EditorContainer({
   });
 
   useEffect(() => {
+    assert(ketcherId, 'ketcherId prop is required');
     store.dispatch(initKetcherId(ketcherId));
   }, [ketcherId]);
 
@@ -167,7 +170,6 @@ function EditorContainer({
         >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
-              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
@@ -192,6 +194,7 @@ function Editor({
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const ketcherId = useAppSelector(selectKetcherId);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
@@ -207,6 +210,9 @@ function Editor({
   });
 
   useEffect(() => {
+    if (!ketcherId) {
+      return;
+    }
     dispatch(
       createEditor({
         theme,
@@ -220,7 +226,7 @@ function Editor({
     return () => {
       dispatch(destroyEditor(null));
     };
-  }, [dispatch]);
+  }, [dispatch, ketcherId]);
 
   useSetRnaPresets();
   useMacromoleculesHotkeys();
@@ -326,6 +332,10 @@ function Editor({
   const toggleLibraryVisibility = useCallback(() => {
     setIsMonomerLibraryHidden((prev) => !prev);
   }, []);
+
+  if (!ketcherId) {
+    return null;
+  }
 
   return (
     <>

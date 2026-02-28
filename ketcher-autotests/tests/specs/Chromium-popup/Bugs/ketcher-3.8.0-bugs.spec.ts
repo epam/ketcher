@@ -366,7 +366,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(550, 250, page);
+    await dragMouseTo(page, 550, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -395,7 +395,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
     await ContextMenu(page, targetAtom).open();
     await takeEditorScreenshot(page);
@@ -476,7 +476,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -503,7 +503,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });

@@ -537,7 +537,7 @@ test.describe('Snake Bond Tool', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getMonomerLocator(page, Peptide.meE).hover();
-    await dragMouseTo(550, 350, page);
+    await dragMouseTo(page, 550, 350);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -556,7 +556,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptide.meE).hover();
-    await dragMouseTo(500, 300, page);
+    await dragMouseTo(page, 500, 300);
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -629,7 +629,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await getMonomerLocator(page, Peptide.meS).hover();
-    await dragMouseTo(450, 150, page);
+    await dragMouseTo(page, 450, 150);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -652,7 +652,7 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(450, 150, page);
+    await dragMouseTo(page, 450, 150);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -753,7 +753,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(450, 550, page);
+    await dragMouseTo(page, 450, 550);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -776,7 +776,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(450, 650, page);
+    await dragMouseTo(page, 450, 650);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -794,7 +794,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(450, 650, page);
+    await dragMouseTo(page, 450, 650);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

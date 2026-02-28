@@ -134,6 +134,7 @@ test.describe('Import-Saving .ket Files', () => {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
+    await resetZoomLevelToDefault(page);
   });
 
   test('Check that empty file can be saved in .ket format', async () => {
@@ -183,7 +184,7 @@ test.describe('Import-Saving .ket Files', () => {
     await CommonTopLeftToolbar(page).undo();
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
-    await dragMouseTo(400, 400, page);
+    await dragMouseTo(page, 400, 400);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

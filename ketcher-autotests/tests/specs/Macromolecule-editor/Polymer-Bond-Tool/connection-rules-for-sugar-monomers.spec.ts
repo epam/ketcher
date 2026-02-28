@@ -211,7 +211,7 @@ test.describe('Connection rules for sugars: ', () => {
 
     await leftMonomerLocator.hover({ force: true });
 
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(page, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -226,7 +226,7 @@ test.describe('Connection rules for sugars: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(page, 600, 375);
     await moveMouseAway(page);
 
     return {
@@ -1011,7 +1011,7 @@ test.describe('Connection rules for sugars: ', () => {
       monomerAlias: leftMonomer.alias,
     }).first();
     await leftMonomerLocator.hover({ force: true });
-    await dragMouseTo(300, 380, page);
+    await dragMouseTo(page, 300, 380);
     await moveMouseAway(page);
   }
 

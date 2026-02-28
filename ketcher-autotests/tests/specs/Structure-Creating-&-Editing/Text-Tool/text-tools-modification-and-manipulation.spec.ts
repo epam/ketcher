@@ -43,7 +43,7 @@ async function moveStructureToNewPosition(page: Page) {
   const point1 = { x: 906, y: 245 };
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
   await page.mouse.up();
 }
 

@@ -103,12 +103,12 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     point.y + selectionRange,
     { from: 'pageTopLeft' },
   );
-  await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
+  await dragMouseTo(page, point.x - selectionRange, point.y - selectionRange);
 
   await page.mouse.move(point.x - 1, point.y - 1);
 
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
-  await dragMouseTo(point.x, point.y, page);
+  await dragMouseTo(page, point.x, point.y);
 }
 
 async function deleteRightBondInRing(page: Page) {

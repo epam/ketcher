@@ -22,7 +22,7 @@ export async function moveMonomer(
 ) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function moveMonomerOnMicro(
@@ -36,7 +36,7 @@ export async function moveMonomerOnMicro(
   await waitForRender(page, async () => {
     await monomer.click();
   });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function connectMonomersWithBonds(

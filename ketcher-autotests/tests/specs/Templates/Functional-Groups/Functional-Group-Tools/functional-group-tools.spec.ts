@@ -241,7 +241,7 @@ test.describe('Templates - Functional Group Tools', () => {
     await getAtomLocator(page, { atomLabel: 'O', atomId: 7 }).click({
       force: true,
     });
-    await dragMouseTo(650, 650, page);
+    await dragMouseTo(page, 650, 650);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });

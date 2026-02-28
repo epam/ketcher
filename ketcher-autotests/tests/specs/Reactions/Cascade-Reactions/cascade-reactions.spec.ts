@@ -1020,7 +1020,7 @@ test.describe('Cascade Reactions', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
         force: true,
       });
-      await dragMouseTo(300, 600, page);
+      await dragMouseTo(page, 300, 600);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {

@@ -389,7 +389,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await interactWithMicroMolecule(page, 'H3C', 'hover', 1);
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

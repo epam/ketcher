@@ -90,7 +90,7 @@ test.describe('Indigo Tools - Layout', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await IndigoFunctionsToolbar(page).layout();
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({

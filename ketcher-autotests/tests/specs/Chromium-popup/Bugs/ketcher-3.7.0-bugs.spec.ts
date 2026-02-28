@@ -426,7 +426,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 400, 300, { from: 'pageTopLeft' });
-    await dragMouseTo(700, 800, page);
+    await dragMouseTo(page, 700, 800);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

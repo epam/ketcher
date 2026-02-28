@@ -119,7 +119,7 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -146,7 +146,7 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -170,8 +170,8 @@ test.describe('Template Manupulations', () => {
     let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
     rotationHandleX += rotationHandleBoundingBox.width / 2;
     rotationHandleY += rotationHandleBoundingBox.height / 2;
-    await dragMouseTo(rotationHandleX, rotationHandleY, page);
-    await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
+    await dragMouseTo(page, rotationHandleX, rotationHandleY);
+    await dragMouseTo(page, rotationHandleX, rotationHandleY - shift);
     await takeEditorScreenshot(page);
   });
 
@@ -230,7 +230,7 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await LeftToolbar(page).chain();
     await RightToolbar(page).clickAtom(Atom.Iodine);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
@@ -248,7 +248,7 @@ test.describe('Template Manupulations', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 

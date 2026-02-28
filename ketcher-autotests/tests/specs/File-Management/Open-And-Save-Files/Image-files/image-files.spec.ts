@@ -486,7 +486,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
   });
 
@@ -500,7 +500,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(600, 400, page);
+    await dragMouseTo(page, 600, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -516,10 +516,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(800, 100, page);
+    await dragMouseTo(page, 800, 100);
     await takeEditorScreenshot(page);
   });
 
@@ -534,7 +534,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(600, 300, page);
+    await dragMouseTo(page, 600, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -563,7 +563,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -592,7 +592,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -620,7 +620,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -863,7 +863,7 @@ test.describe('Image files', () => {
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(100, 100);
-    await dragMouseTo(800, 800, page);
+    await dragMouseTo(page, 800, 800);
     await takeEditorScreenshot(page);
   });
 
@@ -998,7 +998,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1027,7 +1027,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1056,7 +1056,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1089,7 +1089,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1121,7 +1121,7 @@ test.describe('Image files', () => {
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1153,7 +1153,7 @@ test.describe('Image files', () => {
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1386,7 +1386,7 @@ test.describe('Image files', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
       force: true,
     });
-    await dragMouseTo(400, 300, page);
+    await dragMouseTo(page, 400, 300);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).cleanUp();
@@ -2483,10 +2483,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2502,10 +2502,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2521,10 +2521,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2540,10 +2540,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2559,10 +2559,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2578,10 +2578,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2756,7 +2756,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2796,7 +2796,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2950,7 +2950,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2990,7 +2990,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3212,7 +3212,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3241,7 +3241,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3276,7 +3276,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3311,7 +3311,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();

@@ -1227,23 +1227,30 @@ test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () =
     `5'-GAGp-3'
 5'-Cp-3'`,
   );
+  const phosphatePLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+    monomerAlias: 'P',
+  }).nth(3);
   await CommonLeftToolbar(page).handTool();
-  await getMonomerLocator(page, { monomerId: 27 }).hover({
+  await phosphatePLocator.hover({
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
   await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 27 }),
-    {
-      padding: 195,
-    },
-  );
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 195,
+  });
+
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 32 }), {
+  const baseCSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'C',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseCSymbolLocator, {
     padding: 55,
   });
 });

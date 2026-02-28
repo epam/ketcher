@@ -39,22 +39,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
-// test.beforeAll(async ({ browser }) => {
-//   const context = await browser.newContext();
-//   page = await context.newPage();
-
-//   await waitForPageInit(page);
-//   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-//   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-// });
-
-// test.afterEach(async () => {
-//   await CommonTopLeftToolbar(page).clearCanvas();
-// });
-
-// test.afterAll(async ({ browser }) => {
-//   await Promise.all(browser.contexts().map((context) => context.close()));
-// });
 test.beforeAll(async ({ initSnakeCanvas }) => {
   page = await initSnakeCanvas();
 });
@@ -1237,13 +1221,9 @@ test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () =
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
   await dragMouseTo(page, locators.x, locators.y);
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 27 }),
-    {
-      padding: 195,
-    },
-  );
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 195,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );

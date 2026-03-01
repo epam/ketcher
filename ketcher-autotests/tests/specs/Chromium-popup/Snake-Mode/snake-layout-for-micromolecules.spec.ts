@@ -350,11 +350,11 @@ test.describe('Snake Layout for Microstructures', () => {
 });
 
 test.describe('Snake Layout for Microstructures by Ruler', () => {
-  test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
+  test.beforeAll(async ({ initSnakeCanvas }) => {
+    page = await initSnakeCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
+  test.beforeEach(async ({ SnakeCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });

@@ -39,11 +39,11 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ initFlexCanvas }) => {
-  page = await initFlexCanvas();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);

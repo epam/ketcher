@@ -16,11 +16,11 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 let page: Page;
 
 test.describe('Snake Layout for Microstructures', () => {
-  test.beforeAll(async ({ initSnakeCanvas }) => {
-    page = await initSnakeCanvas();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ SnakeCanvas: _ }) => {});
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -350,11 +350,11 @@ test.describe('Snake Layout for Microstructures', () => {
 });
 
 test.describe('Snake Layout for Microstructures by Ruler', () => {
-  test.beforeAll(async ({ initSnakeCanvas }) => {
-    page = await initSnakeCanvas();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ SnakeCanvas: _ }) => {
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });

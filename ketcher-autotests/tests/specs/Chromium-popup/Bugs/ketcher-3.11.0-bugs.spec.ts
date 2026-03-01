@@ -109,10 +109,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });

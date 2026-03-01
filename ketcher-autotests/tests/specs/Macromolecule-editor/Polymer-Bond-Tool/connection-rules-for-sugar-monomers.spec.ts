@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect, Locator } from '@fixtures';
 import {
@@ -15,7 +16,6 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Connection rules for sugars: ', () => {
@@ -23,17 +23,13 @@ test.describe('Connection rules for sugars: ', () => {
   test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
-    test.beforeAll(async ({ initFlexCanvas }) => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

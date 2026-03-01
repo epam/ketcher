@@ -14,7 +14,6 @@ import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
@@ -28,7 +27,6 @@ test.beforeAll(async ({ initFlexCanvas }) => {
 });
 
 test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 

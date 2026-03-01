@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@fixtures';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -35,9 +35,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');

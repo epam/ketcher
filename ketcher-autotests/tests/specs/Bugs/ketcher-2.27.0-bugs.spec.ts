@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -64,20 +65,13 @@ async function connectMonomerToAtom(page: Page) {
 let page: Page;
 
 test.describe('Ketcher bugs in 2.27.0', () => {
-    test.beforeAll(async ({ initFlexCanvas }) => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-    });
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

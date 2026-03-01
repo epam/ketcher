@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -43,21 +44,13 @@ import {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.5.0', () => {
-    test.beforeAll(async ({ initFlexCanvas }) => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-    disableChainLengthRuler: false,
-    });
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

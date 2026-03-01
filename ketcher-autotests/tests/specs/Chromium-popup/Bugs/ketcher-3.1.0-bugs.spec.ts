@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -50,20 +51,13 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 let page: Page;
 
 test.describe('Ketcher bugs in 3.1.0', () => {
-    test.beforeAll(async ({ initFlexCanvas }) => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-    });
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

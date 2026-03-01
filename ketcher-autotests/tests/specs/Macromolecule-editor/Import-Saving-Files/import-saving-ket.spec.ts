@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -22,9 +23,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  markResetToDefaultState,
-} from '@utils/testAnnotations/resetToDefaultState';
+import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -64,9 +63,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

@@ -138,7 +138,6 @@ test.beforeAll(async ({ initFlexCanvas }) => {
 });
 
 test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 

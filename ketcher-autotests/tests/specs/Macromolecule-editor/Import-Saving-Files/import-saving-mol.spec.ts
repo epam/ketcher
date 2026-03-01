@@ -40,8 +40,8 @@ test.beforeAll(async ({ initFlexCanvas }) => {
 
 test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-  enableFlexMode: false,
-  goToPeptides: false,
+    enableFlexMode: false,
+    goToPeptides: false,
   });
 });
 

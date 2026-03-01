@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 import { Page, test } from '@fixtures';
 import {
@@ -22,10 +23,7 @@ test.beforeAll(async ({ initSnakeCanvas }) => {
   page = await initSnakeCanvas();
 });
 
-test.beforeEach(async ({ SnakeCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-});
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

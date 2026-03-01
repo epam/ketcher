@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
@@ -7,25 +8,16 @@ import {
   MacroFileType,
 } from '@utils';
 import { closeOpenStructure, pageReload } from '@utils/common/helpers';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { Library } from '@tests/pages/macromolecules/Library';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 let page: Page;
 
-async function configureInitialState(page: Page) {
-  await Library(page).switchToRNATab();
-}
-
 test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await configureInitialState(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');

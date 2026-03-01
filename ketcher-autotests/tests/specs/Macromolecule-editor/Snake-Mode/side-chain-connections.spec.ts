@@ -62,7 +62,6 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for rna chain in snake mode
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/side-connections-rna.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -73,7 +72,6 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for peptide chain in snake mode
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/side-connections-peptide.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -84,7 +82,6 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for cycled chain in snake mode
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(
       page,
       `KET/side-connection-in-cycle-chain.ket`,
@@ -100,7 +97,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await page.waitForTimeout(200);
@@ -120,7 +116,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -137,8 +132,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -158,8 +151,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -181,7 +172,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -220,7 +210,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -238,7 +227,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -256,7 +244,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -274,7 +261,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -292,7 +278,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -317,10 +302,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -350,9 +331,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -380,9 +358,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -410,9 +385,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -440,9 +412,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -470,9 +439,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -500,9 +466,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -531,10 +494,7 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
+
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -564,9 +524,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -593,10 +550,7 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
+
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -626,9 +580,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -656,9 +607,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -686,9 +634,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -716,9 +661,6 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
       // Closing Library to enlarge canvas
       await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
@@ -738,7 +680,6 @@ test.describe('Side chain connections', () => {
     /* If more than one side connection is drawn horizontally between two monomer rows, they should be shifted vertically against each other.
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/5.ket`);
@@ -754,7 +695,6 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/6.ket`);
@@ -771,7 +711,6 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -791,7 +730,6 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -811,7 +749,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -830,7 +767,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -849,7 +785,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -868,7 +803,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -887,7 +821,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -917,7 +850,6 @@ test.describe('Side chain connections', () => {
     /* Case 9: Verify display of side-chain connections when switching from snake mode to sequence mode
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/9.ket`);
@@ -1108,6 +1040,7 @@ test.describe('Side chain connections', () => {
     await waitForRender(page, async () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await openFileAndAddToCanvasMacro(
       page,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -30,7 +31,6 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -43,12 +43,7 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
   page = await initSequenceCanvas();
 });
 
-test.beforeEach(async ({ SequenceCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-  LayoutMode.Sequence,
-  );
-});
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

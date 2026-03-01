@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
@@ -57,15 +58,13 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 test.describe('Image files', () => {
   let page: Page;
 
-    test.beforeAll(async ({ initMoleculesCanvas }) => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

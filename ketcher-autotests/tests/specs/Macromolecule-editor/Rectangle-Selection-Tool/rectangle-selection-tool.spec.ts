@@ -17,7 +17,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -42,20 +41,15 @@ async function moveMonomersToNewPosition(
 test.describe('Rectangle Selection Tool', () => {
   let page: Page;
 
-    test.beforeAll(async ({ initFlexCanvas }) => {
+  test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
 
   test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToPeptidesTab();
   });
 
-    test.afterEach(async () => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
@@ -40,9 +41,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

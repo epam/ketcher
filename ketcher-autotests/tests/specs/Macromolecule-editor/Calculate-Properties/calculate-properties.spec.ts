@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable promise/param-names */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
@@ -17,8 +18,6 @@ import {
   takeTopToolbarScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -37,24 +36,19 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Calculate Properties tests', () => {
-    test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-    });
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-    test.afterEach(async () => {
+  test.afterEach(async () => {
     if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
-    await CalculateVariablesPanel(page).closeWindow();
+      await CalculateVariablesPanel(page).closeWindow();
     }
   });
 
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

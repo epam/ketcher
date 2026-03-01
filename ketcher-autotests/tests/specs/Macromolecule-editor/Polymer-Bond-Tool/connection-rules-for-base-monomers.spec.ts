@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page, test, expect } from '@fixtures';
 import {
@@ -15,7 +16,6 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
@@ -24,9 +24,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

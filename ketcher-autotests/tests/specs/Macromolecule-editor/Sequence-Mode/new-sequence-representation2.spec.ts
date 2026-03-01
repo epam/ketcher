@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
@@ -12,7 +13,6 @@ import {
 } from '@utils';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
@@ -22,18 +22,7 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
   page = await initSequenceCanvas();
 });
 
-test.beforeEach(async ({ SequenceCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-  LayoutMode.Sequence,
-  );
-});
-
-test.afterEach(async () => {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-  LayoutMode.Sequence,
-  );
-});
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

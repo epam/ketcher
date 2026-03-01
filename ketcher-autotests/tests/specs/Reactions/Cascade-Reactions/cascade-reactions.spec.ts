@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
@@ -46,15 +47,13 @@ async function addTail(page: Page, x: number, y: number) {
 test.describe('Cascade Reactions', () => {
   let page: Page;
 
-    test.beforeAll(async ({ initMoleculesCanvas }) => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

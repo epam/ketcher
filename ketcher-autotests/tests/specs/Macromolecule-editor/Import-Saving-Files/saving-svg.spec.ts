@@ -1,13 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test } from '@fixtures';
-import {
-  openFileAndAddToCanvasMacro,
-  takeEditorScreenshot,
-} from '@utils';
+import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import {
-  markResetToDefaultState,
-} from '@utils/testAnnotations/resetToDefaultState';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { verifySVGExport } from '@utils/files/receiveFileComparisonData';
@@ -18,9 +13,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();

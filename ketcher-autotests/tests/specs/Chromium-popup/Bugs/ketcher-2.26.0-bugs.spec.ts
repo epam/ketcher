@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -33,9 +34,7 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import {
-  waitForRender,
-} from '@utils/common';
+import { waitForRender } from '@utils/common';
 
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -114,22 +113,13 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 let page: Page;
 
 test.describe('Ketcher bugs in 2.26.0', () => {
-    test.beforeAll(async ({ initMoleculesCanvas }) => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
 
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-    test.afterEach(async () => {
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).reset();
-    await SettingsDialog(page).apply();
-  });
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

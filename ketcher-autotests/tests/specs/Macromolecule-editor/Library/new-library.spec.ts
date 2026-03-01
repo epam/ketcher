@@ -8,9 +8,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import {
-  waitForRender,
-} from '@utils/common/loaders';
+import { waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -58,21 +56,17 @@ import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVa
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
   await MacromoleculesTopToolbar(page).rna();
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
   await Library(page).openRNASection(RNASection.Presets);
 }
 
-test.beforeAll(async ({ initFlexCanvas }) => {
-  page = await initFlexCanvas();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
 });
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -19,9 +20,7 @@ import {
   MolFileFormat,
   takePageScreenshot,
 } from '@utils';
-import {
-  waitForSpinnerFinishedWork,
-} from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -141,15 +140,13 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.6.0', () => {
-    test.beforeAll(async ({ initMoleculesCanvas }) => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
 
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  
-
-    test.afterAll(async ({ closePage }) => {
+  test.afterAll(async ({ closePage }) => {
     await closePage();
   });
 

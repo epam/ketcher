@@ -9,9 +9,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -41,11 +39,11 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
   // Creation of custom presets needed for testing
@@ -55,13 +53,10 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await keyboardPressOnCanvas(page, 'Escape');
   await keyboardPressOnCanvas(page, 'Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IBaseReplaceMonomer {

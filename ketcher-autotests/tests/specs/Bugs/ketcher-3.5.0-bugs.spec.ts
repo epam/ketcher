@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
@@ -15,13 +14,13 @@ import {
   selectPartOfMolecules,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -44,25 +43,22 @@ import {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.5.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-      disableChainLengthRuler: false,
+    enableFlexMode: false,
+    goToPeptides: false,
+    disableChainLengthRuler: false,
     });
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Clicking on base card in RNA Builder scroll to selected base if multiple bases from the same section are selected', async () => {

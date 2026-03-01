@@ -20,7 +20,6 @@ import {
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -65,22 +64,20 @@ declare global {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async () => {

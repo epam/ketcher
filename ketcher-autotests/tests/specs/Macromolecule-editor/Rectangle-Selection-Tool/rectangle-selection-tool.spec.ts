@@ -4,10 +4,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
-  waitForPageInit,
   moveMouseAway,
   clickOnCanvas,
-  resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -44,23 +42,21 @@ async function moveMonomersToNewPosition(
 test.describe('Rectangle Selection Tool', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
+    test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
 
-    await waitForPageInit(page);
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToPeptidesTab();
   });
 
-  test.afterEach(async () => {
+    test.afterEach(async () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
   });
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Select monomer and bonds and then erase', async () => {

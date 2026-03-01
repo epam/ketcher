@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
-  waitForPageInit,
   openFile,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -25,7 +24,6 @@ import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   markResetToDefaultState,
-  processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -62,20 +60,16 @@ const fileTestData = [
   },
 ];
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await processResetToDefaultState(testInfo, page);
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .ket Files', () => {

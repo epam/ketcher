@@ -33,8 +33,10 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForPageInit, waitForRender } from '@utils/common';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import {
+  waitForRender,
+} from '@utils/common';
+
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -112,25 +114,23 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 let page: Page;
 
 test.describe('Ketcher bugs in 2.26.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await resetZoomLevelToDefault(page);
+    test.afterEach(async () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings();
     await SettingsDialog(page).reset();
     await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
   });
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: The options for layout about smart-layout, aromatize-skip-superatoms and etc is sent as not undefined', async () => {

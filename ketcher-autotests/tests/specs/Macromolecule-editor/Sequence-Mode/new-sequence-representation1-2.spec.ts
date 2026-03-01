@@ -14,7 +14,6 @@ import {
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -31,7 +30,6 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -41,25 +39,23 @@ import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/Conf
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
+  LayoutMode.Sequence,
   );
 });
 
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomerToAdd {

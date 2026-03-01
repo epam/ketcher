@@ -9,7 +9,6 @@ import {
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
-  waitForPageInit,
   MolFileFormat,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -34,23 +33,21 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SnakeCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 async function clickNthConnectionLine(page: Page, n: number) {

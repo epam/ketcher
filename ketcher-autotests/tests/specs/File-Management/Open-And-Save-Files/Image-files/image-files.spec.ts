@@ -10,10 +10,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
@@ -59,20 +57,16 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 test.describe('Image files', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  
+
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Verify that single image of SVG format can be saved to KET file and load', async () => {

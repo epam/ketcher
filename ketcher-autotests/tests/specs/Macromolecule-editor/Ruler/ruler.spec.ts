@@ -5,16 +5,13 @@
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  resetZoomLevelToDefault,
   keyboardTypeOnCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   clickOnCanvas,
 } from '@utils';
-import { waitForPageInit } from '@utils/common';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -22,24 +19,20 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Tests for Ruler', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
+    disableChainLengthRuler: false,
     });
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Verify that ruler available only in Sequence and Snake mode, and placed below the main toolbar', async () => {

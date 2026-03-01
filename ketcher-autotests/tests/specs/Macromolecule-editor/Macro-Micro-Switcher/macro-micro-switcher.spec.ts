@@ -27,7 +27,6 @@ import {
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
 } from '@utils';
 import { MacroFileType } from '@utils/canvas';
@@ -134,22 +133,17 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Macro-Micro-Switcher', () => {

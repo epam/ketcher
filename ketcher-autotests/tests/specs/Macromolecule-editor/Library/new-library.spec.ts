@@ -8,7 +8,9 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForRender } from '@utils/common/loaders';
+import {
+  waitForRender,
+} from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -65,21 +67,17 @@ async function configureInitialState(page: Page) {
   await Library(page).openRNASection(RNASection.Presets);
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('1. Verify that the header of the library changed to remove the "Library" title and move the "Hide" option to the ear instead of to the right of the title', async () => {

@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -74,20 +73,18 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
 });
 
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
   await CommonLeftToolbar(page).handTool();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe(`Bond tool:`, () => {

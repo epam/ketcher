@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
@@ -24,12 +23,14 @@ import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import {
+  waitForSpinnerFinishedWork,
+} from '@utils/common';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -103,24 +104,21 @@ async function openPPTXFileAndValidateStructurePreview(
 let page: Page;
 
 test.describe('Ketcher bugs in 3.4.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
+    enableFlexMode: false,
+    goToPeptides: false,
     });
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Tooltips in sequence mode disappear after right-click on letters', async () => {

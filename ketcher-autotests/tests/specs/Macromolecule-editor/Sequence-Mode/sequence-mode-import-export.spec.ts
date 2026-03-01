@@ -5,8 +5,6 @@ import {
   takeEditorScreenshot,
   moveMouseAway,
   MacroFileType,
-  resetZoomLevelToDefault,
-  waitForPageInit,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
@@ -30,22 +28,17 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import/export sequence:', () => {

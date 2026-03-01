@@ -8,39 +8,35 @@ import {
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,
-  waitForPageInit,
   waitForRender,
 } from '@utils';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
+  LayoutMode.Sequence,
   );
 });
 
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
+  LayoutMode.Sequence,
   );
-  await resetZoomLevelToDefault(page);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomerToAdd {

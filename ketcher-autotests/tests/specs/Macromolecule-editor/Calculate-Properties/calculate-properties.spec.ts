@@ -11,16 +11,13 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  resetZoomLevelToDefault,
   selectPartOfMolecules,
   takeElementScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -40,27 +37,25 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Calculate Properties tests', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
+    enableFlexMode: false,
+    goToPeptides: false,
     });
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
+    test.afterEach(async () => {
     if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
-      await CalculateVariablesPanel(page).closeWindow();
+    await CalculateVariablesPanel(page).closeWindow();
     }
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
   });
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Check that "Calculate Properties" icon added to the main toolbar, with the tooltip preview of "Calculate Properties (Alt+C)"', async () => {

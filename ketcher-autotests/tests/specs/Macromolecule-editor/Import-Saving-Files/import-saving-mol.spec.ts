@@ -23,7 +23,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -34,25 +34,23 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
+  enableFlexMode: false,
+  goToPeptides: false,
   });
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-  await processResetToDefaultState(testInfo, page);
+test.afterEach(async () => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .mol Files', () => {

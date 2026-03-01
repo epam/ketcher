@@ -2,7 +2,6 @@
 import { Page, expect, test } from '@fixtures';
 import {
   resetZoomLevelToDefault,
-  waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeElementScreenshot,
@@ -32,26 +31,20 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 test.setTimeout(20000);
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`1. Verify context menu in Snake and Flex modes when right-clicking a monomer (Copy and Delete (Paste disabled))`, async () => {

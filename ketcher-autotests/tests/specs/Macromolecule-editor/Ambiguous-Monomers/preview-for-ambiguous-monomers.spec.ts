@@ -2,7 +2,6 @@
 import { Page, test } from '@fixtures';
 import {
   MonomerType,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProjectMacro,
@@ -15,7 +14,6 @@ import {
   getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -24,21 +22,17 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 type MonomerLocatorOptionsWithAlias = MonomerLocatorOptions & {

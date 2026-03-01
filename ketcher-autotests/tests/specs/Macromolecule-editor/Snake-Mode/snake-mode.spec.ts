@@ -2,7 +2,6 @@
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -19,21 +18,17 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ SnakeCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(

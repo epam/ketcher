@@ -5,7 +5,6 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -20,12 +19,14 @@ import {
   MolFileFormat,
   takePageScreenshot,
 } from '@utils';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import {
+  waitForSpinnerFinishedWork,
+} from '@utils/common';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -140,20 +141,16 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
 let page: Page;
 
 test.describe('Ketcher bugs in 3.6.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+    test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  
+
+    test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {

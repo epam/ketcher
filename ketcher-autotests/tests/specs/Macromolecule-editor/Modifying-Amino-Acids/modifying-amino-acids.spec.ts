@@ -3,7 +3,6 @@
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   MonomerType,
@@ -32,11 +31,11 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
@@ -44,14 +43,13 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await CommonTopLeftToolbar(page).clearCanvas();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await CommonTopRightToolbar(page).resetZoom();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface ICommonPart {

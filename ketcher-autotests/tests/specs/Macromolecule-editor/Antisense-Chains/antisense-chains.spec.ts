@@ -4,7 +4,6 @@
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasMacro,
@@ -57,21 +56,17 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {

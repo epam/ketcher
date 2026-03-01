@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForPageInit,
-  resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
   copyToClipboardByKeyboard,
@@ -38,20 +36,16 @@ let page: Page;
 test.setTimeout(40000);
 test.describe.configure({ retries: 0 });
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {

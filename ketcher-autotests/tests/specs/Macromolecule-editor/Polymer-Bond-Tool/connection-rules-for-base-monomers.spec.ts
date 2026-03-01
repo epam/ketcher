@@ -5,9 +5,7 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  resetZoomLevelToDefault,
   MonomerType,
-  waitForPageInit,
 } from '@utils';
 import {
   getMonomerLocator,
@@ -17,27 +15,21 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
-});
-
-test.afterEach(async () => {
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Connection rules for Base monomers: ', () => {

@@ -30,7 +30,7 @@
 
   &.errorTab {
     border-color: @color-secondary-red !important;
-    background: #FDE0DF !important;
+    background: #fde0df !important;
   }
 
   .tabLabel {
@@ -56,7 +56,7 @@
   svg {
     width: 16px;
     height: 16px;
-    color: #B4B9D6;
+    color: #b4b9d6;
   }
 
   :global(.MuiTab-iconWrapper) {
@@ -74,7 +74,7 @@
   padding: 8px;
   margin-bottom: 8px;
   display: flex;
-  background: #EFF2F5;
+  background: #eff2f5;
   font-size: 9px;
   gap: 0 10px;
   border-radius: 4px;
@@ -93,9 +93,9 @@
   }
 
   &:disabled {
-    background: #E1E5EA;
+    background: #e1e5ea;
     color: #333333;
-    border-color: #E1E5EA;
+    border-color: #e1e5ea;
     cursor: not-allowed;
     opacity: 0.5;
   }
@@ -109,4 +109,31 @@
   font-size: 12px;
   cursor: pointer;
   position: relative;
+}
+
+.phosphatePositionPicker {
+  display: inline-flex;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.phosphatePositionPickerError {
+  border-color: @color-secondary-red;
+  background: #fde0df;
+}
+
+.phosphatePositionButton {
+  min-width: 48px;
+  height: 24px;
+  border: 1px solid #cad3dd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.phosphatePositionButtonActive {
+  border-color: @color-primary;
+  color: @color-primary;
 }

@@ -85,8 +85,10 @@ const createMockEditor = () => {
 const createInitialWizardState = (): RnaPresetWizardState => ({
   preset: {
     name: '',
+    phosphatePosition: undefined,
     errors: {
       name: undefined,
+      phosphatePosition: undefined,
     },
     notifications: new Map(),
     manuallyModifiedSymbols: {
@@ -454,5 +456,28 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     expect(mockEditor.highlights.clear).toHaveBeenCalled();
     // But since there's no structure, no highlights should be created
     expect(mockEditor.highlights.create).not.toHaveBeenCalled();
+  });
+
+  it('should render phosphate position picker in phosphate tab and dispatch selected value', () => {
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+
+    expect(screen.getByTestId('phosphate-position-picker')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('phosphate-position-5-button'));
+
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'SetPresetPhosphatePosition',
+      value: '5',
+    });
   });
 });

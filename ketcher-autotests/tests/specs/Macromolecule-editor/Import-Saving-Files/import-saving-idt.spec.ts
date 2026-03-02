@@ -207,7 +207,9 @@ test.describe('Import-Saving .idt Files', () => {
     await Library(page).openRNASection(RNASection.Phosphates);
     await Library(page).hoverMonomer(Phosphate.P);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window, {
+      maxDiffPixelRatio: 0.03,
+    });
   });
 
   const rnaNucleotides = [

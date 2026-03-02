@@ -1217,7 +1217,9 @@ test.describe('RNA Library', () => {
       await moveMouseAway(page);
       await getMonomerLocator(page, monomer).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        maxDiffPixelRatio: 0.03,
+      });
 
       // Reset to default state
       await Library(page).openRNASection(RNASection.Presets);

@@ -19,14 +19,17 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Tests for Ruler', () => {
-  test.beforeAll(async ({ initSequenceCanvas }) => {
-    page = await initSequenceCanvas();
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.beforeEach(async ({ SequenceCanvas: _ }) => {
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
   });
 
   test.afterAll(async ({ closePage }) => {

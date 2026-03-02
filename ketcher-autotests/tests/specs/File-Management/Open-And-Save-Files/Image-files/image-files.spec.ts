@@ -2102,6 +2102,7 @@ test.describe('Image files', () => {
           page,
           SaveStructureDialog(page).saveStructureTextarea,
         );
+        await SaveStructureDialog(page).closeWindow();
       }
     });
   }

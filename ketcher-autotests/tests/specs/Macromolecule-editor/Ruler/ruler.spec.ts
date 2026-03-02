@@ -19,11 +19,11 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Tests for Ruler', () => {
-  test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
@@ -45,9 +45,6 @@ test.describe('Tests for Ruler', () => {
      * 4. Verify that ruler is available and placed below the main toolbar
      * 5. Take screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).hover();
     await takeEditorScreenshot(page, {

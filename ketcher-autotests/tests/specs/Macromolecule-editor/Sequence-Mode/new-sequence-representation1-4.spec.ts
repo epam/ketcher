@@ -23,10 +23,6 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
 
 test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-test.afterEach(async () => {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-});
-
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });

@@ -398,7 +398,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeElementScreenshot(
       page,
-      getSymbolLocator(page, { symbolId: 27 }),
+      getSymbolLocator(page, { symbolAlias: 'W' }),
       {
         padding: 34,
       },
@@ -632,7 +632,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLettersSelector =
       PasteFromClipboardDialog(page).peptideLettersCodeSelector;
 
-    PasteFromClipboardDialog(page).selectContentType(MacroFileType.Sequence);
+    await PasteFromClipboardDialog(page).selectContentType(
+      MacroFileType.Sequence,
+    );
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
@@ -939,6 +941,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test('Case 27 - Former molecule selection causes invalid attachment point creation in Monomer creation wizard', async () => {
@@ -961,6 +964,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await clickOnCanvas(page, 300, 300);
     await LeftToolbar(page).createMonomer();
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test('Case 28 - Unable to create more than one nucleotide monomer - system throws exception', async () => {
@@ -1032,6 +1036,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await takeEditorScreenshot(page);
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
+    await dialog.discard();
   });
 
   test('Case 29 - System should be able to load unknown monomer on any position', async ({

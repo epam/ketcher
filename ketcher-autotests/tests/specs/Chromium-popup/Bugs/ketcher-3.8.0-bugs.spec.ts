@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
@@ -73,10 +74,9 @@ test.describe('Ketcher bugs in 3.8.0', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });

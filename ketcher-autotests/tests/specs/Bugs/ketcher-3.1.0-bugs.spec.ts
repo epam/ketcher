@@ -52,11 +52,11 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 let page: Page;
 
 test.describe('Ketcher bugs in 3.1.0', () => {
-  test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.beforeEach(async ({ FlexCanvas: _ }) => {});
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
     await closePage();

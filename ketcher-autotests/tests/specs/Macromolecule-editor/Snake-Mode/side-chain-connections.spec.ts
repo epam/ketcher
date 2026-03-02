@@ -38,7 +38,6 @@ test.beforeAll(async ({ initSnakeCanvas }) => {
 });
 
 test.beforeEach(async ({ SnakeCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 

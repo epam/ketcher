@@ -27,7 +27,7 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.44.1",
-    "eslint": "^8.44.0",
+    "eslint": "^9.26.0",
     "lint-staged": "^13.1.2",
     "prettier": "2.8.4"
   },

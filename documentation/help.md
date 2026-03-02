@@ -506,7 +506,7 @@ The left toolbar consists of the following elements:
 <img src=images/Macro-Left-Toolbar-3.8..png width = "50"/>
 
 - **Hand tool** (1) used to adjust the view and move around the canvas;
-- **Selection tools** (2) used to select elements on the canvas (_Rectange selection tool_ (1), _Lasso selection tool_ (2), and Structure selection tool_ (3) are available);
+- **Selection tools** (2) used to select elements on the canvas (_Rectange selection tool_ (1), _Lasso selection tool_ (2), and _Structure selection tool_ (3) are available);
 
 <img src=images/Selection-tools-macro-3.8..png width = "150"/>
 

@@ -330,14 +330,16 @@ export const RnaEditorExpanded = ({
     if (!newPreset?.name) {
       return;
     }
-    const resolvedPhosphatePosition = newPreset?.phosphate
-      ? phosphatePosition ||
-        (is3PrimeAvailable && !is5PrimeAvailable
-          ? 'right'
-          : is5PrimeAvailable && !is3PrimeAvailable
-          ? 'left'
-          : undefined)
+    let resolvedPhosphatePosition = newPreset?.phosphate
+      ? phosphatePosition
       : undefined;
+    if (newPreset?.phosphate && !resolvedPhosphatePosition) {
+      if (is3PrimeAvailable && !is5PrimeAvailable) {
+        resolvedPhosphatePosition = 'right';
+      } else if (is5PrimeAvailable && !is3PrimeAvailable) {
+        resolvedPhosphatePosition = 'left';
+      }
+    }
     if (newPreset?.phosphate && !resolvedPhosphatePosition) {
       return;
     }

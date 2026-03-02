@@ -378,6 +378,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
     await AtomPropertiesDialog(page).fillAlias('N1');
     expect(await AtomPropertiesDialog(page).applyButton.isEnabled()).toBe(true);
+    await AtomPropertiesDialog(page).cancel();
   });
 
   test('Case 6 - Ambiguous phosphates (alternatives and mixed) in sequence shown as % symbol instead of @ symbol', async ({
@@ -422,9 +423,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/Ambiguous-monomers-bonds/ketcherSugarsMixedAndAlternatives.ket',
     );
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 3 }), {
-      padding: 14,
-    });
+    await takeElementScreenshot(
+      page,
+      getSymbolLocator(page, { symbolAlias: '@' }),
+      {
+        padding: 14,
+      },
+    );
   });
 
   test('Case 8 - System does not unite ambiguous CHEMs (alternatives and mixed) into one @ symbol', async ({
@@ -445,9 +450,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{([sDBL],[4aPEGMal])}|CHEM2{([sDBL]+[4aPEGMal])}|CHEM3{([sDBL],[4aPEGMal])}|CHEM4{([sDBL]+[4aPEGMal])}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1$$$V2.0',
     );
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 7 }), {
-      padding: 34,
-    });
+    await takeElementScreenshot(
+      page,
+      getSymbolLocator(page, { symbolAlias: '@' }),
+      {
+        padding: 34,
+      },
+    );
   });
 
   test('Case 9 - Verify Undo/Redo do not restore partial selection after cancelling monomer creation (GH-7578)', async () => {

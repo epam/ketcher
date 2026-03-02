@@ -1201,13 +1201,15 @@ export class CoreEditor {
     }
 
     const modelChanges = new Command();
+    const phosphateShift =
+      rnaPresetItem.phosphatePosition === 'left' ? -1.5 : 1.5;
     const { command: addPresetModelChanges, monomers } =
       this.drawingEntitiesManager.addRnaPreset({
         sugar: rnaPresetItem.sugar,
         sugarPosition: new Vec2(sugarPosition.x, sugarPosition.y),
         phosphate: rnaPresetItem.phosphate,
         phosphatePosition: rnaPresetItem.phosphate
-          ? new Vec2(sugarPosition.x + 1.5, sugarPosition.y)
+          ? new Vec2(sugarPosition.x + phosphateShift, sugarPosition.y)
           : undefined,
         rnaBase: rnaPresetItem.base,
         rnaBasePosition: rnaPresetItem.base

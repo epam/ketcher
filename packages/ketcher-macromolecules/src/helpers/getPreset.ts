@@ -16,7 +16,10 @@ interface RnaPresetsTemplatesType
       IKetMonomerGroupTemplate,
       'templates' | 'idtAliases' | 'connections'
     >,
-    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
+    Pick<
+      IRnaLabeledPreset,
+      'default' | 'favorite' | 'name' | 'phosphatePosition'
+    > {
   aliasAxoLabs?: string;
 }
 
@@ -76,6 +79,9 @@ export const getPresets = (
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
+        phosphatePosition:
+          rnaPresetsTemplate.phosphatePosition ??
+          (phosphate ? 'right' : undefined),
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         connections: rnaPresetsTemplate.connections,
         favorite: rnaPresetsTemplate.favorite,

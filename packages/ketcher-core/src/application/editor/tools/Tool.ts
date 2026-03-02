@@ -101,6 +101,7 @@ export interface IRnaPreset {
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
   connections?: IKetTemplateConnection[];
+  phosphatePosition?: 'left' | 'right';
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;

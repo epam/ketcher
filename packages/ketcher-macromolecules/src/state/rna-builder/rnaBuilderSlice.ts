@@ -106,6 +106,7 @@ export const rnaBuilderSlice = createSlice({
         base: undefined,
         sugar: undefined,
         phosphate: undefined,
+        phosphatePosition: undefined,
         name: '',
         nameInList: '',
       };
@@ -383,7 +384,12 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
     fullName += base;
   }
 
-  fullName += phosphate;
+  if (phosphate) {
+    fullName =
+      preset.phosphatePosition === 'left'
+        ? `${phosphate}${fullName}`
+        : `${fullName}${phosphate}`;
+  }
 
   return fullName;
 };

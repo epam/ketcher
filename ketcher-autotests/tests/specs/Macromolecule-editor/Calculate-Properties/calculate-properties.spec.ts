@@ -407,17 +407,17 @@ test.describe('Calculate Properties tests', () => {
       'L10',
       'M11',
       'N12',
-      'O0',
+      'O1',
       'P13',
       'Q14',
       'R15',
       'S16',
       'T17',
-      'U0',
+      'U1',
       'V18',
       'W19',
       'Y20',
-      'Other21',
+      'Other19',
     ]);
   });
 

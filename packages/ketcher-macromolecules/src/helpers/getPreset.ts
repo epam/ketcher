@@ -13,7 +13,10 @@ import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
   extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
-    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
+    Pick<
+      IRnaLabeledPreset,
+      'default' | 'favorite' | 'name' | 'phosphatePosition'
+    > {}
 
 export const getPresets = (
   monomers: ReadonlyArray<MonomerItemType>,
@@ -71,6 +74,9 @@ export const getPresets = (
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
+        phosphatePosition:
+          rnaPresetsTemplate.phosphatePosition ??
+          (phosphate ? 'right' : undefined),
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,

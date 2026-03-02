@@ -19,6 +19,8 @@ export interface IExpandIconProps {
   expanded: boolean;
 }
 
+export type RnaPhosphatePosition = 'left' | 'right';
+
 // TODO: Perhaps more than one interface is needed.
 //  One with a minimum set of required readonly properties used by each use case,
 //  and also for places of use of `favorites`, `idtAliases` and others, which reuse the first interface.
@@ -28,6 +30,7 @@ export interface IRnaPreset {
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
+  phosphatePosition?: RnaPhosphatePosition;
   default?: boolean;
   favorite?: boolean;
   readonly idtAliases?: IKetIdtAliases;

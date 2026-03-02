@@ -53,6 +53,7 @@ describe('getPreset function', () => {
       base: thymine,
       sugar: ribose,
       phosphate,
+      phosphatePosition: 'right',
       default: true,
     };
 
@@ -61,6 +62,7 @@ describe('getPreset function', () => {
       base: guanine,
       sugar: ribose,
       phosphate,
+      phosphatePosition: 'right',
       default: true,
     };
 

@@ -40,6 +40,7 @@ import {
   verifyHELMExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
+import { showRuler } from '@utils/canvas/ruler/helpers';
 
 let page: Page;
 
@@ -66,9 +67,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Right-click and select Modify in RNA Builder
      * 5. Click on the Base card in the RNA Builder.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -187,9 +185,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that layout not shift
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
@@ -456,9 +451,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -633,9 +625,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -668,6 +657,8 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Use the ruler tool to adjust the layout of the sequence (e.g., move the slider from position 30 to 20).
      * 3. Observe the canvas after the ruler is released
      */
+    await showRuler(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );

@@ -54,6 +54,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -461,6 +462,7 @@ test.describe('Bond Tool', () => {
     await LeftToolbar(page).sGroup();
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await takeEditorScreenshot(page);
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Drawing bonds in one direction does not change the bond created in the other direction', async () => {

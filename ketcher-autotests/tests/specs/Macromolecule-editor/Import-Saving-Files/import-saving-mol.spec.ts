@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
@@ -31,6 +32,8 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -300,7 +303,12 @@ test.describe('Import-Saving .mol Files', () => {
       MacroFileType.MOLv3000,
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got   -', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {

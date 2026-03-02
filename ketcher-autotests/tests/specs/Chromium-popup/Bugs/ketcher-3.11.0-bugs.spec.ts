@@ -81,6 +81,7 @@ import {
   SdfFileFormat,
   dragMouseAndMoveTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  moveMouseAway,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -513,9 +514,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'PEPTIDE1{[N%91[C@H](C%92=O)C.[*:2]%92.[*:1]%91 |$;;;;;_R2;_R1$|].[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     );
-    await getMonomerLocator(page, { monomerId: 10 }).hover({ force: true });
+    await getMonomerLocator(page, { monomerAlias: 'Mod3' }).hover({
+      force: true,
+    });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toBe('Mod3');
+    await moveMouseAway(page);
   });
 
   test('Case 12 - The tooltip does not appear below the cursor when hovering over the “plus” button and stripe', async ({
@@ -660,6 +664,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     expect(peptideLetterFontSize).toBe('12px');
 
     await takeEditorScreenshot(page);
+    await PasteFromClipboardDialog(page).closeWindow();
   });
 
   test('Case 17 - System shows inner circles of aromatized benzene rings from collapsed monomers on Molecules canvas', async ({
@@ -743,6 +748,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await expect(
       CalculateVariablesPanel(page).molecularMassUnitDropDownList,
     ).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   test('Case 20 - Number of selected elements in context menu is wrong for sense/antisense chains', async ({
@@ -1090,6 +1096,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'Convert error! Sequence saver: Sugar:12ddR has no AxoLabs alias.',
     );
     await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 31 - Layout works wrong', async () => {

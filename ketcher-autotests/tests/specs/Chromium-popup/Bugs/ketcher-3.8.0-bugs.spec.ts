@@ -890,6 +890,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 34: Export to IDT work for baseless preset', async ({

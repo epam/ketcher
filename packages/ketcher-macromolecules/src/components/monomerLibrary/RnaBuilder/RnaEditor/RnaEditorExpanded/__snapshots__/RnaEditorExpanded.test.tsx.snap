@@ -117,6 +117,47 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </div>
   </div>
   <div
+    class="css-68lmnd"
+  >
+    <span
+      class="css-5z4zpe"
+    >
+      Phosphate position
+    </span>
+    <div
+      class="css-axw7ok"
+    >
+      <span
+        aria-label=""
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-qs4pj7"
+          data-testid="phosphate-position-left"
+          disabled=""
+          type="button"
+        >
+          5'
+        </button>
+      </span>
+      <span
+        aria-label=""
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-1b9vxej"
+          data-testid="phosphate-position-right"
+          disabled=""
+          type="button"
+        >
+          3'
+        </button>
+      </span>
+    </div>
+  </div>
+  <div
     class="css-1iug9fi"
   >
     <button
@@ -125,13 +166,19 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     >
       Cancel
     </button>
-    <button
-      class="css-wciliw"
-      data-testid="add-to-presets-btn"
-      disabled=""
+    <span
+      aria-label=""
+      class=""
+      data-mui-internal-clone-element="true"
     >
-      Add to Presets
-    </button>
+      <button
+        class="css-wciliw"
+        data-testid="add-to-presets-btn"
+        disabled=""
+      >
+        Add to Presets
+      </button>
+    </span>
   </div>
 </div>
 `;
@@ -254,6 +301,47 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </div>
   </div>
   <div
+    class="css-68lmnd"
+  >
+    <span
+      class="css-5z4zpe"
+    >
+      Phosphate position
+    </span>
+    <div
+      class="css-axw7ok"
+    >
+      <span
+        aria-label=""
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-qs4pj7"
+          data-testid="phosphate-position-left"
+          disabled=""
+          type="button"
+        >
+          5'
+        </button>
+      </span>
+      <span
+        aria-label=""
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-1b9vxej"
+          data-testid="phosphate-position-right"
+          disabled=""
+          type="button"
+        >
+          3'
+        </button>
+      </span>
+    </div>
+  </div>
+  <div
     class="css-1iug9fi"
   >
     <button
@@ -262,13 +350,19 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     >
       Cancel
     </button>
-    <button
-      class="css-wciliw"
-      data-testid="save-btn"
-      disabled=""
+    <span
+      aria-label=""
+      class=""
+      data-mui-internal-clone-element="true"
     >
-      Update
-    </button>
+      <button
+        class="css-wciliw"
+        data-testid="save-btn"
+        disabled=""
+      >
+        Update
+      </button>
+    </span>
   </div>
 </div>
 `;
@@ -387,6 +481,47 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       >
         Phosphate
       </p>
+    </div>
+  </div>
+  <div
+    class="css-68lmnd"
+  >
+    <span
+      class="css-5z4zpe"
+    >
+      Phosphate position
+    </span>
+    <div
+      class="css-axw7ok"
+    >
+      <span
+        aria-label="Sugar must have R1, and phosphate must have R2."
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-qs4pj7"
+          data-testid="phosphate-position-left"
+          disabled=""
+          type="button"
+        >
+          5'
+        </button>
+      </span>
+      <span
+        aria-label="Sugar must have R2, and phosphate must have R1."
+        class=""
+        data-mui-internal-clone-element="true"
+      >
+        <button
+          class="css-1b9vxej"
+          data-testid="phosphate-position-right"
+          disabled=""
+          type="button"
+        >
+          3'
+        </button>
+      </span>
     </div>
   </div>
   <div

@@ -371,12 +371,24 @@ export const actions = ['cut', 'copy', 'paste'];
 export function exec(action: string): boolean {
   const clipboardAction =
     action === 'copy' || action === 'cut' || action === 'paste';
-  if (clipboardAction && isClipboardAPIAvailable()) {
+
+  if (!clipboardAction) {
     return true;
   }
-  if (!clipboardAction) {
-    return false;
+
+  if (isClipboardAPIAvailable()) {
+    const target =
+      document.querySelector<HTMLElement>('[data-cliparea]') ||
+      document.activeElement ||
+      document.body;
+    const event = new ClipboardEvent(action, {
+      bubbles: true,
+      cancelable: true,
+    });
+    target.dispatchEvent(event);
+    return true;
   }
+
   return Boolean(ieCb);
 }
 

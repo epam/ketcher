@@ -1531,6 +1531,16 @@ class Editor implements KetcherEditor {
 
       // Restore original atom positions after merge
       const struct = this.struct();
+
+      // Restore positions for atoms that preserved original ids (unselected part)
+      // This prevents the rest of the structure from shifting after merge.
+      originalAtomPositions.forEach((originalPosition, originalAtomId) => {
+        const atom = struct.atoms.get(originalAtomId);
+        if (atom) {
+          atom.pp = new Vec2(originalPosition);
+        }
+      });
+
       const originalToSelectedAtomsIdMap = new Map<number, number>();
 
       // Restore positions for selected atoms (now part of monomer)

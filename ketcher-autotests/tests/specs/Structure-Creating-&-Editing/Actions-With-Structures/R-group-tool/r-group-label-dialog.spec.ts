@@ -271,7 +271,7 @@ test.describe('R-Group Label Tool', () => {
       SelectionToolType.Rectangle,
     );
     await page.getByText('R1').click();
-    await dragMouseTo(500, 200, page);
+    await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -283,7 +283,7 @@ test.describe('R-Group Label Tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
-    await dragMouseTo(500, 200, page);
+    await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -305,7 +305,7 @@ test.describe('R-Group Label Tool', () => {
       SelectionToolType.Rectangle,
     );
     await page.getByText('R8').click();
-    await dragMouseTo(500, 200, page);
+    await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -325,7 +325,7 @@ test.describe('R-Group Label Tool', () => {
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await selectAllStructuresOnCanvas(page);
     await page.getByText('R8').click();
-    await dragMouseTo(500, 200, page);
+    await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -380,7 +380,7 @@ test.describe('R-Group Label Tool', () => {
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
-    await dragMouseTo(100, 100, page);
+    await dragMouseTo(page, 100, 100);
     await takeEditorScreenshot(page);
   });
 
@@ -395,7 +395,7 @@ test.describe('R-Group Label Tool', () => {
     );
     await LeftToolbar(page).chain();
     await page.getByText('R10').hover();
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
   });
 
@@ -410,7 +410,7 @@ test.describe('R-Group Label Tool', () => {
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await page.getByText('R10').hover();
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
   });
 

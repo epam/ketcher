@@ -21,7 +21,7 @@ describe('SelectBase mouseup', () => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({ theme: {}, canvas });
     selectTool = new TestSelectRectangle(editor);
-    history = new EditorHistory(editor);
+    history = EditorHistory.getInstance(editor);
   });
 
   afterEach(() => {

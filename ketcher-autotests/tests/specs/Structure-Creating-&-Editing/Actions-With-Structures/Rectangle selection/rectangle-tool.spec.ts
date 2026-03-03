@@ -69,7 +69,7 @@ test.describe('Rectangle selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
       force: true,
     });
-    await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
+    await dragMouseTo(page, point.x + xDelta, point.y - yDelta);
     await takeEditorScreenshot(page);
   });
 
@@ -118,9 +118,9 @@ test.describe('Rectangle selection tool', () => {
       force: true,
     });
     await dragMouseTo(
+      page,
       point.x - objectSelection,
       point.y - selectionCoords.y,
-      page,
     );
     await takeEditorScreenshot(page);
   });
@@ -159,7 +159,7 @@ test.describe('Rectangle selection tool', () => {
     const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
     const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
 
-    await dragMouseTo(centerX, centerY, page);
+    await dragMouseTo(page, centerX, centerY);
 
     await takeEditorScreenshot(page);
   });
@@ -176,9 +176,9 @@ test.describe('Rectangle selection tool', () => {
       await page.mouse.move(emptySpace.x, emptySpace.y);
       if (mostRightAtom) {
         await dragMouseTo(
+          page,
           mostRightAtom.x + mostRightAtom.width + shift,
           mostRightAtom.y + mostRightAtom.height + shift,
-          page,
         );
       }
     }

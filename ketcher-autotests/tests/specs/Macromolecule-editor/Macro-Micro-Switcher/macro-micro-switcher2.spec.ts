@@ -1176,25 +1176,25 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
       force: true,
     });
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
       force: true,
     });
-    await dragMouseTo(200, 300, page);
+    await dragMouseTo(page, 200, 300);
     await getArrowLocator(page, {
       arrowType: Arrows.BothEndsFilledTriangle,
     }).hover({ force: true });
-    await dragMouseTo(200, 350, page);
+    await dragMouseTo(page, 200, 350);
     await getArrowLocator(page, {
       arrowType: Arrows.UnbalancedOpenHalfAngle,
     }).hover({ force: true });
-    await dragMouseTo(200, 400, page);
+    await dragMouseTo(page, 200, 400);
     await getArrowLocator(page, {
       arrowType: Arrows.EllipticalArcFilledTriangle,
     }).hover({ force: true });
-    await dragMouseTo(200, 450, page);
+    await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1343,7 +1343,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
       force: true,
     });
-    await dragMouseTo(newX, y, page);
+    await dragMouseTo(page, newX, y);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

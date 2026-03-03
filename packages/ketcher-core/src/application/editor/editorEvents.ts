@@ -76,6 +76,8 @@ export interface IEditorEvents {
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
   layoutCircular: Subscription;
+  flipHorizontal: Subscription;
+  flipVertical: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -152,6 +154,8 @@ export function resetEditorEvents() {
     switchToMacromoleculesMode: new Subscription(),
     switchToMoleculesMode: new Subscription(),
     layoutCircular: new Subscription(),
+    flipHorizontal: new Subscription(),
+    flipVertical: new Subscription(),
   };
 }
 resetEditorEvents();

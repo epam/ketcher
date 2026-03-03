@@ -30,7 +30,7 @@ test.describe('Chain Tool drawing', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(center.x + DELTA, center.y, page);
+    await dragMouseTo(page, center.x + DELTA, center.y);
   });
 
   test('Check highlight absence', async () => {
@@ -49,7 +49,7 @@ test.describe('Chain Tool drawing', () => {
 
     point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
-    await dragMouseTo(point.x, point.y + DELTA, page);
+    await dragMouseTo(page, point.x, point.y + DELTA);
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
@@ -67,7 +67,7 @@ test.describe('Chain Tool drawing', () => {
     }
     const { x, y } = atomBoundingBox;
     await atom.hover();
-    await dragMouseTo(x, y + DELTA, page);
+    await dragMouseTo(page, x, y + DELTA);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     expect(await getBondLocator(page, {}).count()).toEqual(

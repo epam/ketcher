@@ -5,8 +5,12 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="none"
   >
     <button
+      aria-controls="color-picker-«r0»"
+      aria-expanded="false"
+      aria-haspopup="true"
       class="colorPickerInput"
       type="button"
     >

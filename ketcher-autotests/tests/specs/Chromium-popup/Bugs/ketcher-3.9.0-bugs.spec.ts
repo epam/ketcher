@@ -1000,7 +1000,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(600, 250, page);
+    await dragMouseTo(page, 600, 250);
 
     const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
     await ContextMenu(page, attachmentPointR1).click(

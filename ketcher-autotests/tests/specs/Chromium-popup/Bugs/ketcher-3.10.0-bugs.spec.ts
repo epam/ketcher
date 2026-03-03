@@ -645,7 +645,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

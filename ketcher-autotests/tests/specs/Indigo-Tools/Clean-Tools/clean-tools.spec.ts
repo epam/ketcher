@@ -341,7 +341,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).cleanUp();
     await bondLocator.hover({ force: true });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await IndigoFunctionsToolbar(page).cleanUp();
     await atomToolbar.clickAtom(Atom.Oxygen);
     await getAtomLocator(page, { atomLabel: 'C' }).first().click({

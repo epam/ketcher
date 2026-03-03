@@ -51,7 +51,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const yDelta = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(page, x + xDelta, y + yDelta);
     await cutToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

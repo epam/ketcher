@@ -133,9 +133,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
-        monomersLibraryReplace: action.payload.monomersLibraryReplace,
       });
+
+      editor.initializeMonomersLibraryFromKetcher(
+        action.payload.monomersLibraryUpdate,
+        action.payload.monomersLibraryReplace,
+      );
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

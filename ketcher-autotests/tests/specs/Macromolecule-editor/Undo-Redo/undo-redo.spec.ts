@@ -138,7 +138,7 @@ test.describe('Undo Redo', () => {
     const coords = { x: 100, y: 100 };
     await page.mouse.move(coords.x, coords.y);
 
-    await dragMouseTo(coords.x + 500, coords.y + 500, page);
+    await dragMouseTo(page, coords.x + 500, coords.y + 500);
     await takeEditorScreenshot(page);
   });
 });

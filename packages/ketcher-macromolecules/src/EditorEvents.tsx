@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
   selectEditor,
@@ -38,6 +38,7 @@ import {
   PolymerBond,
   HydrogenBond,
   BackBoneSequenceNode,
+  LinkerSequenceNode,
   ToolName,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
@@ -69,11 +70,8 @@ export const EditorEvents = () => {
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
-  }, [
-    dispatch,
-    editor?.defaultRnaPresetsLibraryItems,
-    editor?.monomersLibrary,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor]);
 
   useEffect(() => {
     editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
@@ -81,7 +79,7 @@ export const EditorEvents = () => {
     return () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
-  }, [editor, handleMonomersLibraryUpdate]);
+  }, [editor]);
 
   useEffect(() => {
     const onSelectSelectionTool = () => {
@@ -142,15 +140,15 @@ export const EditorEvents = () => {
       dispatch(selectTool(null));
       editor?.events.selectTool.remove(handler);
     };
-  }, [activeTool, dispatch, editor]);
+  }, [editor]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
     [dispatch],
   );
 
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useCallback(
+    debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 
@@ -189,7 +187,7 @@ export const EditorEvents = () => {
       dispatch(selectTool(null));
       editor?.events.selectTool.remove(handler);
     };
-  }, [activeTool, dispatch, editor]);
+  }, [editor]);
 
   const handleOpenBondPreview = useCallback(
     (polymerBond: PolymerBond, style: PreviewStyle) => {
@@ -282,8 +280,9 @@ export const EditorEvents = () => {
         return;
       }
 
-      const isMultiMonomerChemSequenceSymbol =
-        hoveredSequenceSymbolType === 'CHEM' && sequenceNodeMonomers.length > 1;
+      const isMultiMonomerLinkerSequenceNode =
+        sequenceNode instanceof LinkerSequenceNode &&
+        sequenceNode.monomers.length > 1;
 
       // If a concrete sequence symbol is hovered (e.g. phosphate "p"),
       // always show monomer preview for that exact symbol.
@@ -292,7 +291,7 @@ export const EditorEvents = () => {
       if (
         hoveredSequenceSymbolType &&
         hoveredSequenceMonomer &&
-        !isMultiMonomerChemSequenceSymbol
+        !isMultiMonomerLinkerSequenceNode
       ) {
         const monomerPreviewData: MonomerPreviewState = {
           type: PreviewType.Monomer,
@@ -313,16 +312,22 @@ export const EditorEvents = () => {
         sequenceNode instanceof Nucleotide ||
         sequenceNode instanceof Nucleoside;
 
-      if (isMultiMonomerChemSequenceSymbol) {
-        const chemChainPreviewData: PresetPreviewState = {
-          type: PreviewType.Preset,
-          monomers: sequenceNodeMonomers.map((m) => m.monomerItem),
-          position: PresetPosition.ChainMiddle,
-          target: e.target,
-        };
+      // Check if this is a LinkerSequenceNode with multiple monomers (e.g., CHEM chain)
+      if (sequenceNode instanceof LinkerSequenceNode) {
+        const monomers = sequenceNode.monomers;
 
-        debouncedShowPreview(chemChainPreviewData);
-        return;
+        // If there are multiple monomers in the chain, show them all in a preset-style preview
+        if (monomers.length > 1) {
+          const chemChainPreviewData: PresetPreviewState = {
+            type: PreviewType.Preset,
+            monomers: monomers.map((m) => m.monomerItem),
+            position: PresetPosition.ChainMiddle,
+            target: e.target,
+          };
+
+          debouncedShowPreview(chemChainPreviewData);
+          return;
+        }
       }
 
       if (isNucleotideOrNucleoside && !hoveredMonomer) {
@@ -444,7 +449,7 @@ export const EditorEvents = () => {
     if (!hasAtLeastOneAntisense) {
       editor?.events.resetSequenceEditMode.dispatch();
     }
-  }, [editor, hasAtLeastOneAntisense]);
+  }, [hasAtLeastOneAntisense]);
 
   return <></>;
 };

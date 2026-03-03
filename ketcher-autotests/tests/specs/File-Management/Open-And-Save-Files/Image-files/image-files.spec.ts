@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
@@ -10,10 +11,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
@@ -59,20 +58,14 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 test.describe('Image files', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Verify that single image of SVG format can be saved to KET file and load', async () => {
@@ -340,6 +333,7 @@ test.describe('Image files', () => {
       MoleculesFileFormatType.KetFormat,
     );
     await takeEditorScreenshot(page);
+    await OpenStructureDialog(page).closeWindow();
   });
 
   const fileNames = [
@@ -964,6 +958,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
     });
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level', async () => {
@@ -2109,6 +2104,7 @@ test.describe('Image files', () => {
           page,
           SaveStructureDialog(page).saveStructureTextarea,
         );
+        await SaveStructureDialog(page).closeWindow();
       }
     });
   }
@@ -2657,6 +2653,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements', async () => {
@@ -2688,6 +2685,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images are displayed on preview and can be saved to SVG files with correct positions and layers', async () => {
@@ -2711,6 +2709,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers', async () => {
@@ -2731,6 +2730,7 @@ test.describe('Image files', () => {
       page,
       SaveStructureDialog(page).saveStructureTextarea,
     );
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -2765,6 +2765,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
@@ -2805,6 +2806,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
@@ -2840,6 +2842,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after copying actions of images', async () => {
@@ -2870,6 +2873,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after undo/redo actions of images', async () => {
@@ -2905,6 +2909,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled', async () => {
@@ -2925,6 +2930,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -2959,6 +2965,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
@@ -2999,6 +3006,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3034,6 +3042,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
@@ -3064,6 +3073,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after undo/redo actions of images', async () => {
@@ -3099,6 +3109,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to PNG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements', async () => {
@@ -3141,6 +3152,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images are displayed on preview and can be saved to SVG file with correct positions and layers', async () => {
@@ -3160,6 +3172,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers', async () => {
@@ -3176,6 +3189,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers', async () => {
@@ -3192,6 +3206,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -3221,6 +3236,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -3250,6 +3266,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
@@ -3285,6 +3302,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
@@ -3320,6 +3338,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3349,6 +3368,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3378,6 +3398,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
@@ -3403,6 +3424,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after copying actions of images', async () => {
@@ -3428,6 +3450,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images can be saved to PNG file after undo/redo actions', async () => {
@@ -3458,6 +3481,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images can be saved to SVG file after undo/redo actions', async () => {
@@ -3488,6 +3512,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that PNG images with elements from KET saved to PNG can be added by Tool as PNG image', async () => {

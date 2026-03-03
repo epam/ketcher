@@ -1098,6 +1098,13 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
 
   await CreateMonomerDialog(page).discard();
   await takeEditorScreenshot(page);
+  await takeElementScreenshot(
+    page,
+    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
+    {
+      padding: 34,
+    },
+  );
 });
 
 test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {

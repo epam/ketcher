@@ -501,7 +501,7 @@ export class MacromoleculesConverter {
 
     fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
-      const fragmentStruct = struct.getFragment(_fragment, false, atomIdMap);
+      const fragmentStruct = struct.getFragmentOnly(_fragment, atomIdMap);
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,

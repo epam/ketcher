@@ -19,7 +19,9 @@ import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
-    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
+    ketItem.data.mode === 'circle'
+      ? circleToEllipse(ketItem.data)
+      : ketItem.data;
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);
   struct.simpleObjects.add(simpleObject);
@@ -27,13 +29,13 @@ export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
 }
 
 /**
- * @deprecated TODO to remove after release 2.3
- * As circle has been migrated to ellipses here is function for converting old files data with circles to ellipse type
- * @param ketItem
+ * Converts old circle data to ellipse format for backward compatibility.
  */
-function circleToEllipse(ketItem) {
-  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
-  const pos0 = ketItem.data.pos[0];
+function circleToEllipse(data: {
+  pos: Array<{ x: number; y: number; z: number }>;
+}) {
+  const radius = Vec2.dist(new Vec2(data.pos[1]), new Vec2(data.pos[0]));
+  const pos0 = data.pos[0];
   return {
     mode: SimpleObjectMode.ellipse,
     pos: [

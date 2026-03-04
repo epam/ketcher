@@ -1492,11 +1492,12 @@ class Editor implements KetcherEditor {
     const newAction = new Action();
     const structFromWizard = this.struct();
 
-    // Store ALL atom positions before any transformations (both selected and unselected)
+    // Store positions only for atoms that were selected (wizard participants)
     const originalAtomPositions = new Map<number, Vec2>();
-    this.originalStruct.atoms.forEach((atom, atomId) => {
-      if (atom && atom.pp) {
-        originalAtomPositions.set(atomId, new Vec2(atom.pp));
+    this.selectedToOriginalAtomsIdMap.forEach((originalAtomId) => {
+      const atom = this.originalStruct.atoms.get(originalAtomId);
+      if (atom?.pp) {
+        originalAtomPositions.set(originalAtomId, new Vec2(atom.pp));
       }
     });
 
@@ -1531,15 +1532,6 @@ class Editor implements KetcherEditor {
 
       // Restore original atom positions after merge
       const struct = this.struct();
-
-      // Restore positions for atoms that preserved original ids (unselected part)
-      // This prevents the rest of the structure from shifting after merge.
-      originalAtomPositions.forEach((originalPosition, originalAtomId) => {
-        const atom = struct.atoms.get(originalAtomId);
-        if (atom) {
-          atom.pp = new Vec2(originalPosition);
-        }
-      });
 
       const originalToSelectedAtomsIdMap = new Map<number, number>();
 

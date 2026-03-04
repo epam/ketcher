@@ -63,7 +63,7 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,

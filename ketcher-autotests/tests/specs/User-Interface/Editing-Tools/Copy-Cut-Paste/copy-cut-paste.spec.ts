@@ -52,7 +52,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + xDelta, y + yDelta);
-    await MoleculesTopToolbar(page).cut();
+    await cutToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -68,7 +68,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await selectAllStructuresOnCanvas(page);
-    await MoleculesTopToolbar(page).cut();
+    await cutToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -86,7 +86,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
       force: true,
     });
-    await MoleculesTopToolbar(page).cut();
+    await cutToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -102,7 +102,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
     await getBondLocator(page, { bondId: 34 }).click({ force: true });
-    await MoleculesTopToolbar(page).cut();
+    await cutToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,

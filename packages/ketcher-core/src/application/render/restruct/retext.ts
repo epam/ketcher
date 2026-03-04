@@ -95,44 +95,20 @@ function convertDraftToLexical(
       // Empty block
       textChildren.push({ type: 'br' });
     } else {
-      // Build text node with style ranges
-      const styleRanges = block.inlineStyleRanges || [];
-      let format = 0;
-      let cssStyle = '';
+      // Build text segments with their respective styles
+      const segments = buildTextSegments(
+        block.text,
+        block.inlineStyleRanges || [],
+      );
 
-      // Simple approach: if there are bold/italic styles, apply them to whole text
-      styleRanges.forEach((range) => {
-        switch (range.style) {
-          case 'BOLD':
-            format |= IS_BOLD;
-            break;
-          case 'ITALIC':
-            format |= IS_ITALIC;
-            break;
-          case 'SUBSCRIPT':
-            format |= IS_SUBSCRIPT;
-            break;
-          case 'SUPERSCRIPT':
-            format |= IS_SUPERSCRIPT;
-            break;
-          default: {
-            // handle custom font-size styling
-            const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(range.style);
-            if (match) {
-              const size = match[1];
-              cssStyle += `font-size:${size}px;`;
-            }
-            break;
-          }
-        }
-      });
-
-      textChildren.push({
-        type: 'text',
-        text: block.text,
-        format,
-        style: cssStyle,
-        version: 1,
+      segments.forEach((segment) => {
+        textChildren.push({
+          type: 'text',
+          text: segment.text,
+          format: segment.format,
+          style: segment.style,
+          version: 1,
+        });
       });
     }
 
@@ -150,6 +126,98 @@ function convertDraftToLexical(
       version: 1,
     },
   };
+}
+
+interface TextSegment {
+  text: string;
+  format: number;
+  style: string;
+}
+
+// Helper function to split text into segments based on style ranges
+function buildTextSegments(
+  text: string,
+  styleRanges: Array<{ offset: number; length: number; style: string }>,
+): TextSegment[] {
+  // Create an array of style info for each character position
+  const charStyles: Array<{ format: number; style: string }> = Array.from(
+    { length: text.length },
+    () => ({ format: 0, style: '' }),
+  );
+
+  // Apply each style range to the character positions it covers
+  styleRanges.forEach((range) => {
+    const startIdx = range.offset;
+    const endIdx = Math.min(range.offset + range.length, text.length);
+
+    for (let i = startIdx; i < endIdx; i++) {
+      applyStyleToChar(charStyles[i], range.style);
+    }
+  });
+
+  // Group consecutive characters with identical styles into segments
+  const segments: TextSegment[] = [];
+  let currentSegment: TextSegment | null = null;
+
+  for (let i = 0; i < text.length; i++) {
+    const charStyle = charStyles[i];
+    const char = text[i];
+
+    // Check if we need to start a new segment
+    if (
+      !currentSegment ||
+      currentSegment.format !== charStyle.format ||
+      currentSegment.style !== charStyle.style
+    ) {
+      if (currentSegment) {
+        segments.push(currentSegment);
+      }
+      currentSegment = {
+        text: char,
+        format: charStyle.format,
+        style: charStyle.style,
+      };
+    } else {
+      // Continue current segment
+      currentSegment.text += char;
+    }
+  }
+
+  if (currentSegment) {
+    segments.push(currentSegment);
+  }
+
+  return segments;
+}
+
+// Apply a single style to a character's style info
+function applyStyleToChar(
+  charStyle: { format: number; style: string },
+  styleString: string,
+): void {
+  switch (styleString) {
+    case 'BOLD':
+      charStyle.format |= IS_BOLD;
+      break;
+    case 'ITALIC':
+      charStyle.format |= IS_ITALIC;
+      break;
+    case 'SUBSCRIPT':
+      charStyle.format |= IS_SUBSCRIPT;
+      break;
+    case 'SUPERSCRIPT':
+      charStyle.format |= IS_SUPERSCRIPT;
+      break;
+    default: {
+      // Handle custom font-size styling
+      const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(styleString);
+      if (match) {
+        const size = match[1];
+        charStyle.style += `font-size:${size}px;`;
+      }
+      break;
+    }
+  }
 }
 
 class ReText extends ReObject {

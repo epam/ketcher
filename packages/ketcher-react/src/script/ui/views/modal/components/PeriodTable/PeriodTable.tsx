@@ -125,14 +125,8 @@ class Table extends Component<TableProps, TableState> {
       : Array.isArray(value) && value.includes(label);
   };
 
-  onAtomSelect = (label?: string, activateImmediately = false) => {
-    if (activateImmediately) {
-      const result = this.result();
-      const { type } = this.state;
-      if (result && type === 'atom') {
-        this.props.onOk(this.result());
-      }
-    } else if (label) {
+  onAtomSelect = (label?: string) => {
+    if (label) {
       const { type, value } = this.state;
       const normalizedValue = Array.isArray(value) ? value : [];
       const newValue =
@@ -140,6 +134,17 @@ class Table extends Component<TableProps, TableState> {
           ? label
           : xor([label], normalizedValue);
       this.setState({ value: newValue });
+    }
+  };
+
+  onAtomActivate = (label?: string) => {
+    if (label) {
+      this.onAtomSelect(label);
+    }
+    const result = this.result();
+    const { type } = this.state;
+    if (result && type === 'atom') {
+      this.props.onOk(this.result());
     }
   };
 
@@ -201,7 +206,7 @@ class Table extends Component<TableProps, TableState> {
             currentEvents={this.currentEvents}
             selected={this.selected}
             onAtomSelect={(label) => this.onAtomSelect(label)}
-            onDoubleClick={(label) => this.onAtomSelect(label, true)}
+            onDoubleClick={(label) => this.onAtomActivate(label)}
           />
         </div>
       </Dialog>

@@ -937,7 +937,9 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sgroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.atomId === atomId);
@@ -951,7 +953,9 @@ export class Atom extends BaseMicromoleculeEntity {
     const sgroup =
       structOrSgroup instanceof SGroup
         ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
+        : searchBySgroups
+        ? structOrSgroup.getGroupFromAtomIdBySgroups(atomId)
+        : structOrSgroup.getGroupFromAtomId(atomId);
 
     return sgroup
       ?.getAttachmentPoints()
@@ -1066,7 +1070,9 @@ export class Atom extends BaseMicromoleculeEntity {
       struct,
       atomId,
     );
-    const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     const isMonomer = sGroup instanceof MonomerMicromolecule;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {

@@ -8,7 +8,6 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

@@ -133,13 +133,166 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
-  reinitializeTemplateLibrary();
-  initOptionsState.getSettings();
+  return async (dispatch, getState) => {
+    // Try to update via ketcher-core settings service if available
+    const state = getState();
+    const editor = state.editor;
+    const ketcherInstance = editor?.ketcher;
+    const settingsService = ketcherInstance?.settingsService;
+
+    if (settingsService) {
+      try {
+        // Convert flat settings to namespaced format for core
+        const namespacedSettings = convertFlatToNamespaced(newSettings);
+        await settingsService.updateSettings(namespacedSettings);
+        // Core service handles localStorage and emits events
+        // The event will trigger syncSettingsFromCore via useSettings hook
+      } catch (error) {
+        console.error('Failed to update settings via core service:', error);
+        // Fall back to direct localStorage write
+        storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
+      }
+    } else {
+      // No core service available, use legacy localStorage
+      storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
+    }
+
+    // Reinitialize template library and update init state
+    reinitializeTemplateLibrary();
+    initOptionsState.getSettings();
+
+    // Dispatch Redux action for backward compatibility
+    dispatch({
+      type: 'SAVE_SETTINGS',
+      data: newSettings,
+    });
+  };
+}
+
+/**
+ * Convert flat Redux settings to namespaced core format
+ * @param {Object} flatSettings - Flat settings object from Redux
+ * @returns {Object} Namespaced settings for ketcher-core
+ */
+function convertFlatToNamespaced(flatSettings) {
+  // Define which keys belong to which namespace
+  const editorKeys = ['resetToSelect', 'rotationStep', 'showValenceWarnings'];
+  const renderKeys = [
+    'atomColoring', // Moved from editorKeys - this is a render setting
+    'font',
+    'fontsz',
+    'fontszUnit',
+    'fontszsub',
+    'fontszsubUnit',
+    'bondLength',
+    'bondLengthUnit',
+    'bondThickness',
+    'bondThicknessUnit',
+    'bondSpacing',
+    'stereoBondWidth',
+    'stereoBondWidthUnit',
+    'hashSpacing',
+    'hashSpacingUnit',
+    'aromaticCircle',
+    'carbonExplicitly',
+    'showCharge',
+    'showValence',
+    'showHydrogenLabels',
+    'showStereoFlags',
+    'stereoLabelStyle',
+    'colorOfAbsoluteCenters',
+    'colorOfAndCenters',
+    'colorOfOrCenters',
+    'colorStereogenicCenters',
+    'autoFadeOfStereoLabels',
+    'absFlagLabel',
+    'andFlagLabel',
+    'orFlagLabel',
+    'mixedFlagLabel',
+    'ignoreChiralFlag',
+    'reactionComponentMarginSize',
+    'reactionComponentMarginSizeUnit',
+    'imageResolution',
+  ];
+  const serverKeys = [
+    'smart-layout',
+    'ignore-stereochemistry-errors',
+    'mass-skip-error-on-pseudoatoms',
+    'gross-formula-add-rsites',
+    'gross-formula-add-isotopes',
+    'dearomatize-on-load',
+  ];
+  const debugKeys = [
+    'showAtomIds',
+    'showBondIds',
+    'showHalfBondIds',
+    'showLoopIds',
+  ];
+  const miewKeys = ['miewMode', 'miewTheme', 'miewAtomLabel'];
+  const macromoleculesKeys = [
+    'selectionTool',
+    'editorLineLength',
+    'disableCustomQuery',
+    'monomerLibraryUpdates',
+    'ignoreChiralFlag',
+  ];
+
+  const namespaced = {};
+
+  // Extract settings by category
+  const editor = {};
+  const render = {};
+  const server = {};
+  const debug = {};
+  const miew = {};
+  const macromolecules = {};
+
+  for (const [key, value] of Object.entries(flatSettings)) {
+    if (editorKeys.includes(key)) {
+      editor[key] = value;
+    } else if (renderKeys.includes(key)) {
+      render[key] = value;
+    } else if (serverKeys.includes(key)) {
+      server[key] = value;
+    } else if (debugKeys.includes(key)) {
+      debug[key] = value;
+    } else if (miewKeys.includes(key)) {
+      miew[key] = value;
+    } else if (macromoleculesKeys.includes(key)) {
+      macromolecules[key] = value;
+    }
+  }
+
+  if (Object.keys(editor).length > 0) namespaced.editor = editor;
+  if (Object.keys(render).length > 0) namespaced.render = render;
+  if (Object.keys(server).length > 0) namespaced.server = server;
+  if (Object.keys(debug).length > 0) namespaced.debug = debug;
+  if (Object.keys(miew).length > 0) namespaced.miew = miew;
+  if (Object.keys(macromolecules).length > 0)
+    namespaced.macromolecules = macromolecules;
+
+  return namespaced;
+}
+
+/**
+ * Sync settings from ketcher-core SettingsService to Redux
+ * Used for backward compatibility - Redux becomes a passive consumer
+ * @param {Settings} coreSettings - Settings from ketcher-core in namespaced format
+ */
+export function syncSettingsFromCore(coreSettings) {
+  // Flatten namespaced settings to match Redux structure
+  const flatSettings = {
+    ...coreSettings.editor,
+    ...coreSettings.render,
+    ...coreSettings.server,
+    ...coreSettings.debug,
+    ...coreSettings.miew,
+    ...coreSettings.macromolecules,
+  };
 
   return {
-    type: 'SAVE_SETTINGS',
-    data: newSettings,
+    type: 'SYNC_SETTINGS_FROM_CORE',
+    data: flatSettings,
   };
 }
 
@@ -205,6 +358,10 @@ function optionsReducer(state = {}, action) {
     return { ...state, app: { ...state.app, ...data } };
 
   if (type === 'SAVE_SETTINGS') {
+    return { ...state, settings: { ...state.settings, ...data } };
+  }
+
+  if (type === 'SYNC_SETTINGS_FROM_CORE') {
     return { ...state, settings: { ...state.settings, ...data } };
   }
 

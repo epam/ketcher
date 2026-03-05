@@ -29,6 +29,7 @@ export * from 'application/editor';
 export * from 'application/ketcher';
 export * from 'application/ketcher.types';
 export * from 'application/ketcherBuilder';
+export * from 'application/settings';
 export * from 'application/utils';
 export * from 'domain/helpers/monomers';
 

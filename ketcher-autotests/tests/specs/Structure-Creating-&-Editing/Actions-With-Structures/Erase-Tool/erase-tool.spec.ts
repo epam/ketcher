@@ -73,7 +73,10 @@ test.describe('Erase Tool', () => {
     const reactionArrow = 1;
     const plusAfterDelete = 1;
     const reactionPlus = 2;
-    const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+    const { leftBarWidth, topBarHeight } = {
+      leftBarWidth: 52,
+      topBarHeight: 40,
+    };
 
     const { plusElement, scale } = await page.evaluate(() => {
       const [plusElement] = window.ketcher.editor.struct().rxnPluses.values();

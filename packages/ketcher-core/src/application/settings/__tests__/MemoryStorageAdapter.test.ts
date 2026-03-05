@@ -3,7 +3,6 @@
  */
 
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
-import type { Settings } from '../types';
 import { getDefaultSettings } from '../schema';
 
 describe('MemoryStorageAdapter', () => {

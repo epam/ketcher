@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';

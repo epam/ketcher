@@ -2,6 +2,8 @@
  * Unit tests for SettingsMigration
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
+
 import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {
@@ -346,7 +348,7 @@ describe('SettingsMigration', () => {
         selectionTool: 'lasso',
       };
 
-      mockLocalStorage['ketcher_editor_saved_settings'] =
+      mockLocalStorage.ketcher_editor_saved_settings =
         JSON.stringify(testSettings);
 
       const loaded = SettingsMigration.loadFromLegacyStorage();
@@ -359,7 +361,7 @@ describe('SettingsMigration', () => {
       mockLocalStorage['ketcher-opts'] = JSON.stringify({
         resetToSelect: false,
       });
-      mockLocalStorage['ketcher_editor_saved_settings'] = JSON.stringify({
+      mockLocalStorage.ketcher_editor_saved_settings = JSON.stringify({
         selectionTool: 'lasso',
       });
 

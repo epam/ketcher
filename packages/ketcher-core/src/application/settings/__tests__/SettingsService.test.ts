@@ -2,6 +2,8 @@
  * Unit tests for SettingsService
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';

@@ -3,18 +3,6 @@
  */
 
 /**
- * Complete settings structure organized by category
- */
-export interface Settings {
-  readonly editor: EditorSettings;
-  readonly render: RenderSettings;
-  readonly server: ServerSettings;
-  readonly debug: DebugSettings;
-  readonly miew: MiewSettings;
-  readonly macromolecules: MacromoleculesSettings;
-}
-
-/**
  * Editor-specific settings
  */
 export interface EditorSettings {
@@ -122,11 +110,15 @@ export interface MacromoleculesSettings {
 }
 
 /**
- * Validation result structure
+ * Complete settings structure organized by category
  */
-export interface ValidationResult {
-  valid: boolean;
-  errors?: ValidationError[];
+export interface Settings {
+  readonly editor: EditorSettings;
+  readonly render: RenderSettings;
+  readonly server: ServerSettings;
+  readonly debug: DebugSettings;
+  readonly miew: MiewSettings;
+  readonly macromolecules: MacromoleculesSettings;
 }
 
 /**
@@ -139,26 +131,19 @@ export interface ValidationError {
 }
 
 /**
- * Settings change listener callback
+ * Validation result structure
  */
-export type SettingsListener = (settings: Settings) => void;
-
-/**
- * Unsubscribe function returned by subscribe
- */
-export type Unsubscribe = () => void;
-
-/**
- * Options for configuring SettingsService
- */
-export interface SettingsServiceOptions {
-  storage?: ISettingsStorage;
-  validator?: ISettingsValidator;
-  defaults?: DeepPartial<Settings>;
-  storageKey?: string;
-  autoSave?: boolean;
-  migrateOnLoad?: boolean;
+export interface ValidationResult {
+  valid: boolean;
+  errors?: ValidationError[];
 }
+
+/**
+ * Deep partial type helper
+ */
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 
 /**
  * Storage abstraction interface
@@ -179,11 +164,26 @@ export interface ISettingsValidator {
 }
 
 /**
- * Deep partial type helper
+ * Options for configuring SettingsService
  */
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
+export interface SettingsServiceOptions {
+  storage?: ISettingsStorage;
+  validator?: ISettingsValidator;
+  defaults?: DeepPartial<Settings>;
+  storageKey?: string;
+  autoSave?: boolean;
+  migrateOnLoad?: boolean;
+}
+
+/**
+ * Settings change listener callback
+ */
+export type SettingsListener = (settings: Settings) => void;
+
+/**
+ * Unsubscribe function returned by subscribe
+ */
+export type Unsubscribe = () => void;
 
 /**
  * Custom error for settings validation failures

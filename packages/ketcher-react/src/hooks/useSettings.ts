@@ -41,6 +41,7 @@ export function useSettings() {
   // Get ketcher instance from Redux store
   // The editor is set in the store during initialization
   const editor = useAppSelector((state) => state.editor);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ketcherInstance = editor ? (editor as any).ketcher : null;
   const settingsService: ISettingsService | undefined =
     ketcherInstance?.settingsService;

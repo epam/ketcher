@@ -18,7 +18,6 @@ import {
   takeElementScreenshot,
   openFileAndAddToCanvasMacro,
 } from '@utils';
-import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   MicroBondDataIds,
@@ -339,9 +338,13 @@ test.describe(`Bond tool (copy-paste):`, () => {
           SelectionToolType.Rectangle,
         );
 
-        point = await getLeftBondByAttributes(page, {
-          reactingCenterStatus: 0,
-        });
+        const boundingBox = await getBondLocator(page, {}).boundingBox();
+        if (boundingBox) {
+          point = {
+            x: boundingBox.x + boundingBox.width / 2,
+            y: boundingBox.y + boundingBox.height / 2,
+          };
+        }
 
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,

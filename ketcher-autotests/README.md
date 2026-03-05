@@ -64,10 +64,6 @@ getRightAtomByAttributes - get right atom by attributes
 
 For bonds:
 
-getBondByIndex - get bond by attributes and index
-getRightBondByAttributes - get right bond by attributes
-getLeftBondByAttributes - get left bond by attributes
-
 ## Docker
 
 - Docker runs automatically in the pipeline after pushing changes to the repository.

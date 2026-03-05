@@ -164,13 +164,6 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
 };
 
 /**
- * Deep partial type helper for presets
- */
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
-/**
  * JSON Schema for validation with Ajv
  * This is used by SchemaValidator
  */

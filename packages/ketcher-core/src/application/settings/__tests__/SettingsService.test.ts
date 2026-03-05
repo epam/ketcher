@@ -2,7 +2,7 @@
  * Unit tests for SettingsService
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
 
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';

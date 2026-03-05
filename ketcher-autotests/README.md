@@ -59,8 +59,6 @@ To search some bond / atom testers can use next methods:
 
 For atoms:
 
-getRightAtomByAttributes - get right atom by attributes
-
 For bonds:
 
 ## Docker

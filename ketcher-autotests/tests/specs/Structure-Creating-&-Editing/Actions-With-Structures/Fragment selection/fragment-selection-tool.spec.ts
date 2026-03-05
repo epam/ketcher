@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
   dragTo,
@@ -14,7 +13,6 @@ import {
   getArrowLocator,
   getPlusLocator,
 } from '@utils/canvas/arrow-signes/getArrow';
-import { getRightAtomByAttributes } from '@utils/canvas/atoms/getRightAtomByAttributes/getRightAtomByAttributes';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
@@ -116,9 +114,9 @@ test.describe('Fragment selection tool', () => {
     // Verify the bond contours are not intersected with atom contours
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    const point = await getRightAtomByAttributes(page, { label: 'N' });
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await page.mouse.move(point.x, point.y);
+    const atom = await getAtomLocator(page, { atomLabel: 'N' }).first();
+    await atom.click({ force: true });
+    await atom.hover({ force: true });
     await takeEditorScreenshot(page);
   });
 });

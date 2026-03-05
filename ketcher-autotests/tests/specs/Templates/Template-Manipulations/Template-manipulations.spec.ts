@@ -9,7 +9,6 @@ import {
   openFileAndAddToCanvas,
   takePageScreenshot,
   moveMouseToTheMiddleOfTheScreen,
-  getRightAtomByAttributes,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -604,8 +603,9 @@ test.describe('Open Ketcher', () => {
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
     await BottomToolbar(page).cyclopentadiene();
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
+    await getAtomLocator(page, { atomId: 7 }).hover({
+      force: true,
+    });
     await takePageScreenshot(page);
   });
 
@@ -626,8 +626,10 @@ test.describe('Open Ketcher', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     await takePageScreenshot(page);
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
+    await getAtomLocator(page, { atomId: 19 }).hover({
+      force: true,
+    });
+    await page.waitForTimeout(200);
     await takePageScreenshot(page);
   });
 

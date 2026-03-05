@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -9,9 +10,8 @@ import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   waitForPageInit,
-  clickOnCanvas,
 } from '@utils';
-import { getRightAtomByAttributes } from '@utils/canvas/atoms';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 /* Show abbreviated structure preview when hovering over atoms or bonds
@@ -33,8 +33,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
+    await getAtomLocator(page, { atomId: 7 }).hover({
+      force: true,
+    });
+    await page.waitForTimeout(200);
     await takeEditorScreenshot(page);
   });
 
@@ -45,8 +47,10 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
+    await getAtomLocator(page, { atomId: 7 }).hover({
+      force: true,
+    });
+    await page.waitForTimeout(200);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -58,9 +62,9 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
-    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomId: 7 }).click({
+      force: true,
+    });
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -72,10 +76,13 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await StructureLibraryDialog(page).addFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
+    const atom = getAtomLocator(page, { atomId: 7 });
+    await atom.hover({
+      force: true,
+    });
+    await page.waitForTimeout(200);
     await takeEditorScreenshot(page);
-    await ContextMenu(page, point).open();
+    await ContextMenu(page, atom).open();
     await takeEditorScreenshot(page);
   });
 

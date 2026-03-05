@@ -2,11 +2,11 @@
 import { test, expect } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
-import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { BondType } from '@utils/canvas/types';
 import {
   clickOnCanvas,
   dragMouseTo,
+  dragTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
@@ -20,8 +20,6 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 const DELTA = 100;
-const DELTA_Y = 110;
-let point: { x: number; y: number };
 
 test.describe('Chain Tool drawing', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,12 +45,10 @@ test.describe('Chain Tool drawing', () => {
   */
     const expectedNumberOfBondsAfterDrag = 15;
 
-    point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
-    await dragMouseTo(page, point.x, point.y + DELTA);
+    await dragTo(page, getAtomLocator(page, { atomId: 3 }), { x: 744, y: 480 });
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y, {
+    await clickOnCanvas(page, 645, 490, {
       from: 'pageTopLeft',
     });
 

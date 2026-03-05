@@ -239,8 +239,27 @@ export const EditorEvents = () => {
 
       // TODO: Split to separate functions for monomers and presets
       const sequenceNode = e.target.__data__?.node;
-      const monomer: BaseMonomer | AmbiguousMonomer =
-        e.target.__data__?.monomer || sequenceNode?.monomer;
+      const hoveredMonomer = e.target.__data__?.monomer;
+      const sequenceItemElement =
+        e.target instanceof Element ? e.target.closest('.sequence-item') : null;
+      const hoveredSequenceSymbolType =
+        sequenceItemElement?.getAttribute('data-symbol-type');
+      const sequenceNodeMonomers =
+        sequenceNode &&
+        typeof sequenceNode === 'object' &&
+        'monomers' in sequenceNode &&
+        Array.isArray(sequenceNode.monomers)
+          ? sequenceNode.monomers
+          : [];
+      const hoveredSequenceMonomer = hoveredSequenceSymbolType
+        ? sequenceNodeMonomers.find(
+            (nodeMonomer) =>
+              nodeMonomer?.monomerItem?.props?.MonomerClass ===
+              hoveredSequenceSymbolType,
+          )
+        : undefined;
+      const monomer: BaseMonomer | AmbiguousMonomer | undefined =
+        hoveredMonomer || hoveredSequenceMonomer || sequenceNode?.monomer;
 
       if (sequenceNode && sequenceNode instanceof BackBoneSequenceNode) {
         return;
@@ -254,6 +273,36 @@ export const EditorEvents = () => {
         };
 
         debouncedShowPreview(ambiguousMonomerPreviewData);
+        return;
+      }
+
+      if (!monomer) {
+        return;
+      }
+
+      const isMultiMonomerLinkerSequenceNode =
+        sequenceNode instanceof LinkerSequenceNode &&
+        sequenceNode.monomers.length > 1;
+
+      // If a concrete sequence symbol is hovered (e.g. phosphate "p"),
+      // always show monomer preview for that exact symbol.
+      // Do not apply this for multi-monomer linker chains (e.g. "@" in sequence mode),
+      // because they must show a list preview with all chain monomers.
+      if (
+        hoveredSequenceSymbolType &&
+        hoveredSequenceMonomer &&
+        !isMultiMonomerLinkerSequenceNode
+      ) {
+        const monomerPreviewData: MonomerPreviewState = {
+          type: PreviewType.Monomer,
+          monomer: hoveredSequenceMonomer.monomerItem,
+          attachmentPointsToBonds: {
+            ...hoveredSequenceMonomer.attachmentPointsToBonds,
+          },
+          target: e.target,
+        };
+
+        debouncedShowPreview(monomerPreviewData);
         return;
       }
 
@@ -281,7 +330,7 @@ export const EditorEvents = () => {
         }
       }
 
-      if (isNucleotideOrNucleoside) {
+      if (isNucleotideOrNucleoside && !hoveredMonomer) {
         const monomers =
           sequenceNode instanceof Nucleotide
             ? [

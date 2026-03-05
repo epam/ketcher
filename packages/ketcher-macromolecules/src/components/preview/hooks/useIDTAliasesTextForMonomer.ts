@@ -1,10 +1,4 @@
-import {
-  AttachmentPointsToBonds,
-  IKetIdtAliases,
-  KetMonomerClass,
-  Sugar,
-  MonomerToAtomBond,
-} from 'ketcher-core';
+import { AttachmentPointsToBonds, IKetIdtAliases } from 'ketcher-core';
 import { useMemo } from 'react';
 
 import { removeSlashesFromIdtAlias } from 'helpers';
@@ -12,13 +6,11 @@ import { removeSlashesFromIdtAlias } from 'helpers';
 type Props = {
   idtAliases: IKetIdtAliases | undefined;
   attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
-  monomerClass: KetMonomerClass | undefined;
 };
 
 const useIDTAliasesTextForMonomer = ({
   idtAliases,
   attachmentPointsToBonds,
-  monomerClass,
 }: Props) => {
   return useMemo(() => {
     if (!idtAliases) {
@@ -31,29 +23,25 @@ const useIDTAliasesTextForMonomer = ({
       return removeSlashesFromIdtAlias(base);
     }
     const { endpoint5, internal, endpoint3 } = modifications;
+    const allAvailableAliases = [endpoint5, internal, endpoint3]
+      .map((alias) => removeSlashesFromIdtAlias(alias))
+      .filter((alias): alias is string => Boolean(alias));
+    const uniqueAvailableAliases = [...new Set(allAvailableAliases)];
 
     // For preview on canvas
     if (attachmentPointsToBonds) {
       const { R1, R2 } = attachmentPointsToBonds;
-      // Handle phosphate exclusively
-      if (monomerClass === KetMonomerClass.Phosphate) {
-        if (
-          R1 &&
-          !(R1 instanceof MonomerToAtomBond) &&
-          R1.firstMonomer instanceof Sugar
-        ) {
-          return null;
-        }
-      }
+      const hasR1Connection = R1 != null;
+      const hasR2Connection = R2 != null;
 
-      if (R1 !== null && R2 === null) {
+      if (hasR1Connection && !hasR2Connection) {
         return removeSlashesFromIdtAlias(endpoint3 ?? internal);
-      } else if (R1 === null && R2 !== null) {
+      } else if (!hasR1Connection && hasR2Connection) {
         return removeSlashesFromIdtAlias(endpoint5 ?? internal);
-      } else if (R1 !== null && R2 !== null) {
+      } else if (hasR1Connection && hasR2Connection) {
         return removeSlashesFromIdtAlias(internal ?? endpoint5 ?? endpoint3);
       } else {
-        return removeSlashesFromIdtAlias(endpoint5 ?? internal ?? endpoint3);
+        return uniqueAvailableAliases.join(', ');
       }
     }
 
@@ -84,7 +72,7 @@ const useIDTAliasesTextForMonomer = ({
         return `(${positions.join(', ')})${base}`;
       })
       .join(', ');
-  }, [idtAliases, attachmentPointsToBonds, monomerClass]);
+  }, [idtAliases, attachmentPointsToBonds]);
 };
 
 export default useIDTAliasesTextForMonomer;

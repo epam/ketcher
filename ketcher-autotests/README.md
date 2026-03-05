@@ -59,7 +59,6 @@ To search some bond / atom testers can use next methods:
 
 For atoms:
 
-getAtomByIndex - get atom by attributes and index
 getRightAtomByAttributes - get right atom by attributes
 
 For bonds:

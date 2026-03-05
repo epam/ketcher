@@ -2,6 +2,8 @@
  * Unit tests for MemoryStorageAdapter
  */
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';
 
@@ -67,8 +69,10 @@ describe('MemoryStorageAdapter', () => {
       await adapter.save('test-key', settings2);
 
       const loaded = await adapter.load('test-key');
+      expect(loaded).toBeDefined();
 
-      expect(loaded?.editor.resetToSelect).toBe(true);
+      // @ts-expect-error - type guard not recognized
+      expect(loaded!.editor.resetToSelect).toBe(true);
     });
 
     it('should support multiple keys', async () => {
@@ -83,9 +87,13 @@ describe('MemoryStorageAdapter', () => {
 
       const loaded1 = await adapter.load('key1');
       const loaded2 = await adapter.load('key2');
+      expect(loaded1).toBeDefined();
+      expect(loaded2).toBeDefined();
 
-      expect(loaded1?.editor.resetToSelect).toBe(false);
-      expect(loaded2?.editor.resetToSelect).toBe(true);
+      // @ts-expect-error - type guard not recognized
+      expect(loaded1!.editor.resetToSelect).toBe(false);
+      // @ts-expect-error - type guard not recognized
+      expect(loaded2!.editor.resetToSelect).toBe(true);
     });
   });
 
@@ -160,7 +168,9 @@ describe('MemoryStorageAdapter', () => {
 
       // Stored version should not be affected
       const loaded = await adapter.load('test-key');
-      expect(loaded?.editor.resetToSelect).toBe(false);
+      expect(loaded).toBeDefined();
+      // @ts-expect-error - type guard not recognized
+      expect(loaded!.editor.resetToSelect).toBe(false);
     });
   });
 });

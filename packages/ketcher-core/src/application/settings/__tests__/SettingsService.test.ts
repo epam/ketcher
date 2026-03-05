@@ -412,7 +412,7 @@ describe('SettingsService', () => {
       await service.updateSettings({ editor: { resetToSelect: false } });
 
       expect(receivedSettings).not.toBeNull();
-      expect(receivedSettings?.editor.resetToSelect).toBe(false);
+      expect(receivedSettings!.editor.resetToSelect).toBe(false);
     });
   });
 

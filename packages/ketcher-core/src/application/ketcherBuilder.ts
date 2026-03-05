@@ -24,13 +24,14 @@ import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
 import { ketcherProvider } from './utils';
-import type {
-  ISettingsService,
-  ISettingsStorage,
-  Settings,
-  DeepPartial,
+import {
+  SettingsService,
+  LocalStorageAdapter,
+  type ISettingsService,
+  type ISettingsStorage,
+  type Settings,
+  type DeepPartial,
 } from 'application/settings';
-import { SettingsService, LocalStorageAdapter } from 'application/settings';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,

@@ -3,6 +3,8 @@
  * Handles migration from old flat format to new namespaced format
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
+
 import type { Settings, DeepPartial } from './types';
 
 export class SettingsMigration {

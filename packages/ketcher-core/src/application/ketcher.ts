@@ -61,7 +61,7 @@ import {
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
-import type { ISettingsService } from 'application/settings';
+import type { ISettingsService, Settings } from 'application/settings';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -144,7 +144,7 @@ export class Ketcher {
    * Handle settings changes from settings service
    * Updates editor and triggers re-render if needed
    */
-  #onSettingsChanged(settings: any): void {
+  #onSettingsChanged(settings: Settings): void {
     // This will be called when settings change
     // The editor will need to be updated with new settings
     // For now, this is a placeholder for Phase 2 integration

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Integration tests for settings bidirectional flow:
  * Redux → Core → Hook → Redux (complete cycle)

@@ -2,6 +2,8 @@
  * Unit tests for SchemaValidator
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-non-null-assertion */
+
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';
 

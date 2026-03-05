@@ -5,23 +5,23 @@
 
 import { EventEmitter } from 'events';
 import type { ISettingsService } from './ISettingsService';
-import type {
-  Settings,
-  EditorSettings,
-  RenderSettings,
-  ServerSettings,
-  DebugSettings,
-  MiewSettings,
-  MacromoleculesSettings,
-  DeepPartial,
-  ValidationResult,
-  SettingsListener,
-  Unsubscribe,
-  SettingsServiceOptions,
-  ISettingsStorage,
-  ISettingsValidator,
+import {
+  SettingsValidationError,
+  type Settings,
+  type EditorSettings,
+  type RenderSettings,
+  type ServerSettings,
+  type DebugSettings,
+  type MiewSettings,
+  type MacromoleculesSettings,
+  type DeepPartial,
+  type ValidationResult,
+  type SettingsListener,
+  type Unsubscribe,
+  type SettingsServiceOptions,
+  type ISettingsStorage,
+  type ISettingsValidator,
 } from './types';
-import { SettingsValidationError } from './types';
 import { getDefaultSettings, PRESETS } from './schema';
 import { LocalStorageAdapter } from './LocalStorageAdapter';
 import { SchemaValidator } from './SchemaValidator';
@@ -43,7 +43,7 @@ export class SettingsService implements ISettingsService {
   private emitter: EventEmitter;
   private storageKey: string;
   private autoSave: boolean;
-  private initialized: boolean = false;
+  private initialized = false;
 
   constructor(options: SettingsServiceOptions = {}) {
     this.storage = options.storage || new LocalStorageAdapter();
@@ -177,6 +177,7 @@ export class SettingsService implements ISettingsService {
         `Settings validation failed: ${validation.errors
           ?.map((e) => e.message)
           .join(', ')}`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ) as SettingsValidationError & { errors: any[] };
       error.name = 'SettingsValidationError';
       error.errors = validation.errors || [];
@@ -193,6 +194,7 @@ export class SettingsService implements ISettingsService {
         `Settings validation failed: ${fullValidation.errors
           ?.map((e) => e.message)
           .join(', ')}`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ) as SettingsValidationError & { errors: any[] };
       error.name = 'SettingsValidationError';
       error.errors = fullValidation.errors || [];
@@ -290,6 +292,7 @@ export class SettingsService implements ISettingsService {
   /**
    * Get the settings schema (for UI generation, documentation)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getSchema(): any {
     return PRESETS;
   }
@@ -297,6 +300,7 @@ export class SettingsService implements ISettingsService {
   /**
    * Deep merge two objects
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private deepMerge(target: any, source: any): any {
     if (!source || typeof source !== 'object') {
       return target;

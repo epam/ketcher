@@ -156,6 +156,7 @@ describe('syncSettingsFromCore', () => {
 
 describe('Redux reducer - SYNC_SETTINGS_FROM_CORE', () => {
   // Import the reducer
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const optionsReducer = require('../index').default;
 
   it('should handle SYNC_SETTINGS_FROM_CORE action', () => {

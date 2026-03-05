@@ -3,6 +3,8 @@
  * Validates settings against JSON Schema
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Ajv from 'ajv';
 import type {
   ISettingsValidator,

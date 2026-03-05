@@ -11,6 +11,7 @@ import type {
   DebugSettings,
   MiewSettings,
   MacromoleculesSettings,
+  DeepPartial,
 } from './types';
 
 /**

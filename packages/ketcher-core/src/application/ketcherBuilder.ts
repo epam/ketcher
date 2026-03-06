@@ -24,6 +24,14 @@ import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
 import { ketcherProvider } from './utils';
+import {
+  SettingsService,
+  LocalStorageAdapter,
+  type ISettingsService,
+  type ISettingsStorage,
+  type Settings,
+  type DeepPartial,
+} from 'application/settings';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -37,6 +45,9 @@ export const DefaultStructServiceOptions = {
 
 export class KetcherBuilder {
   #structServiceProvider?: StructServiceProvider;
+  #settingsService?: ISettingsService;
+  #storageAdapter?: ISettingsStorage;
+  #initialSettings?: DeepPartial<Settings>;
 
   withStructServiceProvider(
     structServiceProvider: StructServiceProvider,
@@ -45,7 +56,34 @@ export class KetcherBuilder {
     return this;
   }
 
-  build(serviceOptions?: StructServiceOptions): Ketcher {
+  /**
+   * Provide a custom settings service instance
+   * If not provided, a default SettingsService will be created
+   */
+  withSettingsService(settingsService: ISettingsService): this {
+    this.#settingsService = settingsService;
+    return this;
+  }
+
+  /**
+   * Provide a custom storage adapter for settings
+   * Default is LocalStorageAdapter
+   */
+  withStorageAdapter(storageAdapter: ISettingsStorage): this {
+    this.#storageAdapter = storageAdapter;
+    return this;
+  }
+
+  /**
+   * Provide initial settings to merge with defaults
+   * These will be applied when the settings service is initialized
+   */
+  withSettings(settings: DeepPartial<Settings>): this {
+    this.#initialSettings = settings;
+    return this;
+  }
+
+  async build(serviceOptions?: StructServiceOptions): Promise<Ketcher> {
     assert(this.#structServiceProvider != null);
 
     const mergedServiceOptions: StructServiceOptions = {
@@ -54,9 +92,25 @@ export class KetcherBuilder {
     };
     const structService: StructService =
       this.#structServiceProvider!.createStructService(mergedServiceOptions);
+
+    // Initialize settings service if not provided
+    let settingsService = this.#settingsService;
+    if (!settingsService) {
+      settingsService = new SettingsService({
+        storage: this.#storageAdapter || new LocalStorageAdapter(),
+        defaults: this.#initialSettings,
+        autoSave: true,
+        migrateOnLoad: true,
+      });
+
+      // Initialize the settings service
+      await settingsService.init();
+    }
+
     const ketcher = new Ketcher(
       structService,
       new FormatterFactory(structService),
+      settingsService,
     );
     structService.addKetcherId(ketcher.id);
     ketcher[this.#structServiceProvider.mode] = true;

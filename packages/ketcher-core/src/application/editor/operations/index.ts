@@ -19,6 +19,7 @@ export * from './bond';
 export * from './CanvasLoad';
 export * from './descriptors';
 export * from './EnhancedFlagMove';
+export * from './EnhancedFlagClear';
 export * from './ifThen';
 export * from './fragment';
 export * from './fragmentStereoAtom';

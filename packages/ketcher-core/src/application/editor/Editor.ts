@@ -977,7 +977,8 @@ export class CoreEditor {
   }
 
   private onRemoveAutochainPreview() {
-    this.transientDrawingView.clear();
+    this.transientDrawingView.hideAutochainPreview();
+    this.transientDrawingView.update();
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {

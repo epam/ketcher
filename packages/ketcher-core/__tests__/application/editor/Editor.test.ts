@@ -235,4 +235,37 @@ describe('CoreEditor', () => {
       expect(stopMovementSpy).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('remove autochain preview handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: {},
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should hide only autochain preview without clearing all transient views', () => {
+      const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
+      const hideAutochainPreviewSpy = jest.spyOn(
+        editor.transientDrawingView,
+        'hideAutochainPreview',
+      );
+      const updateSpy = jest.spyOn(editor.transientDrawingView, 'update');
+
+      editor.events.removeAutochainPreview.dispatch();
+
+      expect(hideAutochainPreviewSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(clearSpy).not.toHaveBeenCalled();
+    });
+  });
 });

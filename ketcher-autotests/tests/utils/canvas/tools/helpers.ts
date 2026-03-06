@@ -23,17 +23,6 @@ export async function selectRectangleArea(
   await page.mouse.up();
 }
 
-export async function saveStructureWithReaction(
-  page: Page,
-  format?: MoleculesFileFormatType,
-) {
-  await CommonTopLeftToolbar(page).saveFile();
-  if (format) {
-    await SaveStructureDialog(page).chooseFileFormat(format);
-  }
-  await SaveStructureDialog(page).save();
-}
-
 export async function selectWithLasso(
   page: Page,
   startX: number,

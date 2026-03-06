@@ -677,6 +677,24 @@ export class CoreEditor {
       ) {
         this.events.rightClickPolymerBond.dispatch([event, eventData]);
       } else if (
+        eventData instanceof BaseMonomerRenderer &&
+        !eventData.monomer.selected
+      ) {
+        const modelChanges = this.drawingEntitiesManager.selectDrawingEntity(
+          eventData.monomer,
+        );
+
+        this.renderersContainer.update(modelChanges);
+        this.events.selectEntities.dispatch(
+          this.drawingEntitiesManager.selectedEntities.map(
+            (entity) => entity[1],
+          ),
+        );
+        this.events.rightClickSelectedMonomers.dispatch([
+          event,
+          [eventData.monomer],
+        ]);
+      } else if (
         (eventData instanceof BaseMonomerRenderer &&
           eventData.monomer.selected) ||
         (hasSelectedEntities && eventData?.drawingEntity?.selected)

@@ -298,7 +298,7 @@ describe('CoreEditor', () => {
       if (initialGetBBox) {
         svgElementWithBBox.getBBox = initialGetBBox;
       } else {
-        (svgElementWithBBox as { getBBox?: () => DOMRect }).getBBox = undefined;
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
     });
   });

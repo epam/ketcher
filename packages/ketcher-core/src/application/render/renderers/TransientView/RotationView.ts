@@ -248,22 +248,32 @@ export class RotationView extends TransientView {
     handleGroup
       .append('circle')
       .attr('r', STYLE.HANDLE_RADIUS)
-      .attr('fill', STYLE.INITIAL_COLOR)
+      .attr('fill', isRotating ? STYLE.ACTIVE_COLOR : STYLE.INITIAL_COLOR)
       .attr('stroke', 'none')
-      .attr('style', 'cursor: grab');
+      .attr('style', `cursor: ${isRotating ? 'grabbing' : 'grab'}`);
 
     // Draw arrows on handle
     const arrowGroup = handleGroup.append('g');
     arrowGroup
       .append('path')
       .attr('d', LEFT_ARROW_PATH)
-      .attr('fill', 'white')
+      .attr('fill', isRotating ? 'none' : 'white')
       .attr('transform', 'translate(-10,-10)');
     arrowGroup
       .append('path')
       .attr('d', RIGHT_ARROW_PATH)
-      .attr('fill', 'white')
+      .attr('fill', isRotating ? 'none' : 'white')
       .attr('transform', 'translate(-10,-10)');
+
+    if (!isRotating) {
+      handleGroup
+        .on('mouseenter', () => {
+          handleGroup.select('circle').attr('fill', STYLE.ACTIVE_COLOR);
+        })
+        .on('mouseleave', () => {
+          handleGroup.select('circle').attr('fill', STYLE.INITIAL_COLOR);
+        });
+    }
 
     // Draw rotation protractor and arc when rotating
     if (isRotating) {

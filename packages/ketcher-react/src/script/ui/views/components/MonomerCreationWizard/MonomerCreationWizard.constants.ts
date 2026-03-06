@@ -64,6 +64,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   notUniquePresetCode: 'The preset code must be unique amongst other presets.',
   invalidPresetCode:
     'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  phosphatePositionNotSelected:
+    "You must chose the position of the phosphate (5' or 3').",
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -87,6 +89,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   invalidRnaPresetStructure: 'error',
   notUniquePresetCode: 'error',
   invalidPresetCode: 'error',
+  phosphatePositionNotSelected: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

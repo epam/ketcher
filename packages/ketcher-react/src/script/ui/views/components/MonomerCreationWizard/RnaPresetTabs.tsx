@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -41,6 +41,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
+  const phosphatePosition = wizardState.preset.phosphatePosition;
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {
@@ -117,6 +118,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     },
     [editor, wizardStateDispatch],
   );
+
+  const handlePhosphatePositionChange = (position: '3' | '5') => {
+    wizardStateDispatch({
+      type: 'SetPresetPhosphatePosition',
+      value: position,
+    });
+  };
 
   const currentTabStructure = currentTabState?.structure;
 
@@ -252,7 +260,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
-              <>
+              <Fragment key={rnaComponentKey}>
                 <div className={styles.createComponentWrapper}>
                   <div>
                     Select all atoms that form this nucleotide component.
@@ -281,7 +289,48 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   }}
                   wizardState={wizardState[rnaComponentKey]}
                 />
-              </>
+                {rnaComponentKey === 'phosphate' && (
+                  <AttributeField
+                    title="Phosphate position"
+                    required
+                    control={
+                      <div
+                        data-testid="phosphate-position-picker"
+                        className={clsx(
+                          styles.phosphatePositionPicker,
+                          wizardState.preset.errors.phosphatePosition &&
+                            styles.phosphatePositionPickerError,
+                        )}
+                      >
+                        <button
+                          type="button"
+                          className={clsx(
+                            styles.phosphatePositionButton,
+                            phosphatePosition === '5' &&
+                              styles.phosphatePositionButtonActive,
+                          )}
+                          data-testid="phosphate-position-5-button"
+                          onClick={() => handlePhosphatePositionChange('5')}
+                        >
+                          5&apos;
+                        </button>
+                        <button
+                          type="button"
+                          className={clsx(
+                            styles.phosphatePositionButton,
+                            phosphatePosition === '3' &&
+                              styles.phosphatePositionButtonActive,
+                          )}
+                          data-testid="phosphate-position-3-button"
+                          onClick={() => handlePhosphatePositionChange('3')}
+                        >
+                          3&apos;
+                        </button>
+                      </div>
+                    }
+                  />
+                )}
+              </Fragment>
             )
           );
         })}

@@ -1,5 +1,6 @@
 import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
+import { SelectBase } from 'application/editor/tools/select';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { KetcherLogger } from 'utilities';
 
@@ -193,6 +194,78 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount,
       );
+    });
+  });
+
+  describe('window blur handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: {},
+      });
+      editor.selectTool(ToolName.selectRectangle);
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should not stop selection tool when it is already in standby mode', () => {
+      const selectTool = editor.selectedTool as SelectBase;
+      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      selectTool.mode = 'standby';
+
+      window.dispatchEvent(new Event('blur'));
+
+      expect(stopMovementSpy).not.toHaveBeenCalled();
+    });
+
+    it('should stop selection tool when blur happens during active movement', () => {
+      const selectTool = editor.selectedTool as SelectBase;
+      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      selectTool.mode = 'moving';
+
+      window.dispatchEvent(new Event('blur'));
+
+      expect(stopMovementSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('remove autochain preview handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: {},
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should hide only autochain preview without clearing all transient views', () => {
+      const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
+      const hideAutochainPreviewSpy = jest.spyOn(
+        editor.transientDrawingView,
+        'hideAutochainPreview',
+      );
+      const updateSpy = jest.spyOn(editor.transientDrawingView, 'update');
+
+      editor.events.removeAutochainPreview.dispatch();
+
+      expect(hideAutochainPreviewSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(clearSpy).not.toHaveBeenCalled();
     });
   });
 });

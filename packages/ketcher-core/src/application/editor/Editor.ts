@@ -280,7 +280,7 @@ export class CoreEditor {
   };
 
   private cancelActiveDrag(): void {
-    if (this.tool instanceof SelectBase) {
+    if (this.tool instanceof SelectBase && this.tool.mode !== 'standby') {
       this.tool.stopMovement();
     }
   }
@@ -977,7 +977,8 @@ export class CoreEditor {
   }
 
   private onRemoveAutochainPreview() {
-    this.transientDrawingView.clear();
+    this.transientDrawingView.hideAutochainPreview();
+    this.transientDrawingView.update();
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {

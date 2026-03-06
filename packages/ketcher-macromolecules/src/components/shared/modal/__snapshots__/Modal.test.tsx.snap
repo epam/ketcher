@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Modal component should render correctly 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body
     style="padding-right: 1024px; overflow: hidden;"

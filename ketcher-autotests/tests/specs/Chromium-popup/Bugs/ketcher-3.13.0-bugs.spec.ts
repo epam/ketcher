@@ -23,6 +23,12 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 
@@ -171,93 +177,82 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     });
   });
 
-  // test('Case 4 — Stereo bonds between monomers become single bonds if monomer is collapsed', async () => {
-  //   /*
-  //    * Test task: https://github.com/epam/ketcher/issues/9137
-  //    * Bug: https://github.com/epam/ketcher/issues/8981
-  //    * Version: 3.12.0-rc.1
-  //    * Description:
-  //    * Stereo bonds between monomers disappear (converted to single bonds)
-  //    * after collapsing the created monomer.
-  //    *
-  //    * Scenario:
-  //    * 1. Go to Molecules mode (clean canvas)
-  //    * 2. Load from SMARTS:
-  //    *    -[#6](/-[#6]/-[#6]/-[#6]/[#6]/[#6])/[#6]/[#6]
-  //    * 3. Select whole structure
-  //    * 4. Create monomer preset:
-  //    *      - Base: specific atom + bond selection (see bug description)
-  //    *      - Sugar: specific atom + bond selection
-  //    *      - Phosphate: specific atom + bond selection
-  //    * 5. Submit monomer creation
-  //    * 6. Collapse the created monomer (context menu)
-  //    *
-  //    * Expected Result:
-  //    * Stereo bonds between monomer fragments MUST remain stereo
-  //    * and should not degrade into single bonds after collapsing.
-  //    */
+  test('Case 4 — Stereo bonds between monomers become single bonds if monomer is collapsed', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/8981
+     * Version: 3.12.0-rc.1
+     * Description:
+     * Stereo bonds between monomers disappear (converted to single bonds)
+     * after collapsing the created monomer.
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load from SMARTS:
+     *    [#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]
+     * 3. Select whole structure
+     * 4. Create monomer preset:
+     *      - Base: specific atom + bond selection (see bug description)
+     *      - Sugar: specific atom + bond selection
+     *      - Phosphate: specific atom + bond selection
+     * 5. Submit monomer creation
+     * 6. Collapse the created monomer (context menu)
+     *
+     * Expected Result:
+     * Stereo bonds between monomer fragments MUST remain stereo
+     * and should not degrade into single bonds after collapsing.
+     */
 
-  //   // Step 2: Load SMARTS structure
-  //   await pasteFromClipboardAndOpenAsNewProject(
-  //     page,
-  //     '-[#6](/-[#6]/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
-  //   );
+    // Step 1: Load SMARTS structure
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
+    );
 
-  //   // Step 3: Select entire structure
-  //   await CommonLeftToolbar(page).areaSelectionTool();
-  //   await selectAllStructuresOnCanvas(page);
+    // Step 2: Select entire structure
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
 
-  //   // Step 4: Open monomer creation wizard
-  //   await LeftToolbar(page).createMonomer();
-  //   const dialog = CreateMonomerDialog(page);
-  //   const presetSection = NucleotidePresetSection(page);
+    // Step 3: Create monomer preset
+    await LeftToolbar(page).createMonomer();
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
 
-  //   // Base setup — IDs depend on imported structure, but selection matches
-  //   // the grouping shown in the bug report. Adjust only if numbering differs.
-  //   await dialog.selectType(MonomerType.NucleotidePreset);
-  //   await presetSection.setupBase({
-  //     atomIds: [0, 1, 2], // Replace with actual IDs if needed
-  //     bondIds: [0, 1], // Replace with actual IDs if needed
-  //     symbol: Base.Base.alias,
-  //     name: 'B1',
-  //     naturalAnalogue: NucleotideNaturalAnalogue.A,
-  //     HELMAlias: 'BaseAlias',
-  //   });
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('sss');
 
-  //   // Sugar setup
-  //   await presetSection.setupSugar({
-  //     atomIds: [3, 4, 5],
-  //     bondIds: [2, 3],
-  //     symbol: Sugar.Sugar.alias,
-  //     name: 'S1',
-  //     HELMAlias: 'SugarAlias',
-  //   });
+    await presetSection.setupBase({
+      atomIds: [7, 8, 9, 10],
+      bondIds: [7, 8, 9],
+    });
 
-  //   // Phosphate setup
-  //   await presetSection.setupPhosphate({
-  //     atomIds: [6, 7, 8, 9],
-  //     bondIds: [4, 5, 6],
-  //     symbol: Phosphate.Phosphate.alias,
-  //     name: 'P1',
-  //     HELMAlias: 'PhosAlias',
-  //   });
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(450, 250, page);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(450, 250, page);
 
-  //   // Step 5: Submit monomer creation
-  //   await dialog.submit();
+    await presetSection.setupSugar({
+      atomIds: [2, 3, 4, 5, 6],
+      bondIds: [2, 3, 4, 5],
+    });
 
-  //   // Wait for render
-  //   await page.waitForTimeout(500);
+    await presetSection.setupPhosphate({
+      atomIds: [0, 1, 11, 12],
+      bondIds: [0, 10, 11],
+    });
 
-  //   // Step 6: Collapse monomer using context menu
-  //   const monomerLoc = getAbbreviationLocator(page, { name: 'B1' });
-  //   await ContextMenu(page, monomerLoc).click(
-  //     MonomerOnMicroOption.CollapseMonomer,
-  //   );
+    // Step 5: Submit monomer creation
+    await dialog.submit();
 
-  //   // Visual verification: stereo bonds must not become single bonds.
-  //   // Take screenshot of central stereogenic fragment to compare.
-  //   await takeElementScreenshot(page, getAtomLocator(page, { atomId: 2 }), {
-  //     padding: 180,
-  //   });
-  // });
+    // Step 6: Collapse new monomer via context menu
+    const sugarAtom = getAtomLocator(page, { atomId: 4 });
+    await ContextMenu(page, sugarAtom).click(
+      MonomerOnMicroOption.CollapseMonomer,
+    );
+
+    // Step 7: Screenshot stereogenic center to verify stereo bonds persist
+    const collapsedLabel = page.locator('text[data-sgroup-name="sssS"]');
+    await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
+  });
 });

@@ -17,7 +17,6 @@
 import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
-import { arc as d3Arc } from 'd3';
 import { Coordinates } from 'application/editor';
 
 export type RotationViewParams = {
@@ -70,6 +69,29 @@ const RIGHT_ARROW_PATH =
 const getDegreeDifference = (a: number, b: number) => {
   const diff = Math.abs(a - b) % 360;
   return diff > 180 ? 360 - diff : diff;
+};
+
+const getPointOnCircle = (center: Vec2, radius: number, angle: number) => {
+  return {
+    x: center.x + radius * Math.cos(angle),
+    y: center.y + radius * Math.sin(angle),
+  };
+};
+
+const getRotationArcPath = (
+  center: Vec2,
+  radius: number,
+  startAngle: number,
+  rotationAngle: number,
+) => {
+  const start = getPointOnCircle(center, radius, startAngle);
+  const end = getPointOnCircle(center, radius, startAngle + rotationAngle);
+  const sweepFlag = rotationAngle < 0 ? 0 : 1;
+
+  return (
+    `M${start.x},${start.y}` +
+    `A${radius},${radius} 0 0,${sweepFlag} ${end.x},${end.y}`
+  );
 };
 
 // TypeScript doesn't support abstract static methods, but the TransientView pattern
@@ -375,17 +397,12 @@ export class RotationView extends TransientView {
         });
 
         // Draw rotation arc
-        const endAngle = startAngle + rotationAngle;
-        const arcGenerator = d3Arc()
-          .innerRadius(radius)
-          .outerRadius(radius)
-          .startAngle(Math.min(startAngle, endAngle))
-          .endAngle(Math.max(startAngle, endAngle));
-
         transientLayer
           .append('path')
-          .attr('d', arcGenerator as unknown as string)
-          .attr('transform', `translate(${center.x},${center.y})`)
+          .attr(
+            'd',
+            getRotationArcPath(center, radius, startAngle, rotationAngle),
+          )
           .attr('fill', 'none')
           .attr('stroke', STYLE.ACTIVE_COLOR)
           .attr('stroke-width', 1)
@@ -393,7 +410,7 @@ export class RotationView extends TransientView {
 
         // Draw angle text
         const angleInDegrees = Math.round((rotationAngle * 180) / Math.PI);
-        const textAngle = startAngle + rotationAngle / 2;
+        const textAngle = startAngle;
         const textRadius = radius + 20;
         const textX = center.x + textRadius * Math.cos(textAngle);
         const textY = center.y + textRadius * Math.sin(textAngle);

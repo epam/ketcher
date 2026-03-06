@@ -86,11 +86,12 @@ const getRotationArcPath = (
 ) => {
   const start = getPointOnCircle(center, radius, startAngle);
   const end = getPointOnCircle(center, radius, startAngle + rotationAngle);
+  const largeArcFlag = Math.abs(rotationAngle) > Math.PI ? 1 : 0;
   const sweepFlag = rotationAngle < 0 ? 0 : 1;
 
   return (
     `M${start.x},${start.y}` +
-    `A${radius},${radius} 0 0,${sweepFlag} ${end.x},${end.y}`
+    `A${radius},${radius} 0 ${largeArcFlag},${sweepFlag} ${end.x},${end.y}`
   );
 };
 

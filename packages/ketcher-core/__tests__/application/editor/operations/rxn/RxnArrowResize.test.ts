@@ -5,6 +5,10 @@ import {
 import { Vec2 } from 'domain/entities';
 
 describe('Snap arrows to horizontal or vertical orientation', () => {
+  it('uses 5 degree snapping threshold', () => {
+    expect(ARROW_MAX_SNAPPING_ANGLE).toBeCloseTo(Math.PI / 36);
+  });
+
   it('snaps to positive x-axis correctly', () => {
     const arrow = new Vec2(1, 0);
     const oneDegreeInRadian = Math.PI / 180;

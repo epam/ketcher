@@ -1048,9 +1048,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await dialog.selectType(MonomerType.NucleotidePreset);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await dialog.discard();
   });
 

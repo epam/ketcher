@@ -33,6 +33,7 @@ export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
+
   private selectionHandlesElement:
     | D3SvgElementSelection<SVGGElement, void>
     | undefined;

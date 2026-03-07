@@ -32,6 +32,9 @@ export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
+  private selectionHandlesElement:
+    | D3SvgElementSelection<SVGGElement, void>
+    | undefined;
 
   constructor(public arrow: RxnArrow) {
     super(arrow);
@@ -60,6 +63,22 @@ export class RxnArrowRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  private get selectionHandleRadius() {
+    return this.editorSettings.macroModeScale / 8;
+  }
+
+  private get selectionHandlePositions() {
+    const { startPosition, endPosition } = this.scaledPosition;
+
+    return [
+      new Vec2(0, 0),
+      new Vec2(
+        endPosition.x - startPosition.x,
+        endPosition.y - startPosition.y,
+      ),
+    ];
   }
 
   public getArrowParams() {
@@ -320,6 +339,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public appendSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.removeSelection();
     const selectionPathDAttr = this.getSelectionContour(
       this.scaledPosition.startPosition,
     );
@@ -330,11 +354,27 @@ export class RxnArrowRenderer extends BaseRenderer {
       .attr('fill', '#57ff8f')
       .attr('stroke', '#57ff8f')
       .attr('class', 'dynamic-element');
+
+    this.selectionHandlesElement = this.rootElement
+      .append('g')
+      .attr('class', 'dynamic-element')
+      .attr('pointer-events', 'none');
+
+    this.selectionHandlePositions.forEach((point) => {
+      this.selectionHandlesElement
+        ?.append('circle')
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('r', this.selectionHandleRadius)
+        .attr('fill', '#000');
+    });
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+    this.selectionHandlesElement?.remove();
+    this.selectionHandlesElement = undefined;
   }
 
   public move() {

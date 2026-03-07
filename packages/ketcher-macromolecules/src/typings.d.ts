@@ -49,6 +49,16 @@ interface Document {
 
 interface Window {
   isPolymerEditorTurnedOn: boolean;
+  ketcher?: {
+    settingsService?: {
+      getSettings: () => any;
+      updateSettings: (settings: any) => Promise<any>;
+      resetToDefaults: () => Promise<any>;
+      importSettings: (json: string) => Promise<any>;
+      exportSettings: () => string;
+      subscribe: (listener: (settings: any) => void) => () => void;
+    };
+  };
 }
 
 interface HTMLElement {

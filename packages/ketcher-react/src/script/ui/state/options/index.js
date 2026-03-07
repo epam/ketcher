@@ -131,23 +131,89 @@ export function appUpdate(data) {
   };
 }
 
+/**
+ * Transform settings from Redux format to SettingsService format
+ * Fixes type mismatches and removes extra fields
+ */
+function transformSettingsForCore(settings) {
+  const transformed = { ...settings };
+
+  // Remove fields that don't belong in SettingsService
+  delete transformed.init;
+
+  // Fix imageResolution: string -> number
+  if (typeof transformed.imageResolution === 'string') {
+    transformed.imageResolution = parseInt(transformed.imageResolution, 10);
+  }
+
+  // Fix stereoLabelStyle: case sensitivity (Iupac -> IUPAC)
+  if (transformed.stereoLabelStyle) {
+    transformed.stereoLabelStyle = transformed.stereoLabelStyle.toUpperCase();
+  }
+
+  return transformed;
+}
+
+/**
+ * Transform settings from SettingsService format to Redux format
+ * Reverse transformation for display in the Settings dialog
+ */
+function transformSettingsFromCore(settings) {
+  const transformed = { ...settings };
+
+  // Convert imageResolution: number -> string
+  if (typeof transformed.imageResolution === 'number') {
+    transformed.imageResolution = transformed.imageResolution.toString();
+  }
+
+  // Convert stereoLabelStyle: IUPAC -> Iupac (title case for first letter)
+  if (transformed.stereoLabelStyle) {
+    const style = transformed.stereoLabelStyle;
+    transformed.stereoLabelStyle =
+      style.charAt(0) + style.slice(1).toLowerCase();
+  }
+
+  // Remove fields that Redux doesn't use
+  delete transformed.selectionTool;
+  delete transformed.editorLineLength;
+  delete transformed.disableCustomQuery;
+  delete transformed.monomerLibraryUpdates;
+
+  return transformed;
+}
+
 /* SETTINGS */
 export function saveSettings(newSettings) {
   return async (dispatch, getState) => {
     // Try to update via ketcher-core settings service if available
-    const state = getState();
-    const editor = state.editor;
-    const ketcherInstance = editor?.ketcher;
-    const settingsService = ketcherInstance?.settingsService;
+    // Use window.ketcher since Redux state doesn't store the Ketcher instance
+    const settingsService = window.ketcher?.settingsService;
+
+    console.log('[saveSettings] Attempting to save settings:', newSettings);
 
     if (settingsService) {
       try {
+        // Transform settings to match SettingsService schema
+        const transformedSettings = transformSettingsForCore(newSettings);
+        console.log(
+          '[saveSettings] Transformed settings:',
+          transformedSettings,
+        );
+
         // Direct update - both Core and Redux use flat format now
-        await settingsService.updateSettings(newSettings);
+        await settingsService.updateSettings(transformedSettings);
+        console.log(
+          '[saveSettings] Settings saved successfully via core service',
+        );
         // Core service handles localStorage and emits events
         // The event will trigger syncSettingsFromCore via useSettings hook
       } catch (error) {
         console.error('Failed to update settings via core service:', error);
+        console.error('[saveSettings] Validation error details:', error.errors);
+        console.error(
+          '[saveSettings] Settings that failed validation:',
+          JSON.stringify(newSettings, null, 2),
+        );
         // Fall back to direct localStorage write
         storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
       }
@@ -174,10 +240,11 @@ export function saveSettings(newSettings) {
  * @param {Settings} coreSettings - Settings from ketcher-core in flat format
  */
 export function syncSettingsFromCore(coreSettings) {
-  // No conversion needed - both Redux and Core use flat format now
+  // Transform from SettingsService format to Redux format
+  const reduxSettings = transformSettingsFromCore(coreSettings);
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',
-    data: coreSettings,
+    data: reduxSettings,
   };
 }
 

@@ -29,8 +29,36 @@ const DEFAULT_STORAGE_KEY = 'ketcher-opts';
 /**
  * SettingsService implementation
  * Provides centralized, validated, and persistent settings management
+ *
+ * SINGLETON PATTERN - TEMPORARY WORKAROUND
+ *
+ * This class implements a singleton pattern to address the following issues:
+ *
+ * 1. React 18 Strict Mode in development causes components to mount → unmount → remount,
+ *    which creates multiple Ketcher instances and multiple SettingsService instances.
+ *    The second instance overwrites window.ketcher, causing settings sync issues.
+ *
+ * 2. Redux state in ketcher-react stores settings separately from SettingsService.
+ *    When Settings dialog opens, it reads from Redux state which may be out of sync.
+ *    The saveSettings() action uses window.ketcher.settingsService, but if multiple
+ *    instances exist, they don't share subscribers or in-memory state.
+ *
+ * 3. Small molecules and macromolecules modes both access window.ketcher.settingsService,
+ *    expecting them to be the same instance for settings to sync properly.
+ *
+ * WARNING: This singleton pattern prevents creating multiple independent SettingsService
+ * instances with separate settings (e.g., for multi-editor scenarios). This should be
+ * refactored in the future by:
+ * - Fixing React component lifecycle to prevent double initialization
+ * - Making Redux state fully synchronized with SettingsService via proper subscription
+ * - Or removing Redux state dependency entirely and using SettingsService directly
+ * - Supporting multiple SettingsService instances with isolated or shared settings as needed
+ *
+ * TODO: Remove this singleton and implement proper multi-instance support
  */
 export class SettingsService implements ISettingsService {
+  private static instance: SettingsService | null = null;
+
   private settings: Settings;
   private storage: ISettingsStorage;
   private validator: ISettingsValidator;
@@ -39,7 +67,38 @@ export class SettingsService implements ISettingsService {
   private autoSave: boolean;
   private initialized = false;
 
-  constructor(options: SettingsServiceOptions = {}) {
+  /**
+   * Get the singleton instance of SettingsService.
+   * Creates a new instance if one doesn't exist.
+   *
+   * @param options - Configuration options (only used when creating the first instance)
+   * @returns The singleton SettingsService instance
+   */
+  static async getInstance(
+    options: SettingsServiceOptions = {},
+  ): Promise<SettingsService> {
+    if (!SettingsService.instance) {
+      SettingsService.instance = new SettingsService(options);
+      await SettingsService.instance.init();
+    }
+    return SettingsService.instance;
+  }
+
+  /**
+   * Reset the singleton instance.
+   * This is primarily for testing purposes or when you need to force
+   * recreation of the settings service (e.g., after logout, context switch).
+   * Use with caution as this will affect all code using SettingsService.getInstance().
+   */
+  static resetInstance(): void {
+    SettingsService.instance = null;
+  }
+
+  /**
+   * Private constructor to enforce singleton pattern.
+   * Use SettingsService.getInstance() instead.
+   */
+  private constructor(options: SettingsServiceOptions = {}) {
     this.storage = options.storage || new LocalStorageAdapter();
     this.validator = options.validator || new SchemaValidator();
     this.storageKey = options.storageKey || DEFAULT_STORAGE_KEY;
@@ -81,10 +140,6 @@ export class SettingsService implements ISettingsService {
         } else {
           this.settings = merged;
         }
-      } else {
-        // No stored settings, keep the defaults from constructor
-        // (which already includes custom defaults if provided)
-        // this.settings is already set from constructor
       }
 
       // 5. Persist initial state
@@ -94,7 +149,7 @@ export class SettingsService implements ISettingsService {
 
       this.initialized = true;
     } catch (error) {
-      console.error('Failed to initialize settings:', error);
+      console.error('[SettingsService] Failed to initialize settings:', error);
       // Keep settings from constructor (includes custom defaults if provided)
       this.initialized = true;
     }
@@ -155,7 +210,7 @@ export class SettingsService implements ISettingsService {
       try {
         await this.storage.save(this.storageKey, this.settings);
       } catch (error) {
-        console.error('Failed to persist settings:', error);
+        console.error('[SettingsService] Failed to persist settings:', error);
       }
     }
 
@@ -258,6 +313,11 @@ export class SettingsService implements ISettingsService {
       if (Object.prototype.hasOwnProperty.call(source, key)) {
         const sourceValue = source[key];
         const targetValue = result[key];
+
+        // Skip undefined values from source - keep the default value
+        if (sourceValue === undefined) {
+          continue;
+        }
 
         if (
           sourceValue &&

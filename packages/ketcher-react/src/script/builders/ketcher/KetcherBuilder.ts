@@ -23,6 +23,12 @@ import {
   StructServiceProvider,
   ketcherProvider,
   KetcherLogger,
+  SettingsService,
+  LocalStorageAdapter,
+  type ISettingsService,
+  type ISettingsStorage,
+  type Settings,
+  type DeepPartial,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';
@@ -38,11 +44,44 @@ class KetcherBuilder {
   private structService: StructService | null;
   private serviceMode: ServiceMode | null;
   private formatterFactory: FormatterFactory | null;
+  private settingsService: ISettingsService | null;
+  private storageAdapter: ISettingsStorage | null;
+  private initialSettings: DeepPartial<Settings> | null;
 
   constructor() {
     this.structService = null;
     this.serviceMode = null;
     this.formatterFactory = null;
+    this.settingsService = null;
+    this.storageAdapter = null;
+    this.initialSettings = null;
+  }
+
+  /**
+   * Provide a custom settings service instance
+   * If not provided, a default SettingsService will be created
+   */
+  withSettingsService(settingsService: ISettingsService): this {
+    this.settingsService = settingsService;
+    return this;
+  }
+
+  /**
+   * Provide a custom storage adapter for settings
+   * Default is LocalStorageAdapter
+   */
+  withStorageAdapter(storageAdapter: ISettingsStorage): this {
+    this.storageAdapter = storageAdapter;
+    return this;
+  }
+
+  /**
+   * Provide initial settings to merge with defaults
+   * These will be applied when the settings service is initialized
+   */
+  withSettings(settings: DeepPartial<Settings>): this {
+    this.initialSettings = settings;
+    return this;
   }
 
   appendApiAsync(structServiceProvider: StructServiceProvider) {
@@ -147,7 +186,7 @@ class KetcherBuilder {
     return { cleanup, setServer };
   }
 
-  build() {
+  async build(): Promise<Ketcher> {
     if (!this.serviceMode) {
       throw new Error('You should append ServiceMode before building');
     }
@@ -162,7 +201,24 @@ class KetcherBuilder {
       );
     }
 
-    const ketcher = new Ketcher(this.structService, this.formatterFactory);
+    // Get settings service - use singleton pattern via SettingsService.getInstance()
+    let settingsService = this.settingsService;
+    if (!settingsService) {
+      // Use singleton pattern - getInstance() will create the instance only once
+      // and reuse it on subsequent calls (see SettingsService for details)
+      settingsService = await SettingsService.getInstance({
+        storage: this.storageAdapter || new LocalStorageAdapter(),
+        defaults: this.initialSettings || undefined,
+        autoSave: true,
+        migrateOnLoad: true,
+      });
+    }
+
+    const ketcher = new Ketcher(
+      this.structService,
+      this.formatterFactory,
+      settingsService,
+    );
     ketcher[this.serviceMode] = true;
 
     const userInput = document.location.search;

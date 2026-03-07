@@ -87,7 +87,7 @@ Successfully completed a comprehensive refactoring of Ketcher's settings system,
 1. **Service Pattern** - SettingsService encapsulates all logic
 2. **Strategy Pattern** - Pluggable storage adapters (localStorage, memory, etc.)
 3. **Observer Pattern** - Event-driven reactive updates
-4. **Adapter Pattern** - Bidirectional conversion between flat/namespaced formats
+4. **Adapter Pattern** - Settings storage and synchronization adapters
 5. **Migration Pattern** - Backward compatibility with legacy formats
 
 ---
@@ -159,7 +159,7 @@ Instead of rewriting all components, created an elegant sync layer:
 // Redux → Core
 saveSettings() thunk:
   1. Detects if core service available
-  2. Converts flat → namespaced
+  2. Passes settings to core (flat structure)
   3. Calls core.updateSettings()
   4. Falls back to localStorage if unavailable
 
@@ -224,19 +224,14 @@ useSettings() hook:
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| PHASE1_COMPLETE.md | ~330 | Phase 1 summary |
-| PHASE2_COMPLETE.md | ~500 | Phase 2 summary |
-| PHASE2_PROGRESS.md | ~250 | Phase 2 tracking |
-| PHASE3_PLAN.md | ~400 | Phase 3 detailed plan |
-| PHASE3_PROGRESS.md | ~300 | Phase 3 tracking |
-| PHASE3_COMPLETE.md | ~600 | Phase 3 summary |
-| SETTINGS_REFACTORING_COMPLETE.md | ~500 | This file |
-| **Total** | **~2,880 lines** | **7 docs** |
+| SETTINGS_REFACTORING_COMPLETE.md | ~920 | Complete project summary (this file) |
+| packages/ketcher-core/src/application/settings/README.md | ~710 | Settings API documentation and user guide |
+| **Total** | **~1,630 lines** | **2 docs** |
 
 ### Grand Total
 - **Code + Tests:** 19 files, ~5,383 lines
-- **Documentation:** 7 files, ~2,880 lines
-- **Total Project:** 26 files, ~8,263 lines
+- **Documentation:** 2 files, ~1,630 lines
+- **Total Project:** 21 files, ~7,013 lines
 
 ---
 
@@ -339,14 +334,8 @@ interface ISettingsService {
   // Initialization
   init(): Promise<void>;
 
-  // Getters (all return frozen immutable objects)
-  getSettings(): Settings;
-  getEditorSettings(): EditorSettings;
-  getRenderSettings(): RenderSettings;
-  getServerSettings(): ServerSettings;
-  getDebugSettings(): DebugSettings;
-  getMiewSettings(): MiewSettings;
-  getMacromoleculesSettings(): MacromoleculesSettings;
+  // Getters (return frozen immutable object)
+  getSettings(): Settings;  // Returns all settings in flat structure
 
   // Updates (all async, validate, persist, emit events)
   updateSettings(partial: DeepPartial<Settings>): Promise<Settings>;
@@ -371,16 +360,8 @@ interface ISettingsService {
 ```typescript
 function useSettings() {
   return {
-    // Complete settings
+    // Settings (flat structure with all properties at root level)
     settings: Settings | null,
-
-    // Category-specific settings
-    editorSettings: EditorSettings | null,
-    renderSettings: RenderSettings | null,
-    serverSettings: ServerSettings | null,
-    debugSettings: DebugSettings | null,
-    miewSettings: MiewSettings | null,
-    macromoleculesSettings: MacromoleculesSettings | null,
 
     // Update methods
     updateSettings: (partial: DeepPartial<Settings>) => Promise<Settings>,
@@ -408,14 +389,13 @@ import { useSettings } from 'hooks';
 export function MyComponent() {
   const {
     settings,
-    editorSettings,
     updateSettings,
     loadPreset,
   } = useSettings();
 
   const handleToggleColoring = async () => {
     await updateSettings({
-      render: { atomColoring: !settings?.render.atomColoring }
+      atomColoring: !settings?.atomColoring
     });
   };
 
@@ -427,7 +407,7 @@ export function MyComponent() {
 
   return (
     <div>
-      <p>Rotation Step: {editorSettings?.rotationStep}</p>
+      <p>Rotation Step: {settings?.rotationStep}</p>
       <button onClick={handleToggleColoring}>
         Toggle Atom Coloring
       </button>
@@ -468,8 +448,8 @@ await settingsService.init();
 // Use
 const settings = settingsService.getSettings();
 await settingsService.updateSettings({
-  editor: { resetToSelect: false },
-  render: { atomColoring: true },
+  resetToSelect: false,
+  atomColoring: true,
 });
 
 // Subscribe to changes
@@ -819,13 +799,9 @@ This project was completed by Claude (Anthropic AI Assistant) working with the K
 
 ### Project Documentation
 
-1. **PHASE1_COMPLETE.md** - Core infrastructure summary
-2. **PHASE2_COMPLETE.md** - React integration summary
-3. **PHASE3_COMPLETE.md** - Testing and validation summary
-4. **PHASE3_PLAN.md** - Detailed Phase 3 task breakdown
-5. **PHASE2_PROGRESS.md** - Phase 2 progress tracking
-6. **PHASE3_PROGRESS.md** - Phase 3 progress tracking
-7. **SETTINGS_REFACTORING_COMPLETE.md** - This document
+1. **SETTINGS_REFACTORING_COMPLETE.md** - This document (complete technical summary)
+2. **packages/ketcher-core/src/application/settings/README.md** - Settings API documentation and usage guide
+3. **EXECUTIVE_SUMMARY.md** - Business-focused project summary
 
 ### Code Files
 
@@ -904,12 +880,7 @@ ketcher/
 │           │   └── __tests__/sync.test.js
 │           └── __tests__/
 │               └── settings-integration.test.tsx
-├── PHASE1_COMPLETE.md
-├── PHASE2_COMPLETE.md
-├── PHASE2_PROGRESS.md
-├── PHASE3_PLAN.md
-├── PHASE3_PROGRESS.md
-├── PHASE3_COMPLETE.md
+├── EXECUTIVE_SUMMARY.md
 └── SETTINGS_REFACTORING_COMPLETE.md (this file)
 ```
 

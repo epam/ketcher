@@ -67,7 +67,7 @@ function MyComponent() {
  SettingsService
 ├── Storage (LocalStorage/Memory)
 ├── Validator (Ajv Schema)
-├── Migration (Namespaced → Flat)
+├── Migration (Legacy → Current)
 └── Events (Subscribe/Notify)
 ```
 
@@ -337,28 +337,18 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
 
 ### Automatic Migration
 
-Legacy namespaced format is automatically migrated to flat format:
+Settings are automatically migrated from legacy storage keys and validated:
 
 ```typescript
-// Legacy format (namespaced)
-{
-  editor: {
-    resetToSelect: true,
-    rotationStep: 15,
-  },
-  render: {
-    atomColoring: true,
-    bondThickness: 1.2,
-  },
-}
-
-// Migrated to flat format
+// Current format (flat structure - all settings at root level)
 {
   resetToSelect: true,
   rotationStep: 15,
   atomColoring: true,
   bondThickness: 1.2,
 }
+
+// All settings properties are at the root level (no nesting)
 ```
 
 ### Migration Sources
@@ -684,10 +674,8 @@ Test results:
 
 ## Further Reading
 
-- **SETTINGS_REFACTORING_COMPLETE.md** - Complete project documentation
-- **PHASE1_COMPLETE.md** - Core infrastructure details
-- **PHASE2_COMPLETE.md** - React integration
-- **PHASE3_COMPLETE.md** - Testing and validation
+- **SETTINGS_REFACTORING_COMPLETE.md** - Complete technical project documentation (in ketcher root)
+- **EXECUTIVE_SUMMARY.md** - Business-focused project summary (in ketcher root)
 
 ---
 

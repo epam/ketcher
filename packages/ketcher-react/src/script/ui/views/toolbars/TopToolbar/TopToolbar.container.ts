@@ -23,6 +23,7 @@ import action from 'src/script/ui/action/index';
 import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
+import { syncSettingsFromCore } from 'src/script/ui/state/options';
 
 const getActionState = (state) => state.actionState || {};
 
@@ -100,7 +101,26 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
-    onSettingsOpen: () => dispatchAction('settings'),
+    onSettingsOpen: () => {
+      // Sync Redux state with SettingsService before opening dialog
+      if (window.ketcher?.settingsService) {
+        const currentSettings = window.ketcher.settingsService.getSettings();
+        console.log('[SMALL MOLECULES] Settings button clicked');
+        console.log(
+          '[SMALL MOLECULES] Current settings from SettingsService:',
+          currentSettings,
+        );
+
+        // Sync Redux state with SettingsService
+        dispatch(syncSettingsFromCore(currentSettings));
+        console.log(
+          '[SMALL MOLECULES] Redux state synced with SettingsService',
+        );
+      } else {
+        console.warn('[SMALL MOLECULES] Settings service not available');
+      }
+      dispatchAction('settings');
+    },
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),

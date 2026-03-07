@@ -11,11 +11,11 @@ class TestSelectRectangle extends SelectRectangle {
     this.mousePositionAfterMove = after;
   }
 
-  public startRotationCenterDragForTest(event: MouseEvent | PointerEvent) {
+  public exposedStartRotationCenterDrag(event: MouseEvent | PointerEvent) {
     this.startRotationCenterDrag(event);
   }
 
-  public getUserRotationCenterForTest() {
+  public exposedUserRotationCenter() {
     return this.userRotationCenter;
   }
 }
@@ -67,22 +67,23 @@ describe('SelectBase mouseup', () => {
     const event = new MouseEvent('mousedown', { bubbles: true });
     const stopPropagationSpy = jest.spyOn(event, 'stopPropagation');
     const preventDefaultSpy = jest.spyOn(event, 'preventDefault');
+    const externalConnection = { connected: true };
 
     editor.lastCursorPosition = new Vec2(10, 20);
     Object.defineProperty(
       editor.drawingEntitiesManager,
       'externalConnectionsToSelection',
       {
-        get: () => [{}],
+        get: () => [externalConnection],
       },
     );
 
-    selectTool.startRotationCenterDragForTest(event);
+    selectTool.exposedStartRotationCenterDrag(event);
 
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(preventDefaultSpy).toHaveBeenCalled();
     expect(selectTool.mode).toBe('standby');
-    expect(selectTool.getUserRotationCenterForTest()).toBeNull();
+    expect(selectTool.exposedUserRotationCenter()).toBeNull();
   });
 
   it('starts rotation center drag when selection has no external connections', () => {
@@ -100,10 +101,10 @@ describe('SelectBase mouseup', () => {
       },
     );
 
-    selectTool.startRotationCenterDragForTest(event);
+    selectTool.exposedStartRotationCenterDrag(event);
 
     expect(selectTool.mode).toBe('rotating-center');
-    expect(selectTool.getUserRotationCenterForTest()).toEqual(
+    expect(selectTool.exposedUserRotationCenter()).toEqual(
       expectedRotationCenter,
     );
   });

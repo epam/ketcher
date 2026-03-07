@@ -27,17 +27,15 @@ describe('SettingsService', () => {
       const settings = service.getSettings();
       const defaults = getDefaultSettings();
 
-      expect(settings.editor.resetToSelect).toBe(defaults.editor.resetToSelect);
-      expect(settings.render.atomColoring).toBe(defaults.render.atomColoring);
-      expect(settings.server['smart-layout']).toBe(
-        defaults.server['smart-layout'],
-      );
+      expect(settings.resetToSelect).toBe(defaults.resetToSelect);
+      expect(settings.atomColoring).toBe(defaults.atomColoring);
+      expect(settings['smart-layout']).toBe(defaults['smart-layout']);
     });
 
     it('should load from storage when available', async () => {
       const customSettings: DeepPartial<Settings> = {
-        editor: { resetToSelect: false },
-        render: { atomColoring: false },
+        resetToSelect: false,
+        atomColoring: false,
       };
 
       await storage.save('ketcher-opts', customSettings as Settings);
@@ -46,13 +44,13 @@ describe('SettingsService', () => {
       await newService.init();
 
       const settings = newService.getSettings();
-      expect(settings.editor.resetToSelect).toBe(false);
-      expect(settings.render.atomColoring).toBe(false);
+      expect(settings.resetToSelect).toBe(false);
+      expect(settings.atomColoring).toBe(false);
     });
 
     it('should merge stored settings with defaults', async () => {
       const partialSettings: DeepPartial<Settings> = {
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       };
 
       await storage.save('ketcher-opts', partialSettings as Settings);
@@ -64,10 +62,10 @@ describe('SettingsService', () => {
       const defaults = getDefaultSettings();
 
       // Custom value
-      expect(settings.editor.resetToSelect).toBe(false);
+      expect(settings.resetToSelect).toBe(false);
       // Default values should still be present
-      expect(settings.editor.rotationStep).toBe(defaults.editor.rotationStep);
-      expect(settings.render.atomColoring).toBe(defaults.render.atomColoring);
+      expect(settings.rotationStep).toBe(defaults.rotationStep);
+      expect(settings.atomColoring).toBe(defaults.atomColoring);
     });
 
     it('should use defaults on invalid stored settings', async () => {
@@ -100,15 +98,18 @@ describe('SettingsService', () => {
   });
 
   describe('getSettings', () => {
-    it('should return complete settings object', () => {
+    it('should return complete settings object with flat structure', () => {
       const settings = service.getSettings();
 
-      expect(settings).toHaveProperty('editor');
-      expect(settings).toHaveProperty('render');
-      expect(settings).toHaveProperty('server');
-      expect(settings).toHaveProperty('debug');
-      expect(settings).toHaveProperty('miew');
-      expect(settings).toHaveProperty('macromolecules');
+      // Check for flat properties
+      expect(settings).toHaveProperty('resetToSelect');
+      expect(settings).toHaveProperty('rotationStep');
+      expect(settings).toHaveProperty('atomColoring');
+      expect(settings).toHaveProperty('bondThickness');
+      expect(settings).toHaveProperty('smart-layout');
+      expect(settings).toHaveProperty('showAtomIds');
+      expect(settings).toHaveProperty('miewMode');
+      expect(settings).toHaveProperty('selectionTool');
     });
 
     it('should return immutable settings (frozen copy)', () => {
@@ -123,92 +124,47 @@ describe('SettingsService', () => {
     });
   });
 
-  describe('category getters', () => {
-    it('should get editor settings', () => {
-      const editorSettings = service.getEditorSettings();
-
-      expect(editorSettings).toHaveProperty('resetToSelect');
-      expect(editorSettings).toHaveProperty('rotationStep');
-    });
-
-    it('should get render settings', () => {
-      const renderSettings = service.getRenderSettings();
-
-      expect(renderSettings).toHaveProperty('atomColoring');
-      expect(renderSettings).toHaveProperty('bondThickness');
-      expect(renderSettings).toHaveProperty('font');
-    });
-
-    it('should get server settings', () => {
-      const serverSettings = service.getServerSettings();
-
-      expect(serverSettings).toHaveProperty('smart-layout');
-      expect(serverSettings).toHaveProperty('dearomatize-on-load');
-    });
-
-    it('should get debug settings', () => {
-      const debugSettings = service.getDebugSettings();
-
-      expect(debugSettings).toHaveProperty('showAtomIds');
-      expect(debugSettings).toHaveProperty('showBondIds');
-    });
-
-    it('should get miew settings', () => {
-      const miewSettings = service.getMiewSettings();
-
-      expect(miewSettings).toHaveProperty('miewMode');
-      expect(miewSettings).toHaveProperty('miewTheme');
-    });
-
-    it('should get macromolecules settings', () => {
-      const macroSettings = service.getMacromoleculesSettings();
-
-      expect(macroSettings).toHaveProperty('selectionTool');
-      expect(macroSettings).toHaveProperty('editorLineLength');
-    });
-  });
-
   describe('updateSettings', () => {
     it('should update settings with partial object', async () => {
       await service.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
       const settings = service.getSettings();
-      expect(settings.editor.resetToSelect).toBe(false);
+      expect(settings.resetToSelect).toBe(false);
     });
 
     it('should deep merge nested updates', async () => {
       await service.updateSettings({
-        render: { atomColoring: false },
+        atomColoring: false,
       });
 
       await service.updateSettings({
-        render: { bondThickness: 2.5 },
+        bondThickness: 2.5,
       });
 
       const settings = service.getSettings();
-      expect(settings.render.atomColoring).toBe(false);
-      expect(settings.render.bondThickness).toBe(2.5);
+      expect(settings.atomColoring).toBe(false);
+      expect(settings.bondThickness).toBe(2.5);
     });
 
-    it('should preserve other settings when updating one category', async () => {
-      const initialEditor = service.getEditorSettings();
+    it('should preserve other settings when updating one property', async () => {
+      const initialRotation = service.getSettings().rotationStep;
 
       await service.updateSettings({
-        render: { atomColoring: false },
+        atomColoring: false,
       });
 
-      const updatedEditor = service.getEditorSettings();
-      expect(updatedEditor).toEqual(initialEditor);
+      const updatedRotation = service.getSettings().rotationStep;
+      expect(updatedRotation).toEqual(initialRotation);
     });
 
     it('should return updated settings', async () => {
       const updated = await service.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
-      expect(updated.editor.resetToSelect).toBe(false);
+      expect(updated.resetToSelect).toBe(false);
     });
 
     it('should emit settings:changed event', async () => {
@@ -216,21 +172,19 @@ describe('SettingsService', () => {
       service.subscribe(listener);
 
       await service.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
       expect(listener).toHaveBeenCalledTimes(1);
       expect(listener).toHaveBeenCalledWith(
-        expect.objectContaining({
-          editor: expect.objectContaining({ resetToSelect: false }),
-        }),
+        expect.objectContaining({ resetToSelect: false }),
       );
     });
 
     it('should validate settings before applying', async () => {
       await expect(
         service.updateSettings({
-          editor: { rotationStep: 200 } as any, // Invalid: max is 90
+          rotationStep: 200 as any, // Invalid: max is 90
         }),
       ).rejects.toThrow();
     });
@@ -240,7 +194,7 @@ describe('SettingsService', () => {
 
       try {
         await service.updateSettings({
-          editor: { rotationStep: 200 } as any,
+          rotationStep: 200 as any,
         });
       } catch {
         // Expected to fail
@@ -258,19 +212,19 @@ describe('SettingsService', () => {
       await autoSaveService.init();
 
       await autoSaveService.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
       const stored = await storage.load('ketcher-opts');
-      expect(stored?.editor?.resetToSelect).toBe(false);
+      expect(stored?.resetToSelect).toBe(false);
     });
   });
 
   describe('resetToDefaults', () => {
     it('should reset all settings to defaults', async () => {
       await service.updateSettings({
-        editor: { resetToSelect: false },
-        render: { atomColoring: false },
+        resetToSelect: false,
+        atomColoring: false,
       });
 
       await service.resetToDefaults();
@@ -296,9 +250,9 @@ describe('SettingsService', () => {
       await service.loadPreset('acs');
 
       const settings = service.getSettings();
-      expect(settings.render.atomColoring).toBe(false);
-      expect(settings.render.fontszUnit).toBe('pt');
-      expect(settings.render.bondThicknessUnit).toBe('pt');
+      expect(settings.atomColoring).toBe(false);
+      expect(settings.fontszUnit).toBe('pt');
+      expect(settings.bondThicknessUnit).toBe('pt');
     });
 
     it('should throw error for unknown preset', async () => {
@@ -332,23 +286,25 @@ describe('SettingsService', () => {
       expect(() => JSON.parse(json)).not.toThrow();
 
       const parsed = JSON.parse(json);
-      expect(parsed).toHaveProperty('editor');
-      expect(parsed).toHaveProperty('render');
+      // Flat format - should have properties at root level
+      expect(parsed).toHaveProperty('resetToSelect');
+      expect(parsed).toHaveProperty('atomColoring');
     });
 
     it('should import settings from JSON string', async () => {
       const customSettings = {
-        editor: { resetToSelect: false, rotationStep: 30 },
-        render: { atomColoring: false },
+        resetToSelect: false,
+        rotationStep: 30,
+        atomColoring: false,
       };
 
       const json = JSON.stringify(customSettings);
       await service.importSettings(json);
 
       const settings = service.getSettings();
-      expect(settings.editor.resetToSelect).toBe(false);
-      expect(settings.editor.rotationStep).toBe(30);
-      expect(settings.render.atomColoring).toBe(false);
+      expect(settings.resetToSelect).toBe(false);
+      expect(settings.rotationStep).toBe(30);
+      expect(settings.atomColoring).toBe(false);
     });
 
     it('should throw error on invalid JSON', async () => {
@@ -359,7 +315,7 @@ describe('SettingsService', () => {
 
     it('should validate imported settings', async () => {
       const invalidSettings = {
-        editor: { rotationStep: 200 }, // Invalid
+        rotationStep: 200, // Invalid
       };
 
       const json = JSON.stringify(invalidSettings);
@@ -373,7 +329,7 @@ describe('SettingsService', () => {
       const listener = jest.fn();
       service.subscribe(listener);
 
-      await service.updateSettings({ editor: { resetToSelect: false } });
+      await service.updateSettings({ resetToSelect: false });
 
       expect(listener).toHaveBeenCalled();
     });
@@ -385,7 +341,7 @@ describe('SettingsService', () => {
       service.subscribe(listener1);
       service.subscribe(listener2);
 
-      await service.updateSettings({ editor: { resetToSelect: false } });
+      await service.updateSettings({ resetToSelect: false });
 
       expect(listener1).toHaveBeenCalled();
       expect(listener2).toHaveBeenCalled();
@@ -397,7 +353,7 @@ describe('SettingsService', () => {
 
       unsubscribe();
 
-      await service.updateSettings({ editor: { resetToSelect: false } });
+      await service.updateSettings({ resetToSelect: false });
 
       expect(listener).not.toHaveBeenCalled();
     });
@@ -409,17 +365,18 @@ describe('SettingsService', () => {
         receivedSettings = settings;
       });
 
-      await service.updateSettings({ editor: { resetToSelect: false } });
+      await service.updateSettings({ resetToSelect: false });
 
       expect(receivedSettings).not.toBeNull();
-      expect(receivedSettings!.editor.resetToSelect).toBe(false);
+      expect(receivedSettings!.resetToSelect).toBe(false);
     });
   });
 
   describe('validateSettings', () => {
     it('should validate valid settings', () => {
       const result = service.validateSettings({
-        editor: { resetToSelect: true, rotationStep: 15 },
+        resetToSelect: true,
+        rotationStep: 15,
       });
 
       expect(result.valid).toBe(true);
@@ -427,7 +384,7 @@ describe('SettingsService', () => {
 
     it('should return errors for invalid settings', () => {
       const result = service.validateSettings({
-        editor: { rotationStep: 200 } as any, // Invalid
+        rotationStep: 200 as any, // Invalid
       });
 
       expect(result.valid).toBe(false);
@@ -447,7 +404,7 @@ describe('SettingsService', () => {
 
     it('should accept custom defaults', async () => {
       const customDefaults = {
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       };
 
       const customService = new SettingsService({
@@ -460,7 +417,7 @@ describe('SettingsService', () => {
       const settings = customService.getSettings();
       // Custom defaults are merged with standard defaults
       // Since storage is empty, it should use the custom default
-      expect(settings.editor.resetToSelect).toBe(false);
+      expect(settings.resetToSelect).toBe(false);
     });
 
     it('should accept custom storage key', async () => {
@@ -471,7 +428,7 @@ describe('SettingsService', () => {
       });
 
       await customService.init();
-      await customService.updateSettings({ editor: { resetToSelect: false } });
+      await customService.updateSettings({ resetToSelect: false });
 
       // Manually enable auto-save and update again
       const autoSaveService = new SettingsService({
@@ -481,7 +438,7 @@ describe('SettingsService', () => {
       });
       await autoSaveService.init();
       await autoSaveService.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
       const stored = await storage.load(customKey);
@@ -496,11 +453,11 @@ describe('SettingsService', () => {
       await serviceWithAutoSave.init();
 
       await serviceWithAutoSave.updateSettings({
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       });
 
       const stored = await storage.load('ketcher-opts');
-      expect(stored?.editor?.resetToSelect).toBe(false);
+      expect(stored?.resetToSelect).toBe(false);
     });
   });
 });

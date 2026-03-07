@@ -94,7 +94,7 @@ describe('Settings Integration Tests', () => {
 
       const store = createIntegrationStore(settingsService);
 
-      // Dispatch saveSettings action
+      // Dispatch saveSettings action with flat format
       const newSettings = {
         resetToSelect: false,
         rotationStep: 30,
@@ -106,8 +106,8 @@ describe('Settings Integration Tests', () => {
 
       // Verify Core received the update
       const coreSettings = settingsService.getSettings();
-      expect(coreSettings.editor.resetToSelect).toBe(false);
-      expect(coreSettings.editor.rotationStep).toBe(30);
+      expect(coreSettings.resetToSelect).toBe(false);
+      expect(coreSettings.rotationStep).toBe(30);
     });
 
     it('should sync settings from Core to Redux via hook subscription', async () => {
@@ -122,10 +122,11 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Update via Core directly
+      // Update via Core directly with flat format
       await act(async () => {
         await settingsService.updateSettings({
-          editor: { resetToSelect: false, rotationStep: 45 },
+          resetToSelect: false,
+          rotationStep: 45,
         });
       });
 
@@ -140,8 +141,8 @@ describe('Settings Integration Tests', () => {
       expect((reduxSettings as any).rotationStep).toBe(45);
 
       // Verify hook state was updated
-      expect(result.current.editorSettings?.resetToSelect).toBe(false);
-      expect(result.current.editorSettings?.rotationStep).toBe(45);
+      expect(result.current.settings?.resetToSelect).toBe(false);
+      expect(result.current.settings?.rotationStep).toBe(45);
     });
 
     it('should complete full circle: Redux → Core → Hook → Redux', async () => {
@@ -156,7 +157,7 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Step 1: Update via Redux action
+      // Step 1: Update via Redux action with flat format
       const updateFromRedux = {
         resetToSelect: false,
         atomColoring: false,
@@ -168,13 +169,13 @@ describe('Settings Integration Tests', () => {
 
       // Step 2: Verify Core received it
       const afterReduxUpdate = settingsService.getSettings();
-      expect(afterReduxUpdate.editor.resetToSelect).toBe(false);
-      expect(afterReduxUpdate.render.atomColoring).toBe(false);
+      expect(afterReduxUpdate.resetToSelect).toBe(false);
+      expect(afterReduxUpdate.atomColoring).toBe(false);
 
-      // Step 3: Update via hook (which updates Core)
+      // Step 3: Update via hook (which updates Core) with flat format
       await act(async () => {
         await result.current.updateSettings({
-          editor: { rotationStep: 60 },
+          rotationStep: 60,
         });
       });
 
@@ -229,7 +230,7 @@ describe('Settings Integration Tests', () => {
 
       const store = createIntegrationStore(settingsService);
 
-      // Update settings
+      // Update settings with flat format
       await act(async () => {
         await store.dispatch(
           saveSettings({ resetToSelect: false, rotationStep: 25 }) as any,
@@ -239,8 +240,8 @@ describe('Settings Integration Tests', () => {
       // Verify storage has the update
       const stored = await storage.load('ketcher-opts');
       expect(stored).toBeDefined();
-      expect(stored?.editor?.resetToSelect).toBe(false);
-      expect(stored?.editor?.rotationStep).toBe(25);
+      expect(stored?.resetToSelect).toBe(false);
+      expect(stored?.rotationStep).toBe(25);
     });
 
     // TODO: Investigate why SettingsService.init() is not loading stored values correctly
@@ -248,11 +249,10 @@ describe('Settings Integration Tests', () => {
     it.skip('should load persisted settings on initialization', async () => {
       const storage = new MemoryStorageAdapter();
 
-      // Pre-populate storage (create a copy to avoid mutation)
-      // Use true instead of false since default is 'paste' string
+      // Pre-populate storage with flat format
       const presets = JSON.parse(JSON.stringify(getDefaultSettings()));
-      presets.editor.resetToSelect = true;
-      presets.editor.rotationStep = 99;
+      presets.resetToSelect = true;
+      presets.rotationStep = 99;
       await storage.save('ketcher-opts', presets);
 
       // Create new service (should load from storage)
@@ -261,8 +261,8 @@ describe('Settings Integration Tests', () => {
 
       // Verify core has loaded the settings
       const coreSettings = settingsService.getSettings();
-      expect(coreSettings.editor.resetToSelect).toBe(true);
-      expect(coreSettings.editor.rotationStep).toBe(99);
+      expect(coreSettings.resetToSelect).toBe(true);
+      expect(coreSettings.rotationStep).toBe(99);
 
       const store = createIntegrationStore(settingsService);
 
@@ -271,8 +271,8 @@ describe('Settings Integration Tests', () => {
       });
 
       // Verify hook has the settings
-      expect(result.current.editorSettings?.resetToSelect).toBe(true);
-      expect(result.current.editorSettings?.rotationStep).toBe(99);
+      expect(result.current.settings?.resetToSelect).toBe(true);
+      expect(result.current.settings?.rotationStep).toBe(99);
     });
   });
 
@@ -298,10 +298,10 @@ describe('Settings Integration Tests', () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       });
 
-      // Verify ACS settings applied
+      // Verify ACS settings applied (flat format)
       const coreSettings = settingsService.getSettings();
-      expect(coreSettings.render.atomColoring).toBe(false); // ACS has no atom coloring
-      expect(coreSettings.render.fontszUnit).toBe('pt'); // ACS uses pt units
+      expect(coreSettings.atomColoring).toBe(false); // ACS has no atom coloring
+      expect(coreSettings.fontszUnit).toBe('pt'); // ACS uses pt units
 
       // Verify Redux was synced
       const reduxSettings = store.getState().options.settings;
@@ -372,10 +372,10 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Attempt update (should fail)
+      // Attempt update (should fail) with flat format
       await expect(async () => {
         await result.current.updateSettings({
-          editor: { resetToSelect: false },
+          resetToSelect: false,
         });
       }).rejects.toThrow('Update failed');
 
@@ -385,11 +385,11 @@ describe('Settings Integration Tests', () => {
       // Next update should work
       await act(async () => {
         await result.current.updateSettings({
-          editor: { rotationStep: 20 },
+          rotationStep: 20,
         });
       });
 
-      expect(result.current.editorSettings?.rotationStep).toBe(20);
+      expect(result.current.settings?.rotationStep).toBe(20);
     });
 
     it('should handle invalid settings gracefully', async () => {
@@ -403,19 +403,17 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Try to update with invalid value (rotationStep max is 90)
+      // Try to update with invalid value (rotationStep max is 90) with flat format
       await expect(async () => {
         await result.current.updateSettings({
-          editor: { rotationStep: 200 } as any,
+          rotationStep: 200 as any,
         });
       }).rejects.toThrow();
 
       // Settings should remain unchanged
       const coreSettings = settingsService.getSettings();
       const defaults = getDefaultSettings();
-      expect(coreSettings.editor.rotationStep).toBe(
-        defaults.editor.rotationStep,
-      );
+      expect(coreSettings.rotationStep).toBe(defaults.rotationStep);
     });
   });
 
@@ -431,11 +429,12 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Make some changes
+      // Make some changes with flat format
       await act(async () => {
         await result.current.updateSettings({
-          editor: { resetToSelect: false, rotationStep: 33 },
-          render: { atomColoring: false },
+          resetToSelect: false,
+          rotationStep: 33,
+          atomColoring: false,
         });
       });
 
@@ -446,7 +445,7 @@ describe('Settings Integration Tests', () => {
       // Make different changes
       await act(async () => {
         await result.current.updateSettings({
-          editor: { rotationStep: 88 },
+          rotationStep: 88,
         });
       });
 
@@ -461,9 +460,9 @@ describe('Settings Integration Tests', () => {
       });
 
       // Verify restored
-      expect(result.current.editorSettings?.resetToSelect).toBe(false);
-      expect(result.current.editorSettings?.rotationStep).toBe(33);
-      expect(result.current.renderSettings?.atomColoring).toBe(false);
+      expect(result.current.settings?.resetToSelect).toBe(false);
+      expect(result.current.settings?.rotationStep).toBe(33);
+      expect(result.current.settings?.atomColoring).toBe(false);
     });
   });
 
@@ -484,10 +483,10 @@ describe('Settings Integration Tests', () => {
         wrapper: createWrapper(store),
       });
 
-      // Update via first hook
+      // Update via first hook with flat format
       await act(async () => {
         await result1.current.updateSettings({
-          editor: { rotationStep: 42 },
+          rotationStep: 42,
         });
       });
 
@@ -497,8 +496,8 @@ describe('Settings Integration Tests', () => {
       });
 
       // Both hooks should have the update
-      expect(result1.current.editorSettings?.rotationStep).toBe(42);
-      expect(result2.current.editorSettings?.rotationStep).toBe(42);
+      expect(result1.current.settings?.rotationStep).toBe(42);
+      expect(result2.current.settings?.rotationStep).toBe(42);
     });
   });
 });

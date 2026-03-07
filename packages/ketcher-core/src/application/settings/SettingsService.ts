@@ -8,12 +8,6 @@ import type { ISettingsService } from './ISettingsService';
 import {
   SettingsValidationError,
   type Settings,
-  type EditorSettings,
-  type RenderSettings,
-  type ServerSettings,
-  type DebugSettings,
-  type MiewSettings,
-  type MacromoleculesSettings,
   type DeepPartial,
   type ValidationResult,
   type SettingsListener,
@@ -112,54 +106,6 @@ export class SettingsService implements ISettingsService {
   getSettings(): Settings {
     this.assertInitialized();
     return this.freeze(this.settings);
-  }
-
-  /**
-   * Get editor settings
-   */
-  getEditorSettings(): EditorSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.editor);
-  }
-
-  /**
-   * Get render settings
-   */
-  getRenderSettings(): RenderSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.render);
-  }
-
-  /**
-   * Get server settings
-   */
-  getServerSettings(): ServerSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.server);
-  }
-
-  /**
-   * Get debug settings
-   */
-  getDebugSettings(): DebugSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.debug);
-  }
-
-  /**
-   * Get Miew settings
-   */
-  getMiewSettings(): MiewSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.miew);
-  }
-
-  /**
-   * Get macromolecules settings
-   */
-  getMacromoleculesSettings(): MacromoleculesSettings {
-    this.assertInitialized();
-    return this.freeze(this.settings.macromolecules);
   }
 
   /**

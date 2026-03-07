@@ -18,14 +18,14 @@ const settingsService = new SettingsService({
 });
 await settingsService.init();
 
-// Get settings
+// Get settings (flat structure)
 const settings = settingsService.getSettings();
-console.log(settings.editor.rotationStep); // 15
+console.log(settings.rotationStep); // 15
 
-// Update settings
+// Update settings (flat structure)
 await settingsService.updateSettings({
-  editor: { rotationStep: 30 },
-  render: { atomColoring: false },
+  rotationStep: 30,
+  atomColoring: false,
 });
 
 // Load preset
@@ -45,18 +45,17 @@ import { useSettings } from 'ketcher-react';
 function MyComponent() {
   const {
     settings,
-    editorSettings,
     updateSettings,
     loadPreset,
   } = useSettings();
 
   const handleUpdate = async () => {
     await updateSettings({
-      editor: { resetToSelect: false }
+      resetToSelect: false
     });
   };
 
-  return <div>Rotation: {editorSettings?.rotationStep}</div>;
+  return <div>Rotation: {settings?.rotationStep}</div>;
 }
 ```
 
@@ -65,10 +64,10 @@ function MyComponent() {
 ## Architecture
 
 ```
-SettingsService
+ SettingsService
 ├── Storage (LocalStorage/Memory)
 ├── Validator (Ajv Schema)
-├── Migration (Legacy → Namespaced)
+├── Migration (Namespaced → Flat)
 └── Events (Subscribe/Notify)
 ```
 
@@ -83,7 +82,7 @@ SettingsService
 - ✅ **Migrated** - Automatic legacy format migration
 - ✅ **Immutable** - Frozen getters prevent mutations
 - ✅ **Extensible** - Pluggable storage adapters
-- ✅ **Tested** - 113 comprehensive tests
+- ✅ **Tested** - 106 comprehensive tests
 
 ---
 
@@ -98,12 +97,6 @@ interface ISettingsService {
 
   // Getters (return frozen immutable objects)
   getSettings(): Settings;
-  getEditorSettings(): EditorSettings;
-  getRenderSettings(): RenderSettings;
-  getServerSettings(): ServerSettings;
-  getDebugSettings(): DebugSettings;
-  getMiewSettings(): MiewSettings;
-  getMacromoleculesSettings(): MacromoleculesSettings;
 
   // Updates (async, validate, persist, emit events)
   updateSettings(partial: DeepPartial<Settings>): Promise<Settings>;
@@ -127,14 +120,41 @@ interface ISettingsService {
 
 ## Settings Structure
 
+All settings are in **flat format** at the root level:
+
 ```typescript
 interface Settings {
-  editor: EditorSettings;      // Editor behavior
-  render: RenderSettings;       // Visual rendering
-  server: ServerSettings;       // Server communication
-  debug: DebugSettings;         // Debug visualization
-  miew: MiewSettings;           // 3D viewer
-  macromolecules: MacromoleculesSettings; // Macromolecules editor
+  // Editor settings
+  resetToSelect: boolean | 'paste';
+  rotationStep: number;
+
+  // Render settings (40+ properties)
+  showValenceWarnings: boolean;
+  atomColoring: boolean;
+  font: string;
+  fontsz: number;
+  bondLength: number;
+  // ... etc
+
+  // Server settings
+  'smart-layout': boolean;
+  'ignore-stereochemistry-errors': boolean;
+  // ... etc
+
+  // Debug settings
+  showAtomIds: boolean;
+  showBondIds: boolean;
+  // ... etc
+
+  // Miew 3D viewer settings
+  miewMode: string;
+  miewTheme: string;
+  // ... etc
+
+  // Macromolecules settings
+  selectionTool: string;
+  editorLineLength: Record<string, number>;
+  // ... etc
 }
 ```
 
@@ -163,7 +183,7 @@ const service = new SettingsService({
   storageKey: 'my-app-settings',        // Custom key
   autoSave: false,                       // Manual save
   defaults: {
-    editor: { rotationStep: 45 },        // Custom defaults
+    rotationStep: 45,                    // Custom defaults
   },
 });
 ```
@@ -244,13 +264,13 @@ Settings are validated using Ajv JSON Schema:
 ```typescript
 // Automatic validation on update
 await settingsService.updateSettings({
-  editor: { rotationStep: 200 } // Error: max is 90
+  rotationStep: 200 // Error: max is 90
 });
 // Throws: SettingsValidationError
 
 // Manual validation
 const result = settingsService.validateSettings({
-  editor: { rotationStep: 45 }
+  rotationStep: 45
 });
 
 if (!result.valid) {
@@ -305,8 +325,8 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
   acs: { /* ... */ },
 
   myPreset: {
-    editor: { rotationStep: 45 },
-    render: { atomColoring: true },
+    rotationStep: 45,
+    atomColoring: true,
   },
 };
 ```
@@ -317,18 +337,10 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
 
 ### Automatic Migration
 
-Legacy flat format is automatically migrated to namespaced format:
+Legacy namespaced format is automatically migrated to flat format:
 
 ```typescript
-// Legacy format (flat)
-{
-  resetToSelect: true,
-  rotationStep: 15,
-  atomColoring: true,
-  bondThickness: 1.2,
-}
-
-// Migrated to namespaced format
+// Legacy format (namespaced)
 {
   editor: {
     resetToSelect: true,
@@ -338,6 +350,14 @@ Legacy flat format is automatically migrated to namespaced format:
     atomColoring: true,
     bondThickness: 1.2,
   },
+}
+
+// Migrated to flat format
+{
+  resetToSelect: true,
+  rotationStep: 15,
+  atomColoring: true,
+  bondThickness: 1.2,
 }
 ```
 
@@ -393,7 +413,7 @@ const url = URL.createObjectURL(blob);
 
 ```typescript
 // From file or clipboard
-const json = '{"editor":{"rotationStep":30},...}';
+const json = '{"rotationStep":30,"atomColoring":false,...}';
 
 await settingsService.importSettings(json);
 // Validates, merges, persists, and emits event
@@ -408,7 +428,7 @@ await settingsService.importSettings(json);
 ```typescript
 try {
   await settingsService.updateSettings({
-    editor: { rotationStep: 200 } // Invalid: max is 90
+    rotationStep: 200 // Invalid: max is 90
   });
 } catch (error) {
   if (error.name === 'SettingsValidationError') {
@@ -454,11 +474,11 @@ describe('My tests', () => {
 
   it('should update settings', async () => {
     await service.updateSettings({
-      editor: { rotationStep: 30 }
+      rotationStep: 30
     });
 
     const settings = service.getSettings();
-    expect(settings.editor.rotationStep).toBe(30);
+    expect(settings.rotationStep).toBe(30);
   });
 });
 ```
@@ -472,12 +492,12 @@ it('should persist to storage', async () => {
   await service.init();
 
   await service.updateSettings({
-    editor: { rotationStep: 42 }
+    rotationStep: 42
   });
 
   // Verify storage
   const stored = await storage.load('ketcher-opts');
-  expect(stored?.editor?.rotationStep).toBe(42);
+  expect(stored?.rotationStep).toBe(42);
 });
 ```
 
@@ -491,7 +511,7 @@ All getters return frozen (immutable) objects:
 
 ```typescript
 const settings = settingsService.getSettings();
-settings.editor.rotationStep = 99; // No effect (frozen)
+settings.rotationStep = 99; // No effect (frozen)
 ```
 
 ### Update Batching
@@ -501,15 +521,15 @@ Batch multiple updates in one call:
 ```typescript
 // Good: One update, one validation, one persist
 await settingsService.updateSettings({
-  editor: { rotationStep: 30 },
-  render: { atomColoring: false },
-  server: { 'smart-layout': true },
+  rotationStep: 30,
+  atomColoring: false,
+  'smart-layout': true,
 });
 
 // Bad: Three updates, three validations, three persists
-await settingsService.updateSettings({ editor: { rotationStep: 30 } });
-await settingsService.updateSettings({ render: { atomColoring: false } });
-await settingsService.updateSettings({ server: { 'smart-layout': true } });
+await settingsService.updateSettings({ rotationStep: 30 });
+await settingsService.updateSettings({ atomColoring: false });
+await settingsService.updateSettings({ 'smart-layout': true });
 ```
 
 ---
@@ -527,16 +547,13 @@ await settingsService.init();
 <MyApp settingsService={settingsService} />
 ```
 
-### 2. Use Category Getters
+### 2. Use Direct Property Access
 
 ```typescript
-// Good: Get only what you need
-const editorSettings = settingsService.getEditorSettings();
-const rotationStep = editorSettings.rotationStep;
-
-// Okay: Get all settings
+// Good: Access properties directly from flat structure
 const settings = settingsService.getSettings();
-const rotationStep = settings.editor.rotationStep;
+const rotationStep = settings.rotationStep;
+const atomColoring = settings.atomColoring;
 ```
 
 ### 3. Subscribe Once per Component
@@ -560,12 +577,12 @@ useEffect(() => {
 ```typescript
 // Good: Only update what changed
 await settingsService.updateSettings({
-  editor: { rotationStep: 30 } // Only this changed
+  rotationStep: 30 // Only this changed
 });
 
 // Bad: Update everything
 const allSettings = settingsService.getSettings();
-allSettings.editor.rotationStep = 30;
+allSettings.rotationStep = 30;
 await settingsService.updateSettings(allSettings); // Overwrites everything
 ```
 
@@ -600,7 +617,7 @@ const service = new SettingsService({
 
 ```typescript
 const result = service.validateSettings({
-  editor: { rotationStep: 200 } // Too high
+  rotationStep: 200 // Too high
 });
 console.log(result.errors); // Check what's wrong
 ```
@@ -638,7 +655,7 @@ settings/
 ├── SchemaValidator.ts       - Ajv validation
 ├── SettingsMigration.ts     - Legacy migration
 ├── index.ts                 - Public API exports
-└── __tests__/               - Unit tests (113 tests)
+└── __tests__/               - Unit tests (106 tests)
 ```
 
 ---
@@ -659,9 +676,9 @@ npm run test:unit -- --coverage
 ```
 
 Test results:
-- **113 tests**
+- **106 tests**
 - **100% passing**
-- **~8 seconds execution**
+- **~12 seconds execution**
 
 ---
 
@@ -686,11 +703,11 @@ For issues or questions:
 
 ## Version
 
-**Version:** 1.0
+**Version:** 2.0 (Flat Format)
 **Status:** Production Ready
-**Tests:** 113 passing
+**Tests:** 106 passing
 **Coverage:** ~95%
 
 ---
 
-**Last Updated:** 2026-03-05
+**Last Updated:** 2026-03-07

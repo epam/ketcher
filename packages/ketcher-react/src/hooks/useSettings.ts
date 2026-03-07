@@ -28,10 +28,10 @@ import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
  * const { settings, updateSettings, loadPreset } = useSettings();
  *
  * // Read settings
- * console.log(settings?.editor.resetToSelect);
+ * console.log(settings?.resetToSelect);
  *
  * // Update settings
- * await updateSettings({ render: { atomColoring: false } });
+ * await updateSettings({ atomColoring: false });
  *
  * // Load preset
  * await loadPreset('acs');
@@ -127,25 +127,9 @@ export function useSettings() {
   // Get available preset names
   const availablePresets = settingsService?.getAvailablePresets() || [];
 
-  // Get category-specific settings
-  const editorSettings = settings?.editor || null;
-  const renderSettings = settings?.render || null;
-  const serverSettings = settings?.server || null;
-  const debugSettings = settings?.debug || null;
-  const miewSettings = settings?.miew || null;
-  const macromoleculesSettings = settings?.macromolecules || null;
-
   return {
-    // All settings
+    // Flat settings
     settings,
-
-    // Category-specific settings
-    editorSettings,
-    renderSettings,
-    serverSettings,
-    debugSettings,
-    miewSettings,
-    macromoleculesSettings,
 
     // Update methods
     updateSettings,

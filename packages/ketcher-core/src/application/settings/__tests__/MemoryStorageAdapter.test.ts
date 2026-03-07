@@ -28,8 +28,8 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should load settings that were previously saved', async () => {
-      const testSettings = getDefaultSettings();
-      testSettings.editor.resetToSelect = false;
+      const testSettings: any = getDefaultSettings();
+      testSettings.resetToSelect = false;
 
       await adapter.save('test-key', testSettings);
       const loaded = await adapter.load('test-key');
@@ -59,11 +59,11 @@ describe('MemoryStorageAdapter', () => {
     });
 
     it('should overwrite existing settings', async () => {
-      const settings1 = getDefaultSettings();
-      settings1.editor.resetToSelect = false;
+      const settings1: any = getDefaultSettings();
+      settings1.resetToSelect = false;
 
-      const settings2 = getDefaultSettings();
-      settings2.editor.resetToSelect = true;
+      const settings2: any = getDefaultSettings();
+      settings2.resetToSelect = true;
 
       await adapter.save('test-key', settings1);
       await adapter.save('test-key', settings2);
@@ -72,15 +72,15 @@ describe('MemoryStorageAdapter', () => {
       expect(loaded).toBeDefined();
 
       // @ts-expect-error - type guard not recognized
-      expect(loaded!.editor.resetToSelect).toBe(true);
+      expect(loaded!.resetToSelect).toBe(true);
     });
 
     it('should support multiple keys', async () => {
-      const settings1 = getDefaultSettings();
-      settings1.editor.resetToSelect = false;
+      const settings1: any = getDefaultSettings();
+      settings1.resetToSelect = false;
 
-      const settings2 = getDefaultSettings();
-      settings2.editor.resetToSelect = true;
+      const settings2: any = getDefaultSettings();
+      settings2.resetToSelect = true;
 
       await adapter.save('key1', settings1);
       await adapter.save('key2', settings2);
@@ -91,9 +91,9 @@ describe('MemoryStorageAdapter', () => {
       expect(loaded2).toBeDefined();
 
       // @ts-expect-error - type guard not recognized
-      expect(loaded1!.editor.resetToSelect).toBe(false);
+      expect(loaded1!.resetToSelect).toBe(false);
       // @ts-expect-error - type guard not recognized
-      expect(loaded2!.editor.resetToSelect).toBe(true);
+      expect(loaded2!.resetToSelect).toBe(true);
     });
   });
 
@@ -158,19 +158,19 @@ describe('MemoryStorageAdapter', () => {
 
   describe('data isolation', () => {
     it('should store independent copies of settings', async () => {
-      const testSettings = getDefaultSettings();
-      testSettings.editor.resetToSelect = false;
+      const testSettings: any = getDefaultSettings();
+      testSettings.resetToSelect = false;
 
       await adapter.save('test-key', testSettings);
 
       // Modify original
-      testSettings.editor.resetToSelect = true;
+      testSettings.resetToSelect = true;
 
       // Stored version should not be affected
       const loaded = await adapter.load('test-key');
       expect(loaded).toBeDefined();
       // @ts-expect-error - type guard not recognized
-      expect(loaded!.editor.resetToSelect).toBe(false);
+      expect(loaded!.resetToSelect).toBe(false);
     });
   });
 });

@@ -46,14 +46,6 @@ const createMockSettingsService = () => {
 
   return {
     getSettings: jest.fn().mockReturnValue(mockSettings),
-    getEditorSettings: jest.fn().mockReturnValue(mockSettings.editor),
-    getRenderSettings: jest.fn().mockReturnValue(mockSettings.render),
-    getServerSettings: jest.fn().mockReturnValue(mockSettings.server),
-    getDebugSettings: jest.fn().mockReturnValue(mockSettings.debug),
-    getMiewSettings: jest.fn().mockReturnValue(mockSettings.miew),
-    getMacromoleculesSettings: jest
-      .fn()
-      .mockReturnValue(mockSettings.macromolecules),
     updateSettings: jest.fn().mockResolvedValue(mockSettings),
     resetToDefaults: jest.fn().mockResolvedValue(mockSettings),
     loadPreset: jest.fn().mockResolvedValue(mockSettings),
@@ -107,8 +99,8 @@ describe('useSettings', () => {
     });
   });
 
-  describe('category-specific settings', () => {
-    it('should return editor settings', () => {
+  describe('flat settings structure', () => {
+    it('should return settings with flat structure', () => {
       const mockService = createMockSettingsService();
       const store = createMockStore(mockService);
 
@@ -116,25 +108,15 @@ describe('useSettings', () => {
         wrapper: createWrapper(store),
       });
 
-      expect(result.current.editorSettings).toBeDefined();
-      expect(result.current.editorSettings).toHaveProperty('resetToSelect');
-    });
-
-    it('should return render settings', () => {
-      const mockService = createMockSettingsService();
-      const store = createMockStore(mockService);
-
-      const { result } = renderHook(() => useSettings(), {
-        wrapper: createWrapper(store),
-      });
-
-      expect(result.current.renderSettings).toBeDefined();
-      expect(result.current.renderSettings).toHaveProperty('atomColoring');
+      expect(result.current.settings).toBeDefined();
+      expect(result.current.settings).toHaveProperty('resetToSelect');
+      expect(result.current.settings).toHaveProperty('atomColoring');
+      expect(result.current.settings).toHaveProperty('smart-layout');
     });
   });
 
   describe('updateSettings', () => {
-    it('should call service updateSettings', async () => {
+    it('should call service updateSettings with flat format', async () => {
       const mockService = createMockSettingsService();
       const store = createMockStore(mockService);
 
@@ -142,7 +124,7 @@ describe('useSettings', () => {
         wrapper: createWrapper(store),
       });
 
-      const partial = { editor: { resetToSelect: false } };
+      const partial = { resetToSelect: false };
 
       await act(async () => {
         await result.current.updateSettings(partial);
@@ -160,7 +142,7 @@ describe('useSettings', () => {
 
       await expect(async () => {
         await result.current.updateSettings({
-          editor: { resetToSelect: false },
+          resetToSelect: false,
         });
       }).rejects.toThrow('Settings service not available');
     });
@@ -217,7 +199,7 @@ describe('useSettings', () => {
   });
 
   describe('importSettings', () => {
-    it('should call service importSettings with JSON', async () => {
+    it('should call service importSettings with flat JSON', async () => {
       const mockService = createMockSettingsService();
       const store = createMockStore(mockService);
 
@@ -225,7 +207,7 @@ describe('useSettings', () => {
         wrapper: createWrapper(store),
       });
 
-      const json = '{"editor":{"resetToSelect":false}}';
+      const json = '{"resetToSelect":false}';
 
       await act(async () => {
         await result.current.importSettings(json);

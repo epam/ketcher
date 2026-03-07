@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material/styles';
+import { Provider as StoreProvider } from 'react-redux';
 import { Menu, MenuContext } from 'components/menu';
+import { configureAppStore } from 'state';
 import { defaultTheme } from 'theming/defaultTheme';
 
 const mockClickHandler = jest.fn();
@@ -63,12 +67,30 @@ describe('Test SubMenu component', () => {
   });
 
   it('should render opened dropdown above toolbar overlays', () => {
-    render(withThemeAndStoreProvider(mockSubMenu()));
+    const customOverlayZIndex = 321;
+    const customTheme = {
+      ...createTheme(),
+      ketcher: {
+        ...defaultTheme,
+        zIndex: {
+          ...defaultTheme.zIndex,
+          overlay: customOverlayZIndex,
+        },
+      },
+    };
+
+    render(
+      <ThemeProvider theme={customTheme}>
+        <StoreProvider store={configureAppStore()}>
+          {mockSubMenu()}
+        </StoreProvider>
+      </ThemeProvider>,
+    );
 
     fireEvent.click(screen.getByTestId('dropdown-expand'));
 
     expect(screen.getByTestId('multi-tool-dropdown')).toHaveStyle(
-      `z-index: ${defaultTheme.zIndex.overlay}`,
+      `z-index: ${customOverlayZIndex}`,
     );
   });
 });

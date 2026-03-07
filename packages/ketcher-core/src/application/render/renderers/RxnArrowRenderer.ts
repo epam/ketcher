@@ -26,11 +26,12 @@ import { KetcherLogger, tfx } from 'utilities';
 import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer';
 import svgPath from 'svgpath';
 import { shouldApplyArrowSnappingStyle } from 'application/render/draw';
+import { ARROW_SNAPPING_COLOR } from 'application/render/snappingStyles';
 
 const ARROW_STROKE_WIDTH = 2;
 const ARROW_SNAPPING_STYLE = {
-  fill: '#365CFF',
-  stroke: '#365CFF',
+  fill: ARROW_SNAPPING_COLOR,
+  stroke: ARROW_SNAPPING_COLOR,
 };
 
 export class RxnArrowRenderer extends BaseRenderer {

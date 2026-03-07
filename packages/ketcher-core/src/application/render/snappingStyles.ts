@@ -1,0 +1,1 @@
+export const ARROW_SNAPPING_COLOR = '#365CFF';

@@ -1,6 +1,17 @@
 import Editor from '../../Editor';
 import { CoordinateTransformation, CoreEditor, Vec2 } from 'ketcher-core';
 
+function isResizableCoreArrow(
+  arrow: unknown,
+): arrow is { isResizing: boolean } {
+  return (
+    arrow !== null &&
+    typeof arrow === 'object' &&
+    'isResizing' in arrow &&
+    typeof arrow.isResizing === 'boolean'
+  );
+}
+
 export abstract class ArrowTool {
   // eslint-disable-next-line no-useless-constructor
   constructor(protected readonly editor: Editor) {}
@@ -25,7 +36,7 @@ export abstract class ArrowTool {
         arrowId,
       );
 
-    if (coreArrow && 'isResizing' in coreArrow) {
+    if (isResizableCoreArrow(coreArrow)) {
       coreArrow.isResizing = isResizing;
     }
   }

@@ -1,7 +1,9 @@
 import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { SelectBase } from 'application/editor/tools/select';
+import { Vec2 } from 'domain/entities';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
+import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -233,6 +235,71 @@ describe('CoreEditor', () => {
       window.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('context menu handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: polymerEditorTheme,
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should select monomer on right click when it was not selected', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      const modelChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+
+      editor.renderersContainer.update(modelChanges);
+
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const rightClickSelectedMonomersHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      const monomerDomElement = document.createElement('div');
+      (monomerDomElement as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+      document.body.appendChild(monomerDomElement);
+
+      expect(monomer.selected).toBeFalsy();
+      monomerDomElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(monomer.selected).toBeTruthy();
+      expect(rightClickSelectedMonomersHandler).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.anything(), [monomer]]),
+      );
+
+      monomerDomElement.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
     });
   });
 

@@ -27,6 +27,7 @@ import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'applicatio
 import svgPath from 'svgpath';
 
 const ARROW_STROKE_WIDTH = 2;
+const ARROW_SELECTION_HANDLE_RADIUS_SCALE_FACTOR = 8;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
@@ -66,13 +67,18 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   private get selectionHandleRadius() {
-    return this.editorSettings.macroModeScale / 8;
+    return (
+      this.editorSettings.macroModeScale /
+      ARROW_SELECTION_HANDLE_RADIUS_SCALE_FACTOR
+    );
   }
 
   private get selectionHandlePositions() {
     const { startPosition, endPosition } = this.scaledPosition;
 
     return [
+      // The root element is translated to the arrow start, so the first handle
+      // is rendered at the local origin.
       new Vec2(0, 0),
       new Vec2(
         endPosition.x - startPosition.x,

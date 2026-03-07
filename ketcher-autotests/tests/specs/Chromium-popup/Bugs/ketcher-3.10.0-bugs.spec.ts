@@ -34,7 +34,10 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import {
   AminoAcidNaturalAnalogue,
   ModificationType,
@@ -228,6 +231,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
+
   test('5."Arrange as a ring" should be hidden in Snake and Sequence modes context menu.', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8366
@@ -248,6 +252,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
+    const anyMonomerSymbol = getSymbolLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
     });
@@ -264,7 +269,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await ContextMenu(page, anyMonomer).open();
+    await ContextMenu(page, anyMonomerSymbol).open();
     await expect(arrangeAsARing).toBeHidden();
   });
   test('6.No limit on the number of added modification fields; new fields extend beyond the visible wizard area and shift action buttons', async () => {

@@ -14,13 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  BaseMonomer,
-  HydrogenBond,
-  PolymerBond,
-  RxnArrow,
-  Vec2,
-} from 'domain/entities';
+import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
 import {
   CoreEditor,
   EditorHistory,
@@ -50,6 +44,7 @@ import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { getSnappedArrowVector } from 'application/editor/operations/rxn/RxnArrowResize';
 
 type EmptySnapResult = {

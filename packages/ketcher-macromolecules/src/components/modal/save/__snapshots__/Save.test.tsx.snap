@@ -95,6 +95,7 @@ Object {
                       class="css-1w4st8l"
                       data-testid="filename-input"
                       id="filename"
+                      style="box-sizing: border-box; height: 28px;"
                       type="text"
                       value="ketcher"
                     />

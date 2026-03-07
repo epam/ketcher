@@ -64,6 +64,7 @@ describe('Save modal', () => {
     expect(view).toMatchSnapshot();
     expect(filenameInput).toBeVisible();
     expect(filenameInput).toHaveValue('ketcher');
+    expect(filenameInput).toHaveStyle('box-sizing: border-box; height: 28px;');
     expect(fileFormatInput).toBeVisible();
   });
 

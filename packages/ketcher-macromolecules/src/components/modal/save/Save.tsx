@@ -245,6 +245,7 @@ export const Save = ({
                 onChange={handleInputChange}
                 label="File name:"
                 data-testid="filename-input"
+                inputStyle={{ boxSizing: 'border-box', height: '28px' }}
               />
             </div>
             <StyledDropdown

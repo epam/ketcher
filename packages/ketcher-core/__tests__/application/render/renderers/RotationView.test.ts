@@ -73,4 +73,31 @@ describe('RotationView', () => {
     handleGroup.dispatchEvent(new Event('mouseleave'));
     expect(handleCircle?.getAttribute('fill')).toBe('#B4B9D6');
   });
+
+  it('should place the idle handle above the rotation center after the center is moved', () => {
+    const svg = createSvgElement('svg') as SVGSVGElement;
+    const layer = createSvgElement('g') as SVGGElement;
+    svg.appendChild(layer);
+    document.body.appendChild(svg);
+
+    RotationView.show(
+      select(layer) as unknown as D3SvgElementSelection<SVGGElement, void>,
+      {
+        center: new Vec2(140, 100),
+        boundingBox: {
+          left: 80,
+          top: 80,
+          width: 40,
+          height: 40,
+        },
+        isRotating: false,
+      },
+    );
+
+    const handleGroup = layer.querySelector('.rotation-handle');
+    const link = layer.querySelector('path');
+
+    expect(handleGroup?.getAttribute('transform')).toBe('translate(140,25)');
+    expect(link?.getAttribute('d')).toBe('M140,25l0,25');
+  });
 });

@@ -123,13 +123,13 @@ describe('SelectBase mouseup', () => {
     selectTool.mouseup(mouseUpEvent);
 
     expect(arrow.selected).toBe(true);
-    expect(arrow.endPosition.x).toBeCloseTo(resizedEndPosition.x);
-    expect(arrow.endPosition.y).toBeCloseTo(resizedEndPosition.y);
+    expect(arrow.endPosition.x).toBeCloseTo(resizedEndPosition.x, 2);
+    expect(arrow.endPosition.y).toBeCloseTo(resizedEndPosition.y, 2);
     expect(history.historyPointer).toBe(1);
 
     history.undo();
 
-    expect(arrow.endPosition.x).toBeCloseTo(initialEndPosition.x);
-    expect(arrow.endPosition.y).toBeCloseTo(initialEndPosition.y);
+    expect(arrow.endPosition.x).toBeCloseTo(initialEndPosition.x, 2);
+    expect(arrow.endPosition.y).toBeCloseTo(initialEndPosition.y, 2);
   });
 });

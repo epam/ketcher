@@ -109,6 +109,7 @@ abstract class SelectBase implements BaseTool {
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
+  protected static readonly RXN_ARROW_RESIZE_EPSILON = 0.001;
   protected static readonly RXN_ARROW_HANDLE_SELECTION_RADIUS = 8;
   protected rotationStartPositions = new Map<number, Vec2>();
   protected userRotationCenter: Vec2 | null = null;
@@ -1470,9 +1471,11 @@ abstract class SelectBase implements BaseTool {
     const currentStartPosition = new Vec2(context.arrow.startPosition);
     const currentEndPosition = new Vec2(context.arrow.endPosition);
     const hasStartChanged =
-      currentStartPosition.sub(context.initialStartPosition).length() > 0;
+      currentStartPosition.sub(context.initialStartPosition).length() >
+      SelectBase.RXN_ARROW_RESIZE_EPSILON;
     const hasEndChanged =
-      currentEndPosition.sub(context.initialEndPosition).length() > 0;
+      currentEndPosition.sub(context.initialEndPosition).length() >
+      SelectBase.RXN_ARROW_RESIZE_EPSILON;
 
     if (!hasStartChanged && !hasEndChanged) {
       return;

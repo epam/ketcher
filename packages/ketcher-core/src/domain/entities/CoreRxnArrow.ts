@@ -14,7 +14,12 @@ export class RxnArrow extends DrawingEntity {
     public height?: number,
     public initiallySelected?: initiallySelectedType,
   ) {
-    super();
+    super(
+      new Vec2(
+        (startEndPosition[0].x + startEndPosition[1].x) / 2,
+        (startEndPosition[0].y + startEndPosition[1].y) / 2,
+      ),
+    );
   }
 
   public get startPosition() {
@@ -46,6 +51,7 @@ export class RxnArrow extends DrawingEntity {
   }
 
   public override moveRelative(delta: Vec2): void {
+    super.moveRelative(delta);
     this.startPosition = this.startPosition.add(delta);
     this.endPosition = this.endPosition.add(delta);
   }
@@ -54,5 +60,17 @@ export class RxnArrow extends DrawingEntity {
     const delta = Vec2.diff(position, this.startPosition);
 
     this.moveRelative(delta);
+  }
+
+  public setStartEndPosition(position: [Vec2, Vec2]) {
+    this.startEndPosition = position;
+    super.moveAbsolute(this.center);
+  }
+
+  public rotateAroundOrigin(angleInDegrees: number, center: Vec2) {
+    this.setStartEndPosition([
+      this.startPosition.rotateAroundOrigin(angleInDegrees, center),
+      this.endPosition.rotateAroundOrigin(angleInDegrees, center),
+    ]);
   }
 }

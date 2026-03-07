@@ -658,6 +658,26 @@ export class DrawingEntitiesManager {
       }
 
       if (drawingEntity.selected) {
+        if (drawingEntity instanceof RxnArrow) {
+          command.merge(
+            this.createDrawingEntityRedrawCommand(
+              this.rotateRxnArrowModelChange.bind(
+                this,
+                drawingEntity,
+                center,
+                angleInDegrees,
+              ),
+              this.rotateRxnArrowModelChange.bind(
+                this,
+                drawingEntity,
+                center,
+                -angleInDegrees,
+              ),
+            ),
+          );
+          return;
+        }
+
         const newPosition = drawingEntity.position.rotateAroundOrigin(
           angleInDegrees,
           center,
@@ -723,6 +743,26 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  private rotateRxnArrowModelChange(
+    rxnArrow: RxnArrow,
+    center: Vec2,
+    angleInDegrees: number,
+  ) {
+    rxnArrow.rotateAroundOrigin(angleInDegrees, center);
+
+    return rxnArrow;
+  }
+
+  private setRxnArrowPositionModelChange(
+    rxnArrow: RxnArrow,
+    startPosition: Vec2,
+    endPosition: Vec2,
+  ) {
+    rxnArrow.setStartEndPosition([startPosition, endPosition]);
+
+    return rxnArrow;
   }
 
   public flipSelectedDrawingEntities(flipDirection: 'horizontal' | 'vertical') {
@@ -3950,6 +3990,8 @@ export class DrawingEntitiesManager {
 
   public createRotationHistoryCommand(
     initialPositions: Map<number, Vec2>,
+    rotationCenter?: Vec2 | null,
+    rotationAngleInDegrees = 0,
   ): Command {
     const command = new Command();
     const zeroOffset = new Vec2(0, 0);
@@ -3970,6 +4012,39 @@ export class DrawingEntitiesManager {
       }
 
       if (!drawingEntity.selected) {
+        return;
+      }
+
+      if (drawingEntity instanceof RxnArrow) {
+        if (!rotationCenter || rotationAngleInDegrees === 0) {
+          return;
+        }
+
+        const currentStartPosition = new Vec2(drawingEntity.startPosition);
+        const currentEndPosition = new Vec2(drawingEntity.endPosition);
+
+        command.merge(
+          this.createDrawingEntityRedrawCommand(
+            this.setRxnArrowPositionModelChange.bind(
+              this,
+              drawingEntity,
+              currentStartPosition,
+              currentEndPosition,
+            ),
+            this.setRxnArrowPositionModelChange.bind(
+              this,
+              drawingEntity,
+              currentStartPosition.rotateAroundOrigin(
+                -rotationAngleInDegrees,
+                rotationCenter,
+              ),
+              currentEndPosition.rotateAroundOrigin(
+                -rotationAngleInDegrees,
+                rotationCenter,
+              ),
+            ),
+          ),
+        );
         return;
       }
 

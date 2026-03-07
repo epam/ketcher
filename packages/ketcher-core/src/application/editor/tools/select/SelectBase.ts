@@ -1327,6 +1327,8 @@ abstract class SelectBase implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.createRotationHistoryCommand(
         this.rotationStartPositions,
+        this.rotationCenter,
+        this.currentRotationAngle,
       );
 
     history.update(modelChanges);

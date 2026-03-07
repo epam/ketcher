@@ -24,6 +24,8 @@ export class ReactionArrowMoveTool
       assert(reArrow != null);
       reArrow.isResizing = isResizing;
     }
+
+    this.updateCoreArrowResizingState(closestItem.id, isResizing);
   }
 
   mousedown(event: PointerEvent, closestItem: ReactionArrowClosestItem) {

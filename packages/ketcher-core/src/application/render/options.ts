@@ -18,6 +18,7 @@ import { Vec2 } from 'domain/entities';
 import utils from '../editor/shared/utils';
 import { ShowHydrogenLabels } from './restruct/reatom';
 import { RenderOptions } from './render.types';
+import { ARROW_SNAPPING_COLOR } from './snappingStyles';
 
 function defaultOptions(renderOptions: RenderOptions): RenderOptions {
   const options = getOptionsWithConvertedUnits(renderOptions);
@@ -83,8 +84,8 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       'stroke-linejoin': 'round',
     },
     arrowSnappingStyle: {
-      fill: '#365CFF',
-      stroke: '#365CFF',
+      fill: ARROW_SNAPPING_COLOR,
+      stroke: ARROW_SNAPPING_COLOR,
     },
     bondSnappingStyle: {
       fill: '#365CFF',

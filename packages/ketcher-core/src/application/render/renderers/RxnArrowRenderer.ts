@@ -25,8 +25,14 @@ import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/rend
 import { KetcherLogger, tfx } from 'utilities';
 import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer';
 import svgPath from 'svgpath';
+import { shouldApplyArrowSnappingStyle } from 'application/render/draw';
+import { ARROW_SNAPPING_COLOR } from 'application/render/snappingStyles';
 
 const ARROW_STROKE_WIDTH = 2;
+const ARROW_SNAPPING_STYLE = {
+  fill: ARROW_SNAPPING_COLOR,
+  stroke: ARROW_SNAPPING_COLOR,
+};
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
@@ -247,6 +253,10 @@ export class RxnArrowRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     const paths = this.generateArrowPath();
+    const shouldApplySnappingHighlight = shouldApplyArrowSnappingStyle(
+      this.arrow.isResizing,
+      this.getArrowParams().angle,
+    );
 
     paths.forEach(({ d, attrs }) => {
       const path = this.rootElement
@@ -263,6 +273,12 @@ export class RxnArrowRenderer extends BaseRenderer {
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
       });
+
+      if (shouldApplySnappingHighlight) {
+        path
+          ?.attr('fill', ARROW_SNAPPING_STYLE.fill)
+          .attr('stroke', ARROW_SNAPPING_STYLE.stroke);
+      }
     });
 
     this.appendHoverAreaElement();

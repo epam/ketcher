@@ -10,6 +10,7 @@ import {
 import { Editor } from '../../Editor';
 import assert from 'assert';
 import { ArrowAddTool } from './arrow.types';
+import { ArrowTool } from './arrowTool';
 
 interface BaseDragContext {
   p0: Vec2;
@@ -28,24 +29,14 @@ interface DragContextInProgress extends BaseDragContext {
 
 type ReactionArrowDragContext = InitialDragContext | DragContextInProgress;
 
-export class ReactionArrowAddTool implements ArrowAddTool {
+export class ReactionArrowAddTool extends ArrowTool implements ArrowAddTool {
   static readonly MIN_LENGTH = 0.5;
   static readonly DEFAULT_LENGTH = 1;
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
-  // eslint-disable-next-line no-useless-constructor
-  constructor(
-    private readonly editor: Editor,
-    private readonly mode: RxnArrowMode,
-  ) {}
-
-  private get render() {
-    return this.editor.render;
-  }
-
-  private get reStruct() {
-    return this.render.ctab;
+  constructor(editor: Editor, private readonly mode: RxnArrowMode) {
+    super(editor);
   }
 
   mousedown(event: MouseEvent) {
@@ -148,5 +139,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     const reArrow = this.reStruct.rxnArrows.get(arrowId);
     assert(reArrow != null);
     reArrow.isResizing = isResizing;
+    this.updateCoreArrowResizingState(arrowId, isResizing);
   }
 }

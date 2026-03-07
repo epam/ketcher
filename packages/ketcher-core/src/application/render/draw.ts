@@ -32,6 +32,33 @@ export const ARROW_OFFSET = 0.1; // 4
 export const ARROW_DASH_INTERVAL = 0.0875; // 3.5
 export const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
 export const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
+const CARDINAL_DIRECTION_ANGLES = [0, 90, 180, 270];
+
+/**
+ * Normalizes a snapped arrow angle to the [0, 360) range so equivalent
+ * directions such as -90 and 270 can be checked with the same axis list.
+ * The initial rounding intentionally matches the previous toFixed()-based
+ * whole-degree highlight check, and the added 360 keeps negative angles
+ * positive before the final modulo operation.
+ */
+function normalizeAngleTo360Range(angle: number) {
+  return ((Math.round(angle) % 360) + 360) % 360;
+}
+
+/**
+ * Returns true when a resizing arrow is aligned to one of the four cardinal
+ * directions and should therefore receive snapped-axis highlighting.
+ */
+export function shouldApplyArrowSnappingStyle(
+  isResizing: boolean,
+  angle: number,
+) {
+  const normalizedRoundedAngle = normalizeAngleTo360Range(angle);
+
+  return (
+    isResizing && CARDINAL_DIRECTION_ANGLES.includes(normalizedRoundedAngle)
+  );
+}
 
 export function getArrowHeadDimensions(options: RenderOptions) {
   const { microModeScale } = getOptionsWithConvertedUnits(options);
@@ -112,9 +139,10 @@ function arrow(
   options: RenderOptions,
   isResizing: boolean,
 ) {
-  const shouldApplySnappingStyle =
-    isResizing &&
-    ['0', '-0', '90', '-90', '180', '-180'].includes(angle.toFixed());
+  const shouldApplySnappingStyle = shouldApplyArrowSnappingStyle(
+    isResizing,
+    angle,
+  );
 
   switch (item.mode) {
     case RxnArrowMode.OpenAngle: {

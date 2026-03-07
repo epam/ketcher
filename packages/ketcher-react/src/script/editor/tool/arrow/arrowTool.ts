@@ -1,5 +1,5 @@
 import Editor from '../../Editor';
-import { CoordinateTransformation, Vec2 } from 'ketcher-core';
+import { CoordinateTransformation, CoreEditor, Vec2 } from 'ketcher-core';
 
 export abstract class ArrowTool {
   // eslint-disable-next-line no-useless-constructor
@@ -17,5 +17,16 @@ export abstract class ArrowTool {
     return CoordinateTransformation.pageToModel(event, this.render).sub(
       original,
     );
+  }
+
+  protected updateCoreArrowResizingState(arrowId: number, isResizing: boolean) {
+    const coreArrow =
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager.rxnArrows.get(
+        arrowId,
+      );
+
+    if (coreArrow && 'isResizing' in coreArrow) {
+      coreArrow.isResizing = isResizing;
+    }
   }
 }

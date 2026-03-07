@@ -33,6 +33,15 @@ export const ARROW_DASH_INTERVAL = 0.0875; // 3.5
 export const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
 export const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
 
+export function shouldApplyArrowSnappingStyle(
+  isResizing: boolean,
+  angle: number,
+) {
+  const normalizedRoundedAngle = ((Math.round(angle) % 360) + 360) % 360;
+
+  return isResizing && [0, 90, 180, 270].includes(normalizedRoundedAngle);
+}
+
 export function getArrowHeadDimensions(options: RenderOptions) {
   const { microModeScale } = getOptionsWithConvertedUnits(options);
 
@@ -112,9 +121,10 @@ function arrow(
   options: RenderOptions,
   isResizing: boolean,
 ) {
-  const shouldApplySnappingStyle =
-    isResizing &&
-    ['0', '-0', '90', '-90', '180', '-180'].includes(angle.toFixed());
+  const shouldApplySnappingStyle = shouldApplyArrowSnappingStyle(
+    isResizing,
+    angle,
+  );
 
   switch (item.mode) {
     case RxnArrowMode.OpenAngle: {

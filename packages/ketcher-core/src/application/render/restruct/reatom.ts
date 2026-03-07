@@ -1307,7 +1307,10 @@ function shouldDisplayStereoLabel(
 function isLabelVisible(restruct, options, atom: ReAtom) {
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
-  const visibleNeighbors = getVisibleNeighborHalfBonds(restruct.molecule, atom);
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(
+    restruct.molecule,
+    atom,
+  );
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero;
@@ -1362,7 +1365,7 @@ function displayHydrogen(
   atom: ReAtom,
   hydrogenLabels: ShowHydrogenLabels,
 ) {
-  const visibleNeighbors = getVisibleNeighborHalfBonds(struct, atom);
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
 
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
@@ -1376,7 +1379,7 @@ function displayHydrogen(
 }
 
 function shouldHydrogenBeOnLeft(struct, atom) {
-  const visibleNeighbors = getVisibleNeighborHalfBonds(struct, atom);
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
 
   if (visibleNeighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
@@ -1397,7 +1400,7 @@ function shouldHydrogenBeOnLeft(struct, atom) {
   return false;
 }
 
-function getVisibleNeighborHalfBonds(struct: Struct, atom: ReAtom): number[] {
+function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
   return atom.a.neighbors.filter((neighborHalfBondId) => {
     const halfBond = struct.halfBonds.get(neighborHalfBondId);
 

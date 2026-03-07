@@ -170,7 +170,6 @@ describe('expanded monomer rendering', () => {
     addBond(struct, attachmentAtomId, leavingGroupAtomId);
 
     const monomer = new Peptide(peptideMonomerItem);
-    monomer.monomerItem.expanded = true;
     const monomerSGroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
     const monomerSGroupId = struct.sgroups.add(monomerSGroup);
     monomerSGroup.id = monomerSGroupId;
@@ -188,7 +187,6 @@ describe('expanded monomer rendering', () => {
     );
 
     const neighboringMonomer = new Peptide(peptideMonomerItem);
-    neighboringMonomer.monomerItem.expanded = true;
     const neighboringMonomerSGroup = new MonomerMicromolecule(
       SGroup.TYPES.SUP,
       neighboringMonomer,

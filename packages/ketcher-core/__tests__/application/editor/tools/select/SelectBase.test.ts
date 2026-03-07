@@ -11,15 +11,15 @@ class TestSelectRectangle extends SelectRectangle {
     this.mousePositionAfterMove = after;
   }
 
-  public startRotationForTest(event: MouseEvent | PointerEvent) {
+  public startRotationPublic(event: MouseEvent | PointerEvent) {
     this.startRotation(event);
   }
 
-  public handleRotationMoveForTest(event: MouseEvent) {
+  public handleRotationMovePublic(event: MouseEvent) {
     this.handleRotationMove(event);
   }
 
-  public finishRotationForTest() {
+  public finishRotationPublic() {
     this.finishRotation();
   }
 }
@@ -86,7 +86,7 @@ describe('SelectBase mouseup', () => {
 
     const center = Coordinates.modelToCanvas(arrow.center);
     editor.lastCursorPositionOfCanvas = new Vec2(center.x + 100, center.y);
-    selectTool.startRotationForTest({
+    selectTool.startRotationPublic({
       stopPropagation: jest.fn(),
       preventDefault: jest.fn(),
     } as unknown as MouseEvent);
@@ -97,7 +97,7 @@ describe('SelectBase mouseup', () => {
       center.y + Math.sin(snappedAngle) * 100,
     );
 
-    selectTool.handleRotationMoveForTest({
+    selectTool.handleRotationMovePublic({
       ctrlKey: false,
     } as MouseEvent);
 
@@ -110,7 +110,7 @@ describe('SelectBase mouseup', () => {
       Math.PI;
     expect(currentAngle).toBeCloseTo(15, 5);
 
-    selectTool.finishRotationForTest();
+    selectTool.finishRotationPublic();
     expect(history.historyPointer).toBe(1);
 
     history.undo();
@@ -150,7 +150,7 @@ describe('SelectBase mouseup', () => {
 
     const center = Coordinates.modelToCanvas(arrow.center);
     editor.lastCursorPositionOfCanvas = new Vec2(center.x + 100, center.y);
-    selectTool.startRotationForTest({
+    selectTool.startRotationPublic({
       stopPropagation: jest.fn(),
       preventDefault: jest.fn(),
     } as unknown as MouseEvent);
@@ -161,7 +161,7 @@ describe('SelectBase mouseup', () => {
       center.y + Math.sin(unsnappedAngle) * 100,
     );
 
-    selectTool.handleRotationMoveForTest({
+    selectTool.handleRotationMovePublic({
       ctrlKey: true,
     } as MouseEvent);
 

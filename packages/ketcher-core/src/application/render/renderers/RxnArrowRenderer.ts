@@ -38,6 +38,13 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.arrow.setRenderer(this);
   }
 
+  public override get selectionPoints() {
+    return [
+      Scale.modelToCanvas(this.arrow.startPosition, this.editorSettings),
+      Scale.modelToCanvas(this.arrow.endPosition, this.editorSettings),
+    ];
+  }
+
   private get scaledPosition() {
     const startPositionInPixels = Scale.modelToCanvas(
       this.arrow.startPosition,

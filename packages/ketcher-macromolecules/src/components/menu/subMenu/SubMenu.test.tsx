@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Menu, MenuContext } from 'components/menu';
+import { defaultTheme } from 'theming/defaultTheme';
 
 const mockClickHandler = jest.fn();
 const MOCK_NAME = 'select-lasso';
@@ -39,14 +40,35 @@ const mockSubMenu = () => {
 };
 
 describe('Test SubMenu component', () => {
+  beforeEach(() => {
+    const ketcherRoot = document.createElement('div');
+    ketcherRoot.className = 'Ketcher-polymer-editor-root';
+    document.body.appendChild(ketcherRoot);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
   it('should be rendered without crashing', () => {
     const { asFragment } = render(withThemeAndStoreProvider(mockSubMenu()));
     expect(asFragment).toMatchSnapshot();
   });
+
   it('should call provided callback when header icon is clicked', () => {
     render(withThemeAndStoreProvider(mockSubMenu()));
     const button = screen.getByRole('button');
     fireEvent.click(button);
     expect(mockClickHandler).toHaveBeenCalled();
+  });
+
+  it('should render opened dropdown above toolbar overlays', () => {
+    render(withThemeAndStoreProvider(mockSubMenu()));
+
+    fireEvent.click(screen.getByTestId('dropdown-expand'));
+
+    expect(screen.getByTestId('multi-tool-dropdown')).toHaveStyle(
+      `z-index: ${defaultTheme.zIndex.overlay}`,
+    );
   });
 });

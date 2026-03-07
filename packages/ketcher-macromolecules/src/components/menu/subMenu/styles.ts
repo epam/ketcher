@@ -51,7 +51,7 @@ export const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
   border-radius: 4px;
   flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
-  z-index: 1;
+  z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
   background-color: white;
   padding: 2px;
   width: ${({ isVertical, isAutoSize }) =>

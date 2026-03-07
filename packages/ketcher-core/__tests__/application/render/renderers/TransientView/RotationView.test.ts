@@ -117,4 +117,44 @@ describe('RotationView', () => {
     );
     expect(arcPath?.getAttribute('d')).toContain('M100,10A90,90 0 1,1');
   });
+
+  it('uses canvas-space cursor distance for the protractor radius while rotating', () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const transientLayer = select(svg).append('g');
+
+    jest
+      .spyOn(Coordinates, 'viewToCanvas')
+      .mockImplementation(
+        (position) => new Vec2(position.x / 2, position.y / 2),
+      );
+    jest
+      .spyOn(Coordinates, 'canvasToView')
+      .mockImplementation(
+        (position) => new Vec2(position.x * 2, position.y * 2),
+      );
+
+    RotationView.show(
+      transientLayer as unknown as D3SvgElementSelection<SVGGElement, void>,
+      {
+        center: new Vec2(100, 100),
+        boundingBox: {
+          left: 80,
+          top: 80,
+          width: 40,
+          height: 40,
+        },
+        rotationAngle: Math.PI / 3,
+        isRotating: true,
+        cursor: new Vec2(300, 200),
+      },
+    );
+
+    const handleGroup = svg.querySelector('.rotation-handle');
+    const protractorCircle = Array.from(svg.querySelectorAll('circle')).find(
+      (circle) => circle.getAttribute('cx') === '100',
+    );
+
+    expect(handleGroup?.getAttribute('transform')).toBe('translate(150,100)');
+    expect(protractorCircle?.getAttribute('r')).toBe('40');
+  });
 });

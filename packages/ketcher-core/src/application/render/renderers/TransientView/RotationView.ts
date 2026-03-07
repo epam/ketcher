@@ -168,9 +168,7 @@ export class RotationView extends TransientView {
     const cursorInCanvas =
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
 
-    const handleCenterX = isRotating
-      ? cursorInCanvas?.x ?? center.x
-      : boundingBox.left + boundingBox.width / 2;
+    const handleCenterX = isRotating ? cursorInCanvas?.x ?? center.x : center.x;
     const handleCenterY =
       cursorInCanvas?.y ??
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS;
@@ -300,19 +298,18 @@ export class RotationView extends TransientView {
 
     // Draw rotation protractor and arc when rotating
     if (isRotating) {
-      const centerInView = Coordinates.canvasToView(center);
       const fallbackRadius =
         Math.sqrt(
-          Math.pow(handleCenterY - centerInView.y, 2) +
-            Math.pow(handleCenterX - centerInView.x, 2),
+          Math.pow(handleCenterY - center.y, 2) +
+            Math.pow(handleCenterX - center.x, 2),
         ) -
         STYLE.HANDLE_MARGIN -
         STYLE.HANDLE_RADIUS;
 
-      const cursorDistance = cursor
+      const cursorDistance = cursorInCanvas
         ? Math.sqrt(
-            Math.pow(cursor.x - centerInView.x, 2) +
-              Math.pow(cursor.y - centerInView.y, 2),
+            Math.pow(cursorInCanvas.x - center.x, 2) +
+              Math.pow(cursorInCanvas.y - center.y, 2),
           )
         : undefined;
 

@@ -1,11 +1,15 @@
 import { Bond } from 'ketcher-core';
 
-import { isValidRnaPresetStructure } from './RnaPresetStructureValidation';
+import {
+  isValidRnaPresetStructure,
+  RnaPresetComponentStructures,
+  RnaPresetValidationStruct,
+} from './RnaPresetStructureValidation';
 
 const createWizardStruct = (
   atomIds: number[],
   bonds: Array<Pick<Bond, 'begin' | 'end'>>,
-) => ({
+): RnaPresetValidationStruct => ({
   atoms: new Map(atomIds.map((atomId) => [atomId, {}])),
   bonds: new Map(bonds.map((bond, bondId) => [bondId, bond])),
 });
@@ -18,7 +22,7 @@ const createRnaPresetWizardState = ({
   sugar: number[];
   base?: number[];
   phosphate?: number[];
-}) => ({
+}): RnaPresetComponentStructures => ({
   sugar: {
     structure: {
       atoms: sugar,
@@ -129,8 +133,8 @@ describe('isValidRnaPresetStructure', () => {
     ({ atomIds, bonds, components, expected }) => {
       expect(
         isValidRnaPresetStructure(
-          createWizardStruct(atomIds, bonds) as never,
-          components as never,
+          createWizardStruct(atomIds, bonds),
+          components,
         ),
       ).toBe(expected);
     },

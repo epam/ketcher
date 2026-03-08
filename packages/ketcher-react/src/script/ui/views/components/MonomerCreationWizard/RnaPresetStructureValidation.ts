@@ -1,11 +1,23 @@
-import { Bond, Struct } from 'ketcher-core';
+import { Bond } from 'ketcher-core';
 
 import { RnaPresetWizardState } from './MonomerCreationWizard.types';
 
-type RnaPresetComponentStructures = Pick<
-  RnaPresetWizardState,
-  'base' | 'sugar' | 'phosphate'
->;
+export type RnaPresetValidationStruct = {
+  atoms: {
+    forEach: (callback: (_value: unknown, atomId: number) => void) => void;
+  };
+  bonds: {
+    forEach: (
+      callback: (bond: Pick<Bond, 'begin' | 'end'>, bondId: number) => void,
+    ) => void;
+  };
+};
+
+export type RnaPresetComponentStructures = {
+  base: Pick<RnaPresetWizardState['base'], 'structure'>;
+  sugar: Pick<RnaPresetWizardState['sugar'], 'structure'>;
+  phosphate: Pick<RnaPresetWizardState['phosphate'], 'structure'>;
+};
 
 const hasComponentStructure = (
   structure?: RnaPresetWizardState['base']['structure'],
@@ -27,7 +39,7 @@ const hasBondBetweenComponents = (
 };
 
 export const isValidRnaPresetStructure = (
-  wizardStruct: Pick<Struct, 'atoms' | 'bonds'>,
+  wizardStruct: RnaPresetValidationStruct,
   componentStructures: RnaPresetComponentStructures,
 ) => {
   const sugarAtomIds = componentStructures.sugar.structure?.atoms || [];

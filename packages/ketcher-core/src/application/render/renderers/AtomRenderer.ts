@@ -5,13 +5,15 @@ import { CoreEditor, editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, StereoLabel, Vec2 } from 'domain/entities';
+import { StereoLabel, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
 } from 'application/render/renderers/constants';
+
+const LABEL_BASE_DISTANCE = 3;
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -652,24 +654,15 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const { width, height } = this.cipTextElementBBox;
-
-    const modifiedTextBBox = {
-      x: this.scaledPosition.x - width / 2,
-      y: this.scaledPosition.y - height / 2,
+    const direction = this.bisectLargestSector();
+    const centerDistance = util.getLabelCenterDistance({
+      anchorPoint: this.scaledPosition,
+      direction,
       width,
       height,
-    };
-    const direction = this.bisectLargestSector();
-
-    const baseDistance = 3;
-    const shiftDistance =
-      baseDistance +
-      util.shiftRayBox(
-        this.scaledPosition,
-        direction.negated(),
-        Box2Abs.fromRelBox(modifiedTextBBox),
-      );
-    const shiftVector = direction.scaled(3 + shiftDistance);
+      baseDistance: LABEL_BASE_DISTANCE,
+    });
+    const shiftVector = direction.scaled(centerDistance);
 
     const cipPosition = this.scaledPosition.add(
       new Vec2(
@@ -763,24 +756,34 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const { width, height } = this.stereoTextElementBBox;
-
-    const modifiedTextBBox = {
-      x: this.scaledPosition.x - width / 2,
-      y: this.scaledPosition.y - height / 2,
-      width,
-      height,
-    };
     const direction = this.bisectLargestSector();
 
-    const baseDistance = 3;
-    const shiftDistance =
-      baseDistance +
-      util.shiftRayBox(
-        this.scaledPosition,
-        direction.negated(),
-        Box2Abs.fromRelBox(modifiedTextBBox),
-      );
-    const shiftVector = direction.scaled(baseDistance + shiftDistance);
+    const cipCenterDistance =
+      this.cipTextElementBBox && this.cipLabelElementBBox
+        ? util.getLabelCenterDistance({
+            anchorPoint: this.scaledPosition,
+            direction,
+            width: this.cipTextElementBBox.width,
+            height: this.cipTextElementBBox.height,
+            baseDistance: LABEL_BASE_DISTANCE,
+          })
+        : undefined;
+    const centerDistance = util.getLabelCenterDistance({
+      anchorPoint: this.scaledPosition,
+      direction,
+      width,
+      height,
+      baseDistance: LABEL_BASE_DISTANCE,
+      obstacle:
+        cipCenterDistance && this.cipLabelElementBBox
+          ? {
+              centerDistance: cipCenterDistance,
+              width: this.cipLabelElementBBox.width,
+              height: this.cipLabelElementBBox.height,
+            }
+          : undefined,
+    });
+    const shiftVector = direction.scaled(centerDistance);
 
     const stereoPosition = this.scaledPosition.add(
       new Vec2(

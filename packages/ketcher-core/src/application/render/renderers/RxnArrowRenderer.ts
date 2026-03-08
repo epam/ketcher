@@ -27,15 +27,27 @@ import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'applicatio
 import svgPath from 'svgpath';
 
 const ARROW_STROKE_WIDTH = 2;
+const ARROW_SELECTION_HANDLE_RADIUS_SCALE_FACTOR = 8;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
 
+  private selectionHandlesElement:
+    | D3SvgElementSelection<SVGGElement, void>
+    | undefined;
+
   constructor(public arrow: RxnArrow) {
     super(arrow);
     this.arrow.setRenderer(this);
+  }
+
+  public override get selectionPoints() {
+    return [
+      Scale.modelToCanvas(this.arrow.startPosition, this.editorSettings),
+      Scale.modelToCanvas(this.arrow.endPosition, this.editorSettings),
+    ];
   }
 
   private get scaledPosition() {
@@ -53,6 +65,27 @@ export class RxnArrowRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  private get selectionHandleRadius() {
+    return (
+      this.editorSettings.macroModeScale /
+      ARROW_SELECTION_HANDLE_RADIUS_SCALE_FACTOR
+    );
+  }
+
+  private get selectionHandlePositions() {
+    const { startPosition, endPosition } = this.scaledPosition;
+
+    return [
+      // The root element is translated to the arrow start, so the first handle
+      // is rendered at the local origin.
+      new Vec2(0, 0),
+      new Vec2(
+        endPosition.x - startPosition.x,
+        endPosition.y - startPosition.y,
+      ),
+    ];
   }
 
   public getArrowParams() {
@@ -313,6 +346,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public appendSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.removeSelection();
     const selectionPathDAttr = this.getSelectionContour(
       this.scaledPosition.startPosition,
     );
@@ -323,11 +361,27 @@ export class RxnArrowRenderer extends BaseRenderer {
       .attr('fill', '#57ff8f')
       .attr('stroke', '#57ff8f')
       .attr('class', 'dynamic-element');
+
+    this.selectionHandlesElement = this.rootElement
+      .append('g')
+      .attr('class', 'dynamic-element')
+      .attr('pointer-events', 'none');
+
+    this.selectionHandlePositions.forEach((point) => {
+      this.selectionHandlesElement
+        ?.append('circle')
+        .attr('cx', point.x)
+        .attr('cy', point.y)
+        .attr('r', this.selectionHandleRadius)
+        .attr('fill', '#000');
+    });
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+    this.selectionHandlesElement?.remove();
+    this.selectionHandlesElement = undefined;
   }
 
   public move() {

@@ -1,6 +1,9 @@
 import { Bond } from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import {
+  RnaPresetWizardComponentStateFieldId,
+  RnaPresetWizardState,
+} from './MonomerCreationWizard.types';
 
 export type RnaPresetValidationStruct = {
   atoms: {
@@ -25,6 +28,16 @@ const hasComponentStructure = (
   return Boolean(structure?.atoms?.length);
 };
 
+export const getRnaPresetComponentKeysToSave = (
+  componentStructures: RnaPresetComponentStructures,
+) => {
+  return (
+    ['base', 'sugar', 'phosphate'] as RnaPresetWizardComponentStateFieldId[]
+  ).filter((componentKey) =>
+    hasComponentStructure(componentStructures[componentKey].structure),
+  );
+};
+
 const hasBondBetweenComponents = (
   bond: Pick<Bond, 'begin' | 'end'>,
   firstComponentAtomIds: number[],
@@ -36,6 +49,29 @@ const hasBondBetweenComponents = (
     (secondComponentAtomIds.includes(bond.begin) ||
       secondComponentAtomIds.includes(bond.end))
   );
+};
+
+export const findBondBetweenRnaPresetComponents = (
+  wizardStruct: RnaPresetValidationStruct,
+  firstComponentAtomIds: number[],
+  secondComponentAtomIds: number[],
+) => {
+  let bondBetweenComponents: Pick<Bond, 'begin' | 'end'> | undefined;
+
+  wizardStruct.bonds.forEach((bond) => {
+    if (
+      !bondBetweenComponents &&
+      hasBondBetweenComponents(
+        bond,
+        firstComponentAtomIds,
+        secondComponentAtomIds,
+      )
+    ) {
+      bondBetweenComponents = bond;
+    }
+  });
+
+  return bondBetweenComponents;
 };
 
 export const isValidRnaPresetStructure = (

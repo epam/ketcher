@@ -1,6 +1,8 @@
 import { Bond } from 'ketcher-core';
 
 import {
+  findBondBetweenRnaPresetComponents,
+  getRnaPresetComponentKeysToSave,
   isValidRnaPresetStructure,
   RnaPresetComponentStructures,
   RnaPresetValidationStruct,
@@ -139,4 +141,45 @@ describe('isValidRnaPresetStructure', () => {
       ).toBe(expected);
     },
   );
+});
+
+describe('getRnaPresetComponentKeysToSave', () => {
+  it('returns only components that have a selected structure', () => {
+    expect(
+      getRnaPresetComponentKeysToSave(
+        createRnaPresetWizardState({
+          sugar: [0, 1],
+          phosphate: [2],
+        }),
+      ),
+    ).toEqual(['sugar', 'phosphate']);
+  });
+});
+
+describe('findBondBetweenRnaPresetComponents', () => {
+  it('returns undefined when one component is absent', () => {
+    expect(
+      findBondBetweenRnaPresetComponents(
+        createWizardStruct([0, 1], [{ begin: 0, end: 1 }]),
+        [0],
+        [],
+      ),
+    ).toBeUndefined();
+  });
+
+  it('returns the bond between selected components when it exists', () => {
+    expect(
+      findBondBetweenRnaPresetComponents(
+        createWizardStruct(
+          [0, 1, 2],
+          [
+            { begin: 0, end: 1 },
+            { begin: 1, end: 2 },
+          ],
+        ),
+        [0, 1],
+        [2],
+      ),
+    ).toEqual({ begin: 1, end: 2 });
+  });
 });

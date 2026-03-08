@@ -87,6 +87,64 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   );
 }
+
+function getLabelCenterDistance({
+  anchorPoint,
+  direction,
+  width,
+  height,
+  baseDistance,
+  obstacle,
+}: {
+  anchorPoint: Vec2;
+  direction: Vec2;
+  width: number;
+  height: number;
+  baseDistance: number;
+  obstacle?: {
+    centerDistance: number;
+    width: number;
+    height: number;
+  };
+}) {
+  const centeredLabelBox = Box2Abs.fromRelBox({
+    x: anchorPoint.x - width / 2,
+    y: anchorPoint.y - height / 2,
+    width,
+    height,
+  });
+  const labelHalfExtent = shiftRayBox(
+    anchorPoint,
+    direction.negated(),
+    centeredLabelBox,
+  );
+  const labelCenterDistance = 2 * baseDistance + labelHalfExtent;
+
+  if (!obstacle) {
+    return labelCenterDistance;
+  }
+
+  const centeredObstacleBox = Box2Abs.fromRelBox({
+    x: anchorPoint.x - obstacle.width / 2,
+    y: anchorPoint.y - obstacle.height / 2,
+    width: obstacle.width,
+    height: obstacle.height,
+  });
+  const obstacleHalfExtent = shiftRayBox(
+    anchorPoint,
+    direction.negated(),
+    centeredObstacleBox,
+  );
+
+  return Math.max(
+    labelCenterDistance,
+    obstacle.centerDistance +
+      obstacleHalfExtent +
+      baseDistance +
+      labelHalfExtent,
+  );
+}
+
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
     pos1: null | { x: number; y: number };
@@ -263,6 +321,7 @@ function useLabelStyles(
 const util = {
   relBox,
   shiftRayBox,
+  getLabelCenterDistance,
   calcCoordinates,
   drawCIPLabel,
   updateHalfBondCoordinates,

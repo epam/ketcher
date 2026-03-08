@@ -1,4 +1,4 @@
-import { HalfBond } from 'domain/entities';
+import { HalfBond, Vec2 } from 'domain/entities';
 import util from './../../../src/application/render/util';
 
 describe('util', () => {
@@ -30,6 +30,41 @@ describe('util', () => {
       hb2.p.x = 90;
       const result = util.updateHalfBondCoordinates(hb1, hb2, xShift);
       expect(result[0].p.x).toBe(99);
+    });
+  });
+
+  describe('getLabelCenterDistance()', () => {
+    const anchorPoint = new Vec2(0, 0);
+    const direction = new Vec2(1, 0);
+    const baseDistance = 3;
+
+    it('should place a standalone label outside of the atom area', () => {
+      const result = util.getLabelCenterDistance({
+        anchorPoint,
+        direction,
+        width: 10,
+        height: 8,
+        baseDistance,
+      });
+
+      expect(result).toBe(11);
+    });
+
+    it('should move the label farther to avoid an existing obstacle label', () => {
+      const result = util.getLabelCenterDistance({
+        anchorPoint,
+        direction,
+        width: 8,
+        height: 8,
+        baseDistance,
+        obstacle: {
+          centerDistance: 12,
+          width: 20,
+          height: 10,
+        },
+      });
+
+      expect(result).toBe(29);
     });
   });
 });

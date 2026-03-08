@@ -13,6 +13,8 @@ import {
   BAD_VALENCE_LINE_OFFSET,
 } from 'application/render/renderers/constants';
 
+const LABEL_BASE_DISTANCE = 3;
+
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -653,13 +655,12 @@ export class AtomRenderer extends BaseRenderer {
 
     const { width, height } = this.cipTextElementBBox;
     const direction = this.bisectLargestSector();
-    const baseDistance = 3;
     const centerDistance = util.getLabelCenterDistance({
       anchorPoint: this.scaledPosition,
       direction,
       width,
       height,
-      baseDistance,
+      baseDistance: LABEL_BASE_DISTANCE,
     });
     const shiftVector = direction.scaled(centerDistance);
 
@@ -757,7 +758,6 @@ export class AtomRenderer extends BaseRenderer {
     const { width, height } = this.stereoTextElementBBox;
     const direction = this.bisectLargestSector();
 
-    const baseDistance = 3;
     const cipCenterDistance =
       this.cipTextElementBBox && this.cipLabelElementBBox
         ? util.getLabelCenterDistance({
@@ -765,7 +765,7 @@ export class AtomRenderer extends BaseRenderer {
             direction,
             width: this.cipTextElementBBox.width,
             height: this.cipTextElementBBox.height,
-            baseDistance,
+            baseDistance: LABEL_BASE_DISTANCE,
           })
         : undefined;
     const centerDistance = util.getLabelCenterDistance({
@@ -773,7 +773,7 @@ export class AtomRenderer extends BaseRenderer {
       direction,
       width,
       height,
-      baseDistance,
+      baseDistance: LABEL_BASE_DISTANCE,
       obstacle:
         cipCenterDistance && this.cipLabelElementBBox
           ? {

@@ -88,6 +88,11 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   );
 }
 
+/**
+ * Returns the distance from the anchor point to a label center along the given
+ * direction. The label is first moved away from the anchor itself, and can then
+ * be pushed farther if an already-positioned obstacle label occupies the same ray.
+ */
 function getLabelCenterDistance({
   anchorPoint,
   direction,

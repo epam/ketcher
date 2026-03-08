@@ -2,12 +2,10 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';
 import {
-  Atom,
   AtomLabel,
   AttachmentPointClickData,
   AttachmentPointName,
   BaseMonomer,
-  Bond,
   ComponentStructureUpdateData,
   CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
@@ -25,6 +23,7 @@ import Select from '../../../component/form/Select';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
 import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
+import { isValidRnaPresetStructure } from './RnaPresetStructureValidation';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import { onAction } from '../../../state/shared';
@@ -1047,72 +1046,7 @@ const MonomerCreationWizard = () => {
 
     // check structure
     const wizardStruct = editor.struct();
-    const bondsBetweenSugarAndBase: Bond[] = [];
-    const bondsBetweenSugarAndPhosphate: Bond[] = [];
-    const bondsBetweenBaseAndPhosphate: Bond[] = [];
-    const atomsOutsideComponents: Atom[] = [];
-    let hasSameAtomsInSeveralComponents = false;
-
-    wizardStruct.bonds.forEach((bond) => {
-      if (
-        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenSugarAndBase.push(bond);
-      }
-
-      if (
-        (rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.sugar.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
-          bond.begin,
-        ) ||
-          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenSugarAndPhosphate.push(bond);
-      }
-
-      if (
-        (rnaPresetWizardState.base.structure?.atoms?.includes(bond.begin) ||
-          rnaPresetWizardState.base.structure?.atoms?.includes(bond.end)) &&
-        (rnaPresetWizardState.phosphate.structure?.atoms?.includes(
-          bond.begin,
-        ) ||
-          rnaPresetWizardState.phosphate.structure?.atoms?.includes(bond.end))
-      ) {
-        bondsBetweenBaseAndPhosphate.push(bond);
-      }
-    });
-
-    wizardStruct.atoms.forEach((atom, atomId) => {
-      if (
-        !rnaPresetWizardState.sugar.structure?.atoms?.includes(atomId) &&
-        !rnaPresetWizardState.base.structure?.atoms?.includes(atomId) &&
-        !rnaPresetWizardState.phosphate.structure?.atoms?.includes(atomId)
-      ) {
-        atomsOutsideComponents.push(atom);
-      }
-    });
-
-    const atomsArrayFromAllComponents = [
-      ...(rnaPresetWizardState.sugar.structure?.atoms || []),
-      ...(rnaPresetWizardState.base.structure?.atoms || []),
-      ...(rnaPresetWizardState.phosphate.structure?.atoms || []),
-    ];
-    const atomsSetFromAllComponents = new Set(atomsArrayFromAllComponents);
-
-    hasSameAtomsInSeveralComponents =
-      atomsSetFromAllComponents.size < atomsArrayFromAllComponents.length;
-
-    if (
-      hasSameAtomsInSeveralComponents ||
-      atomsOutsideComponents.length > 0 ||
-      bondsBetweenSugarAndBase.length !== 1 ||
-      bondsBetweenSugarAndPhosphate.length !== 1 ||
-      bondsBetweenBaseAndPhosphate.length !== 0
-    ) {
+    if (!isValidRnaPresetStructure(wizardStruct, rnaPresetWizardState)) {
       needSaveMonomers = false;
       rnaPresetWizardStateDispatch({
         type: 'SetNotifications',

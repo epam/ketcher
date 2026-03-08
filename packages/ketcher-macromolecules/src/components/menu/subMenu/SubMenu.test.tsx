@@ -89,8 +89,10 @@ describe('Test SubMenu component', () => {
 
     fireEvent.click(screen.getByTestId('dropdown-expand'));
 
-    expect(screen.getByTestId('multi-tool-dropdown')).toHaveStyle(
-      `z-index: ${customOverlayZIndex}`,
-    );
+    const dropdown = screen.getByTestId('multi-tool-dropdown');
+    const collapse = dropdown.closest('.MuiCollapse-root');
+
+    expect(collapse).not.toBeNull();
+    expect(collapse).toHaveStyle(`z-index: ${customOverlayZIndex}`);
   });
 });

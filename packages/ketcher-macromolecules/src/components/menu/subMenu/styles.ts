@@ -62,6 +62,7 @@ export const OptionsContainer = styled.div<OptionsContainerProps>`
 
 export const OptionsItemsCollapse = styled(Collapse)`
   position: absolute;
+  z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
 `;
 
 export const VisibleItem = styled.div`

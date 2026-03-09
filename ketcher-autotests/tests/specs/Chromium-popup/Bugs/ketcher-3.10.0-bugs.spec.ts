@@ -58,6 +58,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
+  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -400,11 +401,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
       monomerAlias: 'CHEM1',
     });
     await expect(monomerOnCanvas).toBeVisible();
+
+    await monomerOnCanvas.hover();
+    await dragMouseTo(page, 480, 460);
+
     await monomerOnCanvas.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window, {
-      padding: 5,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
   test('9.Ketcher crashes completely when switching from Wizard mode to Macro mode', async () => {
     /*

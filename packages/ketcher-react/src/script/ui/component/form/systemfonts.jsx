@@ -83,7 +83,9 @@ function SystemFonts(props) {
       }
     });
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (

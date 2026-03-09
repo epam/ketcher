@@ -48,16 +48,17 @@ function FormulaInput({ value, contentEditable }) {
   if (errorRegexp.test(value)) return formulaInputMarkdown(value);
 
   const content = [];
-  let cnd;
   let pos = 0;
+  let cnd = formulaRegexp.exec(value);
 
-  while ((cnd = formulaRegexp.exec(value)) !== null) {
+  while (cnd !== null) {
     if (cnd[1].length > 0)
       content.push(<sup key={content.length}>{cnd[1]}</sup>);
     content.push(value.substring(pos, cnd.index) + cnd[2]);
     if (cnd[3].length > 0)
       content.push(<sub key={content.length}>{cnd[3]}</sub>);
     pos = cnd.index + cnd[0].length;
+    cnd = formulaRegexp.exec(value);
   }
 
   if (pos === 0) content.push(value);

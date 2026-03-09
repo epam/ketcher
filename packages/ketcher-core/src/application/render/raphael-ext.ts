@@ -25,11 +25,17 @@ const raphaelModule: any =
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Raphael: any = raphaelModule
-  ? typeof raphaelModule === 'function'
+function resolveRaphael(): any {
+  if (!raphaelModule) {
+    return undefined;
+  }
+
+  return typeof raphaelModule === 'function'
     ? raphaelModule
-    : raphaelModule.default
-  : undefined;
+    : raphaelModule.default;
+}
+
+const Raphael = resolveRaphael();
 
 if (Raphael) {
   // TODO: refactor ugly prototype extensions to plain old functions

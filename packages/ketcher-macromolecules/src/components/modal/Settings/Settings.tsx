@@ -30,6 +30,82 @@ import {
 } from './Settings.styles';
 import { Icon } from 'ketcher-react';
 
+/**
+ * Transform settings from Core format to Form format
+ * Core uses: 'IUPAC', 'classic', 'On-Atoms', 'off' (lowercase off)
+ * Form uses: 'Iupac', 'Classic', 'On', 'Off' (capitalized Off)
+ */
+function transformSettingsFromCore(settings: SettingsType): SettingsType {
+  const transformed = { ...settings };
+
+  // Convert stereoLabelStyle: Core format -> Form format
+  if (transformed.stereoLabelStyle) {
+    const style = transformed.stereoLabelStyle;
+    if (style === 'IUPAC') {
+      transformed.stereoLabelStyle = 'Iupac' as any;
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'Classic' as any;
+    } else if (style === 'On-Atoms') {
+      transformed.stereoLabelStyle = 'On' as any;
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'Off' as any;
+    }
+  }
+
+  // Convert font: Ensure it has the size prefix (legacy data might not have it)
+  // Core and form both expect "30px Arial" format
+  if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
+    // Font missing size prefix, add default 30px
+    transformed.font = `30px ${transformed.font}` as any;
+  }
+
+  // Convert imageResolution: number -> string for form display
+  if (typeof transformed.imageResolution === 'number') {
+    transformed.imageResolution = transformed.imageResolution.toString() as any;
+  }
+
+  return transformed;
+}
+
+/**
+ * Transform settings from Form format to Core format
+ * Form uses: 'Iupac', 'Classic', 'On', 'Off' (capitalized Off)
+ * Core uses: 'IUPAC', 'classic', 'On-Atoms', 'off' (lowercase off)
+ */
+function transformSettingsForCore(settings: SettingsType): SettingsType {
+  const transformed = { ...settings };
+
+  // Convert stereoLabelStyle: Form format -> Core format
+  if (transformed.stereoLabelStyle) {
+    const style = transformed.stereoLabelStyle.toLowerCase();
+    if (style === 'iupac') {
+      transformed.stereoLabelStyle = 'IUPAC' as any;
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'classic' as any;
+    } else if (style === 'on' || style === 'on-atoms') {
+      transformed.stereoLabelStyle = 'On-Atoms' as any;
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'off' as any;
+    }
+  }
+
+  // Convert font: Ensure it has the size prefix
+  // Core expects "30px Arial" format
+  if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
+    transformed.font = `30px ${transformed.font}` as any;
+  }
+
+  // Convert imageResolution: string -> number
+  if (typeof transformed.imageResolution === 'string') {
+    transformed.imageResolution = parseInt(
+      transformed.imageResolution,
+      10,
+    ) as any;
+  }
+
+  return transformed;
+}
+
 export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const settingsService = window.ketcher?.settingsService;
 
@@ -45,12 +121,14 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   useEffect(() => {
     if (!settingsService || !isModalOpen) return;
 
-    const settings = settingsService.getSettings();
-    setCurrentSettings(settings);
-    setInitialSettings(settings);
+    const coreSettings = settingsService.getSettings();
+    const formSettings = transformSettingsFromCore(coreSettings);
+    setCurrentSettings(formSettings);
+    setInitialSettings(formSettings);
 
-    const unsubscribe = settingsService.subscribe((newSettings) => {
-      setCurrentSettings(newSettings);
+    const unsubscribe = settingsService.subscribe((newCoreSettings) => {
+      const newFormSettings = transformSettingsFromCore(newCoreSettings);
+      setCurrentSettings(newFormSettings);
     });
 
     return unsubscribe;
@@ -78,7 +156,8 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setIsLoading(true);
     try {
-      await settingsService.updateSettings(currentSettings);
+      const coreSettings = transformSettingsForCore(currentSettings);
+      await settingsService.updateSettings(coreSettings);
       setInitialSettings(currentSettings);
       onClose();
     } catch (error) {
@@ -95,9 +174,10 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setIsLoading(true);
     try {
-      const defaults = await settingsService.resetToDefaults();
-      setCurrentSettings(defaults);
-      setInitialSettings(defaults);
+      const coreDefaults = await settingsService.resetToDefaults();
+      const formDefaults = transformSettingsFromCore(coreDefaults);
+      setCurrentSettings(formDefaults);
+      setInitialSettings(formDefaults);
     } catch (error) {
       console.error('Failed to reset settings:', error);
     } finally {
@@ -171,8 +251,9 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     try {
       // Type assertion needed as loadPreset may not be in the type definition yet
       await (settingsService as any).loadPreset('acs');
-      const acsSettings = settingsService.getSettings();
-      setCurrentSettings(acsSettings);
+      const coreAcsSettings = settingsService.getSettings();
+      const formAcsSettings = transformSettingsFromCore(coreAcsSettings);
+      setCurrentSettings(formAcsSettings);
     } catch (error) {
       console.error('Failed to apply ACS style:', error);
     } finally {

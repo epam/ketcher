@@ -20,6 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
   fontsz: 13,
   fontszUnit: 'px',
   fontszsub: 13,
+  fontszsubUnit: 'px',
 
   // Stereochemistry
   showStereoFlags: true,
@@ -58,6 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
   // Reaction
   reactionComponentMarginSize: 20,
+  reactionComponentMarginSizeUnit: 'px',
 
   // Server settings
   'smart-layout': true,
@@ -110,6 +112,7 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
     fontsz: 10,
     fontszUnit: 'pt',
     fontszsub: 10,
+    fontszsubUnit: 'pt',
     bondLength: 14.4,
     bondLengthUnit: 'pt',
     bondSpacing: 18,
@@ -120,6 +123,7 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
     hashSpacing: 2.5,
     hashSpacingUnit: 'pt',
     reactionComponentMarginSize: 1.6,
+    reactionComponentMarginSizeUnit: 'pt',
     imageResolution: 600,
   },
 };
@@ -149,6 +153,7 @@ export const SCHEMA = {
     fontsz: { type: 'number', minimum: 0.1, maximum: 96 },
     fontszUnit: { enum: ['px', 'pt', 'cm', 'inch'] },
     fontszsub: { type: 'number', minimum: 0.1, maximum: 96 },
+    fontszsubUnit: { enum: ['px', 'pt', 'cm', 'inch'] },
     showStereoFlags: { type: 'boolean' },
     stereoLabelStyle: { enum: ['IUPAC', 'classic', 'On-Atoms', 'off'] },
     colorOfAbsoluteCenters: { type: 'string' },
@@ -185,6 +190,7 @@ export const SCHEMA = {
       minimum: 0.1,
       maximum: 1000,
     },
+    reactionComponentMarginSizeUnit: { enum: ['px', 'pt', 'cm', 'inch'] },
 
     // Server settings
     'smart-layout': { type: 'boolean' },

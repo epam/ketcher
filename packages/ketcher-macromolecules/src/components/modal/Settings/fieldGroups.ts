@@ -42,7 +42,12 @@ export const FIELD_GROUPS: FieldGroup[] = [
       'atomColoring',
       'font',
       'fontsz',
+      'fontszUnit',
       'fontszsub',
+      'fontszsubUnit',
+      'reactionComponentMarginSize',
+      'reactionComponentMarginSizeUnit',
+      'imageResolution',
     ],
   },
   {
@@ -80,7 +85,11 @@ export const FIELD_GROUPS: FieldGroup[] = [
       'aromaticCircle',
       'bondSpacing',
       'bondThickness',
+      'bondThicknessUnit',
       'stereoBondWidth',
+      'stereoBondWidthUnit',
+      'hashSpacing',
+      'hashSpacingUnit',
     ],
   },
   {
@@ -173,12 +182,57 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     max: 96,
     step: 1,
   },
+  fontszUnit: {
+    label: 'Font Size Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
+  },
   fontszsub: {
     label: 'Sub/Superscript Font Size',
     type: 'number',
     min: 1,
     max: 96,
     step: 1,
+  },
+  fontszsubUnit: {
+    label: 'Sub/Superscript Font Size Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
+  },
+  reactionComponentMarginSize: {
+    label: 'Reaction Component Margin Size',
+    type: 'number',
+    min: 0.1,
+    max: 1000,
+    step: 0.1,
+  },
+  reactionComponentMarginSizeUnit: {
+    label: 'Reaction Component Margin Size Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
+  },
+  imageResolution: {
+    label: 'Image Resolution',
+    type: 'select',
+    options: [
+      { value: '72', label: 'low (72 DPI)' },
+      { value: '600', label: 'high (600 DPI)' },
+    ],
   },
 
   // Stereochemistry
@@ -187,12 +241,13 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     type: 'checkbox',
   },
   stereoLabelStyle: {
-    label: 'Stereo Label Style',
+    label: 'Label Display at Stereogenic Centers',
     type: 'select',
     options: [
-      { value: 'classic', label: 'Classic' },
-      { value: 'IUPAC', label: 'IUPAC' },
-      { value: 'On-Atoms', label: 'On-Atoms' },
+      { value: 'Iupac', label: 'IUPAC style' },
+      { value: 'Classic', label: 'Classic' },
+      { value: 'On', label: 'On' },
+      { value: 'Off', label: 'Off' },
     ],
   },
   colorOfAbsoluteCenters: {
@@ -286,12 +341,49 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     max: 96,
     step: 0.1,
   },
+  bondThicknessUnit: {
+    label: 'Bond Thickness Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
+  },
   stereoBondWidth: {
     label: 'Stereo Bond Width',
     type: 'number',
     min: 0.1,
-    max: 10,
+    max: 96,
     step: 0.1,
+  },
+  stereoBondWidthUnit: {
+    label: 'Stereo Bond Width Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
+  },
+  hashSpacing: {
+    label: 'Hash Spacing',
+    type: 'number',
+    min: 0.1,
+    max: 1000,
+    step: 0.1,
+  },
+  hashSpacingUnit: {
+    label: 'Hash Spacing Unit',
+    type: 'select',
+    options: [
+      { value: 'px', label: 'px' },
+      { value: 'pt', label: 'pt' },
+      { value: 'cm', label: 'cm' },
+      { value: 'inch', label: 'inch' },
+    ],
   },
 
   // Server

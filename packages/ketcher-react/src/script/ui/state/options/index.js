@@ -183,6 +183,12 @@ function transformSettingsForCore(settings) {
 function transformSettingsFromCore(settings) {
   const transformed = { ...settings };
 
+  // Convert font: Ensure it has the size prefix (legacy data might not have it)
+  if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
+    // Font missing size prefix, add default 30px
+    transformed.font = `30px ${transformed.font}`;
+  }
+
   // Convert imageResolution: number -> string (for form display)
   if (typeof transformed.imageResolution === 'number') {
     transformed.imageResolution = transformed.imageResolution.toString();
@@ -264,6 +270,7 @@ export function saveSettings(newSettings) {
 export function syncSettingsFromCore(coreSettings) {
   // Transform from SettingsService format to Redux format
   const reduxSettings = transformSettingsFromCore(coreSettings);
+
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',
     data: reduxSettings,

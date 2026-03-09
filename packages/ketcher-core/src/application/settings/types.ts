@@ -15,8 +15,9 @@ export interface Settings {
   readonly atomColoring: boolean;
   readonly font: string;
   readonly fontsz: number;
-  readonly fontszUnit: 'px' | 'pt';
+  readonly fontszUnit: 'px' | 'pt' | 'cm' | 'inch';
   readonly fontszsub: number;
+  readonly fontszsubUnit: 'px' | 'pt' | 'cm' | 'inch';
 
   // Stereochemistry
   readonly showStereoFlags: boolean;
@@ -60,6 +61,7 @@ export interface Settings {
 
   // Reaction
   readonly reactionComponentMarginSize: number;
+  readonly reactionComponentMarginSizeUnit: 'px' | 'pt' | 'cm' | 'inch';
 
   // Server-side processing settings
   readonly 'smart-layout': boolean;

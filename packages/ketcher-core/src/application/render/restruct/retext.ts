@@ -22,8 +22,9 @@ import ReObject from './reobject';
 import ReStruct from './restruct';
 import { Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
+import { convertDraftToLexical } from './draftToLexical';
 
-interface SerializedTextNode {
+export interface SerializedTextNode {
   detail?: number;
   format: number;
   mode?: string;
@@ -33,7 +34,7 @@ interface SerializedTextNode {
   version?: number;
 }
 
-interface SerializedParagraphNode {
+export interface SerializedParagraphNode {
   children: Array<SerializedTextNode | { type: string }>;
   direction?: string;
   format?: string | number;
@@ -42,7 +43,7 @@ interface SerializedParagraphNode {
   version?: number;
 }
 
-interface SerializedRootNode {
+export interface SerializedRootNode {
   children: Array<SerializedParagraphNode>;
   direction?: string;
   format?: string | number;
@@ -51,7 +52,7 @@ interface SerializedRootNode {
   version?: number;
 }
 
-interface SerializedEditorState {
+export interface SerializedEditorState {
   root: SerializedRootNode;
 }
 
@@ -61,164 +62,6 @@ const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
 const SCALE = 40; // from ketcher-core
-
-interface DraftBlock {
-  text: string;
-  type: string;
-  inlineStyleRanges?: Array<{ offset: number; length: number; style: string }>;
-  entityRanges?: Array<any>;
-  data?: Record<string, any>;
-}
-
-interface DraftEditorState {
-  blocks?: DraftBlock[];
-  entityMap?: Record<string, any>;
-}
-
-// Convert Draft.js format to Lexical format
-function convertDraftToLexical(
-  draftState: DraftEditorState,
-): SerializedEditorState {
-  if (!draftState.blocks || draftState.blocks.length === 0) {
-    return {
-      root: {
-        type: 'root',
-        children: [],
-      },
-    };
-  }
-
-  const children: SerializedParagraphNode[] = draftState.blocks.map((block) => {
-    const textChildren: (SerializedTextNode | { type: string })[] = [];
-
-    if (block.text.length === 0) {
-      // Empty block
-      textChildren.push({ type: 'br' });
-    } else {
-      // Build text segments with their respective styles
-      const segments = buildTextSegments(
-        block.text,
-        block.inlineStyleRanges || [],
-      );
-
-      segments.forEach((segment) => {
-        textChildren.push({
-          type: 'text',
-          text: segment.text,
-          format: segment.format,
-          style: segment.style,
-          version: 1,
-        });
-      });
-    }
-
-    return {
-      type: 'paragraph',
-      children: textChildren,
-      version: 1,
-    };
-  });
-
-  return {
-    root: {
-      type: 'root',
-      children,
-      version: 1,
-    },
-  };
-}
-
-interface TextSegment {
-  text: string;
-  format: number;
-  style: string;
-}
-
-// Helper function to split text into segments based on style ranges
-function buildTextSegments(
-  text: string,
-  styleRanges: Array<{ offset: number; length: number; style: string }>,
-): TextSegment[] {
-  // Create an array of style info for each character position
-  const charStyles: Array<{ format: number; style: string }> = Array.from(
-    { length: text.length },
-    () => ({ format: 0, style: '' }),
-  );
-
-  // Apply each style range to the character positions it covers
-  styleRanges.forEach((range) => {
-    const startIdx = range.offset;
-    const endIdx = Math.min(range.offset + range.length, text.length);
-
-    for (let i = startIdx; i < endIdx; i++) {
-      applyStyleToChar(charStyles[i], range.style);
-    }
-  });
-
-  // Group consecutive characters with identical styles into segments
-  const segments: TextSegment[] = [];
-  let currentSegment: TextSegment | null = null;
-
-  for (let i = 0; i < text.length; i++) {
-    const charStyle = charStyles[i];
-    const char = text[i];
-
-    // Check if we need to start a new segment
-    if (
-      !currentSegment ||
-      currentSegment.format !== charStyle.format ||
-      currentSegment.style !== charStyle.style
-    ) {
-      if (currentSegment) {
-        segments.push(currentSegment);
-      }
-      currentSegment = {
-        text: char,
-        format: charStyle.format,
-        style: charStyle.style,
-      };
-    } else {
-      // Continue current segment
-      currentSegment.text += char;
-    }
-  }
-
-  if (currentSegment) {
-    segments.push(currentSegment);
-  }
-
-  return segments;
-}
-
-// Apply a single style to a character's style info
-function applyStyleToChar(
-  charStyle: { format: number; style: string },
-  styleString: string,
-): void {
-  switch (styleString) {
-    case 'BOLD':
-      charStyle.format |= IS_BOLD;
-      break;
-    case 'ITALIC':
-      charStyle.format |= IS_ITALIC;
-      break;
-    case 'SUBSCRIPT':
-      charStyle.format |= IS_SUBSCRIPT;
-      break;
-    case 'SUPERSCRIPT':
-      charStyle.format |= IS_SUPERSCRIPT;
-      break;
-    default: {
-      // Handle custom font-size styling
-      const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(styleString);
-      if (match) {
-        const size = match[1];
-        charStyle.style += `font-size:${size}px;`;
-      }
-      break;
-    }
-  }
-}
 
 class ReText extends ReObject {
   private readonly item: Text;
@@ -331,17 +174,13 @@ class ReText extends ReObject {
     try {
       if (this.item.content) {
         const parsed = JSON.parse(this.item.content);
-
-        // Detect if it's Draft.js format (has 'blocks') or Lexical format (has 'root')
-        if (parsed.blocks && !parsed.root) {
-          // Old Draft.js format - convert to Lexical
-          console.log('Converting Draft.js format to Lexical');
-          editorState = convertDraftToLexical(parsed as DraftEditorState);
-        } else {
-          // Already Lexical format
+        // Support both Lexical and Draft.js formats
+        if (parsed && parsed.root) {
           editorState = parsed as SerializedEditorState;
+        } else if (parsed && parsed.blocks) {
+          // Import conversion from service
+          editorState = convertDraftToLexical(parsed);
         }
-        console.log('Final editorState:', editorState);
       }
     } catch (error) {
       console.error('Error processing text content:', error);

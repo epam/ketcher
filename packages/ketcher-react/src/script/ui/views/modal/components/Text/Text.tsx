@@ -39,147 +39,18 @@ import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
+// Import the Draft.js to Lexical converter
+// import { convertDraftToLexical, DraftEditorState } from 'ketcher-core/src/application/render/restruct/draftToLexical';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import { IconName } from 'components';
+import { convertDraftToLexical, DraftEditorState } from 'ketcher-core';
 
 interface TextProps extends DialogParams {
   formState: any;
   id?: any;
   content: string;
   position?: string;
-}
-
-type DraftInlineStyleRange = {
-  offset: number;
-  length: number;
-  style: string;
-};
-
-type DraftBlock = {
-  key: string;
-  text: string;
-  type: 'unstyled';
-  depth: number;
-  inlineStyleRanges: DraftInlineStyleRange[];
-  entityRanges: Array<never>;
-  data: Record<string, never>;
-};
-
-type DraftEditorState = {
-  blocks: DraftBlock[];
-  entityMap: Record<string, never>;
-};
-
-interface SerializedTextNode {
-  format: number;
-  style?: string;
-  text: string;
-  type: string;
-}
-
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
-
-function extractFontSizeFromStyle(style?: string): string | null {
-  if (!style) return null;
-
-  const fontSizeMatch = style.match(/font-size:\s*(\d+(?:\.\d+)?)px/);
-  if (!fontSizeMatch) return null;
-
-  const fontSize = Math.round(Number(fontSizeMatch[1]));
-  return Number.isFinite(fontSize) ? `CUSTOM_FONT_SIZE_${fontSize}px` : null;
-}
-
-function addStyleRange(
-  style: string,
-  offset: number,
-  length: number,
-  inlineStyleRanges: DraftInlineStyleRange[],
-) {
-  if (length <= 0) return;
-
-  inlineStyleRanges.push({
-    style,
-    offset,
-    length,
-  });
-}
-
-function lexicalParagraphToDraftBlock(
-  paragraph: any,
-  index: number,
-): DraftBlock {
-  const children = Array.isArray(paragraph?.children) ? paragraph.children : [];
-  const textNodes = children.filter(
-    (child: any): child is SerializedTextNode => child?.type === 'text',
-  );
-
-  const text = textNodes.map((node) => node.text ?? '').join('');
-  const inlineStyleRanges: DraftInlineStyleRange[] = [];
-
-  let offset = 0;
-  textNodes.forEach((node) => {
-    const nodeText = node.text ?? '';
-    const length = nodeText.length;
-    const format = node.format || 0;
-
-    if (format & IS_BOLD) {
-      addStyleRange('BOLD', offset, length, inlineStyleRanges);
-    }
-
-    if (format & IS_ITALIC) {
-      addStyleRange('ITALIC', offset, length, inlineStyleRanges);
-    }
-
-    if (format & IS_SUBSCRIPT) {
-      addStyleRange('SUBSCRIPT', offset, length, inlineStyleRanges);
-    }
-
-    if (format & IS_SUPERSCRIPT) {
-      addStyleRange('SUPERSCRIPT', offset, length, inlineStyleRanges);
-    }
-
-    const customFontSizeStyle = extractFontSizeFromStyle(node.style);
-    if (customFontSizeStyle) {
-      addStyleRange(customFontSizeStyle, offset, length, inlineStyleRanges);
-    }
-
-    offset += length;
-  });
-
-  return {
-    key: `${index}`,
-    text,
-    type: 'unstyled',
-    depth: 0,
-    inlineStyleRanges,
-    entityRanges: [],
-    data: {},
-  };
-}
-
-function lexicalToDraftEditorState(
-  editorState: SerializedEditorState,
-): DraftEditorState {
-  const rootChildren = Array.isArray((editorState as any)?.root?.children)
-    ? (editorState as any).root.children
-    : [];
-
-  const paragraphs = rootChildren.filter(
-    (child: any) => child?.type === 'paragraph',
-  );
-
-  const blocks = paragraphs.map((paragraph, index) =>
-    lexicalParagraphToDraftBlock(paragraph, index),
-  );
-
-  return {
-    blocks,
-    entityMap: {},
-  };
 }
 
 const buttons: Array<{ command: TextCommand; name: IconName }> = [
@@ -287,12 +158,8 @@ const TextEditorInner = (props: {
       serialized = editorState.toJSON();
     }
 
-    const serializedDraft = serialized
-      ? JSON.stringify(lexicalToDraftEditorState(serialized))
-      : '';
-
     return {
-      content: serializedDraft,
+      content: serialized ? JSON.stringify(serialized) : '',
       position,
       id,
     };
@@ -369,100 +236,6 @@ const TextEditorInner = (props: {
   );
 };
 
-// Constants for Draft.js to Lexical format conversion
-const LEXICAL_FORMAT_BOLD = 1;
-const LEXICAL_FORMAT_ITALIC = 2;
-const LEXICAL_FORMAT_SUBSCRIPT = 32;
-const LEXICAL_FORMAT_SUPERSCRIPT = 64;
-
-// Helper function to convert Draft.js inline style to Lexical format bitmask
-function draftStyleToLexicalFormat(styleString: string): number {
-  let format = 0;
-  if (styleString === 'BOLD') format |= LEXICAL_FORMAT_BOLD;
-  if (styleString === 'ITALIC') format |= LEXICAL_FORMAT_ITALIC;
-  if (styleString === 'SUBSCRIPT') format |= LEXICAL_FORMAT_SUBSCRIPT;
-  if (styleString === 'SUPERSCRIPT') format |= LEXICAL_FORMAT_SUPERSCRIPT;
-  return format;
-}
-
-// Helper function to extract font size style from Draft.js custom style
-function extractFontSizeStyle(styleString: string): string {
-  const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(styleString);
-  if (match) {
-    return `font-size:${match[1]}px;`;
-  }
-  return '';
-}
-
-// Convert Draft.js block with inline styles to Lexical text nodes with proper formatting
-function convertDraftBlockToLexical(
-  block: any,
-): Array<{ type: string; text: string; format?: number; style?: string }> {
-  const textChildren: Array<{
-    type: string;
-    text: string;
-    format?: number;
-    style?: string;
-  }> = [];
-
-  if (!block.text || block.text.length === 0) {
-    return [{ type: 'br' } as any];
-  }
-
-  // Build character style information from inline style ranges
-  const charFormats: number[] = new Array(block.text.length).fill(0);
-  const charStyles: string[] = new Array(block.text.length).fill('');
-
-  if (block.inlineStyleRanges && Array.isArray(block.inlineStyleRanges)) {
-    block.inlineStyleRanges.forEach(
-      (range: { offset: number; length: number; style: string }) => {
-        const startIdx = range.offset;
-        const endIdx = Math.min(range.offset + range.length, block.text.length);
-
-        for (let i = startIdx; i < endIdx; i++) {
-          charFormats[i] |= draftStyleToLexicalFormat(range.style);
-          charStyles[i] += extractFontSizeStyle(range.style);
-        }
-      },
-    );
-  }
-
-  // Group consecutive characters with identical styles into segments
-  let i = 0;
-  while (i < block.text.length) {
-    const currentFormat = charFormats[i];
-    const currentStyle = charStyles[i];
-    let j = i;
-
-    // Find the end of this style segment
-    while (
-      j < block.text.length &&
-      charFormats[j] === currentFormat &&
-      charStyles[j] === currentStyle
-    ) {
-      j++;
-    }
-
-    // Create text node for this segment
-    const textNode: any = {
-      type: 'text',
-      text: block.text.substring(i, j),
-    };
-
-    if (currentFormat > 0) {
-      textNode.format = currentFormat;
-    }
-    if (currentStyle) {
-      textNode.style = currentStyle;
-    }
-
-    textChildren.push(textNode);
-    i = j;
-  }
-
-  return textChildren;
-}
-
 // helper to make sure the incoming JSON is a Lexical editor state.
 // Lexical serializes into an object with a "root" node and every node
 // has a `type` property. Draft.js (used elsewhere in the codebase) uses a
@@ -478,8 +251,7 @@ export const normalizeEditorState = (
   if (!content) return undefined;
   try {
     const parsed = JSON.parse(content);
-
-    // already Lexical?
+    // If already Lexical format, return as is
     if (
       parsed &&
       typeof parsed === 'object' &&
@@ -489,21 +261,12 @@ export const normalizeEditorState = (
     ) {
       return content;
     }
-
-    // draft-js style? convert to lexical state with proper inline styles
+    // If Draft.js format, convert to Lexical and return as string
     if (parsed && parsed.blocks && Array.isArray(parsed.blocks)) {
-      const root: any = { type: 'root', version: 1, children: [] };
-      parsed.blocks.forEach((block: any) => {
-        const paragraph: any = { type: 'paragraph', children: [] };
-        if (typeof block.text === 'string') {
-          const textNodes = convertDraftBlockToLexical(block);
-          paragraph.children.push(...textNodes);
-        }
-        root.children.push(paragraph);
-      });
-      return JSON.stringify({ root });
+      const lexicalState = convertDraftToLexical(parsed as DraftEditorState);
+      return JSON.stringify(lexicalState);
     }
-
+    // If not recognized, treat as empty
     console.warn('Unsupported editor state format, falling back to empty');
   } catch (e) {
     console.warn('Failed to parse editor state', e);

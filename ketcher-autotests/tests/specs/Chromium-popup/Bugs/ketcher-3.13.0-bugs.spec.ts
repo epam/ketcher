@@ -29,6 +29,8 @@ import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constant
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
 
@@ -228,9 +230,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -254,5 +256,53 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 7: Screenshot stereogenic center to verify stereo bonds persist
     const collapsedLabel = page.locator('text[data-sgroup-name="sssS"]');
     await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
+  });
+
+  test('Case 5 — Save Structure dialog causes memory leak when switching formats repeatedly', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/8986
+     * Version: 3.12.0-rc.1
+     * Description:
+     * Rapid switching between "SVG Document" and "PNG Image" formats in
+     * Save Structure dialog leads to warning:
+     * "MaxListenersExceededWarning: Possible EventEmitter memory leak detected"
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Open "Save Structure" dialog
+     * 3. Switch format: SVG → PNG → SVG → PNG → ... (repeat at least 11 times)
+     *
+     * Expected Result:
+     * No memory leak warnings appear in the DevTools console.
+     */
+
+    // Intercept console warnings
+    page.on('console', (msg) => {
+      const text = msg.text();
+      if (
+        text.includes('MaxListenersExceededWarning') ||
+        text.includes('Possible EventEmitter memory leak detected')
+      ) {
+        test.fail(true, `Memory leak warning detected: ${text}`);
+      }
+    });
+
+    // Step 1: canvas already clean due to afterEach()
+
+    // Step 2: Open Save Structure dialog
+    await CommonTopLeftToolbar(page).saveFile();
+
+    // const saveDialog = page.getByTestId('save-structure-dialog');
+    const dialog = SaveStructureDialog(page);
+
+    // Step 3: switch formats repeatedly
+    for (let i = 0; i < 12; i++) {
+      await dialog.chooseFileFormat(MoleculesFileFormatType.SVGDocument);
+      await dialog.chooseFileFormat(MoleculesFileFormatType.PNGImage);
+    }
+
+    // Close dialog
+    await dialog.cancel();
   });
 });

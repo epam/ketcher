@@ -22,21 +22,21 @@ type CommonPageObjects = {
 
 export const test = base.extend<{}, CommonPageObjects>({
   CommonTopRightToolbar: [
-    async (_, use) => {
+    async ({}, use) => { 
       await use(CommonTopRightToolbar);
     },
     { scope: 'worker', auto: true },
   ],
 
   CommonTopLeftToolbar: [
-    async (_, use) => {
+    async ({}, use) => {
       await use(CommonTopLeftToolbar);
     },
     { scope: 'worker', auto: true },
   ],
 
   MacromoleculesTopToolbar: [
-    async (_, use) => {
+    async ({}, use) => {
       await use(MacromoleculesTopToolbar);
     },
     { scope: 'worker', auto: true },

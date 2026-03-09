@@ -9,15 +9,15 @@ export const test = base.extend<{
   resetZoomLevelToDefault: (page: Page) => Promise<void>;
   resetSettingsValuesToDefault: (page: Page) => Promise<void>;
 }>({
-  clearLocalStorage: async (_, use) => {
+  clearLocalStorage: async ({}, use) => {
     await use(clearLocalStorage);
   },
 
-  resetZoomLevelToDefault: async (_, use) => {
+  resetZoomLevelToDefault: async ({}, use) => {
     await use(resetZoomLevelToDefault);
   },
 
-  resetSettingsValuesToDefault: async (_, use) => {
+  resetSettingsValuesToDefault: async ({}, use) => {
     await use(resetSettingsValuesToDefault);
   },
 });

@@ -51,7 +51,7 @@ export const test = base.extend<CoreTestFixtures, CoreWorkerFixtures>({
   ],
 
   ketcher: [
-    async (_, use) => {
+    async ({}, use) => {
       await use({});
     },
     { scope: 'worker', auto: true },

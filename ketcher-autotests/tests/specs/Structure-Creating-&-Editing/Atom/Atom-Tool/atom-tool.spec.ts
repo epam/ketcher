@@ -116,7 +116,7 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -218,7 +218,7 @@ test.describe('Atom Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -463,7 +463,7 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
@@ -673,7 +673,7 @@ test.describe('Atom Tool', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
         force: true,
       });
-      await dragMouseTo(640, 270, page);
+      await dragMouseTo(page, 640, 270);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
     });

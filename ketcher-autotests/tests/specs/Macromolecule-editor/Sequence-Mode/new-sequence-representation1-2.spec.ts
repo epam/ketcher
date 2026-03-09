@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -5,7 +6,6 @@ import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  delay,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -15,7 +15,6 @@ import {
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -32,8 +31,6 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -42,25 +39,18 @@ import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/Conf
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
 });
 
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
+
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomerToAdd {
@@ -1498,7 +1488,7 @@ async function callContextMenuForSelectedAllSymbol(
     }
     attempts++;
     await closeContextMenu(page);
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await selectAllStructuresOnCanvas(page);
   }
   logTestWarning(

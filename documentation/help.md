@@ -42,12 +42,15 @@ Using the _Tool palette_, you can:
 - Delete any element of the drawing (atom or bond) by clicking on it with the _Erase tool_;
 - Delete the entire molecule or its fragment using the _Lasso_, _Rectangle_, or _Fragment selection tool_ and the _Erase tool_;
 - Draw special structures (see the following sections);
-- Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options <img src=images/3_lasso_menu.png width = "100"/>):
-  - To select **one atom or bond**, click _Lasso_ (1) or _Rectangle Selection tool_ (2), and then click the atom or bond;
+- Select the entire molecule or its fragment in one of the following ways (<img src=images/2_lasso_icon.png width = "35"/> click on the bottom right corner to see the list of available options <img src=images/Selection-tools-micro-3.13..png width = "150"/>):
+  - To select **one atom or bond**, click _Rectangle Selection tool_ (1) or _Lasso_ (2), and then click the atom or bond;
   - To select the **entire structure**:
       - Select the _Structure Selection tool_ (3) and then click the object;
       - Select the _Lasso_ or _Rectangle Selection tool_, and then drag the mouse to select the object;
       -`Ctrl-click`with the _Lasso_ or _Rectangle Selection tool_.
+  - To select **a part of a molecule**, use the _Fragment Selection tool_ (4) click on the left/right side of a bond to select the left/right section of the molecule:
+  <img src=images/Fragment-selection-tool-3.13..png width = "150"/>
+  
   - To select **multiple atoms, bonds, structures, or other objects**, do one of the following:
       - `Shift-click` with the _Lasso_ or _Rectangle Selection tool_ selects some (connected or not) atoms/bonds;
       - With the _Lasso_ or _Rectangle Selection tool_ click and drag the mouse around the atoms, bonds, or structures that you want to select.
@@ -503,7 +506,7 @@ The left toolbar consists of the following elements:
 <img src=images/Macro-Left-Toolbar-3.8..png width = "50"/>
 
 - **Hand tool** (1) used to adjust the view and move around the canvas;
-- **Selection tools** (2) used to select elements on the canvas (_Rectange selection tool_ (1), _Lasso selection tool_ (2), and _Fragment selection tool_ (3) are available);
+- **Selection tools** (2) used to select elements on the canvas (_Rectange selection tool_ (1), _Lasso selection tool_ (2), and _Structure selection tool_ (3) are available);
 
 <img src=images/Selection-tools-macro-3.8..png width = "150"/>
 
@@ -641,6 +644,8 @@ In addition to adding single monomers, users are able to define three monomers (
 
 Nucleotide components are defined by selecting their atoms and marking them as base, sugar, and phosphate in appropriate tabs:
 <img src=images/Monomer-Creation-Wizard-13-3.11..png width = "450"/>
+
+**Note**: _Fragment Selection tool_ can help with selecting appropriate nucleotide components. While in the Monomer Creation Wizard, atoms and bonds already marked as a particular component will not be selected using that tool.
 
 #### Monomer Addition Through API
 
@@ -800,7 +805,7 @@ In snake mode the snapping is available every ninety degrees.
 
 Snapping to distance is available for both horizontally and vertically arranged monomers in snake and flex layout modes:
 
-<img src=images/Snap-To-Distance-3.3..gif width = "800"/>
+<img src=images/Snap-To-Distance-3.3..gif width = "500"/>
 
 Holding `Crtl` (for Windows) or `Command` (for MacOS) while moving the monomer will disable the snapping.
 

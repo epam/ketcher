@@ -16,9 +16,9 @@
 
 import {
   FC,
-  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
@@ -41,7 +41,7 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
   needMargin?: boolean;
@@ -83,13 +83,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    const dialogElement = dialogRef.current;
     if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+      (dialogElement as HTMLElement).focus();
     }
 
     return () => {
       (
-        dialogRef.current
+        dialogElement
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();
@@ -114,26 +115,40 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const { key } = event;
-    const active = document.activeElement;
-    const activeTextarea = active?.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       ref={dialogRef}
       role="dialog"
       data-testid={'info-modal-window'}
-      onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header

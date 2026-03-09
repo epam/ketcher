@@ -77,7 +77,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await takeEditorScreenshot(page);
   });
@@ -108,7 +108,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -135,7 +135,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -165,7 +165,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -197,7 +197,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -233,7 +233,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(250, 250, page);
+    await dragMouseTo(page, 250, 250);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -261,7 +261,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(245, 245, page);
+    await dragMouseTo(page, 245, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -289,7 +289,7 @@ test.describe('Hot keys', () => {
     );
     await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -324,7 +324,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -352,7 +352,7 @@ test.describe('Hot keys', () => {
     );
     await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -387,7 +387,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -417,7 +417,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -447,7 +447,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -477,7 +477,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -508,7 +508,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -537,7 +537,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -567,7 +567,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -602,7 +602,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);

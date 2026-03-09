@@ -76,12 +76,12 @@
         <button>Open Modal</button>
         <div class="inputs">
           <div>
-            <label>Height</label>
-            <input placeholder="height" class="height" />
+            <label for="height">Height</label>
+            <input id="height" placeholder="height" class="height" />
           </div>
           <div>
-            <label>Width</label>
-            <input placeholder="width" class="width" />
+            <label for="width">Width</label>
+            <input id="width" placeholder="width" class="width" />
           </div>
         </div>
       </div>
@@ -93,10 +93,10 @@
       </div>
     </div>
     <script defer>
-      const button = document.querySelector('button')
-      const textarea = document.querySelector('.molecule')
-      const width = document.querySelector('.width')
-      const height = document.querySelector('.height')
+      const button = document.querySelector('button');
+      const textarea = document.querySelector('.molecule');
+      const width = document.querySelector('.width');
+      const height = document.querySelector('.height');
       const modalContent = `
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -108,42 +108,42 @@
             sandbox="allow-scripts allow-same-origin"
             ></iframe>
         </div>
-      `
-      let modal
+      `;
+      let modal;
       let closeIcon;
       let iframe;
 
       function closeModal() {
-        closeIcon.removeEventListener('click', closeModal)
-        modal.remove()
+        closeIcon.removeEventListener('click', closeModal);
+        modal.remove();
       }
 
       function createModal() {
-        modal = document.createElement('div')
-        modal.classList.add('modal')
-        modal.innerHTML = modalContent
-        document.body.appendChild(modal)
+        modal = document.createElement('div');
+        modal.classList.add('modal');
+        modal.innerHTML = modalContent;
+        document.body.appendChild(modal);
 
-        closeIcon = document.querySelector('.close')
-        iframe = document.getElementById('iframe')
-        iframe.style.height = height.value + 'px'
-        iframe.style.width = width.value + 'px'
+        closeIcon = document.querySelector('.close');
+        iframe = document.getElementById('iframe');
+        iframe.style.height = height.value + 'px';
+        iframe.style.width = width.value + 'px';
 
-        closeIcon.addEventListener('click', closeModal)
+        closeIcon.addEventListener('click', closeModal);
       }
 
-      button.onclick = createModal
+      button.onclick = createModal;
       window.onclick = function (event) {
         if (event.target == modal) {
-            closeModal()
+          closeModal();
         }
-      }
+      };
 
       window.addEventListener('message', (event) => {
         if (event.data.eventType === 'init') {
-          iframe.contentWindow.ketcher.setMolecule(textarea.value)
+          iframe.contentWindow.ketcher.setMolecule(textarea.value);
         }
-      })
+      });
     </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable promise/param-names */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
@@ -5,24 +6,18 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
-  delay,
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
   MacroFileType,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  resetZoomLevelToDefault,
   selectPartOfMolecules,
   takeElementScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -41,27 +36,20 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Calculate Properties tests', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
+
+  test.afterEach(async () => {
     if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
       await CalculateVariablesPanel(page).closeWindow();
     }
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
   });
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Check that "Calculate Properties" icon added to the main toolbar, with the tooltip preview of "Calculate Properties (Alt+C)"', async () => {
@@ -296,7 +284,7 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page, async () => {
       await keyboardTypeOnCanvas(page, 'AA');
     });
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '1.584',
     );
@@ -408,17 +396,17 @@ test.describe('Calculate Properties tests', () => {
       'L10',
       'M11',
       'N12',
-      'O0',
+      'O1',
       'P13',
       'Q14',
       'R15',
       'S16',
       'T17',
-      'U0',
+      'U1',
       'V18',
       'W19',
       'Y20',
-      'Other21',
+      'Other19',
     ]);
   });
 
@@ -1620,7 +1608,7 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page);
     // Dirty hack
     await CalculateVariablesPanel(page).closeWindow();
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
 

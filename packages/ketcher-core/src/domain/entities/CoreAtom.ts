@@ -23,6 +23,7 @@ export interface AtomProperties {
   radical?: AtomRadical;
   alias?: string | null;
   cip?: AtomCIP | null;
+  stereoLabel?: string | null;
 }
 
 export class Atom extends DrawingEntity {
@@ -122,6 +123,10 @@ export class Atom extends DrawingEntity {
   public get hasBadValence() {
     const { hydrogenAmount } = this.calculateValence();
     return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
   }
 
   private get radicalAmount() {
@@ -465,9 +470,10 @@ export class Atom extends DrawingEntity {
         } else {
           hydrogenAmount = -1;
         }
+      } else if (connectionAmount + radicalAmount + absCharge === 0) {
+        valence = 1;
       } else {
-        if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-        else hydrogenAmount = -1;
+        hydrogenAmount = -1;
       }
     }
 

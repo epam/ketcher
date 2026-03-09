@@ -5,7 +5,6 @@ import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  waitForPageInit,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
@@ -41,21 +40,16 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`Verify that bond lines between atoms do not overlap in any angle in macro mode`, async () => {
@@ -616,7 +610,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     const bondLocator = getBondLocator(page, bond);
     await selectAllStructuresOnCanvas(page);
     await bondLocator.first().hover({ force: true });
-    await dragMouseTo(400, 400, page);
+    await dragMouseTo(page, 400, 400);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

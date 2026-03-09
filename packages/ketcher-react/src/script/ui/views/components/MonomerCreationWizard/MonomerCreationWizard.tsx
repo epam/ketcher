@@ -436,18 +436,14 @@ const getLeavingAtomForAttachmentPoint = (
 ): AtomLabel => {
   switch (componentType) {
     case KetMonomerClass.Base:
-      return AttachmentPointName.R1 === attachmentPointName
-        ? AtomLabel.H
-        : AtomLabel.H;
+      return AtomLabel.H;
     case KetMonomerClass.Sugar:
       if (attachmentPointName === AttachmentPointName.R3) {
         return AtomLabel.O; // OH group for base connection
       }
       return AtomLabel.H; // H for R2 (phosphate connection) and R1
     case KetMonomerClass.Phosphate:
-      return AttachmentPointName.R1 === attachmentPointName
-        ? AtomLabel.O
-        : AtomLabel.O;
+      return AtomLabel.O;
     default:
       return AtomLabel.H;
   }
@@ -1595,7 +1591,10 @@ const MonomerCreationWizard = () => {
   const isPresetType = type === 'rnaPreset';
 
   return (
-    <div className={styles.monomerCreationWizard}>
+    <div
+      className={styles.monomerCreationWizard}
+      data-testid="monomer-creation-wizard"
+    >
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />

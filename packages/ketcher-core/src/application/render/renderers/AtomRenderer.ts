@@ -5,7 +5,7 @@ import { CoreEditor, editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs, StereoLabel, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
 import {
@@ -18,10 +18,13 @@ export class AtomRenderer extends BaseRenderer {
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
+  private stereoLabelElementBBox?: SVGRect;
+  private stereoTextElementBBox?: SVGRect;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -418,6 +421,10 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
+    this.stereoLabelElement?.remove();
+    this.stereoLabelElement = undefined;
+    this.stereoLabelElementBBox = undefined;
+    this.stereoTextElementBBox = undefined;
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
@@ -596,6 +603,7 @@ export class AtomRenderer extends BaseRenderer {
     this.appendAtomProperties();
     this.appendBadValenceWarning();
     this.appendCIPLabel();
+    this.appendStereoLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }
@@ -686,6 +694,107 @@ export class AtomRenderer extends BaseRenderer {
     return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));
   }
 
+  private getStereoLabelColor(): string {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return '#000';
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    switch (stereoLabelType) {
+      case StereoLabel.And:
+        return '#0000cd'; // Default AND Centers color
+      case StereoLabel.Or:
+        return '#228b22'; // Default OR Centers color
+      case StereoLabel.Abs:
+        return '#ff0000'; // Default Absolute Center color
+      default:
+        return '#000';
+    }
+  }
+
+  private shouldDisplayStereoLabel(): boolean {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return false;
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    return (
+      stereoLabelType === StereoLabel.And || stereoLabelType === StereoLabel.Or
+    );
+  }
+
+  private appendStereoLabel() {
+    if (!this.shouldDisplayStereoLabel()) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const stereoLabel = this.atom.properties.stereoLabel!;
+
+    this.stereoLabelElement = this.canvas
+      ?.append('g')
+      ?.attr('id', `stereo-atom-${this.atom.id}`);
+
+    const stereoTextElement = this.stereoLabelElement
+      ?.append('text')
+      .text(stereoLabel)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', this.getStereoLabelColor())
+      .attr('pointer-events', 'none');
+
+    this.stereoTextElementBBox = stereoTextElement?.node()?.getBBox();
+    if (!this.stereoTextElementBBox) {
+      return;
+    }
+
+    this.stereoLabelElementBBox = this.stereoLabelElement?.node()?.getBBox();
+
+    this.positionStereoLabel();
+  }
+
+  private positionStereoLabel() {
+    if (!this.stereoTextElementBBox || !this.stereoLabelElementBBox) {
+      return;
+    }
+
+    const { width, height } = this.stereoTextElementBBox;
+
+    const modifiedTextBBox = {
+      x: this.scaledPosition.x - width / 2,
+      y: this.scaledPosition.y - height / 2,
+      width,
+      height,
+    };
+    const direction = this.bisectLargestSector();
+
+    const baseDistance = 3;
+    const shiftDistance =
+      baseDistance +
+      util.shiftRayBox(
+        this.scaledPosition,
+        direction.negated(),
+        Box2Abs.fromRelBox(modifiedTextBBox),
+      );
+    const shiftVector = direction.scaled(baseDistance + shiftDistance);
+
+    const stereoPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x - this.stereoLabelElementBBox.width / 2,
+        shiftVector.y + this.stereoLabelElementBBox.height / 2,
+      ),
+    );
+
+    this.stereoLabelElement?.attr(
+      'transform',
+      `translate(${stereoPosition.x}, ${stereoPosition.y})`,
+    );
+  }
+
   public move() {
     this.rootElement?.attr(
       'transform',
@@ -693,11 +802,13 @@ export class AtomRenderer extends BaseRenderer {
     );
 
     this.positionCIPLabel();
+    this.positionStereoLabel();
   }
 
   public remove() {
     this.removeSelection();
     this.cipLabelElement?.remove();
+    this.stereoLabelElement?.remove();
     super.remove();
   }
 

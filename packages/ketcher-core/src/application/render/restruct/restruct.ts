@@ -704,15 +704,12 @@ class ReStruct {
     }
     this.clearVisel(reloop.visel);
 
-    const bondlist: Array<number> = [];
-
     reloop.loop.hbs.forEach((hbid) => {
       const hb = this.molecule.halfBonds.get(hbid);
       if (!hb) return;
       hb.loop = -1;
       this.markBond(hb.bid, 1);
       this.markAtom(hb.begin, 1);
-      bondlist.push(hb.bid);
     });
 
     this.reloops.delete(loopId);
@@ -909,11 +906,11 @@ class ReStruct {
           fill: '#7f7',
           stroke: '#7f7',
         });
-        if (item.togglePoints) item.togglePoints(true);
+        item.showPoints?.();
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide();
-      if (item.togglePoints) item.togglePoints(false);
+      item.hidePoints?.();
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
         fill: '#fff',

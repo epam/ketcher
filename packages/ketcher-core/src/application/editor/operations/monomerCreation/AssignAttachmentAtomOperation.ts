@@ -31,11 +31,11 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
 
     const { potentialAttachmentPoints } = this.monomerCreationState;
     this.assignedAttachmentPoints =
-      this._assignedAttachmentPoints ||
+      this._assignedAttachmentPoints ??
       this.monomerCreationState.assignedAttachmentPoints;
 
     this.attachmentPointName =
-      this._attachmentPointName ||
+      this._attachmentPointName ??
       getNextFreeAttachmentPoint(
         Array.from(this.assignedAttachmentPoints.keys()),
       );

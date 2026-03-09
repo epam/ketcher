@@ -3,16 +3,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import {
   openFileAndAddToCanvasAsNewProject,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
@@ -22,7 +19,9 @@ test.describe('Snake Layout for Microstructures', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
-  test.afterEach(async ({ FlexCanvas: _ }) => {});
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -351,24 +350,24 @@ test.describe('Snake Layout for Microstructures', () => {
 });
 
 test.describe('Snake Layout for Microstructures by Ruler', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
+
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       disableChainLengthRuler: false,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Ruler(page).setLength('6');
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await Ruler(page).setLength('6');
     await processResetToDefaultState(testInfo, page);
   });
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Check that small molecules connected to monomers layouted below the chains when change layout by dragging ruler slider', async () => {

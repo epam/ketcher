@@ -123,7 +123,6 @@ export default class FragmentSelectionTool implements Tool {
       this.dragCtx = null;
       editor.event.message.dispatch({ info: false });
       editor.rotateController.rerender();
-      return true;
     }
     // No action needed on mouseup for this tool
     // But this method is defined to prevent editor from dropping selection in case if method is absent
@@ -170,13 +169,9 @@ export default class FragmentSelectionTool implements Tool {
     const bondItem = this.editor.findItem(event, ['bonds'], null);
     const atomItem = this.editor.findItem(event, ['atoms'], null);
     const reBond = bondItem && restruct.bonds.get(bondItem.id);
-    const reAtom = atomItem && restruct.bonds.get(atomItem.id);
+    const reAtom = atomItem && restruct.atoms.get(atomItem.id);
 
-    if (
-      (reBond && reBond.selected) ||
-      (reAtom && reAtom.selected) ||
-      (!reBond && !reAtom)
-    ) {
+    if (reBond?.selected || reAtom?.selected || (!reBond && !reAtom)) {
       handleMovingPosibilityCursor(
         bondItem || atomItem,
         this.editor.render.paper.canvas,
@@ -333,12 +328,12 @@ export default class FragmentSelectionTool implements Tool {
       for (const [id, currentBond] of struct.bonds.entries()) {
         if (id === bondId) continue;
 
-        const nextAtomId =
-          currentBond.begin === atomId
-            ? currentBond.end
-            : currentBond.end === atomId
-            ? currentBond.begin
-            : null;
+        let nextAtomId: number | null = null;
+        if (currentBond.begin === atomId) {
+          nextAtomId = currentBond.end;
+        } else if (currentBond.end === atomId) {
+          nextAtomId = currentBond.begin;
+        }
 
         if (nextAtomId === null || visited.has(nextAtomId)) {
           continue;

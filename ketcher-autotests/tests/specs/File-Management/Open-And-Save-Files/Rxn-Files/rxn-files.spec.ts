@@ -146,7 +146,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const xCoordinatesWithShift = x + 300;
     const xCoordinatesWithShiftHalf = x + 150;
     const yCoordinatesWithShift = y + 50;
-    await dragMouseTo(xCoordinatesWithShift, y, page);
+    await dragMouseTo(page, xCoordinatesWithShift, y);
     await savedFileInfoStartsWithRxn(page);
 
     await LeftToolbar(page).reactionPlusTool();
@@ -159,7 +159,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const ySecondChain = yCoordinatesWithShift + 50;
     await LeftToolbar(page).chain();
     await page.mouse.move(x, ySecondChain);
-    await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
+    await dragMouseTo(page, xCoordinatesWithShift, ySecondChain);
     await savedFileInfoStartsWithRxn(page);
 
     await CommonLeftToolbar(page).erase();
@@ -173,13 +173,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const yArrowStart = y + 20;
     const yArrowEnd = yArrowStart + 20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await dragMouseTo(page, xCoordinatesWithShiftHalf, yArrowEnd);
     await savedFileInfoStartsWithRxn(page, true);
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await dragMouseTo(page, xCoordinatesWithShiftHalf, yArrowEnd);
     await savedFileInfoStartsWithRxn(page, true);
   });
 
@@ -347,7 +347,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -376,7 +376,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -405,7 +405,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(700, 100, page);
+    await dragMouseTo(page, 700, 100);
 
     await verifyFileExport(
       page,
@@ -434,7 +434,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
     await verifyFileExport(
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
@@ -462,7 +462,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -491,7 +491,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,

@@ -192,127 +192,124 @@ class RotateTool implements Tool {
   mousemove = throttle((event) => {
     if (!this.dragCtx) {
       this.editor.hover(null, null, event);
-      return true;
+    } else {
+      const dragCtx = this.dragCtx;
+
+      const mousePos = CoordinateTransformation.pageToModel(
+        event,
+        this.editor.render,
+      );
+      const mouseMoveAngle =
+        vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
+
+      let rotateAngle = mouseMoveAngle;
+      this.reStruct.clearSnappingBonds();
+      if (this.snapInfo) {
+        this.snapInfo.snapAngleDrawingProps = null;
+      }
+      if (!event.ctrlKey) {
+        const [isSnapping, rotateAngleWithSnapping] = this.snap(mouseMoveAngle);
+        rotateAngle = isSnapping
+          ? rotateAngleWithSnapping
+          : vectorUtils.fracAngle(mouseMoveAngle, null);
+      }
+
+      const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
+      if (!('angle' in dragCtx) || dragCtx.angle !== rotateAngleInDegrees) {
+        if ('action' in dragCtx) {
+          dragCtx.action.perform(this.reStruct);
+        }
+
+        dragCtx.angle = rotateAngleInDegrees;
+        dragCtx.action = fromRotate(
+          this.reStruct,
+          this.selection,
+          dragCtx.xy0,
+          rotateAngle,
+        );
+
+        this.editor.event.message.dispatch({
+          info: rotateAngleInDegrees + 'º',
+        });
+
+        const expSel = this.editor.explicitSelected();
+        dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
+        this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event);
+
+        this.editor.update(dragCtx.action, true);
+      }
     }
-
-    const dragCtx = this.dragCtx;
-
-    const mousePos = CoordinateTransformation.pageToModel(
-      event,
-      this.editor.render,
-    );
-    const mouseMoveAngle =
-      vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
-
-    let rotateAngle = mouseMoveAngle;
-    this.reStruct.clearSnappingBonds();
-    if (this.snapInfo) {
-      this.snapInfo.snapAngleDrawingProps = null;
-    }
-    if (!event.ctrlKey) {
-      const [isSnapping, rotateAngleWithSnapping] = this.snap(mouseMoveAngle);
-      rotateAngle = isSnapping
-        ? rotateAngleWithSnapping
-        : vectorUtils.fracAngle(mouseMoveAngle, null);
-    }
-
-    const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
-    if ('angle' in dragCtx && dragCtx.angle === rotateAngleInDegrees) {
-      return true;
-    }
-
-    if ('action' in dragCtx) {
-      dragCtx.action.perform(this.reStruct);
-    }
-
-    dragCtx.angle = rotateAngleInDegrees;
-    dragCtx.action = fromRotate(
-      this.reStruct,
-      this.selection,
-      dragCtx.xy0,
-      rotateAngle,
-    );
-
-    this.editor.event.message.dispatch({ info: rotateAngleInDegrees + 'º' });
-
-    const expSel = this.editor.explicitSelected();
-    dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
-    this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event);
-
-    this.editor.update(dragCtx.action, true);
     return true;
   }, 40); // 25fps
 
   mouseup() {
-    if (!this.dragCtx) {
-      return true;
-    }
+    if (this.dragCtx) {
+      this.reStruct.clearSnappingBonds();
+      this.editor.update(true);
 
-    this.reStruct.clearSnappingBonds();
-    this.editor.update(true);
+      const dragCtx = this.dragCtx;
 
-    const dragCtx = this.dragCtx;
+      let isMergingSGroup = false;
 
-    let isMergingSGroup = false;
+      const { atoms, bonds } = dragCtx.mergeItems ?? {};
 
-    const { atoms, bonds } = dragCtx.mergeItems ?? {};
-
-    atoms?.forEach((dst: number, src: number) => {
-      if (
-        this.struct.isAtomFromMacromolecule(src) ||
-        this.struct.isAtomFromMacromolecule(dst)
-      ) {
-        isMergingSGroup = true;
-      }
-    });
-    bonds?.forEach((dst: number, src: number) => {
-      if (
-        this.struct.isBondFromMacromolecule(src) ||
-        this.struct.isBondFromMacromolecule(dst)
-      ) {
-        isMergingSGroup = true;
-      }
-    });
-
-    let action: Action = dragCtx.action;
-
-    if (!isMergingSGroup) {
-      action = action
-        ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
-        : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
-    }
-
-    if (this.selection?.atoms) {
-      const sGroups = getRelSGroupsBySelection(
-        this.struct,
-        this.selection?.atoms,
-      );
-      const monomerRotateAction = new Action();
-      sGroups.forEach((sGroup) => {
-        if (sGroup instanceof MonomerMicromolecule) {
-          const angleInRadians = (dragCtx.angle * Math.PI) / 180;
-          monomerRotateAction.addOp(
-            new RotateMonomerOperation({
-              id: sGroup.id,
-              value: angleInRadians,
-            }),
-          );
+      atoms?.forEach((dst: number, src: number) => {
+        if (
+          this.struct.isAtomFromMacromolecule(src) ||
+          this.struct.isAtomFromMacromolecule(dst)
+        ) {
+          isMergingSGroup = true;
         }
       });
-      monomerRotateAction.perform(this.reStruct);
-      action = action.mergeWith(monomerRotateAction);
+      bonds?.forEach((dst: number, src: number) => {
+        if (
+          this.struct.isBondFromMacromolecule(src) ||
+          this.struct.isBondFromMacromolecule(dst)
+        ) {
+          isMergingSGroup = true;
+        }
+      });
+
+      let action: Action = dragCtx.action;
+
+      if (!isMergingSGroup) {
+        action = action
+          ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
+          : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
+      }
+
+      if (this.selection?.atoms) {
+        const sGroups = getRelSGroupsBySelection(
+          this.struct,
+          this.selection?.atoms,
+        );
+        const monomerRotateAction = new Action();
+        sGroups.forEach((sGroup) => {
+          if (sGroup instanceof MonomerMicromolecule) {
+            const angleInRadians = (dragCtx.angle * Math.PI) / 180;
+            monomerRotateAction.addOp(
+              new RotateMonomerOperation({
+                id: sGroup.id,
+                value: angleInRadians,
+              }),
+            );
+          }
+        });
+        monomerRotateAction.perform(this.reStruct);
+        action = action.mergeWith(monomerRotateAction);
+      }
+
+      delete this.dragCtx;
+      this.editor.update(action);
+
+      if (dragCtx.mergeItems) {
+        this.editor.selection(null);
+      }
+
+      this.editor.event.message.dispatch({
+        info: false,
+      });
     }
-
-    delete this.dragCtx;
-    this.editor.update(action);
-
-    if (dragCtx.mergeItems) {
-      this.editor.selection(null);
-    }
-
-    this.editor.event.message.dispatch({
-      info: false,
-    });
     return true;
   }
 

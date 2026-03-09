@@ -9,7 +9,6 @@ import {
   MonomerToAtomBond,
   Nucleotide,
   Phosphate,
-  Pool,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -1263,32 +1262,4 @@ export class SequenceRenderer {
   private static removeDelegatedEvents() {
     SequenceEventDelegationManager.instance.removeDelegatedEvents();
   }
-}
-
-export function sequenceReplacer(key: string, value: unknown): unknown {
-  if (key === 'renderer') {
-    return `<${typeof value}>`;
-  } else if (key === 'baseRenderer') {
-    return `<${typeof value}>`;
-  } else if (['R1', 'R2', 'R3'].includes(key)) {
-    return `<${typeof value}>`;
-  } else if (value instanceof Pool) {
-    return {
-      // eslint-disable-next-line dot-notation
-      nextId: value['nextId'],
-      items: Array.from(value),
-    };
-  } else if (
-    value instanceof Object &&
-    !['Object', 'Array'].includes(value.constructor.name)
-  ) {
-    const valueObj = value as object;
-    const hasOwnToString = valueObj.toString !== Object.prototype.toString;
-    return {
-      ctor: value.constructor.name,
-      ...(hasOwnToString && { repr: valueObj.toString() }),
-      ...value,
-    };
-  }
-  return value;
 }

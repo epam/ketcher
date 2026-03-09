@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
@@ -5,8 +6,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForPageInit,
-  resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
   copyToClipboardByKeyboard,
@@ -38,20 +37,14 @@ let page: Page;
 test.setTimeout(40000);
 test.describe.configure({ retries: 0 });
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {
@@ -152,7 +145,7 @@ async function loadTwoMonomers(
     .first();
 
   await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(500, 370, page);
+  await dragMouseTo(page, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -175,7 +168,7 @@ async function loadTwoMonomers(
 
   await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-  await dragMouseTo(600, 372, page);
+  await dragMouseTo(page, 600, 372);
   await moveMouseAway(page);
 }
 

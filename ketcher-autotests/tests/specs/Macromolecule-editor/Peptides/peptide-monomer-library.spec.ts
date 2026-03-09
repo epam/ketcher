@@ -257,7 +257,7 @@ test.describe('Peptide library testing', () => {
     });
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await getMonomerLocator(page, Peptide.Nal).hover();
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

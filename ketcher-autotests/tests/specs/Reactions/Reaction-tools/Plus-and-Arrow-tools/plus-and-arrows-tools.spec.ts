@@ -122,13 +122,13 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
-    await dragMouseTo(x + 150, y + 150, page);
+    await dragMouseTo(page, x + 150, y + 150);
     await takeEditorScreenshot(page);
   });
 
@@ -140,7 +140,7 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 300, 300, {
@@ -211,7 +211,7 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select the plus sign and move it', async ({ page }) => {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x - 150, point.y - 10);
-        await dragMouseTo(point.x - 150, point.y - 40, page);
+        await dragMouseTo(page, point.x - 150, point.y - 40);
       });
     });
 
@@ -220,12 +220,12 @@ test.describe('Plus and Arrows tools ', () => {
     }) => {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x - 300, point.y - 100);
-        await dragMouseTo(point.x - 140, point.y + 100, page);
+        await dragMouseTo(page, point.x - 140, point.y + 100);
       });
 
       await waitForRender(page, async () => {
         await page.mouse.move(point.x - 200, point.y - 20);
-        await dragMouseTo(point.x - 300, point.y - 100, page);
+        await dragMouseTo(page, point.x - 300, point.y - 100);
       });
     });
 
@@ -234,7 +234,7 @@ test.describe('Plus and Arrows tools ', () => {
         await selectAllStructuresOnCanvas(page);
         await page.mouse.move(point.x - 20, point.y - 20);
       });
-      await dragMouseTo(point.x - 100, point.y - 100, page);
+      await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
     test.skip(
@@ -287,7 +287,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
+      await dragMouseTo(page, point.x - 140, point.y + 100);
     });
   });
   test.describe('Reaction Arrow - Manipulations with different Tools', () => {
@@ -306,22 +306,22 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the reaction arrow and move it', async ({ page }) => {
       await page.mouse.move(point.x + 60, point.y);
-      await dragMouseTo(point.x + 60, point.y - 40, page);
+      await dragMouseTo(page, point.x + 60, point.y - 40);
     });
 
     test('Select the reaction arrow with any reaction component(s) and move them', async ({
       page,
     }) => {
       await page.mouse.move(point.x + 50, point.y - 300);
-      await dragMouseTo(point.x + 400, point.y + 100, page);
+      await dragMouseTo(page, point.x + 400, point.y + 100);
       await page.mouse.move(point.x + 70, point.y);
-      await dragMouseTo(point.x + 300, point.y - 100, page);
+      await dragMouseTo(page, point.x + 300, point.y - 100);
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
       await selectAllStructuresOnCanvas(page);
       await page.mouse.move(point.x - 20, point.y - 20);
-      await dragMouseTo(point.x - 100, point.y - 100, page);
+      await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
@@ -362,7 +362,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
+      await dragMouseTo(page, point.x - 140, point.y + 100);
     });
   });
   test.describe('Non-default Reaction Arrow Tool - Manipulations with different tool', () => {
@@ -393,22 +393,22 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the reaction arrow and move it', async ({ page }) => {
       await page.mouse.move(point.x + OFFSET_FROM_ARROW, point.y);
-      await dragMouseTo(point.x + OFFSET_FROM_ARROW, point.y - 40, page);
+      await dragMouseTo(page, point.x + OFFSET_FROM_ARROW, point.y - 40);
     });
 
     test('Select the reaction arrow with any reaction component(s) and move them', async ({
       page,
     }) => {
       await page.mouse.move(point.x - 40, point.y - 300);
-      await dragMouseTo(point.x + 400, point.y + 100, page);
+      await dragMouseTo(page, point.x + 400, point.y + 100);
       await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + 300, point.y - 100, page);
+      await dragMouseTo(page, point.x + 300, point.y - 100);
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
       await selectAllStructuresOnCanvas(page);
       await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x - 100, point.y - 100, page);
+      await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
@@ -426,7 +426,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.move(point.x - 40, point.y - 300);
-      await dragMouseTo(point.x + 400, point.y + 100, page);
+      await dragMouseTo(page, point.x + 400, point.y + 100);
 
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
@@ -462,9 +462,9 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).erase();
       await page.mouse.move(point.x - 40, point.y - 300);
-      await dragMouseTo(point.x + 400, point.y + 100, page);
+      await dragMouseTo(page, point.x + 400, point.y + 100);
       await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + 300, point.y - 100, page);
+      await dragMouseTo(page, point.x + 300, point.y - 100);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         maxDiffPixels: 1,
@@ -487,7 +487,7 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.FailedArrow);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - 30, point.y);
-    await dragMouseTo(point.x + 20, point.y + 50, page);
+    await dragMouseTo(page, point.x + 20, point.y + 50);
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -664,7 +664,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await page.mouse.move(x - 35, y - 1);
-      await dragMouseTo(x - 25, y - 50, page);
+      await dragMouseTo(page, x - 25, y - 50);
       await saveStructureWithReaction(page);
       await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
@@ -743,24 +743,26 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x + 100, point.y - 50);
     });
 
-    test('to Horizontal Position with Angle ≤ 15 Degrees', async ({ page }) => {
+    test('to Horizontal Position with Angle ≤ 5 Degrees', async ({ page }) => {
       /**
-       * Test case: Test case: EPMLSOPKET-15548
-       * Description: Arrow Snapping to Horizontal Position with Angle ≤ 15 Degrees
+       * Original Test case: Test case: EPMLSOPKET-15548
+       * Current behavior defined by https://github.com/epam/ketcher/issues/5568
+       * Description: Arrow Snapping to Horizontal Position with Angle ≤ 5 Degrees
        */
       await page.mouse.down();
-      await page.mouse.move(point.x + 100, point.y - 20);
+      await page.mouse.move(point.x + 100, point.y - 5);
       await takeEditorScreenshot(page);
       await page.mouse.up();
     });
 
-    test('to Vertical Position with Angle ≤ 15 Degrees', async ({ page }) => {
+    test('to Vertical Position with Angle ≤ 5 Degrees', async ({ page }) => {
       /**
-       * Test case: Test case: EPMLSOPKET-15549
-       * Description: Arrow Snapping to Vertical Position with Angle ≤ 15 Degrees
+       * Original Test case: Test case: EPMLSOPKET-15549
+       * Current behavior defined by https://github.com/epam/ketcher/issues/5568
+       * Description: Arrow Snapping to Vertical Position with Angle ≤ 5 Degrees
        */
       await page.mouse.down();
-      await page.mouse.move(point.x + 20, point.y - 100);
+      await page.mouse.move(point.x + 5, point.y - 100);
       await takeEditorScreenshot(page);
       await page.mouse.up();
     });
@@ -826,7 +828,7 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 200, y + 200, page);
+    await dragMouseTo(page, x + 200, y + 200);
   });
 
   test('Copy/paste retrosynthetic arrow', async ({ page }) => {

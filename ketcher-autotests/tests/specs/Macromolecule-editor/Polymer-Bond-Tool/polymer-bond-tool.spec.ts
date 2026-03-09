@@ -11,7 +11,6 @@ import {
   moveMouseAway,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  waitForPageInit,
   MacroFileType,
   MolFileFormat,
   takeElementScreenshot,
@@ -52,23 +51,21 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('Create bond between two peptides', async () => {
@@ -938,6 +935,7 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     */
   const firstMonomer = getMonomerLocator(page, Peptide.C);
   const secondMonomer = getMonomerLocator(page, Peptide.dC);
+  const thirdMonomer = getMonomerLocator(page, Peptide.meD);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -959,9 +957,8 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     page,
     'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
   );
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
+  await takeElementScreenshot(page, thirdMonomer, {
+    padding: 200,
   });
 });
 

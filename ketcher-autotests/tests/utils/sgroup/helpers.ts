@@ -5,7 +5,7 @@ import {
   MonomerOnMicroOption,
   SuperatomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
-import { waitForRender } from '@utils/common';
+import { waitForRender } from '../common/loaders/waitForRender';
 
 export async function expandAbbreviation(page: Page, sGroup: ClickTarget) {
   await waitForRender(page, async () => {

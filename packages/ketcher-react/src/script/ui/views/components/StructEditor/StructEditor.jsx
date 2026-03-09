@@ -21,6 +21,7 @@ import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash/fp';
+import { omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
@@ -285,46 +286,45 @@ class StructEditor extends Component {
   }
 
   render() {
+    const omittedProps = [
+      'ketcherId',
+      'prevKetcherId',
+      'struct',
+      'tool',
+      'toolOpts',
+      'options',
+      'onInit',
+      'onSelectionChange',
+      'onElementEdit',
+      'onEnhancedStereoEdit',
+      'onQuickEdit',
+      'onBondEdit',
+      'onZoomIn',
+      'onZoomOut',
+      'onZoomChanged',
+      'onRgroupEdit',
+      'onSgroupEdit',
+      'onRemoveFG',
+      'onMessage',
+      'onAromatizeStruct',
+      'onDearomatizeStruct',
+      'onAttachEdit',
+      'onCipChange',
+      'onConfirm',
+      'onShowInfo',
+      'onApiSettings',
+      'showAttachmentPoints',
+      'onUpdateFloatingTools',
+      'onShowMacromoleculesErrorMessage',
+      'serverSettings',
+    ];
+
     const {
       Tag = 'div',
       className,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      ketcherId,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      prevKetcherId,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      struct,
       indigoVerification,
-      tool,
-      toolOpts,
-      options,
-      onInit,
-      onSelectionChange,
-      onElementEdit,
-      onEnhancedStereoEdit,
-      onQuickEdit,
-      onBondEdit,
-      onZoomIn,
-      onZoomOut,
-      onZoomChanged,
-      onRgroupEdit,
-      onSgroupEdit,
-      onRemoveFG,
-      onMessage,
-      onAromatizeStruct,
-      onDearomatizeStruct,
-      onAttachEdit,
-      onCipChange,
-      onConfirm,
-      onShowInfo,
-      onApiSettings,
-      showAttachmentPoints = true,
-      onUpdateFloatingTools,
-      onShowMacromoleculesErrorMessage,
-      serverSettings,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
-    } = this.props;
+    } = omit(this.props, omittedProps);
 
     const { clientX = 0, clientY = 0, tooltip } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;

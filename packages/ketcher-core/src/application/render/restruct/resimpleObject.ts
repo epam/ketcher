@@ -402,10 +402,12 @@ class ReSimpleObject extends ReObject {
     return this.selectionSet;
   }
 
-  togglePoints(displayFlag: boolean) {
-    displayFlag
-      ? this.selectionPointsSet?.show()
-      : this.selectionPointsSet?.hide();
+  showPoints() {
+    this.selectionPointsSet?.show();
+  }
+
+  hidePoints() {
+    this.selectionPointsSet?.hide();
   }
 
   show(restruct: ReStruct, options: any): void {

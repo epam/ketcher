@@ -76,6 +76,8 @@ export interface IEditorEvents {
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
   layoutCircular: Subscription;
+  flipHorizontal: Subscription;
+  flipVertical: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -152,6 +154,8 @@ export function resetEditorEvents() {
     switchToMacromoleculesMode: new Subscription(),
     switchToMoleculesMode: new Subscription(),
     layoutCircular: new Subscription(),
+    flipHorizontal: new Subscription(),
+    flipVertical: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -198,6 +202,11 @@ const selectTools = [
   ToolName.selectStructure,
 ];
 let currentSelectToolIdx = 0;
+
+// Bond tools require toolName in options to select the bond type.
+const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
+  editor.events.selectTool.dispatch([toolName, { toolName }]);
+};
 
 export const hotkeysConfiguration = {
   RNASequenceType: {
@@ -250,9 +259,29 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      if (editor.isSequenceEditMode) return;
+      // Sequence mode handles Delete/Backspace itself (even when not editing),
+      // so skip tool switching here.
+      if (editor.isSequenceMode) return;
+      const hasSelectedEntities =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
       editor.events.selectTool.dispatch([ToolName.erase]);
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      if (hasSelectedEntities) {
+        editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      }
+    },
+  },
+  bondSingle: {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondSingle);
+    },
+  },
+  bondHydrogen: {
+    shortcut: '2',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondHydrogen);
     },
   },
   clear: {

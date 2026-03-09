@@ -78,22 +78,11 @@ const getPointOnCircle = (center: Vec2, radius: number, angle: number) => {
   };
 };
 
-const getInitialHandleCenter = (
-  center: Vec2,
-  rectStartY: number,
-): Pick<Vec2, 'x' | 'y'> => ({
-  x: center.x,
-  y: rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
-});
+const getInitialHandleCenter = (center: Vec2, rectStartY: number): Vec2 =>
+  new Vec2(center.x, rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS);
 
-const getInitialHandleAngle = (
-  center: Vec2,
-  initialHandleCenter: Pick<Vec2, 'x' | 'y'>,
-) => {
-  const initialHandleOffset = {
-    x: initialHandleCenter.x - center.x,
-    y: initialHandleCenter.y - center.y,
-  };
+const getInitialHandleAngle = (center: Vec2, initialHandleCenter: Vec2) => {
+  const initialHandleOffset = initialHandleCenter.sub(center);
 
   if (initialHandleOffset.x === 0 && initialHandleOffset.y === 0) {
     return -Math.PI / 2;

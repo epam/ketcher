@@ -145,9 +145,23 @@ describe('RotationView', () => {
     expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(100);
     expect(Number(angleText?.getAttribute('y'))).toBeGreaterThan(20);
 
+    const cursorDistance = 80 - 20;
+    const protractorCursorOffset = 12;
+    const protractorRadiusStep = 5;
+    const expectedRadius =
+      Math.round(
+        (cursorDistance - protractorCursorOffset) / protractorRadiusStep,
+      ) * protractorRadiusStep;
+    const expectedArcStart = `M100,${20 + expectedRadius}`;
     const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
-      path.getAttribute('d')?.includes('A50,50 0 0,1'),
+      path
+        .getAttribute('d')
+        ?.includes(`A${expectedRadius},${expectedRadius} 0 0,1`),
     );
-    expect(arcPath?.getAttribute('d')).toContain('M100,70A50,50 0 0,1 100,70');
+    expect(arcPath?.getAttribute('d')).toContain(
+      `${expectedArcStart}A${expectedRadius},${expectedRadius} 0 0,1 100,${
+        20 + expectedRadius
+      }`,
+    );
   });
 });

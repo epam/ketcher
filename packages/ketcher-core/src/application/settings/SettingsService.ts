@@ -57,6 +57,7 @@ const DEFAULT_STORAGE_KEY = 'ketcher-opts';
  * TODO: Remove this singleton and implement proper multi-instance support
  */
 export class SettingsService implements ISettingsService {
+  // eslint-disable-next-line no-use-before-define
   private static instance: SettingsService | null = null;
 
   private settings: Settings;

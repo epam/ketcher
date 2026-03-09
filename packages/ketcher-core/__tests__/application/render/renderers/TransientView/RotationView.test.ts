@@ -117,4 +117,37 @@ describe('RotationView', () => {
     );
     expect(arcPath?.getAttribute('d')).toContain('M100,10A90,90 0 1,1');
   });
+
+  it('uses the moved center handle direction as the 0 degree starting position', () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const transientLayer = select(svg).append('g');
+
+    RotationView.show(
+      transientLayer as unknown as D3SvgElementSelection<SVGGElement, void>,
+      {
+        center: new Vec2(100, 20),
+        boundingBox: {
+          left: 80,
+          top: 80,
+          width: 40,
+          height: 40,
+        },
+        rotationAngle: 0,
+        isRotating: true,
+        cursor: new Vec2(100, 80),
+      },
+    );
+
+    const angleText = Array.from(svg.querySelectorAll('text')).find(
+      (text) => text.textContent === '0°',
+    );
+    expect(angleText).toBeTruthy();
+    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(100);
+    expect(Number(angleText?.getAttribute('y'))).toBeGreaterThan(20);
+
+    const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
+      path.getAttribute('d')?.includes('A50,50 0 0,1'),
+    );
+    expect(arcPath?.getAttribute('d')).toContain('M100,70A50,50 0 0,1 100,70');
+  });
 });

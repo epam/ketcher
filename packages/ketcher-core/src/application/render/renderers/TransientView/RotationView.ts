@@ -78,6 +78,30 @@ const getPointOnCircle = (center: Vec2, radius: number, angle: number) => {
   };
 };
 
+const getInitialHandleCenter = (
+  center: Vec2,
+  rectStartY: number,
+): Pick<Vec2, 'x' | 'y'> => ({
+  x: center.x,
+  y: rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
+});
+
+const getInitialHandleAngle = (
+  center: Vec2,
+  initialHandleCenter: Pick<Vec2, 'x' | 'y'>,
+) => {
+  const initialHandleOffset = {
+    x: initialHandleCenter.x - center.x,
+    y: initialHandleCenter.y - center.y,
+  };
+
+  if (initialHandleOffset.x === 0 && initialHandleOffset.y === 0) {
+    return -Math.PI / 2;
+  }
+
+  return Math.atan2(initialHandleOffset.y, initialHandleOffset.x);
+};
+
 const getRotationArcPath = (
   center: Vec2,
   radius: number,
@@ -167,13 +191,12 @@ export class RotationView extends TransientView {
 
     const cursorInCanvas =
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
+    const initialHandleCenter = getInitialHandleCenter(center, rectStartY);
 
     const handleCenterX = isRotating
-      ? cursorInCanvas?.x ?? center.x
-      : boundingBox.left + boundingBox.width / 2;
-    const handleCenterY =
-      cursorInCanvas?.y ??
-      rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS;
+      ? cursorInCanvas?.x ?? initialHandleCenter.x
+      : initialHandleCenter.x;
+    const handleCenterY = cursorInCanvas?.y ?? initialHandleCenter.y;
 
     // Draw link from bounding box to handle
     const linkPath = isRotating
@@ -355,7 +378,7 @@ export class RotationView extends TransientView {
           .attr('style', 'pointer-events: none');
 
         // Draw protractor degree ticks and labels (as in rotate-controller)
-        const startAngle = -Math.PI / 2;
+        const startAngle = getInitialHandleAngle(center, initialHandleCenter);
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const predefinedDegrees = [
           0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60,

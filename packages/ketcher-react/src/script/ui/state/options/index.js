@@ -225,31 +225,17 @@ export function saveSettings(newSettings) {
     // Use window.ketcher since Redux state doesn't store the Ketcher instance
     const settingsService = window.ketcher?.settingsService;
 
-    console.log('[saveSettings] Attempting to save settings:', newSettings);
-
     if (settingsService) {
       try {
         // Transform settings to match SettingsService schema
         const transformedSettings = transformSettingsForCore(newSettings);
-        console.log(
-          '[saveSettings] Transformed settings:',
-          transformedSettings,
-        );
 
         // Direct update - both Core and Redux use flat format now
         await settingsService.updateSettings(transformedSettings);
-        console.log(
-          '[saveSettings] Settings saved successfully via core service',
-        );
         // Core service handles localStorage and emits events
         // The event will trigger syncSettingsFromCore via useSettings hook
       } catch (error) {
         console.error('Failed to update settings via core service:', error);
-        console.error('[saveSettings] Validation error details:', error.errors);
-        console.error(
-          '[saveSettings] Settings that failed validation:',
-          JSON.stringify(newSettings, null, 2),
-        );
         // Fall back to direct localStorage write
         storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
       }

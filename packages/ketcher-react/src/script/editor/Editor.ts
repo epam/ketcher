@@ -1158,7 +1158,7 @@ class Editor implements KetcherEditor {
 
     this.historyStack = [];
     this.historyPtr = 0;
-    this.struct(selectedStruct, false);
+    this.struct(selectedStruct);
 
     this.subscribeToChangeEventInMonomerCreationWizard();
   }
@@ -1627,7 +1627,6 @@ class Editor implements KetcherEditor {
           undefined,
           true,
         ),
-        false,
       );
     }, 0);
   }

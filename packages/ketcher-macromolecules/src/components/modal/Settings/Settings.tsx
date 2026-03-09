@@ -20,7 +20,15 @@ import { ActionButton } from 'components/shared/actionButton';
 import { SettingsAccordion } from './SettingsAccordion';
 import { Settings as SettingsType } from 'ketcher-core';
 import { RequiredModalProps } from '../modalContainer';
-import { Container, FooterLeft, FooterRight } from './Settings.styles';
+import {
+  Container,
+  FooterLeft,
+  FooterRight,
+  HeaderContent,
+  HeaderButton,
+  HeaderTitle,
+} from './Settings.styles';
+import { Icon } from 'ketcher-react';
 
 export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const settingsService = window.ketcher?.settingsService;
@@ -156,9 +164,55 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     return null;
   }
 
+  const handleACSStyle = async () => {
+    if (!settingsService) return;
+
+    setIsLoading(true);
+    try {
+      // Type assertion needed as loadPreset may not be in the type definition yet
+      await (settingsService as any).loadPreset('acs');
+      const acsSettings = settingsService.getSettings();
+      setCurrentSettings(acsSettings);
+    } catch (error) {
+      console.error('Failed to apply ACS style:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const headerTitle = (
+    <HeaderContent>
+      <HeaderTitle>Settings</HeaderTitle>
+      <HeaderButton
+        onClick={handleImport}
+        disabled={isLoading}
+        title="Open from File"
+        data-testid="open-settings-from-file-button"
+      >
+        <Icon name="open-1" />
+      </HeaderButton>
+      <HeaderButton
+        onClick={handleExport}
+        disabled={isLoading}
+        title="Save to File"
+        data-testid="save-settings-to-file-button"
+      >
+        <Icon name="save-1" />
+      </HeaderButton>
+      <HeaderButton
+        onClick={handleReset}
+        disabled={isLoading}
+        title="Reset"
+        data-testid="reset-settings-button"
+      >
+        <Icon name="reset" />
+      </HeaderButton>
+    </HeaderContent>
+  );
+
   return (
     <Modal
-      title="Settings"
+      title={headerTitle as any}
       isOpen={isModalOpen}
       onClose={handleCancel}
       showExpandButton={true}
@@ -178,22 +232,11 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <Modal.Footer>
         <FooterLeft>
           <ActionButton
-            label="Open from File"
+            label="Set ACS Settings"
             styleType="secondary"
-            clickHandler={handleImport}
+            clickHandler={handleACSStyle}
             disabled={isLoading}
-          />
-          <ActionButton
-            label="Save to File"
-            styleType="secondary"
-            clickHandler={handleExport}
-            disabled={isLoading}
-          />
-          <ActionButton
-            label="Reset"
-            styleType="secondary"
-            clickHandler={handleReset}
-            disabled={isLoading}
+            data-testid="acs-style-button"
           />
         </FooterLeft>
         <FooterRight>

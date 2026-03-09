@@ -22,6 +22,41 @@ export const Container = styled.div`
   overflow-y: auto;
 `;
 
+export const HeaderContent = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+export const HeaderTitle = styled.span`
+  padding-right: 4px;
+`;
+
+export const HeaderButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: #167782;
+  padding: 0;
+  font-size: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #005662;
+  }
+
+  &:disabled {
+    color: #cad3dd;
+    cursor: not-allowed;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+`;
+
 export const FooterLeft = styled.div`
   display: flex;
   gap: 8px;
@@ -44,4 +79,29 @@ export const FieldsContainer = styled.div`
 export const FieldWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  font-size: 12px;
+  line-height: 14px;
+  margin-bottom: 12px;
+  color: #333333;
+  height: 24px;
+
+  label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+  }
+
+  label > span:first-of-type {
+    width: 168px;
+    margin-right: 8px;
+  }
+
+  label > input,
+  label > select,
+  label > div {
+    width: 120px;
+    margin-right: auto;
+  }
 `;

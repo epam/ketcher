@@ -14,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  FormControlLabel,
-  Checkbox,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
+import { Select, MenuItem, FormControl, Switch } from '@mui/material';
 import { FieldWrapper } from './Settings.styles';
 
 interface SettingsFieldProps {
@@ -52,75 +44,134 @@ export const SettingsField = ({
     switch (type) {
       case 'checkbox':
         return (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={Boolean(value)}
-                onChange={(e) => onChange(e.target.checked)}
-                data-testid={`setting-${name}`}
-              />
-            }
-            label={label}
-          />
+          <label>
+            <span>{label}</span>
+            <Switch
+              checked={Boolean(value)}
+              onChange={(e) => onChange(e.target.checked)}
+              size="small"
+              data-testid={`setting-${name}`}
+            />
+          </label>
         );
 
       case 'number':
         return (
-          <TextField
-            type="number"
-            label={label}
-            value={value ?? ''}
-            onChange={(e) => onChange(Number(e.target.value))}
-            inputProps={{ min, max, step: step ?? 1 }}
-            fullWidth
-            size="small"
-            data-testid={`setting-${name}`}
-          />
+          <label>
+            <span>{label}</span>
+            <input
+              type="number"
+              value={value ?? ''}
+              onChange={(e) => onChange(Number(e.target.value))}
+              min={min}
+              max={max}
+              step={step ?? 1}
+              data-testid={`setting-${name}`}
+              style={{
+                fontSize: '12px',
+                padding: '4px 8px',
+                height: '24px',
+                border: '1px solid #cad3dd',
+                borderRadius: '2px',
+              }}
+            />
+          </label>
         );
 
       case 'select':
         return (
-          <FormControl fullWidth size="small">
-            <InputLabel>{label}</InputLabel>
-            <Select
-              value={value ?? ''}
-              onChange={(e) => onChange(e.target.value)}
-              label={label}
-              data-testid={`setting-${name}`}
-            >
-              {options?.map((opt) => (
-                <MenuItem key={String(opt.value)} value={opt.value}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <label>
+            <span>{label}</span>
+            <FormControl size="small" sx={{ border: 'none' }}>
+              <Select
+                value={value ?? ''}
+                onChange={(e) => onChange(e.target.value)}
+                displayEmpty
+                data-testid={`setting-${name}`}
+                sx={{
+                  fontSize: '12px',
+                  height: '24px',
+                  border: 'none',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: '1px solid #cad3dd',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#167782',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#167782',
+                  },
+                }}
+              >
+                {options?.map((opt) => (
+                  <MenuItem
+                    key={String(opt.value)}
+                    value={opt.value}
+                    sx={{ fontSize: '12px' }}
+                  >
+                    {opt.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </label>
         );
 
       case 'color':
         return (
-          <TextField
-            type="color"
-            label={label}
-            value={value ?? '#000000'}
-            onChange={(e) => onChange(e.target.value)}
-            fullWidth
-            size="small"
-            data-testid={`setting-${name}`}
-          />
+          <label>
+            <span>{label}</span>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <input
+                type="color"
+                value={value ?? '#000000'}
+                onChange={(e) => onChange(e.target.value)}
+                data-testid={`setting-${name}`}
+                style={{
+                  width: '30px',
+                  height: '24px',
+                  border: '1px solid #cad3dd',
+                  borderRadius: '2px',
+                  cursor: 'pointer',
+                  padding: '2px',
+                }}
+              />
+              <input
+                type="text"
+                value={value ?? '#000000'}
+                onChange={(e) => onChange(e.target.value)}
+                style={{
+                  width: '85px',
+                  fontSize: '12px',
+                  padding: '4px 8px',
+                  height: '24px',
+                  border: '1px solid #cad3dd',
+                  borderRadius: '2px',
+                }}
+              />
+            </div>
+          </label>
         );
 
       case 'text':
       default:
         return (
-          <TextField
-            label={label}
-            value={value ?? ''}
-            onChange={(e) => onChange(e.target.value)}
-            fullWidth
-            size="small"
-            data-testid={`setting-${name}`}
-          />
+          <label>
+            <span>{label}</span>
+            <input
+              type="text"
+              value={value ?? ''}
+              onChange={(e) => onChange(e.target.value)}
+              data-testid={`setting-${name}`}
+              style={{
+                fontSize: '12px',
+                padding: '4px 8px',
+                height: '24px',
+                border: '1px solid #cad3dd',
+                borderRadius: '2px',
+              }}
+            />
+          </label>
         );
     }
   };

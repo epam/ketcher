@@ -142,13 +142,35 @@ function transformSettingsForCore(settings) {
   delete transformed.init;
 
   // Fix imageResolution: string -> number
+  // Form uses enum: ImageResolution.low = '72', ImageResolution.high = '600'
+  // Schema expects: type 'number'
   if (typeof transformed.imageResolution === 'string') {
     transformed.imageResolution = parseInt(transformed.imageResolution, 10);
   }
 
-  // Fix stereoLabelStyle: case sensitivity (Iupac -> IUPAC)
+  // Fix stereoLabelStyle: normalize to schema-expected values
+  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
+  // Schema expects: ['IUPAC', 'classic', 'On-Atoms', 'off']
+  // Note: There's a legacy mismatch between enum and schema that we need to handle
   if (transformed.stereoLabelStyle) {
-    transformed.stereoLabelStyle = transformed.stereoLabelStyle.toUpperCase();
+    const style = transformed.stereoLabelStyle.toLowerCase();
+    if (style === 'iupac') {
+      transformed.stereoLabelStyle = 'IUPAC';
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'classic';
+    } else if (style === 'on' || style === 'on-atoms') {
+      // Handle both 'On' from enum and 'On-Atoms' from schema
+      transformed.stereoLabelStyle = 'On-Atoms';
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'off';
+    }
+  }
+
+  // Fix showHydrogenLabels: legacy 'all' value -> 'On'
+  // Form enum: ShowHydrogenLabels.On = 'all'
+  // Schema expects: 'On'
+  if (transformed.showHydrogenLabels === 'all') {
+    transformed.showHydrogenLabels = 'On';
   }
 
   return transformed;
@@ -161,17 +183,31 @@ function transformSettingsForCore(settings) {
 function transformSettingsFromCore(settings) {
   const transformed = { ...settings };
 
-  // Convert imageResolution: number -> string
+  // Convert imageResolution: number -> string (for form display)
   if (typeof transformed.imageResolution === 'number') {
     transformed.imageResolution = transformed.imageResolution.toString();
   }
 
-  // Convert stereoLabelStyle: IUPAC -> Iupac (title case for first letter)
+  // Convert stereoLabelStyle: Reverse the transformation for form compatibility
+  // Schema values: ['IUPAC', 'classic', 'On-Atoms', 'off']
+  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
   if (transformed.stereoLabelStyle) {
     const style = transformed.stereoLabelStyle;
-    transformed.stereoLabelStyle =
-      style.charAt(0) + style.slice(1).toLowerCase();
+    if (style === 'IUPAC') {
+      transformed.stereoLabelStyle = 'Iupac';
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'Classic';
+    } else if (style === 'On-Atoms') {
+      transformed.stereoLabelStyle = 'On';
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'Off';
+    }
   }
+
+  // Convert showHydrogenLabels: 'On' -> 'all' if needed
+  // This might not be necessary since form uses 'On', but kept for safety
+  // Form enum: ShowHydrogenLabels.On = 'all'
+  // (Actually, the form should already handle 'On' correctly)
 
   // Remove fields that Redux doesn't use
   delete transformed.selectionTool;

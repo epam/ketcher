@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-} from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { Settings } from 'ketcher-core';
 import { FIELD_GROUPS } from './fieldGroups';
 import { SettingsFields } from './SettingsFields';
+import { Icon } from 'ketcher-react';
+import {
+  AccordionHeader,
+  GroupLabel,
+  ChangeIndicator,
+} from './SettingsAccordion.styles';
 
 interface SettingsAccordionProps {
   settings: Settings;
@@ -37,6 +38,12 @@ export const SettingsAccordion = ({
   expandedGroups,
   onGroupToggle,
 }: SettingsAccordionProps) => {
+  // Detect if any field in a group has changed (simplified - could enhance later)
+  const hasGroupChanged = (_group) => {
+    // For now, always show as not changed - can implement proper change detection later
+    return false;
+  };
+
   return (
     <div>
       {FIELD_GROUPS.map((group) => (
@@ -44,12 +51,19 @@ export const SettingsAccordion = ({
           key={group.id}
           expanded={expandedGroups.includes(group.id)}
           onChange={() => onGroupToggle(group.id)}
+          data-testid={`${group.title}-accordion`}
         >
           <AccordionSummary
             aria-controls={`${group.id}-content`}
             id={`${group.id}-header`}
           >
-            <Typography>{group.title}</Typography>
+            <AccordionHeader>
+              <GroupLabel>
+                <Icon name="elements-group" />
+                <span>{group.title}</span>
+              </GroupLabel>
+              {hasGroupChanged(group) && <ChangeIndicator />}
+            </AccordionHeader>
           </AccordionSummary>
           <AccordionDetails>
             <SettingsFields

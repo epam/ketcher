@@ -135,9 +135,35 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
   font: {
     label: 'Font',
     type: 'select',
+    // TODO: Replace with dynamic font detection (see ketcher-react/systemfonts.jsx)
+    // This hardcoded list should be replaced with runtime font detection using FontFaceObserver
+    // to only show fonts actually available on the user's system
     options: [
       { value: '30px Arial', label: 'Arial' },
+      { value: '30px Arial Black', label: 'Arial Black' },
+      { value: '30px Comic Sans MS', label: 'Comic Sans MS' },
+      { value: '30px Courier New', label: 'Courier New' },
+      { value: '30px Georgia', label: 'Georgia' },
+      { value: '30px Impact', label: 'Impact' },
+      { value: '30px Charcoal', label: 'Charcoal' },
+      { value: '30px Lucida Console', label: 'Lucida Console' },
+      { value: '30px Monaco', label: 'Monaco' },
+      { value: '30px Palatino Linotype', label: 'Palatino Linotype' },
+      { value: '30px Book Antiqua', label: 'Book Antiqua' },
+      { value: '30px Palatino', label: 'Palatino' },
+      { value: '30px Tahoma', label: 'Tahoma' },
+      { value: '30px Geneva', label: 'Geneva' },
       { value: '30px Times New Roman', label: 'Times New Roman' },
+      { value: '30px Times', label: 'Times' },
+      { value: '30px Verdana', label: 'Verdana' },
+      { value: '30px Symbol', label: 'Symbol' },
+      { value: '30px MS Serif', label: 'MS Serif' },
+      { value: '30px MS Sans Serif', label: 'MS Sans Serif' },
+      { value: '30px New York', label: 'New York' },
+      { value: '30px Droid Sans', label: 'Droid Sans' },
+      { value: '30px Droid Serif', label: 'Droid Serif' },
+      { value: '30px Droid Sans Mono', label: 'Droid Sans Mono' },
+      { value: '30px Roboto', label: 'Roboto' },
     ],
   },
   fontsz: {
@@ -182,8 +208,14 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     type: 'color',
   },
   colorStereogenicCenters: {
-    label: 'Color of Stereogenic Centers',
-    type: 'color',
+    label: 'Color Stereogenic Centers',
+    type: 'select',
+    options: [
+      { value: 'LabelsOnly', label: 'Labels Only' },
+      { value: 'BondsOnly', label: 'Bonds Only' },
+      { value: 'LabelsAndBonds', label: 'Labels and Bonds' },
+      { value: 'Off', label: 'Off' },
+    ],
   },
   autoFadeOfStereoLabels: {
     label: 'Auto Fade of Stereo Labels',
@@ -289,8 +321,9 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     label: 'Miew Mode',
     type: 'select',
     options: [
-      { value: 'immediate', label: 'Immediate' },
-      { value: 'deferred', label: 'Deferred' },
+      { value: 'LN', label: 'Lines' },
+      { value: 'BS', label: 'Ball and Stick' },
+      { value: 'LC', label: 'Licorice' },
     ],
   },
   miewTheme: {
@@ -305,9 +338,10 @@ export const FIELD_DEFINITIONS: Record<string, FieldDefinition> = {
     label: 'Miew Atom Label',
     type: 'select',
     options: [
-      { value: 'serial', label: 'Serial' },
-      { value: 'name', label: 'Name' },
-      { value: 'element', label: 'Element' },
+      { value: 'no', label: 'None' },
+      { value: 'bright', label: 'Bright' },
+      { value: 'blackAndWhite', label: 'Black and White' },
+      { value: 'black', label: 'Black' },
     ],
   },
 

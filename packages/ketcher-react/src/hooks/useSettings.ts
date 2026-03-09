@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState, useCallback } from 'react';
-import { useAppSelector, useAppDispatch } from '../script/ui/state/hooks';
+import { useAppDispatch } from '../script/ui/state/hooks';
 import { syncSettingsFromCore } from '../script/ui/state/options';
 import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
 

@@ -226,7 +226,7 @@ function transformSettingsFromCore(settings) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     // Try to update via ketcher-core settings service if available
     // Use window.ketcher since Redux state doesn't store the Ketcher instance
     const settingsService = window.ketcher?.settingsService;

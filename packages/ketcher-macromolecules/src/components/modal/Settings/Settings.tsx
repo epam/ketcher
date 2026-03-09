@@ -39,6 +39,7 @@ function transformSettingsFromCore(settings: SettingsType): SettingsType {
   const transformed = { ...settings };
 
   // Convert stereoLabelStyle: Core format -> Form format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.stereoLabelStyle) {
     const style = transformed.stereoLabelStyle;
     if (style === 'IUPAC') {
@@ -54,12 +55,14 @@ function transformSettingsFromCore(settings: SettingsType): SettingsType {
 
   // Convert font: Ensure it has the size prefix (legacy data might not have it)
   // Core and form both expect "30px Arial" format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
     // Font missing size prefix, add default 30px
     transformed.font = `30px ${transformed.font}` as any;
   }
 
   // Convert imageResolution: number -> string for form display
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof transformed.imageResolution === 'number') {
     transformed.imageResolution = transformed.imageResolution.toString() as any;
   }
@@ -76,6 +79,7 @@ function transformSettingsForCore(settings: SettingsType): SettingsType {
   const transformed = { ...settings };
 
   // Convert stereoLabelStyle: Form format -> Core format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.stereoLabelStyle) {
     const style = transformed.stereoLabelStyle.toLowerCase();
     if (style === 'iupac') {
@@ -91,11 +95,13 @@ function transformSettingsForCore(settings: SettingsType): SettingsType {
 
   // Convert font: Ensure it has the size prefix
   // Core expects "30px Arial" format
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
     transformed.font = `30px ${transformed.font}` as any;
   }
 
   // Convert imageResolution: string -> number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof transformed.imageResolution === 'string') {
     transformed.imageResolution = parseInt(
       transformed.imageResolution,
@@ -170,6 +176,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const handleReset = async () => {
     if (!settingsService) return;
 
+    // eslint-disable-next-line no-alert
     if (!window.confirm('Reset all settings to defaults?')) return;
 
     setIsLoading(true);
@@ -187,6 +194,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const handleCancel = () => {
     if (hasChanges) {
+      // eslint-disable-next-line no-alert
       if (!window.confirm('Discard changes?')) return;
     }
     onClose();
@@ -207,6 +215,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
         await settingsService.importSettings(text);
       } catch (error) {
         console.error('Failed to import settings:', error);
+        // eslint-disable-next-line no-alert
         alert(
           `Import failed: ${
             error instanceof Error ? error.message : String(error)
@@ -236,6 +245,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to export settings:', error);
+      // eslint-disable-next-line no-alert
       alert('Export failed');
     }
   };
@@ -250,6 +260,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     setIsLoading(true);
     try {
       // Type assertion needed as loadPreset may not be in the type definition yet
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (settingsService as any).loadPreset('acs');
       const coreAcsSettings = settingsService.getSettings();
       const formAcsSettings = transformSettingsFromCore(coreAcsSettings);
@@ -293,6 +304,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   return (
     <Modal
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       title={headerTitle as any}
       isOpen={isModalOpen}
       onClose={handleCancel}

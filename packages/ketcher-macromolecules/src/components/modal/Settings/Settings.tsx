@@ -108,11 +108,9 @@ function transformSettingsForCore(settings: SettingsType): SettingsType {
 
   // Convert imageResolution: string -> number
   if (typeof transformed.imageResolution === 'string') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    transformed.imageResolution = parseInt(
-      transformed.imageResolution,
-      10,
-    ) as any;
+    transformed.imageResolution =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parseInt(transformed.imageResolution, 10) as any;
   }
 
   return transformed;

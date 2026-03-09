@@ -79,13 +79,14 @@ export function useSettings() {
     // If not available, poll every 100ms for up to 5 seconds
     let attempts = 0;
     const maxAttempts = 50; // 5 seconds
-    const intervalId: ReturnType<typeof setInterval> | null = !unsubscribe
+    let intervalId: ReturnType<typeof setInterval> | null = !unsubscribe
       ? setInterval(() => {
           attempts++;
           unsubscribe = checkAndSubscribe();
 
-          if (unsubscribe || attempts >= maxAttempts) {
-            clearInterval(intervalId!);
+          if ((unsubscribe || attempts >= maxAttempts) && intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
           }
         }, 100)
       : null;

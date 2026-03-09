@@ -30,6 +30,13 @@ const createMockStore = (settingsService?: any) => {
 
   const rootReducer = (state = initialState) => state;
 
+  // Mock window.ketcher with the settingsService
+  if (settingsService) {
+    (window as any).ketcher = { settingsService };
+  } else {
+    delete (window as any).ketcher;
+  }
+
   return createStore(rootReducer);
 };
 
@@ -63,6 +70,11 @@ const createMockSettingsService = () => {
 };
 
 describe('useSettings', () => {
+  afterEach(() => {
+    // Clean up window.ketcher after each test
+    delete (window as any).ketcher;
+  });
+
   describe('initialization', () => {
     it('should return null settings when service is unavailable', () => {
       const store = createMockStore(undefined);

@@ -39,31 +39,34 @@ function transformSettingsFromCore(settings: SettingsType): SettingsType {
   const transformed = { ...settings };
 
   // Convert stereoLabelStyle: Core format -> Form format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.stereoLabelStyle) {
     const style = transformed.stereoLabelStyle;
     if (style === 'IUPAC') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'Iupac' as any;
     } else if (style === 'classic') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'Classic' as any;
     } else if (style === 'On-Atoms') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'On' as any;
     } else if (style === 'off') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'Off' as any;
     }
   }
 
   // Convert font: Ensure it has the size prefix (legacy data might not have it)
   // Core and form both expect "30px Arial" format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
     // Font missing size prefix, add default 30px
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transformed.font = `30px ${transformed.font}` as any;
   }
 
   // Convert imageResolution: number -> string for form display
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof transformed.imageResolution === 'number') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transformed.imageResolution = transformed.imageResolution.toString() as any;
   }
 
@@ -79,30 +82,33 @@ function transformSettingsForCore(settings: SettingsType): SettingsType {
   const transformed = { ...settings };
 
   // Convert stereoLabelStyle: Form format -> Core format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.stereoLabelStyle) {
     const style = transformed.stereoLabelStyle.toLowerCase();
     if (style === 'iupac') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'IUPAC' as any;
     } else if (style === 'classic') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'classic' as any;
     } else if (style === 'on' || style === 'on-atoms') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'On-Atoms' as any;
     } else if (style === 'off') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transformed.stereoLabelStyle = 'off' as any;
     }
   }
 
   // Convert font: Ensure it has the size prefix
   // Core expects "30px Arial" format
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transformed.font = `30px ${transformed.font}` as any;
   }
 
   // Convert imageResolution: string -> number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof transformed.imageResolution === 'string') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transformed.imageResolution = parseInt(
       transformed.imageResolution,
       10,

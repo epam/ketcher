@@ -14,12 +14,12 @@ describe('SettingsService', () => {
   let storage: ISettingsStorage;
 
   beforeEach(async () => {
+    SettingsService.resetInstance();
     storage = new MemoryStorageAdapter();
-    service = new SettingsService({
+    service = await SettingsService.getInstance({
       storage,
       autoSave: false, // Disable auto-save for easier testing
     });
-    await service.init();
   });
 
   describe('initialization', () => {
@@ -40,8 +40,8 @@ describe('SettingsService', () => {
 
       await storage.save('ketcher-opts', customSettings as Settings);
 
-      const newService = new SettingsService({ storage });
-      await newService.init();
+      SettingsService.resetInstance();
+      const newService = await SettingsService.getInstance({ storage });
 
       const settings = newService.getSettings();
       expect(settings.resetToSelect).toBe(false);
@@ -55,8 +55,8 @@ describe('SettingsService', () => {
 
       await storage.save('ketcher-opts', partialSettings as Settings);
 
-      const newService = new SettingsService({ storage });
-      await newService.init();
+      SettingsService.resetInstance();
+      const newService = await SettingsService.getInstance({ storage });
 
       const settings = newService.getSettings();
       const defaults = getDefaultSettings();
@@ -72,8 +72,8 @@ describe('SettingsService', () => {
       const invalidSettings = { invalid: 'data' };
       await storage.save('ketcher-opts', invalidSettings as any);
 
-      const newService = new SettingsService({ storage });
-      await newService.init();
+      SettingsService.resetInstance();
+      const newService = await SettingsService.getInstance({ storage });
 
       const settings = newService.getSettings();
       const defaults = getDefaultSettings();
@@ -82,18 +82,21 @@ describe('SettingsService', () => {
     });
 
     it('should not allow multiple initializations', async () => {
-      await service.init();
-      await service.init(); // Should not throw or re-initialize
+      // getInstance already initializes, calling it again should return the same instance
+      const service2 = await SettingsService.getInstance({ storage });
 
+      expect(service2).toBe(service);
       expect(service.getSettings()).toBeDefined();
     });
 
-    it('should throw error if methods called before init', () => {
-      const uninitializedService = new SettingsService({ storage });
+    it('should always return initialized instance via getInstance', async () => {
+      // With singleton pattern, getInstance always returns an initialized instance
+      SettingsService.resetInstance();
+      const newService = await SettingsService.getInstance({ storage });
 
-      expect(() => uninitializedService.getSettings()).toThrow(
-        'SettingsService not initialized',
-      );
+      // Should be able to call methods immediately after getInstance
+      expect(() => newService.getSettings()).not.toThrow();
+      expect(newService.getSettings()).toBeDefined();
     });
   });
 
@@ -205,11 +208,11 @@ describe('SettingsService', () => {
     });
 
     it('should persist to storage when autoSave is enabled', async () => {
-      const autoSaveService = new SettingsService({
+      SettingsService.resetInstance();
+      const autoSaveService = await SettingsService.getInstance({
         storage,
         autoSave: true,
       });
-      await autoSaveService.init();
 
       await autoSaveService.updateSettings({
         resetToSelect: false,
@@ -394,25 +397,25 @@ describe('SettingsService', () => {
 
   describe('custom configuration', () => {
     it('should accept custom storage adapter', async () => {
+      SettingsService.resetInstance();
       const customStorage = new MemoryStorageAdapter();
-      const customService = new SettingsService({ storage: customStorage });
-
-      await customService.init();
+      const customService = await SettingsService.getInstance({
+        storage: customStorage,
+      });
 
       expect(customService.getSettings()).toBeDefined();
     });
 
     it('should accept custom defaults', async () => {
+      SettingsService.resetInstance();
       const customDefaults = {
         resetToSelect: false,
       };
 
-      const customService = new SettingsService({
+      const customService = await SettingsService.getInstance({
         storage,
         defaults: customDefaults,
       });
-
-      await customService.init();
 
       const settings = customService.getSettings();
       // Custom defaults are merged with standard defaults
@@ -421,22 +424,22 @@ describe('SettingsService', () => {
     });
 
     it('should accept custom storage key', async () => {
+      SettingsService.resetInstance();
       const customKey = 'my-custom-settings';
-      const customService = new SettingsService({
+      const customService = await SettingsService.getInstance({
         storage,
         storageKey: customKey,
       });
 
-      await customService.init();
       await customService.updateSettings({ resetToSelect: false });
 
       // Manually enable auto-save and update again
-      const autoSaveService = new SettingsService({
+      SettingsService.resetInstance();
+      const autoSaveService = await SettingsService.getInstance({
         storage,
         storageKey: customKey,
         autoSave: true,
       });
-      await autoSaveService.init();
       await autoSaveService.updateSettings({
         resetToSelect: false,
       });
@@ -446,11 +449,11 @@ describe('SettingsService', () => {
     });
 
     it('should respect autoSave setting', async () => {
-      const serviceWithAutoSave = new SettingsService({
+      SettingsService.resetInstance();
+      const serviceWithAutoSave = await SettingsService.getInstance({
         storage,
         autoSave: true,
       });
-      await serviceWithAutoSave.init();
 
       await serviceWithAutoSave.updateSettings({
         resetToSelect: false,

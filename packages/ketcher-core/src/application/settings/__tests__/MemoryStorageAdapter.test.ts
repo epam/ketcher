@@ -72,7 +72,6 @@ describe('MemoryStorageAdapter', () => {
       const loaded = await adapter.load('test-key');
       expect(loaded).toBeDefined();
 
-      // @ts-expect-error - type guard not recognized
       expect(loaded!.resetToSelect).toBe(true);
     });
 
@@ -91,9 +90,7 @@ describe('MemoryStorageAdapter', () => {
       expect(loaded1).toBeDefined();
       expect(loaded2).toBeDefined();
 
-      // @ts-expect-error - type guard not recognized
       expect(loaded1!.resetToSelect).toBe(false);
-      // @ts-expect-error - type guard not recognized
       expect(loaded2!.resetToSelect).toBe(true);
     });
   });
@@ -170,7 +167,6 @@ describe('MemoryStorageAdapter', () => {
       // Stored version should not be affected
       const loaded = await adapter.load('test-key');
       expect(loaded).toBeDefined();
-      // @ts-expect-error - type guard not recognized
       expect(loaded!.resetToSelect).toBe(false);
     });
   });

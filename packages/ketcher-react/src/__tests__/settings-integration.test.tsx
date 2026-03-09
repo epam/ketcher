@@ -86,11 +86,24 @@ const createWrapper = (store: any) =>
   };
 
 describe('Settings Integration Tests', () => {
+  beforeEach(() => {
+    SettingsService.resetInstance();
+    // Clean up window.ketcher
+    if ((window as any).ketcher) {
+      delete (window as any).ketcher;
+    }
+  });
+
   describe('Bidirectional Flow: Redux ↔ Core ↔ Hook', () => {
     it('should sync settings from Redux to Core via saveSettings', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      // Set up window.ketcher for saveSettings to find the service
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -112,8 +125,12 @@ describe('Settings Integration Tests', () => {
 
     it('should sync settings from Core to Redux via hook subscription', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -147,8 +164,12 @@ describe('Settings Integration Tests', () => {
 
     it('should complete full circle: Redux → Core → Hook → Redux', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -193,8 +214,12 @@ describe('Settings Integration Tests', () => {
 
     it('should not create infinite update loop', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       // Spy on updateSettings to count calls
       const updateSpy = jest.spyOn(settingsService, 'updateSettings');
@@ -225,8 +250,12 @@ describe('Settings Integration Tests', () => {
   describe('Persistence to localStorage', () => {
     it('should persist settings to storage when updated', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -256,8 +285,12 @@ describe('Settings Integration Tests', () => {
       await storage.save('ketcher-opts', presets);
 
       // Create new service (should load from storage)
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       // Verify core has loaded the settings
       const coreSettings = settingsService.getSettings();
@@ -279,8 +312,12 @@ describe('Settings Integration Tests', () => {
   describe('Preset Loading', () => {
     it('should apply ACS preset and sync to Redux', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -311,8 +348,12 @@ describe('Settings Integration Tests', () => {
 
     it('should have acs in available presets', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -356,8 +397,12 @@ describe('Settings Integration Tests', () => {
   describe('Error Recovery', () => {
     it('should handle Core update failure gracefully', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       // Mock updateSettings to fail
       const originalUpdate =
@@ -394,8 +439,12 @@ describe('Settings Integration Tests', () => {
 
     it('should handle invalid settings gracefully', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -420,8 +469,12 @@ describe('Settings Integration Tests', () => {
   describe('Import/Export Integration', () => {
     it('should export and re-import settings maintaining consistency', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 
@@ -469,8 +522,12 @@ describe('Settings Integration Tests', () => {
   describe('Multiple Hooks Synchronization', () => {
     it('should sync multiple hook instances', async () => {
       const storage = new MemoryStorageAdapter();
-      const settingsService = new SettingsService({ storage, autoSave: true });
-      await settingsService.init();
+      const settingsService = await SettingsService.getInstance({
+        storage,
+        autoSave: true,
+      });
+
+      (window as any).ketcher = { settingsService };
 
       const store = createIntegrationStore(settingsService);
 

@@ -22,7 +22,7 @@ import { Vec2 } from 'domain/entities';
 // todo: separate classes: now here is circular dependency in `invert` method
 
 class AlignDescriptors extends BaseOperation {
-  history: any;
+  readonly history: any;
 
   constructor() {
     super(OperationType.ALIGN_DESCRIPTORS);
@@ -53,7 +53,7 @@ class AlignDescriptors extends BaseOperation {
 }
 
 class RestoreDescriptorsPosition extends BaseOperation {
-  history: any;
+  readonly history: any;
 
   constructor(history: any) {
     super(OperationType.RESTORE_DESCRIPTORS_POSITION);

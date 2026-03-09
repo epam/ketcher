@@ -28,7 +28,7 @@ type Data = {
 
 // todo : merge add and delete stereo atom
 class FragmentAddStereoAtom extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(fragmentId: any, atomId: any) {
     super(
@@ -55,7 +55,7 @@ class FragmentAddStereoAtom extends BaseOperation {
 }
 
 class FragmentDeleteStereoAtom extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(fragmentId: any, atomId: any) {
     super(

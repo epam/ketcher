@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   openFile,
   openFileAndAddToCanvas,
-  resetZoomLevelToDefault,
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
@@ -48,20 +47,14 @@ async function addTail(page: Page, x: number, y: number) {
 test.describe('Cascade Reactions', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Verify that RDF file with RXN V2000 empty reaction (0:0) can be loaded, nothing is added to Canvas', async () => {
@@ -1020,7 +1013,7 @@ test.describe('Cascade Reactions', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
         force: true,
       });
-      await dragMouseTo(300, 600, page);
+      await dragMouseTo(page, 300, 600);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {

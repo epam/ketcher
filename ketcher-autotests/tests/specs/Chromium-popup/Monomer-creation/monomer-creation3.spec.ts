@@ -332,7 +332,7 @@ test(`4. Check that every R-group gets replaced with a hydrogen upon entering th
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -366,7 +366,7 @@ test(`5. Check that if the structure contains one and only one R1 group, that R1
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -400,7 +400,7 @@ test(`6. Check that if the structure contains one and only one R2 group, that R2
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -432,7 +432,7 @@ test(`7. Check that in case of multiple R1 the one whose attachment atom is the 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -464,7 +464,7 @@ test(`8. Check that in case of multiple R1 the one whose attachment atom is the 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -499,7 +499,7 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 200, page);
+  await dragMouseTo(page, 450, 200);
 
   await takeEditorScreenshot(page);
   await CreateMonomerDialog(page).discard();
@@ -532,7 +532,7 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   // to make molecule visible
 //   await CommonLeftToolbar(page).handTool();
 //   await page.mouse.move(600, 200);
-//   await dragMouseTo(600, 250, page);
+//   await dragMouseTo(page, 600, 250);
 
 //   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
 //   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
@@ -573,7 +573,7 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   // to make molecule visible
 //   await CommonLeftToolbar(page).handTool();
 //   await page.mouse.move(600, 200);
-//   await dragMouseTo(600, 250, page);
+//   await dragMouseTo(page, 600, 250);
 
 //   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
 //   await ContextMenu(page, attachmentPointR1).click(
@@ -616,7 +616,7 @@ test(`12. Check that for already set APs the user can Delete the AP by r-clickin
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   await ContextMenu(page, attachmentPointR1).click(
@@ -651,7 +651,7 @@ test(`13. Check that users can set a new AP by selecting a potential AA, and R-n
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
@@ -687,7 +687,7 @@ test(`14. Check that after an AP is set, it shows up in the Attributes panel wit
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
@@ -727,7 +727,7 @@ test(`15. Check that hovering over an already set AP on the canvas (over an AA),
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
@@ -766,7 +766,7 @@ test(`16. Check that hovering over an already set AP on the canvas (over an LGA)
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
@@ -805,7 +805,7 @@ test(`17. Check that hovering over an already set AP on the canvas (over the bon
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 250, page);
+  await dragMouseTo(page, 600, 250);
 
   const attachmentAtom = getAtomLocator(page, { atomId: 0 });
   await ContextMenu(page, attachmentAtom).click(
@@ -845,7 +845,7 @@ test(`18. Check that for an already set APs the user can Delete the AP, by click
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
@@ -919,7 +919,7 @@ test(`19. Check that for an already set APs the user can change the R-group numb
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
   const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
@@ -962,7 +962,7 @@ test(`20. Check that for an already set APs the user can change the LGA atom by 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).changeAttachmentPointAtom({
     attachmentPointName: AttachmentPointOption.R1,
@@ -1005,7 +1005,7 @@ test(`21. Check that the APs in the Attributes panel are ordered by their R-numb
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await takeEditorScreenshot(page);
 
@@ -1039,7 +1039,7 @@ test(`22. Check that if no APs were set for a monomer, and the user clicks on Su
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
   await CreateMonomerDialog(page).setSymbol('TestMonomer');
@@ -1086,7 +1086,7 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
     oldName: AttachmentPointOption.R2,
@@ -1098,6 +1098,13 @@ test(`23. Check that if the user clicks on Cancel all monomer information is rem
 
   await CreateMonomerDialog(page).discard();
   await takeEditorScreenshot(page);
+  await takeElementScreenshot(
+    page,
+    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
+    {
+      padding: 34,
+    },
+  );
 });
 
 test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets saved to the library, the previously selected structure becomes an expanded monomer, and the monomer is selected)`, async () => {
@@ -1127,7 +1134,7 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
   await CreateMonomerDialog(page).setSymbol(Chem.CHEM.alias);
@@ -1168,7 +1175,7 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
   await CreateMonomerDialog(page).setSymbol(Peptide.Peptide.alias);
@@ -1212,7 +1219,7 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Base);
   await CreateMonomerDialog(page).setSymbol(Base.Base.alias);
@@ -1256,7 +1263,7 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Phosphate);
   await CreateMonomerDialog(page).setSymbol(Phosphate.Phosphate.alias);
@@ -1297,7 +1304,7 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Sugar);
   await CreateMonomerDialog(page).setSymbol(Sugar.Sugar.alias);
@@ -1337,7 +1344,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(425, 200, page);
+  await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.NucleotideMonomer);
   await CreateMonomerDialog(page).setSymbol(Nucleotide.Nucleotide.alias);

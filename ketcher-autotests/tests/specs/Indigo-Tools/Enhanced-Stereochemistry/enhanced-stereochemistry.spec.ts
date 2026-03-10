@@ -194,7 +194,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/two-stereostructures.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 300, y - 600, page);
+    await dragMouseTo(page, x + 300, y - 600);
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });

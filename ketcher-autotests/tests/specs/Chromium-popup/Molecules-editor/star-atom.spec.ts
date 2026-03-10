@@ -656,7 +656,7 @@ test('24. Verify that the star atom retains its properties when the structure is
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
   await rotationHandle.hover();
-  await dragMouseTo(720, 300, page);
+  await dragMouseTo(page, 720, 300);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

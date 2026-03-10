@@ -28,6 +28,12 @@ jest.mock('d3', () => {
         select() {
           return this;
         },
+        selectAll() {
+          return this;
+        },
+        remove() {
+          return this;
+        },
         attr() {
           return this;
         },

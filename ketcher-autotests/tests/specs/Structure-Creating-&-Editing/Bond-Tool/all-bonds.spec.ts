@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
@@ -8,7 +9,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -18,7 +18,6 @@ import {
   takeElementScreenshot,
   openFileAndAddToCanvasMacro,
 } from '@utils';
-import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   MicroBondDataIds,
@@ -54,6 +53,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -74,20 +74,18 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
 });
 
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
   await CommonLeftToolbar(page).handTool();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe(`Bond tool:`, () => {
@@ -169,7 +167,7 @@ test.describe(`Bond tool:`, () => {
       await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA, point.y, page);
+      await dragMouseTo(page, point.x + DELTA, point.y);
 
       await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -205,7 +203,7 @@ test.describe(`Bond tool:`, () => {
       await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA, point.y, page);
+      await dragMouseTo(page, point.x + DELTA, point.y);
 
       await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -333,16 +331,20 @@ test.describe(`Bond tool (copy-paste):`, () => {
         );
 
         await moveMouseToTheMiddleOfTheScreen(page);
-        await dragMouseTo(point.x + 100, point.y, page);
+        await dragMouseTo(page, point.x + 100, point.y);
         await CommonTopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
 
-        point = await getLeftBondByAttributes(page, {
-          reactingCenterStatus: 0,
-        });
+        const boundingBox = await getBondLocator(page, {}).boundingBox();
+        if (boundingBox) {
+          point = {
+            x: boundingBox.x + boundingBox.width / 2,
+            y: boundingBox.y + boundingBox.height / 2,
+          };
+        }
 
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
@@ -463,6 +465,7 @@ test.describe('Bond Tool', () => {
     await LeftToolbar(page).sGroup();
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await takeEditorScreenshot(page);
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Drawing bonds in one direction does not change the bond created in the other direction', async () => {
@@ -566,7 +569,7 @@ test.describe('Bond Tool', () => {
     if (point2) {
       await page.mouse.move(point2.x, point2.y);
       const coordinatesWithShift = point2.y + yDelta;
-      await dragMouseTo(point2.x, coordinatesWithShift, page);
+      await dragMouseTo(page, point2.x, coordinatesWithShift);
     }
     await takeEditorScreenshot(page);
   });
@@ -583,7 +586,7 @@ test.describe('Bond Tool', () => {
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await dragMouseTo(x + 50, y, page);
+    await dragMouseTo(page, x + 50, y);
     await takeEditorScreenshot(page);
     const point1 = await getBondLocator(page, { bondId: 13 });
     await ContextMenu(page, point1).click(MicroBondOption.EditSelectedBonds);

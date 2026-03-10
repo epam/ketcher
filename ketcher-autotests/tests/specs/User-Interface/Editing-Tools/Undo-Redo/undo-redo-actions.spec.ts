@@ -256,7 +256,7 @@ test.describe('Undo/Redo Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

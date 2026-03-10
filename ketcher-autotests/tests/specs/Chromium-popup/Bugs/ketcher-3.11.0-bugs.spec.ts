@@ -81,6 +81,7 @@ import {
   SdfFileFormat,
   dragMouseAndMoveTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  moveMouseAway,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -109,10 +110,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -379,6 +378,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
     await AtomPropertiesDialog(page).fillAlias('N1');
     expect(await AtomPropertiesDialog(page).applyButton.isEnabled()).toBe(true);
+    await AtomPropertiesDialog(page).cancel();
   });
 
   test('Case 6 - Ambiguous phosphates (alternatives and mixed) in sequence shown as % symbol instead of @ symbol', async ({
@@ -400,7 +400,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeElementScreenshot(
       page,
-      getSymbolLocator(page, { symbolId: 27 }),
+      getSymbolLocator(page, { symbolAlias: 'W' }),
       {
         padding: 34,
       },
@@ -423,9 +423,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/Ambiguous-monomers-bonds/ketcherSugarsMixedAndAlternatives.ket',
     );
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 3 }), {
-      padding: 14,
-    });
+    await takeElementScreenshot(
+      page,
+      getSymbolLocator(page, { symbolAlias: '@' }),
+      {
+        padding: 14,
+      },
+    );
   });
 
   test('Case 8 - System does not unite ambiguous CHEMs (alternatives and mixed) into one @ symbol', async ({
@@ -446,9 +450,13 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{([sDBL],[4aPEGMal])}|CHEM2{([sDBL]+[4aPEGMal])}|CHEM3{([sDBL],[4aPEGMal])}|CHEM4{([sDBL]+[4aPEGMal])}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1$$$V2.0',
     );
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 7 }), {
-      padding: 34,
-    });
+    await takeElementScreenshot(
+      page,
+      getSymbolLocator(page, { symbolAlias: '@' }),
+      {
+        padding: 34,
+      },
+    );
   });
 
   test('Case 9 - Verify Undo/Redo do not restore partial selection after cancelling monomer creation (GH-7578)', async () => {
@@ -515,9 +523,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'PEPTIDE1{[N%91[C@H](C%92=O)C.[*:2]%92.[*:1]%91 |$;;;;;_R2;_R1$|].[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     );
-    await getMonomerLocator(page, { monomerId: 10 }).hover({ force: true });
+    await getMonomerLocator(page, { monomerAlias: 'Mod3' }).hover({
+      force: true,
+    });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).getTitleText()).toBe('Mod3');
+    await moveMouseAway(page);
   });
 
   test('Case 12 - The tooltip does not appear below the cursor when hovering over the “plus” button and stripe', async ({
@@ -634,7 +645,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const peptideLettersSelector =
       PasteFromClipboardDialog(page).peptideLettersCodeSelector;
 
-    PasteFromClipboardDialog(page).selectContentType(MacroFileType.Sequence);
+    await PasteFromClipboardDialog(page).selectContentType(
+      MacroFileType.Sequence,
+    );
     const contentTypeFontSize = await contentTypeSelector
       .locator('span')
       .first()
@@ -660,6 +673,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     expect(peptideLetterFontSize).toBe('12px');
 
     await takeEditorScreenshot(page);
+    await PasteFromClipboardDialog(page).closeWindow();
   });
 
   test('Case 17 - System shows inner circles of aromatized benzene rings from collapsed monomers on Molecules canvas', async ({
@@ -743,6 +757,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await expect(
       CalculateVariablesPanel(page).molecularMassUnitDropDownList,
     ).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   test('Case 20 - Number of selected elements in context menu is wrong for sense/antisense chains', async ({
@@ -888,7 +903,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).handTool();
     await chainlocator.hover({ force: true });
-    await dragMouseTo(locators.x, locators.y, page);
+    await dragMouseTo(page, locators.x, locators.y);
     await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -941,6 +956,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test('Case 27 - Former molecule selection causes invalid attachment point creation in Monomer creation wizard', async () => {
@@ -963,6 +979,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await clickOnCanvas(page, 300, 300);
     await LeftToolbar(page).createMonomer();
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test('Case 28 - Unable to create more than one nucleotide monomer - system throws exception', async () => {
@@ -1002,9 +1019,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
@@ -1031,9 +1048,10 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await dialog.selectType(MonomerType.NucleotidePreset);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
+    await dialog.discard();
   });
 
   test('Case 29 - System should be able to load unknown monomer on any position', async ({
@@ -1087,6 +1105,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       'Convert error! Sequence saver: Sugar:12ddR has no AxoLabs alias.',
     );
     await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 31 - Layout works wrong', async () => {
@@ -1152,9 +1171,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],

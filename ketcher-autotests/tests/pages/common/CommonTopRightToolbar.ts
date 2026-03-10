@@ -4,6 +4,7 @@ import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
+import { hideRuler } from '@utils/canvas/ruler/helpers';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -113,12 +114,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       },
     ) {
       if (options.disableChainLengthRuler !== false) {
-        await page.evaluate(() => {
-          // Temporary solution to disable chain length  ruler for the macro editor in e2e tests
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          window._ketcher_isChainLengthRulerDisabled = true;
-        });
+        await hideRuler(page);
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);

@@ -141,8 +141,12 @@ test.describe('Common connection rules: ', () => {
   ) {
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
-    await page.mouse.move(x, y);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.move(x, y);
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await moveMouseAway(page);
   }
 

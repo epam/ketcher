@@ -96,15 +96,12 @@ export class KetcherBuilder {
     // Initialize settings service if not provided
     let settingsService = this.#settingsService;
     if (!settingsService) {
-      settingsService = new SettingsService({
+      settingsService = await SettingsService.getInstance({
         storage: this.#storageAdapter || new LocalStorageAdapter(),
         defaults: this.#initialSettings,
         autoSave: true,
         migrateOnLoad: true,
       });
-
-      // Initialize the settings service
-      await settingsService.init();
     }
 
     const ketcher = new Ketcher(

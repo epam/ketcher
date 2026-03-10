@@ -1,5 +1,6 @@
 /**
  * Unit tests for SettingsMigration
+ * Tests migration from namespaced format back to flat format
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
@@ -8,39 +9,39 @@ import { SettingsMigration } from '../SettingsMigration';
 
 describe('SettingsMigration', () => {
   describe('migrate', () => {
-    it('should detect and return new namespaced format unchanged', () => {
-      const newFormat = {
-        editor: { resetToSelect: false },
-        render: { atomColoring: true },
-      };
-
-      const migrated = SettingsMigration.migrate(newFormat);
-
-      expect(migrated).toEqual(newFormat);
-    });
-
-    it('should migrate flat format to namespaced format', () => {
+    it('should detect and return flat format unchanged', () => {
       const flatFormat = {
-        resetToSelect: false, // editor
-        atomColoring: true, // render
-        'smart-layout': true, // server
-        showAtomIds: false, // debug
-        miewMode: 'BS', // miew
+        resetToSelect: false,
+        atomColoring: true,
+        'smart-layout': true,
       };
 
       const migrated = SettingsMigration.migrate(flatFormat);
 
-      expect(migrated).toHaveProperty('editor');
-      expect(migrated).toHaveProperty('render');
-      expect(migrated).toHaveProperty('server');
-      expect(migrated).toHaveProperty('debug');
-      expect(migrated).toHaveProperty('miew');
+      expect(migrated).toEqual(flatFormat);
+    });
 
-      expect(migrated.editor).toEqual({ resetToSelect: false });
-      expect(migrated.render).toEqual({ atomColoring: true });
-      expect(migrated.server).toEqual({ 'smart-layout': true });
-      expect(migrated.debug).toEqual({ showAtomIds: false });
-      expect(migrated.miew).toEqual({ miewMode: 'BS' });
+    it('should migrate namespaced format to flat format', () => {
+      const namespacedFormat = {
+        editor: { resetToSelect: false, rotationStep: 30 },
+        render: { atomColoring: true, bondThickness: 1.2 },
+        server: { 'smart-layout': true },
+        debug: { showAtomIds: false },
+        miew: { miewMode: 'BS' },
+      };
+
+      const migrated = SettingsMigration.migrate(namespacedFormat);
+
+      // Should be flattened
+      expect(migrated).toEqual({
+        resetToSelect: false,
+        rotationStep: 30,
+        atomColoring: true,
+        bondThickness: 1.2,
+        'smart-layout': true,
+        showAtomIds: false,
+        miewMode: 'BS',
+      });
     });
 
     it('should handle null input', () => {
@@ -69,45 +70,37 @@ describe('SettingsMigration', () => {
   });
 
   describe('migrate - editor settings', () => {
-    it('should migrate editor settings', () => {
-      const flatFormat = {
-        resetToSelect: false,
-        rotationStep: 30,
+    it('should flatten editor settings', () => {
+      const namespacedFormat = {
+        editor: {
+          resetToSelect: false,
+          rotationStep: 30,
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.editor).toEqual({
+      expect(migrated).toEqual({
         resetToSelect: false,
         rotationStep: 30,
       });
-    });
-
-    it('should only migrate recognized editor keys', () => {
-      const flatFormat = {
-        resetToSelect: false,
-        unknownKey: 'value',
-      };
-
-      const migrated = SettingsMigration.migrate(flatFormat);
-
-      expect(migrated.editor).toEqual({ resetToSelect: false });
-      expect(migrated.editor).not.toHaveProperty('unknownKey');
     });
   });
 
   describe('migrate - render settings', () => {
-    it('should migrate render settings', () => {
-      const flatFormat = {
-        atomColoring: false,
-        bondThickness: 2.0,
-        font: '30px Arial',
-        showStereoFlags: true,
+    it('should flatten render settings', () => {
+      const namespacedFormat = {
+        render: {
+          atomColoring: false,
+          bondThickness: 2.0,
+          font: '30px Arial',
+          showStereoFlags: true,
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.render).toEqual({
+      expect(migrated).toEqual({
         atomColoring: false,
         bondThickness: 2.0,
         font: '30px Arial',
@@ -115,24 +108,26 @@ describe('SettingsMigration', () => {
       });
     });
 
-    it('should migrate all render setting types', () => {
-      const flatFormat = {
-        // Boolean
-        atomColoring: true,
-        showCharge: false,
-        // Number
-        bondThickness: 2.5,
-        fontsz: 14,
-        // String
-        font: '30px Arial',
-        colorOfAbsoluteCenters: '#ff0000',
-        // Enum
-        showHydrogenLabels: 'On',
+    it('should flatten all render setting types', () => {
+      const namespacedFormat = {
+        render: {
+          // Boolean
+          atomColoring: true,
+          showCharge: false,
+          // Number
+          bondThickness: 2.5,
+          fontsz: 14,
+          // String
+          font: '30px Arial',
+          colorOfAbsoluteCenters: '#ff0000',
+          // Enum
+          showHydrogenLabels: 'On',
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.render).toEqual({
+      expect(migrated).toEqual({
         atomColoring: true,
         showCharge: false,
         bondThickness: 2.5,
@@ -145,16 +140,18 @@ describe('SettingsMigration', () => {
   });
 
   describe('migrate - server settings', () => {
-    it('should migrate server settings with kebab-case keys', () => {
-      const flatFormat = {
-        'smart-layout': true,
-        'ignore-stereochemistry-errors': false,
-        'dearomatize-on-load': true,
+    it('should flatten server settings with kebab-case keys', () => {
+      const namespacedFormat = {
+        server: {
+          'smart-layout': true,
+          'ignore-stereochemistry-errors': false,
+          'dearomatize-on-load': true,
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.server).toEqual({
+      expect(migrated).toEqual({
         'smart-layout': true,
         'ignore-stereochemistry-errors': false,
         'dearomatize-on-load': true,
@@ -163,17 +160,19 @@ describe('SettingsMigration', () => {
   });
 
   describe('migrate - debug settings', () => {
-    it('should migrate debug settings', () => {
-      const flatFormat = {
-        showAtomIds: true,
-        showBondIds: false,
-        showHalfBondIds: true,
-        showLoopIds: false,
+    it('should flatten debug settings', () => {
+      const namespacedFormat = {
+        debug: {
+          showAtomIds: true,
+          showBondIds: false,
+          showHalfBondIds: true,
+          showLoopIds: false,
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.debug).toEqual({
+      expect(migrated).toEqual({
         showAtomIds: true,
         showBondIds: false,
         showHalfBondIds: true,
@@ -183,16 +182,18 @@ describe('SettingsMigration', () => {
   });
 
   describe('migrate - miew settings', () => {
-    it('should migrate miew settings', () => {
-      const flatFormat = {
-        miewMode: 'BS',
-        miewTheme: 'dark',
-        miewAtomLabel: 'bright',
+    it('should flatten miew settings', () => {
+      const namespacedFormat = {
+        miew: {
+          miewMode: 'BS',
+          miewTheme: 'dark',
+          miewAtomLabel: 'bright',
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.miew).toEqual({
+      expect(migrated).toEqual({
         miewMode: 'BS',
         miewTheme: 'dark',
         miewAtomLabel: 'bright',
@@ -201,17 +202,19 @@ describe('SettingsMigration', () => {
   });
 
   describe('migrate - macromolecules settings', () => {
-    it('should migrate macromolecules settings', () => {
-      const flatFormat = {
-        selectionTool: 'lasso',
-        editorLineLength: { 'sequence-layout-mode': 30 },
-        disableCustomQuery: true,
-        monomerLibraryUpdates: ['update1', 'update2'],
+    it('should flatten macromolecules settings', () => {
+      const namespacedFormat = {
+        macromolecules: {
+          selectionTool: 'lasso',
+          editorLineLength: { 'sequence-layout-mode': 30 },
+          disableCustomQuery: true,
+          monomerLibraryUpdates: ['update1', 'update2'],
+        },
       };
 
-      const migrated = SettingsMigration.migrate(flatFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      expect(migrated.macromolecules).toEqual({
+      expect(migrated).toEqual({
         selectionTool: 'lasso',
         editorLineLength: { 'sequence-layout-mode': 30 },
         disableCustomQuery: true,
@@ -220,90 +223,74 @@ describe('SettingsMigration', () => {
     });
   });
 
-  describe('migrate - mixed flat and namespaced', () => {
-    it('should preserve namespaced and migrate flat', () => {
-      const mixedFormat = {
-        editor: { resetToSelect: false }, // Already namespaced
-        atomColoring: true, // Flat, should be migrated
+  describe('migrate - comprehensive namespaced format', () => {
+    it('should flatten complete namespaced settings', () => {
+      const namespacedFormat = {
+        editor: {
+          resetToSelect: 'paste',
+          rotationStep: 15,
+        },
+        render: {
+          atomColoring: true,
+          bondThickness: 1.2,
+          font: '30px Arial',
+        },
+        server: {
+          'smart-layout': true,
+          'dearomatize-on-load': false,
+        },
+        debug: {
+          showAtomIds: false,
+          showBondIds: true,
+        },
+        miew: {
+          miewMode: 'LN',
+          miewTheme: 'light',
+        },
+        macromolecules: {
+          selectionTool: 'rectangle',
+        },
       };
 
-      const migrated = SettingsMigration.migrate(mixedFormat);
+      const migrated = SettingsMigration.migrate(namespacedFormat);
 
-      // Already namespaced settings should be preserved
-      expect(migrated.editor).toEqual({ resetToSelect: false });
-      // Note: In current implementation, it detects as new format
-      // and returns unchanged. This is acceptable as mixed formats
-      // shouldn't occur in practice.
-    });
-  });
-
-  describe('migrate - comprehensive flat format', () => {
-    it('should migrate complete flat settings', () => {
-      const flatFormat = {
-        // Editor
+      expect(migrated).toEqual({
         resetToSelect: 'paste',
         rotationStep: 15,
-
-        // Render
         atomColoring: true,
         bondThickness: 1.2,
         font: '30px Arial',
-
-        // Server
         'smart-layout': true,
         'dearomatize-on-load': false,
-
-        // Debug
         showAtomIds: false,
         showBondIds: true,
-
-        // Miew
         miewMode: 'LN',
         miewTheme: 'light',
-
-        // Macromolecules
         selectionTool: 'rectangle',
-      };
-
-      const migrated = SettingsMigration.migrate(flatFormat);
-
-      expect(migrated).toHaveProperty('editor');
-      expect(migrated).toHaveProperty('render');
-      expect(migrated).toHaveProperty('server');
-      expect(migrated).toHaveProperty('debug');
-      expect(migrated).toHaveProperty('miew');
-      expect(migrated).toHaveProperty('macromolecules');
-
-      expect(migrated.editor?.resetToSelect).toBe('paste');
-      expect(migrated.render?.atomColoring).toBe(true);
-      expect(migrated.server?.['smart-layout']).toBe(true);
-      expect(migrated.debug?.showBondIds).toBe(true);
-      expect(migrated.miew?.miewMode).toBe('LN');
-      expect(migrated.macromolecules?.selectionTool).toBe('rectangle');
+      });
     });
   });
 
   describe('migrate - partial settings', () => {
-    it('should migrate only present categories', () => {
-      const partialFlat = {
-        resetToSelect: false, // editor only
+    it('should flatten only present categories', () => {
+      const partialNamespaced = {
+        editor: { resetToSelect: false },
       };
 
-      const migrated = SettingsMigration.migrate(partialFlat);
+      const migrated = SettingsMigration.migrate(partialNamespaced);
 
-      expect(migrated).toHaveProperty('editor');
-      expect(migrated).not.toHaveProperty('render');
-      expect(migrated).not.toHaveProperty('server');
+      expect(migrated).toEqual({ resetToSelect: false });
     });
 
-    it('should skip categories with no matching keys', () => {
-      const partialFlat = {
-        unknownKey: 'value',
+    it('should handle empty categories', () => {
+      const emptyCategories = {
+        editor: {},
+        render: {},
       };
 
-      const migrated = SettingsMigration.migrate(partialFlat);
+      const migrated = SettingsMigration.migrate(emptyCategories);
 
-      expect(Object.keys(migrated)).toHaveLength(0);
+      expect(migrated).toEqual({});
     });
   });
 
@@ -328,7 +315,24 @@ describe('SettingsMigration', () => {
       });
     });
 
-    it('should load from ketcher-opts key', () => {
+    it('should load from ketcher-opts key and flatten if namespaced', () => {
+      const testSettings = {
+        editor: { resetToSelect: false },
+        render: { atomColoring: true },
+      };
+
+      mockLocalStorage['ketcher-opts'] = JSON.stringify(testSettings);
+
+      const loaded = SettingsMigration.loadFromLegacyStorage();
+
+      expect(loaded).toBeDefined();
+      expect(loaded).toEqual({
+        resetToSelect: false,
+        atomColoring: true,
+      });
+    });
+
+    it('should load flat settings unchanged', () => {
       const testSettings = {
         resetToSelect: false,
         atomColoring: true,
@@ -338,14 +342,14 @@ describe('SettingsMigration', () => {
 
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
-      expect(loaded).toBeDefined();
-      expect(loaded).toHaveProperty('editor');
-      expect(loaded).toHaveProperty('render');
+      expect(loaded).toEqual(testSettings);
     });
 
     it('should load from ketcher_editor_saved_settings key', () => {
       const testSettings = {
-        selectionTool: 'lasso',
+        macromolecules: {
+          selectionTool: 'lasso',
+        },
       };
 
       mockLocalStorage.ketcher_editor_saved_settings =
@@ -354,7 +358,7 @@ describe('SettingsMigration', () => {
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
       expect(loaded).toBeDefined();
-      expect(loaded).toHaveProperty('macromolecules');
+      expect(loaded).toEqual({ selectionTool: 'lasso' });
     });
 
     it('should prioritize ketcher-opts over ketcher_editor_saved_settings', () => {
@@ -368,7 +372,7 @@ describe('SettingsMigration', () => {
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
       // Should load from first found key (ketcher-opts)
-      expect(loaded).toHaveProperty('editor');
+      expect(loaded).toEqual({ resetToSelect: false });
     });
 
     it('should return null when no legacy keys exist', () => {

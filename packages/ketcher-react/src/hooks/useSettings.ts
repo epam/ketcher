@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState, useCallback } from 'react';
-import { useAppSelector, useAppDispatch } from '../script/ui/state/hooks';
+import { useAppDispatch } from '../script/ui/state/hooks';
 import { syncSettingsFromCore } from '../script/ui/state/options';
 import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
 
@@ -28,124 +28,136 @@ import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
  * const { settings, updateSettings, loadPreset } = useSettings();
  *
  * // Read settings
- * console.log(settings?.editor.resetToSelect);
+ * console.log(settings?.resetToSelect);
  *
  * // Update settings
- * await updateSettings({ render: { atomColoring: false } });
+ * await updateSettings({ atomColoring: false });
  *
  * // Load preset
  * await loadPreset('acs');
  * ```
  */
 export function useSettings() {
-  // Get ketcher instance from Redux store
-  // The editor is set in the store during initialization
-  const editor = useAppSelector((state) => state.editor);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ketcherInstance = editor ? (editor as any).ketcher : null;
-  const settingsService: ISettingsService | undefined =
-    ketcherInstance?.settingsService;
   const dispatch = useAppDispatch();
 
   // Local state for settings (synced from service)
-  const [settings, setSettings] = useState<Settings | null>(
-    settingsService?.getSettings() || null,
-  );
+  const [settings, setSettings] = useState<Settings | null>(null);
 
   // Subscribe to settings changes from core
   useEffect(() => {
-    if (!settingsService) {
-      return;
+    // Check for ketcher instance with retry mechanism
+    const checkAndSubscribe = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ketcherInstance = (window as any).ketcher;
+      const settingsService: ISettingsService | undefined =
+        ketcherInstance?.settingsService;
+
+      if (!settingsService) {
+        return null;
+      }
+
+      // Subscribe to settings changes
+      const unsubscribe = settingsService.subscribe((newSettings) => {
+        // 1. Update local state
+        setSettings(newSettings);
+
+        // 2. Sync to Redux for backward compatibility
+        dispatch(syncSettingsFromCore(newSettings));
+      });
+
+      // Initialize with current settings
+      const current = settingsService.getSettings();
+      setSettings(current);
+      dispatch(syncSettingsFromCore(current));
+
+      return unsubscribe;
+    };
+
+    // Try immediately
+    let unsubscribe = checkAndSubscribe();
+
+    // If not available, poll every 100ms for up to 5 seconds
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds
+    let intervalId: ReturnType<typeof setInterval> | null = !unsubscribe
+      ? setInterval(() => {
+          attempts++;
+          unsubscribe = checkAndSubscribe();
+
+          if ((unsubscribe || attempts >= maxAttempts) && intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+        }, 100)
+      : null;
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      if (unsubscribe) unsubscribe();
+    };
+  }, [dispatch]);
+
+  // Helper to get settings service
+  const getSettingsService = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ketcherInstance = (window as any).ketcher;
+    const service: ISettingsService | undefined =
+      ketcherInstance?.settingsService;
+    if (!service) {
+      throw new Error('Settings service not available');
     }
-
-    // Subscribe to settings changes
-    const unsubscribe = settingsService.subscribe((newSettings) => {
-      // 1. Update local state
-      setSettings(newSettings);
-
-      // 2. Sync to Redux for backward compatibility
-      dispatch(syncSettingsFromCore(newSettings));
-    });
-
-    // Initialize with current settings
-    const current = settingsService.getSettings();
-    setSettings(current);
-    dispatch(syncSettingsFromCore(current));
-
-    return unsubscribe;
-  }, [settingsService, dispatch]);
+    return service;
+  }, []);
 
   // Update settings (deep merge)
   const updateSettings = useCallback(
     async (partial: DeepPartial<Settings>) => {
-      if (!settingsService) {
-        throw new Error('Settings service not available');
-      }
-      return settingsService.updateSettings(partial);
+      const service = getSettingsService();
+      return service.updateSettings(partial);
     },
-    [settingsService],
+    [getSettingsService],
   );
 
   // Reset to default settings
   const resetToDefaults = useCallback(async () => {
-    if (!settingsService) {
-      throw new Error('Settings service not available');
-    }
-    return settingsService.resetToDefaults();
-  }, [settingsService]);
+    const service = getSettingsService();
+    return service.resetToDefaults();
+  }, [getSettingsService]);
 
   // Load a preset (e.g., 'acs')
   const loadPreset = useCallback(
     async (name: string) => {
-      if (!settingsService) {
-        throw new Error('Settings service not available');
-      }
-      return settingsService.loadPreset(name);
+      const service = getSettingsService();
+      return service.loadPreset(name);
     },
-    [settingsService],
+    [getSettingsService],
   );
 
   // Export settings as JSON string
   const exportSettings = useCallback(() => {
-    if (!settingsService) {
-      throw new Error('Settings service not available');
-    }
-    return settingsService.exportSettings();
-  }, [settingsService]);
+    const service = getSettingsService();
+    return service.exportSettings();
+  }, [getSettingsService]);
 
   // Import settings from JSON string
   const importSettings = useCallback(
     async (json: string) => {
-      if (!settingsService) {
-        throw new Error('Settings service not available');
-      }
-      return settingsService.importSettings(json);
+      const service = getSettingsService();
+      return service.importSettings(json);
     },
-    [settingsService],
+    [getSettingsService],
   );
 
-  // Get available preset names
-  const availablePresets = settingsService?.getAvailablePresets() || [];
-
-  // Get category-specific settings
-  const editorSettings = settings?.editor || null;
-  const renderSettings = settings?.render || null;
-  const serverSettings = settings?.server || null;
-  const debugSettings = settings?.debug || null;
-  const miewSettings = settings?.miew || null;
-  const macromoleculesSettings = settings?.macromolecules || null;
+  // Get available preset names (safely)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ketcherInstance = (window as any).ketcher;
+  const availablePresets =
+    ketcherInstance?.settingsService?.getAvailablePresets() || [];
+  const isAvailable = !!ketcherInstance?.settingsService;
 
   return {
-    // All settings
+    // Flat settings
     settings,
-
-    // Category-specific settings
-    editorSettings,
-    renderSettings,
-    serverSettings,
-    debugSettings,
-    miewSettings,
-    macromoleculesSettings,
 
     // Update methods
     updateSettings,
@@ -158,6 +170,6 @@ export function useSettings() {
     availablePresets,
 
     // Service availability
-    isAvailable: !!settingsService,
+    isAvailable,
   };
 }

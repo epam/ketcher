@@ -24,10 +24,10 @@ describe('SchemaValidator', () => {
     });
 
     it('should validate valid custom settings', () => {
-      const settings = getDefaultSettings();
-      settings.editor.resetToSelect = false;
-      settings.render.atomColoring = false;
-      settings.editor.rotationStep = 30;
+      const settings: any = getDefaultSettings();
+      settings.resetToSelect = false;
+      settings.atomColoring = false;
+      settings.rotationStep = 30;
 
       const result = validator.validate(settings);
 
@@ -35,8 +35,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid rotation step (too high)', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 200; // Max is 90
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 200; // Max is 90
 
       const result = validator.validate(settings);
 
@@ -46,8 +46,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid rotation step (too low)', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 0; // Min is 1
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 0; // Min is 1
 
       const result = validator.validate(settings);
 
@@ -55,8 +55,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid bond thickness (negative)', () => {
-      const settings = getDefaultSettings();
-      settings.render.bondThickness = -1; // Min is 0.1
+      const settings: any = getDefaultSettings();
+      settings.bondThickness = -1; // Min is 0.1
 
       const result = validator.validate(settings);
 
@@ -64,8 +64,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid enum value', () => {
-      const settings = getDefaultSettings();
-      settings.render.showHydrogenLabels = 'invalid' as any;
+      const settings: any = getDefaultSettings();
+      settings.showHydrogenLabels = 'invalid' as any;
 
       const result = validator.validate(settings);
 
@@ -73,8 +73,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid type', () => {
-      const settings = getDefaultSettings();
-      (settings.editor.resetToSelect as any) = 'invalid'; // Should be boolean or 'paste'
+      const settings: any = getDefaultSettings();
+      settings.resetToSelect = 'invalid'; // Should be boolean or 'paste'
 
       const result = validator.validate(settings);
 
@@ -106,7 +106,7 @@ describe('SchemaValidator', () => {
   describe('validatePartial - partial settings', () => {
     it('should validate partial editor settings', () => {
       const partial = {
-        editor: { resetToSelect: false },
+        resetToSelect: false,
       };
 
       const result = validator.validatePartial(partial);
@@ -116,10 +116,8 @@ describe('SchemaValidator', () => {
 
     it('should validate partial render settings', () => {
       const partial = {
-        render: {
-          atomColoring: false,
-          bondThickness: 2.0,
-        },
+        atomColoring: false,
+        bondThickness: 2.0,
       };
 
       const result = validator.validatePartial(partial);
@@ -129,9 +127,7 @@ describe('SchemaValidator', () => {
 
     it('should validate nested partial update', () => {
       const partial = {
-        render: {
-          atomColoring: false,
-        },
+        atomColoring: false,
       };
 
       const result = validator.validatePartial(partial);
@@ -141,7 +137,7 @@ describe('SchemaValidator', () => {
 
     it('should reject invalid partial settings', () => {
       const partial = {
-        editor: { rotationStep: 200 }, // Invalid
+        rotationStep: 200, // Invalid
       };
 
       const result = validator.validatePartial(partial);
@@ -151,7 +147,7 @@ describe('SchemaValidator', () => {
 
     it('should reject invalid types in partial', () => {
       const partial = {
-        render: { bondThickness: 'invalid' }, // Should be number
+        bondThickness: 'invalid', // Should be number
       };
 
       const result = validator.validatePartial(partial);
@@ -168,8 +164,8 @@ describe('SchemaValidator', () => {
 
   describe('error reporting', () => {
     it('should provide error details', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 200;
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 200;
 
       const result = validator.validate(settings);
 
@@ -183,9 +179,9 @@ describe('SchemaValidator', () => {
     });
 
     it('should report multiple errors', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 200; // Invalid
-      settings.render.bondThickness = -1; // Invalid
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 200; // Invalid
+      settings.bondThickness = -1; // Invalid
 
       const result = validator.validate(settings);
 
@@ -196,8 +192,8 @@ describe('SchemaValidator', () => {
 
   describe('boundary values', () => {
     it('should accept rotation step at minimum (1)', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 1;
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 1;
 
       const result = validator.validate(settings);
 
@@ -205,8 +201,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept rotation step at maximum (90)', () => {
-      const settings = getDefaultSettings();
-      settings.editor.rotationStep = 90;
+      const settings: any = getDefaultSettings();
+      settings.rotationStep = 90;
 
       const result = validator.validate(settings);
 
@@ -214,8 +210,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept bond thickness at minimum (0.1)', () => {
-      const settings = getDefaultSettings();
-      settings.render.bondThickness = 0.1;
+      const settings: any = getDefaultSettings();
+      settings.bondThickness = 0.1;
 
       const result = validator.validate(settings);
 
@@ -223,8 +219,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should accept bond thickness at maximum (96)', () => {
-      const settings = getDefaultSettings();
-      settings.render.bondThickness = 96;
+      const settings: any = getDefaultSettings();
+      settings.bondThickness = 96;
 
       const result = validator.validate(settings);
 
@@ -234,8 +230,8 @@ describe('SchemaValidator', () => {
 
   describe('enum validation', () => {
     it('should accept valid miew mode', () => {
-      const settings = getDefaultSettings();
-      settings.miew.miewMode = 'BS';
+      const settings: any = getDefaultSettings();
+      settings.miewMode = 'BS';
 
       const result = validator.validate(settings);
 
@@ -243,8 +239,8 @@ describe('SchemaValidator', () => {
     });
 
     it('should reject invalid miew mode', () => {
-      const settings = getDefaultSettings();
-      settings.miew.miewMode = 'INVALID' as any;
+      const settings: any = getDefaultSettings();
+      settings.miewMode = 'INVALID' as any;
 
       const result = validator.validate(settings);
 
@@ -261,8 +257,8 @@ describe('SchemaValidator', () => {
       ];
 
       validOptions.forEach((option) => {
-        const settings = getDefaultSettings();
-        settings.render.showHydrogenLabels = option as any;
+        const settings: any = getDefaultSettings();
+        settings.showHydrogenLabels = option as any;
 
         const result = validator.validate(settings);
 

@@ -1,6 +1,6 @@
 /**
  * Settings migration logic for backward compatibility
- * Handles migration from old flat format to new namespaced format
+ * Handles migration from namespaced format back to flat format
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
@@ -9,165 +9,82 @@ import type { Settings, DeepPartial } from './types';
 
 export class SettingsMigration {
   /**
-   * Migrate settings from old format to new format
-   * Handles flat Redux format and legacy storage keys
+   * Migrate settings from namespaced format back to flat format
+   * Handles legacy namespaced storage and ensures flat structure
    */
   static migrate(stored: any): DeepPartial<Settings> {
     if (!stored || typeof stored !== 'object') {
       return {};
     }
 
-    // Check if already in new namespaced format
-    if (this.isNewFormat(stored)) {
+    // Check if already in flat format
+    if (this.isFlatFormat(stored)) {
       return stored as DeepPartial<Settings>;
     }
 
-    // Migrate from flat Redux format to namespaced format
-    return this.migrateFromFlatFormat(stored);
+    // Migrate from namespaced format to flat format
+    return this.migrateFromNamespacedFormat(stored);
   }
 
   /**
-   * Check if settings are in new namespaced format
+   * Check if settings are in flat format
+   * Flat format has top-level setting keys and no category keys
    */
-  private static isNewFormat(stored: any): boolean {
-    return (
-      stored &&
-      typeof stored === 'object' &&
-      ('editor' in stored ||
-        'render' in stored ||
-        'server' in stored ||
-        'debug' in stored ||
-        'miew' in stored ||
-        'macromolecules' in stored)
-    );
-  }
-
-  /**
-   * Migrate from flat Redux format to namespaced structure
-   */
-  private static migrateFromFlatFormat(old: any): DeepPartial<Settings> {
-    const migrated: any = {};
-
-    // Editor settings keys
-    const editorKeys = ['resetToSelect', 'rotationStep'];
-
-    // Render settings keys
-    const renderKeys = [
-      'showValenceWarnings',
-      'atomColoring',
-      'font',
-      'fontsz',
-      'fontszUnit',
-      'fontszsub',
-      'showStereoFlags',
-      'stereoLabelStyle',
-      'colorOfAbsoluteCenters',
-      'colorOfAndCenters',
-      'colorOfOrCenters',
-      'colorStereogenicCenters',
-      'autoFadeOfStereoLabels',
-      'absFlagLabel',
-      'andFlagLabel',
-      'orFlagLabel',
-      'mixedFlagLabel',
-      'ignoreChiralFlag',
-      'carbonExplicitly',
-      'showCharge',
-      'showValence',
-      'showHydrogenLabels',
-      'aromaticCircle',
-      'bondSpacing',
-      'bondLength',
-      'bondLengthUnit',
-      'bondThickness',
-      'bondThicknessUnit',
-      'stereoBondWidth',
-      'stereoBondWidthUnit',
-      'hashSpacing',
-      'hashSpacingUnit',
-      'imageResolution',
-      'reactionComponentMarginSize',
-    ];
-
-    // Server settings keys
-    const serverKeys = [
-      'smart-layout',
-      'ignore-stereochemistry-errors',
-      'mass-skip-error-on-pseudoatoms',
-      'gross-formula-add-rsites',
-      'aromatize-skip-superatoms',
-      'dearomatize-on-load',
-      'gross-formula-add-isotopes',
-    ];
-
-    // Debug settings keys
-    const debugKeys = [
-      'showAtomIds',
-      'showBondIds',
-      'showHalfBondIds',
-      'showLoopIds',
-    ];
-
-    // Miew settings keys
-    const miewKeys = ['miewMode', 'miewTheme', 'miewAtomLabel'];
-
-    // Macromolecules settings keys
-    const macromoleculesKeys = [
-      'selectionTool',
-      'editorLineLength',
-      'disableCustomQuery',
-      'monomerLibraryUpdates',
-    ];
-
-    // Extract and migrate settings by category
-    if (this.hasAnyKey(old, editorKeys)) {
-      migrated.editor = this.extractKeys(old, editorKeys);
-    }
-
-    if (this.hasAnyKey(old, renderKeys)) {
-      migrated.render = this.extractKeys(old, renderKeys);
-    }
-
-    if (this.hasAnyKey(old, serverKeys)) {
-      migrated.server = this.extractKeys(old, serverKeys);
-    }
-
-    if (this.hasAnyKey(old, debugKeys)) {
-      migrated.debug = this.extractKeys(old, debugKeys);
-    }
-
-    if (this.hasAnyKey(old, miewKeys)) {
-      migrated.miew = this.extractKeys(old, miewKeys);
-    }
-
-    if (this.hasAnyKey(old, macromoleculesKeys)) {
-      migrated.macromolecules = this.extractKeys(old, macromoleculesKeys);
-    }
-
-    return migrated as DeepPartial<Settings>;
-  }
-
-  /**
-   * Check if object has any of the specified keys
-   */
-  private static hasAnyKey(obj: any, keys: string[]): boolean {
-    if (!obj || typeof obj !== 'object') {
+  private static isFlatFormat(stored: any): boolean {
+    if (!stored || typeof stored !== 'object') {
       return false;
     }
-    return keys.some((key) => key in obj);
+
+    // Sample keys from flat format
+    const flatKeys = [
+      'resetToSelect',
+      'rotationStep',
+      'atomColoring',
+      'bondLength',
+    ];
+    const categoryKeys = [
+      'editor',
+      'render',
+      'server',
+      'debug',
+      'miew',
+      'macromolecules',
+    ];
+
+    const hasFlatKeys = flatKeys.some((key) => key in stored);
+    const hasCategoryKeys = categoryKeys.some((key) => key in stored);
+
+    // It's flat if it has flat keys and no category keys
+    return hasFlatKeys && !hasCategoryKeys;
   }
 
   /**
-   * Extract specified keys from object
+   * Flatten namespaced structure by spreading all categories
    */
-  private static extractKeys(obj: any, keys: string[]): any {
-    const extracted: any = {};
-    keys.forEach((key) => {
-      if (key in obj) {
-        extracted[key] = obj[key];
-      }
-    });
-    return extracted;
+  private static migrateFromNamespacedFormat(old: any): DeepPartial<Settings> {
+    const flat: any = {};
+
+    // Spread all category objects into flat structure
+    if (old.editor && typeof old.editor === 'object') {
+      Object.assign(flat, old.editor);
+    }
+    if (old.render && typeof old.render === 'object') {
+      Object.assign(flat, old.render);
+    }
+    if (old.server && typeof old.server === 'object') {
+      Object.assign(flat, old.server);
+    }
+    if (old.debug && typeof old.debug === 'object') {
+      Object.assign(flat, old.debug);
+    }
+    if (old.miew && typeof old.miew === 'object') {
+      Object.assign(flat, old.miew);
+    }
+    if (old.macromolecules && typeof old.macromolecules === 'object') {
+      Object.assign(flat, old.macromolecules);
+    }
+
+    return flat as DeepPartial<Settings>;
   }
 
   /**

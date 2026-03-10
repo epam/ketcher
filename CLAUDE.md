@@ -164,8 +164,7 @@ npm run stylelint:fix
 - **Service**: `SettingsService` - Instance-based, event-driven, platform-agnostic
 - **Storage**: Pluggable adapters (LocalStorage, Memory, custom)
 - **Validation**: Ajv JSON Schema with strict type checking
-- **Migration**: Automatic conversion from legacy flat format to namespaced format
-- **Persistence**: Auto-save to localStorage with backward compatibility
+
 
 **Settings Categories:**
 - `editor` - Editor behavior (rotation, selection, warnings)
@@ -178,7 +177,7 @@ npm run stylelint:fix
 **Access via Ketcher instance:**
 ```typescript
 const settings = ketcher.settings.getSettings();
-await ketcher.settings.updateSettings({ editor: { rotationStep: 30 } });
+await ketcher.settings.updateSettings({ rotationStep: 30, atomColoring: false });
 await ketcher.settings.loadPreset('acs');
 ```
 

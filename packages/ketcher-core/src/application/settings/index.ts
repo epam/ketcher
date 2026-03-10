@@ -6,12 +6,6 @@
 // Types and interfaces
 export type {
   Settings,
-  EditorSettings,
-  RenderSettings,
-  ServerSettings,
-  DebugSettings,
-  MiewSettings,
-  MacromoleculesSettings,
   ValidationResult,
   ValidationError,
   SettingsListener,

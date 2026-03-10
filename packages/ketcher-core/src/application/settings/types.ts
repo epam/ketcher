@@ -3,44 +3,41 @@
  */
 
 /**
- * Editor-specific settings
+ * Complete settings structure in flat format
  */
-export interface EditorSettings {
-  resetToSelect: boolean | 'paste';
-  rotationStep: number;
-}
+export interface Settings {
+  // Editor settings
+  readonly resetToSelect: boolean | 'paste';
+  readonly rotationStep: number;
 
-/**
- * Rendering settings for atoms, bonds, fonts, colors, stereochemistry
- */
-export interface RenderSettings {
   // General render settings
-  showValenceWarnings: boolean;
-  atomColoring: boolean;
-  font: string;
-  fontsz: number;
-  fontszUnit: 'px' | 'pt';
-  fontszsub: number;
+  readonly showValenceWarnings: boolean;
+  readonly atomColoring: boolean;
+  readonly font: string;
+  readonly fontsz: number;
+  readonly fontszUnit: 'px' | 'pt' | 'cm' | 'inch';
+  readonly fontszsub: number;
+  readonly fontszsubUnit: 'px' | 'pt' | 'cm' | 'inch';
 
   // Stereochemistry
-  showStereoFlags: boolean;
-  stereoLabelStyle: 'classic' | 'IUPAC' | 'On-Atoms';
-  colorOfAbsoluteCenters: string;
-  colorOfAndCenters: string;
-  colorOfOrCenters: string;
-  colorStereogenicCenters: string;
-  autoFadeOfStereoLabels: boolean;
-  absFlagLabel: string;
-  andFlagLabel: string;
-  orFlagLabel: string;
-  mixedFlagLabel: string;
-  ignoreChiralFlag: boolean;
+  readonly showStereoFlags: boolean;
+  readonly stereoLabelStyle: 'classic' | 'IUPAC' | 'On-Atoms';
+  readonly colorOfAbsoluteCenters: string;
+  readonly colorOfAndCenters: string;
+  readonly colorOfOrCenters: string;
+  readonly colorStereogenicCenters: string;
+  readonly autoFadeOfStereoLabels: boolean;
+  readonly absFlagLabel: string;
+  readonly andFlagLabel: string;
+  readonly orFlagLabel: string;
+  readonly mixedFlagLabel: string;
+  readonly ignoreChiralFlag: boolean;
 
   // Atoms
-  carbonExplicitly: boolean;
-  showCharge: boolean;
-  showValence: boolean;
-  showHydrogenLabels:
+  readonly carbonExplicitly: boolean;
+  readonly showCharge: boolean;
+  readonly showValence: boolean;
+  readonly showHydrogenLabels:
     | 'off'
     | 'Hetero'
     | 'Terminal'
@@ -48,77 +45,49 @@ export interface RenderSettings {
     | 'On';
 
   // Bonds
-  aromaticCircle: boolean;
-  bondSpacing: number;
-  bondLength: number;
-  bondLengthUnit: 'px' | 'cm' | 'pt' | 'inch';
-  bondThickness: number;
-  bondThicknessUnit: 'px' | 'cm' | 'pt' | 'inch';
-  stereoBondWidth: number;
-  stereoBondWidthUnit: 'px' | 'cm' | 'pt' | 'inch';
-  hashSpacing: number;
-  hashSpacingUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly aromaticCircle: boolean;
+  readonly bondSpacing: number;
+  readonly bondLength: number;
+  readonly bondLengthUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly bondThickness: number;
+  readonly bondThicknessUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly stereoBondWidth: number;
+  readonly stereoBondWidthUnit: 'px' | 'cm' | 'pt' | 'inch';
+  readonly hashSpacing: number;
+  readonly hashSpacingUnit: 'px' | 'cm' | 'pt' | 'inch';
 
   // Image resolution
-  imageResolution: number;
+  readonly imageResolution: number;
 
   // Reaction
-  reactionComponentMarginSize: number;
-}
+  readonly reactionComponentMarginSize: number;
+  readonly reactionComponentMarginSizeUnit: 'px' | 'pt' | 'cm' | 'inch';
 
-/**
- * Server-side processing settings
- */
-export interface ServerSettings {
-  'smart-layout': boolean;
-  'ignore-stereochemistry-errors': boolean;
-  'mass-skip-error-on-pseudoatoms': boolean;
-  'gross-formula-add-rsites': boolean;
-  'aromatize-skip-superatoms': boolean;
-  'dearomatize-on-load': boolean;
-  'gross-formula-add-isotopes': boolean;
-}
+  // Server-side processing settings
+  readonly 'smart-layout': boolean;
+  readonly 'ignore-stereochemistry-errors': boolean;
+  readonly 'mass-skip-error-on-pseudoatoms': boolean;
+  readonly 'gross-formula-add-rsites': boolean;
+  readonly 'aromatize-skip-superatoms': boolean;
+  readonly 'dearomatize-on-load': boolean;
+  readonly 'gross-formula-add-isotopes': boolean;
 
-/**
- * Debug/developer settings
- */
-export interface DebugSettings {
-  showAtomIds: boolean;
-  showBondIds: boolean;
-  showHalfBondIds: boolean;
-  showLoopIds: boolean;
-}
+  // Debug/developer settings
+  readonly showAtomIds: boolean;
+  readonly showBondIds: boolean;
+  readonly showHalfBondIds: boolean;
+  readonly showLoopIds: boolean;
 
-/**
- * Miew 3D viewer settings
- */
-export interface MiewSettings {
-  miewMode: string;
-  miewTheme: string;
-  miewAtomLabel: string;
-}
+  // Miew 3D viewer settings
+  readonly miewMode: string;
+  readonly miewTheme: string;
+  readonly miewAtomLabel: string;
 
-/**
- * Macromolecules editor settings
- */
-export interface MacromoleculesSettings {
-  selectionTool: string;
-  editorLineLength: Record<string, number>;
-  disableCustomQuery: boolean;
-  monomerLibraryUpdates: string[];
-  ignoreChiralFlag: boolean;
-}
-
-/**
- * Complete settings structure organized by category
- */
-export interface Settings {
-  readonly editor: EditorSettings;
-  readonly render: RenderSettings;
-  readonly server: ServerSettings;
-  readonly debug: DebugSettings;
-  readonly miew: MiewSettings;
-  readonly macromolecules: MacromoleculesSettings;
+  // Macromolecules editor settings
+  readonly selectionTool: string;
+  readonly editorLineLength: Record<string, number>;
+  readonly disableCustomQuery: boolean;
+  readonly monomerLibraryUpdates: string[];
 }
 
 /**

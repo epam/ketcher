@@ -131,20 +131,113 @@ export function appUpdate(data) {
   };
 }
 
+/**
+ * Transform settings from Redux format to SettingsService format
+ * Fixes type mismatches and removes extra fields
+ */
+function transformSettingsForCore(settings) {
+  const transformed = { ...settings };
+
+  // Remove fields that don't belong in SettingsService
+  delete transformed.init;
+
+  // Fix imageResolution: string -> number
+  // Form uses enum: ImageResolution.low = '72', ImageResolution.high = '600'
+  // Schema expects: type 'number'
+  if (typeof transformed.imageResolution === 'string') {
+    transformed.imageResolution = parseInt(transformed.imageResolution, 10);
+  }
+
+  // Fix stereoLabelStyle: normalize to schema-expected values
+  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
+  // Schema expects: ['IUPAC', 'classic', 'On-Atoms', 'off']
+  // Note: There's a legacy mismatch between enum and schema that we need to handle
+  if (transformed.stereoLabelStyle) {
+    const style = transformed.stereoLabelStyle.toLowerCase();
+    if (style === 'iupac') {
+      transformed.stereoLabelStyle = 'IUPAC';
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'classic';
+    } else if (style === 'on' || style === 'on-atoms') {
+      // Handle both 'On' from enum and 'On-Atoms' from schema
+      transformed.stereoLabelStyle = 'On-Atoms';
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'off';
+    }
+  }
+
+  // Fix showHydrogenLabels: legacy 'all' value -> 'On'
+  // Form enum: ShowHydrogenLabels.On = 'all'
+  // Schema expects: 'On'
+  if (transformed.showHydrogenLabels === 'all') {
+    transformed.showHydrogenLabels = 'On';
+  }
+
+  return transformed;
+}
+
+/**
+ * Transform settings from SettingsService format to Redux format
+ * Reverse transformation for display in the Settings dialog
+ */
+function transformSettingsFromCore(settings) {
+  const transformed = { ...settings };
+
+  // Convert font: Ensure it has the size prefix (legacy data might not have it)
+  if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
+    // Font missing size prefix, add default 30px
+    transformed.font = `30px ${transformed.font}`;
+  }
+
+  // Convert imageResolution: number -> string (for form display)
+  if (typeof transformed.imageResolution === 'number') {
+    transformed.imageResolution = transformed.imageResolution.toString();
+  }
+
+  // Convert stereoLabelStyle: Reverse the transformation for form compatibility
+  // Schema values: ['IUPAC', 'classic', 'On-Atoms', 'off']
+  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
+  if (transformed.stereoLabelStyle) {
+    const style = transformed.stereoLabelStyle;
+    if (style === 'IUPAC') {
+      transformed.stereoLabelStyle = 'Iupac';
+    } else if (style === 'classic') {
+      transformed.stereoLabelStyle = 'Classic';
+    } else if (style === 'On-Atoms') {
+      transformed.stereoLabelStyle = 'On';
+    } else if (style === 'off') {
+      transformed.stereoLabelStyle = 'Off';
+    }
+  }
+
+  // Convert showHydrogenLabels: 'On' -> 'all' if needed
+  // This might not be necessary since form uses 'On', but kept for safety
+  // Form enum: ShowHydrogenLabels.On = 'all'
+  // (Actually, the form should already handle 'On' correctly)
+
+  // Remove fields that Redux doesn't use
+  delete transformed.selectionTool;
+  delete transformed.editorLineLength;
+  delete transformed.disableCustomQuery;
+  delete transformed.monomerLibraryUpdates;
+
+  return transformed;
+}
+
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     // Try to update via ketcher-core settings service if available
-    const state = getState();
-    const editor = state.editor;
-    const ketcherInstance = editor?.ketcher;
-    const settingsService = ketcherInstance?.settingsService;
+    // Use window.ketcher since Redux state doesn't store the Ketcher instance
+    const settingsService = window.ketcher?.settingsService;
 
     if (settingsService) {
       try {
-        // Convert flat settings to namespaced format for core
-        const namespacedSettings = convertFlatToNamespaced(newSettings);
-        await settingsService.updateSettings(namespacedSettings);
+        // Transform settings to match SettingsService schema
+        const transformedSettings = transformSettingsForCore(newSettings);
+
+        // Direct update - both Core and Redux use flat format now
+        await settingsService.updateSettings(transformedSettings);
         // Core service handles localStorage and emits events
         // The event will trigger syncSettingsFromCore via useSettings hook
       } catch (error) {
@@ -170,129 +263,17 @@ export function saveSettings(newSettings) {
 }
 
 /**
- * Convert flat Redux settings to namespaced core format
- * @param {Object} flatSettings - Flat settings object from Redux
- * @returns {Object} Namespaced settings for ketcher-core
- */
-function convertFlatToNamespaced(flatSettings) {
-  // Define which keys belong to which namespace
-  const editorKeys = ['resetToSelect', 'rotationStep', 'showValenceWarnings'];
-  const renderKeys = [
-    'atomColoring', // Moved from editorKeys - this is a render setting
-    'font',
-    'fontsz',
-    'fontszUnit',
-    'fontszsub',
-    'fontszsubUnit',
-    'bondLength',
-    'bondLengthUnit',
-    'bondThickness',
-    'bondThicknessUnit',
-    'bondSpacing',
-    'stereoBondWidth',
-    'stereoBondWidthUnit',
-    'hashSpacing',
-    'hashSpacingUnit',
-    'aromaticCircle',
-    'carbonExplicitly',
-    'showCharge',
-    'showValence',
-    'showHydrogenLabels',
-    'showStereoFlags',
-    'stereoLabelStyle',
-    'colorOfAbsoluteCenters',
-    'colorOfAndCenters',
-    'colorOfOrCenters',
-    'colorStereogenicCenters',
-    'autoFadeOfStereoLabels',
-    'absFlagLabel',
-    'andFlagLabel',
-    'orFlagLabel',
-    'mixedFlagLabel',
-    'ignoreChiralFlag',
-    'reactionComponentMarginSize',
-    'reactionComponentMarginSizeUnit',
-    'imageResolution',
-  ];
-  const serverKeys = [
-    'smart-layout',
-    'ignore-stereochemistry-errors',
-    'mass-skip-error-on-pseudoatoms',
-    'gross-formula-add-rsites',
-    'gross-formula-add-isotopes',
-    'dearomatize-on-load',
-  ];
-  const debugKeys = [
-    'showAtomIds',
-    'showBondIds',
-    'showHalfBondIds',
-    'showLoopIds',
-  ];
-  const miewKeys = ['miewMode', 'miewTheme', 'miewAtomLabel'];
-  const macromoleculesKeys = [
-    'selectionTool',
-    'editorLineLength',
-    'disableCustomQuery',
-    'monomerLibraryUpdates',
-    'ignoreChiralFlag',
-  ];
-
-  const namespaced = {};
-
-  // Extract settings by category
-  const editor = {};
-  const render = {};
-  const server = {};
-  const debug = {};
-  const miew = {};
-  const macromolecules = {};
-
-  for (const [key, value] of Object.entries(flatSettings)) {
-    if (editorKeys.includes(key)) {
-      editor[key] = value;
-    } else if (renderKeys.includes(key)) {
-      render[key] = value;
-    } else if (serverKeys.includes(key)) {
-      server[key] = value;
-    } else if (debugKeys.includes(key)) {
-      debug[key] = value;
-    } else if (miewKeys.includes(key)) {
-      miew[key] = value;
-    } else if (macromoleculesKeys.includes(key)) {
-      macromolecules[key] = value;
-    }
-  }
-
-  if (Object.keys(editor).length > 0) namespaced.editor = editor;
-  if (Object.keys(render).length > 0) namespaced.render = render;
-  if (Object.keys(server).length > 0) namespaced.server = server;
-  if (Object.keys(debug).length > 0) namespaced.debug = debug;
-  if (Object.keys(miew).length > 0) namespaced.miew = miew;
-  if (Object.keys(macromolecules).length > 0)
-    namespaced.macromolecules = macromolecules;
-
-  return namespaced;
-}
-
-/**
  * Sync settings from ketcher-core SettingsService to Redux
  * Used for backward compatibility - Redux becomes a passive consumer
- * @param {Settings} coreSettings - Settings from ketcher-core in namespaced format
+ * @param {Settings} coreSettings - Settings from ketcher-core in flat format
  */
 export function syncSettingsFromCore(coreSettings) {
-  // Flatten namespaced settings to match Redux structure
-  const flatSettings = {
-    ...coreSettings.editor,
-    ...coreSettings.render,
-    ...coreSettings.server,
-    ...coreSettings.debug,
-    ...coreSettings.miew,
-    ...coreSettings.macromolecules,
-  };
+  // Transform from SettingsService format to Redux format
+  const reduxSettings = transformSettingsFromCore(coreSettings);
 
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',
-    data: flatSettings,
+    data: reduxSettings,
   };
 }
 

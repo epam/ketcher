@@ -539,7 +539,7 @@ class SGroupTool implements Tool {
     functionalGroups,
     result: Array<number>,
   ) {
-    if (!atomsResult || !atomsResult.length) {
+    if (!atomsResult?.length) {
       return;
     }
 
@@ -560,7 +560,7 @@ class SGroupTool implements Tool {
     molecule,
     result: Array<number>,
   ) {
-    if (!bondsResult || !bondsResult.length) {
+    if (!bondsResult?.length) {
       return;
     }
 

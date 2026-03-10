@@ -34,7 +34,10 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import {
   AminoAcidNaturalAnalogue,
   ModificationType,
@@ -58,6 +61,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
+  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -228,7 +232,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
-  test('5."Arrange as a ring" in Snake mode should not be available in the context menu.', async () => {
+
+  test('5."Arrange as a ring" should be hidden in Snake and Sequence modes context menu.', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8366
      * Bug: https://github.com/epam/ketcher/issues/7970
@@ -239,12 +244,16 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * 3. Ensure Snake layout mode is selected
      * 4. Select all structures on the canvas
      * 5. Open context menu on any monomer
-     * 6. Verify "arrange in a ring" option is disabled
+     * 6. Verify "Arrange as a Ring" option is hidden
+     * 7. Switch to Sequence mode
+     * 8. Open context menu on any monomer
+     * 9. Verify "Arrange as a Ring" option is hidden
      *
      * Version 3.10.0
      */
     const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
+    const anyMonomerSymbol = getSymbolLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
     });
@@ -256,7 +265,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARing).toBeHidden();
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await ContextMenu(page, anyMonomerSymbol).open();
+    await expect(arrangeAsARing).toBeHidden();
   });
   test('6.No limit on the number of added modification fields; new fields extend beyond the visible wizard area and shift action buttons', async () => {
     /*
@@ -400,11 +415,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
       monomerAlias: 'CHEM1',
     });
     await expect(monomerOnCanvas).toBeVisible();
+
+    await monomerOnCanvas.hover();
+    await dragMouseTo(page, 480, 460);
+
     await monomerOnCanvas.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window, {
-      padding: 5,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
   test('9.Ketcher crashes completely when switching from Wizard mode to Macro mode', async () => {
     /*

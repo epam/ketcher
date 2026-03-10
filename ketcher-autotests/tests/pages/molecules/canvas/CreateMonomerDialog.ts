@@ -60,6 +60,7 @@ type AliasesSectionLocators = {
 };
 
 type CreateMonomerDialogLocators = {
+  window: Locator;
   typeCombobox: Locator;
   symbolEditbox: Locator;
   nameEditbox: Locator;
@@ -226,6 +227,7 @@ export const CreateMonomerDialog = (page: Page) => {
   const nucleotidePresetSection = NucleotidePresetSection(page);
 
   const locators: CreateMonomerDialogLocators = {
+    window: page.getByTestId('monomer-creation-wizard'),
     typeCombobox: page.getByTestId('type-select'),
     symbolEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),

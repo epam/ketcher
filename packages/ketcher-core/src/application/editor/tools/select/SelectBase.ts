@@ -257,6 +257,12 @@ abstract class SelectBase implements BaseTool {
     event.stopPropagation();
     event.preventDefault();
 
+    if (
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
+    ) {
+      return;
+    }
+
     this.mode = 'rotating-center';
     const cursorCanvas = Coordinates.viewToCanvas(
       this.editor.lastCursorPosition,

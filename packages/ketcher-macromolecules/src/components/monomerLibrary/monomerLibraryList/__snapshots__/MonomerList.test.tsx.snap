@@ -15,7 +15,7 @@ Object {
             class="css-1a3tnc1"
           >
             <div
-              class="css-zopkao"
+              class="css-d1efkn"
               data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
               data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             >
@@ -48,14 +48,13 @@ Object {
                   />
                 </svg>
               </div>
-              <div
+              <button
                 aria-label="Toggle favorite"
                 class="star "
-                role="button"
-                tabindex="0"
+                type="button"
               >
                 ★
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -73,7 +72,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-zopkao"
+            class="css-d1efkn"
             data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
           >
@@ -106,14 +105,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -188,7 +186,7 @@ Object {
             class="css-1a3tnc1"
           >
             <div
-              class="css-1g9muag"
+              class="css-o7i94f"
               data-monomer-item-id="PEG2___Diethylene Glycol"
               data-testid="PEG2___Diethylene Glycol"
             >
@@ -221,14 +219,13 @@ Object {
                   />
                 </svg>
               </div>
-              <div
+              <button
                 aria-label="Toggle favorite"
                 class="star "
-                role="button"
-                tabindex="0"
+                type="button"
               >
                 ★
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -246,7 +243,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1g9muag"
+            class="css-o7i94f"
             data-monomer-item-id="PEG2___Diethylene Glycol"
             data-testid="PEG2___Diethylene Glycol"
           >
@@ -279,14 +276,13 @@ Object {
                 />
               </svg>
             </div>
-            <div
+            <button
               aria-label="Toggle favorite"
               class="star "
-              role="button"
-              tabindex="0"
+              type="button"
             >
               ★
-            </div>
+            </button>
           </div>
         </div>
       </div>

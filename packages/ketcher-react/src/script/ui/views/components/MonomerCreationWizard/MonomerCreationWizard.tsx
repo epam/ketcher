@@ -1591,7 +1591,10 @@ const MonomerCreationWizard = () => {
   const isPresetType = type === 'rnaPreset';
 
   return (
-    <div className={styles.monomerCreationWizard}>
+    <div
+      className={styles.monomerCreationWizard}
+      data-testid="monomer-creation-wizard"
+    >
       <div className={styles.leftColumn}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />

@@ -24,34 +24,6 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
 
-export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page
-    .getByTestId('left-toolbar')
-    .filter({ has: page.locator(':visible') })
-    .boundingBox();
-
-  // we can get padding / margin values of left toolbar through x property
-  if (leftBarSize?.width) {
-    return leftBarSize.width + leftBarSize.x;
-  }
-
-  return Number.MIN_SAFE_INTEGER;
-}
-
-export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page
-    .getByTestId('top-toolbar')
-    .filter({ has: page.locator(':visible') })
-    .boundingBox();
-
-  // we can get padding / margin values of top toolbar through y property
-  if (topBarSize?.height) {
-    return topBarSize.height + topBarSize.y;
-  }
-
-  return Number.MIN_SAFE_INTEGER;
-}
-
 export async function takeElementScreenshot(
   page: Page,
   elementLocator: Locator,

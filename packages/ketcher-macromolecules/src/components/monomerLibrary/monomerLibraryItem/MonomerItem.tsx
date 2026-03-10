@@ -80,17 +80,6 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
-  const handleFavoriteKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        event.stopPropagation();
-        dispatch(toggleMonomerFavorites(item));
-      }
-    },
-    [dispatch, item],
-  );
-
   const onAutochainIconClick = useCallback(
     (event) => {
       event.stopPropagation();
@@ -192,16 +181,14 @@ const MonomerItem = ({
               </AutochainIconWrapper>
             </Tooltip>
           )}
-          <div
+          <button
+            type="button"
             onClick={addFavorite}
-            onKeyDown={handleFavoriteKeyDown}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            role="button"
-            tabIndex={0}
             aria-label="Toggle favorite"
           >
             {FavoriteStarSymbol}
-          </div>
+          </button>
         </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

@@ -4,10 +4,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
-  waitForPageInit,
   moveMouseAway,
   clickOnCanvas,
-  resetZoomLevelToDefault,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -19,7 +17,6 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -44,23 +41,16 @@ async function moveMonomersToNewPosition(
 test.describe('Rectangle Selection Tool', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
 
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await Library(page).switchToPeptidesTab();
   });
 
-  test.afterEach(async () => {
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
-
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Select monomer and bonds and then erase', async () => {

@@ -743,24 +743,26 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x + 100, point.y - 50);
     });
 
-    test('to Horizontal Position with Angle ≤ 15 Degrees', async ({ page }) => {
+    test('to Horizontal Position with Angle ≤ 5 Degrees', async ({ page }) => {
       /**
-       * Test case: Test case: EPMLSOPKET-15548
-       * Description: Arrow Snapping to Horizontal Position with Angle ≤ 15 Degrees
+       * Original Test case: Test case: EPMLSOPKET-15548
+       * Current behavior defined by https://github.com/epam/ketcher/issues/5568
+       * Description: Arrow Snapping to Horizontal Position with Angle ≤ 5 Degrees
        */
       await page.mouse.down();
-      await page.mouse.move(point.x + 100, point.y - 20);
+      await page.mouse.move(point.x + 100, point.y - 5);
       await takeEditorScreenshot(page);
       await page.mouse.up();
     });
 
-    test('to Vertical Position with Angle ≤ 15 Degrees', async ({ page }) => {
+    test('to Vertical Position with Angle ≤ 5 Degrees', async ({ page }) => {
       /**
-       * Test case: Test case: EPMLSOPKET-15549
-       * Description: Arrow Snapping to Vertical Position with Angle ≤ 15 Degrees
+       * Original Test case: Test case: EPMLSOPKET-15549
+       * Current behavior defined by https://github.com/epam/ketcher/issues/5568
+       * Description: Arrow Snapping to Vertical Position with Angle ≤ 5 Degrees
        */
       await page.mouse.down();
-      await page.mouse.move(point.x + 20, point.y - 100);
+      await page.mouse.move(point.x + 5, point.y - 100);
       await takeEditorScreenshot(page);
       await page.mouse.up();
     });

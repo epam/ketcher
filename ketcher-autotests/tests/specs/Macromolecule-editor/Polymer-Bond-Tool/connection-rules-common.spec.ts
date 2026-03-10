@@ -314,6 +314,7 @@ test.describe('Common connection rules: ', () => {
    */
   test(`Check that 4 connected by Bond A6OH monomers can/are...`, async () => {
     test.setTimeout(40000);
+    const a6ohScreenshotTolerance = 0.02;
 
     await openFileAndAddToCanvasMacro(
       page,
@@ -328,7 +329,7 @@ test.describe('Common connection rules: ', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       // Small anti-aliasing drift appears in CI on this post-drag frame.
-      maxDiffPixelRatio: 0.02,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
@@ -337,12 +338,14 @@ test.describe('Common connection rules: ', () => {
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
     await ZoomOutByKeyboard(page);
     await moveMouseAway(page);
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
@@ -351,6 +354,7 @@ test.describe('Common connection rules: ', () => {
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure

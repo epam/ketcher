@@ -323,22 +323,30 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await ZoomInByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await ZoomOutByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, Chem.A6OH);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });

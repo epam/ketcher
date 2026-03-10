@@ -10,6 +10,7 @@ import {
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndOpenAsNewProject,
   selectAllStructuresOnCanvas,
@@ -365,8 +366,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * Subtype combo box width is equal to Type and Repeat Pattern combo boxes.
      */
 
-    // Step 1–2: Load structure from SMILES
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
+    // Step 1–2
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/Chromium-popup/Bugs/Bug8978.mol',
+    );
 
     // Step 3: Select the whole molecule
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -380,7 +384,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.selectType(TypeOption.Copolymer);
 
     // Take screenshot of S‑Group Properties dialog window
-    await takeElementScreenshot(page, dialog.modalWindow, {
+    await takeElementScreenshot(page, dialog.window, {
       padding: 0,
     });
   });

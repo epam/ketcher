@@ -11,7 +11,6 @@ import {
 import { waitForRender } from '@utils/common';
 
 type SGroupPropertiesLocators = {
-  modalWindow: Locator;
   window: Locator;
   closeWindowButton: Locator;
   typeDropdown: Locator;
@@ -32,8 +31,7 @@ type SGroupPropertiesLocators = {
 
 export const SGroupPropertiesDialog = (page: Page) => {
   const locators: SGroupPropertiesLocators = {
-    modalWindow: page.getByTestId('info-modal-window'),
-    window: page.getByTestId('sgroup-dialog'),
+    window: page.getByTestId('sgroup-dialog').getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),
     typeDropdown: page.getByTestId('s-group-type-input-span'),
     contextDropdown: page.getByTestId('context-input-span'),

@@ -78,8 +78,14 @@ const getPointOnCircle = (center: Vec2, radius: number, angle: number) => {
   };
 };
 
-const getInitialHandleCenter = (center: Vec2, rectStartY: number): Vec2 =>
-  new Vec2(center.x, rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS);
+const getInitialHandleCenter = (
+  boundingBox: RotationViewParams['boundingBox'],
+  rectStartY: number,
+): Vec2 =>
+  new Vec2(
+    boundingBox.left + boundingBox.width / 2,
+    rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
+  );
 
 const getInitialHandleAngle = (center: Vec2, initialHandleCenter: Vec2) => {
   const initialHandleOffset = initialHandleCenter.sub(center);
@@ -180,7 +186,7 @@ export class RotationView extends TransientView {
 
     const cursorInCanvas =
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
-    const initialHandleCenter = getInitialHandleCenter(center, rectStartY);
+    const initialHandleCenter = getInitialHandleCenter(boundingBox, rectStartY);
 
     const handleCenterX = isRotating
       ? cursorInCanvas?.x ?? initialHandleCenter.x

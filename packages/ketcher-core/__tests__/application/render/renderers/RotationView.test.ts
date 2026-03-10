@@ -74,7 +74,7 @@ describe('RotationView', () => {
     expect(handleCircle?.getAttribute('fill')).toBe('#B4B9D6');
   });
 
-  it('should align the idle rotation handle with the moved rotation center', () => {
+  it('should keep the idle rotation handle in place after moving the center', () => {
     const svg = createSvgElement('svg') as SVGSVGElement;
     const layer = createSvgElement('g') as SVGGElement;
     svg.appendChild(layer);
@@ -96,6 +96,6 @@ describe('RotationView', () => {
     );
 
     const handleGroup = layer.querySelector('.rotation-handle');
-    expect(handleGroup?.getAttribute('transform')).toBe('translate(50,25)');
+    expect(handleGroup?.getAttribute('transform')).toBe('translate(100,25)');
   });
 });

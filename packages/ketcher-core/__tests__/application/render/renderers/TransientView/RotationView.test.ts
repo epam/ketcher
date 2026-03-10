@@ -121,20 +121,23 @@ describe('RotationView', () => {
   it('uses the moved center handle direction as the 0 degree starting position', () => {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const transientLayer = select(svg).append('g');
+    const center = new Vec2(40, 20);
+    const boundingBox = {
+      left: 80,
+      top: 80,
+      width: 40,
+      height: 40,
+    };
+    const cursor = new Vec2(100, 25);
 
     RotationView.show(
       transientLayer as unknown as D3SvgElementSelection<SVGGElement, void>,
       {
-        center: new Vec2(100, 20),
-        boundingBox: {
-          left: 80,
-          top: 80,
-          width: 40,
-          height: 40,
-        },
+        center,
+        boundingBox,
         rotationAngle: 0,
         isRotating: true,
-        cursor: new Vec2(100, 80),
+        cursor,
       },
     );
 
@@ -142,26 +145,38 @@ describe('RotationView', () => {
       (text) => text.textContent === '0°',
     );
     expect(angleText).toBeTruthy();
-    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(100);
+    expect(Number(angleText?.getAttribute('x'))).toBeGreaterThan(cursor.x);
     expect(Number(angleText?.getAttribute('y'))).toBeGreaterThan(20);
 
-    const cursorDistance = 80 - 20;
+    const initialHandleCenter = new Vec2(
+      boundingBox.left + boundingBox.width / 2,
+      boundingBox.top - 30 - 15 - 10,
+    );
+    const centerHandleOffset = initialHandleCenter.sub(center);
+    const cursorDistance = centerHandleOffset.length();
     const protractorCursorOffset = 12;
     const protractorRadiusStep = 5;
     const expectedRadius =
       Math.round(
         (cursorDistance - protractorCursorOffset) / protractorRadiusStep,
       ) * protractorRadiusStep;
-    const expectedArcStart = `M100,${20 + expectedRadius}`;
+    const expectedArcStart = center.addScaled(
+      centerHandleOffset,
+      expectedRadius / cursorDistance,
+    );
     const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
       path
         .getAttribute('d')
         ?.includes(`A${expectedRadius},${expectedRadius} 0 0,1`),
     );
-    expect(arcPath?.getAttribute('d')).toContain(
-      `${expectedArcStart}A${expectedRadius},${expectedRadius} 0 0,1 100,${
-        20 + expectedRadius
-      }`,
-    );
+    const arcPathValue = arcPath?.getAttribute('d') ?? '';
+    const matches =
+      /^M([\d.]+),([\d.]+)A50,50 0 0,1 ([\d.]+),([\d.]+)$/.exec(arcPathValue) ??
+      [];
+
+    expect(Number(matches[1])).toBeCloseTo(expectedArcStart.x);
+    expect(Number(matches[2])).toBeCloseTo(expectedArcStart.y);
+    expect(Number(matches[3])).toBeCloseTo(expectedArcStart.x);
+    expect(Number(matches[4])).toBeCloseTo(expectedArcStart.y);
   });
 });

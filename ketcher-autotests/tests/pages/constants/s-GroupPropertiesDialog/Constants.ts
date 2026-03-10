@@ -2,6 +2,7 @@ export enum TypeOption {
   Data = 'Data-option',
   MultipleGroup = 'Multiple group-option',
   SRUPolymer = 'SRU polymer-option',
+  Copolymer = 'Copolymer-option',
   Superatom = 'Superatom-option',
   QueryComponent = 'Query component-option',
   NucleotideComponent = 'Nucleotide Component-option',

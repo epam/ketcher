@@ -344,4 +344,44 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 4: Screenshot to verify the "U" label exists
     await takeMonomerLibraryScreenshot(page);
   });
+
+  test('Case 7 — Subtype combo box width is less than other combo boxes on S-Group Properties dialog', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/8978
+     * Version: 3.12.0-rc.1
+     * Description:
+     * After selecting S-Group Type "Copolymer", the "Subtype" combo box
+     * becomes visually narrower than the "Type" and "Repeat pattern" combo boxes.
+     *
+     * Scenario:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Load SMILES: CCCCC
+     * 3. Select whole molecule
+     * 4. Press S‑Group button (or Ctrl+G) to open S‑Group Properties dialog
+     * 5. Change Type combo box value to "Copolymer"
+     *
+     * Expected Result:
+     * Subtype combo box width is equal to Type and Repeat Pattern combo boxes.
+     */
+
+    // Step 1–2: Load structure from SMILES
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
+
+    // Step 3: Select the whole molecule
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
+
+    // Step 4: Open S‑Group Properties dialog
+    await LeftToolbar(page).sGroup();
+    const dialog = SGroupPropertiesDialog(page);
+
+    // Step 5: Change S‑Group Type → Copolymer
+    await dialog.selectType(TypeOption.Copolymer);
+
+    // Take screenshot of S‑Group Properties dialog window
+    await takeElementScreenshot(page, dialog.modalWindow, {
+      padding: 0,
+    });
+  });
 });

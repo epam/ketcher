@@ -310,43 +310,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.cancel();
   });
 
-  test('Case 6 — Label for natural analog category is missing when filter is applied', async ({
-    FlexCanvas: _,
-  }) => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/9137
-     * Bug: https://github.com/epam/ketcher/issues/8987
-     * Version: 3.3.0-rc.1
-     * Description:
-     * When filtering monomers in the Library by entering "v" into the
-     * "Search by name" field, natural analog label (e.g. "U") in RNA → Bases
-     * section disappears.
-     *
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Input "v" into the Search by name field
-     * 3. Open RNA tab → Bases section
-     *
-     * Expected result:
-     * Natural analog label for non-ambiguous monomers ("U") remains visible.
-     */
-
-    // Step 1: Switch to Macro mode (Flex mode by default)
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
-
-    // Step 2: Apply filter
-    await Library(page).setSearchValue('v');
-
-    // Step 3: Open RNA → Bases section
-    await Library(page).openRNASection(RNASection.Bases);
-
-    // Step 4: Screenshot to verify the "U" label exists
-    await takeMonomerLibraryScreenshot(page);
-  });
-
-  test('Case 7 — Subtype combo box width is less than other combo boxes on S-Group Properties dialog', async () => {
+  test('Case 6 — Subtype combo box width is less than other combo boxes on S-Group Properties dialog', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/8978

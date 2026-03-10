@@ -399,7 +399,6 @@ test.describe('Ketcher-3.10 Bugs', () => {
     const monomerOnCanvas = getMonomerLocator(page, {
       monomerAlias: 'CHEM1',
     });
-    await Library(page).hideLibrary();
     await expect(monomerOnCanvas).toBeVisible();
     await monomerOnCanvas.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();

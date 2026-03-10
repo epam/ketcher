@@ -47,7 +47,7 @@ export const DEFAULT_SETTINGS: Settings = {
   bondSpacing: 15,
   bondLength: 40,
   bondLengthUnit: 'px',
-  bondThickness: 1.2,
+  bondThickness: 2,
   bondThicknessUnit: 'px',
   stereoBondWidth: 6,
   stereoBondWidthUnit: 'px',

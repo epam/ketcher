@@ -16,7 +16,6 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
-  takeMonomerLibraryScreenshot,
 } from '@utils';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -33,8 +32,6 @@ import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomer
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { Library } from '@tests/pages/macromolecules/Library';
-import { RNASection } from '@tests/pages/constants/library/Constants';
 
 let page: Page;
 

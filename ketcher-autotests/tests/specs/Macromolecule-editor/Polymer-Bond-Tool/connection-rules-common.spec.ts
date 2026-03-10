@@ -327,6 +327,8 @@ test.describe('Common connection rules: ', () => {
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      // Small anti-aliasing drift appears in CI on this post-drag frame.
+      maxDiffPixelRatio: 0.02,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out

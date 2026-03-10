@@ -618,49 +618,6 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Aromatic - Ring inside the cycle structure', async () => {
-    /**
-     *Test case: EPMLSOPKET-1436
-     *Description: Aromatic Bond tool - Ring inside the cycle structure
-     */
-    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
-    const bondIds = [11, 6, 7, 8, 9, 10];
-    let i = 0;
-    while (i < bondIds.length) {
-      await getBondLocator(page, { bondId: bondIds[i] }).click({ force: true });
-      i++;
-    }
-    await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).dearomatize();
-    await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).aromatize();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8254
-     * Requirements:
-     * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
-     * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
-     * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
-     * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
-     * Expected result: The schema with different connection should save in PNG and SVG format
-     */
-
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/stereo-bonds-between-aa-lga.ket',
-    );
-    await IndigoFunctionsToolbar(page).layout();
-    await verifyPNGExport(page);
-    await verifySVGExport(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await verifySVGExport(page);
-  });
-
   test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for KET format', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8254
@@ -732,3 +689,45 @@ for (const bondType of Object.values(MicroBondType)) {
     await commonLeftToolbar.handTool();
   });
 }
+test('Aromatic - Ring inside the cycle structure', async () => {
+  /**
+   *Test case: EPMLSOPKET-1436
+   *Description: Aromatic Bond tool - Ring inside the cycle structure
+   */
+  await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+  await clickInTheMiddleOfTheScreen(page);
+  await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
+  const bondIds = [11, 6, 7, 8, 9, 10];
+  let i = 0;
+  while (i < bondIds.length) {
+    await getBondLocator(page, { bondId: bondIds[i] }).click({ force: true });
+    i++;
+  }
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).dearomatize();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).aromatize();
+  await takeEditorScreenshot(page);
+});
+
+test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8254
+   * Requirements:
+   * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
+   * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
+   * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
+   * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
+   * Expected result: The schema with different connection should save in PNG and SVG format
+   */
+
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/stereo-bonds-between-aa-lga.ket',
+  );
+  await IndigoFunctionsToolbar(page).layout();
+  await verifyPNGExport(page);
+  await verifySVGExport(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await verifySVGExport(page);
+});

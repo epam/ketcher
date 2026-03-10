@@ -15,6 +15,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 
 let page: Page;
 
@@ -181,6 +182,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await Ruler(page).setLength('30');
   });
 
   test('Case 6: Check that in Snake mode the allowed values on the ruler can be any whole number', async () => {
@@ -475,65 +477,7 @@ test.describe('Tests for Ruler', () => {
     await Ruler(page).setLength('30');
   });
 
-  test('Case 14: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
-    /*
-     * Version 3.5
-     * Test case: https://github.com/epam/ketcher/issues/7276
-     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
-     * Scenario:
-     * 1. Go to Macro - Sequence mode
-     * 2. Drag ruler slider to the right and verify that the layout is changed
-     * 3. Drag ruler slider to the left and verify that the layout is changed
-     * 4. Switch to Snake mode
-     * 5. Drag ruler slider to the right and verify that the layout is changed
-     * 6. Drag ruler slider to the left and verify that the layout is changed
-     * 7. Take screenshot
-     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Ruler(page).setLength('30');
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/1001-dna-monomers.ket',
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Ruler(page).dragRulerHandle(400, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Ruler(page).dragRulerHandle(600, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Ruler(page).dragRulerHandle(400, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Ruler(page).dragRulerHandle(600, 300);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await Ruler(page).setLength('14');
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-    await Ruler(page).setLength('30');
-  });
-
-  test('Case 15: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
+  test('Case 14: Change layout by set length in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -586,7 +530,7 @@ test.describe('Tests for Ruler', () => {
     await Ruler(page).setLength('14');
   });
 
-  test('Case 17: Not missing tooltip for standalone input field in ruler control', async () => {
+  test('Case 15: Not missing tooltip for standalone input field in ruler control', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
      * Bug: https://github.com/epam/ketcher/issues/7245
@@ -656,5 +600,63 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await CalculateVariablesPanel(page).closeWindow();
+  });
+  test('Case 17: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
+    /*
+     * Version 3.5
+     * Test case: https://github.com/epam/ketcher/issues/7276
+     * Description: Layout changed by dragging ruler slider in Sequence and Snake mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Drag ruler slider to the right and verify that the layout is changed
+     * 3. Drag ruler slider to the left and verify that the layout is changed
+     * 4. Switch to Snake mode
+     * 5. Drag ruler slider to the right and verify that the layout is changed
+     * 6. Drag ruler slider to the left and verify that the layout is changed
+     * 7. Take screenshot
+     */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await Ruler(page).setLength('30');
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/1001-dna-monomers.ket',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(400, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).dragRulerHandle(600, 300);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await Ruler(page).setLength('14');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await Ruler(page).setLength('30');
   });
 });

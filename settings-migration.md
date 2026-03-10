@@ -1,5 +1,21 @@
 # Refactor Ketcher Settings from ketcher-react to ketcher-core
 
+## ⚠️ IMPORTANT NOTE
+
+**This document represents an ORIGINAL PLAN that was partially changed during implementation.**
+
+**Key Change:** The plan proposed using a namespaced settings structure (with `editor:`, `render:`, `server:` nested objects), but the final implementation uses a **flat structure** (all settings properties at the root level).
+
+**Current Implementation:**
+- Settings use **flat structure** (e.g., `{ rotationStep: 15, atomColoring: true }`)
+- No nested namespaces like `editor:` or `render:`
+- See `packages/ketcher-core/src/application/settings/types.ts` for actual structure
+- See `packages/ketcher-core/src/application/settings/README.md` for up-to-date documentation
+
+This document is preserved for historical reference but **does not reflect the actual implementation**.
+
+---
+
 ## Context
 
 **Current State:**

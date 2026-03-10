@@ -317,7 +317,5 @@ The Ketcher settings refactoring is **complete, tested, and approved for product
 ---
 
 **For detailed technical information, see:**
-- `SETTINGS_REFACTORING_COMPLETE.md` - Complete project summary
-- `PHASE1_COMPLETE.md` - Core infrastructure details
-- `PHASE2_COMPLETE.md` - React integration details
-- `PHASE3_COMPLETE.md` - Testing and validation details
+- `SETTINGS_REFACTORING_COMPLETE.md` - Complete project summary with technical details
+- `packages/ketcher-core/src/application/settings/README.md` - Settings API documentation and usage guide

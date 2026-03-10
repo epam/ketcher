@@ -18,13 +18,16 @@ import { syncSettingsFromCore } from '../index';
 
 describe('syncSettingsFromCore', () => {
   it('should create SYNC_SETTINGS_FROM_CORE action', () => {
+    // Settings are now FLAT - no nested editor/render/server categories
     const coreSettings = {
-      editor: { resetToSelect: true, rotationStep: 15 },
-      render: { atomColoring: false, bondThickness: 1.2 },
-      server: { 'smart-layout': true },
-      debug: { showAtomIds: false },
-      miew: { miewMode: 'LN' },
-      macromolecules: { selectionTool: 'lasso' },
+      resetToSelect: true,
+      rotationStep: 15,
+      atomColoring: false,
+      bondThickness: 1.2,
+      'smart-layout': true,
+      showAtomIds: false,
+      miewMode: 'LN',
+      selectionTool: 'lasso',
     };
 
     const action = syncSettingsFromCore(coreSettings);
@@ -33,76 +36,58 @@ describe('syncSettingsFromCore', () => {
     expect(action.data).toBeDefined();
   });
 
-  it('should flatten namespaced settings to flat format', () => {
+  it('should transform settings from Core to Redux format', () => {
+    // Settings from Core are FLAT (all properties at root level)
     const coreSettings = {
-      editor: {
-        resetToSelect: true,
-        rotationStep: 15,
-        showValenceWarnings: true,
-        atomColoring: true,
-      },
-      render: {
-        font: '30px Arial',
-        fontsz: 12,
-        atomColoring: false,
-        bondThickness: 1.2,
-      },
-      server: {
-        'smart-layout': true,
-        'ignore-stereochemistry-errors': true,
-      },
-      debug: {
-        showAtomIds: false,
-        showBondIds: false,
-      },
-      miew: {
-        miewMode: 'LN',
-        miewTheme: 'light',
-      },
-      macromolecules: {
-        selectionTool: 'lasso',
-        editorLineLength: 50,
-      },
+      resetToSelect: true,
+      rotationStep: 15,
+      showValenceWarnings: true,
+      atomColoring: false, // Note: atomColoring at root level in flat structure
+      font: '30px Arial',
+      fontsz: 12,
+      bondThickness: 1.2,
+      'smart-layout': true,
+      'ignore-stereochemistry-errors': true,
+      showAtomIds: false,
+      showBondIds: false,
+      miewMode: 'LN',
+      miewTheme: 'light',
+      selectionTool: 'lasso',
+      editorLineLength: { test: 50 },
     };
 
     const action = syncSettingsFromCore(coreSettings);
-    const flatSettings = action.data;
+    const reduxSettings = action.data;
 
-    // Check editor settings are flattened
-    expect(flatSettings.resetToSelect).toBe(true);
-    expect(flatSettings.rotationStep).toBe(15);
-    expect(flatSettings.showValenceWarnings).toBe(true);
+    // Check all settings are present
+    expect(reduxSettings.resetToSelect).toBe(true);
+    expect(reduxSettings.rotationStep).toBe(15);
+    expect(reduxSettings.showValenceWarnings).toBe(true);
+    expect(reduxSettings.atomColoring).toBe(false);
+    expect(reduxSettings.font).toBe('30px Arial');
+    expect(reduxSettings.fontsz).toBe(12);
+    expect(reduxSettings.bondThickness).toBe(1.2);
+    expect(reduxSettings['smart-layout']).toBe(true);
+    expect(reduxSettings['ignore-stereochemistry-errors']).toBe(true);
+    expect(reduxSettings.showAtomIds).toBe(false);
+    expect(reduxSettings.showBondIds).toBe(false);
+    expect(reduxSettings.miewMode).toBe('LN');
+    expect(reduxSettings.miewTheme).toBe('light');
 
-    // Check render settings are flattened
-    expect(flatSettings.font).toBe('30px Arial');
-    expect(flatSettings.fontsz).toBe(12);
-    expect(flatSettings.bondThickness).toBe(1.2);
-
-    // Check server settings are flattened
-    expect(flatSettings['smart-layout']).toBe(true);
-    expect(flatSettings['ignore-stereochemistry-errors']).toBe(true);
-
-    // Check debug settings are flattened
-    expect(flatSettings.showAtomIds).toBe(false);
-    expect(flatSettings.showBondIds).toBe(false);
-
-    // Check miew settings are flattened
-    expect(flatSettings.miewMode).toBe('LN');
-    expect(flatSettings.miewTheme).toBe('light');
-
-    // Check macromolecules settings are flattened
-    expect(flatSettings.selectionTool).toBe('lasso');
-    expect(flatSettings.editorLineLength).toBe(50);
+    // Macromolecules-specific settings should be removed (not needed in Redux)
+    expect(reduxSettings.selectionTool).toBeUndefined();
+    expect(reduxSettings.editorLineLength).toBeUndefined();
   });
 
-  it('should handle settings with all categories', () => {
+  it('should handle complete flat settings', () => {
+    // Settings are flat - no nested categories
     const coreSettings = {
-      editor: { resetToSelect: false },
-      render: { atomColoring: true },
-      server: { 'smart-layout': false },
-      debug: { showAtomIds: true },
-      miew: { miewMode: 'BS' },
-      macromolecules: { selectionTool: 'rectangle' },
+      resetToSelect: false,
+      atomColoring: true,
+      'smart-layout': false,
+      showAtomIds: true,
+      miewMode: 'BS',
+      selectionTool: 'rectangle',
     };
 
     const action = syncSettingsFromCore(coreSettings);
@@ -112,18 +97,13 @@ describe('syncSettingsFromCore', () => {
     expect(action.data['smart-layout']).toBe(false);
     expect(action.data.showAtomIds).toBe(true);
     expect(action.data.miewMode).toBe('BS');
-    expect(action.data.selectionTool).toBe('rectangle');
+    // selectionTool is removed by transformSettingsFromCore (macromolecules-only)
+    expect(action.data.selectionTool).toBeUndefined();
   });
 
-  it('should handle empty categories', () => {
-    const coreSettings = {
-      editor: {},
-      render: {},
-      server: {},
-      debug: {},
-      miew: {},
-      macromolecules: {},
-    };
+  it('should handle empty settings', () => {
+    // Empty flat settings object
+    const coreSettings = {};
 
     const action = syncSettingsFromCore(coreSettings);
 
@@ -132,13 +112,16 @@ describe('syncSettingsFromCore', () => {
   });
 
   it('should preserve all setting values including false and 0', () => {
+    // Flat settings with falsy values
     const coreSettings = {
-      editor: { resetToSelect: false, rotationStep: 0 },
-      render: { atomColoring: false, bondThickness: 0 },
-      server: { 'smart-layout': false },
-      debug: { showAtomIds: false },
-      miew: { miewMode: '' },
-      macromolecules: { editorLineLength: 0 },
+      resetToSelect: false,
+      rotationStep: 0,
+      atomColoring: false,
+      bondThickness: 0,
+      'smart-layout': false,
+      showAtomIds: false,
+      miewMode: '',
+      editorLineLength: { test: 0 },
     };
 
     const action = syncSettingsFromCore(coreSettings);
@@ -150,7 +133,8 @@ describe('syncSettingsFromCore', () => {
     expect(action.data['smart-layout']).toBe(false);
     expect(action.data.showAtomIds).toBe(false);
     expect(action.data.miewMode).toBe('');
-    expect(action.data.editorLineLength).toBe(0);
+    // editorLineLength is removed by transformSettingsFromCore (macromolecules-only)
+    expect(action.data.editorLineLength).toBeUndefined();
   });
 });
 

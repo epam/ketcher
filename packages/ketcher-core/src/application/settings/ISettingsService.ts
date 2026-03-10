@@ -5,12 +5,6 @@
 
 import type {
   Settings,
-  EditorSettings,
-  RenderSettings,
-  ServerSettings,
-  DebugSettings,
-  MiewSettings,
-  MacromoleculesSettings,
   DeepPartial,
   ValidationResult,
   SettingsListener,
@@ -28,16 +22,6 @@ export interface ISettingsService {
    * Get current settings (immutable)
    */
   getSettings(): Settings;
-
-  /**
-   * Get specific settings category
-   */
-  getEditorSettings(): EditorSettings;
-  getRenderSettings(): RenderSettings;
-  getServerSettings(): ServerSettings;
-  getDebugSettings(): DebugSettings;
-  getMiewSettings(): MiewSettings;
-  getMacromoleculesSettings(): MacromoleculesSettings;
 
   /**
    * Update settings (deep merge, validates, persists, emits event)

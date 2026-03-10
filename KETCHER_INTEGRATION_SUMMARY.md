@@ -194,13 +194,9 @@ const settings = ketcher.settingsService?.getSettings();
 const ketcher = await new KetcherBuilder()
   .withStructServiceProvider(provider)
   .withSettings({
-    render: {
-      atomColoring: false,
-      bondThickness: 2.0,
-    },
-    editor: {
-      rotationStep: 30,
-    },
+    atomColoring: false,
+    bondThickness: 2.0,
+    rotationStep: 30,
   })
   .build();
 ```
@@ -237,16 +233,14 @@ const ketcher = await new KetcherBuilder()
 
 ### Pattern 5: Accessing Settings
 ```typescript
-// Get all settings
+// Get all settings (flat structure)
 const allSettings = ketcher.settingsService?.getSettings();
+const { atomColoring, rotationStep, bondThickness } = allSettings;
 
-// Get specific category
-const renderSettings = ketcher.settingsService?.getRenderSettings();
-const editorSettings = ketcher.settingsService?.getEditorSettings();
-
-// Update settings
+// Update settings (flat structure)
 await ketcher.settingsService?.updateSettings({
-  render: { atomColoring: true },
+  atomColoring: true,
+  rotationStep: 30,
 });
 
 // Load preset
@@ -271,7 +265,7 @@ All builder methods return `this` for method chaining:
 const ketcher = await new KetcherBuilder()
   .withStructServiceProvider(provider)
   .withStorageAdapter(new MemoryStorageAdapter())
-  .withSettings({ render: { atomColoring: false } })
+  .withSettings({ atomColoring: false, rotationStep: 30 })
   .build();
 ```
 

@@ -101,6 +101,7 @@ export const ZoomControls = () => {
           vertical: 'top',
           horizontal: 'right',
         }}
+        disableEnforceFocus
       >
         <DropDownContent>
           <ZoomInput

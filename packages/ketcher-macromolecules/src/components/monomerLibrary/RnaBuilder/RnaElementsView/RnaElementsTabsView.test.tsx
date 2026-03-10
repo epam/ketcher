@@ -30,14 +30,14 @@ describe('RnaElementsTabsView', () => {
     },
   };
 
-  it('shows the natural analog title for a filtered single RNA base group in tabs view', () => {
+  const renderTabsView = (activeRnaBuilderItem: MonomerGroups) => {
     render(
       withThemeAndStoreProvider(
         <RnaElementsTabsView
-          activeRnaBuilderItem={MonomerGroups.BASES}
+          activeRnaBuilderItem={activeRnaBuilderItem}
           groupsData={[
             {
-              groupName: MonomerGroups.BASES,
+              groupName: activeRnaBuilderItem,
               iconName: 'base',
               groups: [
                 {
@@ -68,6 +68,17 @@ describe('RnaElementsTabsView', () => {
         initialState,
       ),
     );
+  };
+
+  it('shows the natural analog title for a filtered single RNA base group in tabs view', () => {
+    renderTabsView(MonomerGroups.BASES);
+
+    expect(screen.getByText('U')).toBeInTheDocument();
+    expect(screen.getByText('vinyl5')).toBeInTheDocument();
+  });
+
+  it('shows the natural analog title for a filtered single RNA nucleotide group in tabs view', () => {
+    renderTabsView(MonomerGroups.NUCLEOTIDES);
 
     expect(screen.getByText('U')).toBeInTheDocument();
     expect(screen.getByText('vinyl5')).toBeInTheDocument();

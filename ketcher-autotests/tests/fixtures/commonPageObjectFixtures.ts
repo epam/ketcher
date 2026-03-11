@@ -13,7 +13,7 @@ import {
   MacromoleculesTopToolbar,
   MacromoleculesTopToolbarType,
 } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { Locator, Locator, Locator, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import {
   AntisenseStrandType,
   LayoutMode,

@@ -106,12 +106,6 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
           ap: res,
         }));
-      } else if (elem.type === 'list' || elem.type === 'not-list') {
-        dlg = openDialog(
-          dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo },
-        );
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -131,6 +125,7 @@ export default function initEditor(dispatch, getState) {
           type: 'rlabel',
         }));
       } else {
+        // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',

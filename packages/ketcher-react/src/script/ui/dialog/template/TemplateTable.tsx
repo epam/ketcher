@@ -129,7 +129,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             </div>
             {tmpl.props.group === 'User Templates' && (
               <button
-                tabIndex={0}
                 role="button"
                 data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
@@ -145,7 +144,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             {!isFunctionalGroupTemplate(tmpl) &&
               !isSaltOrSolventTemplate(tmpl) && (
                 <button
-                  tabIndex={0}
                   role="button"
                   data-testid={'edit-template-button'}
                   className={`${classes.button} ${classes.editButton}`}

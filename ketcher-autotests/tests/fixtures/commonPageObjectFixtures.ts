@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 /* eslint-disable @typescript-eslint/ban-types */
 import {
   CommonTopLeftToolbar,
@@ -23,7 +22,7 @@ type CommonPageObjects = {
 
 export const test = base.extend<{}, CommonPageObjects>({
   CommonTopRightToolbar: [
-    async ({}, use) => {
+    async ({}, use) => { 
       await use(CommonTopRightToolbar);
     },
     { scope: 'worker', auto: true },

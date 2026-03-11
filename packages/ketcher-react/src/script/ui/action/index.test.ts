@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import action from './index';
 jest.mock('./atoms', () => ({}));
 jest.mock('./copyAs', () => jest.fn());
 jest.mock('./copyImageToClipboard', () => jest.fn());
@@ -26,8 +28,6 @@ jest.mock('../state/shared', () => ({
   openInfoModal: jest.fn(),
   removeStructAction: jest.fn(),
 }));
-
-import action from './index';
 
 const createEditor = (isMonomerCreationWizardActive: boolean) =>
   ({

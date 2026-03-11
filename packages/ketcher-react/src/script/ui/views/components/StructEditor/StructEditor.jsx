@@ -244,14 +244,7 @@ class StructEditor extends Component {
           break;
         }
 
-        case 'disable': {
-          this.editorRef.current.classList.remove(classes.enableCursor);
-          this.setState({
-            enableCursor: false,
-          });
-          break;
-        }
-
+        case 'disable':
         case 'leave': {
           this.editorRef.current.classList.remove(classes.enableCursor);
           this.setState({

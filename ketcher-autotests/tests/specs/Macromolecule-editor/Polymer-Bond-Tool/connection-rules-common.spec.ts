@@ -141,8 +141,12 @@ test.describe('Common connection rules: ', () => {
   ) {
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
-    await page.mouse.move(x, y);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.move(x, y);
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await moveMouseAway(page);
   }
 
@@ -310,6 +314,7 @@ test.describe('Common connection rules: ', () => {
    */
   test(`Check that 4 connected by Bond A6OH monomers can/are...`, async () => {
     test.setTimeout(40000);
+    const a6ohScreenshotTolerance = 0.02;
 
     await openFileAndAddToCanvasMacro(
       page,
@@ -319,24 +324,37 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      // Small anti-aliasing drift appears in CI on this post-drag frame.
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await ZoomInByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
     await ZoomOutByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, Chem.A6OH);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure

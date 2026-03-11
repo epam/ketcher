@@ -205,6 +205,7 @@ const config: Record<string, UiAction> = {
   settings: {
     title: 'Settings',
     action: { dialog: 'settings' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'settings'),
   },
   about: {

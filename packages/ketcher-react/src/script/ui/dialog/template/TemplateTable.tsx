@@ -128,9 +128,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               {greekify(tmplName(tmpl, i))}
             </div>
             {tmpl.props.group === 'User Templates' && (
-              <span
+              <button
                 role="button"
-                tabIndex={0}
                 data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
                 onClick={(e) => {
@@ -140,13 +139,12 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 onKeyDown={createKeyDownHandler(() => onDelete!(tmpl))}
               >
                 <Icon name="delete" />
-              </span>
+              </button>
             )}
             {!isFunctionalGroupTemplate(tmpl) &&
               !isSaltOrSolventTemplate(tmpl) && (
-                <span
+                <button
                   role="button"
-                  tabIndex={0}
                   data-testid={'edit-template-button'}
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
@@ -156,7 +154,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   onKeyDown={createKeyDownHandler(() => onAttach!(tmpl))}
                 >
                   <Icon name="edit" />
-                </span>
+                </button>
               )}
           </button>
         );

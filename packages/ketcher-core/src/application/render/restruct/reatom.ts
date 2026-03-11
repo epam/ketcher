@@ -60,6 +60,7 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
+const ADDITIONAL_INFO_BASE_DISTANCE = 3;
 
 export enum ShowHydrogenLabels {
   Off = 'off',
@@ -953,6 +954,15 @@ class ReAtom extends ReObject {
       options.ignoreChiralFlag,
       fragment?.enhancedStereoFlag,
     );
+    const additionalInfoDirection = this.bisectLargestSector(restruct.molecule);
+    const additionalInfoOccupiedBoxes = this.visel.exts.map((ext) =>
+      ext.translate(ps),
+    );
+    const additionalInfoObstacles: Array<{
+      centerDistance: number;
+      width: number;
+      height: number;
+    }> = [];
 
     let text = '';
 
@@ -966,6 +976,64 @@ class ReAtom extends ReObject {
 
     if (aamText.length > 0) {
       text += `.${aamText}.`;
+    }
+
+    if (atom.cip) {
+      const paper = render.paper;
+      const options = render.options;
+
+      const cipText = paper.text(ps.x, ps.y, `(${this.a.cip})`).attr({
+        font: options.font,
+        'font-size': Math.floor(options.fontszInPx * 0.8),
+        'pointer-events': 'none',
+      });
+      const cipTextBBox = cipText.getBBox();
+
+      const rect = paper
+        .rect(
+          cipTextBBox.x - 1,
+          cipTextBBox.y - 1,
+          cipTextBBox.width + 2,
+          cipTextBBox.height + 2,
+          3,
+          3,
+        )
+        .attr({ stroke: 'none' });
+
+      const cipGroup = paper.set();
+      cipGroup.push(rect, cipText);
+      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
+      const centerDistance = util.getLabelCenterDistance({
+        anchorPoint: ps,
+        direction: additionalInfoDirection,
+        width: cipTextBBox.width,
+        height: cipTextBBox.height,
+        baseDistance: ADDITIONAL_INFO_BASE_DISTANCE,
+        occupiedBoxes: additionalInfoOccupiedBoxes,
+        obstacles: additionalInfoObstacles,
+      });
+      const shiftVector = additionalInfoDirection.scaled(centerDistance);
+      pathAndRBoxTranslate(
+        cipGroup,
+        cipGroupRelBox,
+        shiftVector.x,
+        shiftVector.y,
+      );
+      additionalInfoObstacles.push({
+        centerDistance,
+        width: cipGroupRelBox.width,
+        height: cipGroupRelBox.height,
+      });
+
+      render.ctab.addReObjectPath(
+        LayerMap.additionalInfo,
+        this.visel,
+        cipGroup,
+        ps,
+        false,
+      );
+
+      this.cip = { path: cipGroup, text: cipText, rectangle: rect };
     }
 
     if (text.length > 0) {
@@ -987,17 +1055,22 @@ class ReAtom extends ReObject {
       }
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
-      const visel = this.visel;
-      let t = 3;
-      let dir = this.bisectLargestSector(restruct.molecule);
-      // estimate the shift to clear the atom label
-      for (const ext of visel.exts) {
-        t = Math.max(t, util.shiftRayBox(ps, dir, ext.translate(ps)));
-      }
-      // estimate the shift backwards to account for the size of the aam/query text box itself
-      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
-      dir = dir.scaled(8 + t);
-      pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
+      const centerDistance = util.getLabelCenterDistance({
+        anchorPoint: ps,
+        direction: additionalInfoDirection,
+        width: aamBox.width,
+        height: aamBox.height,
+        baseDistance: ADDITIONAL_INFO_BASE_DISTANCE,
+        occupiedBoxes: additionalInfoOccupiedBoxes,
+        obstacles: additionalInfoObstacles,
+      });
+      const shiftVector = additionalInfoDirection.scaled(centerDistance);
+      pathAndRBoxTranslate(aamPath, aamBox, shiftVector.x, shiftVector.y);
+      additionalInfoObstacles.push({
+        centerDistance,
+        width: aamBox.width,
+        height: aamBox.height,
+      });
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true);
 
       if (customQueryTooltipText) {
@@ -1023,67 +1096,6 @@ class ReAtom extends ReObject {
 
       const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
-    }
-
-    if (atom.cip) {
-      const paper = render.paper;
-      const options = render.options;
-      const ps = Scale.modelToCanvas(this.a.pp, options);
-
-      const cipText = paper.text(ps.x, ps.y, `(${this.a.cip})`).attr({
-        font: options.font,
-        'font-size': Math.floor(options.fontszInPx * 0.8),
-        'pointer-events': 'none',
-      });
-      const cipTextBBox = cipText.getBBox();
-
-      const rect = paper
-        .rect(
-          cipTextBBox.x - 1,
-          cipTextBBox.y - 1,
-          cipTextBBox.width + 2,
-          cipTextBBox.height + 2,
-          3,
-          3,
-        )
-        .attr({ stroke: 'none' });
-
-      const cipGroup = paper.set();
-      cipGroup.push(rect, cipText);
-      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
-
-      let baseDistance = 3;
-      const direction = this.bisectLargestSector(render.ctab.molecule);
-      for (const ext of this.visel.exts) {
-        baseDistance = Math.max(
-          baseDistance,
-          util.shiftRayBox(ps, direction, ext.translate(ps)),
-        );
-      }
-      const shiftDistance =
-        baseDistance +
-        util.shiftRayBox(
-          ps,
-          direction.negated(),
-          Box2Abs.fromRelBox(cipTextBBox),
-        );
-      const shiftVector = direction.scaled(3 + shiftDistance);
-      pathAndRBoxTranslate(
-        cipGroup,
-        cipGroupRelBox,
-        shiftVector.x,
-        shiftVector.y,
-      );
-
-      render.ctab.addReObjectPath(
-        LayerMap.additionalInfo,
-        this.visel,
-        cipGroup,
-        ps,
-        false,
-      );
-
-      this.cip = { path: cipGroup, text: cipText, rectangle: rect };
     }
 
     if (this.showLabel && this.showInfoLabel) {

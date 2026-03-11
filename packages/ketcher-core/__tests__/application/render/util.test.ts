@@ -1,4 +1,4 @@
-import { HalfBond, Vec2 } from 'domain/entities';
+import { Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import util from './../../../src/application/render/util';
 
 describe('util', () => {
@@ -57,14 +57,48 @@ describe('util', () => {
         width: 8,
         height: 8,
         baseDistance,
-        obstacle: {
-          centerDistance: 12,
-          width: 20,
-          height: 10,
-        },
+        obstacles: [
+          {
+            centerDistance: 12,
+            width: 20,
+            height: 10,
+          },
+        ],
       });
 
       expect(result).toBe(29);
+    });
+
+    it('should account for occupied boxes and all previous label obstacles', () => {
+      const result = util.getLabelCenterDistance({
+        anchorPoint,
+        direction,
+        width: 8,
+        height: 8,
+        baseDistance,
+        occupiedBoxes: [
+          Box2Abs.fromRelBox({
+            x: -6,
+            y: -6,
+            width: 12,
+            height: 12,
+          }),
+        ],
+        obstacles: [
+          {
+            centerDistance: 12,
+            width: 20,
+            height: 10,
+          },
+          {
+            centerDistance: 30,
+            width: 6,
+            height: 6,
+          },
+        ],
+      });
+
+      expect(result).toBe(40);
     });
   });
 });

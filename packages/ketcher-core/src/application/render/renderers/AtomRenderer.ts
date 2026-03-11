@@ -27,6 +27,11 @@ export class AtomRenderer extends BaseRenderer {
   private cipTextElementBBox?: SVGRect;
   private stereoLabelElementBBox?: SVGRect;
   private stereoTextElementBBox?: SVGRect;
+  private cipLabelObstacle?: {
+    centerDistance: number;
+    width: number;
+    height: number;
+  };
 
   constructor(public atom: Atom) {
     super(atom);
@@ -650,30 +655,23 @@ export class AtomRenderer extends BaseRenderer {
 
   private positionCIPLabel() {
     if (!this.cipTextElementBBox || !this.cipLabelElementBBox) {
+      this.cipLabelObstacle = undefined;
       return;
     }
 
-    const { width, height } = this.cipTextElementBBox;
-    const direction = this.bisectLargestSector();
-    const centerDistance = util.getLabelCenterDistance({
-      anchorPoint: this.scaledPosition,
-      direction,
-      width,
-      height,
-      baseDistance: LABEL_BASE_DISTANCE,
+    const cipPlacement = this.getAdditionalLabelPlacement({
+      textBBox: this.cipTextElementBBox,
+      elementBBox: this.cipLabelElementBBox,
     });
-    const shiftVector = direction.scaled(centerDistance);
-
-    const cipPosition = this.scaledPosition.add(
-      new Vec2(
-        shiftVector.x - this.cipLabelElementBBox.width / 2,
-        shiftVector.y + this.cipLabelElementBBox.height / 2,
-      ),
-    );
+    this.cipLabelObstacle = {
+      centerDistance: cipPlacement.centerDistance,
+      width: this.cipLabelElementBBox.width,
+      height: this.cipLabelElementBBox.height,
+    };
 
     this.cipLabelElement?.attr(
       'transform',
-      `translate(${cipPosition.x}, ${cipPosition.y})`,
+      `translate(${cipPlacement.position.x}, ${cipPlacement.position.y})`,
     );
   }
 
@@ -755,47 +753,52 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const { width, height } = this.stereoTextElementBBox;
-    const direction = this.bisectLargestSector();
-
-    const cipCenterDistance =
-      this.cipTextElementBBox && this.cipLabelElementBBox
-        ? util.getLabelCenterDistance({
-            anchorPoint: this.scaledPosition,
-            direction,
-            width: this.cipTextElementBBox.width,
-            height: this.cipTextElementBBox.height,
-            baseDistance: LABEL_BASE_DISTANCE,
-          })
-        : undefined;
-    const centerDistance = util.getLabelCenterDistance({
-      anchorPoint: this.scaledPosition,
-      direction,
-      width,
-      height,
-      baseDistance: LABEL_BASE_DISTANCE,
-      obstacle:
-        cipCenterDistance && this.cipLabelElementBBox
-          ? {
-              centerDistance: cipCenterDistance,
-              width: this.cipLabelElementBBox.width,
-              height: this.cipLabelElementBBox.height,
-            }
-          : undefined,
+    const obstacles = this.cipLabelObstacle ? [this.cipLabelObstacle] : [];
+    const { position: stereoPosition } = this.getAdditionalLabelPlacement({
+      textBBox: this.stereoTextElementBBox,
+      elementBBox: this.stereoLabelElementBBox,
+      obstacles,
     });
-    const shiftVector = direction.scaled(centerDistance);
-
-    const stereoPosition = this.scaledPosition.add(
-      new Vec2(
-        shiftVector.x - this.stereoLabelElementBBox.width / 2,
-        shiftVector.y + this.stereoLabelElementBBox.height / 2,
-      ),
-    );
 
     this.stereoLabelElement?.attr(
       'transform',
       `translate(${stereoPosition.x}, ${stereoPosition.y})`,
     );
+  }
+
+  private getAdditionalLabelPlacement({
+    textBBox,
+    elementBBox,
+    obstacles = [],
+  }: {
+    textBBox: Pick<SVGRect, 'width' | 'height'>;
+    elementBBox: Pick<SVGRect, 'width' | 'height'>;
+    obstacles?: Array<{
+      centerDistance: number;
+      width: number;
+      height: number;
+    }>;
+  }) {
+    const direction = this.bisectLargestSector();
+    const centerDistance = util.getLabelCenterDistance({
+      anchorPoint: this.scaledPosition,
+      direction,
+      width: textBBox.width,
+      height: textBBox.height,
+      baseDistance: LABEL_BASE_DISTANCE,
+      obstacles,
+    });
+    const shiftVector = direction.scaled(centerDistance);
+
+    return {
+      centerDistance,
+      position: this.scaledPosition.add(
+        new Vec2(
+          shiftVector.x - elementBBox.width / 2,
+          shiftVector.y + elementBBox.height / 2,
+        ),
+      ),
+    };
   }
 
   public move() {

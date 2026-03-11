@@ -91,7 +91,7 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
 /**
  * Returns the distance from the anchor point to a label center along the given
  * direction. The label is first moved away from the anchor itself, and can then
- * be pushed farther if an already-positioned obstacle label occupies the same ray.
+ * be pushed farther if already-positioned obstacle labels occupy the same ray.
  */
 function getLabelCenterDistance({
   anchorPoint,
@@ -99,18 +99,20 @@ function getLabelCenterDistance({
   width,
   height,
   baseDistance,
-  obstacle,
+  occupiedBoxes = [],
+  obstacles = [],
 }: {
   anchorPoint: Vec2;
   direction: Vec2;
   width: number;
   height: number;
   baseDistance: number;
-  obstacle?: {
+  occupiedBoxes?: Box2Abs[];
+  obstacles?: Array<{
     centerDistance: number;
     width: number;
     height: number;
-  };
+  }>;
 }) {
   const centeredLabelBox = Box2Abs.fromRelBox({
     x: anchorPoint.x - width / 2,
@@ -123,31 +125,38 @@ function getLabelCenterDistance({
     direction.negated(),
     centeredLabelBox,
   );
-  const labelCenterDistance = 2 * baseDistance + labelHalfExtent;
+  let labelCenterDistance =
+    occupiedBoxes.reduce(
+      (distance, occupiedBox) =>
+        Math.max(distance, shiftRayBox(anchorPoint, direction, occupiedBox)),
+      baseDistance,
+    ) +
+    baseDistance +
+    labelHalfExtent;
 
-  if (!obstacle) {
-    return labelCenterDistance;
-  }
+  obstacles.forEach((obstacle) => {
+    const centeredObstacleBox = Box2Abs.fromRelBox({
+      x: anchorPoint.x - obstacle.width / 2,
+      y: anchorPoint.y - obstacle.height / 2,
+      width: obstacle.width,
+      height: obstacle.height,
+    });
+    const obstacleHalfExtent = shiftRayBox(
+      anchorPoint,
+      direction.negated(),
+      centeredObstacleBox,
+    );
 
-  const centeredObstacleBox = Box2Abs.fromRelBox({
-    x: anchorPoint.x - obstacle.width / 2,
-    y: anchorPoint.y - obstacle.height / 2,
-    width: obstacle.width,
-    height: obstacle.height,
+    labelCenterDistance = Math.max(
+      labelCenterDistance,
+      obstacle.centerDistance +
+        obstacleHalfExtent +
+        baseDistance +
+        labelHalfExtent,
+    );
   });
-  const obstacleHalfExtent = shiftRayBox(
-    anchorPoint,
-    direction.negated(),
-    centeredObstacleBox,
-  );
 
-  return Math.max(
-    labelCenterDistance,
-    obstacle.centerDistance +
-      obstacleHalfExtent +
-      baseDistance +
-      labelHalfExtent,
-  );
+  return labelCenterDistance;
 }
 
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {

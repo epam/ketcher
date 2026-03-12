@@ -23,8 +23,9 @@ import { IRnaPreset } from 'application/editor/tools';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
+} & {
+  enhancedFlags?: number[];
 };
-
 export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };

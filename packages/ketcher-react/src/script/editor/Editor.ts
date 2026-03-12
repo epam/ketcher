@@ -1492,6 +1492,15 @@ class Editor implements KetcherEditor {
     const newAction = new Action();
     const structFromWizard = this.struct();
 
+    // Store positions only for atoms that were selected (wizard participants)
+    const originalAtomPositions = new Map<number, Vec2>();
+    this.selectedToOriginalAtomsIdMap.forEach((originalAtomId) => {
+      const atom = this.originalStruct.atoms.get(originalAtomId);
+      if (atom?.pp) {
+        originalAtomPositions.set(originalAtomId, new Vec2(atom.pp));
+      }
+    });
+
     this.struct(this.originalStruct, false);
 
     // this.struct(struct) uses setTimeout to defer some calculations,
@@ -1521,15 +1530,27 @@ class Editor implements KetcherEditor {
         true,
       );
 
+      // Restore original atom positions after merge
+      const struct = this.struct();
+
       const originalToSelectedAtomsIdMap = new Map<number, number>();
 
+      // Restore positions for selected atoms (now part of monomer)
       this.selectedToOriginalAtomsIdMap.forEach(
         (originalAtomId, selectedAtomId) => {
           originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+
+          // Restore position using the atomIdMap
+          const originalPosition = originalAtomPositions.get(originalAtomId);
+          const newAtomId = atomIdMap.get(selectedAtomId);
+          if (originalPosition && isNumber(newAtomId)) {
+            const atom = struct.atoms.get(newAtomId);
+            if (atom) {
+              atom.pp = new Vec2(originalPosition);
+            }
+          }
         },
       );
-
-      const struct = this.struct();
 
       externalBonds.forEach((bond) => {
         const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);

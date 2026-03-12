@@ -426,10 +426,7 @@ export const selectFilteredMonomers = createSelector(
 
           return (
             idtBase?.endsWith(aliasRest) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.endsWith(aliasRest)))
+            idtModifications?.split(' ').some((mod) => mod.endsWith(aliasRest))
           );
         }
 

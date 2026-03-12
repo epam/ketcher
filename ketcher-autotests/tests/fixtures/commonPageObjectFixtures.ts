@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 /* eslint-disable @typescript-eslint/ban-types */
 import {
   CommonTopLeftToolbar,

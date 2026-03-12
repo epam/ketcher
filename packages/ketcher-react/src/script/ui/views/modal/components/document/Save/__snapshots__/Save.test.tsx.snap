@@ -14,7 +14,6 @@ Object {
         data-testid="info-modal-window"
         role="dialog"
         tabindex="-1"
-        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -426,7 +425,6 @@ Object {
       data-testid="info-modal-window"
       role="dialog"
       tabindex="-1"
-      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"

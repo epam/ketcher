@@ -1275,8 +1275,13 @@ export class Struct {
   }
 
   getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromAtomId(atomId as number);
-    return this.sgroups?.get(sgroupId as number);
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomId(atomId);
+
+    return isNumber(sgroupId) ? this.sgroups?.get(sgroupId) : undefined;
   }
 
   getGroupFromAtomIdBySgroups(atomId: number | undefined): SGroup | undefined {

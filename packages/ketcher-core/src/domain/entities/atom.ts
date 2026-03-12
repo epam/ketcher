@@ -950,12 +950,15 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : searchBySgroups
-        ? structOrSgroup.getGroupFromAtomIdBySgroups(atomId)
-        : structOrSgroup.getGroupFromAtomId(atomId);
+    let sgroup: SGroup | undefined;
+
+    if (structOrSgroup instanceof SGroup) {
+      sgroup = structOrSgroup;
+    } else if (searchBySgroups) {
+      sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
+    } else {
+      sgroup = structOrSgroup.getGroupFromAtomId(atomId);
+    }
 
     return sgroup
       ?.getAttachmentPoints()

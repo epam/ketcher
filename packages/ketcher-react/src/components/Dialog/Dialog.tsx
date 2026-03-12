@@ -85,9 +85,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
     if (focusable) {
-      requestAnimationFrame(() => {
-        (dialogElement as HTMLElement)?.focus();
-      });
+      (dialogElement as HTMLElement).focus();
     }
 
     return () => {

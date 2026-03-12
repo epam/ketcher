@@ -5,10 +5,10 @@ Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
+      <dialog
         class="dialog infoModal"
         data-testid="info-modal-window"
-        role="dialog"
+        open=""
         tabindex="-1"
       >
         <header

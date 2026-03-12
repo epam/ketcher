@@ -93,9 +93,21 @@ type DragContext = {
   closestItem?: ReactionArrowClosestItem | MultitailArrowClosestItem;
 } | null;
 
-type SimpleObjectSelectionDragContext = {
-  item: ClosestItemWithMap<Vec2, 'simpleObjects'>;
+type SelectionMoveDragContext = NonNullable<DragContext> & {
+  item: ClosestItemWithMap<unknown>;
   xy0: Vec2;
+};
+
+type SimpleObjectSelectionDragContext = SelectionMoveDragContext & {
+  item: ClosestItemWithMap<Vec2, 'simpleObjects'> & {
+    ref: Vec2;
+  };
+};
+
+type ImageSelectionDragContext = SelectionMoveDragContext & {
+  item: ClosestItemWithMap<ImageReferencePositionInfo, typeof IMAGE_KEY> & {
+    ref: ImageReferencePositionInfo;
+  };
 };
 
 type ReactionArrowDragContext = NonNullable<DragContext> & {
@@ -109,6 +121,41 @@ type MultitailArrowDragContext = NonNullable<DragContext> & {
   closestItem: MultitailArrowClosestItem;
   originalPosition: Vec2;
 };
+
+function isSelectionMoveDragContext(
+  dragCtx: DragContext,
+): dragCtx is SelectionMoveDragContext {
+  return !!dragCtx?.item && !!dragCtx.xy0;
+}
+
+function isReactionArrowDragContext(
+  dragCtx: DragContext,
+): dragCtx is ReactionArrowDragContext {
+  return (
+    dragCtx?.closestItem?.map === 'rxnArrows' && !!dragCtx.originalPosition
+  );
+}
+
+function isMultitailArrowDragContext(
+  dragCtx: DragContext,
+): dragCtx is MultitailArrowDragContext {
+  return (
+    dragCtx?.closestItem?.map === MULTITAIL_ARROW_KEY &&
+    !!dragCtx.originalPosition
+  );
+}
+
+function isImageSelectionDragContext(
+  dragCtx: SelectionMoveDragContext,
+): dragCtx is ImageSelectionDragContext {
+  return dragCtx.item.map === IMAGE_KEY && !!dragCtx.item.ref;
+}
+
+function isSimpleObjectSelectionDragContext(
+  dragCtx: SelectionMoveDragContext,
+): dragCtx is SimpleObjectSelectionDragContext {
+  return dragCtx.item.map === 'simpleObjects' && !!dragCtx.item.ref;
+}
 
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
@@ -257,23 +304,18 @@ class SelectTool implements Tool {
 
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
-    if (dragCtx?.closestItem) {
+    if (
+      isReactionArrowDragContext(dragCtx) ||
+      isMultitailArrowDragContext(dragCtx)
+    ) {
       if (dragCtx.action) {
         dragCtx.action.perform(restruct);
       }
 
-      if (dragCtx.closestItem.map === 'rxnArrows') {
-        const reactionArrowDragCtx = dragCtx as ReactionArrowDragContext;
-        reactionArrowDragCtx.action = this.reactionArrowMoveTool.mousemove(
-          event,
-          reactionArrowDragCtx,
-        );
-      } else if (dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        const multitailArrowDragCtx = dragCtx as MultitailArrowDragContext;
-        multitailArrowDragCtx.action = this.multitailArrowMoveTool.mousemove(
-          event,
-          multitailArrowDragCtx,
-        );
+      if (isReactionArrowDragContext(dragCtx)) {
+        dragCtx.action = this.reactionArrowMoveTool.mousemove(event, dragCtx);
+      } else {
+        dragCtx.action = this.multitailArrowMoveTool.mousemove(event, dragCtx);
       }
       if (dragCtx.action) {
         editor.update(dragCtx.action, true);
@@ -281,11 +323,8 @@ class SelectTool implements Tool {
       }
     }
 
-    if (dragCtx?.item) {
-      const selectionDragCtx = dragCtx as NonNullable<DragContext> & {
-        item: ClosestItemWithMap<unknown>;
-        xy0: Vec2;
-      };
+    if (isSelectionMoveDragContext(dragCtx)) {
+      const selectionDragCtx = dragCtx;
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
 
@@ -305,17 +344,14 @@ class SelectTool implements Tool {
       /* end */
 
       /* handle image resize */
-      if (
-        selectionDragCtx.item.map === IMAGE_KEY &&
-        selectionDragCtx.item.ref
-      ) {
+      if (isImageSelectionDragContext(selectionDragCtx)) {
         if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
         const position = CoordinateTransformation.pageToModel(event, rnd);
         selectionDragCtx.action = fromImageResize(
           rnd.ctab,
           selectionDragCtx.item.id,
           position,
-          selectionDragCtx.item.ref as ImageReferencePositionInfo,
+          selectionDragCtx.item.ref,
         );
         editor.update(selectionDragCtx.action, true);
         return true;
@@ -323,16 +359,9 @@ class SelectTool implements Tool {
       /* end + fullstop */
 
       /* handle simpleObjects */
-      if (
-        selectionDragCtx.item.map === 'simpleObjects' &&
-        selectionDragCtx.item.ref
-      ) {
+      if (isSimpleObjectSelectionDragContext(selectionDragCtx)) {
         if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
-        const props = getResizingProps(
-          editor,
-          selectionDragCtx as SimpleObjectSelectionDragContext,
-          event,
-        );
+        const props = getResizingProps(editor, selectionDragCtx, event);
         selectionDragCtx.action = fromSimpleObjectResizing(
           ...props,
           event.shiftKey,
@@ -437,20 +466,20 @@ class SelectTool implements Tool {
       this.dragCtx = null;
     }
     /* end */
-    if (this.dragCtx?.closestItem) {
-      if (this.dragCtx.closestItem.map === 'rxnArrows') {
-        const reactionArrowDragCtx = this.dragCtx as ReactionArrowDragContext;
-        reactionArrowDragCtx.action = this.reactionArrowMoveTool.mouseup(
-          event,
-          reactionArrowDragCtx,
-        );
-      } else if (this.dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        const multitailArrowDragCtx = this.dragCtx as MultitailArrowDragContext;
-        multitailArrowDragCtx.action = this.multitailArrowMoveTool.mouseup(
-          event,
-          multitailArrowDragCtx,
-        );
+    if (isReactionArrowDragContext(this.dragCtx)) {
+      this.dragCtx.action = this.reactionArrowMoveTool.mouseup(
+        event,
+        this.dragCtx,
+      );
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action);
+        this.editor.update(true);
       }
+    } else if (isMultitailArrowDragContext(this.dragCtx)) {
+      this.dragCtx.action = this.multitailArrowMoveTool.mouseup(
+        event,
+        this.dragCtx,
+      );
       if (this.dragCtx.action) {
         this.editor.update(this.dragCtx.action);
         this.editor.update(true);
@@ -462,7 +491,7 @@ class SelectTool implements Tool {
         dropAndMerge(
           editor,
           this.dragCtx.mergeItems,
-          this.dragCtx.action ?? undefined,
+          this.dragCtx.action,
           this.dragCtx.copyAction,
         );
       }
@@ -777,15 +806,7 @@ function getResizingProps(
 ] {
   const current = CoordinateTransformation.pageToModel(event, editor.render);
   const diff = current.sub(dragCtx.xy0);
-  return [
-    editor.render.ctab,
-    dragCtx.item.id,
-    diff,
-    current,
-    dragCtx.item.ref as NonNullable<
-      SimpleObjectSelectionDragContext['item']['ref']
-    >,
-  ];
+  return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }
 
 export default SelectTool;

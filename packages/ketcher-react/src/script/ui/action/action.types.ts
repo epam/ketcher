@@ -116,10 +116,8 @@ type ActionStateEditor = Editor & {
       tool?: string;
     };
   };
-  struct(value?: Struct | null): {
-    isBlank(): boolean;
-    hasRxnArrow(): boolean;
-  };
+  struct(): Struct;
+  struct(value: Struct | null): Struct;
 };
 
 type ActionStateOptions = {

@@ -1,0 +1,60 @@
+name: Cleanup merged branches
+
+on:
+  pull_request:
+    types:
+      - closed
+  schedule:
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  delete-merged-pull-request-branch:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref != github.event.repository.default_branch &&
+      !startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete merged pull request branch
+        run: |
+          git push origin --delete "${{ github.event.pull_request.head.ref }}" ||
+            echo "Branch is already deleted or cannot be removed."
+
+  delete-stale-merged-branches:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete stale merged branches
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+
+          git for-each-ref --format='%(refname:strip=3)' \
+            --merged "refs/remotes/origin/${DEFAULT_BRANCH}" \
+            refs/remotes/origin |
+          while IFS= read -r branch; do
+            if [ -z "${branch}" ] ||
+              [ "${branch}" = "HEAD" ] ||
+              [ "${branch}" = "${DEFAULT_BRANCH}" ] ||
+              [[ "${branch}" == release/* ]]; then
+              continue
+            fi
+
+            git push origin --delete "${branch}" ||
+              echo "Skipping ${branch}: branch is already deleted or cannot be removed."
+          done

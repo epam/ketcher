@@ -6,7 +6,9 @@ type TopRightToolbarLocators = {
 
 export const TopRightToolbar = (page: Page) => {
   const locators: TopRightToolbarLocators = {
-    settingsButton: page.getByTestId('settings-button'),
+    settingsButton: page
+      .getByTestId('settings-button')
+      .filter({ has: page.locator(':visible') }),
   };
 
   return {

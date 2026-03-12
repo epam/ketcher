@@ -84,7 +84,7 @@ type CheckDispatch = {
 };
 
 interface CheckDialogDispatchProps {
-  onCheck: (opts: CheckOption[]) => Promise<void>;
+  onCheck: (opts: CheckOption[]) => Promise<unknown>;
   onApply: (res: CheckState) => void;
 }
 
@@ -321,9 +321,7 @@ const mapDispatchToProps = (
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts))
-      .catch(ownProps.onCancel)
-      .then(() => undefined),
+    dispatch(check(opts)).catch(ownProps.onCancel),
   onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);

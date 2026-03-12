@@ -31,6 +31,11 @@ export type DefaultKetFileNodeData =
   | KetFileMultitailArrowNode
   | KetFileNodeData;
 
+export interface RGroupKetFileNodeData {
+  rgnumber: number;
+  rgroup: unknown;
+}
+
 export interface Serializer<T> {
   deserialize: (content: string) => T;
   serialize: (struct: T) => string;

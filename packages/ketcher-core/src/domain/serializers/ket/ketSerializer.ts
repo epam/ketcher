@@ -25,7 +25,7 @@ import {
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
-import { Serializer } from '../serializers.types';
+import { RGroupKetFileNodeData, Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
@@ -188,7 +188,7 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
         case 'rgroup': {
-          const rgroupData = item.data as { rgnumber: number; rgroup: unknown };
+          const rgroupData = item.data as RGroupKetFileNodeData;
           result.root.nodes.push({ $ref: `rg${rgroupData.rgnumber}` });
           result[`rg${rgroupData.rgnumber}`] = rgroupToKet(
             item.fragment!,

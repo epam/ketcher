@@ -34,7 +34,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { TabComponent } from 'components/shared/Tabs';
+import { toTabComponent } from 'components/shared/Tabs';
 import {
   useCallback,
   ReactNode,
@@ -1144,7 +1144,7 @@ export const MacromoleculePropertiesWindow = () => {
             {
               caption: 'Peptides',
               testId: 'peptides-properties-tab',
-              component: PeptideProperties as unknown as TabComponent,
+              component: toTabComponent(PeptideProperties),
               props: {
                 macromoleculesProperties: firstMacromoleculesProperties,
                 isError: hasPeptidesTabError,
@@ -1152,7 +1152,7 @@ export const MacromoleculePropertiesWindow = () => {
             },
             {
               caption: 'RNA/DNA',
-              component: RnaProperties as unknown as TabComponent,
+              component: toTabComponent(RnaProperties),
               testId: 'rna-properties-tab',
               props: {
                 macromoleculesProperties: firstMacromoleculesProperties,

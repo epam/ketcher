@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Dispatch } from 'redux';
+import Editor from '../../editor/Editor';
 
 type ToolVariant =
   | 'any-atom'
@@ -108,25 +109,42 @@ type ToolVariant =
   | 'shape-line'
   | 'undo';
 
+type AppDispatch = (action: unknown) => unknown;
+type ActionState = {
+  editor: Editor;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
+};
+type ActionOptions = {
+  app?: {
+    server?: boolean;
+  };
+  buttons?: Record<string, { hidden?: boolean }>;
+  [key: string]: unknown;
+};
+
 // todo: find out types
 type ActionObj = {
   tool?: string;
-  opts?: any;
+  opts?: Record<string, unknown>;
   dialog?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  thunk?: (dispatch: Dispatch, getState: () => any) => void;
+  thunk?: (
+    dispatch: Dispatch | AppDispatch,
+    getState: () => ActionState,
+  ) => void;
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ActionFn = (editor: any) => void;
+type ActionFn = (editor: Editor) => void;
 // todo: come up with better name
 type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GetActionState = (
-  editor: any,
-  server?: any,
-  options?: any,
+  editor: Editor,
+  server?: unknown,
+  options?: ActionOptions,
 ) => boolean;
 
 type IsActionState = boolean | GetActionState;

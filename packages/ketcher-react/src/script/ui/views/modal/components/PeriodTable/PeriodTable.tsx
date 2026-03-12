@@ -19,7 +19,7 @@ import { fromElement, toElement } from '../../../../data/convert/structconv';
 
 import { Component } from 'react';
 import { Dialog } from '../../../components';
-import { Element, Elements } from 'ketcher-core';
+import { Editor as KetcherCoreEditor, Element, Elements } from 'ketcher-core';
 import { addAtoms } from '../../../../state/toolbar';
 import classes from './PeriodTable.module.less';
 import { connect } from 'react-redux';
@@ -46,6 +46,7 @@ interface ListResult {
 }
 
 type PeriodTableResult = AtomResult | GenResult | ListResult | null;
+type DispatchProp = (action: unknown) => unknown;
 
 interface TableOwnProps {
   type?: AtomType;
@@ -210,13 +211,13 @@ class Table extends Component<TableProps, TableState> {
 }
 
 interface RootState {
-  editor: {
+  editor: KetcherCoreEditor & {
     isMonomerCreationWizardActive: boolean;
   };
 }
 
 function mapSelectionToProps(
-  editor: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  editor: RootState['editor'],
 ): Partial<TableStateProps> {
   const selection = editor.selection();
 
@@ -252,7 +253,7 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: DispatchProp,
   ownProps: TableOwnProps,
 ): TableDispatchProps => {
   return {
@@ -275,6 +276,6 @@ const mapDispatchToProps = (
   };
 };
 
-const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table);
 
 export default PeriodTable;

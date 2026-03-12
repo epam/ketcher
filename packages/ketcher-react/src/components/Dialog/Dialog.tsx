@@ -41,6 +41,7 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
+  testId?: string;
   params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
@@ -66,6 +67,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const {
     children,
     title,
+    testId,
     params,
     result = () => null,
     valid = () => !!result(),
@@ -143,10 +145,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   });
 
   return (
-    <div
-      ref={dialogRef}
-      role="dialog"
-      data-testid={'info-modal-window'}
+      <div
+        ref={dialogRef}
+        role="dialog"
+        data-testid={testId ?? 'info-modal-window'}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
       {...rest}

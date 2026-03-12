@@ -87,6 +87,8 @@ type CheckDialogProps = CheckDialogOwnProps &
   CheckDialogStateProps &
   CheckDialogDispatchProps;
 
+type DispatchProp = (action: unknown) => unknown;
+
 interface State {
   modal: {
     form: FormState;
@@ -312,11 +314,11 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: DispatchProp,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts)).catch(ownProps.onCancel),
+    (dispatch(check(opts)) as Promise<void>).catch(ownProps.onCancel),
   onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);

@@ -1,4 +1,5 @@
 import {
+  Action,
   CoordinateTransformation,
   Struct,
   Vec2,
@@ -26,6 +27,22 @@ type FragmentPreview = {
   bonds: number[];
 };
 
+type MergeItems = {
+  atoms: Map<number, number>;
+  bonds: Map<number, number>;
+  atomToFunctionalGroup?: Map<number, number>;
+};
+
+type FragmentDragContext = {
+  item?: { map: string; id: number };
+  xy0: Vec2;
+  action?: Action;
+  mergeItems?: MergeItems;
+  copyAction?: Action;
+  stopTapping?: () => void;
+  closestItem?: { map: string; id: number };
+};
+
 export default class FragmentSelectionTool implements Tool {
   private readonly editor: Editor;
   private preview: FragmentPreview | null = null;
@@ -35,16 +52,13 @@ export default class FragmentSelectionTool implements Tool {
 
   // drag state to support moving selected entities
   private dragCtx?: {
-    item?: { map: string; id: number };
+    item?: FragmentDragContext['item'];
     xy0: Vec2;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    action?: any;
-    mergeItems?: ReturnType<typeof getItemsToFuse>;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    copyAction?: any;
-    stopTapping?: () => void;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    closestItem?: any;
+    action?: FragmentDragContext['action'];
+    mergeItems?: FragmentDragContext['mergeItems'];
+    copyAction?: FragmentDragContext['copyAction'];
+    stopTapping?: FragmentDragContext['stopTapping'];
+    closestItem?: FragmentDragContext['closestItem'];
   } | null;
 
   constructor(editor: Editor) {
@@ -154,7 +168,10 @@ export default class FragmentSelectionTool implements Tool {
 
       // Prepare fuse/hover hints during move
       const visibleSelectedItems = expSel; // FragmentSelection does not handle contracted sgroups here
-      this.dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
+      this.dragCtx.mergeItems = getItemsToFuse(
+        editor,
+        visibleSelectedItems,
+      ) as MergeItems | undefined;
       editor.hover(getHoverToFuse(this.dragCtx.mergeItems));
 
       editor.update(this.dragCtx.action, true);

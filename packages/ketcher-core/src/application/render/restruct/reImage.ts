@@ -168,8 +168,7 @@ export class ReImage extends ReObject {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: any) {
+  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: unknown) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.image.getTopLeftPosition(),
       renderOptions,

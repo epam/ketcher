@@ -214,8 +214,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (window as any).ketcher?.editor?.errorHandler?.(
+              window.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -282,6 +281,9 @@ function autoselect(cliparea: HTMLTextAreaElement): void {
 
 async function copy(data: ClipboardData): Promise<void> {
   try {
+    type ClipboardItemWithPresentationStyle = ClipboardItem & {
+      presentationStyle?: string;
+    };
     const clipboardItemData: Record<string, Promise<Blob>> = {};
     Object.keys(data).forEach((mimeType) => {
       // https://developer.chrome.com/blog/web-custom-formats-for-the-async-clipboard-api/#writing-web-custom-formats-to-the-clipboard
@@ -297,11 +299,11 @@ async function copy(data: ClipboardData): Promise<void> {
     const clipboardItem = new ClipboardItem(clipboardItemData);
 
     // Chrome: clipboardItem.presentationStyle is undefined
+    const clipboardItemWithPresentationStyle =
+      clipboardItem as ClipboardItemWithPresentationStyle;
     if (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (clipboardItem as any).presentationStyle &&
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (clipboardItem as any).presentationStyle === 'unspecified'
+      clipboardItemWithPresentationStyle.presentationStyle &&
+      clipboardItemWithPresentationStyle.presentationStyle === 'unspecified'
     ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy

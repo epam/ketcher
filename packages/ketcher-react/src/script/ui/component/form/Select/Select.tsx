@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -24,7 +23,7 @@ import styles from './Select.module.less';
 import { Icon } from 'components';
 
 export interface Option {
-  value: string;
+  value: string | number;
   label: string;
   children?: ReactNode;
 }
@@ -33,7 +32,7 @@ interface Props {
   options: Array<Option>;
   onChange: (value: string) => void;
   className?: string;
-  value?: string;
+  value?: string | number;
   multiple?: boolean;
   disabled?: boolean;
   formName?: string;
@@ -79,12 +78,12 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
-      renderValue={(selected: string) =>
-        (currentValue?.children ??
-          currentValue?.label ??
-          placeholder ??
-          selected ??
-          '') as any
+      renderValue={(selected: string | number) =>
+        currentValue?.children ??
+        currentValue?.label ??
+        placeholder ??
+        selected ??
+        ''
       }
       displayEmpty
       multiple={multiple}

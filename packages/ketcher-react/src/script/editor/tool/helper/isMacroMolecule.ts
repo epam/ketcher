@@ -5,14 +5,24 @@ const isMacroMolecule = (editor: Editor, id: number): boolean => {
   return struct.isFunctionalGroupFromMacromolecule(id);
 };
 
-// dragCtx is actually "any" in the code
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isMergingToMacroMolecule = (editor: Editor, dragCtx: any): boolean => {
+type MacroMoleculeDragContext = {
+  mergeItems?: {
+    atomToFunctionalGroup?: Map<number, number>;
+  };
+};
+
+const isMergingToMacroMolecule = (
+  editor: Editor,
+  dragCtx: MacroMoleculeDragContext | null | undefined,
+): boolean => {
   const funcGroups = dragCtx?.mergeItems?.atomToFunctionalGroup;
   if (!funcGroups?.size) {
     return false;
   }
-  const targetObjectId = funcGroups.entries().next().value[1];
+  const targetObjectId = funcGroups.entries().next().value?.[1];
+  if (targetObjectId == null) {
+    return false;
+  }
   return isMacroMolecule(editor, targetObjectId);
 };
 

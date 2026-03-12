@@ -27,6 +27,8 @@ import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 
+type DispatchProp = (action: unknown) => unknown;
+
 interface AnalyseValues {
   gross?: string;
   'molecular-weight'?: number;
@@ -61,6 +63,18 @@ interface AnalyseDialogCallProps {
 }
 
 type Props = AnalyseDialogProps & AnalyseDialogCallProps;
+
+interface AnalyseState {
+  options: {
+    analyse: {
+      values: AnalyseValues | null;
+      loading: boolean;
+      roundWeight: number;
+      roundMass: number;
+      roundElAnalysis: number;
+    };
+  };
+}
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
@@ -175,8 +189,7 @@ function AnalyseDialog({
                 <span>Decimal places</span>
                 <Select
                   options={selectOptions}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  value={round[item.round] as any}
+                  value={round[item.round]}
                   onChange={(val) => {
                     if (item.round) {
                       onChangeRound(item.round, val);
@@ -194,8 +207,7 @@ function AnalyseDialog({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: AnalyseState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -205,18 +217,12 @@ const mapStateToProps = (state: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: DispatchProp) => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName: string, val: string) =>
     dispatch(changeRound(roundName, val)),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyse = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-)(AnalyseDialog as any) as any;
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
 export default Analyse;

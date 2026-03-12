@@ -20,8 +20,7 @@ export interface Serializer<T> {
   serialize: (struct: T) => string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface KetFileNode<T = any> {
+export interface KetFileNode<T = unknown> {
   type: string;
   fragment?: Struct;
   center: Vec2;

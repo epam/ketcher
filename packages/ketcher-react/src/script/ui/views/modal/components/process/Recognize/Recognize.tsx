@@ -239,8 +239,8 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const URL = window.URL || (window as any).webkitURL;
+  type WindowWithWebkitURL = Window & { webkitURL?: typeof URL };
+  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
@@ -267,8 +267,9 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+type DispatchProp = (action: unknown) => unknown;
+
+const mapDispatchToProps = (dispatch: DispatchProp) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
   onImage: (file: File | null) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>

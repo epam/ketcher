@@ -55,9 +55,69 @@ interface IndigoOptions {
   set: (key: string, value: string) => void;
 }
 
+interface IndigoVectorInt {
+  push_back: (value: number) => void;
+}
+
+interface IndigoModule {
+  MapStringString: new () => IndigoOptions;
+  VectorInt: new () => IndigoVectorInt;
+  render: (struct: string, options: IndigoOptions) => string;
+  layout: (
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  dearomatize: (
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  check: (
+    struct: string,
+    types: string,
+    options: IndigoOptions,
+  ) => string;
+  calculateCip: (
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  calculate: (
+    struct: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ) => string;
+  automap: (
+    struct: string,
+    mode: string,
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  aromatize: (
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  clean2d: (
+    struct: string,
+    format: string,
+    options: IndigoOptions,
+    selectedAtoms: IndigoVectorInt,
+  ) => string;
+  convert: (struct: string, format: string, options: IndigoOptions) => string;
+  version: () => string;
+  convert_explicit_hydrogens: (
+    struct: string,
+    mode: ExplicitHydrogensCommandData['mode'],
+    format: string,
+    options: IndigoOptions,
+  ) => string;
+  calculateMacroProperties: (struct: string, options: IndigoOptions) => string;
+}
+
 type HandlerType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  indigo: any,
+  indigo: IndigoModule,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -69,8 +129,7 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  module.then((indigo: any) => {
+  module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options || {});
     let msg: OutputMessage<string>;

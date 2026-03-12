@@ -631,8 +631,7 @@ function findCloseMerge(
       });
     } else {
       result[map] = Array.from(pos[map].keys()).reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: Map<any, any>, srcId) => {
+        (res: Map<number, number>, srcId) => {
           const skip = { map, id: srcId };
           const item = findMaps[map](
             restruct,

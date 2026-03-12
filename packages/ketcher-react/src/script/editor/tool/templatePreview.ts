@@ -31,6 +31,10 @@ import { getAngleFromEvent, getBondFlipSign } from './template';
 
 const PREVIEW_DELAY = 300;
 type ClosestItemType = { map: string; id: number; dist: number };
+type TemplatePasteItems = {
+  atoms: number[];
+  bonds: number[];
+};
 
 function getUniqueCiId(ci: ClosestItemType) {
   return `${ci.id}-${ci.map}`;
@@ -196,8 +200,7 @@ class TemplatePreview {
         shouldFlip,
         true,
         true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as Promise<any>;
+      ) as Promise<[Action, TemplatePasteItems]>;
 
       promise.then(([action, pasteItems]) => {
         if (!this.isModeFunctionalGroup) {

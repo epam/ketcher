@@ -1,4 +1,5 @@
 import {
+  Action,
   CoordinateTransformation,
   Struct,
   Vec2,
@@ -10,6 +11,7 @@ import {
 import { dropAndMerge } from '../tool/helper/dropAndMerge';
 
 import Editor from '../Editor';
+import { ClosestItemWithMap } from '../shared/closest.types';
 import { Tool } from './Tool';
 import { selMerge } from './select';
 import { handleMovingPosibilityCursor } from '../utils';
@@ -35,16 +37,13 @@ export default class FragmentSelectionTool implements Tool {
 
   // drag state to support moving selected entities
   private dragCtx?: {
-    item?: { map: string; id: number };
+    item?: ClosestItemWithMap;
     xy0: Vec2;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    action?: any;
+    action?: Action;
     mergeItems?: ReturnType<typeof getItemsToFuse>;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    copyAction?: any;
+    copyAction?: Action;
     stopTapping?: () => void;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    closestItem?: any;
+    closestItem?: ClosestItemWithMap;
   } | null;
 
   constructor(editor: Editor) {

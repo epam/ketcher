@@ -194,7 +194,8 @@ export const {
 export const selectAxoLabsAliasesByPresetName = createSelector(
   (state: RootState) => state.library.defaultRnaPresets,
   (defaultPresets: IKetMonomerGroupTemplate[]): Map<string, string> => {
-    return defaultPresets.reduce(
+    const presets = defaultPresets ?? [];
+    return presets.reduce(
       (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
         if (preset.aliasAxoLabs && preset.name) {
           aliases.set(

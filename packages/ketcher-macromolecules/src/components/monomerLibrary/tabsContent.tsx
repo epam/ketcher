@@ -6,7 +6,7 @@ import {
 import { MonomerList } from './monomerLibraryList';
 import { RnaBuilder } from './RnaBuilder';
 import { IRnaPreset } from './RnaBuilder/types';
-import { TabsData } from 'components/shared/Tabs';
+import { TabComponent, TabsData } from 'components/shared/Tabs';
 
 export const tabsContent = (
   duplicatePreset: (preset?: IRnaPreset) => void,
@@ -15,7 +15,7 @@ export const tabsContent = (
   {
     caption: FavoriteStarSymbol,
     tooltip: 'Favorites',
-    component: MonomerList,
+    component: MonomerList as unknown as TabComponent,
     testId: 'FAVORITES-TAB',
     props: {
       libraryName: MONOMER_LIBRARY_FAVORITES,
@@ -25,7 +25,7 @@ export const tabsContent = (
   },
   {
     caption: 'Peptides',
-    component: MonomerList,
+    component: MonomerList as unknown as TabComponent,
     testId: 'PEPTIDES-TAB',
     props: {
       libraryName: MONOMER_TYPES.PEPTIDE,
@@ -34,7 +34,7 @@ export const tabsContent = (
   {
     caption: 'RNA',
     testId: 'RNA-TAB',
-    component: RnaBuilder,
+    component: RnaBuilder as unknown as TabComponent,
     props: {
       libraryName: MONOMER_TYPES.RNA,
       duplicatePreset,
@@ -43,7 +43,7 @@ export const tabsContent = (
   },
   {
     caption: 'CHEM',
-    component: MonomerList,
+    component: MonomerList as unknown as TabComponent,
     testId: 'CHEM-TAB',
     props: {
       libraryName: MONOMER_TYPES.CHEM,

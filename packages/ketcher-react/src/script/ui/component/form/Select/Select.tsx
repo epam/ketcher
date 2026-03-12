@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,7 +17,7 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -26,7 +25,7 @@ import { Icon } from 'components';
 export interface Option {
   value: string;
   label: string;
-  children?: ReactNode;
+  children?: JSX.Element | string;
 }
 
 interface Props {
@@ -43,7 +42,11 @@ interface Props {
   error?: boolean;
 }
 
-const ChevronIcon = ({ className }) => (
+interface ChevronIconProps {
+  className?: string;
+}
+
+const ChevronIcon = ({ className }: ChevronIconProps) => (
   <Icon name="chevron" className={className} />
 );
 
@@ -79,13 +82,15 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
-      renderValue={(selected: string) =>
-        (currentValue?.children ??
-          currentValue?.label ??
-          placeholder ??
-          selected ??
-          '') as any
-      }
+      renderValue={(selected: string) => {
+        const content = currentValue?.children;
+
+        if (content) {
+          return content;
+        }
+
+        return currentValue?.label ?? placeholder ?? selected ?? '';
+      }}
       displayEmpty
       multiple={multiple}
       disabled={disabled}

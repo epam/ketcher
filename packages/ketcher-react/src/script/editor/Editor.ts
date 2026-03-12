@@ -317,7 +317,7 @@ class Editor implements KetcherEditor {
 
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
 
-    const tool = new ToolConstructor(this, opts);
+    const tool = new ToolConstructor(this, opts as never);
 
     const isAtomToolChosen = name === 'atom';
     if (!isAtomToolChosen) {

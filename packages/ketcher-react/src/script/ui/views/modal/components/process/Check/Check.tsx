@@ -78,6 +78,11 @@ interface CheckDialogStateProps {
   checkState: CheckState;
 }
 
+type CheckDispatch = {
+  (action: ReturnType<typeof check>): Promise<unknown>;
+  (action: ReturnType<typeof checkOpts>): unknown;
+};
+
 interface CheckDialogDispatchProps {
   onCheck: (opts: CheckOption[]) => Promise<void>;
   onApply: (res: CheckState) => void;
@@ -312,11 +317,13 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: CheckDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts)).catch(ownProps.onCancel),
+    dispatch(check(opts))
+      .catch(ownProps.onCancel)
+      .then(() => undefined),
   onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);

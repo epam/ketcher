@@ -188,10 +188,11 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
         case 'rgroup': {
-          result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` });
-          result[`rg${item.data!.rgnumber}`] = rgroupToKet(
+          const rgroupData = item.data as { rgnumber: number; rgroup: unknown };
+          result.root.nodes.push({ $ref: `rg${rgroupData.rgnumber}` });
+          result[`rg${rgroupData.rgnumber}`] = rgroupToKet(
             item.fragment!,
-            item.data,
+            rgroupData,
           );
           break;
         }

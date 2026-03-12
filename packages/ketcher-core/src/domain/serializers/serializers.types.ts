@@ -13,15 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct, Vec2 } from 'domain/entities';
+import { KetFileMultitailArrowNode, Struct, Vec2 } from 'domain/entities';
+
+export interface KetFileNodeData {
+  content?: string;
+  height?: number;
+  mode?: string;
+  pos?: Vec2[];
+  position?: Vec2;
+  rgnumber?: number;
+  rgroup?: unknown;
+  [key: string]: unknown;
+}
+
+export type DefaultKetFileNodeData =
+  | string
+  | KetFileMultitailArrowNode
+  | KetFileNodeData;
 
 export interface Serializer<T> {
   deserialize: (content: string) => T;
   serialize: (struct: T) => string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface KetFileNode<T = any> {
+export interface KetFileNode<T = DefaultKetFileNodeData> {
   type: string;
   fragment?: Struct;
   center: Vec2;

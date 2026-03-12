@@ -49,6 +49,7 @@ const findMaps = {
 
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
 type RefPoint = Vec2 | null;
+type MergeMap = 'atoms' | 'bonds';
 
 function rectangleContainsPoint(startX, startY, width, height, x, y) {
   return (
@@ -584,11 +585,11 @@ function findCloseMerge(
   restruct: ReStruct,
   selected,
   options,
-  maps = ['atoms', 'bonds'],
+  maps: MergeMap[] = ['atoms', 'bonds'],
 ) {
   const pos = {
-    atoms: new Map(), // aid -> position
-    bonds: new Map(), // bid -> position
+    atoms: new Map<number, Vec2>(), // aid -> position
+    bonds: new Map<number, Vec2>(), // bid -> position
   };
 
   const struct = restruct.molecule;
@@ -618,29 +619,30 @@ function findCloseMerge(
   });
 
   const result = {
-    atoms: new Map(),
-    atomToFunctionalGroup: new Map(),
+    atoms: new Map<number, number>(),
+    atomToFunctionalGroup: new Map<number, number>(),
   };
 
   maps.forEach((map) => {
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
         const atomPosition = pos.atoms.get(atomId);
+        if (!atomPosition) {
+          return;
+        }
         mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) ||
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
       });
     } else {
       result[map] = Array.from(pos[map].keys()).reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: Map<any, any>, srcId) => {
+        (res: Map<number, number>, srcId: number) => {
+          const position = pos[map].get(srcId);
+          if (!position) {
+            return res;
+          }
+
           const skip = { map, id: srcId };
-          const item = findMaps[map](
-            restruct,
-            pos[map].get(srcId),
-            skip,
-            null,
-            options,
-          );
+          const item = findMaps[map](restruct, position, skip, null, options);
 
           if (item && !selected[map].includes(item.id)) {
             res.set(srcId, item.id);
@@ -648,7 +650,7 @@ function findCloseMerge(
 
           return res;
         },
-        new Map(),
+        new Map<number, number>(),
       );
     }
   });

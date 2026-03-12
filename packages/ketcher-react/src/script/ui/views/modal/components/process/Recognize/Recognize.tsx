@@ -37,6 +37,18 @@ import { useAppContext } from 'src/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
 
+interface WindowWithWebkitURL extends Window {
+  webkitURL?: typeof URL;
+}
+
+type RecognizeDispatch = {
+  (action: ReturnType<typeof shouldFragment>): unknown;
+  (action: ReturnType<typeof changeImage>): unknown;
+  (action: ReturnType<typeof recognize>): unknown;
+  (action: ReturnType<typeof changeVersion>): unknown;
+  (action: ReturnType<typeof load>): unknown;
+};
+
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
@@ -239,9 +251,8 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const URL = window.URL || (window as any).webkitURL;
-  return URL ? URL.createObjectURL(file) : 'No preview';
+  const urlObject = window.URL ?? (window as WindowWithWebkitURL).webkitURL;
+  return urlObject ? urlObject.createObjectURL(file) : 'No preview';
 }
 
 interface RecognizeState {
@@ -267,8 +278,7 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: RecognizeDispatch) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
   onImage: (file: File | null) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>

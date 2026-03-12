@@ -1,10 +1,11 @@
 import { FC } from 'react';
 
+export type TabComponent = FC<Record<string, unknown>>;
+
 export type TabPanelData = {
   caption: string;
   tooltip?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: FC<any>;
+  component: TabComponent;
   testId: string;
   props?: Record<string, unknown>;
 };

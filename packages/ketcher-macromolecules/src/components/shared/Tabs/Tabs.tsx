@@ -67,7 +67,7 @@ const Tabs = (props: Props) => {
       {tabPanel && (
         <TabPanel value={selectedTabIndex} index={selectedTabIndex}>
           <TabPanelContent>
-            <Component {...componentProps} />
+            <Component {...(componentProps ?? {})} />
           </TabPanelContent>
         </TabPanel>
       )}

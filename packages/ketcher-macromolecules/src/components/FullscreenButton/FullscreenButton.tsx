@@ -66,12 +66,10 @@ const ButtonContainer = styled.div`
 `;
 
 export const FullscreenButton = (props) => {
-  const [fullScreenMode, setFullScreenMode] = useState(false);
+  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen);
 
   useEffect(() => {
     const syncFullscreenMode = () => setFullScreenMode(isFullScreen());
-
-    syncFullscreenMode();
 
     document.addEventListener('fullscreenchange', syncFullscreenMode);
     document.addEventListener('webkitfullscreenchange', syncFullscreenMode);

@@ -27,7 +27,6 @@ import {
   KetSerializer,
   type FormatterFactoryOptions,
   type GenerateImageOptions,
-  type OutputFormatType,
   formatProperties,
   getPropertiesByFormat,
   getPropertiesByImgFormat,
@@ -55,7 +54,7 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import { AnyAction, Dispatch } from 'redux';
 
-type SaveImageFormat = OutputFormatType;
+type SaveImageFormat = 'svg' | 'png';
 type SaveSupportedFormat = string;
 type SaveFormat = string;
 type SaveFormatOption = string;
@@ -589,11 +588,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       if (isClipboardAPIAvailable()) {
         navigator.clipboard.writeText(structStr || '');
       } else {
-        const clipboardData =
-          (event.nativeEvent instanceof ClipboardEvent
-            ? event.nativeEvent.clipboardData
-            : undefined) ||
-          (window as Window & { clipboardData?: DataTransfer }).clipboardData;
+        const clipboardData = (
+          window as Window & { clipboardData?: DataTransfer }
+        ).clipboardData;
 
         if (!clipboardData) {
           throw new Error('Clipboard data is not available');
@@ -671,6 +668,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       ...options,
       outputFormat: imageFormat,
     };
+    const supportedFormatProperties = isSupportedFormat(format)
+      ? getSupportedFormatProperties(format)
+      : undefined;
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading
@@ -731,12 +731,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           mode="saveFile"
           data={savingStruct || ''}
           testId="save-button"
-          filename={
-            filename +
-            (getSupportedFormatProperties(format).extensions[0] || '')
-          }
+          filename={filename + (supportedFormatProperties?.extensions[0] || '')}
           key="save-file-button"
-          type={getSupportedFormatProperties(format).mime}
+          type={supportedFormatProperties?.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
@@ -799,7 +796,8 @@ const Save = connect(
   mapDispatchToProps,
 )(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error React 19 type mismatch in legacy connected class component
+  // @ts-expect-error react-redux/connect resolves this legacy class component
+  // against a different React type package instance than the component uses.
   SaveDialog,
 );
 

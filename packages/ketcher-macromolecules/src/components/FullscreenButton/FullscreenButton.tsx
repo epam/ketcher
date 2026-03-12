@@ -16,7 +16,7 @@
 
 import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
@@ -66,11 +66,32 @@ const ButtonContainer = styled.div`
 `;
 
 export const FullscreenButton = (props) => {
-  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
+  const [fullScreenMode, setFullScreenMode] = useState(false);
+
+  useEffect(() => {
+    const syncFullscreenMode = () => setFullScreenMode(isFullScreen());
+
+    syncFullscreenMode();
+
+    document.addEventListener('fullscreenchange', syncFullscreenMode);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenMode);
+    document.addEventListener('mozfullscreenchange', syncFullscreenMode);
+    document.addEventListener('MSFullscreenChange', syncFullscreenMode);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreenMode);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        syncFullscreenMode,
+      );
+      document.removeEventListener('mozfullscreenchange', syncFullscreenMode);
+      document.removeEventListener('MSFullscreenChange', syncFullscreenMode);
+    };
+  }, []);
+
   const toggleFullscreen = () => {
     const fullscreenElement = getFullscreenElement();
-    fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
-    setFullScreenMode(!fullScreenMode);
+    isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
   };
   return (
     <ButtonContainer className={props.className}>

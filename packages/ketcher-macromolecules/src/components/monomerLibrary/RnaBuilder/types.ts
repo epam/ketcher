@@ -31,5 +31,6 @@ export interface IRnaPreset {
   default?: boolean;
   favorite?: boolean;
   readonly idtAliases?: IKetIdtAliases;
+  readonly aliasAxoLabs?: string;
   editedName?: boolean;
 }

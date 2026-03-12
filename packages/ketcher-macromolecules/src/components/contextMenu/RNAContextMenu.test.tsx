@@ -72,6 +72,7 @@ describe('RNA ContextMenu', () => {
       searchFilter: '',
       favorites: {},
       monomers: monomerData,
+      defaultRnaPresets: mockedPresets,
     },
     rnaBuilder: {
       presetsDefault: mockedPresets,

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Dispatch } from 'redux';
+import Editor from '../../editor/Editor';
 
 type ToolVariant =
   | 'any-atom'
@@ -108,37 +109,76 @@ type ToolVariant =
   | 'shape-line'
   | 'undo';
 
+type ActionStateEditor = Editor & {
+  actions?: {
+    active?: {
+      tool?: string;
+    };
+  };
+  struct(value?: unknown | null): {
+    isBlank(): boolean;
+    hasRxnArrow(): boolean;
+  };
+};
+
+type ActionStateOptions = {
+  app: {
+    server?: unknown;
+    templates?: unknown;
+    functionalGroups?: unknown;
+  };
+  buttons?: Record<string, { hidden?: boolean }>;
+};
+
+type ActionThunkState = {
+  editor: ActionStateEditor;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
+};
+
 // todo: find out types
 type ActionObj = {
   tool?: string;
-  opts?: any;
+  opts?: unknown;
   dialog?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  thunk?: (dispatch: Dispatch, getState: () => any) => void;
+  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ActionFn = (editor: any) => void;
+type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
 type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type GetActionState = (
-  editor: any,
-  server?: any,
-  options?: any,
+type GetSelectedState = (
+  editor: ActionStateEditor,
+  server?: unknown,
 ) => boolean;
+type GetDisabledState = (
+  editor: ActionStateEditor,
+  server: unknown,
+  options: ActionStateOptions,
+) => boolean;
+type GetHiddenState = (options: ActionStateOptions) => boolean;
 
-type IsActionState = boolean | GetActionState;
+export type GetActionState =
+  | GetSelectedState
+  | GetDisabledState
+  | GetHiddenState;
+
+type IsSelectedState = boolean | GetSelectedState;
+type IsDisabledState = boolean | GetDisabledState;
+type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
   title?: string;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
   action: UiActionAction;
-  selected?: IsActionState;
-  disabled?: IsActionState;
-  hidden?: IsActionState;
+  selected?: IsSelectedState;
+  disabled?: IsDisabledState;
+  hidden?: IsHiddenState;
   onAction?: (action: UiActionAction) => void;
 }
 

@@ -140,7 +140,7 @@ const config: Record<string, UiAction> = {
     enabledInViewOnly: true,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  } as UiAction,
+  } as unknown as UiAction,
   copy: {
     shortcut: 'Mod+c',
     enabledInViewOnly: true,

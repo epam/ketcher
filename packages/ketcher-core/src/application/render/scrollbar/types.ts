@@ -6,7 +6,8 @@ export type RaphaelRectAttr = {
   r: number;
 };
 
-export interface RaphaelElement extends Record<string, unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface RaphaelElement extends Record<string, any> {
   readonly raphaelid: string;
 
   attr(attr: RaphaelRectAttr): this;

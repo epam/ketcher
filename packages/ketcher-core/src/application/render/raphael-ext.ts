@@ -18,32 +18,14 @@
 
 import { Vec2 } from 'domain/entities';
 
-type RaphaelExtensionTarget = {
-  el: {
-    translateAbs?: (x: number, y: number) => void;
-  };
-  st: {
-    translateAbs?: (x: number, y: number) => void;
-  };
-};
-
-type CallableRaphaelModule = ((...args: unknown[]) => unknown) &
-  RaphaelExtensionTarget & {
-    default?: RaphaelExtensionTarget;
-  };
-
-type RaphaelModule = CallableRaphaelModule | { default?: RaphaelExtensionTarget };
-
-const raphaelRequire = (globalThis as { require?: (moduleName: string) => unknown })
-  .require;
-const raphaelModule =
-  typeof window !== 'undefined'
-    ? (raphaelRequire?.('raphael') as RaphaelModule | undefined)
-    : undefined;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const raphaelModule: any =
+  typeof window !== 'undefined' ? require('raphael') : undefined;
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments
-function resolveRaphael(): RaphaelExtensionTarget | undefined {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveRaphael(): any {
   if (!raphaelModule) {
     return undefined;
   }

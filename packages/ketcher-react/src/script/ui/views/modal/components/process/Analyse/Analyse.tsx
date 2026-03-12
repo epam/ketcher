@@ -49,18 +49,25 @@ interface AnalyseItem {
   withSelector: boolean;
 }
 
-interface AnalyseDialogProps extends DialogParams {
+interface AnalyseState {
+  options: {
+    analyse: {
+      values: AnalyseValues | null;
+      loading?: boolean;
+      roundWeight: number;
+      roundMass: number;
+      roundElAnalysis: number;
+    };
+  };
+}
+
+interface Props extends DialogParams {
   values: AnalyseValues | null;
   round: RoundSettings;
   loading: boolean;
-}
-
-interface AnalyseDialogCallProps {
   onAnalyse: () => void;
   onChangeRound: (roundName: string, value: string) => void;
 }
-
-type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
@@ -175,8 +182,7 @@ function AnalyseDialog({
                 <span>Decimal places</span>
                 <Select
                   options={selectOptions}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  value={round[item.round] as any}
+                  value={String(round[item.round])}
                   onChange={(val) => {
                     if (item.round) {
                       onChangeRound(item.round, val);
@@ -194,10 +200,9 @@ function AnalyseDialog({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: AnalyseState) => ({
   values: state.options.analyse.values,
-  loading: state.options.analyse.loading,
+  loading: state.options.analyse.loading ?? false,
   round: {
     roundWeight: state.options.analyse.roundWeight,
     roundMass: state.options.analyse.roundMass,
@@ -205,18 +210,13 @@ const mapStateToProps = (state: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
-  onAnalyse: () => dispatch(analyse()),
-  onChangeRound: (roundName: string, val: string) =>
-    dispatch(changeRound(roundName, val)),
-});
+const mapDispatchToProps = {
+  onAnalyse: analyse,
+  onChangeRound: changeRound,
+};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyse = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-)(AnalyseDialog as any) as any;
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+const Analyse = connector(AnalyseDialog);
 
 export default Analyse;

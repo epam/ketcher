@@ -98,11 +98,23 @@ type SimpleObjectSelectionDragContext = {
   xy0: Vec2;
 };
 
+type ReactionArrowDragContext = NonNullable<DragContext> & {
+  action: Action | null;
+  closestItem: ReactionArrowClosestItem;
+  originalPosition: Vec2;
+};
+
+type MultitailArrowDragContext = NonNullable<DragContext> & {
+  action: Action | null;
+  closestItem: MultitailArrowClosestItem;
+  originalPosition: Vec2;
+};
+
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
-  private dragCtx?: DragContext;
+  private dragCtx: DragContext = null;
   private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
   isReadyForCopy = false;
@@ -246,32 +258,21 @@ class SelectTool implements Tool {
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     if (dragCtx?.closestItem) {
-      const arrowDragCtx = dragCtx as NonNullable<DragContext> & {
-        closestItem: ReactionArrowClosestItem | MultitailArrowClosestItem;
-      };
       if (dragCtx.action) {
         dragCtx.action.perform(restruct);
       }
 
-      if (arrowDragCtx.closestItem.map === 'rxnArrows') {
-        arrowDragCtx.action = this.reactionArrowMoveTool.mousemove(
+      if (dragCtx.closestItem.map === 'rxnArrows') {
+        const reactionArrowDragCtx = dragCtx as ReactionArrowDragContext;
+        reactionArrowDragCtx.action = this.reactionArrowMoveTool.mousemove(
           event,
-          arrowDragCtx as ReactionArrowMoveTool['mousemove'] extends (
-            event: PointerEvent,
-            dragContext: infer T,
-          ) => Action
-            ? T
-            : never,
+          reactionArrowDragCtx,
         );
-      } else if (arrowDragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        arrowDragCtx.action = this.multitailArrowMoveTool.mousemove(
+      } else if (dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
+        const multitailArrowDragCtx = dragCtx as MultitailArrowDragContext;
+        multitailArrowDragCtx.action = this.multitailArrowMoveTool.mousemove(
           event,
-          arrowDragCtx as MultitailArrowMoveTool['mousemove'] extends (
-            event: PointerEvent,
-            dragContext: infer T,
-          ) => Action
-            ? T
-            : never,
+          multitailArrowDragCtx,
         );
       }
       if (dragCtx.action) {
@@ -433,36 +434,25 @@ class SelectTool implements Tool {
         this.isDraggingStructureOnSaltOrSolvent(this.dragCtx, struct.sgroups))
     ) {
       preventSaltAndSolventsMerge(struct, this.dragCtx, editor);
-      delete this.dragCtx;
+      this.dragCtx = null;
     }
     /* end */
     if (this.dragCtx?.closestItem) {
-      const arrowDragCtx = this.dragCtx as NonNullable<DragContext> & {
-        closestItem: ReactionArrowClosestItem | MultitailArrowClosestItem;
-      };
-      if (arrowDragCtx.closestItem.map === 'rxnArrows') {
-        arrowDragCtx.action = this.reactionArrowMoveTool.mouseup(
+      if (this.dragCtx.closestItem.map === 'rxnArrows') {
+        const reactionArrowDragCtx = this.dragCtx as ReactionArrowDragContext;
+        reactionArrowDragCtx.action = this.reactionArrowMoveTool.mouseup(
           event,
-          arrowDragCtx as ReactionArrowMoveTool['mouseup'] extends (
-            event: PointerEvent,
-            dragContext: infer T,
-          ) => Action | null
-            ? T
-            : never,
+          reactionArrowDragCtx,
         );
-      } else if (arrowDragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        arrowDragCtx.action = this.multitailArrowMoveTool.mouseup(
+      } else if (this.dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
+        const multitailArrowDragCtx = this.dragCtx as MultitailArrowDragContext;
+        multitailArrowDragCtx.action = this.multitailArrowMoveTool.mouseup(
           event,
-          arrowDragCtx as MultitailArrowMoveTool['mouseup'] extends (
-            event: PointerEvent,
-            dragContext: infer T,
-          ) => Action | null
-            ? T
-            : never,
+          multitailArrowDragCtx,
         );
       }
-      if (arrowDragCtx.action) {
-        this.editor.update(arrowDragCtx.action);
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action);
         this.editor.update(true);
       }
     }
@@ -621,7 +611,7 @@ class SelectTool implements Tool {
     }
     onSelectionLeave(this.editor, this.#lassoHelper);
 
-    delete this.dragCtx;
+    this.dragCtx = null;
 
     this.editor.hover(null);
   }

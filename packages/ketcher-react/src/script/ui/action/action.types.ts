@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Dispatch } from 'redux';
+import { Struct } from 'ketcher-core';
 import Editor from '../../editor/Editor';
 
 type ToolVariant =
@@ -115,7 +116,7 @@ type ActionStateEditor = Editor & {
       tool?: string;
     };
   };
-  struct(value?: unknown | null): {
+  struct(value?: Struct | null): {
     isBlank(): boolean;
     hasRxnArrow(): boolean;
   };

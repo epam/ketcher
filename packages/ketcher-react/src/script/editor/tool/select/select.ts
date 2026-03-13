@@ -16,7 +16,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-  Action,
   CoordinateTransformation,
   fromImageResize,
   fromItemsFuse,
@@ -28,7 +27,6 @@ import {
   getHoverToFuse,
   getItemsToFuse,
   IMAGE_KEY,
-  ImageReferencePositionInfo,
   KetcherLogger,
   MULTITAIL_ARROW_KEY,
   isControlKey,
@@ -57,9 +55,9 @@ import {
   MultitailArrowClosestItem,
   ReactionArrowClosestItem,
 } from '../arrow/arrow.types';
+import { CommonArrowTool } from '../arrow/commonArrow';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
-import { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getNewSelectedItems,
   getSelectedAtoms,
@@ -70,7 +68,15 @@ import {
   onSelectionStart,
   selMerge,
 } from './select.helpers';
-import { SelectMode } from './select.types';
+import {
+  DragContext,
+  isArrowDragContext,
+  isImageSelectionDragContext,
+  isSelectionMoveDragContext,
+  isSimpleObjectSelectionDragContext,
+  SelectMode,
+  SimpleObjectSelectionDragContext,
+} from './select.types';
 import { createCopyOfSelected } from 'src/script/ui/action/createCopyOfSelected';
 
 enum Direction {
@@ -78,83 +84,6 @@ enum Direction {
   TOP,
   RIGHT,
   DOWN,
-}
-
-type MergeItems = ReturnType<typeof getItemsToFuse>;
-
-type DragContext = {
-  action?: Action | null;
-  copyAction?: Action;
-  mergeItems?: MergeItems;
-  stopTapping?: () => void;
-  item?: ClosestItemWithMap<unknown>;
-  xy0?: Vec2;
-  originalPosition?: Vec2;
-  closestItem?: ReactionArrowClosestItem | MultitailArrowClosestItem;
-} | null;
-
-type SelectionMoveDragContext = NonNullable<DragContext> & {
-  item: ClosestItemWithMap<unknown>;
-  xy0: Vec2;
-};
-
-type SimpleObjectSelectionDragContext = SelectionMoveDragContext & {
-  item: ClosestItemWithMap<Vec2, 'simpleObjects'> & {
-    ref: Vec2;
-  };
-};
-
-type ImageSelectionDragContext = SelectionMoveDragContext & {
-  item: ClosestItemWithMap<ImageReferencePositionInfo, typeof IMAGE_KEY> & {
-    ref: ImageReferencePositionInfo;
-  };
-};
-
-type ReactionArrowDragContext = NonNullable<DragContext> & {
-  action: Action | null;
-  closestItem: ReactionArrowClosestItem;
-  originalPosition: Vec2;
-};
-
-type MultitailArrowDragContext = NonNullable<DragContext> & {
-  action: Action | null;
-  closestItem: MultitailArrowClosestItem;
-  originalPosition: Vec2;
-};
-
-function isSelectionMoveDragContext(
-  dragCtx: DragContext,
-): dragCtx is SelectionMoveDragContext {
-  return !!dragCtx?.item && !!dragCtx.xy0;
-}
-
-function isReactionArrowDragContext(
-  dragCtx: DragContext,
-): dragCtx is ReactionArrowDragContext {
-  return (
-    dragCtx?.closestItem?.map === 'rxnArrows' && !!dragCtx.originalPosition
-  );
-}
-
-function isMultitailArrowDragContext(
-  dragCtx: DragContext,
-): dragCtx is MultitailArrowDragContext {
-  return (
-    dragCtx?.closestItem?.map === MULTITAIL_ARROW_KEY &&
-    !!dragCtx.originalPosition
-  );
-}
-
-function isImageSelectionDragContext(
-  dragCtx: SelectionMoveDragContext,
-): dragCtx is ImageSelectionDragContext {
-  return dragCtx.item.map === IMAGE_KEY && !!dragCtx.item.ref;
-}
-
-function isSimpleObjectSelectionDragContext(
-  dragCtx: SelectionMoveDragContext,
-): dragCtx is SimpleObjectSelectionDragContext {
-  return dragCtx.item.map === 'simpleObjects' && !!dragCtx.item.ref;
 }
 
 class SelectTool implements Tool {
@@ -304,17 +233,14 @@ class SelectTool implements Tool {
 
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
-    if (
-      isReactionArrowDragContext(dragCtx) ||
-      isMultitailArrowDragContext(dragCtx)
-    ) {
+    if (isArrowDragContext(dragCtx)) {
       if (dragCtx.action) {
         dragCtx.action.perform(restruct);
       }
 
-      if (isReactionArrowDragContext(dragCtx)) {
+      if (CommonArrowTool.isDragContextReaction(dragCtx)) {
         dragCtx.action = this.reactionArrowMoveTool.mousemove(event, dragCtx);
-      } else {
+      } else if (CommonArrowTool.isDragContextMultitail(dragCtx)) {
         dragCtx.action = this.multitailArrowMoveTool.mousemove(event, dragCtx);
       }
       if (dragCtx.action) {
@@ -438,13 +364,14 @@ class SelectTool implements Tool {
     const selected = editor.selection();
     const struct = editor.render.ctab;
     const molecule = struct.molecule;
+    const dragCtx = this.dragCtx;
 
     // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
 
-    if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
+    if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     /* ignore salts and solvents */
     const possibleSaltOrSolvent = struct.sgroups.get(
@@ -457,42 +384,34 @@ class SelectTool implements Tool {
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
     if (
-      this.dragCtx &&
+      dragCtx &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(this.dragCtx, struct.sgroups))
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups))
     ) {
-      preventSaltAndSolventsMerge(struct, this.dragCtx, editor);
+      preventSaltAndSolventsMerge(struct, dragCtx, editor);
       this.dragCtx = null;
     }
     /* end */
-    if (isReactionArrowDragContext(this.dragCtx)) {
-      this.dragCtx.action = this.reactionArrowMoveTool.mouseup(
-        event,
-        this.dragCtx,
-      );
-      if (this.dragCtx.action) {
-        this.editor.update(this.dragCtx.action);
-        this.editor.update(true);
+    if (isArrowDragContext(dragCtx)) {
+      if (CommonArrowTool.isDragContextReaction(dragCtx)) {
+        dragCtx.action = this.reactionArrowMoveTool.mouseup(event, dragCtx);
+      } else if (CommonArrowTool.isDragContextMultitail(dragCtx)) {
+        dragCtx.action = this.multitailArrowMoveTool.mouseup(event, dragCtx);
       }
-    } else if (isMultitailArrowDragContext(this.dragCtx)) {
-      this.dragCtx.action = this.multitailArrowMoveTool.mouseup(
-        event,
-        this.dragCtx,
-      );
-      if (this.dragCtx.action) {
-        this.editor.update(this.dragCtx.action);
+      if (dragCtx.action) {
+        this.editor.update(dragCtx.action);
         this.editor.update(true);
       }
     }
 
-    if (this.dragCtx?.item) {
-      if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
+    if (isSelectionMoveDragContext(dragCtx)) {
+      if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
-          this.dragCtx.mergeItems,
-          this.dragCtx.action,
-          this.dragCtx.copyAction,
+          dragCtx.mergeItems,
+          dragCtx.action,
+          dragCtx.copyAction,
         );
       }
     } else {

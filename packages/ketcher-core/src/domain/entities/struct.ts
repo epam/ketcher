@@ -1285,7 +1285,11 @@ export class Struct {
   }
 
   getGroupFromAtomIdBySgroups(atomId: number | undefined): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromAtomIdBySgroups(atomId as number);
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomIdBySgroups(atomId);
     return this.sgroups?.get(sgroupId as number);
   }
 

@@ -210,6 +210,8 @@ class Table extends Component<TableProps, TableState> {
   }
 }
 
+const PeriodTableWrapper: FC<TableProps> = (props) => <Table {...props} />;
+
 interface RootState {
   editor: Editor;
 }
@@ -275,6 +277,6 @@ const mapDispatchToProps = (
 const PeriodTable = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Table as unknown as FC<TableOwnProps>);
+)(PeriodTableWrapper);
 
 export default PeriodTable;

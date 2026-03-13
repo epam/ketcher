@@ -16,6 +16,7 @@
 
 import { AtomInfo, ElementsTable, TypeChoice } from './components';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
+import { PeriodTableResult, PeriodTableType } from './types';
 
 import { Component, FC } from 'react';
 import { Dialog } from '../../../components';
@@ -28,28 +29,8 @@ import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
 
-type AtomType = 'atom' | 'gen' | 'list' | 'not-list';
-
-interface AtomResult {
-  label: string;
-  pseudo: string | null;
-}
-
-interface GenResult {
-  type: 'gen';
-  label: string;
-  pseudo: string;
-}
-
-interface ListResult {
-  type: 'list' | 'not-list';
-  values: string[];
-}
-
-type PeriodTableResult = AtomResult | GenResult | ListResult | null;
-
 interface TableOwnProps {
-  type?: AtomType;
+  type?: PeriodTableType;
   values?: string[];
   label?: string;
   pseudo?: string;
@@ -59,7 +40,7 @@ interface TableOwnProps {
 
 interface TableStateProps {
   isMonomerCreationWizardActive: boolean;
-  type?: AtomType;
+  type?: PeriodTableType;
   values?: string[];
   label?: string;
   pseudo?: string;
@@ -72,7 +53,7 @@ interface TableDispatchProps {
 type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
 
 interface TableState {
-  type: AtomType;
+  type: PeriodTableType;
   value: string | string[] | null;
   current: Element;
   isInfo: boolean;
@@ -98,7 +79,7 @@ class Table extends Component<TableProps, TableState> {
     };
   }
 
-  changeType = (type: AtomType) => {
+  changeType = (type: PeriodTableType) => {
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
     const currentChoice = type === 'list' || type === 'not-list';

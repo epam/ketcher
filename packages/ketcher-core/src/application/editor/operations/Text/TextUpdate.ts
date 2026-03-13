@@ -17,7 +17,6 @@
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
-import { normalizeTextContentToLexical } from 'domain/helpers';
 
 interface TextUpdateData {
   id: number;
@@ -30,10 +29,7 @@ export class TextUpdate extends BaseOperation {
 
   constructor(id: number, content: string) {
     super(OperationType.TEXT_UPDATE);
-    this.data = {
-      id,
-      content: normalizeTextContentToLexical(content),
-    };
+    this.data = { id, content };
   }
 
   execute(restruct: ReStruct) {

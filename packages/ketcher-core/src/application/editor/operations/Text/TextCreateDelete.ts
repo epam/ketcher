@@ -17,7 +17,6 @@
 
 import { ReStruct, ReText } from '../../../render';
 import { Text, Vec2 } from 'domain/entities';
-import { normalizeTextContentToLexical } from 'domain/helpers';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
@@ -34,12 +33,7 @@ export class TextCreate extends BaseOperation {
 
   constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE);
-    this.data = {
-      content: normalizeTextContentToLexical(content),
-      position,
-      pos,
-      id,
-    };
+    this.data = { content, position, pos, id };
   }
 
   execute(restruct: ReStruct): void {

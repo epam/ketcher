@@ -25,4 +25,3 @@ export {
   isSingleRGroupAttachmentPoint,
   getAttachmentPointLabelWithBinaryShift,
 } from './attachmentPointCalculations';
-export * from './textContentNormalization';

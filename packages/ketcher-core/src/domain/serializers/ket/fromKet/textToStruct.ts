@@ -15,15 +15,10 @@
  ***************************************************************************/
 
 import { Struct, Text } from 'domain/entities';
-import { normalizeTextContentToLexical } from 'domain/helpers';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function textToStruct(ketItem: any, struct: Struct) {
-  const textData = getNodeWithInvertedYCoord(ketItem.data);
-  const text = new Text({
-    ...textData,
-    content: normalizeTextContentToLexical(textData.content),
-  });
+  const text = new Text(getNodeWithInvertedYCoord(ketItem.data));
   text.setInitiallySelected(ketItem.selected);
   struct.texts.add(text);
   return struct;

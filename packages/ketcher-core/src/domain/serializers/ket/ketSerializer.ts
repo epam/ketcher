@@ -223,7 +223,7 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
-    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
+    return JSON.stringify(result, null, 4);
   }
 
   private validateMonomerNodeTemplate(

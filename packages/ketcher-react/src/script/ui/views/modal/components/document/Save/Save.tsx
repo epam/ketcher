@@ -25,8 +25,8 @@ import Form, {
 import {
   FormatterFactory,
   KetSerializer,
-  type FormatterFactoryOptions,
   type GenerateImageOptions,
+  type OutputFormatType,
   formatProperties,
   getPropertiesByFormat,
   getPropertiesByImgFormat,
@@ -36,7 +36,6 @@ import {
   isClipboardAPIAvailable,
   legacyCopy,
   Struct,
-  type StructService,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -53,20 +52,14 @@ import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import { AnyAction, Dispatch } from 'redux';
-
-type SaveImageFormat = 'svg' | 'png';
-type SaveSupportedFormat = string;
-type SaveFormat = string;
-type SaveFormatOption = string;
-type SaveServer = StructService &
-  PromiseLike<unknown> & {
-    generateImageAsBase64: (
-      data: string,
-      options?: GenerateImageOptions,
-    ) => Promise<string>;
-  };
-type SaveServerSettings = FormatterFactoryOptions &
-  Partial<GenerateImageOptions>;
+import type {
+  SaveAppState,
+  SaveCheckOptions,
+  SaveDialogProps,
+  SaveDialogState,
+  SaveFormState,
+  SaveServer,
+} from './types';
 
 interface ImageFormatProperties {
   extension: string;
@@ -74,20 +67,22 @@ interface ImageFormatProperties {
 }
 
 interface SaveFormatFieldProps extends FieldProps {
-  onChange?: (value: SaveFormat) => void;
+  onChange?: (value: string) => void;
   options: Option[];
 }
 
-const isImageFormat = (format: string): format is SaveImageFormat => {
+const isImageFormat = (format: string): format is OutputFormatType => {
   return format === 'svg' || format === 'png';
 };
 
-const isSupportedFormat = (format: string): format is SaveSupportedFormat => {
+const isSupportedFormat = (
+  format: string,
+): format is Parameters<typeof getPropertiesByFormat>[0] => {
   return format in formatProperties;
 };
 
 const getImageFormatProperties = (
-  format: SaveImageFormat,
+  format: OutputFormatType,
 ): ImageFormatProperties | undefined => {
   return getPropertiesByImgFormat(format) as ImageFormatProperties | undefined;
 };
@@ -108,13 +103,13 @@ const SaveFormatSelect = ({
     name={name}
     data-testid={testId}
     options={options}
-    onChange={(value) => onChange?.(value as SaveFormat)}
+    onChange={(value) => onChange?.(value)}
   />
 );
 
 const SaveFormatField = Field as FC<
   FieldProps & {
-    onChange?: (value: SaveFormat) => void;
+    onChange?: (value: string) => void;
   }
 >;
 
@@ -167,78 +162,6 @@ interface PreviewContentProps {
   handleCopy: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-interface FormState {
-  result: {
-    filename: string;
-    format: SaveFormat;
-  };
-  valid: boolean;
-  errors: Record<string, string>;
-  moleculeErrors?: Record<string, string>;
-}
-
-interface CheckState {
-  checkOptions: unknown;
-}
-
-interface Editor {
-  selection: () => { atoms?: number[] } | null;
-  errorHandler: (message: string) => void;
-  struct: () => Struct;
-  render: {
-    options: {
-      ignoreChiralFlag: boolean;
-    };
-  };
-}
-
-interface SaveDialogState {
-  disableControls: boolean;
-  imageFormat: SaveImageFormat;
-  tabIndex: number;
-  isLoading: boolean;
-  structStr?: string;
-  imageSrc?: string;
-}
-
-interface AppState {
-  options: {
-    app: {
-      server?: boolean;
-    };
-    getServerSettings: () => SaveServerSettings;
-    check: CheckState;
-    settings: {
-      bondThickness?: number;
-    };
-  };
-  server: SaveServer;
-  editor: Editor;
-  modal: {
-    form: FormState;
-  };
-}
-
-interface SaveDialogOwnProps {
-  onOk: (result?: Record<string, unknown>) => void;
-  onCancel?: () => void;
-}
-
-interface SaveDialogProps extends SaveDialogOwnProps {
-  server: SaveServer | null;
-  struct: Struct;
-  options: SaveServerSettings;
-  formState: FormState;
-  moleculeErrors?: Record<string, string>;
-  checkState: CheckState;
-  bondThickness?: number;
-  ignoreChiralFlag: boolean;
-  editor: Editor;
-  onCheck: (checkOptions: unknown) => void;
-  onTmplSave: (struct: Struct) => void;
-  onResetForm: (prevState: FormState) => void;
-}
-
 // Extracted components for better performance and React best practices
 const LoadingState = ({ classes }: LoadingStateProps) => (
   <div className={classes.loadingCirclesContainer}>
@@ -246,10 +169,10 @@ const LoadingState = ({ classes }: LoadingStateProps) => (
   </div>
 );
 
-const getSupportedFormatProperties = (format: SaveSupportedFormat) => {
-  return getPropertiesByFormat(
-    format as Parameters<typeof getPropertiesByFormat>[0],
-  );
+const getSupportedFormatProperties = (
+  format: Parameters<typeof getPropertiesByFormat>[0],
+) => {
+  return getPropertiesByFormat(format);
 };
 
 const ImageContent = ({
@@ -323,7 +246,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats: SaveFormatOption[] = !this.props.server
+    const formats: string[] = !this.props.server
       ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
       : [
           'ket',
@@ -378,12 +301,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return format === 'binaryCdx';
   };
 
-  showStructWarningMessage = (format: SaveFormat): boolean => {
+  showStructWarningMessage = (format: string): boolean => {
     const { errors } = this.props.formState;
     return format !== 'mol' && Object.keys(errors).length > 0;
   };
 
-  changeType = (type: SaveFormat): Promise<Error | void> => {
+  changeType = (type: string): Promise<Error | void> => {
     const { struct, server, options, formState, ignoreChiralFlag } = this.props;
 
     const errorHandler = this.context.errorHandler;
@@ -487,7 +410,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     this.setState({ tabIndex: index });
   };
 
-  getWarnings = (format: SaveFormat): string[] => {
+  getWarnings = (format: string): string[] => {
     const { struct, moleculeErrors } = this.props;
     const warnings: string[] = [];
     const structWarning =
@@ -766,12 +689,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   }
 }
 
-const getOptions = (state: AppState) => state.options;
+const getOptions = (state: SaveAppState) => state.options;
 const serverSettingsSelector = createSelector([getOptions], (options) =>
   options.getServerSettings(),
 );
 
-const mapStateToProps = (state: AppState) => ({
+const mapStateToProps = (state: SaveAppState) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   options: serverSettingsSelector(state),
@@ -784,11 +707,12 @@ const mapStateToProps = (state: AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
-  onCheck: (checkOptions: unknown) =>
+  onCheck: (checkOptions: SaveCheckOptions) =>
     dispatch(check(checkOptions) as unknown as AnyAction),
   onTmplSave: (struct: Struct) =>
     dispatch(saveUserTmpl(struct) as unknown as AnyAction),
-  onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
+  onResetForm: (prevState: SaveFormState) =>
+    dispatch(updateFormState(prevState)),
 });
 
 const Save = connect(

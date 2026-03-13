@@ -4,6 +4,11 @@ import { render } from '@testing-library/react';
 import { formReducer } from 'src/script/ui/state/modal/form';
 import { ErrorsContext } from 'src/contexts';
 import { defaultBondThickness } from 'ketcher-core';
+import type {
+  SaveCheckState,
+  SaveFormState,
+  SaveServerSettings,
+} from './types';
 
 const initialState = {
   server: true,
@@ -14,8 +19,8 @@ const initialState = {
     settings: {
       bondThickness: defaultBondThickness,
     },
-    check: { checkOptions: '' },
-    getServerSettings: () => ({}),
+    check: { checkOptions: [] } as SaveCheckState,
+    getServerSettings: () => ({} as SaveServerSettings),
   },
   editor: {
     struct: () => ({
@@ -30,7 +35,11 @@ const initialState = {
     render: { options: { ignoreChiralFlag: true } },
   },
   modal: {
-    form: { result: { filename: '', format: 'mol' } },
+    form: {
+      result: { filename: '', format: 'mol' },
+      valid: true,
+      errors: {},
+    } as SaveFormState,
   },
 };
 

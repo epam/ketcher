@@ -39,12 +39,10 @@ import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
-// Import the Draft.js to Lexical converter
-// import { convertDraftToLexical, DraftEditorState } from 'ketcher-core/src/application/render/restruct/draftToLexical';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import { IconName } from 'components';
-import { convertDraftToLexical, DraftEditorState } from 'ketcher-core';
+import { parseTextContentAsLexical } from 'ketcher-core';
 
 interface TextProps extends DialogParams {
   formState: any;
@@ -248,30 +246,8 @@ const TextEditorInner = (props: {
 export const normalizeEditorState = (
   content: string | undefined,
 ): string | undefined => {
-  if (!content) return undefined;
-  try {
-    const parsed = JSON.parse(content);
-    // If already Lexical format, return as is
-    if (
-      parsed &&
-      typeof parsed === 'object' &&
-      parsed.root &&
-      typeof parsed.root === 'object' &&
-      typeof parsed.root.type === 'string'
-    ) {
-      return content;
-    }
-    // If Draft.js format, convert to Lexical and return as string
-    if (parsed && parsed.blocks && Array.isArray(parsed.blocks)) {
-      const lexicalState = convertDraftToLexical(parsed as DraftEditorState);
-      return JSON.stringify(lexicalState);
-    }
-    // If not recognized, treat as empty
-    console.warn('Unsupported editor state format, falling back to empty');
-  } catch (e) {
-    console.warn('Failed to parse editor state', e);
-  }
-  return undefined;
+  const lexicalState = parseTextContentAsLexical(content);
+  return lexicalState ? JSON.stringify(lexicalState) : undefined;
 };
 
 const Text = (props: TextProps) => {

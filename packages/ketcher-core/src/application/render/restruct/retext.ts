@@ -20,9 +20,8 @@ import { flatten } from 'lodash/fp';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import ReStruct from './restruct';
-import { Scale } from 'domain/helpers';
+import { parseTextContentAsLexical, Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
-import { convertDraftToLexical } from './draftToLexical';
 
 export interface SerializedTextNode {
   detail?: number;
@@ -170,21 +169,7 @@ class ReText extends ReObject {
     this.paths = [];
     // TODO: create parser in ketcher-core package
 
-    let editorState: SerializedEditorState | null = null;
-    try {
-      if (this.item.content) {
-        const parsed = JSON.parse(this.item.content);
-        // Support both Lexical and Draft.js formats
-        if (parsed && parsed.root) {
-          editorState = parsed as SerializedEditorState;
-        } else if (parsed && parsed.blocks) {
-          // Import conversion from service
-          editorState = convertDraftToLexical(parsed);
-        }
-      }
-    } catch (error) {
-      console.error('Error processing text content:', error);
-    }
+    const editorState = parseTextContentAsLexical(this.item.content);
 
     if (!editorState?.root) {
       console.log('No valid editorState, skipping render');

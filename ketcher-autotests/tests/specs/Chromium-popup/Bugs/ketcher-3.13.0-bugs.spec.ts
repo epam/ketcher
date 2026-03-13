@@ -19,6 +19,7 @@ import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
+  takeMonomerLibraryScreenshot,
 } from '@utils';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
@@ -37,6 +38,8 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { RNASection } from '@tests/pages/constants/library/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 let page: Page;
 
@@ -410,5 +413,38 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 2 }), {
       padding: 200,
     });
+  });
+
+  test('Case 8 — System shows natural analog category for phosphates', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/9065
+     * Version: 3.12.0-rc.2
+     * Description:
+     * In the RNA → Phosphates section, the Library incorrectly displays a natural
+     * analog category label. Natural analog categories apply only to peptides,
+     * bases, and nucleotides, and should NOT appear for phosphates.
+     *
+     * Scenario:
+     * 1. Switch to Macromolecules mode (Flex)
+     * 2. Open the Library → RNA tab
+     * 3. Open the Phosphates section
+     *
+     * Expected Result:
+     * Natural analog category is NOT shown for phosphates.
+     */
+
+    // Step 1: Switch to Macromolecules Flex mode
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+
+    // Step 2–3: Open Library → RNA → Phosphates section
+    await Library(page).openRNASection(RNASection.Phosphates);
+
+    // Visual verification: screenshot of the Library panel
+    await takeMonomerLibraryScreenshot(page);
   });
 });

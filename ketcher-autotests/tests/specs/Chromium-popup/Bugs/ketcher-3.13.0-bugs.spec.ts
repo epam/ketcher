@@ -7,11 +7,14 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
+  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  MacroFileType,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
@@ -32,6 +35,8 @@ import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomer
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 
 let page: Page;
 
@@ -347,6 +352,63 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Take screenshot of S‑Group Properties dialog window
     await takeElementScreenshot(page, dialog.window, {
       padding: 0,
+    });
+  });
+
+  test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/7153
+     * Version: 3.4.0-rc.3
+     * Description:
+     * After loading a monomer in Macromolecules → Flex mode,
+     * switching to Molecules mode, expanding the monomer and erasing
+     * its abbreviation, switching back to Macromolecules mode clears
+     * the entire canvas instead of preserving the expanded structure.
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode – Flex mode (clean canvas)
+     * 2. Load from HELM: RNA1{[2-damdA]}$$$$V2.0
+     * 3. Switch to Molecules mode
+     * 4. Expand the monomer and remove abbreviation
+     * 5. Switch to Macromolecules mode again
+     *
+     * Expected Result:
+     * Expanded molecule remains on canvas and does NOT disappear.
+     */
+
+    // Step 1: Macro → Flex mode (popup-friendly)
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+
+    // Step 2: Load HELM
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[2-damdA]}$$$$V2.0',
+    );
+
+    // Step 3: Switch to Molecules mode
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await page.waitForTimeout(300);
+
+    // Step 4.1: Expand monomer via context menu
+    const abbrev = getAbbreviationLocator(page, { id: 0 });
+    await ContextMenu(page, abbrev).click(MonomerOnMicroOption.ExpandMonomer);
+
+    // Step 4.2: Remove abbreviation
+    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).sGroup();
+    await EditAbbreviationDialog(page).removeAbbreviation();
+
+    // Step 5: Switch back to Macromolecules mode
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await page.waitForTimeout(300);
+
+    // Expected: Expanded molecule still visible
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 2 }), {
+      padding: 200,
     });
   });
 });

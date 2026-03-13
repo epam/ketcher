@@ -310,7 +310,9 @@ async function copy(data: ClipboardData): Promise<void> {
       clipboardItem as ClipboardItemWithPresentationStyle;
 
     // Chrome: clipboardItem.presentationStyle is undefined
-    if (clipboardItemWithPresentationStyle.presentationStyle === 'unspecified') {
+    if (
+      clipboardItemWithPresentationStyle.presentationStyle === 'unspecified'
+    ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy
         const textData = data['text/plain'] || JSON.stringify(data);

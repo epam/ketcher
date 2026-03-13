@@ -210,6 +210,7 @@ class Table extends Component<TableProps, TableState> {
   }
 }
 
+// Helps react-redux connect with this legacy class component under the current React typings.
 const PeriodTableWrapper: FC<TableProps> = (props) => <Table {...props} />;
 
 interface RootState {

@@ -40,6 +40,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -446,5 +447,81 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Visual verification: screenshot of the Library panel
     await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 9 — System shows bad valence for atoms attached to bonds that connect monomers', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/8980
+     * Version: 3.12.0-rc.1
+     * Description:
+     * Bad valence warnings are shown on N atoms that are attached to bonds
+     * connecting monomers after creating a nucleotide preset from a SMARTS structure.
+     * Switching to Macromolecules mode and back to Molecules removes the warnings.
+     *
+     * Scenario:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Load SMARTS:
+     *    [#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]
+     * 3. Select whole structure and open Create Monomer wizard
+     * 4. Create a Nucleotide (preset) with following grouping (Base/Sugar/Phosphate)
+     *    according to the bug description (IDs must match your structure)
+     * 5. Submit wizard — observe that no bad valence warnings on N atoms
+     *
+     * Expected Result:
+     * No bad valence indications (warnings) on atoms after preset creation.
+     * If they appear initially, they must disappear after Macro→Micro switch.
+     */
+
+    // Step 1–2: Load SMARTS structure as a new project
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
+    );
+
+    // Step 3: Select the whole structure and open Create Monomer wizard
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
+
+    // Step 4: Create a Nucleotide (preset)
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('badValence');
+
+    // --- Base ---
+    await presetSection.setupBase({
+      atomIds: [7, 8, 9, 10],
+      bondIds: [7, 8, 9],
+    });
+
+    // Small stabilize drags
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    // --- Sugar ---
+    await presetSection.setupSugar({
+      atomIds: [2, 3, 4, 5, 6],
+      bondIds: [2, 3, 4, 5],
+    });
+
+    // --- Phosphate ---
+    await presetSection.setupPhosphate({
+      atomIds: [0, 1, 11, 12],
+      bondIds: [0, 10, 11],
+    });
+
+    // Step 5: Submit wizard
+    await dialog.submit();
+
+    // Visual verification: take a screenshot where bad valence (if present) is visible.
+    await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), {
+      padding: -160,
+    });
   });
 });

@@ -912,10 +912,15 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       }
     } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1 || charge === 2) return rad + conn;
-      } else if (label === 'Sb' || label === 'Bi' || label === 'As') {
-        if (charge === 1 || charge === 2) return rad + conn;
+      if (
+        (label === 'N' ||
+          label === 'P' ||
+          label === 'Sb' ||
+          label === 'Bi' ||
+          label === 'As') &&
+        (charge === 1 || charge === 2)
+      ) {
+        return rad + conn;
       }
     } else if (groupno === 6) {
       if (label === 'O') {

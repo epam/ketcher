@@ -135,7 +135,7 @@ class SelectTool implements Tool {
 
     if (!ci) {
       onSelectionStart(event, this.editor, this.#lassoHelper);
-      return true;
+      return;
     }
 
     if (ci.map === MULTITAIL_ARROW_KEY && ci.ref) {
@@ -184,7 +184,7 @@ class SelectTool implements Tool {
         bonds: rgroup.getBonds(rnd),
       };
     } else if (ci.map === 'sgroupData') {
-      if (isSelected(selection, ci)) return true;
+      if (isSelected(selection, ci)) return;
     }
 
     if (event.shiftKey) {
@@ -201,8 +201,6 @@ class SelectTool implements Tool {
     if (isControlKey(event) && this.dragCtx) {
       this.isReadyForCopy = true;
     }
-
-    return true;
   }
 
   mousemove(event: PointerEvent) {

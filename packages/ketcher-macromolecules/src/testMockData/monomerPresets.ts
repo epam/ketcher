@@ -378,6 +378,7 @@ const rnaPresetsTemplates = [
     id: 'A',
     name: 'A',
     class: KetMonomerGroupTemplateClass.RNA,
+    aliasAxoLabs: '(5MdC)',
     templates: [
       {
         $ref: 'monomerTemplate-R___Ribose',

@@ -775,10 +775,10 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const peptide2 = new Peptide(peptideMonomerItem);
   peptide.moveAbsolute(new Vec2(x1, y1));
   peptide2.moveAbsolute(new Vec2(x2, y2));
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide);
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide2);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer1 = new PeptideRenderer(peptide);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer2 = new PeptideRenderer(peptide2);
 
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);

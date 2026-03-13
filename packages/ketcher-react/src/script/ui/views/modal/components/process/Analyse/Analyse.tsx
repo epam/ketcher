@@ -26,6 +26,16 @@ import { connect } from 'react-redux';
 import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+
+type AnalyseValueKey =
+  | 'gross'
+  | 'molecular-weight'
+  | 'monoisotopic-mass'
+  | 'mass-composition';
+
+type RoundKey = 'roundWeight' | 'roundMass' | 'roundElAnalysis';
 
 interface AnalyseValues {
   gross?: string;
@@ -44,8 +54,8 @@ interface RoundSettings {
 
 interface AnalyseItem {
   name: string;
-  key: string;
-  round?: string;
+  key: AnalyseValueKey;
+  round?: RoundKey;
   withSelector: boolean;
 }
 
@@ -57,10 +67,23 @@ interface AnalyseDialogProps extends DialogParams {
 
 interface AnalyseDialogCallProps {
   onAnalyse: () => void;
-  onChangeRound: (roundName: string, value: string) => void;
+  onChangeRound: (roundName: RoundKey, value: string) => void;
 }
 
 type Props = AnalyseDialogProps & AnalyseDialogCallProps;
+type AnalyseStateProps = Pick<
+  AnalyseDialogProps,
+  'values' | 'round' | 'loading'
+>;
+
+interface RootState {
+  options: {
+    analyse: {
+      values: AnalyseValues | null;
+      loading?: boolean;
+    } & RoundSettings;
+  };
+}
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
@@ -175,8 +198,7 @@ function AnalyseDialog({
                 <span>Decimal places</span>
                 <Select
                   options={selectOptions}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  value={round[item.round] as any}
+                  value={String(round[item.round])}
                   onChange={(val) => {
                     if (item.round) {
                       onChangeRound(item.round, val);
@@ -194,10 +216,9 @@ function AnalyseDialog({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: RootState): AnalyseStateProps => ({
   values: state.options.analyse.values,
-  loading: state.options.analyse.loading,
+  loading: Boolean(state.options.analyse.loading),
   round: {
     roundWeight: state.options.analyse.roundWeight,
     roundMass: state.options.analyse.roundMass,
@@ -205,18 +226,14 @@ const mapStateToProps = (state: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, unknown, AnyAction>,
+): AnalyseDialogCallProps => ({
   onAnalyse: () => dispatch(analyse()),
-  onChangeRound: (roundName: string, val: string) =>
+  onChangeRound: (roundName: RoundKey, val: string) =>
     dispatch(changeRound(roundName, val)),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyse = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-)(AnalyseDialog as any) as any;
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
 export default Analyse;

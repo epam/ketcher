@@ -76,7 +76,7 @@ type AnalyseStateProps = Pick<
   'values' | 'round' | 'loading'
 >;
 
-interface RootState {
+interface AnalyseRootState {
   options: {
     analyse: {
       values: AnalyseValues | null;
@@ -216,9 +216,9 @@ function AnalyseDialog({
   );
 }
 
-const mapStateToProps = (state: RootState): AnalyseStateProps => ({
+const mapStateToProps = (state: AnalyseRootState): AnalyseStateProps => ({
   values: state.options.analyse.values,
-  loading: Boolean(state.options.analyse.loading),
+  loading: state.options.analyse.loading ?? false,
   round: {
     roundWeight: state.options.analyse.roundWeight,
     roundMass: state.options.analyse.roundMass,
@@ -227,7 +227,7 @@ const mapStateToProps = (state: RootState): AnalyseStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RootState, unknown, AnyAction>,
+  dispatch: ThunkDispatch<AnalyseRootState, unknown, AnyAction>,
 ): AnalyseDialogCallProps => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName: RoundKey, val: string) =>

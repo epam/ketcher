@@ -282,7 +282,7 @@ const rnaPresetWizardReducer = (
       ...state,
       [rnaComponentKey]: {
         ...state[rnaComponentKey],
-        structure: restAction.editor?.selection(),
+        structure: restAction.editor?.explicitSelected(),
       },
     };
   }

@@ -13,49 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
+import { IMAGE_KEY } from 'ketcher-core';
 
-import APointTool from './apoint';
 import AtomTool from './atom';
 import AttachTool from './attach';
 import BondTool from './bond';
 import ChainTool from './chain';
 import ChargeTool from './charge';
-import EnhancedStereoTool from './enhanced-stereo';
 import EraserTool from './eraser';
 import HandTool from './hand';
 import PasteTool from './paste';
-import RGroupAtomTool from './rgroupatom';
-import RGroupFragmentTool from './rgroupfragment';
 import { CommonArrowTool } from './arrow/commonArrow';
 import ReactionMapTool from './reactionmap';
 import ReactionPlusTool from './reactionplus';
 import ReactionUnmapTool from './reactionunmap';
 import RotateTool from './rotate';
-import SGroupTool from './sgroup';
 import SimpleObjectTool from './simpleobject';
 import TemplateTool from './template';
 import TextTool from './text';
 import { ToolConstructorInterface } from './Tool';
 import { ImageTool } from './image';
 import { SelectCommonTool } from './select';
-import CreateMonomerTool from './create-monomer';
 import FragmentSelectionTool from './fragmentSelection';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,
-  rgroupatom: RGroupAtomTool,
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
-  sgroup: SGroupTool,
   eraser: EraserTool,
   atom: AtomTool,
   bond: BondTool,
   chain: ChainTool,
   template: TemplateTool,
   charge: ChargeTool,
-  rgroupfragment: RGroupFragmentTool,
-  apoint: APointTool,
   attach: AttachTool,
   reactionarrow: CommonArrowTool,
   reactionplus: ReactionPlusTool,
@@ -63,9 +53,7 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   reactionunmap: ReactionUnmapTool,
   paste: PasteTool,
   rotate: RotateTool,
-  enhancedStereo: EnhancedStereoTool,
   simpleobject: SimpleObjectTool,
   text: TextTool,
   [IMAGE_KEY]: ImageTool,
-  [CREATE_MONOMER_TOOL_NAME]: CreateMonomerTool,
 };

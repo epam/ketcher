@@ -27,17 +27,13 @@ import {
   AttachPoints,
   Automap,
   Bond,
-  RgroupLogic,
 } from '../views/modal/components/toolbox';
 import { Open, Save } from '../views/modal/components/document';
 
-import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo';
 import LabelEdit from './toolbox/labeledit';
 import PeriodTable from '../views/modal/components/PeriodTable';
 import ExtendedTable from '../views/modal/components/ExtendedTable';
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG';
-import Rgroup from './toolbox/rgroup/rgroup';
-import SGroup from './toolbox/sgroup';
 import TemplateAttach from './template/template-attach';
 import TemplatesDialog from './template/TemplateDialog';
 import Text from '../views/modal/components/Text';
@@ -50,7 +46,6 @@ export default {
   recognize: Recognize,
   'period-table': PeriodTable,
   'extended-table': ExtendedTable,
-  rgroup: Rgroup,
   attach: TemplateAttach,
   templates: TemplatesDialog,
   about: About,
@@ -60,13 +55,10 @@ export default {
   automap: Automap,
   bondProps: Bond,
   check: Check,
-  enhancedStereo: EnhancedStereo,
   labelEdit: LabelEdit,
-  rgroupLogic: RgroupLogic,
   removeFG: RemoveFG,
   save: Save,
   settings: Settings,
-  sgroup: SGroup,
   text: Text,
   confirm: Confirm,
   'info-modal': InfoModal,

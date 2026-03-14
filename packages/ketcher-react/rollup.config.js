@@ -74,7 +74,7 @@ const config = {
       extract: 'index.css',
       minimize: isProduction,
       sourceMap: true,
-      include: [includePattern, '../ketcher-macromolecules/dist/index.css'],
+      include: [includePattern],
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),

@@ -23,8 +23,6 @@ type LeftGroup =
   | 'bond'
   | 'charge'
   | 'transform'
-  | 'sgroup'
-  | 'rgroup'
   | 'shape'
   | 'text';
 
@@ -96,8 +94,6 @@ type LeftToolbarItemVariant =
   // charge group
   | 'charge-plus'
   | 'charge-minus'
-  // sgroup group
-  | 'sgroup'
   // reaction
   // plus
   | 'reaction-plus'
@@ -127,13 +123,6 @@ type LeftToolbarItemVariant =
   | 'reaction-automap'
   | 'reaction-map'
   | 'reaction-unmap'
-  // rgroup group
-  | 'rgroup'
-  | 'rgroup-label'
-  | 'rgroup-fragment'
-  | 'rgroup-attpoints'
-  // create monomer
-  | 'create-monomer'
   // shape group
   | 'shapes'
   | 'shape-ellipse'
@@ -147,7 +136,6 @@ type LeftToolbarItemVariant =
 type BottomToolbarItemVariant =
   | 'template-common'
   | 'template-lib'
-  | 'enhanced-stereo'
   | 'fullscreen';
 
 type RightToolbarItemVariant =

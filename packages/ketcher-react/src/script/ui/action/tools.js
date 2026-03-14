@@ -17,10 +17,8 @@
 import {
   RxnArrowMode,
   SimpleObjectMode,
-  findStereoAtoms,
   IMAGE_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
-  CREATE_MONOMER_TOOL_NAME,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -72,18 +70,6 @@ const toolActions = {
     action: { tool: 'chain' },
     hidden: (options) => isHidden(options, 'chain'),
   },
-  'enhanced-stereo': {
-    shortcut: 'Alt+e',
-    title: 'Stereochemistry',
-    action: { tool: 'enhancedStereo' },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive ||
-      findStereoAtoms(
-        editor?.struct(),
-        Array.from(editor?.struct().atoms.keys()),
-      ).length === 0,
-    hidden: (options) => isHidden(options, 'enhanced-stereo'),
-  },
   'charge-plus': {
     shortcut: ['Equal', 'Shift+Equal', 'NumpadAdd'],
     title: 'Charge Plus',
@@ -114,13 +100,6 @@ const toolActions = {
     action: { tool: 'rotate', opts: 'vertical' },
     disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-v'),
-  },
-  sgroup: {
-    shortcut: 'Mod+g',
-    title: 'S-Group',
-    action: { tool: 'sgroup' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'sgroup'),
   },
   arrows: {
     disabled: (editor) => editor.isMonomerCreationWizardActive,
@@ -321,42 +300,6 @@ const toolActions = {
     action: { tool: 'reactionunmap' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'reaction-unmap'),
-  },
-  rgroup: {
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup'),
-  },
-  'rgroup-label': {
-    shortcut: 'Mod+r',
-    title: 'R-Group Label Tool',
-    action: { tool: 'rgroupatom' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-label'),
-  },
-  'rgroup-fragment': {
-    shortcut: ['Mod+Shift+r', 'Mod+r'],
-    title: 'R-Group Fragment Tool',
-    action: { tool: 'rgroupfragment' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-fragment'),
-  },
-  'rgroup-attpoints': {
-    shortcut: 'Mod+r',
-    title: 'Attachment Point Tool',
-    action: { tool: 'apoint' },
-    disabled: (editor) => editor.isMonomerCreationWizardActive,
-    hidden: (options) => isHidden(options, 'rgroup-attpoints'),
-  },
-  [CREATE_MONOMER_TOOL_NAME]: {
-    shortcut: 'Mod+m',
-    title: 'Create a monomer',
-    action: {
-      tool: CREATE_MONOMER_TOOL_NAME,
-    },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive ||
-      !editor.isMonomerCreationWizardEnabled,
-    hidden: (options) => isHidden(options, CREATE_MONOMER_TOOL_NAME),
   },
   shapes: {
     disabled: (editor) => editor.isMonomerCreationWizardActive,

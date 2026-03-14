@@ -31,8 +31,6 @@ export type ButtonName =
   | 'about'
   | 'fullscreen'
   // left
-  // sgroup group
-  | 'sgroup'
   // reaction
   // plus
   | 'reaction-plus'
@@ -61,11 +59,6 @@ export type ButtonName =
   | 'reaction-automap'
   | 'reaction-map'
   | 'reaction-unmap'
-  // rgroup group
-  | 'rgroup'
-  | 'rgroup-label'
-  | 'rgroup-fragment'
-  | 'rgroup-attpoints'
   // shape group
   | 'shape'
   | 'shape-ellipse'
@@ -74,5 +67,4 @@ export type ButtonName =
   // text group
   | 'text'
   // right
-  | 'enhanced-stereo'
-  | 'create-monomer';
+;

@@ -14,5 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './remoteStructService';
-export * from './remoteStructServiceProvider';
+// Remote struct service removed - using standalone (WASM) mode only

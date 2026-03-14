@@ -53,7 +53,6 @@ const disableableButtons = [
   'arom',
   'dearom',
   'cip',
-  'enhanced-stereo',
 ];
 
 const shortcuts = generateMenuShortcuts<typeof action>(action);

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { RefObject, useRef } from 'react';
-import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
+import { IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -29,14 +29,12 @@ import {
   bondSpecial,
   bondStereo,
   mappingOptions,
-  rGroupOptions,
   selectOptions,
   shapeOptions,
 } from './leftToolbarOptions';
 
 import { ArrowScroll } from '../ArrowScroll';
 import { Bond } from './Bond';
-import { RGroup } from './RGroup';
 import { Shape } from './Shape';
 import classes from './LeftToolbar.module.less';
 import clsx from 'clsx';
@@ -83,8 +81,6 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         switch (item.id) {
           case 'bond-common':
             return <Bond {...rest} height={height} key={item.id} />;
-          case 'rgroup':
-            return <RGroup {...rest} key={item.id} />;
           case 'shapes':
             return <Shape {...rest} key={item.id} />;
           case 'bonds':
@@ -173,7 +169,6 @@ const LeftToolbar = (props: Props) => {
               ],
             },
             { id: 'chain' },
-            { id: 'enhanced-stereo' },
             { id: 'charge-plus' },
             { id: 'charge-minus' },
           ]}
@@ -183,11 +178,7 @@ const LeftToolbar = (props: Props) => {
         <div className={classes.listener} ref={sizeRef}>
           <Group
             className={classes.groupItem}
-            items={[
-              { id: 'sgroup' },
-              { id: 'rgroup', options: rGroupOptions },
-              { id: CREATE_MONOMER_TOOL_NAME },
-            ]}
+            items={[]}
             height={height}
             rest={rest}
           />

@@ -3,12 +3,6 @@ import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
 import { makeItems } from '../ToolbarGroupItem/utils';
 import { ToolbarItem } from '../toolbar.types';
 
-const rGroupOptions: ToolbarItem[] = makeItems([
-  'rgroup-label',
-  'rgroup-fragment',
-  'rgroup-attpoints',
-]);
-
 const shapeOptions: ToolbarItem[] = makeItems([
   'shape-ellipse',
   'shape-rectangle',
@@ -53,7 +47,6 @@ const mappingOptions: ToolbarItem[] = makeItems([
 ]);
 
 export {
-  rGroupOptions,
   bondCommon,
   bondQuery,
   bondSpecial,

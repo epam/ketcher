@@ -583,7 +583,7 @@ export function sGroupAttributeAction(id, attrs) {
 
 export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   let action = new Action();
-  const struct = restruct.molecule as Struct;
+  const struct = restruct.molecule;
 
   const sG = restruct.sgroups.get(id)?.item;
   const atoms = SGroup.getAtoms(struct, sG);

@@ -788,6 +788,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public redrawAttachmentPointsCoordinates() {
     // intentional no-op: default base implementation; subclasses override when behavior is needed
   }
+
   public get enumeration() {
     return null;
   }

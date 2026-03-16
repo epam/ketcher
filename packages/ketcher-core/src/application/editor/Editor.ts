@@ -1213,6 +1213,7 @@ export class CoreEditor {
         rnaBasePosition: rnaPresetItem.base
           ? new Vec2(sugarPosition.x, sugarPosition.y + 1.5)
           : undefined,
+        connections: rnaPresetItem.connections,
       });
     const sugar = monomers.find(
       (monomer) => monomer instanceof Sugar,

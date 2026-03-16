@@ -74,7 +74,10 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'application/formatters';
+import {
+  IKetTemplateConnection,
+  KetMonomerClass,
+} from 'application/formatters';
 import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
@@ -125,7 +128,10 @@ import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
-import { KetFileNode } from 'domain/serializers';
+import {
+  getMonomerTemplateRefFromMonomerItem,
+  KetFileNode,
+} from 'domain/serializers';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
   RxnPlusAddOperation,
@@ -149,6 +155,7 @@ type RnaPresetAdditionParams = {
   phosphate: MonomerItemType | undefined;
   phosphatePosition: Vec2 | undefined;
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
+  connections?: IKetTemplateConnection[];
 };
 
 interface MonomerConnectedToSelection {
@@ -1623,6 +1630,7 @@ export class DrawingEntitiesManager {
     phosphatePosition,
     rnaBase,
     rnaBasePosition,
+    connections,
   }: RnaPresetAdditionParams) {
     const command = new Command();
     const monomersToAdd: Array<[MonomerItemType, Vec2]> = [];
@@ -1646,9 +1654,35 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
-        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        const connectionTemplate = connections?.find((connection) => {
+          return (
+            (connection.endpoint1.templateId ===
+              getMonomerTemplateRefFromMonomerItem(
+                previousMonomer.monomerItem,
+              ) &&
+              connection.endpoint2.templateId ===
+                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem)) ||
+            (connection.endpoint2.templateId ===
+              getMonomerTemplateRefFromMonomerItem(
+                previousMonomer.monomerItem,
+              ) &&
+              connection.endpoint1.templateId ===
+                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem))
+          );
+        });
+        // requirements are: use connectionTemplate if exist. If no then Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
+        const attPointStart = connectionTemplate
+          ? connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            ? connectionTemplate.endpoint1.attachmentPointId
+            : connectionTemplate.endpoint2.attachmentPointId
+          : previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = connectionTemplate
+          ? connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            ? connectionTemplate.endpoint2.attachmentPointId
+            : connectionTemplate.endpoint1.attachmentPointId
+          : monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
         assert(attPointEnd);

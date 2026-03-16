@@ -70,7 +70,7 @@ export enum KetConnectionType {
 }
 
 export interface IKetTemplateConnectionEndPoint {
-  monomerTemplateId: string;
+  templateId: string;
   attachmentPointId: AttachmentPointName;
 }
 

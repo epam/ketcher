@@ -31,7 +31,57 @@ import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
 import { css } from '@emotion/react';
 import { Button } from '@mui/material';
-import { ketcherProvider } from 'ketcher-core';
+import { Editor, ketcherProvider, Struct } from 'ketcher-core';
+
+interface AttachPoints {
+  atomid: number;
+  bondid: number;
+}
+
+interface TemplateItem {
+  struct: Struct;
+  props: {
+    atomid?: string | number;
+    bondid?: string | number;
+    group?: string;
+    [key: string]: string | number | undefined;
+  };
+}
+
+interface NormalizedTemplate {
+  struct: Struct;
+  props: AttachPoints;
+}
+
+interface FormState {
+  errors: Record<string, string>;
+  valid: boolean;
+  result: Record<string, unknown>;
+}
+
+interface AttachOwnProps {
+  tmpl: TemplateItem;
+  ketcherId: string;
+  onCancel: () => void;
+  onOk: (result: unknown) => void;
+}
+
+interface AttachStateProps {
+  name: string;
+  atomid: number;
+  bondid: number;
+  templateLib: TemplateItem[];
+  formState: FormState;
+  globalSettings: Record<string, unknown>;
+}
+
+interface AttachDispatchProps {
+  onInit: (name: string, ap: AttachPoints) => void;
+  onAttachEdit: (ap: AttachPoints) => void;
+  onNameEdit: (name: string) => void;
+}
+
+type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -196,19 +246,24 @@ const editorStyles = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 },
 };
 
-class Attach extends Component {
+class Attach extends Component<AttachProps> {
   MODES = {
-    SAVE: 'save',
-    EDIT: 'edit',
+    SAVE: 'save' as const,
+    EDIT: 'edit' as const,
   };
 
-  constructor({ onInit, ...props }) {
-    super();
-    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
-    this.tmpl = initTmpl(props.tmpl);
+  mode: 'save' | 'edit';
+  tmpl: NormalizedTemplate;
+  oldKetcherEditor: Editor;
+
+  constructor(props: AttachProps) {
+    super(props);
+    const { onInit, ...rest } = props;
+    this.mode = isEmpty(rest.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
+    this.tmpl = initTmpl(rest.tmpl);
     onInit(this.tmpl.struct.name, this.tmpl.props);
     this.onResult = this.onResult.bind(this);
-    const ketcher = ketcherProvider.getKetcher(props.ketcherId);
+    const ketcher = ketcherProvider.getKetcher(rest.ketcherId);
     this.oldKetcherEditor = ketcher.editor;
   }
 
@@ -228,7 +283,7 @@ class Attach extends Component {
       : null;
   }
 
-  checkIsValidName(name) {
+  checkIsValidName(name: string) {
     return (
       !!name &&
       !this.props.templateLib.some(
@@ -266,7 +321,7 @@ class Attach extends Component {
       <TemplateEditDialog
         title={dialogTitle}
         result={this.onResult}
-        valid={() => this.props.formState.valid && name}
+        valid={() => this.props.formState.valid && !!name}
         params={prop}
         buttons={[]}
         needMargin={false}
@@ -306,12 +361,16 @@ class Attach extends Component {
             ) : null}
           </LeftColumn>
           <RightColumn>
+            {/* eslint-disable @typescript-eslint/no-explicit-any */}
             <NameInput
               name="name"
-              value={name}
-              onChange={this.props.onNameEdit}
-              placeholder="template"
+              {...({
+                value: name,
+                onChange: this.props.onNameEdit,
+                placeholder: 'template',
+              } as any)}
             />
+            {/* eslint-enable @typescript-eslint/no-explicit-any */}
             <span>Selected attachment points</span>
             <AttachmentOutput data-testid="attach-output">
               Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
@@ -347,33 +406,35 @@ class Attach extends Component {
   }
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default connect(
-  (store) => ({
+  (store: any) => ({
     ...store.templates.attach,
     templateLib: store.templates.lib,
     formState: store.modal.form,
     globalSettings: store.options.settings,
   }),
-  (dispatch) => ({
-    onInit: (name, ap) => dispatch(initAttach(name, ap)),
-    onAttachEdit: (ap) => dispatch(setAttachPoints(ap)),
-    onNameEdit: (name) => dispatch(setTmplName(name)),
+  (dispatch: any) => ({
+    onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
+    onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
+    onNameEdit: (name: string) => dispatch(setTmplName(name)),
   }),
-)(Attach);
+)(Attach as any);
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
-function initTmpl(tmpl) {
+function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {
     struct: structNormalization(tmpl.struct),
     props: {
-      atomid: +tmpl.props.atomid || 0,
-      bondid: +tmpl.props.bondid || 0,
+      atomid: Number(tmpl.props.atomid) || 0,
+      bondid: Number(tmpl.props.bondid) || 0,
     },
   };
   normTmpl.struct.name = tmpl.struct.name;
   return normTmpl;
 }
 
-function structNormalization(struct) {
+function structNormalization(struct: Struct): Struct {
   const normStruct = struct.clone();
   const cbb = normStruct.getCoordBoundingBox();
 
@@ -404,7 +465,7 @@ function structNormalization(struct) {
   return normStruct;
 }
 
-function getScale(struct) {
+function getScale(struct: Struct): number {
   const cbb = struct.getCoordBoundingBox();
   const VIEW_SIZE = 220;
   const scale =

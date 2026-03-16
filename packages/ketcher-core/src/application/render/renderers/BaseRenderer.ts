@@ -126,5 +126,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     this.rootElement?.style('opacity', isVisible ? 1 : 0);
   }
 
-  move() {}
+  move() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 }

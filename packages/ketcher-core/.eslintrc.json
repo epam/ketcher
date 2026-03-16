@@ -2,10 +2,7 @@
   "root": false,
   "extends": "plugin:jest/recommended",
   "rules": {
-    "@typescript-eslint/no-empty-function": [
-      "error",
-      { "allow": ["arrowFunctions"] }
-    ],
+    "@typescript-eslint/no-empty-function": "off",
     "no-useless-constructor": "off"
   },
   "overrides": [

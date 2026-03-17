@@ -344,6 +344,7 @@ test.describe('Sequence edit mode', () => {
     */
     await Library(page).hoverMonomer(Base.c7A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await page.waitForTimeout(200);
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 

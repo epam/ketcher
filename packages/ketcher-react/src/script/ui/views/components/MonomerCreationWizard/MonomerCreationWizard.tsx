@@ -833,6 +833,8 @@ const MonomerCreationWizard = () => {
       fieldId: 'type',
       value: newType as KetMonomerClass,
     });
+
+    editor.setRnaMonomerCreationMode(newType === 'rnaPreset');
   };
 
   const handleFieldChange = (
@@ -856,8 +858,6 @@ const MonomerCreationWizard = () => {
         value,
       });
     }
-
-    editor.setRnaMonomerCreationMode(value === 'rnaPreset');
   };
 
   useEffect(() => {

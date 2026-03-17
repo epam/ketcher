@@ -1194,6 +1194,7 @@ export class CoreEditor {
     if (this.mode instanceof SequenceMode) {
       return;
     }
+    console.log(rnaPresetItem);
 
     if (!rnaPresetItem.sugar) {
       this.events.error.dispatch('No sugar in RNA preset found');
@@ -1219,13 +1220,18 @@ export class CoreEditor {
       (monomer) => monomer instanceof Sugar,
     ) as BaseMonomer;
     const phosphate = monomers.find((monomer) => monomer instanceof Phosphate);
+    const isFivePrimePhosphate =
+      phosphate &&
+      sugar.attachmentPointsToBonds.R1?.getAnotherEntity(sugar) === phosphate &&
+      phosphate.attachmentPointsToBonds.R2?.getAnotherEntity(phosphate) ===
+        sugar;
 
     modelChanges.merge(addPresetModelChanges);
 
     return {
       modelChanges,
-      firstMonomer: sugar,
-      lastMonomer: phosphate ?? sugar,
+      firstMonomer: isFivePrimePhosphate ? phosphate : sugar,
+      lastMonomer: isFivePrimePhosphate ? sugar : phosphate ?? sugar,
       drawingEntities: [
         ...monomers,
         ...(sugar.attachmentPointsToBonds.R2

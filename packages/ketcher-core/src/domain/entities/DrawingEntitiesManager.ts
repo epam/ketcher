@@ -95,8 +95,8 @@ import {
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
   AtomLabel,
-  SnakeLayoutCellWidth,
   HalfMonomerSize,
+  SnakeLayoutCellWidth,
 } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -1599,22 +1599,11 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        const connectionTemplate = connections?.find((connection) => {
-          return (
-            (connection.endpoint1.templateId ===
-              getMonomerTemplateRefFromMonomerItem(
-                previousMonomer.monomerItem,
-              ) &&
-              connection.endpoint2.templateId ===
-                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem)) ||
-            (connection.endpoint2.templateId ===
-              getMonomerTemplateRefFromMonomerItem(
-                previousMonomer.monomerItem,
-              ) &&
-              connection.endpoint1.templateId ===
-                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem))
-          );
-        });
+        const connectionTemplate = this.findGroupTemplateConnection(
+          connections || [],
+          previousMonomer.monomerItem,
+          monomer.monomerItem,
+        );
         const attPointStart = connectionTemplate
           ? connectionTemplate.endpoint1.templateId ===
             getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
@@ -1650,15 +1639,61 @@ export class DrawingEntitiesManager {
     return command;
   };
 
+  private findGroupTemplateConnection(
+    connections: IKetTemplateConnection[],
+    monomer1: MonomerItemType,
+    monomer2?: MonomerItemType,
+  ) {
+    return (
+      monomer2 &&
+      connections?.find((connection) => {
+        return (
+          (connection.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            connection.endpoint2.templateId ===
+              getMonomerTemplateRefFromMonomerItem(monomer2)) ||
+          (connection.endpoint2.templateId ===
+            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            connection.endpoint1.templateId ===
+              getMonomerTemplateRefFromMonomerItem(monomer2))
+        );
+      })
+    );
+  }
+
   public addRnaPreset({
     sugar,
-    sugarPosition,
+    sugarPosition: _sugarPosition,
     phosphate,
-    phosphatePosition,
+    phosphatePosition: _phosphatePosition,
     rnaBase,
-    rnaBasePosition,
+    rnaBasePosition: _rnaBasePosition,
     connections,
   }: RnaPresetAdditionParams) {
+    const sugarPhosphateConnectionTemplate = this.findGroupTemplateConnection(
+      connections || [],
+      sugar,
+      phosphate,
+    );
+    const isFivePrimePhosphate =
+      sugarPhosphateConnectionTemplate?.endpoint1.templateId ===
+      getMonomerTemplateRefFromMonomerItem(sugar)
+        ? sugarPhosphateConnectionTemplate?.endpoint1.attachmentPointId ===
+          AttachmentPointName.R1
+        : sugarPhosphateConnectionTemplate?.endpoint2.attachmentPointId ===
+          AttachmentPointName.R1;
+
+    const sugarPosition = isFivePrimePhosphate
+      ? _phosphatePosition
+      : _sugarPosition;
+    const phosphatePosition = isFivePrimePhosphate
+      ? _sugarPosition
+      : _phosphatePosition;
+    const rnaBasePosition =
+      isFivePrimePhosphate && sugarPosition && _rnaBasePosition
+        ? new Vec2(sugarPosition.x, _rnaBasePosition.y)
+        : _rnaBasePosition;
+
     const command = new Command();
     const monomersToAdd: Array<[MonomerItemType, Vec2]> = [];
     if (rnaBase && rnaBasePosition) {
@@ -1681,22 +1716,11 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        const connectionTemplate = connections?.find((connection) => {
-          return (
-            (connection.endpoint1.templateId ===
-              getMonomerTemplateRefFromMonomerItem(
-                previousMonomer.monomerItem,
-              ) &&
-              connection.endpoint2.templateId ===
-                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem)) ||
-            (connection.endpoint2.templateId ===
-              getMonomerTemplateRefFromMonomerItem(
-                previousMonomer.monomerItem,
-              ) &&
-              connection.endpoint1.templateId ===
-                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem))
-          );
-        });
+        const connectionTemplate = this.findGroupTemplateConnection(
+          connections || [],
+          previousMonomer.monomerItem,
+          monomer.monomerItem,
+        );
         // requirements are: use connectionTemplate if exist. If no then Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
         const attPointStart = connectionTemplate
           ? connectionTemplate.endpoint1.templateId ===

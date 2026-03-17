@@ -49,9 +49,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -137,6 +135,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await expect(dialog.contextDropdown).toHaveValue('');
     await expect(dialog.fieldNameEditbox).toBeDisabled();
     await expect(dialog.fieldValueEditbox).toBeDisabled();
+
+    await dialog.cancel();
   });
 
   test('Case 3 — CIP labels are rendered under the bond after selection and move', async () => {
@@ -357,6 +357,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeElementScreenshot(page, dialog.window, {
       padding: 0,
     });
+
+    await dialog.cancel();
   });
 
   test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async () => {
@@ -524,4 +526,149 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       padding: -160,
     });
   });
+
+  // test('Case 10 — Monomer area selection works wrong if user scrolls down during selection', async ({
+  //   FlexCanvas: _,
+  // }) => {
+  //   /*
+  //    * Test task: https://github.com/epam/ketcher/issues/9137
+  //    * Bug: https://github.com/epam/ketcher/issues/7927
+  //    * Version: 3.8.0-rc.3
+  //    * Description:
+  //    * In Snake canvas, area selection behaves incorrectly when the user starts
+  //    * selection at the bottom of the screen and scrolls down using mouse wheel.
+  //    *
+  //    * Scenario:
+  //    * 1. Go to Macromolecules mode – Snake canvas (clean canvas)
+  //    * 2. Load the following HELM (very large RNA sequence)
+  //    * 3. Start area selection from the bottom of the screen
+  //    * 4. Scroll down using the mouse wheel during selection
+  //    *
+  //    * Expected Result:
+  //    * Area selection works correctly and selection area is consistent even after scrolling.
+  //    */
+
+  //   // Step 1: Switch to Macromolecules → Snake mode
+  //   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+  //     enableSnakeMode: true,
+  //   });
+
+  //   // Step 2: Load the huge HELM structure
+  //   await pasteFromClipboardAndAddToMacromoleculesCanvas(
+  //     page,
+  //     MacroFileType.HELM,
+  //     'RNA1{r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A]}$$$$V2.0',
+  //   );
+
+  //   // Step 3: Start area selection from the bottom of the screen
+  //   await CommonLeftToolbar(page).areaSelectionTool();
+
+  //   const viewport = page.viewportSize();
+  //   if (!viewport) throw new Error('Viewport is undefined');
+
+  //   const startX = viewport.width / 2;
+  //   const startY = viewport.height - 40;
+
+  //   await page.mouse.move(startX, startY);
+  //   await page.mouse.down();
+
+  //   // Step 4: Scroll down while still holding the selection
+  //   for (let i = 0; i < 10; i++) {
+  //     await page.mouse.wheel(0, 300);
+  //     await page.waitForTimeout(50);
+  //   }
+
+  //   // Finish selection (drag a bit lower)
+  //   await page.mouse.move(startX, startY + 200, { steps: 10 });
+  //   await page.mouse.up();
+
+  //   // Visual result validation
+  //   await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.15 });
+  // });
+
+  // test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
+  //   /*
+  //    * Test task: https://github.com/epam/ketcher/issues/9137
+  //    * Bug: https://github.com/epam/ketcher/issues/9084
+  //    * Version: 3.13.0-rc.1
+  //    * Description:
+  //    * When creating a new Nucleotide in the monomer wizard and manually defining
+  //    * attachment points (AP), Ketcher loses the user-defined AP configuration.
+  //    * It should instead validate that Sugar.R2 and Phosphate.R1 are already defined
+  //    * and show an error (prevent invalid save).
+  //    *
+  //    * Scenario:
+  //    * 1. Go to Molecules mode (clean canvas)
+  //    * 2. Load structure from file: issue.ket.zip (use provided test data)
+  //    * 3. Select the whole structure and open Create Monomer wizard
+  //    * 4. Choose "Nucleotide" type
+  //    * 5. Configure Base/Sugar/Phosphate per picture from the issue and set APs:
+  //    *    - Sugar: R2 is already defined (user tries to define it again)
+  //    *    - Phosphate: R1 is already defined (user tries to define it again)
+  //    * 6. Try to submit
+  //    *
+  //    * Expected result:
+  //    * Wizard shows validation error and does NOT allow saving an invalid configuration
+  //    * (AP duplicates). No loss of user-defined AP configuration.
+  //    */
+
+  //   // Step 1–2: Load structure from file as a new project (Molecules mode)
+  //   await openFileAndAddToCanvasAsNewProject(
+  //     page,
+  //     // Adjust the path if your test-data structure differs
+  //     'KET/Chromium-popup/Bugs/ketcher-3.13.0-bugs/issue.ket',
+  //   );
+
+  //   // Ensure canvas focus (popup mode)
+  //   await clickInTheMiddleOfTheScreen(page);
+
+  //   // Step 3: Select the whole structure and open Create Monomer wizard
+  //   await CommonLeftToolbar(page).areaSelectionTool();
+  //   await selectAllStructuresOnCanvas(page);
+  //   await LeftToolbar(page).createMonomer();
+
+  //   const dialog = CreateMonomerDialog(page);
+
+  //   // Step 4: Select type "Nucleotide" (not Nucleotide Preset)
+  //   await dialog.selectType(MonomerType.Nucleotide);
+
+  //   // Step 5: Configure fragments (Base/Sugar/Phosphate) + define attachment points per the issue
+  //   // NOTE: Replace the placeholders below with your actual actions/locators for the Nucleotide wizard.
+  //   // In your repo likely exists a Nucleotide section object similar to NucleotidePresetSection.
+  //   // If not, target controls by testIds used in your build (e.g. 'ap-sugar-r2', 'ap-phosphate-r1', etc.).
+
+  //   // --- Base fragment selection (per picture) ---
+  //   // TODO: set Base fragment (by selecting atoms/bonds or by picking region in wizard)
+  //   // await NucleotideSection(page).setupBase({ atomIds: [...], bondIds: [...] });
+
+  //   // --- Sugar fragment selection (per picture) ---
+  //   // TODO: set Sugar fragment
+  //   // await NucleotideSection(page).setupSugar({ atomIds: [...], bondIds: [...] });
+
+  //   // --- Phosphate fragment selection (per picture) ---
+  //   // TODO: set Phosphate fragment
+  //   // await NucleotideSection(page).setupPhosphate({ atomIds: [...], bondIds: [...] });
+
+  //   // --- Manually define APs as on the screenshot in the issue ---
+  //   // Sugar.R2 and Phosphate.R1 are already defined in the structure,
+  //   // user attempts to define them again → expected validation error.
+
+  //   // TODO: set AP for Sugar R2 (UI control depends on your wizard)
+  //   // await NucleotideSection(page).sugar.setAttachmentPoint('R2', TARGET_ATOM_ID_OR_HANDLE);
+
+  //   // TODO: set AP for Phosphate R1
+  //   // await NucleotideSection(page).phosphate.setAttachmentPoint('R1', TARGET_ATOM_ID_OR_HANDLE);
+
+  //   // Step 6: Try to submit (expect validation error shown and submit blocked)
+  //   // We use visual regression on the wizard window to confirm the error is shown.
+  //   // If your build shows inline error near AP controls, it's captured by the screenshot.
+  //   // If a toast appears, it will also be captured on top of the dialog.
+  //   await takeElementScreenshot(page, dialog.window, { padding: 0 });
+
+  //   // Optionally, if your build disables the submit button on invalid APs, you can assert it:
+  //   // await expect(dialog.saveButton).toBeDisabled(); // uncomment if applicable
+
+  //   // Close the wizard to cleanup (do not save invalid configuration)
+  //   await dialog.cancel();
+  // });
 });

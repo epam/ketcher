@@ -42,7 +42,6 @@ import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import { IconName } from 'components';
-import { convertDraftToLexical, DraftEditorState } from 'ketcher-core';
 
 interface TextProps extends DialogParams {
   formState: any;

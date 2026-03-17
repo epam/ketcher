@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { formReducer, formsState } from './form';
+import type { Dispatch, UnknownAction } from 'redux';
 
 type ModalFormResult = Record<string, unknown>;
 type ModalFormState = typeof formsState[keyof typeof formsState];
@@ -59,7 +60,7 @@ type ModalAction =
       data?: unknown;
     };
 
-type ModalDispatch = (action: ModalAction) => void;
+type ModalDispatch = Dispatch<UnknownAction>;
 
 function getFormResult(form: ModalFormState | null): ModalFormResult {
   if (!form || typeof form !== 'object' || !('result' in form)) {
@@ -84,8 +85,8 @@ export function openDialog<T = unknown>(
         name: dialogName,
         prop: {
           ...props,
-          onResult: resolve,
-          onCancel: reject,
+          onResult: (value) => resolve(value as T),
+          onCancel: (reason) => reject(reason),
         },
       },
     });

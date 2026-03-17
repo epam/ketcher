@@ -23,6 +23,11 @@ import { storage } from '../../storage-ext';
 
 export { initTmplLib };
 
+type AttachDialogResult = {
+  name: string;
+  attach?: Record<string, unknown>;
+};
+
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
   return {
@@ -83,7 +88,7 @@ export function setTmplName(name) {
 
 export function editTmpl(tmpl) {
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
+    openDialog<AttachDialogResult | null>(dispatch, 'attach', { tmpl })
       .then(
         (formData) => {
           tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name;
@@ -127,7 +132,7 @@ export function saveUserTmpl(struct) {
   const tmpl = { struct: struct.clone(), props: {} };
 
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
+    openDialog<AttachDialogResult>(dispatch, 'attach', { tmpl })
       .then(({ name, attach }) => {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };

@@ -197,11 +197,14 @@ export const selectAxoLabsAliasesByPresetName = createSelector(
     const presets = defaultPresets ?? [];
     return presets.reduce(
       (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
-        if (preset.aliasAxoLabs && preset.name) {
-          aliases.set(
-            preset.name.toLowerCase(),
-            preset.aliasAxoLabs.toLowerCase(),
-          );
+        const aliasAxoLabs = (
+          preset as IKetMonomerGroupTemplate & {
+            aliasAxoLabs?: string;
+          }
+        ).aliasAxoLabs;
+
+        if (aliasAxoLabs && preset.name) {
+          aliases.set(preset.name.toLowerCase(), aliasAxoLabs.toLowerCase());
         }
         return aliases;
       },

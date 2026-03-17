@@ -151,8 +151,13 @@ function handleAtomPropsDialog({
   } else {
     const atomFromStruct = restruct.atoms.get(hoveredItemId);
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
+    const dialogName = newAction.dialog;
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal)
+    if (!dialogName) {
+      return;
+    }
+
+    openDialog(dispatch, dialogName, convertedAtomForModal)
       .then((res) => {
         const updatedAtom = fromAtomsAttrs(
           restruct,
@@ -181,8 +186,13 @@ function handleBondPropsDialog({
   const restruct = editor.render.ctab;
   const bondFromStruct = restruct.bonds.get(hoveredItemId);
   const convertedBondForModal = fromBond(bondFromStruct?.b);
+  const dialogName = newAction.dialog;
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal)
+  if (!dialogName) {
+    return;
+  }
+
+  openDialog(dispatch, dialogName, convertedBondForModal)
     .then((res) => {
       const updatedBond = fromBondsAttrs(
         restruct,

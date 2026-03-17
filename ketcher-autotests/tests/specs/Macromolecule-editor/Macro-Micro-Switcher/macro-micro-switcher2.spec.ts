@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   takePageScreenshot,
-  takeTopToolbarScreenshot,
   MacroFileType,
   MolFileFormat,
   dragMouseTo,

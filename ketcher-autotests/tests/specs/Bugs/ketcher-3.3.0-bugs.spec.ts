@@ -5,14 +5,13 @@
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,

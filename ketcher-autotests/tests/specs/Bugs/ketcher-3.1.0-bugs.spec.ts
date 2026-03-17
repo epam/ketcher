@@ -5,7 +5,6 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,

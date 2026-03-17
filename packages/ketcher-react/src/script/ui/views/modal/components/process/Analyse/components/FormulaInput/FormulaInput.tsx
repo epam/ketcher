@@ -14,17 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KeyboardEvent, ReactNode } from 'react';
 import styles from './FormulaInput.module.less';
 
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
 const errorRegexp = /error:.*/g;
 
-function formulaInputMarkdown(contentData) {
+interface FormulaInputMarkdownProps {
+  content: ReactNode;
+  contentEditable: boolean;
+}
+
+interface FormulaInputProps {
+  value: string;
+  contentEditable: boolean;
+}
+
+function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
   const { content, contentEditable } = contentData;
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode === 8) {
       e.preventDefault();
-      return false;
     }
   };
   return (
@@ -44,11 +54,12 @@ function formulaInputMarkdown(contentData) {
   );
 }
 
-function FormulaInput({ value, contentEditable }) {
-  if (errorRegexp.test(value)) return formulaInputMarkdown(value);
+function FormulaInput({ value, contentEditable }: FormulaInputProps) {
+  if (errorRegexp.test(value))
+    return formulaInputMarkdown({ content: value, contentEditable });
 
-  const content = [];
-  let cnd;
+  const content: ReactNode[] = [];
+  let cnd: RegExpExecArray | null;
   let pos = 0;
 
   while ((cnd = formulaRegexp.exec(value)) !== null) {

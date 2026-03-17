@@ -56,13 +56,27 @@ export class FlexMode extends BaseMode {
     return command;
   }
 
-  isPasteAllowedByMode(): boolean {
-    return true;
+  isPasteAllowedByMode(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): boolean {
+    return drawingEntitiesManager.hasDrawingEntities;
   }
 
-  isPasteAvailable(): boolean {
-    return true;
+  isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager): boolean {
+    return (
+      drawingEntitiesManager.monomers.size > 0 ||
+      drawingEntitiesManager.atoms.size > 0 ||
+      drawingEntitiesManager.polymerBonds.size > 0 ||
+      drawingEntitiesManager.bonds.size > 0
+    );
   }
 
   scrollForView(): void {}
+
+  get keyboardEventHandlers(): Record<
+    string,
+    { handler: (event: KeyboardEvent) => void }
+  > {
+    return {};
+  }
 }

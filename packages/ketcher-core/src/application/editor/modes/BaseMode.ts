@@ -78,9 +78,10 @@ export abstract class BaseMode {
     });
   }
 
-  get keyboardEventHandlers() {
-    return {};
-  }
+  abstract get keyboardEventHandlers(): Record<
+    string,
+    { handler: (event: KeyboardEvent) => void }
+  >;
 
   abstract getNewNodePosition();
 

@@ -11,7 +11,6 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  // waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,

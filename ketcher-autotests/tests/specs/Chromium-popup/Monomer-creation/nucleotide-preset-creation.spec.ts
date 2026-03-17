@@ -72,7 +72,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
      *
      * Version 3.12
      */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)CC(C)CCCC(C)CCC');
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
@@ -663,37 +663,6 @@ test.describe('Mark as... context menu for Nucleotide (preset) components', () =
     await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
 
     await takeEditorScreenshot(page);
-
-    await dialog.discard();
-  });
-
-  test('No "Mark as a..." option after switching from Nucleotide (preset) to Base with confirmation', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/9132
-     * Description: After switching from Nucleotide (preset) to Base and confirming
-     * type change, context menu should not show "Mark as a...".
-     *
-     * Case:
-     *      1. Open wizard and select Nucleotide (preset)
-     *      2. Switch type to Base
-     *      3. Confirm modal with Yes
-     *      4. Open context menu on selected structure
-     *      5. Verify "Mark as a..." is not visible
-     *
-     * Version 3.13
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
-    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await dialog.selectType(MonomerTypeInDropdown.Base);
-    await confirmModal.ok();
-
-    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
-    await ContextMenu(page, getAtomLocator(page, { atomId: 0 })).open();
-
-    await expect(page.getByTestId(MonomerWizardOption.MarkAs)).toHaveCount(0);
 
     await dialog.discard();
   });

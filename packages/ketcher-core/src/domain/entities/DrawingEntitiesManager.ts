@@ -1557,6 +1557,7 @@ export class DrawingEntitiesManager {
 
   public addRnaPresetFromNode = (
     node: Nucleotide | Nucleoside | LinkerSequenceNode,
+    connections?: IKetTemplateConnection[],
   ) => {
     // TODO: Consider combining it with the method below to avoid code duplication
     const command = new Command();
@@ -1598,8 +1599,34 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        const connectionTemplate = connections?.find((connection) => {
+          return (
+            (connection.endpoint1.templateId ===
+              getMonomerTemplateRefFromMonomerItem(
+                previousMonomer.monomerItem,
+              ) &&
+              connection.endpoint2.templateId ===
+                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem)) ||
+            (connection.endpoint2.templateId ===
+              getMonomerTemplateRefFromMonomerItem(
+                previousMonomer.monomerItem,
+              ) &&
+              connection.endpoint1.templateId ===
+                getMonomerTemplateRefFromMonomerItem(monomer.monomerItem))
+          );
+        });
+        const attPointStart = connectionTemplate
+          ? connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            ? connectionTemplate.endpoint1.attachmentPointId
+            : connectionTemplate.endpoint2.attachmentPointId
+          : previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = connectionTemplate
+          ? connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            ? connectionTemplate.endpoint2.attachmentPointId
+            : connectionTemplate.endpoint1.attachmentPointId
+          : monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
         assert(attPointEnd);

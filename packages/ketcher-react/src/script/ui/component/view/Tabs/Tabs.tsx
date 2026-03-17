@@ -14,41 +14,62 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react';
+import { Component, ComponentType, MouseEvent, KeyboardEvent } from 'react';
 import classes from './Tabs.module.less';
 import clsx from 'clsx';
 
-class Tabs extends Component {
-  constructor(props) {
+interface TabPanel {
+  caption: string;
+  component?: ComponentType;
+  props?: Record<string, unknown>;
+  tabIndex?: number;
+}
+
+interface TabsProps {
+  tabs: TabPanel[];
+  tabIndex?: number;
+  changeTab: (index: number) => void;
+  className?: string;
+  contentClassName?: string;
+  captions?: TabPanel[];
+}
+
+interface TabsState {
+  tabIndex: number;
+}
+
+class Tabs extends Component<TabsProps, TabsState> {
+  constructor(props: TabsProps) {
     super(props);
-    this.state = {};
-    this.state.tabIndex = props.tabIndex || 0;
+    this.state = {
+      tabIndex: props.tabIndex || 0,
+    };
     this.props.changeTab(this.state.tabIndex);
   }
 
   // TODO: refactor the component
-  changeTab(ev, index) {
+  changeTab(_ev: MouseEvent | KeyboardEvent, index: number) {
     this.setState({ tabIndex: index });
     if (this.props.changeTab) this.props.changeTab(index);
   }
 
-  handleKeyDown(ev, index) {
+  handleKeyDown(ev: KeyboardEvent, index: number) {
     if (ev.key === 'Enter' || ev.key === ' ') {
       ev.preventDefault();
       this.changeTab(ev, index);
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: TabsProps) {
     if (this.props.tabIndex !== prevProps.tabIndex) {
-      this.setState({ tabIndex: this.props.tabIndex });
+      this.setState({ tabIndex: this.props.tabIndex || 0 });
     }
   }
 
   render() {
     const { tabs, contentClassName, className, tabIndex } = this.props;
     const tabPanel = tabs[this.state.tabIndex];
-    const Component = tabPanel?.component;
+    const TabComponent = tabPanel?.component;
     const componentProps = tabPanel?.props;
     return (
       <div>
@@ -71,9 +92,9 @@ class Tabs extends Component {
             ))}
           </li>
         </ul>
-        {tabPanel && (
+        {TabComponent && (
           <div className={contentClassName}>
-            <Component {...componentProps} />
+            <TabComponent {...componentProps} />
           </div>
         )}
       </div>

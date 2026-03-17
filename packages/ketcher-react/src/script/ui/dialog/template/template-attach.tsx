@@ -24,6 +24,7 @@ import {
 } from '../../state/templates';
 
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { storage } from '../../storage-ext';
 import Form, { Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
@@ -82,6 +83,23 @@ interface AttachDispatchProps {
 }
 
 type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
+
+interface StoreState {
+  templates: {
+    attach: {
+      name: string;
+      atomid: number;
+      bondid: number;
+    };
+    lib: TemplateItem[];
+  };
+  modal: {
+    form: FormState;
+  };
+  options: {
+    settings: Record<string, unknown>;
+  };
+}
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -247,11 +265,6 @@ const editorStyles = {
 };
 
 class Attach extends Component<AttachProps> {
-  MODES = {
-    SAVE: 'save' as const,
-    EDIT: 'edit' as const,
-  };
-
   mode: 'save' | 'edit';
   tmpl: NormalizedTemplate;
   oldKetcherEditor: Editor;
@@ -259,7 +272,7 @@ class Attach extends Component<AttachProps> {
   constructor(props: AttachProps) {
     super(props);
     const { onInit, ...rest } = props;
-    this.mode = isEmpty(rest.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
+    this.mode = isEmpty(rest.tmpl.props) ? 'save' : 'edit';
     this.tmpl = initTmpl(rest.tmpl);
     onInit(this.tmpl.struct.name, this.tmpl.props);
     this.onResult = this.onResult.bind(this);
@@ -313,15 +326,15 @@ class Attach extends Component<AttachProps> {
       reuseRestructIfExist: false,
     });
     const dialogTitle =
-      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit';
+      this.mode === 'save' ? 'Save to Templates' : 'Template Edit';
     const warningObject =
-      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates';
+      this.mode === 'save' ? 'Templates' : 'Edited templates';
 
     return (
       <TemplateEditDialog
         title={dialogTitle}
         result={this.onResult}
-        valid={() => this.props.formState.valid && !!name}
+        valid={() => this.props.formState.valid && Boolean(name)}
         params={prop}
         buttons={[]}
         needMargin={false}
@@ -361,16 +374,12 @@ class Attach extends Component<AttachProps> {
             ) : null}
           </LeftColumn>
           <RightColumn>
-            {/* eslint-disable @typescript-eslint/no-explicit-any */}
             <NameInput
               name="name"
-              {...({
-                value: name,
-                onChange: this.props.onNameEdit,
-                placeholder: 'template',
-              } as any)}
+              value={name}
+              onChange={this.props.onNameEdit}
+              placeholder="template"
             />
-            {/* eslint-enable @typescript-eslint/no-explicit-any */}
             <span>Selected attachment points</span>
             <AttachmentOutput data-testid="attach-output">
               Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
@@ -391,12 +400,12 @@ class Attach extends Component<AttachProps> {
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
                 data-testid={
-                  this.mode === this.MODES.SAVE
+                  this.mode === 'save'
                     ? 'template-save-button'
                     : 'template-edit-button'
                 }
               >
-                {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
+                {this.mode === 'save' ? 'Save' : 'Edit'}
               </SaveButton>
             </Buttons>
           </RightColumn>
@@ -406,21 +415,22 @@ class Attach extends Component<AttachProps> {
   }
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default connect(
-  (store: any) => ({
-    ...store.templates.attach,
-    templateLib: store.templates.lib,
-    formState: store.modal.form,
-    globalSettings: store.options.settings,
-  }),
-  (dispatch: any) => ({
-    onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
-    onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
-    onNameEdit: (name: string) => dispatch(setTmplName(name)),
-  }),
-)(Attach as any);
-/* eslint-enable @typescript-eslint/no-explicit-any */
+const mapStateToProps = (store: StoreState): AttachStateProps => ({
+  ...store.templates.attach,
+  templateLib: store.templates.lib,
+  formState: store.modal.form,
+  globalSettings: store.options.settings,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
+  onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
+  onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
+  onNameEdit: (name: string) => dispatch(setTmplName(name)),
+});
+
+// Type assertion needed due to @types/react version mismatch with react-redux
+const connector = connect(mapStateToProps, mapDispatchToProps);
+export default connector(Attach as never);
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

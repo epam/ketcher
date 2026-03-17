@@ -17,10 +17,10 @@
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
 import { SettingsManager } from 'ketcher-core';
 import actions, { UiAction, UiActionAction } from '../../action';
-import Editor from '../../../editor/Editor';
 
 type ActionParams = {
-  editor: Editor;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  editor: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   server: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +57,7 @@ function execute(
     }
   } else if (typeof action === 'function') {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (action as (editor: Editor, server: any, options: any) => void)(
+    (action as (editor: any, server: any, options: any) => void)(
       editor,
       server,
       options,

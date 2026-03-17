@@ -1194,7 +1194,6 @@ export class CoreEditor {
     if (this.mode instanceof SequenceMode) {
       return;
     }
-    console.log(rnaPresetItem);
 
     if (!rnaPresetItem.sugar) {
       this.events.error.dispatch('No sugar in RNA preset found');

@@ -17,7 +17,7 @@ import { getNodeWithInvertedYCoord } from '../helpers';
 import type { SerializedRootNode } from 'lexical/nodes/LexicalRootNode';
 import type { SerializedParagraphNode } from 'lexical/nodes/LexicalParagraphNode';
 import type { SerializedTextNode } from 'lexical/nodes/LexicalTextNode';
-import { convertDraftToLexical } from 'application/render';
+import { convertDraftToLexical } from 'ketcher-core';
 
 interface KETTextPart {
   text: string;

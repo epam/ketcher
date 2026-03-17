@@ -16,8 +16,68 @@
 
 import { formReducer, formsState } from './form';
 
-export function openDialog(dispatch, dialogName, props) {
-  return new Promise((resolve, reject) => {
+type ModalFormResult = Record<string, unknown>;
+type ModalFormState = typeof formsState[keyof typeof formsState];
+
+interface ModalProps extends Record<string, unknown> {
+  isNestedModal?: boolean;
+  isRestoredModal?: boolean;
+  onResult?: (value: unknown) => void;
+  onCancel?: (reason?: unknown) => void;
+}
+
+interface ModalState {
+  name: string;
+  form: ModalFormState | null;
+  prop: ModalProps | null;
+  parentModal: ModalState | null;
+}
+
+interface ModalOpenAction {
+  type: 'MODAL_OPEN';
+  data: {
+    name: string;
+    prop?: ModalProps | null;
+  };
+}
+
+interface ModalCloseAction {
+  type: 'MODAL_CLOSE';
+}
+
+interface UpdateFormAction {
+  type: 'UPDATE_FORM';
+  data: Record<string, unknown>;
+}
+
+type ModalAction =
+  | ModalOpenAction
+  | ModalCloseAction
+  | UpdateFormAction
+  | {
+      type: string;
+      data?: unknown;
+    };
+
+type ModalDispatch = (action: ModalAction) => void;
+
+function getFormResult(form: ModalFormState | null): ModalFormResult {
+  if (!form || typeof form !== 'object' || !('result' in form)) {
+    return {};
+  }
+
+  const result = (form as { result?: unknown }).result;
+  return result && typeof result === 'object'
+    ? (result as ModalFormResult)
+    : {};
+}
+
+export function openDialog<T = unknown>(
+  dispatch: ModalDispatch,
+  dialogName: string,
+  props: ModalProps = {},
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
     dispatch({
       type: 'MODAL_OPEN',
       data: {
@@ -32,8 +92,11 @@ export function openDialog(dispatch, dialogName, props) {
   });
 }
 
-function modalReducer(state = null, action) {
-  const { type, data } = action;
+function modalReducer(
+  state: ModalState | null = null,
+  action: ModalAction,
+): ModalState | null {
+  const { type } = action;
 
   if (type === 'UPDATE_FORM') {
     // Don't update if modal has already been closed
@@ -43,28 +106,36 @@ function modalReducer(state = null, action) {
       return null;
     }
 
-    const formState = formReducer(state.form, action);
+    const formState = formReducer(state.form, action) as ModalFormState;
     return { ...state, form: formState };
   }
 
   switch (type) {
     case 'MODAL_CLOSE':
       if (state?.parentModal) {
-        state.parentModal.prop = {
-          ...state.parentModal.prop,
-          ...state.parentModal.form.result,
-          isRestoredModal: true,
+        return {
+          ...state.parentModal,
+          prop: {
+            ...(state.parentModal.prop || {}),
+            ...getFormResult(state.parentModal.form),
+            isRestoredModal: true,
+          },
         };
-        return state.parentModal;
       }
       return null;
-    case 'MODAL_OPEN':
+
+    case 'MODAL_OPEN': {
+      const data = (action as ModalOpenAction).data;
+      const modalForms = formsState as Record<string, ModalFormState>;
+
       return {
         name: data.name,
-        form: formsState[data.name] || null,
+        form: modalForms[data.name] || null,
         prop: data.prop || null,
         parentModal: data.prop?.isNestedModal ? state : null,
       };
+    }
+
     default:
       return state;
   }

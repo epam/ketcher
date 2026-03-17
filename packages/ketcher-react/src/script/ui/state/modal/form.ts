@@ -19,6 +19,7 @@ import { initSdata, nucleotideComponentReducer, sdataReducer } from './sdata';
 import { getDefaultOptions } from '../../data/schema/options-schema';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 import { SUPERATOM_CLASS } from 'ketcher-core';
+import { UnknownAction } from 'redux';
 
 type ModalFormErrors = Record<string, unknown>;
 
@@ -37,6 +38,8 @@ interface UpdateFormAction<TData = Partial<ModalFormState>> {
   type: 'UPDATE_FORM';
   data: TData;
 }
+
+type ModalReducerAction = UpdateFormAction | UnknownAction;
 
 export const formsState: ModalFormsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -169,10 +172,11 @@ export function setDefaultSettings(): UpdateFormAction {
 }
 
 export function formReducer(
-  state: ModalFormState,
-  action: UpdateFormAction,
+  state: ModalFormState = { errors: {} },
+  action: ModalReducerAction,
 ): ModalFormState {
-  const actionData = action.data as Partial<ModalFormState>;
+  const actionData =
+    'data' in action ? (action.data as Partial<ModalFormState>) : {};
   const actionResult = actionData.result as Record<string, unknown>;
   const newType = actionResult?.type;
 

@@ -19,7 +19,7 @@ import { initSdata, nucleotideComponentReducer, sdataReducer } from './sdata';
 import { getDefaultOptions } from '../../data/schema/options-schema';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 import { SUPERATOM_CLASS } from 'ketcher-core';
-import { UnknownAction } from 'redux';
+import { AnyAction } from 'redux';
 
 type ModalFormErrors = Record<string, unknown>;
 
@@ -34,12 +34,12 @@ interface ModalFormState<TResult = Record<string, unknown>> {
 
 type ModalFormsState = Record<string, ModalFormState>;
 
-interface UpdateFormAction<TData = Partial<ModalFormState>> {
+interface UpdateFormAction<TData = Partial<ModalFormState>> extends AnyAction {
   type: 'UPDATE_FORM';
   data: TData;
 }
 
-type ModalReducerAction = UpdateFormAction | UnknownAction;
+type ModalReducerAction = UpdateFormAction | AnyAction;
 
 export const formsState: ModalFormsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -172,23 +172,24 @@ export function setDefaultSettings(): UpdateFormAction {
 }
 
 export function formReducer(
-  state: ModalFormState = { errors: {} },
+  state: unknown = { errors: {} },
   action: ModalReducerAction,
-): ModalFormState {
+): unknown {
   const actionData =
     'data' in action ? (action.data as Partial<ModalFormState>) : {};
+  const formState = state as ModalFormState;
   const actionResult = actionData.result as Record<string, unknown>;
   const newType = actionResult?.type;
 
-  if (newType === 'DAT') return sdataReducer(state, action);
+  if (newType === 'DAT') return sdataReducer(formState, action);
   if (
     newType === 'SUP' &&
-    state?.result?.type !== 'nucleotideComponent' &&
+    formState?.result?.type !== 'nucleotideComponent' &&
     (Object.values(SUPERATOM_CLASS) as string[]).includes(
       actionResult?.class as string,
     )
   )
-    return nucleotideComponentReducer(state, action);
+    return nucleotideComponentReducer(formState, action);
 
-  return { ...state, ...actionData };
+  return { ...(state as object), ...actionData };
 }

@@ -26,6 +26,8 @@ import { connect } from 'react-redux';
 import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 interface AnalyseValues {
   gross?: string;
@@ -175,8 +177,7 @@ function AnalyseDialog({
                 <span>Decimal places</span>
                 <Select
                   options={selectOptions}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  value={round[item.round] as any}
+                  value={round[item.round]}
                   onChange={(val) => {
                     if (item.round) {
                       onChangeRound(item.round, val);
@@ -194,8 +195,21 @@ function AnalyseDialog({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapStateToProps = (state: any) => ({
+interface AnalyseState {
+  values: AnalyseValues | null;
+  loading: boolean;
+  roundWeight: number;
+  roundMass: number;
+  roundElAnalysis: number;
+}
+
+interface RootState {
+  options: {
+    analyse: AnalyseState;
+  };
+}
+
+const mapStateToProps = (state: RootState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -205,18 +219,14 @@ const mapStateToProps = (state: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+type AppDispatch = ThunkDispatch<RootState, unknown, Action<string>>;
+
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName: string, val: string) =>
     dispatch(changeRound(roundName, val)),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyse = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-)(AnalyseDialog as any) as any;
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
 export default Analyse;

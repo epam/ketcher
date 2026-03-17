@@ -92,7 +92,7 @@ class Tabs extends Component<TabsProps, TabsState> {
             ))}
           </li>
         </ul>
-        {tabPanel && TabComponent && (
+        {TabComponent && (
           <div className={contentClassName}>
             <TabComponent {...componentProps} />
           </div>

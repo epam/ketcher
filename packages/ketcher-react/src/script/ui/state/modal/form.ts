@@ -20,7 +20,25 @@ import { getDefaultOptions } from '../../data/schema/options-schema';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 import { SUPERATOM_CLASS } from 'ketcher-core';
 
-export const formsState = {
+type ModalFormErrors = Record<string, unknown>;
+
+type MoleculeErrors = Record<string, string>;
+
+interface ModalFormState<TResult = Record<string, unknown>> {
+  errors: ModalFormErrors;
+  valid?: boolean;
+  result?: TResult;
+  moleculeErrors?: MoleculeErrors;
+}
+
+type ModalFormsState = Record<string, ModalFormState>;
+
+interface UpdateFormAction<TData = Partial<ModalFormState>> {
+  type: 'UPDATE_FORM';
+  data: TData;
+}
+
+export const formsState: ModalFormsState = {
   // TODO: create from schema.{smth}.defaultValue
   // TODO: change validation method, no 'valid:true' props as default
   atomProps: {
@@ -123,40 +141,50 @@ export const formsState = {
   sgroup: initSdata(sdataCustomSchema),
 };
 
-export function updateFormState(data) {
+export function updateFormState<TData extends Partial<ModalFormState>>(
+  data: TData,
+): UpdateFormAction<TData> {
   return {
     type: 'UPDATE_FORM',
     data,
   };
 }
 
-export function checkErrors(errors) {
+export function checkErrors(errors: MoleculeErrors): UpdateFormAction {
   return {
     type: 'UPDATE_FORM',
     data: { moleculeErrors: errors },
   };
 }
 
-export function setDefaultSettings() {
+export function setDefaultSettings(): UpdateFormAction {
   return {
     type: 'UPDATE_FORM',
     data: {
-      result: getDefaultOptions(sdataCustomSchema),
+      result: getDefaultOptions(),
       valid: true,
-      errors: {},
+      errors: {} as ModalFormErrors,
     },
   };
 }
 
-export function formReducer(state, action) {
-  const newType = action.data?.result?.type;
+export function formReducer(
+  state: ModalFormState,
+  action: UpdateFormAction,
+): ModalFormState {
+  const actionData = action.data as Partial<ModalFormState>;
+  const actionResult = actionData.result as Record<string, unknown>;
+  const newType = actionResult?.type;
+
   if (newType === 'DAT') return sdataReducer(state, action);
   if (
     newType === 'SUP' &&
     state?.result?.type !== 'nucleotideComponent' &&
-    Object.values(SUPERATOM_CLASS).includes(action.data?.result?.class)
+    (Object.values(SUPERATOM_CLASS) as string[]).includes(
+      actionResult?.class as string,
+    )
   )
     return nucleotideComponentReducer(state, action);
 
-  return { ...state, ...action.data };
+  return { ...state, ...actionData };
 }

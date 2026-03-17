@@ -22,7 +22,6 @@ import ReObject from './reobject';
 import ReStruct from './restruct';
 import { Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
-import { convertDraftToLexical } from './draftToLexical';
 
 export interface SerializedTextNode {
   detail?: number;
@@ -174,12 +173,13 @@ class ReText extends ReObject {
     try {
       if (this.item.content) {
         const parsed = JSON.parse(this.item.content);
-        // Support both Lexical and Draft.js formats
+        // Support Lexical format only (convert at import time).
         if (parsed && parsed.root) {
           editorState = parsed as SerializedEditorState;
-        } else if (parsed && parsed.blocks) {
-          // Import conversion from service
-          editorState = convertDraftToLexical(parsed);
+        } else {
+          console.warn(
+            'Unsupported editor state format in text content; expected Lexical JSON.',
+          );
         }
       }
     } catch (error) {

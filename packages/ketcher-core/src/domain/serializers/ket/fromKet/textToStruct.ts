@@ -16,9 +16,35 @@
 
 import { Struct, Text } from 'domain/entities';
 import { getNodeWithInvertedYCoord } from '../helpers';
+import {
+  convertDraftToLexical,
+  DraftEditorState,
+} from 'application/render/restruct/draftToLexical';
 
 export function textToStruct(ketItem: any, struct: Struct) {
-  const text = new Text(getNodeWithInvertedYCoord(ketItem.data));
+  const node = getNodeWithInvertedYCoord(ketItem.data);
+
+  // If the incoming node.content is Draft.js shape (stringified or object),
+  // convert it to Lexical format at parse time so we store only Lexical JSON.
+  if (node && node.content) {
+    try {
+      // If content is a JSON string, try to parse it
+      const parsed =
+        typeof node.content === 'string'
+          ? JSON.parse(node.content)
+          : node.content;
+
+      if (parsed && Array.isArray((parsed as DraftEditorState).blocks)) {
+        const lexical = convertDraftToLexical(parsed as DraftEditorState);
+        node.content = JSON.stringify(lexical);
+      }
+    } catch (e) {
+      // Leave content as-is if parsing/conversion fails
+      // (content may already be Lexical or plain text)
+    }
+  }
+
+  const text = new Text(node);
   text.setInitiallySelected(ketItem.selected);
   struct.texts.add(text);
   return struct;

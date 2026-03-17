@@ -47,8 +47,16 @@ export function convertDraftToLexical(
     const textChildren: (SerializedTextNode | { type: string })[] = [];
 
     if (block.text.length === 0) {
-      // Empty block
-      textChildren.push({ type: 'br' });
+      // Empty block — Lexical doesn't have a 'br' node type in serialized state.
+      // Emit an empty text node instead so Lexical can parse it and
+      // the renderer will treat it as an empty paragraph.
+      textChildren.push({
+        type: 'text',
+        text: '',
+        format: 0,
+        style: '',
+        version: 1,
+      });
     } else {
       // Build text segments with their respective styles
       const segments = buildTextSegments(

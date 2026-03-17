@@ -39,8 +39,6 @@ import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
-// Import the Draft.js to Lexical converter
-// import { convertDraftToLexical, DraftEditorState } from 'ketcher-core/src/application/render/restruct/draftToLexical';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import { IconName } from 'components';
@@ -261,16 +259,11 @@ export const normalizeEditorState = (
     ) {
       return content;
     }
-    // If Draft.js format, convert to Lexical and return as string
-    if (parsed && parsed.blocks && Array.isArray(parsed.blocks)) {
-      const lexicalState = convertDraftToLexical(parsed as DraftEditorState);
-      return JSON.stringify(lexicalState);
-    }
-    // If not recognized, treat as empty
-    console.warn('Unsupported editor state format, falling back to empty');
   } catch (e) {
     console.warn('Failed to parse editor state', e);
   }
+  // For import-time conversion we expect Serialised Lexical state stored in `content`.
+  // If it's not valid Lexical JSON, return undefined so the editor starts empty.
   return undefined;
 };
 

@@ -1683,9 +1683,10 @@ export class DrawingEntitiesManager {
         : sugarPhosphateConnectionTemplate?.endpoint2.attachmentPointId ===
           AttachmentPointName.R1;
 
-    const sugarPosition = isFivePrimePhosphate
-      ? _phosphatePosition
-      : _sugarPosition;
+    const sugarPosition =
+      isFivePrimePhosphate && _phosphatePosition
+        ? _phosphatePosition
+        : _sugarPosition;
     const phosphatePosition = isFivePrimePhosphate
       ? _sugarPosition
       : _phosphatePosition;

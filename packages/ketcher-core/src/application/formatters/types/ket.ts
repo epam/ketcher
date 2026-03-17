@@ -206,7 +206,7 @@ export interface IKetMonomerGroupTemplate {
   type: KetTemplateType;
   class?: KetMonomerGroupTemplateClass;
   templates: IKetMonomerTemplateRef[];
-  connections: IKetTemplateConnection[];
+  connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
 }

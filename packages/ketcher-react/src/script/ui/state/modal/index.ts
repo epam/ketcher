@@ -19,7 +19,7 @@ import { formReducer, formsState } from './form';
 type ModalFormResult = Record<string, unknown>;
 type ModalFormState = typeof formsState[keyof typeof formsState];
 
-interface ModalProps extends Record<string, unknown> {
+interface ModalDialogProps extends Record<string, unknown> {
   isNestedModal?: boolean;
   isRestoredModal?: boolean;
   onResult?: (value: unknown) => void;
@@ -29,7 +29,7 @@ interface ModalProps extends Record<string, unknown> {
 interface ModalState {
   name: string;
   form: ModalFormState | null;
-  prop: ModalProps | null;
+  prop: ModalDialogProps | null;
   parentModal: ModalState | null;
 }
 
@@ -37,7 +37,7 @@ interface ModalOpenAction {
   type: 'MODAL_OPEN';
   data: {
     name: string;
-    prop?: ModalProps | null;
+    prop?: ModalDialogProps | null;
   };
 }
 
@@ -75,7 +75,7 @@ function getFormResult(form: ModalFormState | null): ModalFormResult {
 export function openDialog<T = unknown>(
   dispatch: ModalDispatch,
   dialogName: string,
-  props: ModalProps = {},
+  props: ModalDialogProps = {},
 ): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     dispatch({
@@ -142,3 +142,5 @@ function modalReducer(
 }
 
 export default modalReducer;
+
+export type { ModalDialogProps, ModalState };

@@ -175,16 +175,14 @@ test.describe('Hot keys', () => {
     page,
   }) => {
     /*
-      Test case: https://github.com/epam/ketcher/issues/4986
-      Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      Case:
-      1. Open a benzene ring with attachment points.
-      2. Select all structure.
-      3. Press Ctrl key and move structure.
-      Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      We have a bug: https://github.com/epam/ketcher/issues/6199 
-      After fixing this bug we need update screenshots.
-      */
+     * Test case: https://github.com/epam/ketcher/issues/4986
+     * Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     * Case:
+     * 1. Open a benzene ring with attachment points.
+     * 2. Select all structure.
+     * 3. Press Ctrl key and move structure.
+     * Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-ring-with-two-attachment-points.ket',

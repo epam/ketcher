@@ -46,7 +46,7 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { Action } from './action';
 import { SgContexts } from '..';
 import { uniq } from 'lodash/fp';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttrs, mergeFragmentsIfNeeded } from './atom';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
@@ -586,6 +586,16 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   const struct = restruct.molecule;
 
   const sG = restruct.sgroups.get(id)?.item;
+  const atoms = SGroup.getAtoms(struct, sG);
+  const atomsSet = new Set(atoms);
+  const outsideConnections: Array<readonly [number, number]> = [];
+  atoms.forEach((atomId) => {
+    (struct.atomGetNeighbors(atomId) ?? []).forEach(({ aid }) => {
+      if (!atomsSet.has(aid)) {
+        outsideConnections.push([atomId, aid] as const);
+      }
+    });
+  });
 
   if (sG?.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds();
@@ -598,7 +608,6 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   }
 
   let fragmentId;
-  const atoms = SGroup.getAtoms(struct, sG);
   const attrs = sG?.getAttrs();
 
   // cache attachment points before any structural changes
@@ -682,6 +691,10 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   if (needPerform) {
     action = action.perform(restruct);
+
+    outsideConnections.forEach(([atomId, neighborAtomId]) => {
+      mergeFragmentsIfNeeded(action, restruct, atomId, neighborAtomId);
+    });
   }
 
   return action;

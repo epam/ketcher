@@ -138,9 +138,10 @@ const config: Record<string, UiAction> = {
   // This is some dirty trick for `ClipboardControls.tsx` component
   copies: {
     enabledInViewOnly: true,
+    action: () => undefined,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  } as UiAction,
+  },
   copy: {
     shortcut: 'Mod+c',
     enabledInViewOnly: true,

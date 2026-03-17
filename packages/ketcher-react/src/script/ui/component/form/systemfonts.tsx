@@ -17,9 +17,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import FontFaceObserver from 'font-face-observer';
-import Select from './Select';
+import Select, { Option } from './Select';
 
-const commonFonts = [
+const commonFonts: string[] = [
   'Arial',
   'Arial Black',
   'Comic Sans MS',
@@ -47,7 +47,7 @@ const commonFonts = [
   'Roboto',
 ];
 
-function checkInSystem() {
+function checkInSystem(): Promise<(string | null)[]> {
   const availableFontsPromises = commonFonts.map((fontName) => {
     const observer = new FontFaceObserver(fontName);
     return observer.check().then(
@@ -59,11 +59,15 @@ function checkInSystem() {
   return Promise.all(availableFontsPromises);
 }
 
-function SystemFonts(props) {
-  const [availableFonts, setAvailableFonts] = useState(null);
-  const { value, onChange } = props;
+interface SystemFontsProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function SystemFonts({ value, onChange }: SystemFontsProps) {
+  const [availableFonts, setAvailableFonts] = useState<Option[] | null>(null);
   const onChangeCallback = useCallback(
-    (value) => {
+    (value: string) => {
       onChange(value);
     },
     [onChange],
@@ -73,7 +77,7 @@ function SystemFonts(props) {
     let mounted = true;
     checkInSystem().then((results) => {
       const fonts = results
-        .filter((i) => i !== null)
+        .filter((i): i is string => i !== null)
         .map((font) => {
           // TODO remove font-size from here
           return { value: `30px ${font}`, label: font };
@@ -83,7 +87,9 @@ function SystemFonts(props) {
       }
     });
 
-    return () => (mounted = false);
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -91,7 +97,7 @@ function SystemFonts(props) {
       onChange={onChangeCallback}
       value={value}
       disabled={availableFonts === null}
-      options={availableFonts}
+      options={availableFonts ?? []}
     />
   );
 }

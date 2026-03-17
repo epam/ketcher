@@ -3,12 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { ModeControl } from './ModeControl';
 
 jest.mock('components', () => ({
-  Icon: ({ name, dataTestId, disabled }) => (
-    <span
-      data-testid={dataTestId ?? `icon-${name}`}
-      data-disabled={disabled ? 'true' : 'false'}
-    />
-  ),
+  Icon: ({ name }) => <span data-testid={`icon-${name}`} />,
 }));
 
 describe('ModeControl', () => {

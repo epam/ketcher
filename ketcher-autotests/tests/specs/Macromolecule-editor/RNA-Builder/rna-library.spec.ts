@@ -1061,7 +1061,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async () => {

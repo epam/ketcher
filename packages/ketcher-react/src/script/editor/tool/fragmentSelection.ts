@@ -1,5 +1,6 @@
 import {
   CoordinateTransformation,
+  MonomerMicromolecule,
   Struct,
   Vec2,
   Visel,
@@ -130,6 +131,7 @@ export default class FragmentSelectionTool implements Tool {
   private removeBondPreview() {
     if (this.bondPreview) {
       this.bondPreview.paths.forEach((path) => path.remove());
+      this.bondPreview = null;
     }
   }
 
@@ -211,6 +213,11 @@ export default class FragmentSelectionTool implements Tool {
 
     if (componentData.componentAtoms.has(startAtomId)) {
       this.setDisabledState(COMPONENT_TOOLTIP);
+      this.bondPreview = reBond.drawFragmentSelectionPreview(
+        this.editor.render,
+        startAtomId,
+        true,
+      );
       return;
     }
 
@@ -417,6 +424,13 @@ export default class FragmentSelectionTool implements Tool {
     rnaComponentAtoms?.forEach((component) => {
       component.atoms?.forEach((atomId) => componentAtoms.add(atomId));
       component.bonds?.forEach((bondId) => componentBonds.add(bondId));
+    });
+
+    // Atoms belonging to a MonomerMicromolecule sgroup are already-marked components
+    struct.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule) {
+        sgroup.atoms.forEach((atomId) => componentAtoms.add(atomId));
+      }
     });
 
     if (componentAtoms.size) {

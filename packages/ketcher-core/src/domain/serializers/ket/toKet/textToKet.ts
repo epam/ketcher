@@ -17,7 +17,6 @@ import { getNodeWithInvertedYCoord } from '../helpers';
 import type { SerializedRootNode } from 'lexical/nodes/LexicalRootNode';
 import type { SerializedParagraphNode } from 'lexical/nodes/LexicalParagraphNode';
 import type { SerializedTextNode } from 'lexical/nodes/LexicalTextNode';
-import { convertDraftToLexical } from 'ketcher-core';
 
 interface KETTextPart {
   text: string;
@@ -66,8 +65,7 @@ export function textToKet(textNode) {
     const textContent = JSON.parse(source.content) as {
       root: SerializedRootNode<SerializedParagraphNode | SerializedTextNode>;
     };
-    // @ts-ignore
-    const root = convertDraftToLexical(textContent).root;
+    const root = textContent.root;
     const ketText: KETText = {
       type: 'text',
       boundingBox: { x, y, width, height },

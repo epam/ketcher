@@ -21,6 +21,7 @@ import { Icon } from 'components';
 interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
+  disabled?: boolean;
   name?: string;
 }
 const ElementAndDropdown = styled('div')`
@@ -68,6 +69,12 @@ const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
       display: flex;
     }
   }
+`;
+
+const ModeIconWrapper = styled('span')<IStyledIconProps>`
+  display: inline-flex;
+  align-items: center;
+  opacity: ${({ disabled }) => (disabled ? '0.38' : '1')};
 `;
 
 const CornerIcon = styled(Icon)`
@@ -180,7 +187,13 @@ export const ModeControl = ({
         onClick={onExpand}
         ref={btnRef}
       >
-        <Icon name={modeIcon} />
+        <ModeIconWrapper
+          disabled={disabled}
+          data-disabled={disabled}
+          data-testid="mode-switcher-icon"
+        >
+          <Icon name={modeIcon} />
+        </ModeIconWrapper>
         <ModeLabel>{modeLabel}</ModeLabel>
         <StyledIconForMacromoleculesToggler
           name="chevron"

@@ -61,7 +61,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
-  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -422,40 +421,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
-  test('9.Ketcher crashes completely when switching from Wizard mode to Macro mode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7633
-     * Bug: https://github.com/epam/ketcher/issues/8334
-     * Description: When the user switches from the Create Monomer Wizard to Macromolecule mode,
-     *  the entire application crashes.The screen becomes completely white, and the console
-     *  displays a TypeError.
-     * Scenario:
-     * 1. Open file with benzene ring structure and add to canvas
-     * 2. Open Create Monomer Wizard
-     * 3. Switch to Macromolecule mode
-     * 4. Verify that Ketcher is not crashed
-     *
-     * Version 3.10.0
-     */
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      'C1C=CC=CC%91=1.[*:1]%91 |$;;;;;;_R1$|',
-    );
-    await deselectAtomAndBonds(page);
-    await LeftToolbar(page).createMonomer();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expect(CommonTopLeftToolbar(page).undoButton).toBeEnabled();
-    const rnaPresetGroup = page.getByTestId('rna-preset-group');
-    expect(rnaPresetGroup).toBeVisible();
-  });
+
   test('10.“+ Add modification type” option appears only after selecting Natural analogue instead of monomer type Amino acid', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/7633

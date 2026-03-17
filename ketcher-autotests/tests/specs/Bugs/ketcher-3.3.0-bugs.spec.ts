@@ -46,6 +46,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { SaltsAndSolventsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -219,13 +220,15 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await Library(page).selectMonomer(Base.h456UR);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await Library(page).selectMonomer(Base.e6A);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+    );
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '2-amino-6-etoxypurine',
+    );
   });
 
   test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async () => {

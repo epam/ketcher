@@ -364,10 +364,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     await Library(page).hoverMonomer(Peptide.U);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async () => {

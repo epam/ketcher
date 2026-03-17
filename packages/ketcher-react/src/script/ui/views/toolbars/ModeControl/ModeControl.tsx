@@ -71,7 +71,7 @@ const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
   }
 `;
 
-const ModeIconWrapper = styled('span')<IStyledIconProps>`
+const ModeIconWrapper = styled('div')<IStyledIconProps>`
   display: inline-flex;
   align-items: center;
   opacity: ${({ disabled }) => (disabled ? '0.38' : '1')};

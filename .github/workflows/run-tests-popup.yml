@@ -45,7 +45,7 @@ jobs:
 
   popup-part:
     timeout-minutes: 120
-    runs-on: self-hosted-a
+    runs-on: ubuntu-latest
     needs: build_ketcher
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
     strategy:

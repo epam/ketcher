@@ -23,6 +23,8 @@ export interface FieldProps {
   schema?: object;
   type?: string;
   value?: string | number | boolean;
+  onChange?: (value: string) => void;
+  placeholder?: string;
   checked?: boolean;
 }
 

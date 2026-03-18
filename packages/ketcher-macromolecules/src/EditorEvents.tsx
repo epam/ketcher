@@ -329,6 +329,7 @@ export const EditorEvents = () => {
           monomers,
           name: existingPreset?.name,
           idtAliases: existingPreset?.idtAliases,
+          aliasAxoLabs: existingPreset?.aliasAxoLabs,
           position,
           target: e.target,
         };

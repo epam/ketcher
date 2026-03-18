@@ -38,23 +38,16 @@ jobs:
           CI: "false"
         run: npm run build
 
-      - name: Create ketcher-core tarball
+      - name: Create packages
         run: >
-          tar -C packages/ketcher-core
-          -czf ketcher-core.tar.gz
-          dist README.md package.json
-
-      - name: Create ketcher-react tarball
-        run: >
-          tar -C packages/ketcher-react
-          -czf ketcher-react.tar.gz
-          dist README.md package.json
+          npm pack
+          --workspace packages/ketcher-core
+          --workspace packages/ketcher-react
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ketcher-core.tar.gz
-            ketcher-react.tar.gz
+            *.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

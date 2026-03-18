@@ -44,7 +44,6 @@ test.describe('Open Ketcher', () => {
      */
     await CommonTopRightToolbar(page).helpButton.hover();
     await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Menu bar: UI Verification', async ({ page }) => {

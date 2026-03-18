@@ -1,6 +1,6 @@
 import { Page, test } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot, takePageScreenshot } from '@utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 
@@ -24,11 +24,11 @@ test.describe('RNA layout', () => {
   test('Each panel is collapsed', async ({ page }) => {
     await Library(page).rnaBuilder.collapse();
     await Library(page).rnaTab.presetsSection.click();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('RNA Builder panel is collapsed', async ({ page }) => {
     await Library(page).rnaBuilder.collapse();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 });

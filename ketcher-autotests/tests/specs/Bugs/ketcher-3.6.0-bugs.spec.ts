@@ -687,12 +687,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CalculateVariablesPanel(page).setUnipositiveIonsValue(
       '99999999999999999999999999999999999999999999999999',
     );
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await keyboardPressOnCanvas(page, 'Backspace');
     await CalculateVariablesPanel(page).setOligonucleotidesValue(
       '99999999999999999999999999999999999999999999999999',
     );
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
   });
 
   test('Case 19: System not allow to export molecules to 3-letter sequence format', async () => {

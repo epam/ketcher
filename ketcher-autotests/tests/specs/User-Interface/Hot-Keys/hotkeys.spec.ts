@@ -9,6 +9,7 @@ import {
   dragMouseTo,
   clickOnCanvas,
   deleteByKeyboard,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
@@ -46,7 +47,7 @@ test.describe('Hot keys', () => {
     await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
@@ -54,7 +55,7 @@ test.describe('Hot keys', () => {
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Verify move by ctrl when its a part of molecula as only atom', async ({

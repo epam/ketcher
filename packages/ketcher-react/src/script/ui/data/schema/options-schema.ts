@@ -469,7 +469,9 @@ export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
   const validator = new Validator();
-  const result = validator.validate(settings, optionsSchema);
+  const result = validator.validate(settings, optionsSchema, {
+    base: 'https://example.com',
+  });
   const errorsProps = result.errors.map((el) => el.path[el.path.length - 1]);
 
   return Object.keys(settings).reduce((res, prop) => {

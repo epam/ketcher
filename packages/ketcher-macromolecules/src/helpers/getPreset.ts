@@ -12,7 +12,10 @@ import {
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
-  extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
+  extends Pick<
+      IKetMonomerGroupTemplate,
+      'templates' | 'idtAliases' | 'connections'
+    >,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
   aliasAxoLabs?: string;
 }
@@ -74,6 +77,7 @@ export const getPresets = (
           ? { ...phosphate, label: phosphate.label }
           : undefined,
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
+        connections: rnaPresetsTemplate.connections,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };

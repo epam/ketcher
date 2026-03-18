@@ -7,6 +7,7 @@ Object {
     <div>
       <div
         class="loading-spinner css-rmxyg7"
+        data-testid="loading-spinner"
       >
         <span />
         <span />
@@ -17,6 +18,7 @@ Object {
   "container": <div>
     <div
       class="loading-spinner css-rmxyg7"
+      data-testid="loading-spinner"
     >
       <span />
       <span />

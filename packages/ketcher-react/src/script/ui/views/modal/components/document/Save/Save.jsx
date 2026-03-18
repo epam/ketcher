@@ -374,6 +374,7 @@ class SaveDialog extends Component {
           <img
             src={`data:image/${format}+xml;base64,${imageSrc}`}
             alt={`${format} preview`}
+            data-testid="preview-area"
           />
         )}
       </div>
@@ -386,12 +387,12 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
-          data-testid="preview-area-binary"
+          data-testid="preview-area"
         />
       </div>
     );
 
-    const PreviewContent = ({ format }) => {
+    const PreviewContent = () => {
       return (
         <div className={classes.previewBackground}>
           <textarea
@@ -399,7 +400,7 @@ class SaveDialog extends Component {
             className={classes.previewArea}
             readOnly
             ref={this.textAreaRef}
-            data-testid={`${format}-preview-area-text`}
+            data-testid="preview-area"
           />
           <IconButton
             onClick={this.handleCopy}
@@ -461,6 +462,7 @@ class SaveDialog extends Component {
         className={classes.saveTmpl}
         disabled={disableControls || isCleanStruct || !isMoleculeContain}
         onClick={() => this.props.onTmplSave(this.props.struct)}
+        data-testid="save-to-templates-button"
       >
         Save to Templates
       </button>,
@@ -473,6 +475,7 @@ class SaveDialog extends Component {
         className={classes.cancel}
         onClick={() => this.props.onOk({})}
         type="button"
+        data-testid="cancel-button"
       >
         Cancel
       </button>,
@@ -488,6 +491,7 @@ class SaveDialog extends Component {
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
+          testId="save-button"
           disabled={
             disableControls ||
             !formState.valid ||
@@ -504,6 +508,7 @@ class SaveDialog extends Component {
         <SaveButton
           mode="saveFile"
           data={savingStruct}
+          testId="save-button"
           filename={filename + getPropertiesByFormat(format).extensions[0]}
           key="save-file-button"
           type={format.mime}
@@ -522,6 +527,7 @@ class SaveDialog extends Component {
   render() {
     return (
       <Dialog
+        testId="save-structure-dialog"
         className={classes.dialog}
         title="Save Structure"
         params={this.props}

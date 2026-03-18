@@ -55,11 +55,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return true;
   }
 
+  static get selectionCircleRadius() {
+    return 21;
+  }
+
   protected constructor(
     public monomer: BaseMonomer,
-    private monomerSelectedElementId: string,
     private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
+    public monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
@@ -91,7 +94,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
     if (!renderer) return false;
     if ('isSnake' in renderer) {
-      return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
+      return renderer.isSnake && !renderer.polymerBond.isHorizontal;
     }
     return false;
   }
@@ -319,13 +322,19 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         'data-monomertype',
         this.monomer instanceof AmbiguousMonomer
           ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
-          : this.monomer.monomerItem.props.MonomerClass || '',
+          : (this.monomer.monomerItem.props.isMicromoleculeFragment
+              ? 'CHEM'
+              : this.monomer.monomerItem.props.MonomerClass) || '',
       )
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)
       .attr(
         'data-number-of-attachment-points',
         this.monomer.listOfAttachmentPoints.length,
+      )
+      .attr(
+        'data-hydrogen-connection-number',
+        this.monomer.hydrogenBonds.length,
       )
       .attr(
         'transform',
@@ -382,6 +391,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public setLabelVisibility(isVisible: boolean) {
+    this.rootElement?.select('text').style('opacity', isVisible ? 1 : 0);
+  }
+
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
@@ -429,16 +442,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (this.selectionCircle) {
       this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);
     } else {
-      this.selectionBorder = this.rootElement
-        ?.append('use')
-        .attr('href', this.monomerSelectedElementId)
-        .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none')
-        .attr('class', 'dynamic-element');
-
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
-        .attr('r', '21px')
+        .attr('r', `${BaseMonomerRenderer.selectionCircleRadius}px`)
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)

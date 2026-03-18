@@ -25,6 +25,7 @@ import {
   FunctionalGroup,
   SGroup,
   vectorUtils,
+  removeInfoLabelFromAtoms,
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
@@ -213,6 +214,9 @@ class ChainTool implements Tool {
     let atom;
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
+
+    removeInfoLabelFromAtoms(struct);
+    this.editor.render.update(true, null);
 
     if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;

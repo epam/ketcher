@@ -1,4 +1,4 @@
-import { fromFragmentDeletion } from 'ketcher-core';
+import { fromFragmentDeletion, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -10,11 +10,11 @@ import {
 type Params = ItemEventParams<SelectionContextMenuProps>;
 
 const useDelete = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
     async ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const itemsToDelete = editor.selection() || {
         bonds: props?.bondIds,
@@ -27,7 +27,7 @@ const useDelete = () => {
       editor.selection(null);
       editor.focusCliparea();
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return handler;

@@ -135,7 +135,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           <button
             className={styles.buttonTop}
             onClick={() => exit('Cancel')}
-            data-testid={'close-icon'}
+            data-testid={'close-window-button'}
           >
             <Icon name={'close'} className={styles.closeButton} />
           </button>

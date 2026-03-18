@@ -30,7 +30,7 @@ import {
 import {
   getIntegerFromString,
   getValidZoom,
-  shortcuts,
+  hotkeysShortcuts,
   updateInputString,
 } from 'components/ZoomControls/helpers';
 
@@ -109,28 +109,28 @@ export const ZoomControls = () => {
             currentZoom={currentZoom}
           />
           <ZoomControlButton
-            data-testid="zoom-out-button"
+            data-testid="zoom-out"
             title="Zoom Out"
             onClick={onZoomOut}
           >
             <span>Zoom out</span>
-            <ShortcutLabel>{shortcuts['zoom-minus']}</ShortcutLabel>
+            <ShortcutLabel>{hotkeysShortcuts['zoom-minus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
-            data-testid="zoom-in-button"
+            data-testid="zoom-in"
             title="Zoom In"
             onClick={onZoomIn}
           >
             <span>Zoom in</span>
-            <ShortcutLabel>{shortcuts['zoom-plus']}</ShortcutLabel>
+            <ShortcutLabel>{hotkeysShortcuts['zoom-plus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
-            data-testid="reset-zoom-button"
+            data-testid="zoom-default"
             title="Zoom 100%"
             onClick={onZoomReset}
           >
             <span>Zoom 100%</span>
-            <ShortcutLabel>{shortcuts['zoom-reset']}</ShortcutLabel>
+            <ShortcutLabel>{hotkeysShortcuts['zoom-reset']}</ShortcutLabel>
           </ZoomControlButton>
         </DropDownContent>
       </Dropdown>

@@ -130,3 +130,12 @@ export function sdataReducer(state, action) {
 
   return correctErrors(newstate, action.data);
 }
+
+export function nucleotideComponentReducer(state, action) {
+  return {
+    ...state,
+    result: Object.assign({}, state.result, action.data.result, {
+      type: 'nucleotideComponent',
+    }),
+  };
+}

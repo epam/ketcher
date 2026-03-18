@@ -8,17 +8,32 @@ import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters';
-import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Sugar } from 'domain/entities/Sugar';
+import { RNABase } from 'domain/entities/RNABase';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
+
+export const MONOMER_CLASS_TO_CONSTRUCTOR = {
+  [KetMonomerClass.CHEM]: Chem,
+  [KetMonomerClass.AminoAcid]: Peptide,
+  [KetMonomerClass.Phosphate]: Phosphate,
+  [KetMonomerClass.Sugar]: Sugar,
+  [KetMonomerClass.Base]: RNABase,
+  [KetMonomerClass.RNA]: UnsplitNucleotide,
+};
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
+  public subtype: KetAmbiguousMonomerTemplateSubType;
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
@@ -52,6 +67,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
       variantMonomerItem.monomers,
     );
+    this.subtype = variantMonomerItem.subtype;
   }
 
   public static getMonomerClass(monomers: BaseMonomer[]) {

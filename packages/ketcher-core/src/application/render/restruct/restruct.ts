@@ -446,6 +446,7 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
+  /** Visel is a shorthand for VISual ELement */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
   }
@@ -845,8 +846,8 @@ class ReStruct {
       if (item.togglePoints) item.togglePoints(false);
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
-        fill: '#fff',
-        stroke: '#fff',
+        fill: 'none',
+        stroke: 'none',
       });
     }
   }

@@ -18,26 +18,32 @@ export abstract class Scrollbar {
     this.render = render;
   }
 
+  public destroy() {
+    this.hide();
+  }
+
   update() {
     this.bar = this.hasOffset() ? this.redraw() : this.hide();
   }
 
-  protected redraw() {
+  protected redraw(): RaphaelElement {
     return this.bar ? this.updateAttr() : this.draw();
   }
 
-  protected updateAttr() {
+  protected updateAttr(): RaphaelElement {
+    if (!this.bar) throw new Error('Unexpected state no bar');
+
     const attr = this.getDynamicAttr();
-    return this.bar?.attr(attr);
+    return this.bar.attr(attr);
   }
 
-  protected hide() {
+  protected hide(): null {
     this.bar?.undrag();
     this.bar?.remove();
     return null;
   }
 
-  protected draw() {
+  protected draw(): RaphaelElement {
     const { x, y, width, height, r } = this.getDynamicAttr();
     const bar = this.render.paper.rect(x, y, width, height, r).attr({
       stroke: this.COLOR,
@@ -67,7 +73,9 @@ export abstract class Scrollbar {
   }
 
   abstract hasOffset(): boolean;
+
   abstract getDynamicAttr(): RaphaelRectAttr;
+
   abstract onDragMove(
     dx: number,
     dy: number,

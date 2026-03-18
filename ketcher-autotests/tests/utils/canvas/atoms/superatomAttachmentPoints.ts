@@ -1,5 +1,7 @@
 import { Page } from '@playwright/test';
-import { clickOnAtom } from '@utils';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroAtomOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getAtomByIndex } from '@utils';
 import { AtomLabelType } from '@utils/clicks/types';
 
 export async function addSuperatomAttachmentPoint(
@@ -8,8 +10,8 @@ export async function addSuperatomAttachmentPoint(
   atomIndex: number,
 ) {
   await page.keyboard.press('Escape');
-  await clickOnAtom(page, atomLabel, atomIndex, 'right');
-  await page.getByText('Add attachment point').click();
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomIndex);
+  await ContextMenu(page, point).click(MicroAtomOption.AddAttachmentPoint);
 }
 
 export async function removeSuperatomAttachmentPoint(
@@ -18,6 +20,6 @@ export async function removeSuperatomAttachmentPoint(
   atomIndex: number,
 ) {
   await page.keyboard.press('Escape');
-  await clickOnAtom(page, atomLabel, atomIndex, 'right');
-  await page.getByText('Remove attachment point').click();
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomIndex);
+  await ContextMenu(page, point).click(MicroAtomOption.RemoveAttachmentPoint);
 }

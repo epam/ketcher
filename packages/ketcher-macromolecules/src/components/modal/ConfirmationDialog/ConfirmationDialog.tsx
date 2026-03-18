@@ -4,6 +4,7 @@ import { ActionButton } from 'components/shared/actionButton';
 import { ConfirmationText } from './ConfirmationDialog.styles';
 
 export const ConfirmationDialog = ({
+  title,
   confirmationText,
   onConfirm,
   isModalOpen,
@@ -15,7 +16,11 @@ export const ConfirmationDialog = ({
   };
 
   return (
-    <Modal isOpen={isModalOpen} title="Confirm your action" onClose={onClose}>
+    <Modal
+      isOpen={isModalOpen}
+      title={title || 'Confirm your action'}
+      onClose={onClose}
+    >
       <Modal.Content>
         <ConfirmationText>{confirmationText}</ConfirmationText>
       </Modal.Content>

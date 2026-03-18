@@ -8,7 +8,9 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
 const BUTTON_OFFSET_FROM_CANVAS = 20;
-const BUTTON_Y_OFFSET_FROM_ROW = 18;
+const BUTTON_Y_OFFSET_FROM_SENSE_ROW = 12;
+const BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW = 30;
+const RECT_MAX_WIDTH = 620;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
@@ -23,8 +25,10 @@ export class NewSequenceButton {
   public show() {
     const editor = CoreEditor.provideEditorInstance();
     const chain =
-      SequenceRenderer.chainsCollection.chains[this.indexOfRowBefore];
-    const lastNodeRendererInChain = chain.lastNode?.renderer;
+      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
+    const lastNodeRendererInChain =
+      chain.lastNode?.antisenseNode?.renderer ||
+      chain.lastNode?.senseNode?.renderer;
 
     if (!(lastNodeRendererInChain instanceof BaseSequenceItemRenderer)) {
       return;
@@ -38,7 +42,9 @@ export class NewSequenceButton {
         'transform',
         `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${
           lastNodeRendererInChain.scaledMonomerPositionForSequence.y +
-          BUTTON_Y_OFFSET_FROM_ROW
+          (chain.hasAntisense
+            ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
+            : BUTTON_Y_OFFSET_FROM_SENSE_ROW)
         })`,
       )
       .attr('cursor', 'pointer') as never as D3SvgElementSelection<
@@ -50,24 +56,30 @@ export class NewSequenceButton {
     this.rootElement
       .append('rect')
       .attr('x', '16')
-      .attr('y', '14')
-      .attr('width', '595')
+      .attr('y', '22')
+      .attr('width', '0')
       .attr('height', '4')
       .attr('stroke', '#B4B9D6')
       .attr('stroke-width', '1')
-      .attr('fill', '#fff');
+      .attr('fill', '#fff')
+      .attr('pointer-events', 'none');
 
     this.bodyElement = this.rootElement
       .append('foreignObject')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('height', '35')
-      .attr('width', '611');
+      .attr('height', '48')
+      .attr('width', '48')
+      .attr('data-testid', 'NewSequencePlusButton');
 
-    this.buttonElement = this.bodyElement.append<SVGElement>('xhtml:div').attr(
-      'style',
-      `
+    this.buttonElement = this.bodyElement
+      .append<SVGElement>('xhtml:div')
+      .attr('data-testid', 'NewSequencePlusButtonIcon')
+      .attr(
+        'style',
+        `
         width: 32px;
+        margin: 8px;
         padding:  8px;
         font-size: 12px;
         color: ${TEXT_COLOR};
@@ -81,7 +93,7 @@ export class NewSequenceButton {
         align-items: center;
         justify-content: space-between;
       `,
-    );
+      );
 
     NewSequenceButton.appendPlusIcon(this.buttonElement);
 
@@ -134,5 +146,14 @@ export class NewSequenceButton {
   public remove() {
     this.rootElement?.remove();
     this.rootElement = undefined;
+  }
+
+  public setWidth(width: number): void {
+    const rectElement = this.rootElement?.select('rect');
+    const computedWidthPx = Math.min(
+      (width - 1) * 20 + (width / 10) * 10,
+      RECT_MAX_WIDTH,
+    );
+    rectElement?.attr('width', computedWidthPx);
   }
 }

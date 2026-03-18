@@ -1,16 +1,8 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
-
-// const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
-//   const MAX_TIME_TO_WAIT = 10000;
-//   return new Promise((resolve) => {
-//     window.ketcher.eventBus.addListener(REQUEST_IS_FINISHED, () => {
-//       return resolve('resolve');
-//     });
-//
-//     setTimeout(() => resolve('Timeout exceeded'), MAX_TIME_TO_WAIT);
-//   });
-// };
 
 /**
  * Waits till event REQUEST_IS_FINISHED emits
@@ -26,40 +18,40 @@ import { waitForRender } from '@utils/common';
  * @returns Promise<string>
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
-  await page.waitForFunction(() => window.ketcher);
-  // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
-  callback();
-  const roleDialog = page.locator('[role=dialog]');
-  const loadingSpinner = page.locator('.loading-spinner');
+  const openStructureDialogWindow = OpenStructureDialog(page).window;
+  const loadingSpinner = page.getByTestId('loading-spinner');
+  const errorMessageBox = page.getByText('Error Message', {
+    exact: true,
+  });
 
-  if (await roleDialog.isVisible()) {
-    // this spinner appear in Macro mode (before roleDialog close)
+  callback();
+  await delay(0.3);
+  if (await loadingSpinner.isVisible()) {
+    await loadingSpinner.waitFor({ state: 'detached' });
+  }
+
+  if (await openStructureDialogWindow.isVisible()) {
+    // this spinner appear in Macro mode (before openStructureDialog close)
     if (await loadingSpinner.isVisible()) {
-      await page.waitForSelector('.loading-spinner', { state: 'detached' });
+      await loadingSpinner.waitFor({ state: 'detached' });
     }
-    // if you see here that "locator resolved to 2 elements. Proceeding with the first one:..."
-    // That means that another dialog (error one) appeared over first one
-    // for example:
-    // Error: locator.isVisible: Error: strict mode violation: locator('[role=dialog]') resolved to 2 elements:
-    // 1) <div role="dialog" aria-labelledby=":r2:" class="MuiP…>…</div> aka getByLabel('Open Structure')
-    // 2) <div role="dialog" aria-labelledby=":r0:" class="MuiP…>…</div> aka getByLabel('Unsupported symbols')
-    await page.waitForSelector('[role=dialog]', {
+    if (await errorMessageBox.isVisible()) {
+      return;
+    }
+    await openStructureDialogWindow.waitFor({
       state: 'detached',
-      // timeout: 10000, <--this is for debug purposes
     });
   }
-  // this spinner appear in Molecules mode (after roleDialog close)
+  // this spinner appear in Molecules mode (after openStructureDialog close)
   if (await loadingSpinner.isVisible()) {
-    await page.waitForSelector('.loading-spinner', { state: 'detached' });
+    await loadingSpinner.waitFor({ state: 'detached' });
   }
-
-  await waitForRender(page);
 };
 
 export async function waitForLoadAndRender(page: Page, callback: VoidFunction) {
   await waitForRender(page, async () => {
     await waitForLoad(page, async () => {
-      await callback();
+      callback();
     });
   });
 }

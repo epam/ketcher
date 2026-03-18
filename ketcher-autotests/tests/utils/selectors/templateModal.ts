@@ -1,17 +1,12 @@
 import { Page, expect } from '@playwright/test';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectLeftPanelButton,
-  takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
-  pressButton,
-  clickOnCanvas,
 } from '@utils';
-import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -27,6 +22,7 @@ export enum SaltsAndSolvents {
   Butanol2 = '2-butanol',
   Ethylhexanol2 = '2-ethylhexanol',
   DMF = 'DMF',
+  DBU = '1,5-diazabicyclo[5.4.0]undec-7-ene',
   Isobutanol = 'isobutanol',
   Glycerol = 'glycerol',
   TButanol = 't-butanol',
@@ -94,105 +90,8 @@ export enum TemplateLibrary {
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
   Arabinofuranose = 'Arabinofuranose',
-}
-
-export enum Peptides {
-  X = '_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___' +
-    'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
-    '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
-  B = '_D___Aspartic acid_N___Asparagine',
-  J = '_L___Leucine_I___Isoleucine',
-  Z = '_E___Glutamic acid_Q___Glutamine',
-}
-
-export enum Sugars {
-  TwelveddR = "12ddR___1',2'-dideoxyribose",
-  TwentyFiveR = '25R___Ribose (2,5 connectivity)',
-  ThreeA6 = "3A6___6-amino-hexanol (3' end)",
-  ThreeSS6 = "3SS6___Thiol Modifier 6 S-S (3' end)",
-}
-
-export async function selectSugar(sugarName: Sugars, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId(sugarName).click();
-}
-
-export enum Bases {
-  Adenine = 'A___Adenine',
-  baA = 'baA___N6-benzyladenine',
-  TClampOMe = 'clA___T-clamp OMe',
-  meA = 'meA___N6-methyladenine',
-  DNA_N = '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',
-  DNA_B = '_C___Cytosine_G___Guanine_T___Thymine',
-  DNA_D = '_A___Adenine_G___Guanine_T___Thymine',
-  DNA_H = '_A___Adenine_C___Cytosine_T___Thymine',
-  DNA_K = '_G___Guanine_T___Thymine',
-  DNA_W = '_A___Adenine_T___Thymine',
-  DNA_Y = '_C___Cytosine_T___Thymine',
-  RNA_N = '_A___Adenine_C___Cytosine_G___Guanine_U___Uracil',
-  RNA_B = '_C___Cytosine_G___Guanine_U___Uracil',
-  RNA_D = '_A___Adenine_G___Guanine_U___Uracil',
-  RNA_H = '_A___Adenine_C___Cytosine_U___Uracil',
-  RNA_K = '_G___Guanine_U___Uracil',
-  RNA_W = '_A___Adenine_U___Uracil',
-  RNA_Y = '_C___Cytosine_U___Uracil',
-  M = '_A___Adenine_C___Cytosine',
-  R = '_A___Adenine_G___Guanine',
-  S = '_C___Cytosine_G___Guanine',
-  V = '_A___Adenine_C___Cytosine_G___Guanine',
-}
-
-export async function selectBase(baseName: Bases, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Bases').click();
-  await page.getByTestId(baseName).click();
-}
-
-export enum Phosphates {
-  Test6Ph = 'Test-6-Ph___Test-6-AP-Phosphate',
-  Phosphate = 'P___Phosphate',
-  Boranophosphate = 'bP___Boranophosphate',
-  sP_ = 'sP-___Dihydrogen phosphorothioate',
-  bP = 'bP___Boranophosphate',
-}
-
-export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Phosphates').click();
-  await page.getByTestId(phosphateName).click();
-}
-
-export enum RnaPartDropDown {
-  Sugars = 'summary-Sugars',
-  Bases = 'summary-Bases',
-  Phosphates = 'summary-Phosphates',
-}
-
-export async function selectMonomer(
-  page: Page,
-  monomerType: Sugars | Bases | Phosphates | Peptides,
-) {
-  const isSugar = Object.values(Sugars).includes(monomerType as Sugars);
-  const isBase = Object.values(Bases).includes(monomerType as Bases);
-  const isPhosphate = Object.values(Phosphates).includes(
-    monomerType as Phosphates,
-  );
-  const isPeptide = Object.values(Peptides).includes(monomerType as Peptides);
-
-  if (isSugar) {
-    await page.getByTestId(RnaPartDropDown.Sugars).click();
-  }
-  if (isBase) {
-    await page.getByTestId(RnaPartDropDown.Bases).click();
-  }
-  if (isPhosphate) {
-    await page.getByTestId(RnaPartDropDown.Phosphates).click();
-  }
-  if (isPeptide) {
-    await page.getByTestId('PEPTIDES-TAB').click();
-  }
-  await page.getByTestId(monomerType).click();
+  PHEDPhenylalanine = 'PHE-D-Phenylalanine',
+  PHELPhenylalanine = 'PHE-L-Phenylalanine',
 }
 
 export async function selectSaltsAndSolvents(
@@ -200,7 +99,7 @@ export async function selectSaltsAndSolvents(
   page: Page,
 ) {
   // const amountOfSaltsAndSolvents = 124;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   const saltsButton = page
     .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
@@ -226,7 +125,7 @@ export async function selectFunctionalGroups(
   page: Page,
 ) {
   const amountOfFunctionalGroups = 62;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
@@ -244,7 +143,7 @@ export async function selectFunctionalGroup(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(functionalGroupName, page);
 }
@@ -296,23 +195,11 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   itemToChoose: TemplateLibrary,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);
   await clickInTheMiddleOfTheScreen(page);
-}
-/*
-  Function for selecting tool from left panel, click right mouse in the middle of canvas and take
-  screenshot
-  */
-export async function selectLeftPanelToolClickAndScreenshot(
-  leftbutton: LeftPanelButton,
-  page: Page,
-) {
-  await selectLeftPanelButton(leftbutton, page);
-  await clickInTheMiddleOfTheScreen(page, 'right');
-  await takeEditorScreenshot(page);
 }
 
 const COORDS_CLICK = {
@@ -358,19 +245,4 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
-}
-
-export async function selectAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  elements: ElementLabel[],
-) {
-  await page.getByTestId('period-table').click();
-  await page.getByText(selectlisting, { exact: true }).click();
-
-  for (const element of elements) {
-    await page.getByTestId(`${element}-button`).click();
-  }
-
-  await page.getByTestId('OK').click();
 }

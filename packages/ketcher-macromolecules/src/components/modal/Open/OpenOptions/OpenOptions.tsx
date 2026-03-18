@@ -101,7 +101,7 @@ const OpenOptions = ({
         <Icon name={ICON_NAMES.PASTE} />
         <OpenOptionText>Paste from clipboard</OpenOptionText>
       </DropContainer>
-      <DropContainer>
+      <DropContainer data-testid="open-from-file-button">
         <FileDrop
           onDropAccepted={fileLoadHandler}
           onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
@@ -110,7 +110,7 @@ const OpenOptions = ({
           iconName={ICON_NAMES.FILE}
         />
       </DropContainer>
-      <DropContainer>
+      <DropContainer data-testid="open-from-image-button">
         <FileDrop
           accept="image/*"
           onDropAccepted={fileLoadHandler}

@@ -24,13 +24,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { SGroup } from 'domain/entities/sgroup';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-
-enum CIP {
-  E = 'E',
-  Z = 'Z',
-  M = 'M',
-  P = 'P',
-}
+import { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -41,7 +35,7 @@ export interface BondAttributes {
   type: number;
   end: number;
   begin: number;
-  cip?: CIP | null;
+  cip?: BondCIP | null;
   isPreview?: boolean;
   initiallySelected?: initiallySelectedType;
   beginSuperatomAttachmentPointNumber?: number;
@@ -110,7 +104,7 @@ export class Bond extends BaseMicromoleculeEntity {
   len: number;
   sb: number;
   sa: number;
-  cip?: CIP | null;
+  cip?: BondCIP | null;
   hb1?: number;
   hb2?: number;
   angle: number;

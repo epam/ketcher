@@ -1,11 +1,11 @@
 import { useAppContext } from 'src/hooks';
-import { fromBondFlipping } from 'ketcher-core';
+import { fromBondFlipping, ketcherProvider } from 'ketcher-core';
 
 export const useChangeBondDirection = (props) => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const changeDirection = () => {
-    const editor = getKetcherInstance()?.editor;
+    const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
     const bondIds = props.propsFromTrigger?.bondIds || [];
     const bondId = bondIds[0];
     const molecule = editor?.render.ctab.molecule;

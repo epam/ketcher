@@ -73,6 +73,7 @@ export const FullscreenButton = (props) => {
       <IconButton
         onClick={toggleFullscreen}
         iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}
+        testId="fullscreen-mode-button"
       />
     </ButtonContainer>
   );

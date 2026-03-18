@@ -23,20 +23,26 @@ import {
   UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
-    node: SubChainNode,
+    node: SubChainNode | BackBoneSequenceNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
-    subChain: BaseSubChain,
-    isEditingSymbol: boolean,
+    chain: Chain,
+    nodeIndexOverall: number,
+    editingNodeIndexOverall: number,
+    previousRowsWithAntisense = 0,
+    twoStrandedNode: ITwoStrandedChainItem,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
-  ) {
+  ): BaseSequenceItemRenderer {
     let RendererClass;
 
     switch (node.constructor) {
@@ -48,6 +54,9 @@ export class SequenceNodeRendererFactory {
         break;
       case EmptySequenceNode:
         RendererClass = EmptySequenceItemRenderer;
+        break;
+      case BackBoneSequenceNode:
+        RendererClass = BackBoneSequenceItemRenderer;
         break;
       case LinkerSequenceNode:
         RendererClass = ChemSequenceItemRenderer;
@@ -83,10 +92,13 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
-      subChain,
-      isEditingSymbol,
+      chain,
+      nodeIndexOverall,
+      editingNodeIndexOverall,
       renderer?.monomerSize,
       renderer?.scaledMonomerPosition,
+      previousRowsWithAntisense,
+      twoStrandedNode,
     );
   }
 }

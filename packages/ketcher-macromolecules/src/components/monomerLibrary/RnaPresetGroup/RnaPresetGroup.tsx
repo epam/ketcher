@@ -85,7 +85,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       return;
     }
     dispatch(setActivePreset(preset));
-    editor.events.selectPreset.dispatch(preset);
+    editor?.events.selectPreset.dispatch(preset);
     if (preset.name === activePreset.name) return;
     dispatch(setIsEditMode(false));
   };

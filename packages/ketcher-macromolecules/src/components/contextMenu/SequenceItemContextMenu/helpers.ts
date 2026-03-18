@@ -7,6 +7,10 @@ import {
   NodesSelection,
   Phosphate,
   Entities,
+  SubChainNode,
+  BackBoneSequenceNode,
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  AmbiguousMonomer,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -21,7 +25,9 @@ const generateLabeledNodes = (
       nodeIndexOverall,
       isNucleosideConnectedAndSelectedWithPhosphate,
       hasR1Connection,
+      twoStrandedNode,
     } = selection;
+    const hasAntisense = Boolean(twoStrandedNode?.antisenseNode);
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -29,23 +35,34 @@ const generateLabeledNodes = (
         baseLabel: node?.rnaBase?.label,
         sugarLabel: node?.sugar?.label,
         phosphateLabel: node?.phosphate?.label,
+        rnaBaseMonomerItem:
+          node.rnaBase instanceof AmbiguousMonomer
+            ? node.rnaBase.variantMonomerItem
+            : node.rnaBase.monomerItem,
         hasR1Connection,
         nodeIndexOverall,
+        hasAntisense,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
         type: Entities.Nucleoside,
         baseLabel: node?.rnaBase?.label,
         sugarLabel: node?.sugar?.label,
+        rnaBaseMonomerItem:
+          node.rnaBase instanceof AmbiguousMonomer
+            ? node.rnaBase.variantMonomerItem
+            : node.rnaBase.monomerItem,
         isNucleosideConnectedAndSelectedWithPhosphate,
         hasR1Connection,
         nodeIndexOverall,
+        hasAntisense,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
         type: Entities.Phosphate,
         phosphateLabel: node?.monomer?.label,
         nodeIndexOverall,
+        hasAntisense,
       });
     }
   }
@@ -96,6 +113,7 @@ export const generateSequenceContextMenuProps = (
   let title: string;
   let isSelectedAtLeastOneNucleoelement = false;
   let isSelectedOnlyNucleoelements = true;
+  let hasAntisense = false;
   let isSequenceFirstsOnlyNucleoelementsSelected = true;
 
   // Generate labeled elements for RNA Builder
@@ -119,6 +137,10 @@ export const generateSequenceContextMenuProps = (
     } else {
       isSequenceFirstsOnlyNucleoelementsSelected = false;
       isSelectedOnlyNucleoelements = false;
+    }
+
+    if (node.hasAntisense) {
+      hasAntisense = true;
     }
   }
   if (countOfSelections > countOfNucleoelements) {
@@ -145,5 +167,24 @@ export const generateSequenceContextMenuProps = (
     isSelectedOnlyNucleoelements,
     isSelectedAtLeastOneNucleoelement,
     isSequenceFirstsOnlyNucleoelementsSelected,
+    hasAntisense,
   };
 };
+
+export function isEstablishHydrogenBondDisabled(
+  selections: NodesSelection = [],
+) {
+  return selections.every((selectionRange) => {
+    return selectionRange.every((selection) => {
+      return isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+        selection.twoStrandedNode,
+      );
+    });
+  });
+}
+
+export function isNodeContainHydrogenBonds(
+  node: SubChainNode | BackBoneSequenceNode | undefined,
+) {
+  return node?.monomers.some((monomer) => monomer.hydrogenBonds.length !== 0);
+}

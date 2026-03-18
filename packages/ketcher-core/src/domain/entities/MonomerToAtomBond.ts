@@ -28,4 +28,12 @@ export class MonomerToAtomBond extends BaseBond {
   get secondEndEntity(): Atom {
     return this.atom;
   }
+
+  public get isHorizontal() {
+    return false;
+  }
+
+  public get isVertical() {
+    return false;
+  }
 }

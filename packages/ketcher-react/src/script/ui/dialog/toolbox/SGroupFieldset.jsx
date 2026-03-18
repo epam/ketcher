@@ -31,14 +31,14 @@ const content = (type) =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
-      if (prop === 'connectivity') {
+      if (prop === 'connectivity' || prop === 'class') {
         return (
           <Field
             name={prop}
             key={`${type}-${prop}`}
             component={Select}
             options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
-            data-testid="connectivity"
+            data-testid={prop}
           />
         );
       }

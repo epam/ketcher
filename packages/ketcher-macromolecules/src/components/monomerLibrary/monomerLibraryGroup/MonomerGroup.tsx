@@ -32,7 +32,6 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
 } from 'ketcher-react';
-import { MONOMER_LIBRARY_PEPTIDES } from 'src/constants';
 
 const MonomerGroup = ({
   items,
@@ -46,7 +45,6 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
-  const isPeptideTab = libraryName === MONOMER_LIBRARY_PEPTIDES;
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     let monomerDisabled = false;
     if (isAmbiguousMonomerLibraryItem(monomer)) {
@@ -120,7 +118,7 @@ const MonomerGroup = ({
     dispatch(selectTool('monomer'));
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
-      editor.events.selectMonomer.dispatch(monomer);
+      editor?.events.selectMonomer.dispatch(monomer);
     }
 
     onItemClick(monomer);
@@ -143,7 +141,6 @@ const MonomerGroup = ({
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
               onMouseLeave={handleItemMouseLeave}
-              isPeptideTab={isPeptideTab}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => selectMonomer(monomer)}
             />

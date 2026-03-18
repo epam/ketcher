@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export * from './stateHooks';
+export * from './useIsCompactView';

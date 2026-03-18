@@ -31,6 +31,11 @@ import {
   Struct,
   Vec2,
   ketcherProvider,
+  KetcherLogger,
+  fromPaste,
+  Coordinates,
+  Atom,
+  Pool,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -94,25 +99,32 @@ const highlightTargets = [
 ];
 
 function selectStereoFlagsIfNecessary(
-  atoms: any,
-  expAtoms: number[],
+  atoms: Pool<Atom>,
+  explicitlySelectedAtoms: number[],
 ): number[] {
-  const atomsOfFragments = {};
+  const fragmentToAtoms: Map<number, number[]> = new Map();
   atoms.forEach((atom, atomId) => {
-    atomsOfFragments[atom.fragment]
-      ? atomsOfFragments[atom.fragment].push(atomId)
-      : (atomsOfFragments[atom.fragment] = [atomId]);
+    const atomFragment = atom.fragment;
+    if (atomFragment === -1) {
+      return;
+    }
+
+    const currentAtoms = fragmentToAtoms.get(atomFragment) ?? [];
+    const updatedAtoms = currentAtoms.concat(atomId);
+    fragmentToAtoms.set(atomFragment, updatedAtoms);
   });
 
-  const stereoFlags: number[] = [];
+  let stereoFlags: number[] = [];
+  fragmentToAtoms.forEach((fragmentAtoms, fragmentId) => {
+    const shouldSelectStereoFlag = fragmentAtoms.every((atomId) =>
+      explicitlySelectedAtoms.includes(atomId),
+    );
 
-  Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag = true;
-    atomsOfFragments[fragId].forEach((atomId) => {
-      if (!expAtoms.includes(atomId)) shouldSelSFlag = false;
-    });
-    shouldSelSFlag && stereoFlags.push(Number(fragId));
+    if (shouldSelectStereoFlag) {
+      stereoFlags = stereoFlags.concat(fragmentId);
+    }
   });
+
   return stereoFlags;
 }
 
@@ -128,12 +140,13 @@ export interface Selection {
 }
 
 class Editor implements KetcherEditor {
+  ketcherId: string;
   #origin?: any;
   render: Render;
   _selection: Selection | null;
   _tool: Tool | null;
-  historyStack: any;
-  historyPtr: any;
+  historyStack: Action[];
+  historyPtr: number;
   errorHandler: ((message: string) => void) | null;
   highlights: Highlighter;
   hoverIcon: HoverIcon;
@@ -145,6 +158,7 @@ class Editor implements KetcherEditor {
     elementEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
+    zoomChanged: PipelineSubscription;
     bondEdit: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
@@ -169,7 +183,7 @@ class Editor implements KetcherEditor {
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
-  constructor(clientArea, options, serverSettings) {
+  constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -178,9 +192,11 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
+      prevEditor?.render,
       options.reuseRestructIfExist !== false,
     );
 
+    this.ketcherId = ketcherId;
     this._selection = null; // eslint-disable-line
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
@@ -206,6 +222,7 @@ class Editor implements KetcherEditor {
       bondEdit: new PipelineSubscription(),
       zoomIn: new PipelineSubscription(),
       zoomOut: new PipelineSubscription(),
+      zoomChanged: new PipelineSubscription(),
       rgroupEdit: new PipelineSubscription(),
       sgroupEdit: new PipelineSubscription(),
       sdataEdit: new PipelineSubscription(),
@@ -280,19 +297,37 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  renderAndRecoordinateStruct(struct: Struct, needToCenterStruct = true) {
+  renderAndRecoordinateStruct(
+    struct: Struct,
+    needToCenterStruct = true,
+    x?: number,
+    y?: number,
+  ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
+
     this.update(action);
+
     if (needToCenterStruct) {
       this.centerStruct();
+    } else if (x != null && y != null) {
+      this.positionStruct(x, y);
     }
+
     return this.render.ctab.molecule;
   }
 
-  struct(value?: Struct, needToCenterStruct = true): Struct {
+  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
+  struct(
+    value?: Struct,
+    needToCenterStruct = true,
+    x?: number,
+    y?: number,
+  ): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
+
+    KetcherLogger.log('Editor.struct(), start', value, needToCenterStruct);
 
     this.selection(null);
     const struct = value || new Struct();
@@ -300,17 +335,37 @@ class Editor implements KetcherEditor {
     const molecule = this.renderAndRecoordinateStruct(
       struct,
       needToCenterStruct,
+      x,
+      y,
     );
 
     this.hoverIcon.create();
+    KetcherLogger.log('Editor.struct(), end');
     return molecule;
   }
 
   // this is used by API addFragment method
-  structToAddFragment(value: Struct): Struct {
-    const superStruct = value.mergeInto(this.render.ctab.molecule);
+  structToAddFragment(struct: Struct, x?: number, y?: number): Struct {
+    if (x != null && y != null) {
+      const position = new Vec2(x, y);
+      const [action] = fromPaste(
+        this.render.ctab,
+        struct,
+        position,
+        0,
+        false,
+        true,
+      );
+      this.update(action, true);
+    } else {
+      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
 
-    return this.renderAndRecoordinateStruct(superStruct);
+      this.renderAndRecoordinateStruct(superStruct);
+    }
+
+    this.centerViewportAccordingToStruct();
+
+    return this.render.ctab.molecule;
   }
 
   setOptions(opts: string) {
@@ -322,6 +377,7 @@ class Editor implements KetcherEditor {
     return result;
   }
 
+  /** Apply options from {@link value} */
   options(value?: any) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -337,7 +393,8 @@ class Editor implements KetcherEditor {
       Object.assign({ microModeScale: SCALE }, value),
     );
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
-    this.struct(struct);
+    this.render.setMolecule(struct);
+    this.struct(struct.clone());
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;
@@ -356,7 +413,7 @@ class Editor implements KetcherEditor {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
       this.event.change.dispatch('force');
-      ketcherProvider.getKetcher().changeEvent.dispatch('force');
+      ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
     }
   }
 
@@ -391,6 +448,41 @@ class Editor implements KetcherEditor {
     this.update(action, true);
   }
 
+  public centerViewportAccordingToStruct(struct: Struct = this.struct()) {
+    const isFitMinZoom = this.zoomAccordingContent(struct);
+
+    const structBbox = struct.getCoordBoundingBox();
+    const newScrollCoordinates = Coordinates.modelToCanvas(
+      isFitMinZoom
+        ? new Vec2(
+            structBbox.min.x + (structBbox.max.x - structBbox.min.x) / 2,
+            structBbox.min.y + (structBbox.max.y - structBbox.min.y) / 2,
+          )
+        : new Vec2(structBbox.min.x, structBbox.min.y),
+    ).sub(
+      new Vec2(this.render.viewBox.width / 2, this.render.viewBox.height / 2),
+    );
+
+    this.render.setViewBox((viewBox) => {
+      return {
+        ...viewBox,
+        minX: newScrollCoordinates.x,
+        minY: newScrollCoordinates.y,
+      };
+    });
+  }
+
+  positionStruct(x: number, y: number) {
+    const struct = this.struct();
+    const reStruct = this.render.ctab;
+    const structBbox = struct.getCoordBoundingBox();
+    const shiftVector = new Vec2(x, y).sub(structBbox.min);
+    const structureToMove = getSelectionMap(reStruct);
+    const action = fromMultipleMove(reStruct, structureToMove, shiftVector);
+    this.update(action, true);
+    this.centerViewportAccordingToStruct();
+  }
+
   zoomAccordingContent(struct: Struct) {
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
@@ -419,7 +511,7 @@ class Editor implements KetcherEditor {
       parsedStructSizeInPixels.height + MARGIN_IN_PIXELS <
         clientAreaBoundingBox.height
     ) {
-      return;
+      return true;
     }
 
     let newZoomValue =
@@ -431,7 +523,7 @@ class Editor implements KetcherEditor {
 
     if (newZoomValue >= MAX_ZOOM_VALUE) {
       this.zoom(MAX_ZOOM_VALUE);
-      return;
+      return true;
     }
 
     newZoomValue -= MARGIN_IN_PIXELS / clientAreaBoundingBox.width;
@@ -441,6 +533,9 @@ class Editor implements KetcherEditor {
         ? MIN_ZOOM_VALUE
         : Number(newZoomValue.toFixed(2)),
     );
+    this.event.zoomChanged.dispatch();
+
+    return newZoomValue > MIN_ZOOM_VALUE;
   }
 
   selection(ci?: any) {
@@ -518,15 +613,25 @@ class Editor implements KetcherEditor {
       delete tool.ci;
     }
 
-    if (ci && setHover(ci, true, this.render)) tool.ci = ci;
+    if (ci && setHover(ci, true, this.render)) {
+      tool.ci = ci;
+    }
 
-    if (!event) return;
+    if (!ci) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        isShow: false,
+      });
+      return;
+    }
 
-    setFunctionalGroupsTooltip({
-      editor: this,
-      event,
-      isShow: true,
-    });
+    if (event) {
+      setFunctionalGroupsTooltip({
+        editor: this,
+        event,
+        isShow: true,
+      });
+    }
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
@@ -545,13 +650,13 @@ class Editor implements KetcherEditor {
         }
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher().changeEvent.dispatch(action);
+        ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch(action);
       }
       this.render.update(false, null);
     }
   }
 
-  historySize() {
+  historySize(): { readonly undo: number; readonly redo: number } {
     return {
       undo: this.historyPtr,
       redo: this.historyStack.length - this.historyPtr,
@@ -559,7 +664,15 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    KetcherLogger.log(
+      'Editor.undo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -584,10 +697,20 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.undo(), end');
   }
 
   redo() {
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
+    KetcherLogger.log(
+      'Editor.redo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
+    const ketcherChangeEvent = ketcherProvider.getKetcher(
+      this.ketcherId,
+    ).changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -598,9 +721,14 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
-    this.historyStack[this.historyPtr] = action;
-    this.historyPtr++;
+    const stack = this.historyStack[this.historyPtr];
+    let action!: Action;
+    try {
+      action = stack.perform(this.render.ctab);
+    } finally {
+      this.historyStack[this.historyPtr] = action;
+      this.historyPtr++;
+    }
 
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
@@ -611,6 +739,13 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.redo(), end');
+  }
+
+  public clearHistory() {
+    this.historyStack = [];
+    this.historyPtr = 0;
   }
 
   subscribe(eventName: any, handler: any) {
@@ -623,7 +758,9 @@ class Editor implements KetcherEditor {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        ketcherProvider.getKetcher().changeEvent.add(subscribeFuncWrapper);
+        ketcherProvider
+          .getKetcher(this.ketcherId)
+          .changeEvent.add(subscribeFuncWrapper);
         break;
       }
 
@@ -874,6 +1011,17 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         !isMouseMainButtonPressed(event)
       ) {
         return true;
+      }
+
+      if (eventName === 'mousemove') {
+        const itemUnderCursor = editor.findItem(event, [
+          'atoms',
+          'bonds',
+          'sgroups',
+        ]);
+        if (!itemUnderCursor) {
+          editor.hover(null);
+        }
       }
 
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {

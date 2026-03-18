@@ -96,8 +96,11 @@ const config: Record<string, UiAction> = {
   undo: {
     shortcut: 'Mod+z',
     title: 'Undo',
-    action: (editor) => {
-      editor.undo();
+    action: {
+      thunk: (_, getState) => {
+        const editor = getState().editor;
+        editor.undo();
+      },
     },
     disabled: (editor) => editor.historySize().undo === 0,
     hidden: (options) => isHidden(options, 'undo'),
@@ -105,8 +108,11 @@ const config: Record<string, UiAction> = {
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
     title: 'Redo',
-    action: (editor) => {
-      editor.redo();
+    action: {
+      thunk: (_, getState) => {
+        const editor = getState().editor;
+        editor.redo();
+      },
     },
     disabled: (editor) => editor.historySize().redo === 0,
     hidden: (options) => isHidden(options, 'redo'),

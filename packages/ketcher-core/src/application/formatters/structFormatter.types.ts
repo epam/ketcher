@@ -51,6 +51,7 @@ export enum SupportedFormat {
   sdfV3000 = 'sdfV3000',
   fasta = 'fasta',
   sequence = 'sequence',
+  sequence3Letter = 'sequence-3-letter',
   idt = 'idt',
   helm = 'helm',
   unknown = 'unknown',

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import {
   LocatorScreenshotOptions,
   Page,
@@ -8,61 +9,34 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
-  pressButton,
+  dragMouseTo,
+  moveOnAtom,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import {
-  Bases,
-  Phosphates,
-  Sugars,
-  selectMonomer,
-  AtomButton,
-  RingButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
-  TemplateLibrary,
-  selectRing,
-  waitForSpinnerFinishedWork,
-  getControlModifier,
-  TopPanelButton,
-} from '..';
-import { waitForRender } from '@utils/common';
-import {
-  openSettings,
-  selectAtomInToolbar,
-  selectRectangleSelectionTool,
-  selectTopPanelButton,
-} from './tools';
-
+import { getControlModifier } from '@utils/keyboard';
+import { TemplateLibrary } from '@utils/selectors';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
-
-export async function drawBenzeneRing(page: Page) {
-  await selectRing(RingButton.Benzene, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclohexaneRing(page: Page) {
-  await selectRing(RingButton.Cyclohexane, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclopentadieneRing(page: Page) {
-  await selectRing(RingButton.Cyclopentadiene, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
+import { Monomer } from '@utils/types';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 export async function openEditDialogForTemplate(
   page: Page,
   itemToChoose: TemplateLibrary,
   _newName?: string,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics (18)' }).click();
   await page.getByTitle(itemToChoose).getByRole('button').click();
@@ -86,7 +60,9 @@ export async function selectAnyStructuresFromAromaticsTable(
 }
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
-  await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  const atomToolbar = RightToolbar(page);
+
+  await atomToolbar.clickAtom(Atom.Nitrogen);
   await clickOnAtom(page, 'C', 0);
   const anyAtom = 3;
   await clickOnAtom(page, 'C', anyAtom);
@@ -106,7 +82,10 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
+  const leftBarSize = await page
+    .getByTestId('left-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -117,7 +96,10 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
+  const topBarSize = await page
+    .getByTestId('top-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -160,23 +142,28 @@ export async function screenshotDialog(page: Page, dialogId: string) {
 
 export async function takeElementScreenshot(
   page: Page,
-  elementId: string,
+  elementLocator: Locator,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
+    delay?: number;
   },
 ) {
-  const maxTimeout = 1500;
-  const element = page.getByTestId(elementId).first();
-  await waitForRender(page, emptyFunction, maxTimeout);
   if (options?.hideMonomerPreview) {
-    await page.keyboard.press('Shift');
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('hidePreview'));
+    });
+    await page.getByTestId('polymer-library-preview').isHidden();
   }
-  await expect(element).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  let element = elementLocator;
+
+  if ((await elementLocator.count()) > 1) {
+    element = element.filter({ has: page.locator(':visible') }).first();
+  }
+  await element.waitFor({ state: 'visible' });
+  await expect(element).toHaveScreenshot(options);
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {
@@ -207,68 +194,98 @@ export async function getCoordinatesOfTopMostCarbon(page: Page) {
 
 export async function takePageScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    mask?: Locator[];
+    maxDiffPixelRatio?: number;
+    timeout?: number;
+    hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
+  },
 ) {
-  const maxTimeout = 1500;
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(page).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  await expect(page).toHaveScreenshot(options);
 }
 
 export async function takePresetsScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  await takeElementScreenshot(page, 'rna-accordion', options);
+  await takeElementScreenshot(page, page.getByTestId('rna-accordion'), options);
 }
 
 export async function takeRNABuilderScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    mask?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+    timeout?: number;
+  },
 ) {
-  await takeElementScreenshot(page, 'rna-editor-expanded', options);
+  await takeElementScreenshot(
+    page,
+    page.getByTestId('rna-editor-expanded'),
+    options,
+  );
 }
 
 export async function takeMonomerLibraryScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    mask?: Locator[];
+    maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
+    hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
+  },
 ) {
-  await takeElementScreenshot(page, 'monomer-library', options);
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
+  await takeElementScreenshot(
+    page,
+    page.getByTestId('monomer-library'),
+    options,
+  );
 }
 
 export async function takeEditorScreenshot(
   page: Page,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
-  await takeElementScreenshot(page, 'ketcher-canvas', options);
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
+  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'left-toolbar-buttons');
+  await takeElementScreenshot(page, page.getByTestId('left-toolbar-buttons'));
 }
 
 export async function takeLeftToolbarMacromoleculeScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'left-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('left-toolbar'));
 }
 
 export async function takeRightToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'right-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('right-toolbar'));
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'top-toolbar');
+  await takeElementScreenshot(page, page.getByTestId('top-toolbar'));
 }
 
 export async function takePolymerEditorScreenshot(page: Page) {
-  const maxTimeout = 3000;
   const editor = page.locator('.Ketcher-polymer-editor-root');
-  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
@@ -304,43 +321,35 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await pressUndoButton(page);
-  await takeEditorScreenshot(page);
-  await pressRedoButton(page);
+  await CommonTopLeftToolbar(page).undo();
+  await takeEditorScreenshot(page, {
+    maxDiffPixels: 1,
+  });
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await pressUndoButton(page);
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await pressRedoButton(page);
-}
-
-export async function resetAllSettingsToDefault(page: Page) {
-  await openSettings(page);
-  await pressButton(page, 'Reset');
-  await pressButton(page, 'Apply');
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function addSingleMonomerToCanvas(
   page: Page,
-  monomerFullName: string,
-  alias: string,
+  monomer: Monomer,
   positionX: number,
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomerFullName).click();
-  await clickOnCanvas(page, positionX, positionY);
+  await Library(page).selectMonomer(monomer);
+  await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
   await hideMonomerPreview(page);
-  return await page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
-    .nth(index);
+  return getMonomerLocator(page, monomer).nth(index);
 }
 
 export async function addBondedMonomersToCanvas(
   page: Page,
-  monomerFullName: string,
-  alias: string,
+  monomerType: Monomer,
   initialPositionX: number,
   initialPositionY: number,
   deltaX: number,
@@ -353,8 +362,7 @@ export async function addBondedMonomersToCanvas(
   for (let index = 0; index < amount; index++) {
     const monomer = await addSingleMonomerToCanvas(
       page,
-      monomerFullName,
-      alias,
+      monomerType,
       initialPositionX + deltaX * index,
       initialPositionY + deltaY * index,
       index,
@@ -375,43 +383,39 @@ export async function addBondedMonomersToCanvas(
 
 export async function addMonomerToCenterOfCanvas(
   page: Page,
-  monomerType: Sugars | Bases | Phosphates,
+  monomerType: Monomer,
 ) {
-  await selectMonomer(page, monomerType);
+  await Library(page).selectMonomer(monomerType);
   await clickInTheMiddleOfTheScreen(page);
-  await selectRectangleSelectionTool(page);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
 }
 
-export async function addPeptideOnCanvas(page: Page, peptideId: string) {
-  await page.getByTestId(peptideId).click();
+export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
+  await page.getByTestId(peptide.testId).click();
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function addRnaPresetOnCanvas(
   page: Page,
-  presetId: string,
+  preset: Monomer,
   positionX: number,
   positionY: number,
   sugarIndex: number,
   phosphateIndex: number,
 ) {
-  await page.getByTestId(presetId).click();
+  await page.getByTestId(preset.testId).click();
   await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
-  const sugar = await page
+  const sugar = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
     .nth(sugarIndex);
-  const phosphate = await page
+  const phosphate = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
     .nth(phosphateIndex);
 
   return { sugar, phosphate };
-}
-
-export async function addChemOnCanvas(page: Page, chemId: string) {
-  await page.getByTestId('CHEM-TAB').click();
-  await page.getByTestId(chemId).click();
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function copyToClipboardByKeyboard(
@@ -505,16 +509,34 @@ export async function copyToClipboardByIcon(page: Page) {
   await page.getByTestId('copy-to-clipboard').click();
 }
 
-export async function selectAromatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Aromatize, page),
-  );
+export async function copyStructureByCtrlMove(
+  page: Page,
+  atom: string,
+  atomIndex: number,
+  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
+) {
+  await moveOnAtom(page, atom, atomIndex);
+  await page.keyboard.down('Control');
+  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
+  await page.keyboard.up('Control');
 }
 
-export async function selectDearomatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Dearomatize, page),
+export async function waitForElementInCanvas(
+  page: Page,
+  text: string,
+): Promise<void> {
+  const canvas = page.getByTestId(KETCHER_CANVAS);
+  const targetElement = canvas.locator(`div:has-text("${text}")`);
+  await expect(targetElement).toBeVisible();
+}
+export async function selectCanvasArea(
+  page: Page,
+  firstCorner: { x: number; y: number },
+  secondCorner: { x: number; y: number },
+) {
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
   );
+  await page.mouse.move(firstCorner.x, firstCorner.y);
+  await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

@@ -41,6 +41,7 @@ const ButtonGenSet = ({
       onDoubleClick={() => onAtomSelect(button.label, true)}
       title={titleText}
       disabled={disabled}
+      data-testid={`${button.label}-button`}
       className={clsx(
         {
           [classes.selected]: selected(button.label),

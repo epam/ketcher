@@ -2,7 +2,7 @@ import { Vec2 } from 'domain/entities';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { BondType } from 'domain/entities/CoreBond';
 
-export type BondSVGPath = {
+export type SVGPathAttributes = {
   d: string;
   attrs: Record<string, string | number>;
 };

@@ -25,13 +25,13 @@ import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { tfx } from 'utilities';
 import { PathBuilder } from './pathBuilder';
 
-const ARROW_HEAD_LENGHT = 0.25; // 10
-const ARROW_HEAD_WIDTH = 0.125; // 5
-const ARROW_HEAD_ATTR = 0.1; // 4
-const ARROW_OFFSET = 0.1; // 4
-const ARROW_DASH_INTERVAL = 0.0875; // 3.5
-const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
-const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
+export const ARROW_HEAD_LENGHT = 0.25; // 10
+export const ARROW_HEAD_WIDTH = 0.125; // 5
+export const ARROW_HEAD_ATTR = 0.1; // 4
+export const ARROW_OFFSET = 0.1; // 4
+export const ARROW_DASH_INTERVAL = 0.0875; // 3.5
+export const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
+export const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
 
 export function getArrowHeadDimensions(options: RenderOptions) {
   const { microModeScale } = getOptionsWithConvertedUnits(options);

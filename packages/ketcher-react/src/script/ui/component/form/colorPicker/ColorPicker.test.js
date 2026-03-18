@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import ColorPicker from './ColorPicker';
 
 const openPreset = async () => {
-  const presetToggleBtn = screen.getByTestId('color-picker-preview');
+  const presetToggleBtn = screen.getByTestId('undefined-color-picker-preview');
   userEvent.click(presetToggleBtn);
   const preset = await screen.findByTestId('color-picker-preset');
   await waitFor(() => expect(preset).toBeInTheDocument());
@@ -70,9 +70,9 @@ describe('should pick color correctly', () => {
   });
 
   it('should display picked color correctly', () => {
-    render(<ColorPicker value="#000000" />);
+    render(<ColorPicker value="#000000" name="testname" />);
     expect(
-      screen.getByTestId('color-picker-preview').style.backgroundColor,
+      screen.getByTestId('testname-color-picker-preview').style.backgroundColor,
     ).toBe('rgb(0, 0, 0)');
   });
 });

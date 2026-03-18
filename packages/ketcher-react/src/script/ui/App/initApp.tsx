@@ -19,11 +19,10 @@ import {
   ErrorsContext,
   SettingsContext,
 } from './../../../contexts';
-import { Ketcher, StructService } from 'ketcher-core';
+import { StructService } from 'ketcher-core';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
-import { uniqueId } from 'lodash';
 import { Root } from 'react-dom/client';
 import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
@@ -31,6 +30,8 @@ import { initResize } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
+  prevKetcherId: string,
+  ketcherId: string,
   element: HTMLDivElement | null,
   appRoot: Root,
   staticResourcesUrl: string,
@@ -38,17 +39,10 @@ function initApp(
   server: StructService,
   resolve: (args: {
     editor: any;
-    setKetcher: (ketcher: Ketcher) => void;
-    ketcherId: string;
     setServer: (server: StructService) => void;
   }) => void,
   togglerComponent?: JSX.Element,
 ) {
-  let ketcherRef: Ketcher | null = null;
-  const setKetcher = (ketcher: Ketcher) => {
-    ketcherRef = ketcher;
-  };
-  const ketcherId = uniqueId();
   // hack to return server setter to Editor.tsx
   // because it does not have access to store
   // eslint-disable-next-line prefer-const
@@ -56,7 +50,7 @@ function initApp(
 
   const setEditor = (editor) => {
     const setServer = getServerSetter();
-    resolve({ editor, setKetcher, ketcherId, setServer });
+    resolve({ editor, setServer });
   };
   const store = createStore(options, server, setEditor);
 
@@ -76,9 +70,8 @@ function initApp(
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
             value={{
-              // Expected this is set before load
-              getKetcherInstance: () => ketcherRef as unknown as Ketcher,
               ketcherId,
+              prevKetcherId,
             }}
           >
             <App togglerComponent={togglerComponent} />

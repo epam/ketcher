@@ -27,6 +27,7 @@ type FileDropProps = {
   iconName: IconName;
   disabled?: boolean;
   disabledText?: string;
+  testId?: string;
 } & DropzoneOptions;
 
 const FileDrop = ({
@@ -35,6 +36,7 @@ const FileDrop = ({
   iconName,
   disabled,
   disabledText,
+  testId,
   ...rest
 }: FileDropProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -54,6 +56,7 @@ const FileDrop = ({
 
   return (
     <div
+      data-testid={testId}
       onKeyDown={open}
       {...getRootProps({
         className: getClassesString,

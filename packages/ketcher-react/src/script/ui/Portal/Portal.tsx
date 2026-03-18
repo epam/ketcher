@@ -26,6 +26,7 @@ interface PortalProps {
   className?: string;
   style?: CSSProperties;
   children: ReactNode;
+  testId?: string;
 }
 
 type Props = PortalProps;
@@ -38,6 +39,10 @@ class Portal extends Component<Props> {
     super(props);
     this.element = document.createElement('div');
     this.isElementInDom = false;
+
+    if (this.props.testId) {
+      this.element.setAttribute('data-testId', this.props.testId);
+    }
   }
 
   componentDidMount() {

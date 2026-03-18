@@ -192,7 +192,9 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
   }
 
-  static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {
+  static getConstructorParamsFromKetNode(
+    ketFileNode: KetFileNode<KetFileMultitailArrowNode>,
+  ) {
     const data = getNodeWithInvertedYCoord(
       ketFileNode.data,
     ) as KetFileMultitailArrowNode;
@@ -224,6 +226,28 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         FixedPrecisionCoordinates.fromFloatingPrecision(tail.y).sub(spineTopY),
       );
     });
+
+    return {
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    };
+  }
+
+  static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {
+    const {
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    } = MultitailArrow.getConstructorParamsFromKetNode(ketFileNode);
 
     return new MultitailArrow(
       spineTopX,
@@ -271,43 +295,63 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     super();
   }
 
-  getReferencePositions(): MultitailArrowsReferencePositions {
-    const tailX = this.spineTopX.sub(this.tailLength);
-    const bottomY = this.spineTopY.add(this.height);
+  static getReferencePositions(
+    spineTopX: FixedPrecisionCoordinates,
+    spineTopY: FixedPrecisionCoordinates,
+    height: FixedPrecisionCoordinates,
+    headOffsetX: FixedPrecisionCoordinates,
+    headOffsetY: FixedPrecisionCoordinates,
+    tailLength: FixedPrecisionCoordinates,
+    tailsYOffset: Pool<FixedPrecisionCoordinates>,
+  ) {
+    const tailX = spineTopX.sub(tailLength);
+    const bottomY = spineTopY.add(height);
     const tails = new Pool<Vec2>();
-    this.tailsYOffset.forEach((tailYOffset, key) => {
+    tailsYOffset.forEach((tailYOffset, key) => {
       tails.set(
         key,
         new Vec2(
           tailX.getFloatingPrecision(),
-          this.spineTopY.add(tailYOffset).getFloatingPrecision(),
+          spineTopY.add(tailYOffset).getFloatingPrecision(),
         ),
       );
     });
 
     return {
       head: new Vec2(
-        this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
-        this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
+        spineTopX.add(headOffsetX).getFloatingPrecision(),
+        spineTopY.add(headOffsetY).getFloatingPrecision(),
       ),
       topTail: new Vec2(
         tailX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       bottomTail: new Vec2(
         tailX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
       topSpine: new Vec2(
-        this.spineTopX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       bottomSpine: new Vec2(
-        this.spineTopX.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
       tails,
     };
+  }
+
+  getReferencePositions(): MultitailArrowsReferencePositions {
+    return MultitailArrow.getReferencePositions(
+      this.spineTopX,
+      this.spineTopY,
+      this.height,
+      this.headOffsetX,
+      this.headOffsetY,
+      this.tailLength,
+      this.tailsYOffset,
+    );
   }
 
   getReferencePositionsArray(): Array<Vec2> {
@@ -627,37 +671,47 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     );
   }
 
-  toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
+  static getParametersForKetNode(
+    spineTopX: FixedPrecisionCoordinates,
+    spineTopY: FixedPrecisionCoordinates,
+    headOffsetX: FixedPrecisionCoordinates,
+    headOffsetY: FixedPrecisionCoordinates,
+    tailLength: FixedPrecisionCoordinates,
+    tailsYOffset: Pool<FixedPrecisionCoordinates>,
+    height: FixedPrecisionCoordinates,
+    center: Vec2,
+    isInitiallySelected?: boolean,
+  ) {
     const head = new Vec2(
-      this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
-      this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
+      spineTopX.add(headOffsetX).getFloatingPrecision(),
+      spineTopY.add(headOffsetY).getFloatingPrecision(),
     );
-    const bottomY = this.spineTopY.add(this.height);
+    const bottomY = spineTopY.add(height);
     const spine: [Vec2, Vec2] = [
       new Vec2(
-        this.spineTopX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       new Vec2(
-        this.spineTopX.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
     ];
-    const tailX = this.spineTopX.sub(this.tailLength);
-    const nonBorderTails = Array.from(this.tailsYOffset.values()).map(
-      (yOffset) => this.spineTopY.add(yOffset),
+    const tailX = spineTopX.sub(tailLength);
+    const nonBorderTails = Array.from(tailsYOffset.values()).map((yOffset) =>
+      spineTopY.add(yOffset),
     );
     const convertTail = (y: FixedPrecisionCoordinates) =>
       new Vec2(tailX.getFloatingPrecision(), y.getFloatingPrecision());
-    const tails = [this.spineTopY]
+    const tails = [spineTopY]
       .concat(nonBorderTails)
       .concat(bottomY)
       .map(convertTail);
 
     return {
       type: MULTITAIL_ARROW_SERIALIZE_KEY,
-      center: this.center(),
-      selected: this.getInitiallySelected(),
+      center,
+      selected: isInitiallySelected,
       data: getNodeWithInvertedYCoord({
         head: {
           position: head,
@@ -668,8 +722,22 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         tails: {
           pos: tails,
         },
-        zOrder: 0,
+        zOrder: 0 as const,
       }),
     };
+  }
+
+  toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
+    return MultitailArrow.getParametersForKetNode(
+      this.spineTopX,
+      this.spineTopY,
+      this.headOffsetX,
+      this.headOffsetY,
+      this.tailLength,
+      this.tailsYOffset,
+      this.height,
+      this.center(),
+      this.getInitiallySelected(),
+    );
   }
 }

@@ -40,6 +40,9 @@ jest.mock('d3', () => {
         append() {
           return this;
         },
+        raise() {
+          return this;
+        },
         data() {
           return this;
         },
@@ -99,7 +102,7 @@ describe('Select Rectangle Tool', () => {
       target: {
         __data__: polymerBond.renderer,
       },
-    };
+    } as MouseEvent;
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
         theme: polymerEditorTheme,
@@ -153,6 +156,8 @@ describe('Select Rectangle Tool', () => {
         func(0);
         return 0;
       });
+    // TODO: Probably mock Editor/TransientDrawingView better
+    editor.transientDrawingView.update = jest.fn();
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
@@ -170,14 +175,16 @@ describe('Select Rectangle Tool', () => {
       },
       pageX: initialPosition.x,
       pageY: initialPosition.y,
-    };
+    } as MouseEvent;
 
     editor.drawingEntitiesManager.selectDrawingEntity(peptide);
     selectRectangleTool.mousedown(event);
     editor.lastCursorPositionOfCanvas.x = initialPosition.x + 100;
     editor.lastCursorPositionOfCanvas.y = initialPosition.y + 100;
 
-    selectRectangleTool.mousemove();
+    const moveEvent = new MouseEvent('mousemove');
+
+    selectRectangleTool.mousemove(moveEvent);
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();

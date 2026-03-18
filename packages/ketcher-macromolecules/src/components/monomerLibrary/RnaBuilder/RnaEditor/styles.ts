@@ -15,45 +15,39 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { Button, Icon } from 'ketcher-react';
+import { Icon } from 'ketcher-react';
 
-export const RnaEditorContainer = styled.div((props) => ({
-  borderRadius: props.theme.ketcher.border.radius.regular,
-  backgroundColor: '#F7F9FA',
-  boxShadow: props.theme.ketcher.shadow.regular,
-  overflow: 'hidden',
-  margin: '12px',
-  flexShrink: 0,
-}));
+export const RnaEditorContainer = styled.div`
+  padding: 8px;
+`;
 
-export const StyledHeader = styled.div((props) => ({
-  height: '32px',
-  backgroundColor: '#fff',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingLeft: '10px',
-  fontSize: props.theme.ketcher.font.size.regular,
-  '&.styled-header--sequence-edit-mode': {
-    backgroundColor: props.theme.ketcher.color.editMode.sequenceInRNABuilder,
-  },
-}));
+export const StyledHeader = styled.button`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: ${(props) => props.theme.ketcher.color.background.primary};
+  font-weight: ${(props) => props.theme.ketcher.font.weight.regular};
+  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  border: none;
+  border-radius: 4px;
+  text-transform: none;
+  cursor: pointer;
 
-export const ExpandButton = styled(Button)({
-  background: 'transparent',
-  width: '32px',
-  height: '100%',
-  outline: 'none',
-  borderRadius: '0',
-  padding: '0',
-});
+  &.styled-header--sequence-edit-mode {
+    background-color: ${(props) =>
+      props.theme.ketcher.color.editMode.sequenceInRNABuilder};
+  }
 
-export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(
-  {
-    height: '16px',
-    width: '16px',
-  },
-  ({ expanded }) => ({
-    transform: expanded ? 'rotate(180deg)' : 'none',
-  }),
-);
+  &.styled-header--expanded,
+  &.styled-header--active-preset {
+    border-radius: 4px 4px 0 0;
+  }
+`;
+
+export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>`
+  height: 16px;
+  width: 16px;
+  transform: ${(props) => (props.expanded ? 'rotate(180deg)' : 'none')};
+`;

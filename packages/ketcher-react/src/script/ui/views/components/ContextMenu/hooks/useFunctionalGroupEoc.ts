@@ -1,4 +1,4 @@
-import { Action, setExpandMonomerSGroup } from 'ketcher-core';
+import { Action, ketcherProvider, setExpandMonomerSGroup } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
@@ -15,12 +15,12 @@ type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
  * Fullname: useFunctionalGroupExpandOrContract
  */
 const useFunctionalGroupEoc = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const dispatch = useDispatch();
 
   const handler = useCallback(
     ({ props }: Params, toExpand: boolean) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
@@ -37,7 +37,7 @@ const useFunctionalGroupEoc = () => {
       editor.rotateController.rerender();
       highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance],
+    [dispatch, ketcherId],
   );
 
   const hidden = useCallback(({ props }: Params, toExpand: boolean) => {

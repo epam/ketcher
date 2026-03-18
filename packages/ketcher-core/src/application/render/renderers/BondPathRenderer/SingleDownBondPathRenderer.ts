@@ -1,12 +1,12 @@
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   BondWidth,
   StereoBondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 
 class SingleDownBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     const direction = endPosition.sub(startPosition);
@@ -44,7 +44,7 @@ class SingleDownBondPathRenderer {
           `;
     }
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: path,
       attrs: {
         'stroke-width': '2',

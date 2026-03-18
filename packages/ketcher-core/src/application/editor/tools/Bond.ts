@@ -20,7 +20,11 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { UnresolvedMonomer } from 'domain/entities';
+import {
+  AmbiguousMonomer,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
@@ -35,16 +39,12 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { ToolName } from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import { KetMonomerClass } from 'application/formatters';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
-
-export enum MACROMOLECULES_BOND_TYPES {
-  SINGLE = 'single',
-  HYDROGEN = 'hydrogen',
-}
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -110,6 +110,7 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
+
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
@@ -320,6 +321,11 @@ class PolymerBond implements BaseTool {
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.history.update(modelChanges);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -377,6 +383,7 @@ class PolymerBond implements BaseTool {
         'You have connected monomers with attachment points of the same group',
       );
     }
+
     return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
       this.bondRenderer.polymerBond,
       secondMonomer,
@@ -437,6 +444,11 @@ class PolymerBond implements BaseTool {
 
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -454,21 +466,32 @@ class PolymerBond implements BaseTool {
 
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
+
+    if (!this.isHydrogenBond && !monomer.chosenFirstAttachmentPointForBond) {
+      this.editor.events.error.dispatch(
+        'Monomer to Atom supports only attachment points for bond creation',
+      );
+      return;
+    }
+
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
       ) || monomer?.getValidSourcePoint();
 
+    // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
       this.bondRenderer?.polymerBond,
     );
     this.bondRenderer?.remove();
     this.bondRenderer = undefined;
+    monomer.setChosenFirstAttachmentPoint(null);
 
     if (!attachmentPoint) {
       return;
     }
 
+    // Establish new Monomer to Atom Bond
     const modelChanges =
       this.editor.drawingEntitiesManager.addMonomerToAtomBond(
         monomer,
@@ -601,10 +624,28 @@ class PolymerBond implements BaseTool {
     );
     if (
       (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof Peptide)
+      (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
+      (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
+      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide) ||
+      (firstMonomerIsRNA &&
+        secondMonomer instanceof AmbiguousMonomer &&
+        secondMonomer.monomerClass === KetMonomerClass.AminoAcid) ||
+      (secondMonomerIsRNA &&
+        firstMonomer instanceof AmbiguousMonomer &&
+        firstMonomer.monomerClass === KetMonomerClass.AminoAcid)
     ) {
       return true;
     }
+    // if (
+    //   (firstMonomer instanceof RNABase &&
+    //     secondMonomer instanceof Sugar &&
+    //     secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
+    //   (secondMonomer instanceof RNABase &&
+    //     firstMonomer instanceof Sugar &&
+    //     firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
+    // ) {
+    //   return true;
+    // }
 
     // Modal: special case for Peptide chain
     if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {

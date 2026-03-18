@@ -8,9 +8,10 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
+import { LIBRARY_TAB_INDEX } from '../../constants';
 
 export const RNAContextMenu = () => {
-  const RNA_TAB_INDEX = 2;
+  const RNA_TAB_INDEX = LIBRARY_TAB_INDEX.RNA;
   const dispatch = useAppDispatch();
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,

@@ -54,7 +54,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
     dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
     dispatch(createNewPreset());
-    editor.events.selectPreset.dispatch(null);
+    editor?.events.selectPreset.dispatch(null);
   };
 
   return (

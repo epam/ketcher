@@ -1,6 +1,6 @@
 {
   "name": "ketcher-macromolecules",
-  "version": "3.0.3",
+  "version": "3.6.0",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -48,12 +48,13 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.26.10",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.13.2",
     "@reduxjs/toolkit": "^1.7.1",
     "clsx": "^1.1.1",
+    "d3": "^7.9.0",
     "file-saver": "^2.0.5",
     "ketcher-core": "*",
     "ketcher-react": "*",
@@ -83,12 +84,12 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/d3": "^7.4.3",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.12",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
-    "@types/testing-library__jest-dom": "^5.14.2",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.4.5",
     "cross-env": "^7.0.3",
@@ -102,20 +103,32 @@
     "jest": "^27.4.5",
     "less": "^3.12.2",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.2.10",
     "prettier": "^2.5.1",
-    "rollup": "^2.60.2",
+    "rollup": "^2.79.2",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
-    "stylelint": "13.13.1",
     "ts-jest": "^27.1.2",
     "typescript": "^4.5.2"
   },
   "files": [
     "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.modern.js",
+      "require": "./dist/index.js"
+    },
+    "./dist/index.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  },
+  "sideEffects": [
+    "*.css",
+    "dist/index.css"
   ]
 }

@@ -32,6 +32,12 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
+import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
+import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -131,12 +137,17 @@ export class RenderersManager {
     this.markForReEnumeration();
   }
 
-  public addPolymerBond(polymerBond: PolymerBond | HydrogenBond): void {
+  public addPolymerBond(
+    polymerBond: PolymerBond | HydrogenBond,
+    redrawAttachmentPoints = true,
+  ): void {
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
-    polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    if (redrawAttachmentPoints) {
+      polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    }
     this.markForReEnumeration();
   }
 
@@ -161,10 +172,13 @@ export class RenderersManager {
   public deletePolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
     recalculateEnumeration = true,
+    redrawAttachmentPoints = true,
   ) {
     polymerBond.renderer?.remove();
-    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
-    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
+    if (redrawAttachmentPoints) {
+      polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
+      polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
+    }
     this.polymerBonds.delete(polymerBond.id);
     if (recalculateEnumeration) {
       this.markForReEnumeration();
@@ -176,18 +190,15 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
-      const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? subChain.length - currentEnumeration + 1
-        : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? monomerEnumeration === subChain.length
-        : monomerEnumeration === 1;
+        ? currentEnumeration === subChain.length
+        : currentEnumeration === 1;
 
       if (!monomerRenderer) {
         return;
       }
 
-      monomerRenderer.setEnumeration(monomerEnumeration);
+      monomerRenderer.setEnumeration(currentEnumeration);
       monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
       currentEnumeration++;
     });
@@ -206,21 +217,18 @@ export class RenderersManager {
     );
 
     subChain.nodes.forEach((node) => {
-      const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? nucleotidesAmount - currentEnumeration + 1
-        : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? monomerEnumeration === nucleotidesAmount
-        : monomerEnumeration === 1;
+        ? currentEnumeration === nucleotidesAmount
+        : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
-        node.rnaBase.renderer?.setEnumeration(monomerEnumeration);
+        node.rnaBase.renderer?.setEnumeration(currentEnumeration);
         node.rnaBase.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
-        node.sugar.renderer?.setEnumeration(monomerEnumeration);
+        node.sugar.renderer?.setEnumeration(currentEnumeration);
         node.sugar.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
       } else if (node.monomer instanceof UnsplitNucleotide) {
-        node.monomer.renderer?.setEnumeration(monomerEnumeration);
+        node.monomer.renderer?.setEnumeration(currentEnumeration);
         node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
       } else if (
@@ -308,7 +316,6 @@ export class RenderersManager {
   public reinitializeViewModel() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
-
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
@@ -357,6 +364,36 @@ export class RenderersManager {
     this.redrawDrawingEntity(bond.atom);
   }
 
+  public addRxnArrow(arrow: RxnArrow) {
+    const arrowRenderer = new RxnArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addMultitailArrow(arrow: MultitailArrow) {
+    const arrowRenderer = new MultitailArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteMultitailArrow(arrow: MultitailArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addRxnPlus(rxnPlus: RxnPlus) {
+    const rxnPlusRenderer = new RxnPlusRenderer(rxnPlus);
+
+    rxnPlusRenderer.show();
+  }
+
+  public deleteRxnPlus(rxnPlus: RxnPlus) {
+    rxnPlus.renderer?.remove();
+  }
+
   public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
@@ -392,7 +429,10 @@ export class RenderersManager {
 
   public rerenderSideConnectionPolymerBonds() {
     this.polymerBonds.forEach((polymerBondRenderer) => {
-      if (!polymerBondRenderer.polymerBond.isSideChainConnection) {
+      if (
+        !polymerBondRenderer.polymerBond.isSideChainConnection &&
+        !polymerBondRenderer.polymerBond.isOverlappedByMonomer
+      ) {
         return;
       }
 

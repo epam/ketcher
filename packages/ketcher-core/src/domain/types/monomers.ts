@@ -9,11 +9,13 @@ import {
   PolymerBond,
 } from 'domain/entities';
 import {
+  AmbiguousMonomerTransformation,
   IKetAttachmentPoint,
   IKetIdtAliases,
   KetAmbiguousMonomerTemplateOption,
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
+  MonomerTransformation,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
@@ -36,13 +38,18 @@ export enum AttachmentPointName {
   HYDROGEN = 'hydrogen',
 }
 
-export type MonomerItemType = {
+export type MonomerItemBase = {
   label: string;
-  colorScheme?: MonomerColorScheme;
+  isAmbiguous?: boolean;
   favorite?: boolean;
+};
+
+export type MonomerItemType = MonomerItemBase & {
+  colorScheme?: MonomerColorScheme;
   struct: Struct;
   props: {
     id?: string;
+    MonomerNaturalAnalogThreeLettersCode?: string;
     MonomerNaturalAnalogCode: string;
     MonomerName: string;
     MonomerFullName?: string;
@@ -56,23 +63,24 @@ export type MonomerItemType = {
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
+    modificationType?: string;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
-  isAmbiguous?: boolean;
   isAntisense?: boolean;
   isSense?: boolean;
+  expanded?: boolean;
+  transformation?: MonomerTransformation;
 };
 
-export type AmbiguousMonomerType = {
+export type AmbiguousMonomerType = MonomerItemBase & {
   id: string;
   monomers: BaseMonomer[];
   subtype: KetAmbiguousMonomerTemplateSubType;
-  label: string;
   options: KetAmbiguousMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
   isAmbiguous: true;
-  favorite?: boolean;
+  transformation?: AmbiguousMonomerTransformation;
 };
 
 export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;

@@ -13,6 +13,7 @@ Object {
         class="dialog dialog"
         role="dialog"
         tabindex="-1"
+        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -25,7 +26,7 @@ Object {
           >
             <button
               class="buttonTop"
-              data-testid="close-icon"
+              data-testid="close-window-button"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -134,11 +135,11 @@ Object {
                 >
                   <textarea
                     class="previewArea"
-                    data-testid="mol-preview-area-text"
+                    data-testid="preview-area"
                     readonly=""
                   />
                   <button
-                    class="css-1kbfai8"
+                    class="css-kp5gpq"
                     data-testid="copy-to-clipboard"
                     title="Copy to clipboard"
                   >
@@ -156,12 +157,14 @@ Object {
         >
           <button
             class="saveTmpl"
+            data-testid="save-to-templates-button"
             disabled=""
           >
             Save to Templates
           </button>
           <button
             class="cancel"
+            data-testid="cancel-button"
             mode="onCancel"
             type="button"
           >
@@ -169,6 +172,7 @@ Object {
           </button>
           <button
             class="ok"
+            data-testid="save-button"
             disabled=""
           >
             Save
@@ -416,6 +420,7 @@ Object {
       class="dialog dialog"
       role="dialog"
       tabindex="-1"
+      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"
@@ -428,7 +433,7 @@ Object {
         >
           <button
             class="buttonTop"
-            data-testid="close-icon"
+            data-testid="close-window-button"
           >
             <icon-close.svg
               classname="closeButton"
@@ -537,11 +542,11 @@ Object {
               >
                 <textarea
                   class="previewArea"
-                  data-testid="mol-preview-area-text"
+                  data-testid="preview-area"
                   readonly=""
                 />
                 <button
-                  class="css-1kbfai8"
+                  class="css-kp5gpq"
                   data-testid="copy-to-clipboard"
                   title="Copy to clipboard"
                 >
@@ -559,12 +564,14 @@ Object {
       >
         <button
           class="saveTmpl"
+          data-testid="save-to-templates-button"
           disabled=""
         >
           Save to Templates
         </button>
         <button
           class="cancel"
+          data-testid="cancel-button"
           mode="onCancel"
           type="button"
         >
@@ -572,6 +579,7 @@ Object {
         </button>
         <button
           class="ok"
+          data-testid="save-button"
           disabled=""
         >
           Save

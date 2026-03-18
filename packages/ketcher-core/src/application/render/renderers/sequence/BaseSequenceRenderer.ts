@@ -22,4 +22,8 @@ export class BaseSequenceRenderer extends BaseRenderer {
   get center() {
     return new Vec2(0, 0, 0);
   }
+
+  override get selectionPoints() {
+    return [this.center];
+  }
 }

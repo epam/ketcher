@@ -16,6 +16,7 @@
 
 import {
   AutomapMode,
+  CalculateMacromoleculePropertiesResult,
   CalculateProps,
   CalculateResult,
   CheckResult,
@@ -28,7 +29,7 @@ import {
 } from 'domain/services';
 import { StructOrString } from 'application/indigo.types';
 import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import { SequenceType, Struct } from 'domain/entities';
 import { defaultBondThickness } from './editor';
 
 const defaultTypes: Array<CheckTypes> = [
@@ -53,6 +54,7 @@ const defaultCalcProps: Array<CalculateProps> = [
 type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
   inputFormat?: ChemicalMimeType;
+  sequenceType?: SequenceType;
 };
 type AutomapOptions = {
   mode?: AutomapMode;
@@ -106,11 +108,16 @@ export class Indigo {
     const outputFormat = options?.outputFormat || ChemicalMimeType.KET;
     const inputFormat = options?.inputFormat;
 
-    return this.#structService.convert({
-      struct: convertStructToString(struct, this.#ketSerializer),
-      output_format: outputFormat,
-      input_format: inputFormat,
-    });
+    return this.#structService.convert(
+      {
+        struct: convertStructToString(struct, this.#ketSerializer),
+        output_format: outputFormat,
+        input_format: inputFormat,
+      },
+      {
+        'sequence-type': options?.sequenceType,
+      },
+    );
   }
 
   layout(struct: StructOrString, options): Promise<Struct> {
@@ -226,5 +233,13 @@ export class Indigo {
         output_format: ChemicalMimeType.KET,
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
+  }
+
+  calculateMacromoleculeProperties(
+    struct: string,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    return this.#structService.calculateMacromoleculeProperties({
+      struct,
+    });
   }
 }

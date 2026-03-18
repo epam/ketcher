@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "3.0.3-unc27",
+  "version": "3.6.0-unc27",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -46,8 +46,7 @@
     "typedoc": "typedoc"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
-    "@types/raphael": "^2.3.9",
+    "@babel/runtime": "^7.26.10",
     "assert": "^2.0.0",
     "d3": "^7.8.5",
     "file-saver": "^2.0.5",
@@ -80,7 +79,7 @@
     "jest-mock-extended": "^2.0.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
-    "rollup": "^2.60.2",
+    "rollup": "^2.79.2",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -90,7 +89,7 @@
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "26.5.6",
     "ttypescript": "^1.5.13",
-    "typedoc": "^0.22.17",
+    "typedoc": "^0.24.8",
     "typedoc-plugin-markdown": "^3.12.1",
     "typescript": "^4.5.2"
   },

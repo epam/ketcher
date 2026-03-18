@@ -1,19 +1,16 @@
 import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  BondType,
-  ReactionMappingTool,
-  resetCurrentTool,
-  selectButtonById,
-  selectNestedTool,
-  takeEditorScreenshot,
-  waitForRender,
-} from '..';
-import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
+import { BondType, takeEditorScreenshot, waitForRender } from '..';
+import { resetCurrentTool } from '../canvas/tools/resetCurrentTool';
+import { selectButtonById } from '../canvas/tools/helpers';
+import { AtomLabelType } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 type BoundingBox = {
   width: number;
@@ -23,6 +20,25 @@ type BoundingBox = {
 };
 
 const HALF_DIVIDER = 2;
+
+let cachedBodyCenter: { x: number; y: number } | null = null;
+
+export async function getCachedBodyCenter(page: Page) {
+  if (cachedBodyCenter) return cachedBodyCenter;
+
+  await page.waitForSelector('body', { state: 'attached', timeout: 10000 });
+  const box = await page.locator('body').boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for <body>');
+  }
+
+  cachedBodyCenter = {
+    x: box.x + box.width / HALF_DIVIDER,
+    y: box.y + box.height / HALF_DIVIDER,
+  };
+
+  return cachedBodyCenter;
+}
 
 export async function clickAfterItemsToMergeInitialization(
   page: Page,
@@ -43,16 +59,21 @@ export async function clickAfterItemsToMergeInitialization(
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
+  options: { waitForMergeInitialization: boolean } = {
+    waitForMergeInitialization: false,
+  },
 ) {
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  await waitForRender(page, async () => {
-    await clickAfterItemsToMergeInitialization(
-      page,
-      body.x + body?.width / HALF_DIVIDER,
-      body.y + body?.height / HALF_DIVIDER,
-      button,
-    );
-  });
+  const { x, y } = await getCachedBodyCenter(page);
+
+  if (options.waitForMergeInitialization) {
+    await waitForRender(page, async () => {
+      await clickAfterItemsToMergeInitialization(page, x, y, button);
+    });
+  } else {
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y, { button });
+    });
+  }
 }
 
 export async function clickOnCanvas(
@@ -74,24 +95,29 @@ export async function clickOnCanvas(
      * Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
      */
     delay?: number;
+    waitForRenderTimeOut?: number;
+    /**
+     *      * Time to wait canvas event for for waitForRenderTimeOut.
+     */
   },
 ) {
-  await waitForRender(page, async () => {
-    await page.mouse.click(x, y, options);
-  });
+  await waitForRender(
+    page,
+    async () => {
+      await page.mouse.click(x, y, options);
+    },
+    options?.waitForRenderTimeOut,
+  );
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  return {
-    x: body.x + body.width / HALF_DIVIDER,
-    y: body.y + body.height / HALF_DIVIDER,
-  };
+  return await getCachedBodyCenter(page);
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   const canvas = (await page
-    .getByTestId('ketcher-canvas')
+    .getByTestId(KETCHER_CANVAS)
+    .filter({ has: page.locator(':visible') })
     .boundingBox()) as BoundingBox;
   return {
     x: canvas.x + canvas.width / HALF_DIVIDER,
@@ -220,15 +246,6 @@ export async function doubleClickOnBond(
   });
 }
 
-export async function rightClickOnBond(
-  page: Page,
-  bondType: BondType,
-  bondNumber: number,
-) {
-  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-}
-
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,
@@ -247,41 +264,26 @@ export async function moveOnBond(
   await page.mouse.move(point.x, point.y);
 }
 
-export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
-  await page.getByTestId('hand').click();
-  // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
-  const button = page.getByTestId(dropdownElementId);
-  await button.isVisible();
-  await button.click({ delay: 200, clickCount: 2 });
-  const dropdown = page.locator('.default-multitool-dropdown');
-  if (!(await dropdown.isVisible({ timeout: 200 }))) {
-    await button.click();
-  }
-}
-
-export async function selectDropdownTool(
-  page: Page,
-  toolName: DropdownIds,
-  toolTypeId: DropdownToolIds,
-) {
-  await openDropdown(page, toolName);
-  const button = page.locator(
-    `.default-multitool-dropdown [data-testid="${toolTypeId}"]`,
-  );
-  await button.click();
-}
-
 export async function applyAutoMapMode(
   page: Page,
   mode: string,
   withScreenshot = true,
 ) {
   await resetCurrentTool(page);
-  await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+  await LeftToolbar(page).selectReactionMappingTool(
+    ReactionMappingType.ReactionAutoMapping,
+  );
   await page.getByTestId('automap-mode-input-span').click();
   await selectOption(page, mode);
   await selectButtonById('OK', page);
   if (withScreenshot) {
     await takeEditorScreenshot(page);
   }
+}
+
+export async function selectSequenceTypeMode(
+  page: Page,
+  type: 'PEPTIDE' | 'RNA' | 'DNA',
+) {
+  await page.getByTestId(`${type}Btn`).click();
 }

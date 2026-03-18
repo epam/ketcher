@@ -165,6 +165,7 @@ export type EditorTheme = {
   };
   shadow: {
     regular: string;
+    mainLayoutBlocks: string;
   };
   outline: {
     small: string;
@@ -181,6 +182,14 @@ export type EditorTheme = {
   };
   transition: {
     regular: string;
+  };
+  zIndex: {
+    base: number;
+    toolbar: number;
+    sticky: number;
+    overlay: number;
+    modal: number;
+    critical: number;
   };
 };
 

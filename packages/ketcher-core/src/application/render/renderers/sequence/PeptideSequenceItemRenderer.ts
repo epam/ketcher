@@ -1,4 +1,5 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { D3SvgElementSelection } from 'application/render/types';
 
 export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
   #NO_ANALOGUE_SYMBOL = '@';
@@ -26,5 +27,15 @@ export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
     if (isAsparticAcidWithDifferentR3) return;
     if (this.symbolToDisplay === this.#NO_ANALOGUE_SYMBOL) return;
     this.drawLine();
+  }
+
+  protected appendRootElement() {
+    this.rootElement = super.appendRootElement();
+    this.rootElement?.attr('data-symbol-type', 'Peptide');
+
+    return this.rootElement as never as D3SvgElementSelection<
+      SVGGElement,
+      void
+    >;
   }
 }

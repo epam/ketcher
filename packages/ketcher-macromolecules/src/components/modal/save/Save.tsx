@@ -199,7 +199,12 @@ export const Save = ({
   }, [currentFileFormat]);
 
   return (
-    <StyledModal title="save structure" isOpen={isModalOpen} onClose={onClose}>
+    <StyledModal
+      title="save structure"
+      isOpen={isModalOpen}
+      onClose={onClose}
+      testId="save-structure-dialog"
+    >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">
           <Row style={{ padding: '12px 12px 10px' }}>
@@ -209,6 +214,7 @@ export const Save = ({
                 id="filename"
                 onChange={handleInputChange}
                 label="File name:"
+                data-testid="filename-input"
               />
             </div>
             <StyledDropdown
@@ -217,13 +223,17 @@ export const Save = ({
               currentSelection={currentFileFormat}
               selectionHandler={handleSelectChange}
               customStylesForExpanded={stylesForExpanded}
+              testId="file-format-list"
             />
           </Row>
           {svgData ? (
-            <SvgPreview dangerouslySetInnerHTML={{ __html: svgData }} />
+            <SvgPreview
+              dangerouslySetInnerHTML={{ __html: svgData }}
+              data-testid="preview-area"
+            />
           ) : (
             <PreviewContainer>
-              <TextArea testId="preview-area-text" value={struct} readonly />
+              <TextArea testId="preview-area" value={struct} readonly />
               <IconButton
                 onClick={handleCopy}
                 iconName="copy"
@@ -245,12 +255,14 @@ export const Save = ({
           label="Cancel"
           styleType="secondary"
           clickHandler={onClose}
+          data-testid="cancel-button"
         />
 
         <ActionButton
           label="Save"
           clickHandler={handleSave}
           disabled={!currentFileName}
+          data-testid="save-button"
         />
       </Modal.Footer>
     </StyledModal>

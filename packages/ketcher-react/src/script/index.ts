@@ -29,7 +29,11 @@ interface Config {
   customButtons?: Array<CustomButton>;
   errorHandler: (message: string) => void;
   togglerComponent?: JSX.Element;
+  ketcherId: string;
 }
+
+export type { Config, ButtonsConfig };
+export * from './providers';
 
 async function buildKetcherAsync({
   element,
@@ -40,29 +44,28 @@ async function buildKetcherAsync({
   errorHandler,
   togglerComponent,
   customButtons,
+  ketcherId: prevKetcherId,
 }: Config) {
   const builder = new KetcherBuilder();
 
-  await builder.appendApiAsync(structServiceProvider);
+  const structService = builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
-  const { setKetcher, ketcherId, cleanup, setServer } =
-    await builder.appendUiAsync(
-      element,
-      appRoot,
-      staticResourcesUrl,
-      errorHandler,
-      buttons,
-      togglerComponent,
-      customButtons,
-    );
-
   const ketcher = builder.build();
-  if (ketcher) {
-    setKetcher(ketcher);
-  }
-  return { ketcher, ketcherId, cleanup, builder, setServer };
+  structService.addKetcherId(ketcher.id);
+
+  const { cleanup, setServer } = await builder.appendUiAsync(
+    prevKetcherId,
+    ketcher.id,
+    element,
+    appRoot,
+    staticResourcesUrl,
+    errorHandler,
+    buttons,
+    togglerComponent,
+    customButtons,
+  );
+
+  return { ketcher, cleanup, builder, setServer };
 }
 
-export type { Config, ButtonsConfig };
-export * from './providers';
 export default buildKetcherAsync;

@@ -31,6 +31,7 @@ import { load } from '../../../../../state';
 import { pick } from 'lodash/fp';
 import { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
+import { useAppContext } from 'src/hooks';
 
 const Viewer = lazy(() => import('miew-react'));
 
@@ -122,7 +123,11 @@ const MiewDialog = ({
 }: Props) => {
   const miewRef = useRef<MiewAsType>();
   const [isInitialized, setIsIsInitialized] = useState(false);
-  const ketcher = ketcherProvider.getKetcher();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   const isDisabled = useMemo(() => {
     return (

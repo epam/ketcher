@@ -23,4 +23,5 @@ services:
     #   - "4002:4002"
     volumes:
       - ./:/app
+      - ./build:/app/node_modules
       - ../:/ketcher

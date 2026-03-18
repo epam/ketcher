@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { KetcherLogger, GenerateImageOptions } from 'ketcher-core';
+import {
+  KetcherLogger,
+  GenerateImageOptions,
+  ketcherProvider,
+} from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -33,6 +37,7 @@ type Props = {
   className?: string;
   title?: string;
   disabled?: boolean;
+  testId?: string;
 };
 
 type SaveButtonProps = PropsWithChildren<Props>;
@@ -51,8 +56,9 @@ const SaveButton = (props: SaveButtonProps) => {
     className,
     title,
     disabled,
+    testId,
   } = props;
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const saveFile = () => {
     if (data) {
@@ -69,7 +75,7 @@ const SaveButton = (props: SaveButtonProps) => {
   };
 
   const saveImage = () => {
-    const ketcherInstance = getKetcherInstance();
+    const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
     if (options?.outputFormat) {
       ketcherInstance
         .generateImage(data, options)
@@ -101,6 +107,7 @@ const SaveButton = (props: SaveButtonProps) => {
       title={title}
       className={className}
       disabled={disabled}
+      data-testid={testId}
       onClick={(event) => {
         save(event);
       }}

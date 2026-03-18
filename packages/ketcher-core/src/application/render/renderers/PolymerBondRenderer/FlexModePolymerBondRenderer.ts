@@ -1,17 +1,32 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
+import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
+import {
+  CORNER_LENGTH,
+  generateCornerFromBottomToLeft,
+  generateCornerFromBottomToRight,
+  generateCornerFromLeftToBottom,
+  generateCornerFromLeftToTop,
+  generateCornerFromRightToBottom,
+  generateCornerFromRightToTop,
+  generateCornerFromTopToLeft,
+  generateCornerFromTopToRight,
+} from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
+  private path = '';
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
@@ -35,10 +50,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.rootBBox?.height || 0;
   }
 
-  private get scaledPosition(): {
-    readonly endPosition: Vec2;
-    readonly startPosition: Vec2;
-  } {
+  private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const startPositionInPixels = Coordinates.modelToCanvas(
@@ -58,7 +70,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   public moveSelection(): void {
     if (
       this.previousStateOfIsMonomersOnSameHorizontalLine !==
-      this.isMonomersOnSameHorizontalLine()
+      this.polymerBond.isHorizontal
     ) {
       this.remove();
       this.show();
@@ -68,35 +80,156 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       this.moveEnd();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
-      this.isMonomersOnSameHorizontalLine();
+      this.polymerBond.isHorizontal;
   }
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
+    if (this.polymerBond.isOverlappedByMonomer) {
+      this.generateEnvelopingBondPath();
+    } else {
+      this.generateLinearBondPath();
+    }
+
     this.appendBondGraph(rootElement);
+
     return this.bodyElement;
   }
 
-  public isMonomersOnSameHorizontalLine(): boolean {
-    if (!this.polymerBond.secondMonomer) return false;
+  public generateLinearBondPath() {
+    const { startPosition, endPosition } = this.scaledPosition;
+    this.path = `
+      M${startPosition.x},${startPosition.y}
+      L${endPosition.x},${endPosition.y}
+    `;
+  }
 
-    const monomer1Y = this.polymerBond.firstMonomer.position.y;
-    const monomer2Y = this.polymerBond.secondMonomer.position.y;
-    const difference = monomer1Y - monomer2Y;
-    return difference < 0.5 && difference > -0.5;
+  public generateEnvelopingBondPath() {
+    if (!this.polymerBond.secondMonomer) {
+      return;
+    }
+
+    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+      this.polymerBond.firstMonomer,
+      this.polymerBond.secondMonomer,
+    ]);
+    const expandedBBox = this.getExpandedBoundingBox(subStructureBBox);
+
+    const { left, top, width, height } = expandedBBox;
+    const midX = left + width / 2;
+    const midY = top + height / 2;
+
+    const isBoundingBoxVertical =
+      Math.abs(this.polymerBond.startPosition.x - midX) <
+      Math.abs(this.polymerBond.startPosition.y - midY);
+
+    const firstPoint = this.getPointOnBBox(
+      this.polymerBond.startPosition,
+      expandedBBox,
+    );
+    const secondPoint = this.getPointOnBBox(
+      this.polymerBond.endPosition,
+      expandedBBox,
+    );
+
+    let thirdPoint: Vec2;
+
+    if (isBoundingBoxVertical) {
+      thirdPoint = new Vec2(firstPoint.x, secondPoint.y);
+    } else {
+      thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
+    }
+
+    this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}`;
+
+    const adjustedFirstPoint = this.adjustPointForCorner(
+      this.scaledPosition.startPosition,
+      firstPoint,
+    );
+    this.path += `L${adjustedFirstPoint.x},${adjustedFirstPoint.y}`;
+    this.addCornerBasedOnDirection(
+      this.scaledPosition.startPosition,
+      firstPoint,
+      thirdPoint,
+    );
+
+    const adjustedThirdPoint = this.adjustPointForCorner(
+      firstPoint,
+      thirdPoint,
+    );
+    this.path += `L${adjustedThirdPoint.x},${adjustedThirdPoint.y}`;
+    this.addCornerBasedOnDirection(
+      firstPoint,
+      thirdPoint,
+      this.scaledPosition.endPosition,
+    );
+
+    this.path += `L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}`;
+  }
+
+  private addCornerBasedOnDirection(
+    prevPoint: Vec2,
+    cornerPoint: Vec2,
+    nextPoint: Vec2,
+  ) {
+    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (prevPoint.x < cornerPoint.x) {
+        if (cornerPoint.y < nextPoint.y) {
+          this.path = this.path.concat(generateCornerFromLeftToBottom());
+        } else {
+          this.path = this.path.concat(generateCornerFromLeftToTop());
+        }
+      } else {
+        if (cornerPoint.y < nextPoint.y) {
+          this.path = this.path.concat(generateCornerFromRightToBottom());
+        } else {
+          this.path = this.path.concat(generateCornerFromRightToTop());
+        }
+      }
+    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
+      if (prevPoint.y < cornerPoint.y) {
+        if (cornerPoint.x < nextPoint.x) {
+          this.path = this.path.concat(generateCornerFromTopToRight());
+        } else {
+          this.path = this.path.concat(generateCornerFromTopToLeft());
+        }
+      } else {
+        if (cornerPoint.x < nextPoint.x) {
+          this.path = this.path.concat(generateCornerFromBottomToRight());
+        } else {
+          this.path = this.path.concat(generateCornerFromBottomToLeft());
+        }
+      }
+    }
+  }
+
+  private adjustPointForCorner(startPoint: Vec2, endPoint: Vec2): Vec2 {
+    const adjustedPoint = new Vec2(endPoint.x, endPoint.y);
+
+    if (startPoint.x > endPoint.x) {
+      adjustedPoint.x += CORNER_LENGTH;
+    } else if (startPoint.x < endPoint.x) {
+      adjustedPoint.x -= CORNER_LENGTH;
+    }
+
+    if (startPoint.y > endPoint.y) {
+      adjustedPoint.y += CORNER_LENGTH;
+    } else if (startPoint.y < endPoint.y) {
+      adjustedPoint.y -= CORNER_LENGTH;
+    }
+
+    return adjustedPoint;
   }
 
   // TODO: Specify the types.
   public appendBondGraph(rootElement) {
     this.bodyElement = rootElement
-      .append('line')
+      .append('path')
+      .attr('d', this.path)
+      .attr('fill', 'none')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
       .attr('class', 'selection-area')
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y)
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', 'covalent')
@@ -110,13 +243,46 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         ),
       )
       .attr(
-        'data-tomonomerid',
+        'data-toconnectionpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),
       );
 
     return this.bodyElement;
+  }
+
+  private getExpandedBoundingBox(bbox) {
+    const expansionFactor = this.polymerBond.isSideChainConnection
+      ? MonomerSize - 0.1
+      : MonomerSize;
+    let { left, top, width, height } = bbox;
+
+    if (width < height) {
+      left -= expansionFactor;
+      width += 2 * expansionFactor;
+    } else {
+      top -= expansionFactor;
+      height += 2 * expansionFactor;
+    }
+
+    return { left, top, width, height };
+  }
+
+  private getPointOnBBox(position: Vec2, bbox): Vec2 {
+    const { left, top, width, height } = bbox;
+    const midX = left + width / 2;
+    const midY = top + height / 2;
+
+    let result: Vec2;
+
+    if (Math.abs(position.x - midX) < Math.abs(position.y - midY)) {
+      result = new Vec2(position.x > midX ? left : left + width, position.y);
+    } else {
+      result = new Vec2(position.x, position.y > midY ? top + height : top);
+    }
+
+    return Coordinates.modelToCanvas(result);
   }
 
   // TODO: Specify the types.
@@ -152,12 +318,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       this.selectionElement = this.rootElement
-        ?.insert('line', ':first-child')
+        ?.insert('path', ':first-child')
+        .attr('d', this.path)
+        .attr('fill', 'none')
         .attr('stroke', '#57FF8F')
-        .attr('x1', this.scaledPosition.startPosition.x)
-        .attr('y1', this.scaledPosition.startPosition.y)
-        .attr('x2', this.scaledPosition.endPosition.x)
-        .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '5')
         .attr('class', 'dynamic-element');
     } else {
@@ -172,21 +336,16 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private moveGraphBondEnd(): void {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
-    this.bodyElement
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y);
 
-    this.hoverAreaElement
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y);
+    this.generateLinearBondPath();
+
+    this.bodyElement.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
 
     this.hoverCircleAreaElement
       ?.attr('cx', this.scaledPosition.endPosition.x)
       .attr('cy', this.scaledPosition.endPosition.y);
-
-    this.selectionElement
-      ?.attr('x2', this.scaledPosition.endPosition.x)
-      ?.attr('y2', this.scaledPosition.endPosition.y);
   }
 
   public moveStart(): void {
@@ -196,29 +355,22 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private moveGraphBondStart(): void {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
-    this.bodyElement
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y);
 
-    this.hoverAreaElement
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y);
+    this.generateLinearBondPath();
 
-    this.selectionElement
-      ?.attr('x1', this.scaledPosition.startPosition.x)
-      ?.attr('y1', this.scaledPosition.startPosition.y);
+    this.bodyElement.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
+    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
       this.hoverAreaElement
     )) = this.rootElement
-      ?.append('line')
+      ?.append('path')
+      .attr('d', this.path)
+      .attr('fill', 'none')
       .attr('stroke', 'transparent')
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y)
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y)
       .attr('stroke-width', '10');
 
     (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(

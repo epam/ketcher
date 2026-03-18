@@ -75,10 +75,6 @@ getBottomBondByAttributes - get bottom bond by attributes
 getLeftBondByAttributes - get left bond by attributes
 getFirstBondCoordinatesByAttributes - get one bond by attributes
 
-To select tools with nested / sub levels use:
-
-selectNestedTool - select specific tool that has sub / nested levels.
-
 ## Docker
 
 - Docker runs automatically in the pipeline after pushing changes to the repository.
@@ -100,17 +96,11 @@ selectNestedTool - select specific tool that has sub / nested levels.
     - Rc: KETCHER_URL=link_to_rc
     - Local frontend: KETCHER_URL=http://localhost:4002
   - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
-  - OPTIONAL: ENABLE_POLYMER_EDITOR=true (If you want to run tests for Macromolecule Editor)
   - OPTIONAL: NUM_WORKERS=8 (default=num cpus, if you want to define custom number of workers)
 
 ### Run tests:
 
-**OPTIONAL: Test Polymer Editor **:
-If you want to run tests from Macromolecule Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
-
-- Root package.json: "build:example": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
-
-Also make sure, that test is not skipped! Check if test starts with
+Make sure that test is not skipped! Check if test starts with
 `test.skip('We test something', async ({ page }) => {`
 Remove "skip" before running.
 
@@ -159,6 +149,7 @@ docker-compose run --rm --user $(id -u) ketcher bash /app/test_build.sh
 Prepare tests
 
 ```
+mkdir build
 docker-compose build autotests
 docker-compose run --rm --user $(id -u) autotests bash /app/test_prepare.sh
 ```

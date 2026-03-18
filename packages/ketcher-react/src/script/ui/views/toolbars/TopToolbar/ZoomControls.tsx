@@ -18,10 +18,10 @@ import { useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 
-import { zoomList } from 'src/script/ui/action/zoom';
+import { zoomList } from '../../../action/zoom';
 import { ZoomInput, updateInputString } from './ZoomInput';
 import { Icon } from 'components';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 
 const isFullScreen = () => {
   return !!(
@@ -167,7 +167,7 @@ export const ZoomControls = ({
 
   return (
     <ElementAndDropdown ref={containerRef}>
-      <DropDownButton onClick={onExpand}>
+      <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">
           {Math.round(currentZoom)}%
         </ZoomLabel>

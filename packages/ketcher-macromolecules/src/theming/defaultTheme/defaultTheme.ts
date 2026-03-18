@@ -82,7 +82,7 @@ export const defaultTheme: EditorTheme = {
     },
     tab: {
       regular: '#FFFFFF',
-      active: '#EFF2F5',
+      active: '#E1E5EA',
       hover: '#00838F',
       content: '#EFF2F5',
     },
@@ -252,6 +252,7 @@ export const defaultTheme: EditorTheme = {
   },
   shadow: {
     regular: '0px 1px 1px rgba(197, 203, 207, 0.7)',
+    mainLayoutBlocks: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   },
   outline: {
     small: '1px solid #B4B9D6',
@@ -268,6 +269,14 @@ export const defaultTheme: EditorTheme = {
   },
   transition: {
     regular: 'all .3s',
+  },
+  zIndex: {
+    base: 0,
+    toolbar: 10,
+    sticky: 100,
+    overlay: 200,
+    modal: 1000,
+    critical: 9999,
   },
 };
 

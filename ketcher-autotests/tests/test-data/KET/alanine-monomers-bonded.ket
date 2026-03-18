@@ -149,6 +149,7 @@
                 ]
             }
         ],
+	    "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "naturalAnalogShort": "A",
         "id": "A___Alanine",

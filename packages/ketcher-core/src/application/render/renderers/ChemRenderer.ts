@@ -5,19 +5,12 @@ import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
-const CHEM_SELECTED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].selected;
+const CHEM_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].hover;
 const CHEM_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].body;
 
 export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {
-    super(
-      monomer,
-      CHEM_SELECTED_ELEMENT_ID,
-      CHEM_SELECTED_ELEMENT_ID,
-      CHEM_SYMBOL_ELEMENT_ID,
-      scale,
-    );
+    super(monomer, CHEM_HOVERED_ELEMENT_ID, CHEM_SYMBOL_ELEMENT_ID, scale);
   }
 
   protected appendBody(

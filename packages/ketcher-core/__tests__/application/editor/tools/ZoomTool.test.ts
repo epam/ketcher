@@ -1,4 +1,4 @@
-import { CoreEditor, FlexMode } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { polymerEditorTheme } from '../../../mock-data';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -9,10 +9,11 @@ describe('Zoom Tool', () => {
   const zoomed = jest.fn();
 
   beforeEach(() => {
-    window.SVGElement.prototype.getBBox = () => ({
-      width: 20,
-      height: 30,
-    });
+    window.SVGElement.prototype.getBBox = () =>
+      ({
+        width: 20,
+        height: 30,
+      } as DOMRect);
     canvas = createPolymerEditorCanvas();
     Object.defineProperty(canvas, 'width', {
       value: {
@@ -40,7 +41,6 @@ describe('Zoom Tool', () => {
     new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
-      mode: new FlexMode(),
     });
     canvas.dispatchEvent(
       new WheelEvent('wheel', { deltaY: 60, ctrlKey: true }),

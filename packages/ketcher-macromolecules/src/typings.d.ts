@@ -1,7 +1,7 @@
 // <reference types="react-scripts" />
 /* eslint-disable no-var, no-use-before-define */
-declare module '*.less' {
-  const classes: { [className: string]: string };
+declare module '*.module.less' {
+  const classes: { [key: string]: string };
   export default classes;
 }
 
@@ -22,6 +22,16 @@ declare module '*.svg' {
 
   const src: ReactComponent;
   export default src;
+}
+
+declare global {
+  export interface Element {
+    __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
+    __data__?: BaseRenderer;
+  }
 }
 
 interface Document {

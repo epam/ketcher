@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, Axis, Axises, Struct } from 'domain/entities';
-import { cloneDeepWith, cloneDeep } from 'lodash';
+import { Axis, Axises, Struct, Vec2 } from 'domain/entities';
+import { cloneDeep, cloneDeepWith } from 'lodash';
 import { EditorSelection } from 'application/editor';
+import { MonomerTransformation } from 'application/formatters';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -67,9 +68,26 @@ export const switchIntoChemistryCoordSystem = (position: Vec2) => {
   return rotateCoordAxisBy180Degrees(position, Axis.y);
 };
 
+export const modifyTransformation = (transformation: MonomerTransformation) => {
+  const { rotate } = transformation;
+  const newTransformation = cloneDeep(transformation);
+
+  /*
+   * Ketcher provides rotation angle according to the rotation tool – 0 is in the middle, minus angle rotates anti-clockwise, plus angle rotates clockwise
+   * Indigo uses trigonometric circle – 0 is on the right, plus angle rotates anti-clockwise, minus angle rotates clockwise
+   * Hence, we have to invert the angle when saving and when loading from KET file
+   */
+  if (rotate) {
+    newTransformation.rotate = -rotate;
+  }
+
+  return newTransformation;
+};
+
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,
+  resetSelection = false,
 ) => {
   if (!selection) {
     return populatedStruct;
@@ -78,7 +96,15 @@ export const populateStructWithSelection = (
     const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
-        value.setInitiallySelected(selectedEntities.includes(key) || undefined);
+        if (resetSelection) {
+          value.setInitiallySelected(
+            selectedEntities.includes(key) || undefined,
+          );
+        } else {
+          if (selectedEntities.includes(key)) {
+            value.setInitiallySelected(true);
+          }
+        }
       }
     });
   });

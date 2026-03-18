@@ -16,8 +16,8 @@ import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { KetMonomerClass } from 'application/formatters';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleotide {
   constructor(
@@ -25,6 +25,14 @@ export class Nucleotide {
     public rnaBase: RNABase | AmbiguousMonomer,
     public phosphate: Phosphate,
   ) {}
+
+  toString() {
+    return (
+      `sugar: ${this.sugar.constructor.name}, ` +
+      `rnaBase: ${this.rnaBase.constructor.name}, ` +
+      `phosphate: ${this.phosphate.constructor.name}`
+    );
+  }
 
   static fromSugar(sugar: Sugar, needValidation = true) {
     if (needValidation) {
@@ -53,10 +61,12 @@ export class Nucleotide {
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
     const editor = CoreEditor.provideEditorInstance();
+    const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
       rnaBaseName,
       KetMonomerClass.Base,
+      isDnaSugar,
     );
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
@@ -75,7 +85,7 @@ export class Nucleotide {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, CELL_WIDTH + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
       ),
     );
 
@@ -87,7 +97,7 @@ export class Nucleotide {
         rnaBasePosition: bottomItemPosition,
         phosphate: phosphateLibraryItem,
         phosphatePosition: topLeftItemPosition.add(
-          Coordinates.canvasToModel(new Vec2(CELL_WIDTH, 0)),
+          Coordinates.canvasToModel(new Vec2(SnakeLayoutCellWidth, 0)),
         ),
       });
 

@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Provider } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
+  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
   NodeSelection,
+  NodesSelection,
+  SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -41,6 +47,10 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
+  setContextMenuActive,
+  setEditorLineLength,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -89,27 +99,38 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
-import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
+import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
+import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+import { DragGhost } from 'components/DragGhost/DragGhost';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: () => void;
+  onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -120,21 +141,26 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  useEffect(() => {
-    onInit?.();
-  }, [onInit]);
+  store.dispatch(initKetcherId(ketcherId));
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor
-            theme={editorTheme}
-            togglerComponent={togglerComponent}
-            monomersLibraryUpdate={monomersLibraryUpdate}
-          />
-        </EditorWrapper>
+        <RootSizeProvider
+          rootRef={rootElRef}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
+          <EditorWrapper ref={rootElRef} className={EditorClassName}>
+            <Editor
+              ketcherId={ketcherId}
+              theme={editorTheme}
+              togglerComponent={togglerComponent}
+              monomersLibraryUpdate={monomersLibraryUpdate}
+              onInit={onInit}
+            />
+          </EditorWrapper>
+        </RootSizeProvider>
       </ThemeProvider>
     </Provider>
   );
@@ -144,6 +170,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -154,12 +181,10 @@ function Editor({
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
-  });
-  const { show: showPolymerBondContextMenu } = useContextMenu({
-    id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
   const { show: showSelectedMonomersContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
@@ -167,7 +192,12 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+        onInit,
+      }),
     );
 
     return () => {
@@ -178,8 +208,11 @@ function Editor({
   useSetRnaPresets();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event, selections) => {
+    editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
+      setContextMenuEvent(event);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
         props: {
@@ -188,11 +221,13 @@ function Editor({
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      (
-        event,
-        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-      ): void => {
-        showPolymerBondContextMenu({
+      ([event, polymerBondRenderer]: [
+        PointerEvent,
+        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ]): void => {
+        setContextMenuEvent(event);
+        setSelectedMonomers([]);
+        showSelectedMonomersContextMenu({
           event,
           props: {
             polymerBondRenderer,
@@ -200,20 +235,41 @@ function Editor({
         });
       },
     );
+
     editor?.events.rightClickSelectedMonomers.add(
-      (event, selectedMonomers: BaseMonomer[]) => {
+      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
+        setContextMenuEvent(event);
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
         });
       },
     );
-    editor?.events.rightClickCanvas.add((event) => {
-      showSequenceContextMenu({
-        event,
-        props: {},
-      });
+    editor?.events.rightClickCanvas.add(
+      ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
+        setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
+
+        // TODO separate by two events
+        if (editor.mode instanceof SequenceMode) {
+          setSelections(selections as NodesSelection);
+          showSequenceContextMenu({
+            event,
+            props: {},
+          });
+        } else {
+          setSelectedMonomers(selections as BaseMonomer[]);
+          showSelectedMonomersContextMenu({
+            event,
+            props: { selectedMonomers: selections },
+          });
+        }
+      },
+    );
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
     });
   }, [editor]);
 
@@ -224,9 +280,34 @@ function Editor({
     };
   }, [editor]);
 
+  useEffect(() => {
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
+
+  const toggleLibraryVisibility = useCallback(() => {
+    setIsMonomerLibraryHidden((prev) => !prev);
+  }, []);
 
   return (
     <>
@@ -237,8 +318,8 @@ function Editor({
         >
           <TopMenuComponent />
           <TopMenuRightWrapper>
+            <SequenceSyncEditModeButton />
             <LayoutModeButton />
-
             <SequenceTypeGroupButton />
             <TogglerComponentWrapper
               className={
@@ -261,6 +342,7 @@ function Editor({
 
         <Layout.Main>
           <EditorEvents />
+          <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
@@ -284,7 +366,7 @@ function Editor({
               <SequenceStartArrow />
               <ArrowMarker />
             </defs>
-            <g className="drawn-structures"></g>
+            <g className="drawn-structures" />
             {isHandToolSelected && (
               <rect
                 x={0}
@@ -300,19 +382,28 @@ function Editor({
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
-          <MonomerLibraryToggle
-            isHidden={isMonomerLibraryHidden}
-            onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
-          />
+          {isMonomerLibraryHidden && (
+            <MonomerLibraryToggle onClick={toggleLibraryVisibility} />
+          )}
         </Layout.InsideRoot>
       </Layout>
       <Preview />
-      <SequenceItemContextMenu selections={selections} />
-      <PolymerBondContextMenu />
-      <SelectedMonomersContextMenu selectedMonomers={selectedMonomers} />
+      <DragGhost />
+      <SequenceItemContextMenu
+        selections={selections}
+        contextMenuEvent={contextMenuEvent}
+      />
+      <SelectedMonomersContextMenu
+        selectedMonomers={selectedMonomers}
+        contextMenuEvent={contextMenuEvent}
+      />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
@@ -326,6 +417,7 @@ function Editor({
             {errorTooltipText}
           </StyledToastContent>
           <StyledIconButton
+            testId="error-tooltip-close"
             iconName="close"
             onClick={handleCloseErrorTooltip}
           ></StyledIconButton>

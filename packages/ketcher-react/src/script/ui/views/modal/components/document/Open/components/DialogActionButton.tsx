@@ -20,6 +20,7 @@ type Props = {
   label: string;
   styles: string;
   title?: string;
+  testId?: string;
 };
 
 export const DialogActionButton = ({
@@ -28,11 +29,13 @@ export const DialogActionButton = ({
   title,
   styles,
   disabled,
+  testId,
 }: Props) => (
   <input
     key="Open"
     type="button"
     className={styles}
+    data-testid={testId}
     value={label}
     title={title || label}
     disabled={disabled}

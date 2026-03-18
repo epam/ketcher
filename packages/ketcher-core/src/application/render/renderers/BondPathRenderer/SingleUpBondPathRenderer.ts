@@ -1,11 +1,11 @@
 import {
-  BondSVGPath,
+  SVGPathAttributes,
   BondVectors,
   StereoBondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 
 class SingleUpBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     const halfOfBondEndWidth = 0.7 * StereoBondWidth;
@@ -18,7 +18,7 @@ class SingleUpBondPathRenderer {
       -halfOfBondEndWidth,
     );
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: `
           M${startPosition.x},${startPosition.y}
           L${bondEndFirstPoint.x},${bondEndFirstPoint.y}

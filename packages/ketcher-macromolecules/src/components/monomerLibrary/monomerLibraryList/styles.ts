@@ -21,6 +21,6 @@ export const MonomerListContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
   justifyItems: 'center',
-  gap: '24px',
-  padding: '16px 12px',
+  gap: '8px',
+  padding: '8px',
 });

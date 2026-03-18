@@ -10,18 +10,19 @@ import { useAppContext } from 'src/hooks/useAppContext';
 import Editor from 'src/script/editor';
 
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { ketcherProvider } from 'ketcher-core';
 
 const RGroupAttachmentPointMenuItems: FC<
   MenuItemsProps<RGroupAttachmentPointContextMenuProps>
 > = (props) => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const handleRemove = useRGroupAttachmentPointRemove();
   const [
     handleEditRGroupAttachmentPoint,
     rgroupAttachmentPointDisabled,
     rgroupAttachmentPointHidden,
   ] = useRGroupAttachmentPointEdit();
-  const editor = getKetcherInstance().editor as Editor;
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
   const highlight = (color: string) => {
     const rgroupAttachmentPoints =

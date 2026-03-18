@@ -46,6 +46,7 @@ export class Render {
   constructor(
     clientArea: HTMLElement,
     options: RenderOptions,
+    currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
@@ -57,8 +58,8 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && global.ketcher?.editor?.render?.ctab) {
-      this.ctab = global.ketcher?.editor?.render?.ctab;
+    if (reuseRestructIfExist && currentRender?.ctab) {
+      this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
       this.ctab.update(true);
@@ -211,9 +212,12 @@ export class Render {
   }
 
   setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
-    this.paper.clear();
+    this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
+    this.scrollbar.destroy();
+    this.scrollbar = new ScrollbarContainer(this);
+
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
     if (forceUpdateWithTimeout) {

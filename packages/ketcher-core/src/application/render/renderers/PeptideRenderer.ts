@@ -4,8 +4,6 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
-const PEPTIDE_SELECTED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].selected;
 const PEPTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
 const PEPTIDE_SYMBOL_ELEMENT_ID =
@@ -18,7 +16,6 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Peptide, scale?: number) {
     super(
       monomer,
-      PEPTIDE_SELECTED_ELEMENT_ID,
       PEPTIDE_HOVERED_ELEMENT_ID,
       PEPTIDE_SYMBOL_ELEMENT_ID,
       scale,
@@ -33,11 +30,15 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
+    const isPeptide = this.monomer.monomerItem.props?.MonomerType === 'PEPTIDE';
+    const color = isPeptide
+      ? this.getPeptideColor(theme)
+      : this.getMonomerColor(theme);
     return rootElement
       .append('use')
       .data([this])
       .attr('href', PEPTIDE_SYMBOL_ELEMENT_ID)
-      .attr('fill', this.getPeptideColor(theme));
+      .attr('fill', color);
   }
 
   public get textColor() {

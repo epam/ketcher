@@ -104,7 +104,7 @@ const ColorPicker = (props: Props) => {
       >
         <div
           className={classes.colorPickerPreview}
-          data-testid="color-picker-preview"
+          data-testid={`${props.name}-color-picker-preview`}
           style={{ backgroundColor: value }}
         />
 

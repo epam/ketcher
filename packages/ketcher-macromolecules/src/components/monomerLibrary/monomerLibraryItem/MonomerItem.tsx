@@ -15,13 +15,14 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
-import { useState } from 'react';
+import { useCallback, MouseEvent, useRef } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
-import { MONOMER_TYPES } from '../../../constants';
+import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const MonomerItem = ({
   item,
@@ -29,12 +30,13 @@ const MonomerItem = ({
   onMouseLeave,
   onMouseMove,
   isSelected,
-  isPeptideTab,
   disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
-  const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
+
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
   const colorCode = isAmbiguousMonomerLibraryItem(item)
@@ -44,6 +46,19 @@ const MonomerItem = ({
     : item.props.MonomerNaturalAnalogCode;
 
   const monomerKey: string = getMonomerUniqueKey(item);
+  const monomerItem = isAmbiguousMonomerLibraryItem(item)
+    ? undefined
+    : (item as MonomerItemType);
+
+  const addFavorite = useCallback(
+    (event: MouseEvent) => {
+      event.stopPropagation();
+      dispatch(toggleMonomerFavorites(item));
+    },
+    [dispatch, item],
+  );
+
+  useLibraryItemDrag(item, cardRef);
 
   return (
     <Card
@@ -51,24 +66,21 @@ const MonomerItem = ({
       disabled={isDisabled}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
-      isPeptideTab={isPeptideTab}
+      item={monomerItem}
       isVariantMonomer={item.isAmbiguous}
       code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       {...(!isDisabled ? { onClick } : {})}
+      ref={cardRef}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
         <div
-          onClick={(event) => {
-            event.stopPropagation();
-            setFavorite(!favorite);
-            dispatch(toggleMonomerFavorites(item));
-          }}
-          className={`star ${favorite ? 'visible' : ''}`}
+          onClick={addFavorite}
+          className={`star ${item.favorite ? 'visible' : ''}`}
         >
-          ★
+          {FavoriteStarSymbol}
         </div>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

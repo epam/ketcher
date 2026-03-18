@@ -42,6 +42,7 @@ const mediaSizes = {
 
 export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
+  onSetKetcherId?: (ketcherId: string) => void;
 }
 
 function MicromoleculesEditor(props: EditorProps) {
@@ -59,16 +60,22 @@ function MicromoleculesEditor(props: EditorProps) {
     ref: rootElRef,
   });
 
+  // IMPROVE: Can probably remove now that ketcherId is being passed through
+  // props?
+  // - Tony
   const [ketcherId, setKetcherId] = useState<string | null>(null);
-
   useEffect(() => {
+    if (!props.ketcherId) {
+      return;
+    }
     ketcherBuilderRef.current?.reinitializeApi(
+      props.ketcherId,
       props.structServiceProvider,
       setServerRef.current,
     );
   }, [structServiceProvider]);
 
-  const initKetcher = () => {
+  const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
 
     initPromiseRef.current = init({
@@ -77,20 +84,19 @@ function MicromoleculesEditor(props: EditorProps) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(
-      ({ ketcher, ketcherId, cleanup, builder, setServer }) => {
-        cleanupRef.current = cleanup;
-        ketcherBuilderRef.current = builder;
-        setServerRef.current = setServer;
-        setKetcherId(ketcherId);
+    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
+      cleanupRef.current = cleanup;
+      ketcherBuilderRef.current = builder;
+      setServerRef.current = setServer;
+      props.onSetKetcherId?.(ketcher.id);
+      setKetcherId(ketcherId);
 
-        if (typeof props.onInit === 'function' && ketcher) {
-          props.onInit(ketcher);
-          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
-          window.dispatchEvent(ketcherInitEvent);
-        }
-      },
-    );
+      if (typeof props.onInit === 'function' && ketcher) {
+        props.onInit(ketcher);
+        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
+        window.dispatchEvent(ketcherInitEvent);
+      }
+    });
   };
   useEffect(() => {
     if (initPromiseRef.current === null) {

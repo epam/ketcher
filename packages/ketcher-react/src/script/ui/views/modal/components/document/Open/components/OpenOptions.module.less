@@ -39,7 +39,17 @@
   justify-content: space-between;
   box-sizing: border-box;
   position: relative;
-  box-shadow: 0 4px 12px @color-dropcontainer-shadow;
+  box-shadow: @shadow-dropcontainer;
+
+  &:hover {
+    transform: translateY(-0.5px);
+    box-shadow: @shadow-dropcontainer-hover;
+  }
+
+  &:active {
+    transform: translateY(+0.3px);
+    box-shadow: @shadow-dropcontainer-active;
+  }
 
   div {
     margin: 0;
@@ -60,7 +70,7 @@
     flex-direction: column;
     justify-content: center;
   }
-  
+
   .buttonLabel {
     color: @color-text-secondary;
     font-weight: 500;

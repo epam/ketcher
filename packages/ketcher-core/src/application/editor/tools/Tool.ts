@@ -1,4 +1,8 @@
-import { MonomerItemType, Entities } from 'domain/types';
+import {
+  MonomerItemType,
+  Entities,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
 import { IKetMonomerGroupTemplate } from 'application/formatters';
 
 interface ToolEventHandler {
@@ -83,6 +87,8 @@ interface ToolEventHandler {
   doubleClickOnSequenceItem?(event: Event): void;
 
   mouseUpAtom?(event: Event): void;
+
+  selectEntities?(event: Event): void;
 }
 
 export interface IRnaPreset {
@@ -103,9 +109,11 @@ export interface IRnaLabeledPreset
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;
   nodeIndexOverall: number;
+  hasAntisense: boolean;
   baseLabel?: string;
   sugarLabel?: string;
   phosphateLabel?: string;
+  rnaBaseMonomerItem?: MonomerOrAmbiguousType;
   isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
   hasR1Connection?: boolean;
 };

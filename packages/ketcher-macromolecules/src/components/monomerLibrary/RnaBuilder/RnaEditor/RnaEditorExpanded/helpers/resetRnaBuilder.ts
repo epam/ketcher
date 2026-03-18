@@ -1,5 +1,5 @@
 import { AnyAction, Dispatch } from 'redux';
-import { CoreEditor } from 'ketcher-core';
+import { CoreEditor, SequenceMode } from 'ketcher-core';
 import {
   setActivePresetMonomerGroup,
   setIsEditMode,
@@ -17,9 +17,10 @@ export const resetRnaBuilder = (dispatch: Dispatch<AnyAction>) => {
 
 export const resetRnaBuilderAfterSequenceUpdate = (
   dispatch: Dispatch<AnyAction>,
-  editor: CoreEditor,
+  editor: CoreEditor | undefined,
 ) => {
   resetRnaBuilderCommon(dispatch);
   dispatch(setSequenceSelection([]));
-  editor.events.turnOffSequenceEditInRNABuilderMode.dispatch();
+  editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch();
+  if (editor?.mode instanceof SequenceMode) editor.mode.turnOffEditMode();
 };

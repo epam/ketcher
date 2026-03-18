@@ -57,8 +57,11 @@ export function fromPaste(
   point,
   angle = 0,
   isPreview = false,
+  needMoveFromTopLeftPoint = false,
 ): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
-  const xy0 = getStructCenter(pstruct);
+  const xy0 = needMoveFromTopLeftPoint
+    ? pstruct.getCoordBoundingBox().min
+    : getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
 
   const action = new Action();

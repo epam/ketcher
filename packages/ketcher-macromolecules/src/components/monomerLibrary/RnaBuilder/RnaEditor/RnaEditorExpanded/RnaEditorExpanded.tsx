@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities, ModeTypes } from 'ketcher-core';
+import { Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
   ButtonsContainer,
+  CompactViewName,
   GroupsContainer,
   NameContainer,
   NameInput,
@@ -50,8 +51,9 @@ import {
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
   recalculateRnaBuilderValidations,
+  setActiveMonomerKey,
 } from 'state/rna-builder';
-import { useAppSelector, useLayoutMode } from 'hooks';
+import { useAppSelector, useIsCompactView, useLayoutMode } from 'hooks';
 import {
   scrollToSelectedMonomer,
   scrollToSelectedPreset,
@@ -61,7 +63,7 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -70,6 +72,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import clsx from 'clsx';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -123,7 +126,7 @@ export const RnaEditorExpanded = ({
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
 
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -164,6 +167,7 @@ export const RnaEditorExpanded = ({
         const monomerType =
           monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
         const field = `${monomerType}Label`;
+
         const updatedSequenceSelection = sequenceSelection.map((node) => {
           // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
           // Do not set 'sugarLabel', 'baseLabel' for Phosphate
@@ -172,14 +176,20 @@ export const RnaEditorExpanded = ({
               field === 'phosphateLabel') ||
             (node.type === Entities.Phosphate &&
               (field === 'sugarLabel' || field === 'baseLabel'))
-          )
+          ) {
             return node;
+          }
 
           return {
             ...node,
             [field]: activePresetMonomerGroup.groupItem.label,
+            rnaBaseMonomerItem:
+              activePresetMonomerGroup.groupName === 'Bases'
+                ? activePresetMonomerGroup.groupItem
+                : node.rnaBaseMonomerItem,
           };
         });
+
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
@@ -193,11 +203,11 @@ export const RnaEditorExpanded = ({
     }
   }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
 
-  const scrollToActiveItemInLibrary = (selectedGroup) => {
+  const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
       scrollToSelectedPreset(newPreset?.name);
       if (newPreset) {
-        editor.events.selectPreset.dispatch(newPreset);
+        editor?.events.selectPreset.dispatch(newPreset);
       }
       return;
     }
@@ -205,8 +215,13 @@ export const RnaEditorExpanded = ({
     const activeMonomerInSelectedGroup =
       newPreset[monomerGroupToPresetGroup[selectedGroup]];
 
-    if (!activeMonomerInSelectedGroup) return;
-    scrollToSelectedMonomer(getMonomerUniqueKey(activeMonomerInSelectedGroup));
+    if (activeMonomerInSelectedGroup) {
+      scrollToSelectedMonomer(
+        getMonomerUniqueKey(activeMonomerInSelectedGroup),
+      );
+    } else if (selectedMonomer) {
+      scrollToSelectedMonomer(selectedMonomer);
+    }
   };
 
   const selectGroup = (selectedGroup) => () => {
@@ -216,13 +231,49 @@ export const RnaEditorExpanded = ({
     );
 
     if (selectedRNAPartMonomer && !isSequenceMode) {
-      editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
+      editor?.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
-    scrollToActiveItemInLibrary(selectedGroup);
-    dispatch(setActiveRnaBuilderItem(selectedGroup));
 
+    if (newPreset[monomerGroupToPresetGroup[selectedGroup]]) {
+      dispatch(
+        setActiveMonomerKey(
+          getMonomerUniqueKey(
+            newPreset[monomerGroupToPresetGroup[selectedGroup]],
+          ),
+        ),
+      );
+    }
+
+    dispatch(setActiveRnaBuilderItem(selectedGroup));
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
+    );
+
+    // If all the selected nodes in sequence have the same base, set the monomer as active in the library
+    let selectedMonomer = '';
+    if (isSequenceEditInRNABuilderMode && sequenceSelection.length > 0) {
+      const firstBaseLabel = sequenceSelection[0].baseLabel;
+      const allBasesSame =
+        firstBaseLabel &&
+        sequenceSelection.every((node) => node.baseLabel === firstBaseLabel);
+
+      if (allBasesSame) {
+        const baseMonomerItem = sequenceSelection[0].rnaBaseMonomerItem;
+        if (baseMonomerItem) {
+          selectedMonomer = getMonomerUniqueKey(baseMonomerItem);
+          dispatch(setActiveMonomerKey(selectedMonomer));
+        }
+      }
+    }
+
+    /*
+     * setTimeout is needed here to wait for the selected group to be switched first (in tab or accordion view)
+     * Then scroll to the selected item in the library will be possible, otherwise it won't be present in the DOM
+     * Perhaps not the best approach, consider refactoring
+     */
+    setTimeout(
+      () => scrollToActiveItemInLibrary(selectedGroup, selectedMonomer),
+      100,
     );
   };
 
@@ -241,7 +292,7 @@ export const RnaEditorExpanded = ({
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
-      editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
+      editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
   };
@@ -263,7 +314,7 @@ export const RnaEditorExpanded = ({
     dispatch(savePreset(newPreset));
     dispatch(setActivePreset(newPreset));
     if (!isSequenceMode) {
-      editor.events.selectPreset.dispatch(newPreset);
+      editor?.events.selectPreset.dispatch(newPreset);
     }
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
@@ -303,7 +354,27 @@ export const RnaEditorExpanded = ({
     return sequenceSelectionGroupNames[groupName];
   };
 
-  let mainButton;
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCancel();
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (event.key === 'Enter') {
+        isSequenceEditInRNABuilderMode
+          ? onUpdateSequence()
+          : editor?.events.startNewSequence.dispatch({});
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    editor?.events.keyDown.add(handleKeyDown);
+    return () => {
+      editor?.events.keyDown.remove(handleKeyDown);
+    };
+  }, [editor, sequenceSelection]);
+
+  let mainButton: JSX.Element;
 
   if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
@@ -341,38 +412,54 @@ export const RnaEditorExpanded = ({
     );
   }
 
+  const isCompactView = useIsCompactView();
+
   return (
     <RnaEditorExpandedContainer
       data-testid="rna-editor-expanded"
-      className={
-        isSequenceEditInRNABuilderMode
-          ? 'rna-editor-expanded--sequence-edit-mode'
-          : ''
-      }
+      className={clsx(
+        isSequenceEditInRNABuilderMode &&
+          'rna-editor-expanded--sequence-edit-mode',
+      )}
     >
-      <NameContainer
-        selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
-        onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
-      >
-        {isEditMode ? (
-          <NameInput
-            value={
-              isSequenceEditInRNABuilderMode
-                ? sequenceSelectionName
-                : newPreset?.name
-            }
-            placeholder="Name your structure"
-            disabled={isSequenceEditInRNABuilderMode}
-            onChange={onChangeName}
-          />
-        ) : (
-          <PresetName>{newPreset?.name}</PresetName>
-        )}
-        <NameLine
-          selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+      {isCompactView ? (
+        <CompactViewName
+          value={
+            isSequenceEditInRNABuilderMode
+              ? sequenceSelectionName
+              : newPreset?.name
+          }
+          placeholder="Name your structure"
+          data-testid="name-your-structure-editbox"
+          disabled={isSequenceEditInRNABuilderMode}
+          onChange={onChangeName}
         />
-      </NameContainer>
-      <GroupsContainer>
+      ) : (
+        <NameContainer
+          selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+          onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
+        >
+          {isEditMode ? (
+            <NameInput
+              value={
+                isSequenceEditInRNABuilderMode
+                  ? sequenceSelectionName
+                  : newPreset?.name
+              }
+              placeholder="Name your structure"
+              data-testid="name-your-structure-editbox"
+              disabled={isSequenceEditInRNABuilderMode}
+              onChange={onChangeName}
+            />
+          ) : (
+            <PresetName>{newPreset?.name}</PresetName>
+          )}
+          <NameLine
+            selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+          />
+        </NameContainer>
+      )}
+      <GroupsContainer compact={isCompactView}>
         {groupsData.map(({ groupName, iconName, testId }) => {
           return (
             <GroupBlock

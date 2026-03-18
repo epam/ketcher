@@ -20,7 +20,7 @@ export const ItemsContainer = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: auto;
   flex: 1;
-  gap: 8px;
+  gap: 4px;
 
   &::after {
     content: '';
@@ -38,7 +38,7 @@ export const GroupContainerRow = styled.div`
   font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
   color: ${({ theme }) => theme.ketcher.color.divider};
   margin: 0;
-  gap: 8px;
+  gap: 4px;
 `;
 
 export const GroupContainerColumn = styled(GroupContainerRow)`

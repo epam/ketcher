@@ -11,6 +11,7 @@
         <atom id="a4" elementType="C" x2="19.5875" y2="-11.715"/>
         <atom id="a5" elementType="C" x2="20.4535" y2="-12.215"/>
         <atom id="a6" elementType="C" x2="21.3195" y2="-11.715"/>
+        <atom id="a7" elementType="S" x2="20.5234" y2="-13.895"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a0 a1" order="1"/>
@@ -20,11 +21,6 @@
         <bond atomRefs2="a4 a5" order="1"/>
         <bond atomRefs2="a5 a6" order="1"/>
     </bondArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="S" x2="20.5234" y2="-13.895"/>
-    </atomArray>
 </molecule>
 </reactantList>
 <productList>

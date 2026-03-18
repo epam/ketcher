@@ -51,8 +51,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position, config);
 
     this.monomerItem = { ...monomerItem };
-    this.attachmentPointsToBonds = this.getAttachmentPointDict();
-    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    this.monomerItem.expanded = monomerItem.expanded;
+    this.recalculateAttachmentPoints();
     this.monomerItem.attachmentPoints =
       this.monomerItem.attachmentPoints ||
       this.getMonomerDefinitionAttachmentPoints();
@@ -213,7 +213,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     );
   }
 
-  public setRenderer(renderer: BaseMonomerRenderer) {
+  public setRenderer(renderer: BaseMonomerRenderer | BaseSequenceItemRenderer) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }
@@ -272,6 +272,44 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get covalentBonds() {
     return compact(values(this.attachmentPointsToBonds));
+  }
+
+  public get polymerBonds() {
+    return this.covalentBonds.filter(
+      (bond) => bond instanceof PolymerBond,
+    ) as PolymerBond[];
+  }
+
+  public get bonds(): Array<PolymerBond | HydrogenBond | MonomerToAtomBond> {
+    return [...this.covalentBonds, ...this.hydrogenBonds];
+  }
+
+  public get bondsSortedByLength(): Array<
+    PolymerBond | HydrogenBond | MonomerToAtomBond
+  > {
+    const bonds = [...this.bonds];
+    return bonds.sort((firstBond, secondBond) => {
+      if (!firstBond.secondEndEntity || !secondBond.secondEndEntity) {
+        return 0;
+      }
+
+      const firstLength = Vec2.diff(
+        firstBond.firstEndEntity.position,
+        firstBond.secondEndEntity?.position,
+      ).length();
+      const secondLength = Vec2.diff(
+        secondBond.firstEndEntity.position,
+        secondBond.secondEndEntity?.position,
+      ).length();
+
+      return firstLength - secondLength;
+    });
+  }
+
+  public get polymerBondsSortedByLength(): Array<PolymerBond | HydrogenBond> {
+    return this.bondsSortedByLength.filter(
+      (bond) => !(bond instanceof MonomerToAtomBond),
+    ) as Array<PolymerBond | HydrogenBond>;
   }
 
   public get hasBonds() {
@@ -526,16 +564,16 @@ export abstract class BaseMonomer extends DrawingEntity {
     return attachmentPointNameToBond;
   }
 
-  public get startBondAttachmentPoint() {
+  public get startBondAttachmentPoint(): AttachmentPointName | undefined {
     if (this.chosenFirstAttachmentPointForBond) {
       return this.chosenFirstAttachmentPointForBond;
     }
     if (this.attachmentPointsToBonds.R2 === null) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     if (this.attachmentPointsToBonds.R1 === null) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return this.firstFreeAttachmentPoint;
@@ -554,7 +592,21 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isModification() {
-    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+    const naturalAnalogThreeLettersCode =
+      this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
+    const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
+    const namesToCompareNaturalAnalog = [
+      ...([this.label] || []),
+      ...([this.monomerItem.props.MonomerName] || []),
+    ];
+    const naturalAnaloguesToCompare = [
+      ...([naturalAnalogThreeLettersCode] || []),
+      ...([naturalAnalogCode] || []),
+    ];
+
+    return namesToCompareNaturalAnalog.every(
+      (nameToCompare) => !naturalAnaloguesToCompare.includes(nameToCompare),
+    );
   }
 
   public get sideConnections() {
@@ -569,5 +621,19 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get monomerCaps() {
     return this.monomerItem.props.MonomerCaps;
+  }
+
+  public recalculateAttachmentPoints() {
+    const oldAttachmentPointsToBonds = this.attachmentPointsToBonds;
+
+    this.attachmentPointsToBonds = this.getAttachmentPointDict();
+    for (const attachmentPointName in this.attachmentPointsToBonds) {
+      if (oldAttachmentPointsToBonds[attachmentPointName]) {
+        this.attachmentPointsToBonds[attachmentPointName] =
+          oldAttachmentPointsToBonds[attachmentPointName];
+      }
+    }
+
+    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
   }
 }

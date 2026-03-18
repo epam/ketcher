@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
+import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 
 export const Card = styled.div<{
   code?: string;
   selected?: boolean;
   disabled?: boolean;
   isVariantMonomer?: boolean;
-  isPeptideTab?: boolean;
+  item?: MonomerOrAmbiguousType;
 }>`
   background: white;
   height: 48px;
@@ -30,13 +31,12 @@ export const Card = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5px;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 5px 0 rgba(103, 104, 132, 0.149);
   margin: 0;
   user-select: none;
   border-color: #167782;
@@ -66,7 +66,11 @@ export const Card = styled.div<{
     height: 8px;
     border-bottom: ${({ isVariantMonomer }) =>
       isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
-    background: ${({ code, theme, isPeptideTab }) => {
+    background: ${({ code, theme, item }) => {
+      if (!item) return theme.ketcher.monomer.color.default?.regular;
+
+      const monomerItem = item as MonomerItemType;
+      const isPeptideTab = monomerItem.props?.MonomerType === 'PEPTIDE';
       if (
         isPeptideTab &&
         theme.ketcher.peptide.color[code as string]?.regular

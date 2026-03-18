@@ -259,6 +259,9 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
         const compno = utils.parseDecimalInt(propertyData.slice(4, 8));
         sGroups[sid].data.compno = compno;
+      } else if (type === 'SCL') {
+        const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
+        sGroups[sid].data.class = propertyData.slice(4).trim();
       } else if (type === 'SDT') {
         sGroup.applyDataSGroupDesc(sGroups, propertyData);
       } else if (type === 'SDD') {

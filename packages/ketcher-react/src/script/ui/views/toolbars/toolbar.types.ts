@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 

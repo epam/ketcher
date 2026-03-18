@@ -15,10 +15,20 @@ export function MultitailArrowMenuItems(
   const { removeTail, removeTailHidden } = useMultitailArrowTailsRemove();
   return (
     <>
-      <Item {...props} onClick={removeTail} hidden={removeTailHidden}>
+      <Item
+        {...props}
+        data-testid="Remove tail-option"
+        onClick={removeTail}
+        hidden={removeTailHidden}
+      >
         Remove tail
       </Item>
-      <Item {...props} onClick={addTail} disabled={isAddTailDisabled}>
+      <Item
+        {...props}
+        data-testid="Add new tail-option"
+        onClick={addTail}
+        disabled={isAddTailDisabled}
+      >
         Add new tail
       </Item>
     </>

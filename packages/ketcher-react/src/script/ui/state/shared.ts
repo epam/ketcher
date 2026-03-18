@@ -16,7 +16,6 @@
 
 import {
   FormatterFactory,
-  Pile,
   SGroup,
   identifyStructFormat,
   Struct,
@@ -175,15 +174,7 @@ export function load(struct: Struct, options?) {
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
-          const atomSet = new Pile(sg.atoms);
-          const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
-          SGroup.bracketPos(
-            sg,
-            parsedStruct,
-            crossBonds,
-            undefined,
-            editor.render,
-          );
+          SGroup.bracketPos(sg, parsedStruct, undefined, editor.render);
           if (offset) sg.updateOffset(offset);
         });
       }
@@ -192,6 +183,7 @@ export function load(struct: Struct, options?) {
       parsedStruct.setImplicitHydrogen();
       parsedStruct.setStereoLabelsToAtoms();
       parsedStruct.markFragments();
+      parsedStruct.applyMonomersTransformations();
 
       if (fragment) {
         if (parsedStruct.isBlank()) {

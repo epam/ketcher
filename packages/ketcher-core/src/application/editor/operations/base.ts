@@ -38,6 +38,7 @@ class BaseOperation {
     throw new Error('Operation.execute() is not implemented');
   }
 
+  /** Returns inverted of this */
   perform(restruct: ReStruct): BaseOperation {
     this.execute(restruct);
     if (!this._inverted) {

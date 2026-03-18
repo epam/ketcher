@@ -3,14 +3,15 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
-import { Sugar } from 'domain/entities/Sugar';
 import {
+  isBondBetweenSugarAndBaseOfRna,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
+import { HalfMonomerSize } from 'domain/constants';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
@@ -21,7 +22,10 @@ export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
 export class PolymerBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
-  public restOfRowsWithAntisense?: number = undefined;
+  // Move to renderer
+  public hasAntisenseInRow?: boolean = false;
+  // Move to renderer
+  public nextRowPositionX?: number | undefined = undefined;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();
@@ -82,16 +86,7 @@ export class PolymerBond extends BaseBond {
         (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
           isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
         firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
-      !(
-        (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer) &&
-          secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
-          this.secondMonomer instanceof Sugar) ||
-        (firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
-          this.firstMonomer instanceof Sugar &&
-          secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer))
-      )
+      !isBondBetweenSugarAndBaseOfRna(this)
     );
   }
 
@@ -105,5 +100,27 @@ export class PolymerBond extends BaseBond {
 
   public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return super.getAnotherEntity(monomer) as BaseMonomer;
+  }
+
+  public get isHorizontal() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
+      HalfMonomerSize
+    );
+  }
+
+  public get isVertical() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
+      HalfMonomerSize
+    );
   }
 }

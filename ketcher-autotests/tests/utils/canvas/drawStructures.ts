@@ -1,16 +1,18 @@
 import { Page } from '@playwright/test';
-import {
-  BondTypeName,
-  drawBenzeneRing,
-  getCoordinatesTopAtomOfBenzeneRing,
-  selectBond,
-} from '.';
+import { getCoordinatesTopAtomOfBenzeneRing } from '.';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
 } from '@utils';
-import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
 
 export async function drawReactionWithTwoBenzeneRings(
   page: Page,
@@ -19,7 +21,7 @@ export async function drawReactionWithTwoBenzeneRings(
   arrowLenght: number,
 ) {
   await drawBenzeneRing(page);
-  await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   const firstBenzineTopAtom = await getCoordinatesTopAtomOfBenzeneRing(page);
   await page.mouse.move(
     firstBenzineTopAtom.x,
@@ -30,7 +32,7 @@ export async function drawReactionWithTwoBenzeneRings(
     firstBenzineTopAtom.y - arrowLenght,
     page,
   );
-  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  await BottomToolbar(page).Benzene();
   await clickOnCanvas(
     page,
     firstBenzineTopAtom.x,
@@ -39,7 +41,7 @@ export async function drawReactionWithTwoBenzeneRings(
 }
 
 export async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);

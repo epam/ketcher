@@ -179,20 +179,15 @@ const addToCanvas = ({
   const isFlexMode = editor.mode instanceof FlexMode;
 
   if (isFlexMode) {
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
-
     if (editor.drawingEntitiesManager.hasAntisenseChains) {
       modelChanges.merge(
-        editor.drawingEntitiesManager.applySnakeLayout(
-          editor.canvas.width.baseVal.value,
-          true,
-          true,
-          true,
-        ),
+        editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
       );
       modelChanges.setUndoOperationsByPriority();
     }
   }
+
+  editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);
@@ -418,6 +413,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
+          data-testid="open-as-new-button"
         />
         <FooterButton
           key="copyButton"
@@ -437,6 +433,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       title="Open Structure"
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
+      testId="openStructureModal"
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>

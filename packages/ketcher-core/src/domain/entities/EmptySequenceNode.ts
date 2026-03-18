@@ -33,7 +33,7 @@ export class EmptySequenceNode {
   }
 
   public get monomers(): BaseMonomer[] {
-    return [];
+    return [this.monomer];
   }
 
   public setRenderer(renderer) {

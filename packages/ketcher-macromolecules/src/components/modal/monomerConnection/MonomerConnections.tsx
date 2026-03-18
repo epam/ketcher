@@ -108,7 +108,7 @@ const MonomerConnection = ({
       );
       onClose();
     } else {
-      editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
+      editor?.events.cancelBondCreationViaModal.dispatch(secondMonomer);
       onClose();
     }
   };
@@ -129,7 +129,7 @@ const MonomerConnection = ({
       return;
     }
 
-    editor.events.createBondViaModal.dispatch({
+    editor?.events.createBondViaModal.dispatch({
       firstMonomer,
       secondMonomer,
       firstSelectedAttachmentPoint,

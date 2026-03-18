@@ -15,12 +15,18 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import { HTMLInputTypeAttribute } from 'react';
 
 interface Props {
-  value: string;
+  value: string | number;
   id: string;
   onChange: (value: string) => void;
   label?: string;
+  type?: HTMLInputTypeAttribute;
+  min?: number;
+  max?: number;
+  className?: string;
+  inputClassName?: string;
 }
 
 const Label = styled.label(({ theme }) => ({
@@ -57,6 +63,9 @@ export const TextInputField = ({
   id,
   onChange,
   label,
+  type,
+  className,
+  inputClassName,
   ...rest
 }: Props) => {
   const handleChange = (event) => {
@@ -65,12 +74,13 @@ export const TextInputField = ({
 
   return (
     <>
-      <Label htmlFor={id}>
+      <Label htmlFor={id} className={className}>
         {label && <span>{label}</span>}
         <Input
-          type="text"
+          type={type || 'text'}
           id={id}
           value={value}
+          className={inputClassName}
           onChange={handleChange}
           {...rest}
         />

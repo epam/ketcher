@@ -2,7 +2,6 @@ import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 let id = 0;
 
 export interface DrawingEntityConfig {
@@ -66,21 +65,28 @@ export abstract class DrawingEntity {
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    let center = Coordinates.modelToCanvas(this.center);
-    if (this.baseRenderer instanceof BaseSequenceRenderer) {
-      center = this.baseRenderer.center;
-    }
-    const locatedInRectangle =
-      rectangleBottomRightPoint.x > center.x &&
-      rectangleBottomRightPoint.y > center.y &&
-      rectangleTopLeftPoint.x < center.x &&
-      rectangleTopLeftPoint.y < center.y;
-    if ((shiftKey && !isPreviousSelected) || !shiftKey) {
-      if (locatedInRectangle) {
-        this.turnOnSelection();
-      } else {
-        this.turnOffSelection();
+    const selectionPoints = this.baseRenderer.selectionPoints || [
+      Coordinates.modelToCanvas(this.center),
+    ];
+    let isSelected = false;
+
+    selectionPoints.forEach((point) => {
+      const locatedInRectangle =
+        rectangleBottomRightPoint.x > point.x &&
+        rectangleBottomRightPoint.y > point.y &&
+        rectangleTopLeftPoint.x < point.x &&
+        rectangleTopLeftPoint.y < point.y;
+      if ((shiftKey && !isPreviousSelected) || !shiftKey) {
+        if (locatedInRectangle) {
+          isSelected = true;
+        }
       }
+    });
+
+    if (isSelected) {
+      this.turnOnSelection();
+    } else {
+      this.turnOffSelection();
     }
 
     return prevSelectedValue !== this.selected;

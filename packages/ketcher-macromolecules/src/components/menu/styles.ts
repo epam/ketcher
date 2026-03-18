@@ -22,6 +22,7 @@ export const MenuLayout = styled.div<{ isHorizontal?: boolean }>(
     borderRadius: '4px',
     display: 'flex',
     flexDirection: isHorizontal ? 'row' : 'column',
+    zIndex: theme.ketcher.zIndex.toolbar,
   }),
 );
 

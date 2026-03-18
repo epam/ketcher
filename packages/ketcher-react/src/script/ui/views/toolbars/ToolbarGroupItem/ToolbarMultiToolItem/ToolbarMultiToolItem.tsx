@@ -139,7 +139,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     <div
       ref={ref}
       className={classes.root}
-      data-testid={`${dataTestId || iconName}-in-toolbar`}
+      data-testid={`${id}-drop-down-button`}
     >
       <ActionButton
         {...actionButtonProps}
@@ -156,6 +156,7 @@ const ToolbarMultiToolItem = (props: Props) => {
             currentStatus?.selected && classes.iconSelected
           }`}
           name="dropdown"
+          dataTestId={`dropdown-expand`}
           onClick={onOpenOptions}
         />
       )}
@@ -169,6 +170,7 @@ const ToolbarMultiToolItem = (props: Props) => {
             portalClassName,
           )}
           style={portalStyle}
+          testId="multi-tool-dropdown"
         >
           <Component
             options={options}

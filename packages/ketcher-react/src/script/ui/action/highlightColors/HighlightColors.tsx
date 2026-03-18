@@ -15,16 +15,20 @@ interface HighlightMenuProps {
 
 const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight }) => {
   return (
-    <Submenu label="Highlight">
+    <Submenu data-testid="Highlight-option" label="Highlight">
       <ColorContainer>
         {standardColors.map((color) => (
-          <ColorItem key={color.name} onClick={() => onHighlight(color.value)}>
+          <ColorItem
+            key={color.name}
+            data-testid={`${color.name}-option`}
+            onClick={() => onHighlight(color.value)}
+          >
             <ColorSquare color={color.value} />
           </ColorItem>
         ))}
       </ColorContainer>
       <Divider />
-      <Item onClick={() => onHighlight('')}>
+      <Item data-testid="No highlight-option" onClick={() => onHighlight('')}>
         <div
           style={{
             marginLeft: '-10px',

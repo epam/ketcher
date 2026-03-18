@@ -12,3 +12,6 @@ export * from './formats';
 export * from './macromolecules';
 export * from './query-features';
 export * from './moveMouseAway';
+export * from './canvas/helpers';
+export * from './canvas/types';
+export * from './canvas/tools';

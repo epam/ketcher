@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import React, { useState } from 'react';
-import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
+import { memo, MouseEvent, useCallback, useRef } from 'react';
+import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
+import { FavoriteStarSymbol } from '../../../constants';
+import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDrag';
 
 const RnaPresetItem = ({
   preset,
@@ -30,20 +33,19 @@ const RnaPresetItem = ({
   onMouseLeave = EmptyFunction,
   onMouseMove = EmptyFunction,
 }: IRNAPresetItemProps) => {
-  const [showDots, setShowDots] = useState(false);
-  const [favorite, setFavorite] = useState(preset.favorite);
   const dispatch = useAppDispatch();
-  const onMouseOver = (): void => {
-    setShowDots(true);
-  };
-  const onMouseOut = (): void => {
-    setShowDots(false);
-  };
-  const addFavorite = (event: React.MouseEvent): void => {
-    event.stopPropagation();
-    setFavorite(!favorite);
-    dispatch(togglePresetFavorites(preset));
-  };
+
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const addFavorite = useCallback(
+    (event: MouseEvent): void => {
+      event.stopPropagation();
+      dispatch(togglePresetFavorites(preset));
+    },
+    [dispatch, preset],
+  );
+
+  useLibraryItemDrag(preset, cardRef);
 
   return (
     <Card
@@ -52,27 +54,26 @@ const RnaPresetItem = ({
       onContextMenu={onContextMenu}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
+      ref={cardRef}
     >
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"
-        className={showDots ? 'dots' : 'dots hidden'}
+        className="dots"
         onClick={onContextMenu}
       ></StyledIcon>
       <div
         aria-hidden
         onClick={addFavorite}
-        className={`star ${favorite ? 'visible' : ''}`}
+        className={`star ${preset.favorite ? 'visible' : ''}`}
       >
-        ★
+        {FavoriteStarSymbol}
       </div>
     </Card>
   );
 };
 
-export { RnaPresetItem };
+export default memo(RnaPresetItem);

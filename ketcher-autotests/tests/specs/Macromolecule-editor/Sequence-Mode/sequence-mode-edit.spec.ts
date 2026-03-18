@@ -20,6 +20,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takePageScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -272,12 +273,12 @@ test.describe('Sequence edit mode', () => {
       symbolAlias: 'A',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     await getSymbolLocator(page, {
       symbolAlias: 'K',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async () => {
@@ -289,10 +290,10 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getMonomerLocator(page, Peptide.A).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     await getMonomerLocator(page, Peptide.Aad).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async () => {
@@ -308,12 +309,12 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await getMonomerLocator(page, { monomerAlias: symbol }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takeEditorScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
       await moveMouseAway(page);
     }
     await getMonomerLocator(page, { monomerAlias: '5HydMe-dC' }).click();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for Peptide type of monomer in the library', async () => {
@@ -321,9 +322,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Peptide.A);
+    await Library(page).hoverMonomer(Peptide.A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for Sugar type of monomer in the library', async () => {
@@ -331,9 +332,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Sugar._25d3r);
+    await Library(page).hoverMonomer(Sugar._25d3r);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for Base type of monomer in the library', async () => {
@@ -341,9 +342,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Base.c7A);
+    await Library(page).hoverMonomer(Base.c7A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for Phosphate type of monomer in the library', async () => {
@@ -351,9 +352,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Phosphate.ibun);
+    await Library(page).hoverMonomer(Phosphate.ibun);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for Nucleotide type of monomer in the library', async () => {
@@ -361,9 +362,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Nucleotide.Super_T);
+    await Library(page).hoverMonomer(Nucleotide.Super_T);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for CHEM type of monomer in the library', async () => {
@@ -371,9 +372,9 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
-    await Library(page).selectMonomer(Chem.DOTA);
+    await Library(page).hoverMonomer(Chem.DOTA);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Validate that preview tooltip for each type of monomer in sequence mode', async () => {
@@ -396,7 +397,7 @@ test.describe('Sequence edit mode', () => {
         .first()
         .hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
-      await takePageScreenshot(page);
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
       await moveMouseAway(page);
     }
   });
@@ -408,7 +409,7 @@ test.describe('Sequence edit mode', () => {
     */
     await Library(page).hoverMonomer(Preset.dR_U_P);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
   test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async () => {
     /*

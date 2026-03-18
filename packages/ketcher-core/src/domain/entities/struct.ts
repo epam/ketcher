@@ -211,9 +211,12 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(
+  getFragment(fid: number | number[], aidMap?: Map<number, number>): Struct {
+    return this.clone(this.getFragmentIds(fid), null, true, aidMap);
+  }
+
+  getFragmentOnly(
     fid: number | number[],
-    copyNonFragmentObjects = true,
     aidMap?: Map<number, number>,
   ): Struct {
     return this.clone(
@@ -221,11 +224,11 @@ export class Struct {
       null,
       true,
       aidMap,
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
     );
   }
 
@@ -1254,32 +1257,38 @@ export class Struct {
     });
   }
 
-  getGroupIdFromAtomId(atomId: number, searchBySgroups = false): number | null {
-    if (searchBySgroups) {
-      // Search by sgroups is more expensive, but allows to find
-      // functional groups for atoms which are not exist in struct already.
-      // F.e. if atom already deleted and it needs to find its functional group
-      for (const [groupId, sgroup] of Array.from(this.sgroups)) {
-        if (sgroup.atoms.includes(atomId)) return groupId;
-      }
-      return null;
-    } else {
-      const firstSgroupId = [
-        ...(this.atoms.get(atomId)?.sgs.values() ?? []),
-      ][0];
+  getGroupIdFromAtomId(atomId: number): number | null {
+    const firstSgroupId = [...(this.atoms.get(atomId)?.sgs.values() ?? [])][0];
 
-      return isNumber(firstSgroupId) ? firstSgroupId : null;
-    }
+    return isNumber(firstSgroupId) ? firstSgroupId : null;
   }
 
-  getGroupFromAtomId(
-    atomId: number | undefined,
-    searchBySgroups = false,
-  ): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromAtomId(
-      atomId as number,
-      searchBySgroups,
-    );
+  getGroupIdFromAtomIdBySgroups(atomId: number): number | null {
+    // Search by sgroups is more expensive, but allows to find
+    // functional groups for atoms which are not exist in struct already.
+    // F.e. if atom already deleted and it needs to find its functional group
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (sgroup.atoms.includes(atomId)) return groupId;
+    }
+    return null;
+  }
+
+  getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomId(atomId);
+
+    return isNumber(sgroupId) ? this.sgroups?.get(sgroupId) : undefined;
+  }
+
+  getGroupFromAtomIdBySgroups(atomId: number | undefined): SGroup | undefined {
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomIdBySgroups(atomId);
     return this.sgroups?.get(sgroupId as number);
   }
 

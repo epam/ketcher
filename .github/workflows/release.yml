@@ -36,7 +36,21 @@ jobs:
         env:
           NODE_ENV: production
           CI: "false"
-        run: npm run build:packages
+        # HACK: Doing this twice is actually important.
+        #
+        # On the first time, ketcher-macromolecules will resolve to a
+        # package-level dependency in the bundle.
+        #
+        # On the second time, ketcher-macromolecules gets bundled in because
+        # it's been built.
+        #
+        # Yes, we could likely reorder the build script to build ketcher-
+        # macromolecules first, but since we're working on a fork, we should be
+        # conservative with modifying existing code.
+        # - Tony
+        run: >
+          npm run build:packages &&
+          npm run build:packages
 
       - name: Create packages
         run: >

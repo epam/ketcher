@@ -181,7 +181,12 @@ export function formReducer(
   const actionResult = actionData.result as Record<string, unknown>;
   const newType = actionResult?.type;
 
-  if (newType === 'DAT') return sdataReducer(formState, action);
+  if (newType === 'DAT') {
+    return sdataReducer(
+      formState as Parameters<typeof sdataReducer>[0],
+      action as Parameters<typeof sdataReducer>[1],
+    );
+  }
   if (
     newType === 'SUP' &&
     formState?.result?.type !== 'nucleotideComponent' &&
@@ -189,7 +194,10 @@ export function formReducer(
       actionResult?.class as string,
     )
   )
-    return nucleotideComponentReducer(formState, action);
+    return nucleotideComponentReducer(
+      formState as Parameters<typeof nucleotideComponentReducer>[0],
+      action as Parameters<typeof nucleotideComponentReducer>[1],
+    );
 
   return { ...(state as object), ...actionData };
 }

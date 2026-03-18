@@ -18,7 +18,6 @@ import {
   openFile,
   readFileContent,
   MolFileFormat,
-  takePageScreenshot,
 } from '@utils';
 import { waitForSpinnerFinishedWork } from '@utils/common';
 import {

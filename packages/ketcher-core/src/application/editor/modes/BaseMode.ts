@@ -280,5 +280,7 @@ export abstract class BaseMode {
     );
   }
 
-  public destroy() {}
+  public destroy() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 }

@@ -190,7 +190,9 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       .attr('stroke-width', 10);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
   public drawSelection() {
     if (!this.rootElement) {
@@ -239,5 +241,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     this.hoverElement = undefined;
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

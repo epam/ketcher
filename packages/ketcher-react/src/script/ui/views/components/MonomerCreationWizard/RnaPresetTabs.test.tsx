@@ -85,7 +85,6 @@ const createMockEditor = () => {
 const createInitialWizardState = (): RnaPresetWizardState => ({
   preset: {
     name: '',
-    phosphatePosition: undefined,
     errors: {
       name: undefined,
       phosphatePosition: undefined,
@@ -139,12 +138,14 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
   let mockDispatch: jest.Mock;
+  let mockOnPhosphatePositionChange: jest.Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
     mockDispatch = jest.fn();
+    mockOnPhosphatePositionChange = jest.fn();
     wizardState = createInitialWizardState();
     jest.clearAllMocks();
   });
@@ -161,6 +162,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -184,6 +187,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -214,6 +219,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -251,6 +258,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -307,6 +316,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -357,6 +368,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -396,6 +409,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -444,6 +459,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -485,13 +502,15 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render phosphate position picker in phosphate tab and dispatch selected value', () => {
+  it('should render phosphate position picker in phosphate tab and call selected value handler', () => {
     render(
       <Provider store={mockStore}>
         <RnaPresetTabs
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -502,9 +521,6 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     fireEvent.click(screen.getByTestId('phosphate-position-5-button'));
 
-    expect(mockDispatch).toHaveBeenCalledWith({
-      type: 'SetPresetPhosphatePosition',
-      value: '5',
-    });
+    expect(mockOnPhosphatePositionChange).toHaveBeenCalledWith('5');
   });
 });

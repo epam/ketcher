@@ -107,6 +107,7 @@ export interface IRnaPreset {
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }
 
 export interface IRnaLabeledPreset

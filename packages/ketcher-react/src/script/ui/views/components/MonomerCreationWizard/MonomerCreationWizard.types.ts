@@ -89,7 +89,6 @@ export type WizardState = {
 
 export type RnaPresetWizardStatePresetFieldValue = {
   name: string;
-  phosphatePosition?: '3' | '5';
   errors: {
     name?: boolean;
     phosphatePosition?: boolean;
@@ -168,10 +167,6 @@ export type RnaPresetWizardAction =
         phosphatePosition?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
-    }
-  | {
-      type: 'SetPresetPhosphatePosition';
-      value: '3' | '5' | undefined;
     }
   | {
       type: 'RemoveNotification';

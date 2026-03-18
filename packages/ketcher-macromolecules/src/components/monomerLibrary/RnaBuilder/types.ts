@@ -38,4 +38,5 @@ export interface IRnaPreset {
   readonly idtAliases?: IKetIdtAliases;
   readonly aliasAxoLabs?: string;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }

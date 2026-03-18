@@ -28,6 +28,8 @@ interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
+  phosphatePosition: '3' | '5' | undefined;
+  onPhosphatePositionChange: (position: '3' | '5') => void;
 }
 
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
@@ -46,7 +48,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
-  const phosphatePosition = wizardState.preset.phosphatePosition;
+  const { phosphatePosition, onPhosphatePositionChange } = props;
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {
@@ -125,10 +127,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   );
 
   const handlePhosphatePositionChange = (position: '3' | '5') => {
-    wizardStateDispatch({
-      type: 'SetPresetPhosphatePosition',
-      value: position,
-    });
+    onPhosphatePositionChange(position);
   };
 
   const currentTabStructure = currentTabState?.structure;

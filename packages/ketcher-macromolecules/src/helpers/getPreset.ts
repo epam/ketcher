@@ -18,6 +18,7 @@ interface RnaPresetsTemplatesType
       IKetMonomerGroupTemplate,
       'templates' | 'idtAliases' | 'aliasAxoLabs'
     >,
+    Partial<Pick<IKetMonomerGroupTemplate, 'connections'>>,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
   connections?: IKetTemplateConnection[];
 }
@@ -88,6 +89,7 @@ export const getPresets = (
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
+        connections: rnaPresetsTemplate.connections || [],
       };
 
       const presetWithAliases: IRnaPreset = {

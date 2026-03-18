@@ -2472,10 +2472,11 @@ class Editor implements KetcherEditor {
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
+    let resolvedCi = ci;
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      ci = structObjects.reduce((res, key) => {
+      resolvedCi = structObjects.reduce((res, key) => {
         res[key] = Array.from(ReStruct[key].keys());
         return res;
       }, {});
@@ -2483,16 +2484,16 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab;
-      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
+      resolvedCi = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
     }
 
-    if (ci) {
+    if (resolvedCi) {
       const res: Selection = {};
 
-      Object.keys(ci).forEach((key) => {
-        if (ci[key].length > 0)
+      Object.keys(resolvedCi).forEach((key) => {
+        if (resolvedCi[key].length > 0)
           // TODO: deep merge
-          res[key] = ci[key].slice();
+          res[key] = resolvedCi[key].slice();
       });
 
       if (Object.keys(res).length !== 0) {

@@ -63,6 +63,9 @@ const mapStateToProps = (state: any) => {
     currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
+    isModeSwitcherDisabled: Boolean(
+      state.editor?.isMonomerCreationWizardActive,
+    ),
     customButtons: selectCustomButtons(state),
     shortcuts,
     status: state.actionState || {},

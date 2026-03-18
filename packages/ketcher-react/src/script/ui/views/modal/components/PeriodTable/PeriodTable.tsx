@@ -16,39 +16,21 @@
 
 import { AtomInfo, ElementsTable, TypeChoice } from './components';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
+import { PeriodTableResult, PeriodTableType } from './types';
 
-import { Component } from 'react';
+import { Component, FC } from 'react';
 import { Dialog } from '../../../components';
-import { Element, Elements } from 'ketcher-core';
+import { Editor, Element, Elements } from 'ketcher-core';
 import { addAtoms } from '../../../../state/toolbar';
 import classes from './PeriodTable.module.less';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
 
-type AtomType = 'atom' | 'gen' | 'list' | 'not-list';
-
-interface AtomResult {
-  label: string;
-  pseudo: string | null;
-}
-
-interface GenResult {
-  type: 'gen';
-  label: string;
-  pseudo: string;
-}
-
-interface ListResult {
-  type: 'list' | 'not-list';
-  values: string[];
-}
-
-type PeriodTableResult = AtomResult | GenResult | ListResult | null;
-
 interface TableOwnProps {
-  type?: AtomType;
+  type?: PeriodTableType;
   values?: string[];
   label?: string;
   pseudo?: string;
@@ -58,7 +40,7 @@ interface TableOwnProps {
 
 interface TableStateProps {
   isMonomerCreationWizardActive: boolean;
-  type?: AtomType;
+  type?: PeriodTableType;
   values?: string[];
   label?: string;
   pseudo?: string;
@@ -71,7 +53,7 @@ interface TableDispatchProps {
 type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
 
 interface TableState {
-  type: AtomType;
+  type: PeriodTableType;
   value: string | string[] | null;
   current: Element;
   isInfo: boolean;
@@ -97,7 +79,7 @@ class Table extends Component<TableProps, TableState> {
     };
   }
 
-  changeType = (type: AtomType) => {
+  changeType = (type: PeriodTableType) => {
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
     const currentChoice = type === 'list' || type === 'not-list';
@@ -214,15 +196,14 @@ class Table extends Component<TableProps, TableState> {
   }
 }
 
+// Helps react-redux connect with this legacy class component under the current React typings.
+const PeriodTableWrapper: FC<TableProps> = (props) => <Table {...props} />;
+
 interface RootState {
-  editor: {
-    isMonomerCreationWizardActive: boolean;
-  };
+  editor: Editor;
 }
 
-function mapSelectionToProps(
-  editor: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-): Partial<TableStateProps> {
+function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   const selection = editor.selection();
 
   if (
@@ -257,7 +238,7 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: Dispatch,
   ownProps: TableOwnProps,
 ): TableDispatchProps => {
   return {
@@ -280,6 +261,9 @@ const mapDispatchToProps = (
   };
 };
 
-const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+const PeriodTable = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PeriodTableWrapper);
 
 export default PeriodTable;

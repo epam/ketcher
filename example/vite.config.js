@@ -69,6 +69,21 @@ const HtmlReplaceVitePlugin = () => {
   };
 };
 
+const CspNoncePlugin = (nonce) => ({
+  name: 'ketcher-csp-nonce-injector',
+  transformIndexHtml: {
+    enforce: 'post',
+    transform(html) {
+      return html.replace(
+        /<script(?![^>]*\bnonce=)([^>]*)>/g,
+        `<script nonce="${nonce}"$1>`,
+      );
+    },
+  },
+});
+
+const DEV_NONCE = 'ketcher-dev-nonce';
+
 const logger = createLogger();
 const loggerWarn = logger.warn;
 logger.warn = (msg, options) => {
@@ -84,6 +99,9 @@ logger.warn = (msg, options) => {
 export default defineConfig({
   server: {
     open: true,
+    headers: {
+      'Content-Security-Policy': `script-src 'self' 'unsafe-eval' 'nonce-${DEV_NONCE}'`,
+    },
   },
   esbuild: {
     tsconfigRaw: {
@@ -97,7 +115,7 @@ export default defineConfig({
     devSourcemap: true,
   },
   plugins: [
-    react(),
+    react({ nonce: DEV_NONCE }),
     svgr({
       exportAsDefault: true,
     }),
@@ -140,12 +158,14 @@ export default defineConfig({
              */
             injectTo: 'body',
             tag: 'script',
+            attrs: { nonce: DEV_NONCE },
             children: 'var global = global || window',
           },
         ],
       },
     }),
     HtmlReplaceVitePlugin(),
+    CspNoncePlugin(DEV_NONCE),
     commonjs(),
   ],
   define: {

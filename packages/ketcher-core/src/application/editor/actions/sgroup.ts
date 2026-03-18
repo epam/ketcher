@@ -362,7 +362,6 @@ export function setExpandMonomerSGroup(
   });
 
   const sameLine = new Set<number>();
-  const complementaryLine = new Set<number>();
 
   sGroupsToMove.forEach((sGroupIds) => {
     sGroupIds.forEach((sGroupId) => {
@@ -473,8 +472,7 @@ export function setExpandMonomerSGroup(
       const moveUp = movableSGroupCenter.y < sGroupCenter.y;
       const moveRight = movableSGroupCenter.x > sGroupCenter.x;
       const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
-      const moveHorizontally =
-        sameLine.has(sGroupId) || complementaryLine.has(sGroupId);
+      const moveHorizontally = sameLine.has(sGroupId);
       const moveVertically = !moveHorizontally;
 
       let horizontalDirection = 0;

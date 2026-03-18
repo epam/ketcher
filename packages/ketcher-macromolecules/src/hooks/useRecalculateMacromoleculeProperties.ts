@@ -41,6 +41,7 @@ export const useRecalculateMacromoleculeProperties = () => {
     const selectionDrawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
+    const hasNoSelection = !selectionDrawingEntitiesManager.hasDrawingEntities;
     const drawingEntitiesManagerToCalculateProperties =
       selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager
@@ -56,9 +57,19 @@ export const useRecalculateMacromoleculeProperties = () => {
         0,
       ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
 
+    const allMonomers = [
+      ...drawingEntitiesManagerToCalculateProperties.monomers.values(),
+    ];
+    const firstMonomerFromAll = allMonomers[0];
+    const areAllEntitiesInSingleChain =
+      !firstMonomerFromAll ||
+      allMonomers.length <=
+        getAllConnectedMonomersRecursively(firstMonomerFromAll).length;
+
     if (
       !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
-      !areAllMonomersConnectedByCovalentOrHydrogenBonds
+      !areAllMonomersConnectedByCovalentOrHydrogenBonds ||
+      (hasNoSelection && !areAllEntitiesInSingleChain)
     ) {
       dispatch(setMacromoleculesProperties(undefined));
 

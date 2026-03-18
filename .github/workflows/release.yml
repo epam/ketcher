@@ -36,7 +36,7 @@ jobs:
         env:
           NODE_ENV: production
           CI: "false"
-        run: npm run build
+        run: npm run build:packages
 
       - name: Create packages
         run: >

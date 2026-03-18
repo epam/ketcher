@@ -25,6 +25,7 @@ import {
 
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
 import Form, { Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
@@ -83,23 +84,6 @@ interface AttachDispatchProps {
 }
 
 type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
-
-interface StoreState {
-  templates: {
-    attach: {
-      name: string;
-      atomid: number;
-      bondid: number;
-    };
-    lib: TemplateItem[];
-  };
-  modal: {
-    form: FormState;
-  };
-  options: {
-    settings: Record<string, unknown>;
-  };
-}
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`

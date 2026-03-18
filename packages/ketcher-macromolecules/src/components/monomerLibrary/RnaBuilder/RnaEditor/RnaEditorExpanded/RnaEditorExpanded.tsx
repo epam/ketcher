@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities } from 'ketcher-core';
+import {
+  buildRnaPresetConnections,
+  Entities,
+  getRnaPresetPhosphatePosition,
+  RnaPhosphatePosition,
+} from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -118,6 +123,13 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
+  const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
+    RnaPhosphatePosition | undefined
+  >(
+    activePreset?.connections?.length
+      ? getRnaPresetPhosphatePosition(activePreset)
+      : undefined,
+  );
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -135,7 +147,7 @@ export const RnaEditorExpanded = ({
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const phosphatePosition = isSequenceMode
     ? 'right'
-    : newPreset?.phosphatePosition;
+    : selectedPhosphatePosition;
   const { is3PrimeAvailable, is5PrimeAvailable } =
     getPhosphatePositionAvailability(newPreset || {});
   const isPhosphateOrientationRequired =
@@ -166,6 +178,11 @@ export const RnaEditorExpanded = ({
 
   useEffect(() => {
     setNewPreset(activePreset);
+    setSelectedPhosphatePosition(
+      activePreset?.connections?.length
+        ? getRnaPresetPhosphatePosition(activePreset)
+        : undefined,
+    );
   }, [activePreset]);
 
   useEffect(() => {
@@ -218,12 +235,22 @@ export const RnaEditorExpanded = ({
         const currentPreset = updatePresetMonomerGroup();
         let presetFullName = newPreset?.name;
         if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName(currentPreset);
+          presetFullName = selectPresetFullName({
+            ...currentPreset,
+            connections: buildRnaPresetConnections(
+              currentPreset,
+              selectedPhosphatePosition,
+            ),
+          });
         }
         setNewPreset({ ...currentPreset, name: presetFullName });
       }
     }
-  }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
+  }, [
+    activePresetMonomerGroup?.groupItem,
+    isSequenceEditInRNABuilderMode,
+    selectedPhosphatePosition,
+  ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -268,7 +295,11 @@ export const RnaEditorExpanded = ({
 
     dispatch(setActiveRnaBuilderItem(selectedGroup));
     dispatch(
-      recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
+      recalculateRnaBuilderValidations({
+        rnaPreset: newPreset,
+        isEditMode,
+        selectedPhosphatePosition,
+      }),
     );
 
     // If all the selected nodes in sequence have the same base, set the monomer as active in the library
@@ -310,11 +341,15 @@ export const RnaEditorExpanded = ({
     }
   };
 
-  const setPhosphatePosition = (position?: 'left' | 'right') => {
-    setNewPreset({
-      ...(newPreset || {}),
-      phosphatePosition: position,
-    });
+  const setPhosphatePosition = (position?: RnaPhosphatePosition) => {
+    setSelectedPhosphatePosition(position);
+    dispatch(
+      recalculateRnaBuilderValidations({
+        rnaPreset: newPreset,
+        isEditMode,
+        selectedPhosphatePosition: position,
+      }),
+    );
   };
 
   const onUpdateSequence = () => {
@@ -330,9 +365,14 @@ export const RnaEditorExpanded = ({
     if (!newPreset?.name) {
       return;
     }
-    let resolvedPhosphatePosition = newPreset?.phosphate
-      ? phosphatePosition
-      : undefined;
+    let resolvedPhosphatePosition: RnaPhosphatePosition | undefined;
+    if (newPreset?.phosphate) {
+      resolvedPhosphatePosition = phosphatePosition;
+
+      if (!resolvedPhosphatePosition && newPreset?.connections?.length) {
+        resolvedPhosphatePosition = getRnaPresetPhosphatePosition(newPreset);
+      }
+    }
     if (newPreset?.phosphate && !resolvedPhosphatePosition) {
       if (is3PrimeAvailable && !is5PrimeAvailable) {
         resolvedPhosphatePosition = 'right';
@@ -345,7 +385,10 @@ export const RnaEditorExpanded = ({
     }
     const presetToSave = {
       ...newPreset,
-      phosphatePosition: resolvedPhosphatePosition,
+      connections: buildRnaPresetConnections(
+        newPreset,
+        resolvedPhosphatePosition,
+      ),
     };
     const presetWithSameName = presets.find(
       (preset) => preset.name === presetToSave.name,
@@ -373,6 +416,11 @@ export const RnaEditorExpanded = ({
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {
       setNewPreset(activePreset);
+      setSelectedPhosphatePosition(
+        activePreset?.connections?.length
+          ? getRnaPresetPhosphatePosition(activePreset)
+          : undefined,
+      );
       resetRnaBuilder(dispatch);
     }
   };

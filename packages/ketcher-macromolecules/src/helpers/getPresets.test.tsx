@@ -28,7 +28,12 @@ import {
   adenine,
   rnaPresetsTemplates,
 } from '../testMockData/monomerPresets';
-import { MonomerItemType } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  getRnaPresetPhosphatePosition,
+  KetConnectionType,
+  MonomerItemType,
+} from 'ketcher-core';
 
 describe('getPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {
@@ -53,7 +58,7 @@ describe('getPreset function', () => {
       base: thymine,
       sugar: ribose,
       phosphate,
-      phosphatePosition: 'right',
+      connections: rnaPresetsTemplates[3].connections,
       default: true,
     };
 
@@ -62,7 +67,7 @@ describe('getPreset function', () => {
       base: guanine,
       sugar: ribose,
       phosphate,
-      phosphatePosition: 'right',
+      connections: rnaPresetsTemplates[2].connections,
       default: true,
     };
 
@@ -74,5 +79,59 @@ describe('getPreset function', () => {
       MonomerName: '3FAM',
       Name: '3-FAM',
     });
+  });
+
+  it('should infer left phosphate position from preset connections', () => {
+    const phosphateWithId = {
+      ...phosphate,
+      props: {
+        ...phosphate.props,
+        id: 'P___Phosphate',
+      },
+    };
+    const riboseWithId = {
+      ...ribose,
+      props: {
+        ...ribose.props,
+        id: 'R___Ribose',
+      },
+    };
+    const adenineWithId = {
+      ...adenine,
+      props: {
+        ...adenine.props,
+        id: 'A___Adenine',
+      },
+    };
+    const monomerData: MonomerItemType[] = [
+      phosphateWithId,
+      riboseWithId,
+      adenineWithId,
+    ];
+    const leftPreset = getPresets(
+      monomerData,
+      [
+        {
+          ...rnaPresetsTemplates[0],
+          connections: [
+            rnaPresetsTemplates[0].connections[0],
+            {
+              connectionType: KetConnectionType.SINGLE,
+              endpoint1: {
+                monomerTemplateId: 'monomerTemplate-R___Ribose',
+                attachmentPointId: AttachmentPointName.R1,
+              },
+              endpoint2: {
+                monomerTemplateId: 'monomerTemplate-P___Phosphate',
+                attachmentPointId: AttachmentPointName.R2,
+              },
+            },
+          ],
+        },
+      ],
+      true,
+    )[0];
+
+    expect(getRnaPresetPhosphatePosition(leftPreset)).toBe('left');
   });
 });

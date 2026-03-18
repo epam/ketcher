@@ -94,6 +94,8 @@ interface ToolEventHandler {
   selectEntities?(event: Event): void;
 }
 
+export type RnaPhosphatePosition = 'left' | 'right';
+
 export interface IRnaPreset {
   name?: string;
   nameInList?: string;
@@ -108,8 +110,8 @@ export interface IRnaPreset {
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
-    Pick<IKetMonomerGroupTemplate, 'templates'> {
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+    Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
   connections?: IKetTemplateConnection[];
 }
 

@@ -18,9 +18,11 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import {
+  getRnaPresetPhosphatePosition,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
   MonomerItemType,
+  RnaPhosphatePosition,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
@@ -106,7 +108,6 @@ export const rnaBuilderSlice = createSlice({
         base: undefined,
         sugar: undefined,
         phosphate: undefined,
-        phosphatePosition: undefined,
         name: '',
         nameInList: '',
       };
@@ -149,10 +150,19 @@ export const rnaBuilderSlice = createSlice({
     },
     recalculateRnaBuilderValidations: (
       state,
-      action: PayloadAction<{ rnaPreset: IRnaPreset; isEditMode: boolean }>,
+      action: PayloadAction<{
+        rnaPreset: IRnaPreset;
+        isEditMode: boolean;
+        selectedPhosphatePosition?: RnaPhosphatePosition;
+      }>,
     ) => {
       const { sugarValidations, phosphateValidations, baseValidations } =
-        getValidations(action.payload.rnaPreset, action.payload.isEditMode);
+        getValidations(
+          action.payload.rnaPreset,
+          action.payload.isEditMode,
+          action.payload.selectedPhosphatePosition ??
+            getRnaPresetPhosphatePosition(action.payload.rnaPreset),
+        );
 
       state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
       state.groupItemValidations[MonomerGroups.BASES] = baseValidations;
@@ -374,6 +384,7 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label || preset.base?.props.MonomerName || '';
   const phosphate =
     preset.phosphate?.label || preset.phosphate?.props.MonomerName || '';
+  const phosphatePosition = getRnaPresetPhosphatePosition(preset);
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -386,7 +397,7 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
 
   if (phosphate) {
     fullName =
-      preset.phosphatePosition === 'left'
+      phosphatePosition === 'left'
         ? `${phosphate}${fullName}`
         : `${fullName}${phosphate}`;
   }

@@ -1,5 +1,5 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, RnaPhosphatePosition } from 'ketcher-core';
 
 const hasCap = (
   presetPart: MonomerItemType | undefined,
@@ -23,6 +23,7 @@ export const getPhosphatePositionAvailability = (newPreset: IRnaPreset) => {
 export const getValidations = (
   newPreset: IRnaPreset,
   isEditMode: boolean,
+  selectedPhosphatePosition?: RnaPhosphatePosition,
 ): {
   sugarValidations: string[];
   phosphateValidations: string[];
@@ -46,10 +47,10 @@ export const getValidations = (
   const { is3PrimeAvailable, is5PrimeAvailable } =
     getPhosphatePositionAvailability(newPreset);
 
-  if (newPreset?.phosphatePosition === 'right') {
+  if (selectedPhosphatePosition === 'right') {
     sugarValidations.push('R2');
     phosphateValidations.push('R1');
-  } else if (newPreset?.phosphatePosition === 'left') {
+  } else if (selectedPhosphatePosition === 'left') {
     sugarValidations.push('R1');
     phosphateValidations.push('R2');
   } else {

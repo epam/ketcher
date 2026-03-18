@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
+import { IKetTemplateConnection } from 'application/formatters';
 import { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 
@@ -27,6 +28,7 @@ import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { IKetTemplateConnection } from 'application/formatters';
+import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
@@ -57,7 +59,7 @@ class RnaPresetTool implements Tool {
     if (preset?.phosphate) {
       this.phosphate = preset?.phosphate;
     }
-    this.phosphatePosition = preset?.phosphatePosition;
+    this.connections = preset?.connections || [];
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
@@ -87,7 +89,7 @@ class RnaPresetTool implements Tool {
           ? Coordinates.canvasToModel(
               new Vec2(
                 this.editor.lastCursorPositionOfCanvas.x +
-                  (this.phosphatePosition === 'left'
+                  (getRnaPresetPhosphatePosition(this) === 'left'
                     ? -SnakeLayoutCellWidth
                     : SnakeLayoutCellWidth),
                 this.editor.lastCursorPositionOfCanvas.y,
@@ -142,7 +144,7 @@ class RnaPresetTool implements Tool {
         new Vec2(
           this.editor.lastCursorPosition.x +
             this.MONOMER_PREVIEW_OFFSET_X +
-            (this.phosphatePosition === 'left'
+            (getRnaPresetPhosphatePosition(this) === 'left'
               ? -this.PHOSPHATE_PREVIEW_OFFSET_X
               : this.PHOSPHATE_PREVIEW_OFFSET_X),
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,

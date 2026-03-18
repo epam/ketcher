@@ -155,6 +155,11 @@ describe('Test Rna Editor Expanded component', () => {
                 },
               },
             },
+            groupItemValidations: {
+              Sugars: [],
+              Bases: [],
+              Phosphates: [],
+            },
             presetsDefault: [],
             presetsCustom: [],
           },

@@ -68,9 +68,9 @@ describe('rnaValidations', () => {
     const { phosphateValidations } = getValidations(
       {
         sugar: sugarWithR1R2R3 as never,
-        phosphatePosition: 'left',
       },
       true,
+      'left',
     );
 
     expect(phosphateValidations).toContain('R2');

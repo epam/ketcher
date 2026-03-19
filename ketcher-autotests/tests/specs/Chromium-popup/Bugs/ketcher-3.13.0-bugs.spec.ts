@@ -527,64 +527,67 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     });
   });
 
-  // test('Case 10 — Monomer area selection works wrong if user scrolls down during selection', async ({
-  //   FlexCanvas: _,
-  // }) => {
-  //   /*
-  //    * Test task: https://github.com/epam/ketcher/issues/9137
-  //    * Bug: https://github.com/epam/ketcher/issues/7927
-  //    * Version: 3.8.0-rc.3
-  //    * Description:
-  //    * In Snake canvas, area selection behaves incorrectly when the user starts
-  //    * selection at the bottom of the screen and scrolls down using mouse wheel.
-  //    *
-  //    * Scenario:
-  //    * 1. Go to Macromolecules mode – Snake canvas (clean canvas)
-  //    * 2. Load the following HELM (very large RNA sequence)
-  //    * 3. Start area selection from the bottom of the screen
-  //    * 4. Scroll down using the mouse wheel during selection
-  //    *
-  //    * Expected Result:
-  //    * Area selection works correctly and selection area is consistent even after scrolling.
-  //    */
+  test('Case 10 — Monomer area selection works wrong if user scrolls down during selection', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/7927
+     * Version: 3.8.0-rc.3
+     * Description:
+     * In Snake canvas, area selection behaves incorrectly when the user starts
+     * selection at the bottom of the screen and scrolls down using mouse wheel.
+     *
+     * Scenario:
+     * 1. Go to Macromolecules mode – Snake canvas (clean canvas)
+     * 2. Load the HELM structure
+     * 3. Start area selection from the bottom of the screen
+     * 4. Scroll down using the mouse wheel during selection
+     *
+     * Expected Result:
+     * Area selection works correctly and selection area is consistent even after scrolling.
+     */
 
-  //   // Step 1: Switch to Macromolecules → Snake mode
-  //   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-  //     enableSnakeMode: true,
-  //   });
+    // Step 1: Switch to Macromolecules → Snake mode
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
-  //   // Step 2: Load the huge HELM structure
-  //   await pasteFromClipboardAndAddToMacromoleculesCanvas(
-  //     page,
-  //     MacroFileType.HELM,
-  //     'RNA1{r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A]}$$$$V2.0',
-  //   );
+    // Step 2: Load the huge HELM structure
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)p.r(A)}$$$$V2.0',
+    );
 
-  //   // Step 3: Start area selection from the bottom of the screen
-  //   await CommonLeftToolbar(page).areaSelectionTool();
+    // Step 3: Start area selection from the bottom of the screen
+    await CommonLeftToolbar(page).areaSelectionTool();
+    const canvas = page.getByTestId(KETCHER_CANVAS).first();
+    await expect(canvas).toBeVisible();
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('Canvas bounding box is undefined');
+    const inset = 20;
+    // eslint-disable-next-line prefer-const
+    let startX = Math.floor(box.x + box.width - inset);
+    let startY = Math.floor(box.y + box.height / 2 + 40);
+    const bottomLimit = Math.floor(box.y + box.height - inset);
+    if (startY > bottomLimit - 8) startY = bottomLimit - 8;
+    const firstTargetX = Math.floor(box.x + inset);
+    const firstTargetY = bottomLimit;
+    await page.mouse.move(startX, startY);
+    await page.mouse.down();
+    await page.mouse.move(firstTargetX, firstTargetY, { steps: 20 });
+    for (let i = 0; i < 10; i++) {
+      await page.mouse.wheel(0, 320);
+      await page.waitForTimeout(40);
+    }
+    const extraX = Math.max(firstTargetX - 30, box.x + 8);
+    const extraY = firstTargetY + 30;
+    await page.mouse.move(extraX, extraY, { steps: 8 });
+    await page.mouse.up();
 
-  //   const viewport = page.viewportSize();
-  //   if (!viewport) throw new Error('Viewport is undefined');
-
-  //   const startX = viewport.width / 2;
-  //   const startY = viewport.height - 40;
-
-  //   await page.mouse.move(startX, startY);
-  //   await page.mouse.down();
-
-  //   // Step 4: Scroll down while still holding the selection
-  //   for (let i = 0; i < 10; i++) {
-  //     await page.mouse.wheel(0, 300);
-  //     await page.waitForTimeout(50);
-  //   }
-
-  //   // Finish selection (drag a bit lower)
-  //   await page.mouse.move(startX, startY + 200, { steps: 10 });
-  //   await page.mouse.up();
-
-  //   // Visual result validation
-  //   await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.15 });
-  // });
+    // Visual result validation: screenshot of the entire canvas
+    await takeEditorScreenshot(page);
+  });
 
   // test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
   //   /*

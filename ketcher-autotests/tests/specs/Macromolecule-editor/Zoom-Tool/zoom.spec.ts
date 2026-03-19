@@ -117,14 +117,14 @@ test.describe('Zoom Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
     await CommonTopRightToolbar(page).selectZoomInTool(30);
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that mouse scrolling IN/OUT - zooms into center of current mouse position', async ({

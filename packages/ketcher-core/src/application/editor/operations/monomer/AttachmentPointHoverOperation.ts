@@ -32,5 +32,7 @@ export class AttachmentPointHoverOperation implements Operation {
     );
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: hover state is transient and has no undo state
+  }
 }

@@ -812,7 +812,9 @@ export class AtomRenderer extends BaseRenderer {
     super.remove();
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
   protected removeHover(): void {
     this.hoverElement?.remove();

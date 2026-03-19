@@ -1,4 +1,5 @@
 import {
+  Action,
   CoordinateTransformation,
   Struct,
   Vec2,
@@ -8,6 +9,7 @@ import {
   getItemsToFuse,
 } from 'ketcher-core';
 import { dropAndMerge } from '../tool/helper/dropAndMerge';
+import { ClosestItemWithMap } from '../shared/closest.types';
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -37,14 +39,11 @@ export default class FragmentSelectionTool implements Tool {
   private dragCtx?: {
     item?: { map: string; id: number };
     xy0: Vec2;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    action?: any;
+    action?: Action | null;
     mergeItems?: ReturnType<typeof getItemsToFuse>;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    copyAction?: any;
+    copyAction?: Action;
     stopTapping?: () => void;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    closestItem?: any;
+    closestItem?: ClosestItemWithMap | null;
   } | null;
 
   constructor(editor: Editor) {

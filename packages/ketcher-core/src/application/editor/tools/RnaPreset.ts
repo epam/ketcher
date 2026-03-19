@@ -26,11 +26,13 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { IKetTemplateConnection } from 'application/formatters';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
+  connections: IKetTemplateConnection[] | undefined;
 
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;
@@ -56,6 +58,9 @@ class RnaPresetTool implements Tool {
     }
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
+    }
+    if (preset?.connections) {
+      this.connections = preset?.connections;
     }
     this.history = EditorHistory.getInstance(this.editor);
   }
@@ -93,6 +98,7 @@ class RnaPresetTool implements Tool {
               ),
             )
           : undefined,
+        connections: this.connections,
       });
 
     this.history.update(modelChanges);

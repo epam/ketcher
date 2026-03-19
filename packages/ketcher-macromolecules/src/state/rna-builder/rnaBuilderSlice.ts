@@ -298,7 +298,7 @@ export const rnaBuilderSlice = createSlice({
       const uniquePresetKey = `${action.payload.name}_${MONOMER_CONST.RNA}`;
       const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
-      ) || []) as string[];
+      ) ?? []) as string[];
 
       const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
         (targetKey) => targetKey === uniquePresetKey,
@@ -369,10 +369,10 @@ export const selectIsEditMode = (state: RootState): boolean => {
 
 export const selectPresetFullName = (preset: IRnaPreset): string => {
   if (!preset) return '';
-  const sugar = preset.sugar?.label || preset.sugar?.props.MonomerName || '';
-  const base = preset.base?.label || preset.base?.props.MonomerName || '';
+  const sugar = preset.sugar?.label ?? preset.sugar?.props.MonomerName ?? '';
+  const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
-    preset.phosphate?.label || preset.phosphate?.props.MonomerName || '';
+    preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -457,7 +457,7 @@ export const selectFilteredPresets = createSelector(
         const internal = modifications?.internal ?? `i${base}`;
         transformedIdtText = `${endpoint5}, ${internal}`;
       }
-      const slashCount = (searchText.match(/\//g) || []).length;
+      const slashCount = (searchText.match(/\//g) ?? []).length;
       const parts = searchText.split('/');
 
       if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {

@@ -219,7 +219,7 @@ class BondTool implements Tool {
             if (atomId !== null) atomResult.push(atomId);
           } else if (endAtom?.map === 'functionalGroups') {
             const functionalGroup = molecule.functionalGroups.get(endAtom.id);
-            if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+            if (!SGroup.isSaltOrSolvent(functionalGroup?.name ?? '')) {
               const attachmentAtomId =
                 functionalGroup?.relatedSGroup.getAttachmentAtomId();
               endAtom =
@@ -355,7 +355,7 @@ class BondTool implements Tool {
           delete this.dragCtx.existedBond;
         }
       } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = { ...(this.bondProps || {}) };
+        const bondProps = { ...(this.bondProps ?? {}) };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(

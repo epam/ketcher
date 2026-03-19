@@ -87,7 +87,7 @@ function request(
     method,
     headers: {
       Accept: 'application/json',
-      ...(headers || {}),
+      ...(headers ?? {}),
     },
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
@@ -120,11 +120,11 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = { ...(data || {}) };
+    const body = { ...(data ?? {}) };
     body.options = {
-      ...(body.options || {}),
-      ...(defaultOptions || {}),
-      ...(options || {}),
+      ...(body.options ?? {}),
+      ...(defaultOptions ?? {}),
+      ...(options ?? {}),
     };
     return request(
       method,

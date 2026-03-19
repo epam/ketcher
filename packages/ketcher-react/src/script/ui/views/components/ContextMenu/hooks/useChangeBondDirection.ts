@@ -6,7 +6,7 @@ export const useChangeBondDirection = (props) => {
 
   const changeDirection = () => {
     const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
-    const bondIds = props.propsFromTrigger?.bondIds || [];
+    const bondIds = props.propsFromTrigger?.bondIds ?? [];
     const bondId = bondIds[0];
     const molecule = editor?.render.ctab.molecule;
 

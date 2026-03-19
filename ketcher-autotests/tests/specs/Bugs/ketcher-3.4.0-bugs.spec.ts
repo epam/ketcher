@@ -15,7 +15,6 @@ import {
   takeTopToolbarScreenshot,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
   MolFileFormat,
   clickOnCanvas,
   openFile,

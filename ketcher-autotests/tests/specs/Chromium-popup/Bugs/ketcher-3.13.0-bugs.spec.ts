@@ -589,89 +589,85 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeEditorScreenshot(page);
   });
 
-  // test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
-  //   /*
-  //    * Test task: https://github.com/epam/ketcher/issues/9137
-  //    * Bug: https://github.com/epam/ketcher/issues/9084
-  //    * Version: 3.13.0-rc.1
-  //    * Description:
-  //    * When creating a new Nucleotide in the monomer wizard and manually defining
-  //    * attachment points (AP), Ketcher loses the user-defined AP configuration.
-  //    * It should instead validate that Sugar.R2 and Phosphate.R1 are already defined
-  //    * and show an error (prevent invalid save).
-  //    *
-  //    * Scenario:
-  //    * 1. Go to Molecules mode (clean canvas)
-  //    * 2. Load structure from file: issue.ket.zip (use provided test data)
-  //    * 3. Select the whole structure and open Create Monomer wizard
-  //    * 4. Choose "Nucleotide" type
-  //    * 5. Configure Base/Sugar/Phosphate per picture from the issue and set APs:
-  //    *    - Sugar: R2 is already defined (user tries to define it again)
-  //    *    - Phosphate: R1 is already defined (user tries to define it again)
-  //    * 6. Try to submit
-  //    *
-  //    * Expected result:
-  //    * Wizard shows validation error and does NOT allow saving an invalid configuration
-  //    * (AP duplicates). No loss of user-defined AP configuration.
-  //    */
+  test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9137
+     * Bug: https://github.com/epam/ketcher/issues/9084
+     * Version: 3.13.0-rc.1
+     * Description:
+     * When creating a new Nucleotide in the monomer wizard and manually defining
+     * attachment points (AP), Ketcher loses the user-defined AP configuration.
+     * It should instead validate that Sugar.R2 and Phosphate.R1 are already defined
+     * and show an error (prevent invalid save).
+     *
+     * Scenario:
+     * 1. Go to Molecules mode (clean canvas)
+     * 2. Load structure from file
+     * 3. Select the whole structure and open Create Monomer wizard
+     * 4. Choose "Nucleotide" type
+     * 5. Configure Base/Sugar/Phosphate per picture from the issue and set APs:
+     *    - Sugar: R2 is already defined (user tries to define it again)
+     *    - Phosphate: R1 is already defined (user tries to define it again)
+     * 6. Try to submit
+     *
+     * Expected result:
+     * Wizard shows validation error and does NOT allow saving an invalid configuration
+     * (AP duplicates). No loss of user-defined AP configuration.
+     */
 
-  //   // Step 1–2: Load structure from file as a new project (Molecules mode)
-  //   await openFileAndAddToCanvasAsNewProject(
-  //     page,
-  //     // Adjust the path if your test-data structure differs
-  //     'KET/Chromium-popup/Bugs/ketcher-3.13.0-bugs/issue.ket',
-  //   );
+    // Step 1–2: Load structure from file as a new project (Molecules mode)
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.13.0-bugs/ketcher-saves-incorrect-attachment-points-configuration-for-new-nucleotides.ket',
+    );
 
-  //   // Ensure canvas focus (popup mode)
-  //   await clickInTheMiddleOfTheScreen(page);
+    // Step 3: Select the whole structure and open Create Monomer wizard
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await selectAllStructuresOnCanvas(page);
 
-  //   // Step 3: Select the whole structure and open Create Monomer wizard
-  //   await CommonLeftToolbar(page).areaSelectionTool();
-  //   await selectAllStructuresOnCanvas(page);
-  //   await LeftToolbar(page).createMonomer();
+    // Step 4: Select type Nucleotide Preset
+    await LeftToolbar(page).createMonomer();
 
-  //   const dialog = CreateMonomerDialog(page);
+    const dialog = CreateMonomerDialog(page);
+    const presetSection = NucleotidePresetSection(page);
 
-  //   // Step 4: Select type "Nucleotide" (not Nucleotide Preset)
-  //   await dialog.selectType(MonomerType.Nucleotide);
+    await dialog.selectType(MonomerType.NucleotidePreset);
+    await presetSection.setName('ap');
 
-  //   // Step 5: Configure fragments (Base/Sugar/Phosphate) + define attachment points per the issue
-  //   // NOTE: Replace the placeholders below with your actual actions/locators for the Nucleotide wizard.
-  //   // In your repo likely exists a Nucleotide section object similar to NucleotidePresetSection.
-  //   // If not, target controls by testIds used in your build (e.g. 'ap-sugar-r2', 'ap-phosphate-r1', etc.).
+    // Step 5: Configure fragments (Base/Sugar/Phosphate)
 
-  //   // --- Base fragment selection (per picture) ---
-  //   // TODO: set Base fragment (by selecting atoms/bonds or by picking region in wizard)
-  //   // await NucleotideSection(page).setupBase({ atomIds: [...], bondIds: [...] });
+    // Small stabilize drags
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
 
-  //   // --- Sugar fragment selection (per picture) ---
-  //   // TODO: set Sugar fragment
-  //   // await NucleotideSection(page).setupSugar({ atomIds: [...], bondIds: [...] });
+    // --- Base ---
+    await presetSection.setupBase({
+      atomIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+      bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
+    });
 
-  //   // --- Phosphate fragment selection (per picture) ---
-  //   // TODO: set Phosphate fragment
-  //   // await NucleotideSection(page).setupPhosphate({ atomIds: [...], bondIds: [...] });
+    // --- Sugar ---
+    await presetSection.setupSugar({
+      atomIds: [0, 1, 2, 3, 4, 5, 6, 7, 23],
+      bondIds: [0, 1, 2, 3, 4, 5, 6, 7, 25],
+    });
 
-  //   // --- Manually define APs as on the screenshot in the issue ---
-  //   // Sugar.R2 and Phosphate.R1 are already defined in the structure,
-  //   // user attempts to define them again → expected validation error.
+    // --- Phosphate ---
+    await presetSection.setupPhosphate({
+      atomIds: [8, 19, 20, 21, 22],
+      bondIds: [21, 22, 23, 24],
+    });
 
-  //   // TODO: set AP for Sugar R2 (UI control depends on your wizard)
-  //   // await NucleotideSection(page).sugar.setAttachmentPoint('R2', TARGET_ATOM_ID_OR_HANDLE);
+    // Step 6: Try to submit with invalid AP configuration (duplicates)
+    await dialog.submit();
 
-  //   // TODO: set AP for Phosphate R1
-  //   // await NucleotideSection(page).phosphate.setAttachmentPoint('R1', TARGET_ATOM_ID_OR_HANDLE);
+    // Visual verification: screenshot to check if AP configuration is preserved and error is shown
+    await takeEditorScreenshot(page);
 
-  //   // Step 6: Try to submit (expect validation error shown and submit blocked)
-  //   // We use visual regression on the wizard window to confirm the error is shown.
-  //   // If your build shows inline error near AP controls, it's captured by the screenshot.
-  //   // If a toast appears, it will also be captured on top of the dialog.
-  //   await takeElementScreenshot(page, dialog.window, { padding: 0 });
-
-  //   // Optionally, if your build disables the submit button on invalid APs, you can assert it:
-  //   // await expect(dialog.saveButton).toBeDisabled(); // uncomment if applicable
-
-  //   // Close the wizard to cleanup (do not save invalid configuration)
-  //   await dialog.cancel();
-  // });
+    // Close dialog to avoid affecting other tests
+    await dialog.discard();
+  });
 });

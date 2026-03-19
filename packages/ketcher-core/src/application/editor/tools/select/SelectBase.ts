@@ -1084,7 +1084,6 @@ abstract class SelectBase implements BaseTool {
         return;
       }
 
-      const history = EditorHistory.getInstance(this.editor);
       if (
         this.mode === 'moving' &&
         (renderer?.drawingEntity?.selected ||
@@ -1107,6 +1106,7 @@ abstract class SelectBase implements BaseTool {
             return;
           }
 
+          const history = EditorHistory.getInstance(this.editor);
           const modelChanges =
             this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
               new Vec2(0, 0),
@@ -1122,6 +1122,7 @@ abstract class SelectBase implements BaseTool {
             return;
           }
 
+          const history = EditorHistory.getInstance(this.editor);
           const fullMovementOffset = Coordinates.canvasToModel(canvasDelta);
           const modelChanges =
             this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(

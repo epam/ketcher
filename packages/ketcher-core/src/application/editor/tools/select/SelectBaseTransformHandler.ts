@@ -382,5 +382,6 @@ export class SelectBaseTransformHandler {
     this.userRotationCenter = null;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
+    this.rxnArrowResizeContext = null;
   }
 }

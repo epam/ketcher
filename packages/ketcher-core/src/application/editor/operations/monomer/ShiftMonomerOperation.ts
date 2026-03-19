@@ -30,7 +30,7 @@ type ShiftMonomerData = {
 export class ShiftMonomerOperation extends BaseOperation {
   private previousValue: Partial<{ x: number; y: number }> | null = null;
 
-  constructor(public data: ShiftMonomerData) {
+  constructor(public readonly data: ShiftMonomerData) {
     super(OperationType.SHIFT_MONOMER);
   }
 

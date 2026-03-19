@@ -126,9 +126,6 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
           break;
         }
-        case 'queryComponent': {
-          break;
-        }
         case 'SRU': {
           let connectivity: string = sgroup.data.connectivity || 'eu';
           if (connectivity === 'ht') connectivity = '';
@@ -154,13 +151,12 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
           break;
         }
-        case 'GEN': {
-          break;
-        }
         case 'DAT': {
           set = drawGroupDat(remol, sgroup);
           break;
         }
+        case 'queryComponent':
+        case 'GEN':
         default:
           break;
       }

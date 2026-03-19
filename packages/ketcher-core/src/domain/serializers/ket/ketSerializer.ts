@@ -104,10 +104,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 function parseNode(node: any, struct: any) {
   const type = node.type;
   switch (type) {
-    case 'arrow': {
-      rxnToStruct(node, struct);
-      break;
-    }
+    case 'arrow':
     case 'plus': {
       rxnToStruct(node, struct);
       break;

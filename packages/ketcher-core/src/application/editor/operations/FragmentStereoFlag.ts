@@ -19,7 +19,7 @@ import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 export class FragmentStereoFlag extends BaseOperation {
-  frid: number;
+  readonly frid: number;
 
   constructor(fragmentId: number) {
     super(

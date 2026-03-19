@@ -17,25 +17,18 @@
 import { FormulaInput, FrozenInput } from './components';
 
 import { ReactElement, useEffect } from 'react';
+import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { range } from 'lodash/fp';
 import { Dialog } from '../../../../components';
 import { DialogParams } from '../../../../../../../components/Dialog/Dialog';
 import { analyse } from '../../../../../state/server';
 import { changeRound } from '../../../../../state/options';
-import classes from './Analyse.module.less';
-import { connect } from 'react-redux';
-import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-import { Action } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
-
-interface AnalyseValues {
-  gross?: string;
-  'molecular-weight'?: number;
-  'monoisotopic-mass'?: number;
-  'mass-composition'?: string;
-  [key: string]: string | number | undefined;
-}
+import { AnalyseValues, StoreState } from '../../../../../state/store.types';
+import classes from './Analyse.module.less';
 
 interface RoundSettings {
   roundWeight: number;
@@ -195,21 +188,7 @@ function AnalyseDialog({
   );
 }
 
-interface AnalyseState {
-  values: AnalyseValues | null;
-  loading: boolean;
-  roundWeight: number;
-  roundMass: number;
-  roundElAnalysis: number;
-}
-
-interface RootState {
-  options: {
-    analyse: AnalyseState;
-  };
-}
-
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: StoreState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -219,7 +198,7 @@ const mapStateToProps = (state: RootState) => ({
   },
 });
 
-type AppDispatch = ThunkDispatch<RootState, unknown, Action<string>>;
+type AppDispatch = ThunkDispatch<StoreState, unknown, Action<string>>;
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onAnalyse: () => dispatch(analyse()),

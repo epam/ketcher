@@ -1,7 +1,6 @@
 import { CoreEditor, EditorHistory } from 'application/editor';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { SelectRectangle } from 'application/editor/tools/select';
-import { Coordinates } from 'application/editor/shared/coordinates';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
 import { createPolymerEditorCanvas } from '../../../../helpers/dom';
 

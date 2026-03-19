@@ -21,7 +21,6 @@ import {
   SelectRectangle,
 } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -42,10 +41,11 @@ import {
 } from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { RotationView } from 'application/render/renderers/TransientView/RotationView';
-import { Atom } from 'domain/entities/CoreAtom';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
-import { getSnappedArrowVector } from 'application/editor/operations/rxn/RxnArrowResize';
+import {
+  SelectBaseMode,
+  SelectBaseTransformHandler,
+} from 'application/editor/tools/select/SelectBaseTransformHandler';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -80,15 +80,6 @@ function isGroupCenterSnapResult(
   return (result as GroupCenterSnapResult).showGroupCenterSnapping;
 }
 
-type RxnArrowResizeHandle = 'start' | 'end';
-
-type RxnArrowResizeContext = {
-  arrow: RxnArrow;
-  handle: RxnArrowResizeHandle;
-  initialStartPosition: Vec2;
-  initialEndPosition: Vec2;
-};
-
 abstract class SelectBase implements BaseTool {
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
@@ -96,45 +87,26 @@ abstract class SelectBase implements BaseTool {
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
-  public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center'
-    | 'resizing-rxn-arrow' = 'standby';
-
-  protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
-  protected currentRotationAngle = 0;
-  protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
-  protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
-  protected static readonly RXN_ARROW_RESIZE_EPSILON = 0.001;
-  protected static readonly RXN_ARROW_HANDLE_SELECTION_RADIUS = 8;
-  protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
-  private rxnArrowResizeContext: RxnArrowResizeContext | null = null;
+  public mode: SelectBaseMode = 'standby';
+  private readonly transformHandler: SelectBaseTransformHandler;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
-    this.updateRotationView();
+    this.transformHandler.updateRotationView();
   };
 
   constructor(protected readonly editor: CoreEditor) {
+    this.transformHandler = new SelectBaseTransformHandler(
+      editor,
+      (mode) => {
+        this.mode = mode;
+      },
+      () => this.mode,
+      (center, bbox) => this.buildRotationViewParams(center, bbox),
+    );
     this.destroy();
-    this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
-      (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
-        if (this.mode === 'rotating') return;
-        this.startRotation(payload.event);
-      },
-    );
-    this.rotationCenterUnsubscribe = RotationView.subscribeRotationCenter(
-      (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
-        this.startRotationCenterDrag(payload.event);
-      },
-    );
+    [this.rotationHandleUnsubscribe, this.rotationCenterUnsubscribe] =
+      this.transformHandler.subscribeToRotationControls();
     this.editor.events.selectEntities.add(this.selectEntitiesHandler);
   }
 
@@ -223,68 +195,28 @@ abstract class SelectBase implements BaseTool {
     };
   }
 
+  protected get userRotationCenter() {
+    return this.transformHandler.getUserRotationCenter();
+  }
+
+  protected updateRotationView() {
+    this.transformHandler.updateRotationView();
+  }
+
   protected startRotation(event: MouseEvent | PointerEvent) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    this.mode = 'rotating';
-    this.rotationCenter =
-      this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
-
-    if (!this.rotationCenter) {
-      this.mode = 'standby';
-      this.rotationStartPositions.clear();
-      return;
-    }
-
-    this.rotationStartPositions = new Map(
-      this.editor.drawingEntitiesManager.selectedEntitiesArr.map((entity) => [
-        entity.id,
-        new Vec2(entity.position),
-      ]),
-    );
-
-    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
-    const cursorPos = this.editor.lastCursorPositionOfCanvas;
-    this.rotationStartAngle = Math.atan2(
-      cursorPos.y - canvasCenter.y,
-      cursorPos.x - canvasCenter.x,
-    );
-    this.currentRotationAngle = 0;
-
-    const bbox =
-      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
-    }
+    this.transformHandler.startRotation(event);
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
-    event.stopPropagation();
-    event.preventDefault();
+    this.transformHandler.startRotationCenterDrag(event);
+  }
 
-    if (
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
-    ) {
-      return;
-    }
+  protected handleRotationMove(event: MouseEvent) {
+    this.transformHandler.handleRotationMove(event);
+  }
 
-    this.mode = 'rotating-center';
-    const cursorCanvas = Coordinates.viewToCanvas(
-      this.editor.lastCursorPosition,
-    );
-    this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
-    this.updateRotationView();
+  protected finishRotation() {
+    this.transformHandler.finishRotation();
   }
 
   protected mousedownEntity(
@@ -295,7 +227,9 @@ abstract class SelectBase implements BaseTool {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
     const rxnArrowResizeHandle =
-      !shiftKey && !modKey ? this.getRxnArrowResizeHandle(renderer) : null;
+      !shiftKey && !modKey
+        ? this.transformHandler.getRxnArrowResizeHandle(renderer)
+        : null;
 
     if (renderer instanceof BaseSequenceItemRenderer) {
       const twoStrandedNode = renderer.twoStrandedNode;
@@ -367,7 +301,10 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
 
     if (renderer.drawingEntity instanceof RxnArrow && rxnArrowResizeHandle) {
-      this.startRxnArrowResize(renderer.drawingEntity, rxnArrowResizeHandle);
+      this.transformHandler.startRxnArrowResize(
+        renderer.drawingEntity,
+        rxnArrowResizeHandle,
+      );
     }
   }
 
@@ -1006,21 +943,17 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (this.mode === 'rotating') {
-      this.handleRotationMove(event);
+      this.transformHandler.handleRotationMove(event);
       return;
     }
 
     if (this.mode === 'rotating-center') {
-      const cursorCanvas = Coordinates.viewToCanvas(
-        this.editor.lastCursorPosition,
-      );
-      this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
-      this.updateRotationView();
+      this.transformHandler.updateRotationCenterFromCursor();
       return;
     }
 
     if (this.mode === 'resizing-rxn-arrow') {
-      this.resizeRxnArrow(event);
+      this.transformHandler.resizeRxnArrow(event);
       return;
     }
 
@@ -1133,25 +1066,25 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
-    const history = EditorHistory.getInstance(this.editor);
 
     try {
       if (this.mode === 'resizing-rxn-arrow') {
-        this.finishRxnArrowResize(history);
+        this.transformHandler.finishRxnArrowResize();
         return;
       }
 
       if (this.mode === 'rotating') {
-        this.finishRotation();
+        this.transformHandler.finishRotation();
         return;
       }
 
       if (this.mode === 'rotating-center') {
         this.mode = 'standby';
-        this.updateRotationView();
+        this.transformHandler.updateRotationView();
         return;
       }
 
+      const history = EditorHistory.getInstance(this.editor);
       if (
         this.mode === 'moving' &&
         (renderer?.drawingEntity?.selected ||
@@ -1259,125 +1192,7 @@ abstract class SelectBase implements BaseTool {
     this.editor.events.selectEntities.dispatch(
       this.previousSelectedEntities.map((entity) => entity[1]),
     );
-    this.updateRotationView();
-  }
-
-  protected updateRotationView() {
-    const selectedEntities =
-      this.editor.drawingEntitiesManager.selectedEntitiesArr;
-    const selectedMonomersAndAtoms = selectedEntities.filter(
-      (entity) => entity instanceof BaseMonomer || entity instanceof Atom,
-    );
-
-    if (
-      selectedMonomersAndAtoms.length < 2 ||
-      this.editor.mode.modeName === 'sequence-layout-mode' ||
-      (this.mode !== 'standby' && this.mode !== 'rotating-center')
-    ) {
-      this.editor.transientDrawingView.hideRotation();
-      this.editor.transientDrawingView.update();
-      return;
-    }
-
-    const bbox =
-      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    const center =
-      this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
-
-    if (!bbox || !center) {
-      this.editor.transientDrawingView.hideRotation();
-      this.editor.transientDrawingView.update();
-      return;
-    }
-
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
-    this.editor.transientDrawingView.update();
-  }
-
-  protected handleRotationMove(event: MouseEvent) {
-    if (!this.rotationCenter) return;
-
-    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
-    const cursorPos = this.editor.lastCursorPositionOfCanvas;
-
-    const currentAngle = Math.atan2(
-      cursorPos.y - canvasCenter.y,
-      cursorPos.x - canvasCenter.x,
-    );
-
-    let angleDelta = currentAngle - this.rotationStartAngle;
-    let angleDeltaDegrees = (angleDelta * 180) / Math.PI;
-
-    // Snap to 15 degree increments (the default rotation angle from requirements)
-    if (!event.ctrlKey) {
-      const snapAngle = SelectBase.ROTATION_SNAP_ANGLE;
-      angleDeltaDegrees = Math.round(angleDeltaDegrees / snapAngle) * snapAngle;
-      angleDelta = (angleDeltaDegrees * Math.PI) / 180;
-    }
-
-    // Calculate the incremental rotation needed
-    const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
-    this.currentRotationAngle = angleDeltaDegrees;
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.rotateSelectedDrawingEntities(
-        this.rotationCenter,
-        incrementalDegrees,
-        true,
-      );
-
-    requestAnimationFrame(() => {
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
-
-      const bbox =
-        this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
-      }
-    });
-  }
-
-  protected finishRotation() {
-    const history = EditorHistory.getInstance(this.editor);
-
-    if (
-      !this.rotationCenter ||
-      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
-    ) {
-      this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
-      this.currentRotationAngle = 0;
-      this.rotationStartPositions.clear();
-      this.updateRotationView();
-      return;
-    }
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.createRotationHistoryCommand(
-        this.rotationStartPositions,
-      );
-
-    history.update(modelChanges);
-
-    this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
-    this.currentRotationAngle = 0;
-    this.rotationStartPositions.clear();
-    this.updateRotationView();
+    this.transformHandler.updateRotationView();
   }
 
   destroy() {
@@ -1396,118 +1211,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
-    this.mode = 'standby';
-    this.rxnArrowResizeContext = null;
-    this.editor.transientDrawingView.clear();
-  }
-
-  private getRxnArrowResizeHandle(
-    renderer: BaseRenderer,
-  ): RxnArrowResizeHandle | null {
-    if (!(renderer instanceof RxnArrowRenderer)) {
-      return null;
-    }
-
-    const selectionPoints = renderer.selectionPoints;
-    if (!selectionPoints) {
-      return null;
-    }
-
-    const [startPoint, endPoint] = selectionPoints;
-    const cursorPosition = this.editor.lastCursorPositionOfCanvas;
-    const threshold = SelectBase.RXN_ARROW_HANDLE_SELECTION_RADIUS;
-
-    if (Vec2.dist(cursorPosition, startPoint) <= threshold) {
-      return 'start';
-    }
-
-    if (Vec2.dist(cursorPosition, endPoint) <= threshold) {
-      return 'end';
-    }
-
-    return null;
-  }
-
-  private startRxnArrowResize(
-    arrow: RxnArrow,
-    handle: RxnArrowResizeHandle,
-  ): void {
-    this.mode = 'resizing-rxn-arrow';
-    this.rxnArrowResizeContext = {
-      arrow,
-      handle,
-      initialStartPosition: new Vec2(arrow.startPosition),
-      initialEndPosition: new Vec2(arrow.endPosition),
-    };
-  }
-
-  private resizeRxnArrow(event: MouseEvent): void {
-    const context = this.rxnArrowResizeContext;
-    if (!context) {
-      return;
-    }
-
-    const currentPosition = Coordinates.canvasToModel(
-      this.editor.lastCursorPositionOfCanvas,
-    );
-    const fixedPosition =
-      context.handle === 'start'
-        ? context.initialEndPosition
-        : context.initialStartPosition;
-    const currentVector = currentPosition.sub(fixedPosition);
-    const nextPosition = !event.ctrlKey
-      ? fixedPosition.add(getSnappedArrowVector(currentVector))
-      : currentPosition;
-
-    if (context.handle === 'start') {
-      context.arrow.startEndPosition = [new Vec2(nextPosition), fixedPosition];
-    } else {
-      context.arrow.startEndPosition = [fixedPosition, new Vec2(nextPosition)];
-    }
-
-    this.editor.renderersContainer.redrawDrawingEntity(context.arrow);
-  }
-
-  private finishRxnArrowResize(history: EditorHistory): void {
-    const context = this.rxnArrowResizeContext;
-    if (!context) {
-      return;
-    }
-
-    const currentStartPosition = new Vec2(context.arrow.startPosition);
-    const currentEndPosition = new Vec2(context.arrow.endPosition);
-    const hasStartChanged =
-      currentStartPosition.sub(context.initialStartPosition).length() >
-      SelectBase.RXN_ARROW_RESIZE_EPSILON;
-    const hasEndChanged =
-      currentEndPosition.sub(context.initialEndPosition).length() >
-      SelectBase.RXN_ARROW_RESIZE_EPSILON;
-
-    if (!hasStartChanged && !hasEndChanged) {
-      return;
-    }
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.createDrawingEntityRedrawCommand(
-        () => {
-          context.arrow.startEndPosition = [
-            new Vec2(currentStartPosition),
-            new Vec2(currentEndPosition),
-          ];
-
-          return context.arrow;
-        },
-        () => {
-          context.arrow.startEndPosition = [
-            new Vec2(context.initialStartPosition),
-            new Vec2(context.initialEndPosition),
-          ];
-
-          return context.arrow;
-        },
-      );
-
-    history.update(modelChanges);
+    this.transformHandler.stopMovement();
   }
 }
 

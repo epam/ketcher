@@ -106,7 +106,7 @@ const TemplateEditDialog = styled(Dialog)`
   }
 `;
 
-const Editor = styled('div')`
+const EditorContainer = styled('div')`
   border: 1px solid #b4b9d6;
   background-color: #ffff;
   border-radius: 5px;
@@ -341,7 +341,7 @@ class Attach extends Component<AttachProps> {
           {...this.props.formState}
         >
           <LeftColumn>
-            <Editor>
+            <EditorContainer>
               <StructEditor
                 className="structEditor"
                 ketcherId={this.props.ketcherId}
@@ -352,7 +352,7 @@ class Attach extends Component<AttachProps> {
                 options={options}
                 showAttachmentPoints={false}
               />
-            </Editor>
+            </EditorContainer>
             {!storage.isAvailable() ? (
               <Warning>{storage.warningMessage}</Warning>
             ) : null}

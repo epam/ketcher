@@ -55,24 +55,31 @@ function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
 }
 
 function FormulaInput({ value, contentEditable }: FormulaInputProps) {
-  if (errorRegexp.test(value))
+  if (errorRegexp.test(value)) {
     return formulaInputMarkdown({ content: value, contentEditable });
-
-  const content: ReactNode[] = [];
-  let cnd: RegExpExecArray | null;
-  let pos = 0;
-
-  while ((cnd = formulaRegexp.exec(value)) !== null) {
-    if (cnd[1].length > 0)
-      content.push(<sup key={content.length}>{cnd[1]}</sup>);
-    content.push(value.substring(pos, cnd.index) + cnd[2]);
-    if (cnd[3].length > 0)
-      content.push(<sub key={content.length}>{cnd[3]}</sub>);
-    pos = cnd.index + cnd[0].length;
   }
 
-  if (pos === 0) content.push(value);
-  else content.push(value.substring(pos, value.length));
+  const content: ReactNode[] = [];
+  let cnd: RegExpExecArray | null = formulaRegexp.exec(value);
+  let pos = 0;
+
+  while (cnd !== null) {
+    if (cnd[1].length > 0) {
+      content.push(<sup key={content.length}>{cnd[1]}</sup>);
+    }
+    content.push(value.substring(pos, cnd.index) + cnd[2]);
+    if (cnd[3].length > 0) {
+      content.push(<sub key={content.length}>{cnd[3]}</sub>);
+    }
+    pos = cnd.index + cnd[0].length;
+    cnd = formulaRegexp.exec(value);
+  }
+
+  if (pos === 0) {
+    content.push(value);
+  } else {
+    content.push(value.substring(pos, value.length));
+  }
 
   return formulaInputMarkdown({ content, contentEditable });
 }

@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component, PropsWithChildren } from 'react';
+import {
+  ButtonHTMLAttributes,
+  ChangeEvent,
+  Component,
+  PropsWithChildren,
+} from 'react';
 import clsx from 'clsx';
 
 import { fileOpener } from '../../utils';
@@ -30,10 +35,7 @@ type OpenButtonOwnProps = {
 };
 
 type OpenButtonProps = PropsWithChildren<
-  Omit<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    keyof OpenButtonOwnProps
-  > &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof OpenButtonOwnProps> &
     OpenButtonOwnProps
 >;
 
@@ -54,14 +56,16 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     }
   }
 
-  open(ev: React.ChangeEvent<HTMLInputElement>) {
+  open(ev: ChangeEvent<HTMLInputElement>) {
     const files = ev.target.files;
     const noop = () => null;
     const { onLoad = noop, onError = noop } = this.props;
 
-    if (this.state.opener && files?.length)
+    if (this.state.opener && files?.length) {
       this.state.opener(files[0]).then(onLoad, onError);
-    else if (files?.length) onLoad(files[0]);
+    } else if (files?.length) {
+      onLoad(files[0]);
+    }
     ev.target.value = '';
     ev.preventDefault();
   }
@@ -85,7 +89,6 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
         className={clsx(classes.openButton, className)}
         {...buttonProps}
       >
-        open
         <input
           onChange={(ev) => this.open(ev)}
           accept={type}

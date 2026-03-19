@@ -6,7 +6,9 @@ export class PhosphateSequenceItemRenderer extends BaseSequenceItemRenderer {
     return 'p';
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 
   protected appendRootElement() {
     this.rootElement = super.appendRootElement();

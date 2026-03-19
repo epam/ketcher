@@ -7,7 +7,9 @@ export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
     return '@';
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 
   public show() {
     if (

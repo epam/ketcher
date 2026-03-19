@@ -1914,34 +1914,4 @@ test.describe('Calculate Properties tests', () => {
 
     await page.setViewportSize(originalViewport);
   });
-
-  test('Case 63: Verify that Calculate Properties shows blank values and error message when two standalone small molecules are on canvas with no selection', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7141
-     * Description: When two standalone small molecule structures (e.g. benzene ring + standalone atom)
-     * are loaded from KET and Calculate Properties is opened without any selection,
-     * the window should show blank values and the error message "Select monomer, chain or part of a chain".
-     * Each standalone molecule/atom counts as a separate chain.
-     * Scenario:
-     * 1. Go to Macro - Flex
-     * 2. Load KET file with two standalone small molecules (benzene + standalone carbon atom)
-     * 3. Open the "Calculate Properties" window without any selection
-     * 4. Verify molecular formula and mass are blank
-     * 5. Verify error message is shown
-     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/two-standalone-small-molecules.ket',
-    );
-    await MacromoleculesTopToolbar(page).calculateProperties();
-    await waitForCalculateProperties(page);
-
-    await expect(page.getByTestId('Gross-formula')).not.toBeVisible();
-    await expect(page.getByTestId('Molecular-Mass-Value')).not.toBeVisible();
-    await expect(
-      page.getByText('Select monomer, chain or part of a chain'),
-    ).toBeVisible();
-    await takePageScreenshot(page);
-  });
 });

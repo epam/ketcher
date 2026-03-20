@@ -179,13 +179,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       };
 
-      document.addEventListener('contextmenu', documentHandler, {
-        capture: true,
-      });
+      document.addEventListener('contextmenu', documentHandler);
       return () => {
-        document.removeEventListener('contextmenu', documentHandler, {
-          capture: true,
-        });
+        document.removeEventListener('contextmenu', documentHandler);
       };
     }
     return undefined;

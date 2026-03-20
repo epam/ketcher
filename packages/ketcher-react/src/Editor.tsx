@@ -75,6 +75,7 @@ export const Editor = (props: Props) => {
     setMoleculesEditor(ketcher.editor);
   };
 
+  console.log('Hello 8123');
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
     setMacromoleculesEditor(macromoleculesEditor);
   };

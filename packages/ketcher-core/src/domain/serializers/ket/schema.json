@@ -5,6 +5,9 @@
   "type": "object",
   "required": ["root"],
   "properties": {
+    "ket_version": {
+      "type": "string"
+    },
     "root": {
       "type": "object",
       "required": ["nodes"],

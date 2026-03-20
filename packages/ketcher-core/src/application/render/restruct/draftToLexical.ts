@@ -22,13 +22,16 @@ export interface DraftBlock {
   text: string;
   type: string;
   inlineStyleRanges?: DraftInlineStyleRange[];
-  entityRanges?: Array<any>;
-  data?: Record<string, any>;
+  // Draft.js entityRanges have this shape: { offset, length, key }
+  entityRanges?: Array<{ offset: number; length: number; key: number }>;
+  // Data can be arbitrary but prefer unknown over any for stricter typing
+  data?: Record<string, unknown>;
 }
 
 export interface DraftEditorState {
   blocks?: DraftBlock[];
-  entityMap?: Record<string, any>;
+  // entityMap keys map to entity definitions; use unknown for values
+  entityMap?: Record<string, unknown>;
 }
 
 export function convertDraftToLexical(

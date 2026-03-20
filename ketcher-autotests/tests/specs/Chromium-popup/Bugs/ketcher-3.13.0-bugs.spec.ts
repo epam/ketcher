@@ -8,7 +8,6 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   MacroFileType,
@@ -284,16 +283,18 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * No memory leak warnings appear in the DevTools console.
      */
 
-    // Intercept console warnings
-    page.on('console', (msg) => {
+    // Intercept console warnings and collect any matching messages
+    const memoryLeakWarnings: string[] = [];
+    const onConsole = (msg: { text(): string }) => {
       const text = msg.text();
       if (
         text.includes('MaxListenersExceededWarning') ||
         text.includes('Possible EventEmitter memory leak detected')
       ) {
-        test.fail(true, `Memory leak warning detected: ${text}`);
+        memoryLeakWarnings.push(text);
       }
-    });
+    };
+    page.on('console', onConsole);
 
     // Step 1: canvas already clean due to afterEach()
 
@@ -311,6 +312,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Close dialog
     await dialog.cancel();
+
+    // Detach console listener and assert that no memory leak warnings were observed
+    page.off('console', onConsole);
+    expect(
+      memoryLeakWarnings,
+      'Memory leak warnings were logged to the console',
+    ).toEqual([]);
   });
 
   test('Case 6 — Subtype combo box width is less than other combo boxes on S-Group Properties dialog', async () => {

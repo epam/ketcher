@@ -296,29 +296,32 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     };
     page.on('console', onConsole);
 
-    // Step 1: canvas already clean due to afterEach()
+    try {
+      // Step 1: canvas already clean due to afterEach()
 
-    // Step 2: Open Save Structure dialog
-    await CommonTopLeftToolbar(page).saveFile();
+      // Step 2: Open Save Structure dialog
+      await CommonTopLeftToolbar(page).saveFile();
 
-    // const saveDialog = page.getByTestId('save-structure-dialog');
-    const dialog = SaveStructureDialog(page);
+      // const saveDialog = page.getByTestId('save-structure-dialog');
+      const dialog = SaveStructureDialog(page);
 
-    // Step 3: switch formats repeatedly
-    for (let i = 0; i < 12; i++) {
-      await dialog.chooseFileFormat(MoleculesFileFormatType.SVGDocument);
-      await dialog.chooseFileFormat(MoleculesFileFormatType.PNGImage);
+      // Step 3: switch formats repeatedly
+      for (let i = 0; i < 12; i++) {
+        await dialog.chooseFileFormat(MoleculesFileFormatType.SVGDocument);
+        await dialog.chooseFileFormat(MoleculesFileFormatType.PNGImage);
+      }
+
+      // Close dialog
+      await dialog.cancel();
+
+      expect(
+        memoryLeakWarnings,
+        'Memory leak warnings were logged to the console',
+      ).toEqual([]);
+    } finally {
+      // Always detach listener to avoid leaking it into subsequent tests.
+      page.off('console', onConsole);
     }
-
-    // Close dialog
-    await dialog.cancel();
-
-    // Detach console listener and assert that no memory leak warnings were observed
-    page.off('console', onConsole);
-    expect(
-      memoryLeakWarnings,
-      'Memory leak warnings were logged to the console',
-    ).toEqual([]);
   });
 
   test('Case 6 — Subtype combo box width is less than other combo boxes on S-Group Properties dialog', async () => {

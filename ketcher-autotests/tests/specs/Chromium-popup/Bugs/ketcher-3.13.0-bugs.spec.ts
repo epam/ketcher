@@ -174,14 +174,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     const { x: centerX, y: centerY } =
       await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(centerX + 20, centerY + 20);
-    await page.mouse.down();
-    await page.mouse.move(centerX - 100, centerY - 100, { steps: 10 });
-    await page.mouse.up();
-    await page.keyboard.press('Escape');
+    await dragMouseTo(page, centerX - 100, centerY - 100);
 
     // Step 6: Move cursor back to center and click to clear selection
-    await page.mouse.move(centerX, centerY);
-    await clickOnCanvas(page, centerX, centerY);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await clickInTheMiddleOfTheScreen(page);
 
     // Visual verification: take a focused screenshot around the double bond.
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 1 }), {

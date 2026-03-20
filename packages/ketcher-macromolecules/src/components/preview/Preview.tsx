@@ -68,7 +68,7 @@ export const Preview = () => {
       const targetBottom = targetBoundingClientRect?.bottom || 0;
       const targetLeft = targetBoundingClientRect?.left || 0;
       const targetWidth = targetBoundingClientRect?.width || 0;
-      const targetCenterX = targetLeft - targetWidth / 2;
+      const targetCenterX = targetLeft + targetWidth / 2;
 
       const ketcherRootRect = editor?.ketcherRootElementBoundingClientRect;
       const ketcherRootOffsetX = ketcherRootRect?.x || 0;

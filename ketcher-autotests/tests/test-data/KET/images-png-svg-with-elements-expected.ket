@@ -103,36 +103,24 @@
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"key\":\"fo9b9\",\"text\":\"Test case\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":9,\"style\":\"CUSTOM_FONT_SIZE_40px\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
+                "boundingBox": {
                     "x": 10.496072253043597,
                     "y": -1.152577480785828,
-                        "z": 0
+                    "width": 4.22421875,
+                    "height": 1.1000000953674318
                 },
-                    "pos": [
+                "paragraphs": [
                     {
-                            "x": 10.496072253043597,
-                            "y": -1.152577480785828,
-                            "z": 0
-                        },
+                        "parts": [
                             {
-                            "x": 10.496072253043597,
-                            "y": -2.25257757615326,
-                            "z": 0
-                        },
-                        {
-                            "x": 14.720291003043597,
-                            "y": -2.25257757615326,
-                            "z": 0
-                        },
-                        {
-                            "x": 14.720291003043597,
-                            "y": -1.152577480785828,
-                            "z": 0
+                                "text": "Test case",
+                                "font": {
+                                    "size": 40
+                                }
                             }
                         ]
                     }
+                ]
             },
             {
                 "type": "image",

@@ -400,7 +400,7 @@ export class CoreEditor {
 
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
-      event.preventDefault();
+      // event.preventDefault();
 
       if (this.libraryItemDragState) {
         this.cancelLibraryItemDrag();

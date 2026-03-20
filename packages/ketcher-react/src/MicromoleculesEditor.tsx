@@ -90,7 +90,6 @@ function MicromoleculesEditor(props: EditorProps) {
       setServerRef.current = setServer;
       props.onSetKetcherId?.(ketcher.id);
       setKetcherId(ketcherId);
-      console.log(ketcherId);
 
       if (typeof props.onInit === 'function' && ketcher) {
         props.onInit(ketcher);
@@ -117,7 +116,6 @@ function MicromoleculesEditor(props: EditorProps) {
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 
-  console.log(props.ketcherId);
   return (
     <div
       ref={rootElRef}

@@ -29,10 +29,10 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   }
 
   deserialize(content: string): Array<SdfItem> {
-    let m: any;
     const result: Array<SdfItem> = [];
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    while ((m = DelimeterRegex.exec(content)) !== null) {
+    let m: any = DelimeterRegex.exec(content);
+    while (m !== null) {
       const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
@@ -64,6 +64,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
         result.push({ struct, props });
       }
+      m = DelimeterRegex.exec(content);
     }
     return result;
   }

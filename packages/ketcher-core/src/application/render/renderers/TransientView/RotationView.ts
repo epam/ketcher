@@ -137,9 +137,7 @@ export class RotationView extends TransientView {
       cursor,
     } = params;
 
-    if (!isRotating) {
-      RotationView.lastSnappingRadius = undefined;
-    } else if (!RotationView.wasRotating) {
+    if (!isRotating || !RotationView.wasRotating) {
       RotationView.lastSnappingRadius = undefined;
     }
     RotationView.wasRotating = isRotating;

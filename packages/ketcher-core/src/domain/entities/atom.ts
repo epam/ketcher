@@ -912,10 +912,15 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       }
     } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1 || charge === 2) return rad + conn;
-      } else if (label === 'Sb' || label === 'Bi' || label === 'As') {
-        if (charge === 1 || charge === 2) return rad + conn;
+      if (
+        (label === 'N' ||
+          label === 'P' ||
+          label === 'Sb' ||
+          label === 'Bi' ||
+          label === 'As') &&
+        (charge === 1 || charge === 2)
+      ) {
+        return rad + conn;
       }
     } else if (groupno === 6) {
       if (label === 'O') {
@@ -937,7 +942,9 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sgroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.atomId === atomId);
@@ -948,10 +955,15 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
+    let sgroup: SGroup | undefined;
+
+    if (structOrSgroup instanceof SGroup) {
+      sgroup = structOrSgroup;
+    } else if (searchBySgroups) {
+      sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
+    } else {
+      sgroup = structOrSgroup.getGroupFromAtomId(atomId);
+    }
 
     return sgroup
       ?.getAttachmentPoints()
@@ -1066,7 +1078,9 @@ export class Atom extends BaseMicromoleculeEntity {
       struct,
       atomId,
     );
-    const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     const isMonomer = sGroup instanceof MonomerMicromolecule;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {

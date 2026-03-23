@@ -46,7 +46,7 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { Action } from './action';
 import { SgContexts } from '..';
 import { uniq } from 'lodash/fp';
-import { fromAtomsAttrs } from './atom';
+import { fromAtomsAttrs, mergeFragmentsIfNeeded } from './atom';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
@@ -362,7 +362,6 @@ export function setExpandMonomerSGroup(
   });
 
   const sameLine = new Set<number>();
-  const complementaryLine = new Set<number>();
 
   sGroupsToMove.forEach((sGroupIds) => {
     sGroupIds.forEach((sGroupId) => {
@@ -473,8 +472,7 @@ export function setExpandMonomerSGroup(
       const moveUp = movableSGroupCenter.y < sGroupCenter.y;
       const moveRight = movableSGroupCenter.x > sGroupCenter.x;
       const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
-      const moveHorizontally =
-        sameLine.has(sGroupId) || complementaryLine.has(sGroupId);
+      const moveHorizontally = sameLine.has(sGroupId);
       const moveVertically = !moveHorizontally;
 
       let horizontalDirection = 0;
@@ -586,6 +584,16 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   const struct = restruct.molecule;
 
   const sG = restruct.sgroups.get(id)?.item;
+  const atoms = SGroup.getAtoms(struct, sG);
+  const atomsSet = new Set(atoms);
+  const outsideConnections: Array<readonly [number, number]> = [];
+  atoms.forEach((atomId) => {
+    (struct.atomGetNeighbors(atomId) ?? []).forEach(({ aid }) => {
+      if (!atomsSet.has(aid)) {
+        outsideConnections.push([atomId, aid] as const);
+      }
+    });
+  });
 
   if (sG?.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds();
@@ -598,7 +606,6 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   }
 
   let fragmentId;
-  const atoms = SGroup.getAtoms(struct, sG);
   const attrs = sG?.getAttrs();
 
   // cache attachment points before any structural changes
@@ -638,21 +645,38 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   // After SGroup is deleted, resolve leaving groups on plain structure
   if (sG instanceof MonomerMicromolecule) {
+    const isExpanded = sG.isExpanded();
     const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps || {};
     cachedAttachmentPoints?.forEach((attachmentPoint) => {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;
 
       if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
+        const apNumber = attachmentPoint.attachmentPointNumber;
         const isOccupied = Array.from(struct.bonds.values()).some(
-          ({ begin: bondBegin, end: bondEnd }: BondAttributes) => {
+          ({
+            begin: bondBegin,
+            end: bondEnd,
+            beginSuperatomAttachmentPointNumber,
+            endSuperatomAttachmentPointNumber,
+          }: BondAttributes) => {
             const isAttached =
               bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
             if (!isAttached) return false;
             const otherAtomId =
               bondBegin === attachmentAtomId ? bondEnd : bondBegin;
             if (otherAtomId === leaveAtomId) return false;
-            return !atoms.includes(otherAtomId);
+            if (!atoms.includes(otherAtomId)) {
+              const bondApNumber =
+                bondBegin === attachmentAtomId
+                  ? beginSuperatomAttachmentPointNumber
+                  : endSuperatomAttachmentPointNumber;
+              if (isNumber(bondApNumber) && isNumber(apNumber)) {
+                return bondApNumber === apNumber;
+              }
+              return true;
+            }
+            return false;
           },
         );
 
@@ -668,6 +692,8 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
             },
           );
           action.addOp(new AtomDelete(leaveAtomId));
+        } else if (isExpanded) {
+          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
         } else {
           const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
           const newLabel = monomerCaps?.[apLabel] || 'H';
@@ -682,6 +708,10 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   if (needPerform) {
     action = action.perform(restruct);
+
+    outsideConnections.forEach(([atomId, neighborAtomId]) => {
+      mergeFragmentsIfNeeded(action, restruct, atomId, neighborAtomId);
+    });
   }
 
   return action;

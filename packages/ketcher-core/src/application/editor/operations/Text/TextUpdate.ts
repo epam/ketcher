@@ -25,7 +25,7 @@ interface TextUpdateData {
 }
 
 export class TextUpdate extends BaseOperation {
-  data: TextUpdateData;
+  readonly data: TextUpdateData;
 
   constructor(id: number, content: string) {
     super(OperationType.TEXT_UPDATE);

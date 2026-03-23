@@ -13,7 +13,7 @@ const INITIAL_DATA = {
 };
 
 class RGroupAttachmentPointRemove extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(attachmentPointId: number) {
     super(

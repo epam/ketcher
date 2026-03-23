@@ -27,7 +27,7 @@ type RotateMonomerData = {
 export class RotateMonomerOperation extends BaseOperation {
   private previousValue: number | null = null;
 
-  constructor(public data: RotateMonomerData) {
+  constructor(public readonly data: RotateMonomerData) {
     super(OperationType.ROTATE_MONOMER);
   }
 

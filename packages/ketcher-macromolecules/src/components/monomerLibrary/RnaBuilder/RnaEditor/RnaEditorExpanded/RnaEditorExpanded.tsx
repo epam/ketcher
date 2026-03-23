@@ -29,10 +29,6 @@ import {
   NameContainer,
   NameInput,
   NameLine,
-  PhosphatePositionButton,
-  PhosphatePositionButtons,
-  PhosphatePositionContainer,
-  PhosphatePositionLabel,
   PresetName,
   RnaEditorExpandedContainer,
   StyledButton,
@@ -72,7 +68,14 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -82,8 +85,11 @@ import {
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import clsx from 'clsx';
+import Popover from '@mui/material/Popover';
 import Tooltip from '@mui/material/Tooltip';
 import { getPhosphatePositionAvailability } from 'helpers/rnaValidations';
+import { Icon, IconButton } from 'ketcher-react';
+import styles from './RnaEditorExpanded.module.less';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -130,6 +136,9 @@ export const RnaEditorExpanded = ({
       ? getRnaPresetPhosphatePosition(activePreset)
       : undefined,
   );
+  const [phosphateMenuAnchor, setPhosphateMenuAnchor] =
+    useState<HTMLElement | null>(null);
+  const closePhosphateMenuTimeoutRef = useRef<number | null>(null);
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -161,6 +170,74 @@ export const RnaEditorExpanded = ({
     left: 'Sugar must have R1, and phosphate must have R2.',
     right: 'Sugar must have R2, and phosphate must have R1.',
   };
+
+  const clearPhosphateMenuCloseTimeout = () => {
+    if (closePhosphateMenuTimeoutRef.current !== null) {
+      window.clearTimeout(closePhosphateMenuTimeoutRef.current);
+      closePhosphateMenuTimeoutRef.current = null;
+    }
+  };
+
+  const openPhosphateMenu = (event: ReactMouseEvent<HTMLElement>) => {
+    if (isSequenceMode || (!is5PrimeAvailable && !is3PrimeAvailable)) {
+      return;
+    }
+
+    clearPhosphateMenuCloseTimeout();
+    setPhosphateMenuAnchor(event.currentTarget);
+  };
+
+  const scheduleClosePhosphateMenu = () => {
+    clearPhosphateMenuCloseTimeout();
+    closePhosphateMenuTimeoutRef.current = window.setTimeout(() => {
+      setPhosphateMenuAnchor(null);
+    }, 120);
+  };
+
+  const closePhosphateMenu = () => {
+    clearPhosphateMenuCloseTimeout();
+    setPhosphateMenuAnchor(null);
+  };
+
+  const renderPhosphateTriggerIcon = (position: RnaPhosphatePosition) => (
+    <div
+      className={clsx(
+        styles.phosphatePositionIconWrapper,
+        activeMonomerGroup === 'Phosphates' && styles.active,
+      )}
+    >
+      {position === 'left' ? (
+        <Icon name="preset-left-phosphate" width={12} height={12} />
+      ) : (
+        <Icon name="preset-right-phosphate" width={12} height={12} />
+      )}
+    </div>
+  );
+
+  const renderPhosphatePositionSelector = (position: RnaPhosphatePosition) => {
+    if (!newPreset?.phosphate) {
+      return null;
+    }
+
+    const triggerDisabled =
+      isSequenceMode || (!is5PrimeAvailable && !is3PrimeAvailable);
+
+    return (
+      <>
+        <div className={styles.phosphatePositionIconWrapperOnPresetCard}>
+          {renderPhosphateTriggerIcon(phosphatePosition)}
+        </div>
+      </>
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      if (closePhosphateMenuTimeoutRef.current !== null) {
+        window.clearTimeout(closePhosphateMenuTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -568,70 +645,29 @@ export const RnaEditorExpanded = ({
       )}
       <GroupsContainer compact={isCompactView}>
         {groupsData.map(({ groupName, iconName, testId }) => {
+          const isPhosphateGroup = groupName === MonomerGroups.PHOSPHATES;
+
           return (
-            <GroupBlock
-              key={groupName}
-              selected={activeMonomerGroup === groupName}
-              groupName={groupName}
-              monomerName={
-                isSequenceEditInRNABuilderMode
-                  ? getMonomersName(groupName)
-                  : getMonomerName(groupName)
-              }
-              iconName={iconName}
-              testid={testId}
-              onClick={selectGroup(groupName)}
-            />
+            <div key={groupName} style={{ position: 'relative' }}>
+              <GroupBlock
+                selected={activeMonomerGroup === groupName}
+                groupName={groupName}
+                monomerName={
+                  isSequenceEditInRNABuilderMode
+                    ? getMonomersName(groupName)
+                    : getMonomerName(groupName)
+                }
+                iconName={iconName}
+                testid={testId}
+                onClick={selectGroup(groupName)}
+              />
+              {isPhosphateGroup
+                ? renderPhosphatePositionSelector(phosphatePosition)
+                : null}
+            </div>
           );
         })}
       </GroupsContainer>
-      <PhosphatePositionContainer>
-        <PhosphatePositionLabel>Phosphate position</PhosphatePositionLabel>
-        <PhosphatePositionButtons>
-          <Tooltip
-            title={
-              !is5PrimeAvailable ? phosphatePositionDisabledTooltip.left : ''
-            }
-          >
-            <span>
-              <PhosphatePositionButton
-                type="button"
-                selected={phosphatePosition === 'left'}
-                disabled={isSequenceMode || !is5PrimeAvailable}
-                data-testid="phosphate-position-left"
-                onClick={() =>
-                  setPhosphatePosition(
-                    phosphatePosition === 'left' ? undefined : 'left',
-                  )
-                }
-              >
-                5&apos;
-              </PhosphatePositionButton>
-            </span>
-          </Tooltip>
-          <Tooltip
-            title={
-              !is3PrimeAvailable ? phosphatePositionDisabledTooltip.right : ''
-            }
-          >
-            <span>
-              <PhosphatePositionButton
-                type="button"
-                selected={phosphatePosition === 'right'}
-                disabled={isSequenceMode || !is3PrimeAvailable}
-                data-testid="phosphate-position-right"
-                onClick={() =>
-                  setPhosphatePosition(
-                    phosphatePosition === 'right' ? undefined : 'right',
-                  )
-                }
-              >
-                3&apos;
-              </PhosphatePositionButton>
-            </span>
-          </Tooltip>
-        </PhosphatePositionButtons>
-      </PhosphatePositionContainer>
       <ButtonsContainer>
         {isEditMode ? (
           <StyledButton data-testid="cancel-btn" onClick={onCancel}>

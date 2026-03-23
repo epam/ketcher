@@ -59,7 +59,7 @@ const isSugarPhosphateConnection = (
 export const getRnaPresetPhosphatePosition = (
   preset: Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
 ): RnaPhosphatePosition | undefined => {
-  if (!preset.phosphate) {
+  if (!preset?.phosphate) {
     return undefined;
   }
 

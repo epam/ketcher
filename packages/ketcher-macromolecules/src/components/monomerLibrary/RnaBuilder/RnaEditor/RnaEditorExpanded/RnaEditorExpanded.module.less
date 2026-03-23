@@ -14,29 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { memo } from 'react';
-import {
-  MonomerName,
-  RnaEditorCollapsedContainer,
-  TextContainer,
-} from './styles';
-import { IRnaEditorCollapsedProps } from './types';
+.phosphatePositionIconWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #B4B9D6;
+    background-color: #F3F8F9;
 
-const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
-  const displayName = name ?? fullName;
-  const title = fullName ?? name;
-
-  if (!displayName) {
-    return null;
+  &.active {
+    border-color: #585858;
   }
+}
 
-  return (
-    <RnaEditorCollapsedContainer>
-      <TextContainer>
-        <MonomerName title={title}>{displayName}</MonomerName>
-      </TextContainer>
-    </RnaEditorCollapsedContainer>
-  );
-};
-
-export default memo(RnaEditorCollapsed);
+.phosphatePositionIconWrapperOnPresetCard {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}

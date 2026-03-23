@@ -7,14 +7,15 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickOnMiddleOfCanvas,
   dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheScreen,
+  getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
@@ -40,6 +41,8 @@ import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbrev
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 
 let page: Page;
 
@@ -170,14 +173,23 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Drag the molecule slightly (grab → move → release)
     await CommonLeftToolbar(page).handTool();
+    const canvas = page
+      .getByTestId(KETCHER_CANVAS)
+      .filter({ has: page.locator(':visible') });
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('Canvas bounding box is undefined');
     const { x: centerX, y: centerY } =
-      await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(centerX + 20, centerY + 20);
-    await dragMouseTo(page, centerX - 100, centerY - 100);
+      await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    const startX = box.x + centerX + 20;
+    const startY = box.y + centerY + 20;
+    const endX = box.x + centerX - 100;
+    const endY = box.y + centerY - 100;
+    await page.mouse.move(startX, startY);
+    await dragMouseTo(page, endX, endY);
 
     // Step 6: Move cursor back to center and click to clear selection
     await CommonLeftToolbar(page).areaSelectionTool();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickOnMiddleOfCanvas(page);
 
     // Visual verification: take a focused screenshot around the double bond.
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 1 }), {
@@ -260,7 +272,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     );
 
     // Step 7: Screenshot stereogenic center to verify stereo bonds persist
-    const collapsedLabel = page.locator('text[data-sgroup-name="sssS"]');
+    const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
     await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
   });
 
@@ -405,20 +417,20 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 3: Switch to Molecules mode
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.waitForTimeout(300);
+    await resetZoomLevelToDefault(page);
 
     // Step 4.1: Expand monomer via context menu
     const abbrev = getAbbreviationLocator(page, { id: 0 });
     await ContextMenu(page, abbrev).click(MonomerOnMicroOption.ExpandMonomer);
 
     // Step 4.2: Remove abbreviation
-    await clickInTheMiddleOfTheScreen(page);
+    await clickOnMiddleOfCanvas(page);
     await LeftToolbar(page).sGroup();
     await EditAbbreviationDialog(page).removeAbbreviation();
 
     // Step 5: Switch back to Macromolecules mode
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await page.waitForTimeout(300);
+    await resetZoomLevelToDefault(page);
 
     // Expected: Expanded molecule still visible
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 2 }), {
@@ -531,8 +543,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
-      paddingX: 180,
-      paddingY: 90,
+      paddingWidth: 180,
+      paddingHeight: 90,
     });
   });
 
@@ -673,8 +685,15 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();
 
-    // Visual verification: screenshot to check if AP configuration is preserved and error is shown
-    await takeEditorScreenshot(page);
+    // Verify that an error notification banner appears for duplicate attachment points
+    const errorBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.invalidRnaPresetStructure,
+    );
+    await expect(errorBanner.notificationMessageBanner).toBeVisible();
+
+    // Visual verification: screenshot of the error notification banner
+    await takeElementScreenshot(page, errorBanner.notificationMessageBanner);
 
     // Close dialog to avoid affecting other tests
     await dialog.discard();

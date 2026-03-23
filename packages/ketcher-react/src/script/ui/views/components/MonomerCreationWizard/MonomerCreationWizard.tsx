@@ -954,12 +954,12 @@ const MonomerCreationWizard = () => {
     const { errors: inputsErrors, notifications: inputsNotifications } =
       validateInputs(valuesToSave);
     if (Object.keys(inputsErrors).length > 0) {
+      needSaveMonomers = false;
       wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
       wizardStateDispatch({
         type: 'SetNotifications',
         notifications: inputsNotifications,
       });
-      return;
     }
 
     const {
@@ -969,12 +969,12 @@ const MonomerCreationWizard = () => {
       Array.from(monomerAssignedAttachmentPoints.keys()),
     );
     if (attachmentPointsNotifications.size > 0) {
+      needSaveMonomers = false;
       wizardStateDispatch({
         type: 'SetNotifications',
         notifications: attachmentPointsNotifications,
       });
       editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-      return;
     }
 
     const {
@@ -982,6 +982,7 @@ const MonomerCreationWizard = () => {
       notifications: modificationTypesNotifications,
     } = validateModificationTypes(modificationTypes, naturalAnalogue);
     if (Object.keys(modificationTypesErrors).length > 0) {
+      needSaveMonomers = false;
       wizardStateDispatch({
         type: 'SetErrors',
         errors: modificationTypesErrors,
@@ -990,16 +991,15 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: modificationTypesNotifications,
       });
-      return;
     }
 
     const structureNotifications = validateStructure(structure, editor);
     if (structureNotifications.size > 0) {
+      needSaveMonomers = false;
       wizardStateDispatch({
         type: 'SetNotifications',
         notifications: structureNotifications,
       });
-      return;
     }
 
     if (type) {

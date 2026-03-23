@@ -18,9 +18,13 @@ import { formReducer, formsState } from './form';
 import type { Dispatch, UnknownAction } from 'redux';
 
 type ModalFormResult = Record<string, unknown>;
-type ModalFormState = typeof formsState[keyof typeof formsState];
+type BaseModalFormState = typeof formsState[keyof typeof formsState];
+type ModalFormState = Omit<BaseModalFormState, 'result'> & {
+  result: ModalFormResult;
+};
 
-interface ModalDialogProps extends Record<string, unknown> {
+interface ModalDialogProps {
+  [key: string]: unknown;
   isNestedModal?: boolean;
   isRestoredModal?: boolean;
   onResult?: (value: unknown) => void;
@@ -34,7 +38,7 @@ interface ModalState {
   parentModal: ModalState | null;
 }
 
-interface ModalOpenAction {
+interface ModalOpenAction extends UnknownAction {
   type: 'MODAL_OPEN';
   data: {
     name: string;
@@ -42,35 +46,46 @@ interface ModalOpenAction {
   };
 }
 
-interface ModalCloseAction {
+interface ModalCloseAction extends UnknownAction {
   type: 'MODAL_CLOSE';
 }
 
-interface UpdateFormAction {
+interface UpdateFormAction extends UnknownAction {
   type: 'UPDATE_FORM';
   data: Record<string, unknown>;
 }
 
-type ModalAction =
-  | ModalOpenAction
-  | ModalCloseAction
-  | UpdateFormAction
-  | {
-      type: string;
-      data?: unknown;
-    };
+type ModalAction = ModalOpenAction | ModalCloseAction | UpdateFormAction;
 
-type ModalDispatch = Dispatch<UnknownAction>;
+type ModalDispatch = Dispatch<ModalAction>;
+
+function isUpdateFormAction(action: UnknownAction): action is UpdateFormAction {
+  return action.type === 'UPDATE_FORM' && 'data' in action;
+}
+
+function isModalOpenAction(action: UnknownAction): action is ModalOpenAction {
+  return action.type === 'MODAL_OPEN' && 'data' in action;
+}
+
+function ensureFormState(
+  form: BaseModalFormState | null | undefined,
+): ModalFormState | null {
+  if (!form) {
+    return null;
+  }
+
+  return {
+    ...form,
+    result: form.result ?? {},
+  };
+}
 
 function getFormResult(form: ModalFormState | null): ModalFormResult {
-  if (!form || typeof form !== 'object' || !('result' in form)) {
+  if (!form) {
     return {};
   }
 
-  const result = (form as { result?: unknown }).result;
-  return result && typeof result === 'object'
-    ? (result as ModalFormResult)
-    : {};
+  return form.result;
 }
 
 export function openDialog<T = unknown>(
@@ -95,23 +110,29 @@ export function openDialog<T = unknown>(
 
 function modalReducer(
   state: ModalState | null = null,
-  action: ModalAction,
+  action: UnknownAction,
 ): ModalState | null {
   const { type } = action;
 
-  if (type === 'UPDATE_FORM') {
-    // Don't update if modal has already been closed
-    // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
-    // not send 'UPDATE_FORM' action to a closed modal in the first place
-    if (!state) {
-      return null;
+  switch (type) {
+    case 'UPDATE_FORM': {
+      if (!isUpdateFormAction(action)) {
+        return state;
+      }
+
+      // Don't update if modal has already been closed
+      // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
+      // not send 'UPDATE_FORM' action to a closed modal in the first place
+      if (!state) {
+        return null;
+      }
+
+      const formState = ensureFormState(
+        formReducer(state.form ?? undefined, action),
+      );
+      return { ...state, form: formState };
     }
 
-    const formState = formReducer(state.form, action) as ModalFormState;
-    return { ...state, form: formState };
-  }
-
-  switch (type) {
     case 'MODAL_CLOSE':
       if (state?.parentModal) {
         return {
@@ -126,12 +147,15 @@ function modalReducer(
       return null;
 
     case 'MODAL_OPEN': {
-      const data = (action as ModalOpenAction).data;
-      const modalForms = formsState as Record<string, ModalFormState>;
+      if (!isModalOpenAction(action)) {
+        return state;
+      }
+
+      const { data } = action;
 
       return {
         name: data.name,
-        form: modalForms[data.name] || null,
+        form: ensureFormState(formsState[data.name]),
         prop: data.prop || null,
         parentModal: data.prop?.isNestedModal ? state : null,
       };

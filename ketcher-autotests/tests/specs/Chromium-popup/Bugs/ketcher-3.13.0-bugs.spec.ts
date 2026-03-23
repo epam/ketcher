@@ -530,8 +530,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.submit();
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
-    await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), {
-      padding: -160,
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
+      paddingX: 180,
+      paddingY: 90,
     });
   });
 

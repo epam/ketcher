@@ -14,17 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KeyboardEvent, ReactNode } from 'react';
 import styles from './FormulaInput.module.less';
 
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
 const errorRegexp = /error:.*/g;
 
-function formulaInputMarkdown(contentData) {
+interface FormulaInputMarkdownProps {
+  content: ReactNode;
+  contentEditable: boolean;
+}
+
+interface FormulaInputProps {
+  value: string;
+  contentEditable: boolean;
+}
+
+function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
   const { content, contentEditable } = contentData;
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode === 8) {
       e.preventDefault();
-      return false;
     }
   };
   return (
@@ -44,24 +54,32 @@ function formulaInputMarkdown(contentData) {
   );
 }
 
-function FormulaInput({ value, contentEditable }) {
-  if (errorRegexp.test(value)) return formulaInputMarkdown(value);
-
-  const content = [];
-  let cnd;
-  let pos = 0;
-
-  while ((cnd = formulaRegexp.exec(value)) !== null) {
-    if (cnd[1].length > 0)
-      content.push(<sup key={content.length}>{cnd[1]}</sup>);
-    content.push(value.substring(pos, cnd.index) + cnd[2]);
-    if (cnd[3].length > 0)
-      content.push(<sub key={content.length}>{cnd[3]}</sub>);
-    pos = cnd.index + cnd[0].length;
+function FormulaInput({ value, contentEditable }: FormulaInputProps) {
+  if (errorRegexp.test(value)) {
+    return formulaInputMarkdown({ content: value, contentEditable });
   }
 
-  if (pos === 0) content.push(value);
-  else content.push(value.substring(pos, value.length));
+  const content: ReactNode[] = [];
+  let cnd: RegExpExecArray | null = formulaRegexp.exec(value);
+  let pos = 0;
+
+  while (cnd !== null) {
+    if (cnd[1].length > 0) {
+      content.push(<sup key={content.length}>{cnd[1]}</sup>);
+    }
+    content.push(value.substring(pos, cnd.index) + cnd[2]);
+    if (cnd[3].length > 0) {
+      content.push(<sub key={content.length}>{cnd[3]}</sub>);
+    }
+    pos = cnd.index + cnd[0].length;
+    cnd = formulaRegexp.exec(value);
+  }
+
+  if (pos === 0) {
+    content.push(value);
+  } else {
+    content.push(value.substring(pos, value.length));
+  }
 
   return formulaInputMarkdown({ content, contentEditable });
 }

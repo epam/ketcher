@@ -11,7 +11,7 @@ type ElementType = 'text' | 'background' | 'spacer';
  */
 export class SequenceEventDelegationManager {
   // eslint-disable-next-line no-use-before-define
-  static _instance: SequenceEventDelegationManager | null = null;
+  private static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
   private boundHandlers: Map<string, (event: MouseEvent) => void> = new Map();
 

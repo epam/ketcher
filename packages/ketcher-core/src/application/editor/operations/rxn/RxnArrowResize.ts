@@ -32,8 +32,8 @@ interface RxnArrowResizeData {
   noinvalidate: boolean;
 }
 export class RxnArrowResize extends Base {
-  data: RxnArrowResizeData;
-  isSnappingEnabled: boolean;
+  readonly data: RxnArrowResizeData;
+  readonly isSnappingEnabled: boolean;
 
   constructor(
     id: number,

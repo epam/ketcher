@@ -30,7 +30,7 @@ interface SimpleObjectAddData {
   toCircle: boolean;
 }
 export class SimpleObjectAdd extends Base {
-  data: SimpleObjectAddData;
+  readonly data: SimpleObjectAddData;
 
   constructor(
     pos: Array<Vec2> = [],
@@ -82,7 +82,7 @@ interface SimpleObjectDeleteData {
 }
 
 export class SimpleObjectDelete extends Base {
-  data: SimpleObjectDeleteData;
+  readonly data: SimpleObjectDeleteData;
   performed: boolean;
 
   constructor(id: number) {
@@ -190,7 +190,7 @@ function handleRectangleChangeWithAnchor(item, anchor, current) {
 }
 
 export class SimpleObjectResize extends Base {
-  data: SimpleObjectResizeData;
+  readonly data: SimpleObjectResizeData;
 
   constructor(
     id: number,

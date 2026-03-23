@@ -379,7 +379,7 @@ export const selectFilteredMonomers = createSelector(
       const idtBase = idtAliases?.base?.toLowerCase();
 
       const idtModifications = idtAliases?.modifications
-        ? Object.values(idtAliases.modifications)
+        ? (Object.values(idtAliases.modifications) as string[])
             .map((mod) => mod.toLowerCase())
             .join(' ')
         : '';

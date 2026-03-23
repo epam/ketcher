@@ -61,8 +61,6 @@ interface StructEditorProps {
 
 interface StructEditorState {
   enableCursor: boolean;
-  clientX: number;
-  clientY: number;
   tooltip: string;
 }
 
@@ -123,8 +121,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     super(props);
     this.state = {
       enableCursor: false,
-      clientX: 0,
-      clientY: 0,
       tooltip: '',
     };
     this.editorRef = createRef();
@@ -261,8 +257,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     });
 
     this.editor.event.cursor.add((csr) => {
-      let clientX, clientY;
-
       switch (csr.status) {
         case 'enable': {
           this.editorRef.current?.classList.add(classes.enableCursor);
@@ -274,8 +268,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
               bottom: 0,
             };
 
-          clientX = csr.cursorPosition.clientX;
-          clientY = csr.cursorPosition.clientY;
+          const clientX = csr.cursorPosition.clientX;
+          const clientY = csr.cursorPosition.clientY;
 
           const handShouldBeShown =
             clientX >= left &&
@@ -294,8 +288,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           this.editorRef.current?.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
-            clientX,
-            clientY,
           });
           break;
         }
@@ -371,24 +363,14 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     const remaining = omit(this.props, omittedProps) as StructEditorProps;
     const { Tag = 'div', className, indigoVerification, ...props } = remaining;
 
-    const { clientX = 0, clientY = 0, tooltip } = this.state;
+    const { tooltip } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;
 
     const TagComponent = (Tag || 'div') as ElementType;
 
-    const infoPanelProps = {
-      clientX,
-      clientY,
-      render: this.props.render,
-      groupStruct: this.props.groupStruct,
-      sGroup: this.props.sGroup,
-    };
-    // @ts-expect-error ownProps not exposed by connected component types
-    const infoPanel = <InfoPanel {...infoPanelProps} />;
-    // @ts-expect-error ownProps not exposed by connected component types
-    const infoTooltip = <InfoTooltip render={this.props.render} />;
+    const infoPanel = <InfoPanel />;
+    const infoTooltip = <InfoTooltip />;
     const tooltipElement = (
-      // @ts-expect-error Tooltip return type includes falsy value
       <Tooltip
         message={tooltip}
         position={{

@@ -50,6 +50,18 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.atoms) {
     const atomSet = new Pile(lists.atoms);
     const bondlist: Array<number> = [];
+    const relatedSgroups = new Map<
+      number,
+      ReturnType<typeof struct.sgroups.get>
+    >();
+
+    getRelSGroupsBySelection(struct, lists.atoms).forEach((sg) => {
+      relatedSgroups.set(sg.id, sg);
+    });
+
+    lists.sgroupData?.forEach((sgid) => {
+      relatedSgroups.set(sgid, struct.sgroups.get(sgid));
+    });
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -87,9 +99,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
     });
 
+    relatedSgroups.forEach((sgroup) => {
+      sgroup?.atoms.forEach((aid) => {
+        if (!atomSet.has(aid)) {
+          action.addOp(new AtomMove(aid, d, true));
+        }
+      });
+    });
+
     if (lists.sgroupData?.length === 0) {
-      const sgroups = getRelSGroupsBySelection(struct, lists.atoms);
-      sgroups.forEach((sg) => {
+      relatedSgroups.forEach((sg) => {
         action.addOp(new SGroupDataMove(sg.id, d));
       });
     }

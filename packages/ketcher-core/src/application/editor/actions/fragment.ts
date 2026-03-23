@@ -33,7 +33,6 @@ import {
 } from '../operations';
 import { Pile, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
@@ -57,16 +56,11 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     >();
 
     getRelSGroupsBySelection(struct, lists.atoms).forEach((sg) => {
-      if (sg instanceof MonomerMicromolecule && sg.isContracted()) {
-        relatedSgroups.set(sg.id, sg);
-      }
+      relatedSgroups.set(sg.id, sg);
     });
 
     lists.sgroupData?.forEach((sgid) => {
-      const sgroup = struct.sgroups.get(sgid);
-      if (sgroup instanceof MonomerMicromolecule && sgroup.isContracted()) {
-        relatedSgroups.set(sgid, sgroup);
-      }
+      relatedSgroups.set(sgid, struct.sgroups.get(sgid));
     });
 
     restruct.bonds.forEach((bond, bid) => {

@@ -165,20 +165,25 @@ export const RnaEditorExpanded = ({
   const renderPhosphateTriggerIcon = (
     position: RnaPhosphatePosition,
     isActive = false,
-  ) => (
-    <div
-      className={clsx(
-        styles.phosphatePositionIconWrapper,
-        isActive && styles.active,
-      )}
-    >
-      {position === 'left' ? (
-        <Icon name="preset-left-phosphate" width={12} height={12} />
-      ) : (
-        <Icon name="preset-right-phosphate" width={12} height={12} />
-      )}
-    </div>
-  );
+    highlightOnHover = false,
+  ) => {
+    console.log(position);
+    return (
+      <div
+        className={clsx(
+          styles.phosphatePositionIconWrapper,
+          isActive && styles.active,
+          highlightOnHover && styles.hover,
+        )}
+      >
+        {position === 'left' ? (
+          <Icon name="preset-left-phosphate" width={12} height={12} />
+        ) : (
+          <Icon name="preset-right-phosphate" width={12} height={12} />
+        )}
+      </div>
+    );
+  };
 
   const renderPhosphatePositionOption = (
     position: RnaPhosphatePosition,
@@ -201,10 +206,7 @@ export const RnaEditorExpanded = ({
             setIsPhosphateSelectorOpen(false);
           }}
         >
-          {renderPhosphateTriggerIcon(
-            position,
-            selectedPhosphatePosition === position,
-          )}
+          {renderPhosphateTriggerIcon(position, false, true)}
         </button>
       </span>
     </Tooltip>
@@ -216,7 +218,6 @@ export const RnaEditorExpanded = ({
     }
 
     const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
-    const triggerPosition = position ?? 'right';
 
     return (
       <div
@@ -238,9 +239,8 @@ export const RnaEditorExpanded = ({
           aria-expanded={!triggerDisabled && isPhosphateSelectorOpen}
         >
           {renderPhosphateTriggerIcon(
-            triggerPosition,
-            activeMonomerGroup === MonomerGroups.PHOSPHATES ||
-              selectedPhosphatePosition === triggerPosition,
+            selectedPhosphatePosition,
+            activeMonomerGroup === MonomerGroups.PHOSPHATES,
           )}
         </button>
         {!triggerDisabled && isPhosphateSelectorOpen ? (

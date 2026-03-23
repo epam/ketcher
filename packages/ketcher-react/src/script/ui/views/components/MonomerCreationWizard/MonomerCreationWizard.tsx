@@ -963,7 +963,6 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: inputsNotifications,
       });
-      return;
     }
 
     const {
@@ -979,7 +978,6 @@ const MonomerCreationWizard = () => {
         notifications: attachmentPointsNotifications,
       });
       editor.setProblematicAttachmentPoints(problematicAttachmentPoints);
-      return;
     }
 
     const {
@@ -996,7 +994,6 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: modificationTypesNotifications,
       });
-      return;
     }
 
     const structureNotifications = validateStructure(structure, editor);
@@ -1006,7 +1003,6 @@ const MonomerCreationWizard = () => {
         type: 'SetNotifications',
         notifications: structureNotifications,
       });
-      return;
     }
 
     if (type) {

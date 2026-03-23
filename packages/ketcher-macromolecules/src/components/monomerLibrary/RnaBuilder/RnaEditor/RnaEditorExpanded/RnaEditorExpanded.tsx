@@ -68,14 +68,7 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  MouseEvent as ReactMouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -136,9 +129,7 @@ export const RnaEditorExpanded = ({
       ? getRnaPresetPhosphatePosition(activePreset)
       : undefined,
   );
-  const [phosphateMenuAnchor, setPhosphateMenuAnchor] =
-    useState<HTMLElement | null>(null);
-  const closePhosphateMenuTimeoutRef = useRef<number | null>(null);
+  const [isPhosphateSelectorOpen, setIsPhosphateSelectorOpen] = useState(false);
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -171,39 +162,14 @@ export const RnaEditorExpanded = ({
     right: 'Sugar must have R2, and phosphate must have R1.',
   };
 
-  const clearPhosphateMenuCloseTimeout = () => {
-    if (closePhosphateMenuTimeoutRef.current !== null) {
-      window.clearTimeout(closePhosphateMenuTimeoutRef.current);
-      closePhosphateMenuTimeoutRef.current = null;
-    }
-  };
-
-  const openPhosphateMenu = (event: ReactMouseEvent<HTMLElement>) => {
-    if (isSequenceMode || (!is5PrimeAvailable && !is3PrimeAvailable)) {
-      return;
-    }
-
-    clearPhosphateMenuCloseTimeout();
-    setPhosphateMenuAnchor(event.currentTarget);
-  };
-
-  const scheduleClosePhosphateMenu = () => {
-    clearPhosphateMenuCloseTimeout();
-    closePhosphateMenuTimeoutRef.current = window.setTimeout(() => {
-      setPhosphateMenuAnchor(null);
-    }, 120);
-  };
-
-  const closePhosphateMenu = () => {
-    clearPhosphateMenuCloseTimeout();
-    setPhosphateMenuAnchor(null);
-  };
-
-  const renderPhosphateTriggerIcon = (position: RnaPhosphatePosition) => (
+  const renderPhosphateTriggerIcon = (
+    position: RnaPhosphatePosition,
+    isActive = false,
+  ) => (
     <div
       className={clsx(
         styles.phosphatePositionIconWrapper,
-        activeMonomerGroup === 'Phosphates' && styles.active,
+        isActive && styles.active,
       )}
     >
       {position === 'left' ? (
@@ -214,30 +180,78 @@ export const RnaEditorExpanded = ({
     </div>
   );
 
-  const renderPhosphatePositionSelector = (position: RnaPhosphatePosition) => {
+  const renderPhosphatePositionOption = (
+    position: RnaPhosphatePosition,
+    isDisabled: boolean,
+  ) => (
+    <Tooltip
+      key={position}
+      title={isDisabled ? phosphatePositionDisabledTooltip[position] : ''}
+    >
+      <span>
+        <button
+          type="button"
+          className={clsx(
+            styles.phosphatePositionOption,
+            isDisabled && styles.phosphatePositionOptionDisabled,
+          )}
+          disabled={isDisabled}
+          onClick={() => {
+            setPhosphatePosition(position);
+            setIsPhosphateSelectorOpen(false);
+          }}
+        >
+          {renderPhosphateTriggerIcon(
+            position,
+            selectedPhosphatePosition === position,
+          )}
+        </button>
+      </span>
+    </Tooltip>
+  );
+
+  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
     if (!newPreset?.phosphate) {
       return null;
     }
 
-    const triggerDisabled =
-      isSequenceMode || (!is5PrimeAvailable && !is3PrimeAvailable);
+    const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
+    const triggerPosition = position ?? 'right';
 
     return (
-      <>
-        <div className={styles.phosphatePositionIconWrapperOnPresetCard}>
-          {renderPhosphateTriggerIcon(phosphatePosition)}
-        </div>
-      </>
+      <div
+        className={styles.phosphatePositionIconWrapperOnPresetCard}
+        onMouseEnter={() => {
+          if (!triggerDisabled) {
+            setIsPhosphateSelectorOpen(true);
+          }
+        }}
+        onMouseLeave={() => {
+          setIsPhosphateSelectorOpen(false);
+        }}
+      >
+        <button
+          type="button"
+          className={styles.phosphatePositionTrigger}
+          disabled={triggerDisabled}
+          aria-label="Select phosphate position"
+          aria-expanded={!triggerDisabled && isPhosphateSelectorOpen}
+        >
+          {renderPhosphateTriggerIcon(
+            triggerPosition,
+            activeMonomerGroup === MonomerGroups.PHOSPHATES ||
+              selectedPhosphatePosition === triggerPosition,
+          )}
+        </button>
+        {!triggerDisabled && isPhosphateSelectorOpen ? (
+          <div className={styles.phosphatePositionSelector}>
+            {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
+            {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
+          </div>
+        ) : null}
+      </div>
     );
   };
-
-  useEffect(() => {
-    return () => {
-      if (closePhosphateMenuTimeoutRef.current !== null) {
-        window.clearTimeout(closePhosphateMenuTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -489,6 +503,8 @@ export const RnaEditorExpanded = ({
   };
 
   const onCancel = () => {
+    setIsPhosphateSelectorOpen(false);
+
     if (isSequenceEditInRNABuilderMode) {
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {
@@ -648,7 +664,7 @@ export const RnaEditorExpanded = ({
           const isPhosphateGroup = groupName === MonomerGroups.PHOSPHATES;
 
           return (
-            <div key={groupName} style={{ position: 'relative' }}>
+            <div key={groupName} className={styles.groupBlockWrapper}>
               <GroupBlock
                 selected={activeMonomerGroup === groupName}
                 groupName={groupName}

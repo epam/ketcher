@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 import { getPresets } from './getPreset';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
   monomers,
   phosphate,
@@ -53,30 +52,28 @@ describe('getPreset function', () => {
       adenine,
     ];
 
-    const thymineNucleotide: IRnaPreset = {
-      name: 'T',
-      base: thymine,
-      sugar: ribose,
-      phosphate,
-      default: true,
-    };
-
-    const guanineNucleotide: IRnaPreset = {
-      name: 'G',
-      base: guanine,
-      sugar: ribose,
-      phosphate,
-      default: true,
-    };
-
     const testArr = getPresets(monomerData, rnaPresetsTemplates, true);
 
-    expect(testArr).toContainEqual(thymineNucleotide);
-    expect(testArr).toContainEqual(guanineNucleotide);
-    expect(testArr).not.toContainEqual({
-      MonomerName: '3FAM',
-      Name: '3-FAM',
-    });
+    expect(testArr).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'T',
+          base: thymine,
+          sugar: ribose,
+          phosphate,
+          default: true,
+        }),
+        expect.objectContaining({
+          name: 'G',
+          base: guanine,
+          sugar: ribose,
+          phosphate,
+          default: true,
+        }),
+      ]),
+    );
+
+    expect(testArr.find(({ name }) => name === '3FAM')).toBeUndefined();
   });
 
   it('should infer left phosphate position from preset connections', () => {

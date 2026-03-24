@@ -117,14 +117,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const isFocusInsideDialog = dialogRef.current?.contains(
-        document.activeElement,
-      );
-
-      if (!isFocusInsideDialog) {
-        return;
-      }
-
       const { key } = event;
       const active = document.activeElement;
       const activeTextarea = active?.tagName === 'TEXTAREA';

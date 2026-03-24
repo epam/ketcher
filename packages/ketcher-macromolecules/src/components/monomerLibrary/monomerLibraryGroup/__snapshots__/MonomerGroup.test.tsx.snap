@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-cyguzh"
+  class="css-zy0hur"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
@@ -13,11 +13,11 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
   </span>
   <div
     aria-label=""
-    class="css-daj1kg"
+    class="css-nbn2np"
     data-mui-internal-clone-element="true"
   >
     <svg
-      class="autochain css-1u7bcdc"
+      class="autochain css-1n497qa"
       height="13"
       viewBox="0 0 13 13"
       width="13"
@@ -62,7 +62,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1vx381w"
+            class="css-cwv0td"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -73,11 +73,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -104,7 +104,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-o7i94f"
+            class="css-crmumh"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -115,11 +115,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -146,7 +146,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-1m6zie5"
+            class="css-magi5p"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -157,11 +157,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -188,7 +188,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-1vx381w"
+            class="css-cwv0td"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -199,11 +199,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -230,7 +230,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-o7i94f"
+            class="css-crmumh"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -241,11 +241,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -288,7 +288,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1vx381w"
+          class="css-cwv0td"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -299,11 +299,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -330,7 +330,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-o7i94f"
+          class="css-crmumh"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -341,11 +341,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -372,7 +372,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-1m6zie5"
+          class="css-magi5p"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -383,11 +383,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -414,7 +414,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-1vx381w"
+          class="css-cwv0td"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -425,11 +425,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -456,7 +456,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-o7i94f"
+          class="css-crmumh"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -467,11 +467,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -566,7 +566,7 @@ Object {
           class="css-1a3tnc1"
         >
           <div
-            class="css-1vx381w"
+            class="css-cwv0td"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
@@ -577,11 +577,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -608,7 +608,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-o7i94f"
+            class="css-crmumh"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
@@ -619,11 +619,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -650,7 +650,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-1m6zie5"
+            class="css-magi5p"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
@@ -661,11 +661,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -692,7 +692,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-1vx381w"
+            class="css-cwv0td"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
@@ -703,11 +703,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -734,7 +734,7 @@ Object {
             </button>
           </div>
           <div
-            class="css-o7i94f"
+            class="css-crmumh"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
@@ -745,11 +745,11 @@ Object {
             </span>
             <div
               aria-label=""
-              class="css-daj1kg"
+              class="css-nbn2np"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-1n497qa"
                 height="13"
                 viewBox="0 0 13 13"
                 width="13"
@@ -787,7 +787,7 @@ Object {
         class="css-1a3tnc1"
       >
         <div
-          class="css-1vx381w"
+          class="css-cwv0td"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
@@ -798,11 +798,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -829,7 +829,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-o7i94f"
+          class="css-crmumh"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
@@ -840,11 +840,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -871,7 +871,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-1m6zie5"
+          class="css-magi5p"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
@@ -882,11 +882,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -913,7 +913,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-1vx381w"
+          class="css-cwv0td"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
@@ -924,11 +924,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"
@@ -955,7 +955,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-o7i94f"
+          class="css-crmumh"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
@@ -966,11 +966,11 @@ Object {
           </span>
           <div
             aria-label=""
-            class="css-daj1kg"
+            class="css-nbn2np"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-1n497qa"
               height="13"
               viewBox="0 0 13 13"
               width="13"

@@ -9,17 +9,17 @@ exports[`Test Rna Preset Group component should render 1`] = `
     class="css-1a3tnc1"
   >
     <div
-      class="css-1lgakmz"
+      class="css-19ix9vb"
       data-rna-preset-item-name="U"
       data-testid="U_U_R_P"
     >
       <div
         aria-label=""
-        class="css-daj1kg"
+        class="css-nbn2np"
         data-mui-internal-clone-element="true"
       >
         <svg
-          class="autochain css-1u7bcdc"
+          class="autochain css-1n497qa"
           height="13"
           viewBox="0 0 13 13"
           width="13"
@@ -41,7 +41,7 @@ exports[`Test Rna Preset Group component should render 1`] = `
         U
       </span>
       <svg
-        class="dots css-x2ejol"
+        class="dots css-vwrj36"
         fill="none"
         height="16"
         viewBox="0 0 16 16"

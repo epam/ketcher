@@ -163,6 +163,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public resetEditMode() {
+    if (this.isEditMode) this.turnOffEditMode();
     this.turnOffAntisenseEditMode();
     this.turnOffSyncEditMode();
   }
@@ -721,7 +722,8 @@ export class SequenceMode extends BaseMode {
     if (
       addPhosphateIfNeeded &&
       firstNodeToConnect instanceof Nucleoside &&
-      (secondNodeToConnect instanceof Nucleotide ||
+      ((secondNodeToConnect instanceof Nucleotide &&
+        !secondNodeToConnect.isFiveEndPhosphate) ||
         secondNodeToConnect instanceof Nucleoside ||
         (secondNodeToConnect instanceof MonomerSequenceNode &&
           secondNodeToConnect.monomer instanceof Phosphate &&
@@ -2513,7 +2515,10 @@ export class SequenceMode extends BaseMode {
       }
 
       const rnaPresetAddModelChanges =
-        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+        editor.drawingEntitiesManager.addRnaPresetFromNode(
+          newPresetNode,
+          preset.connections,
+        );
 
       modelChanges.merge(rnaPresetAddModelChanges);
       modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));

@@ -9,6 +9,7 @@ import {
   dragMouseTo,
   clickOnCanvas,
   deleteByKeyboard,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
@@ -46,7 +47,7 @@ test.describe('Hot keys', () => {
     await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
@@ -54,7 +55,7 @@ test.describe('Hot keys', () => {
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Verify move by ctrl when its a part of molecula as only atom', async ({
@@ -175,16 +176,14 @@ test.describe('Hot keys', () => {
     page,
   }) => {
     /*
-      Test case: https://github.com/epam/ketcher/issues/4986
-      Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      Case:
-      1. Open a benzene ring with attachment points.
-      2. Select all structure.
-      3. Press Ctrl key and move structure.
-      Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      We have a bug: https://github.com/epam/ketcher/issues/6199 
-      After fixing this bug we need update screenshots.
-      */
+     * Test case: https://github.com/epam/ketcher/issues/4986
+     * Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     * Case:
+     * 1. Open a benzene ring with attachment points.
+     * 2. Select all structure.
+     * 3. Press Ctrl key and move structure.
+     * Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-ring-with-two-attachment-points.ket',

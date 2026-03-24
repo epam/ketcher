@@ -24,6 +24,8 @@ import {
 } from '../../state/templates';
 
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
 import Form, { Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
@@ -31,7 +33,57 @@ import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
 import { css } from '@emotion/react';
 import { Button } from '@mui/material';
-import { ketcherProvider } from 'ketcher-core';
+import { Editor, ketcherProvider, Struct } from 'ketcher-core';
+
+interface AttachPoints {
+  atomid: number;
+  bondid: number;
+}
+
+interface TemplateItem {
+  struct: Struct;
+  props: {
+    atomid?: string | number;
+    bondid?: string | number;
+    group?: string;
+    [key: string]: string | number | undefined;
+  };
+}
+
+interface NormalizedTemplate {
+  struct: Struct;
+  props: AttachPoints;
+}
+
+interface FormState {
+  errors: Record<string, string>;
+  valid: boolean;
+  result: Record<string, unknown>;
+}
+
+interface AttachOwnProps {
+  tmpl: TemplateItem;
+  ketcherId: string;
+  onCancel: () => void;
+  onOk: (result: unknown) => void;
+}
+
+interface AttachStateProps {
+  name: string;
+  atomid: number;
+  bondid: number;
+  templateLib: TemplateItem[];
+  formState: FormState;
+  globalSettings: Record<string, unknown>;
+}
+
+interface AttachDispatchProps {
+  onInit: (name: string, ap: AttachPoints) => void;
+  onAttachEdit: (ap: AttachPoints) => void;
+  onNameEdit: (name: string) => void;
+}
+
+type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -54,7 +106,7 @@ const TemplateEditDialog = styled(Dialog)`
   }
 `;
 
-const Editor = styled('div')`
+const EditorContainer = styled('div')`
   border: 1px solid #b4b9d6;
   background-color: #ffff;
   border-radius: 5px;
@@ -196,19 +248,19 @@ const editorStyles = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 },
 };
 
-class Attach extends Component {
-  MODES = {
-    SAVE: 'save',
-    EDIT: 'edit',
-  };
+class Attach extends Component<AttachProps> {
+  mode: 'save' | 'edit';
+  tmpl: NormalizedTemplate;
+  oldKetcherEditor: Editor;
 
-  constructor({ onInit, ...props }) {
-    super();
-    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
-    this.tmpl = initTmpl(props.tmpl);
+  constructor(props: AttachProps) {
+    super(props);
+    const { onInit, ...rest } = props;
+    this.mode = isEmpty(rest.tmpl.props) ? 'save' : 'edit';
+    this.tmpl = initTmpl(rest.tmpl);
     onInit(this.tmpl.struct.name, this.tmpl.props);
     this.onResult = this.onResult.bind(this);
-    const ketcher = ketcherProvider.getKetcher(props.ketcherId);
+    const ketcher = ketcherProvider.getKetcher(rest.ketcherId);
     this.oldKetcherEditor = ketcher.editor;
   }
 
@@ -228,7 +280,7 @@ class Attach extends Component {
       : null;
   }
 
-  checkIsValidName(name) {
+  checkIsValidName(name: string) {
     return (
       !!name &&
       !this.props.templateLib.some(
@@ -258,15 +310,15 @@ class Attach extends Component {
       reuseRestructIfExist: false,
     });
     const dialogTitle =
-      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit';
+      this.mode === 'save' ? 'Save to Templates' : 'Template Edit';
     const warningObject =
-      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates';
+      this.mode === 'save' ? 'Templates' : 'Edited templates';
 
     return (
       <TemplateEditDialog
         title={dialogTitle}
         result={this.onResult}
-        valid={() => this.props.formState.valid && name}
+        valid={() => this.props.formState.valid && Boolean(name)}
         params={prop}
         buttons={[]}
         needMargin={false}
@@ -289,7 +341,7 @@ class Attach extends Component {
           {...this.props.formState}
         >
           <LeftColumn>
-            <Editor>
+            <EditorContainer>
               <StructEditor
                 className="structEditor"
                 ketcherId={this.props.ketcherId}
@@ -300,7 +352,7 @@ class Attach extends Component {
                 options={options}
                 showAttachmentPoints={false}
               />
-            </Editor>
+            </EditorContainer>
             {!storage.isAvailable() ? (
               <Warning>{storage.warningMessage}</Warning>
             ) : null}
@@ -332,12 +384,12 @@ class Attach extends Component {
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
                 data-testid={
-                  this.mode === this.MODES.SAVE
+                  this.mode === 'save'
                     ? 'template-save-button'
                     : 'template-edit-button'
                 }
               >
-                {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
+                {this.mode === 'save' ? 'Save' : 'Edit'}
               </SaveButton>
             </Buttons>
           </RightColumn>
@@ -347,33 +399,36 @@ class Attach extends Component {
   }
 }
 
-export default connect(
-  (store) => ({
-    ...store.templates.attach,
-    templateLib: store.templates.lib,
-    formState: store.modal.form,
-    globalSettings: store.options.settings,
-  }),
-  (dispatch) => ({
-    onInit: (name, ap) => dispatch(initAttach(name, ap)),
-    onAttachEdit: (ap) => dispatch(setAttachPoints(ap)),
-    onNameEdit: (name) => dispatch(setTmplName(name)),
-  }),
-)(Attach);
+const mapStateToProps = (store: StoreState): AttachStateProps => ({
+  ...store.templates.attach,
+  templateLib: store.templates.lib,
+  formState: store.modal.form,
+  globalSettings: store.options.settings,
+});
 
-function initTmpl(tmpl) {
+const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
+  onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
+  onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
+  onNameEdit: (name: string) => dispatch(setTmplName(name)),
+});
+
+// Type assertion needed due to @types/react version mismatch with react-redux
+const connector = connect(mapStateToProps, mapDispatchToProps);
+export default connector(Attach as never);
+
+function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {
     struct: structNormalization(tmpl.struct),
     props: {
-      atomid: +tmpl.props.atomid || 0,
-      bondid: +tmpl.props.bondid || 0,
+      atomid: Number(tmpl.props.atomid) || 0,
+      bondid: Number(tmpl.props.bondid) || 0,
     },
   };
   normTmpl.struct.name = tmpl.struct.name;
   return normTmpl;
 }
 
-function structNormalization(struct) {
+function structNormalization(struct: Struct): Struct {
   const normStruct = struct.clone();
   const cbb = normStruct.getCoordBoundingBox();
 
@@ -404,7 +459,7 @@ function structNormalization(struct) {
   return normStruct;
 }
 
-function getScale(struct) {
+function getScale(struct: Struct): number {
   const cbb = struct.getCoordBoundingBox();
   const VIEW_SIZE = 220;
   const scale =

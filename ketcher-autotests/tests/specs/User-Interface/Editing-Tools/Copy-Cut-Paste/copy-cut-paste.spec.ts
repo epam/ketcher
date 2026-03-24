@@ -254,7 +254,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       force: true,
     });
     await MoleculesTopToolbar(page).copy();
-    await expect(page).toHaveScreenshot();
+    await takeEditorScreenshot(page);
   });
 
   test('Copy the Bond from reaction', async () => {

@@ -64,5 +64,7 @@ export class FlexMode extends BaseMode {
     return true;
   }
 
-  scrollForView(): void {}
+  scrollForView(): void {
+    // intentional no-op: flex mode does not implement automatic scroll for view
+  }
 }

@@ -82,8 +82,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
-  moveSelection(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
+
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   public get currentChain() {
     return this.chain;
@@ -768,17 +773,37 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {}
-  public redrawEnumeration() {}
-  public redrawAttachmentPoints() {}
-  public redrawAttachmentPointsCoordinates() {}
+  public setEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
   public get enumeration() {
     return null;
   }
 
-  public redrawChainBeginning() {}
-  public hoverAttachmentPoint(): void {}
-  public updateAttachmentPoints() {}
+  public redrawChainBeginning() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public hoverAttachmentPoint(): void {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public updateAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 
   public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {

@@ -1003,5 +1003,7 @@ export class BondRenderer extends BaseRenderer {
     this.show();
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 }

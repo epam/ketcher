@@ -31,7 +31,10 @@ import {
 } from 'helpers/manipulateCachedRnaPresets';
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
-import { selectSearchFilter } from 'state/library';
+import {
+  selectAxoLabsAliasesByPresetName,
+  selectSearchFilter,
+} from 'state/library';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -427,7 +430,12 @@ export const selectAllPresets = createSelector(
 export const selectFilteredPresets = createSelector(
   selectAllPresets,
   selectSearchFilter,
-  (presetsAll, searchFilter): Array<IRnaPreset & { favorite?: boolean }> => {
+  selectAxoLabsAliasesByPresetName,
+  (
+    presetsAll,
+    searchFilter,
+    axoLabsAliasesByPresetName,
+  ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
 
     return presetsAll.filter((item: IRnaPreset) => {
@@ -436,6 +444,10 @@ export const selectFilteredPresets = createSelector(
       const phosphateName = item.phosphate?.label?.toLowerCase();
       const baseName = item.base?.label?.toLowerCase();
       const idtName = item.idtAliases?.base?.toLowerCase();
+      const axoLabsAlias =
+        item.aliasAxoLabs?.toLowerCase() ??
+        (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
+        '';
       const modifications = item.idtAliases?.modifications;
       let transformedIdtText = idtName;
 
@@ -492,7 +504,8 @@ export const selectFilteredPresets = createSelector(
         sugarName?.includes(searchText) ||
         phosphateName?.includes(searchText) ||
         baseName?.includes(searchText) ||
-        transformedIdtText?.toLowerCase().includes(searchText)
+        transformedIdtText?.toLowerCase().includes(searchText) ||
+        axoLabsAlias.includes(searchText)
       );
     });
   },

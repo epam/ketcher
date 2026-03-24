@@ -80,7 +80,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
@@ -143,9 +143,9 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   });
 
   return (
-    <div
+    <dialog
       ref={dialogRef}
-      role="dialog"
+      open
       data-testid={'info-modal-window'}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
@@ -196,6 +196,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-    </div>
+    </dialog>
   );
 };

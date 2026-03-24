@@ -15,10 +15,10 @@ import {
   takeTopToolbarScreenshot,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
   MolFileFormat,
   clickOnCanvas,
   openFile,
+  takeElementScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
@@ -1302,7 +1302,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).rnaTab.click();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -1323,12 +1323,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('140');
     await CalculateVariablesPanel(page).setOligonucleotidesValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 

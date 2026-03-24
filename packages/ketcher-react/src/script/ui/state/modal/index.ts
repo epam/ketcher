@@ -81,11 +81,7 @@ function ensureFormState(
 }
 
 function getFormResult(form: ModalFormState | null): ModalFormResult {
-  if (!form) {
-    return {};
-  }
-
-  return form.result;
+  return form?.result ?? {};
 }
 
 export function openDialog<T = unknown>(
@@ -112,27 +108,23 @@ function modalReducer(
   state: ModalState | null = null,
   action: UnknownAction,
 ): ModalState | null {
+  if (isUpdateFormAction(action)) {
+    // Don't update if modal has already been closed
+    // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
+    // not send 'UPDATE_FORM' action to a closed modal in the first place
+    if (!state) {
+      return null;
+    }
+
+    const formState = ensureFormState(
+      formReducer(state.form ?? undefined, action),
+    );
+    return { ...state, form: formState };
+  }
+
   const { type } = action;
 
   switch (type) {
-    case 'UPDATE_FORM': {
-      if (!isUpdateFormAction(action)) {
-        return state;
-      }
-
-      // Don't update if modal has already been closed
-      // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
-      // not send 'UPDATE_FORM' action to a closed modal in the first place
-      if (!state) {
-        return null;
-      }
-
-      const formState = ensureFormState(
-        formReducer(state.form ?? undefined, action),
-      );
-      return { ...state, form: formState };
-    }
-
     case 'MODAL_CLOSE':
       if (state?.parentModal) {
         return {
@@ -146,20 +138,18 @@ function modalReducer(
       }
       return null;
 
-    case 'MODAL_OPEN': {
-      if (!isModalOpenAction(action)) {
-        return state;
+    case 'MODAL_OPEN':
+      if (isModalOpenAction(action)) {
+        const { data } = action;
+
+        return {
+          name: data.name,
+          form: ensureFormState(formsState[data.name]),
+          prop: data.prop || null,
+          parentModal: data.prop?.isNestedModal ? state : null,
+        };
       }
-
-      const { data } = action;
-
-      return {
-        name: data.name,
-        form: ensureFormState(formsState[data.name]),
-        prop: data.prop || null,
-        parentModal: data.prop?.isNestedModal ? state : null,
-      };
-    }
+      return state;
 
     default:
       return state;

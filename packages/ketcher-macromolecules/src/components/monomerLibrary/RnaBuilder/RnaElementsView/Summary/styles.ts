@@ -35,6 +35,7 @@ export const SummaryText = styled.span((props) => ({
 export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
   width: '16px',
   height: '16px',
+  cursor: 'pointer',
   color: props.theme.ketcher.color.icon.grey,
   transition: props.theme.ketcher.transition.regular,
   transform: props.expanded ? 'rotate(180deg)' : 'none',

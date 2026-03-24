@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ export const Card = styled.div<{
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'grab')};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;
@@ -53,11 +53,56 @@ export const Card = styled.div<{
   &:hover {
     outline: 1px solid #b4b9d6;
     > .star,
-    .autochain {
+    .autochain,
+    .menu {
       visibility: visible;
       opacity: 1;
     }
   }
+
+  .is-library-dragging &:not([data-dragging='true']) {
+    cursor: grabbing !important;
+  }
+
+  .is-library-dragging &:not([data-dragging='true']):hover {
+    outline: none;
+  }
+
+  .is-library-dragging &[data-dragging='true'] > .star,
+  .is-library-dragging &[data-dragging='true'] .autochain,
+  .is-library-dragging &[data-dragging='true'] .menu,
+  .is-library-dragging &[data-dragging='true'] .dots {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .is-library-dragging &[data-dragging='true']:hover {
+    outline: none !important;
+  }
+
+  .is-library-dragging &:not([data-dragging='true']):hover > .star,
+  .is-library-dragging &:not([data-dragging='true']):hover .autochain,
+  .is-library-dragging &:not([data-dragging='true']):hover .menu,
+  .is-library-dragging &:not([data-dragging='true']):hover .dots {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .is-library-dragging &:not([data-dragging='true']) > .star,
+  .is-library-dragging &:not([data-dragging='true']) .autochain,
+  .is-library-dragging &:not([data-dragging='true']) .menu,
+  .is-library-dragging &:not([data-dragging='true']):hover .dots {
+    pointer-events: none !important;
+    cursor: grabbing !important;
+  }
+
+  .is-library-dragging &[data-dragging='true'] {
+    cursor: grabbing !important;
+    outline: none !important;
+  }
+
   &::after {
     content: '';
     display: block;
@@ -66,11 +111,11 @@ export const Card = styled.div<{
     left: 0;
     width: 100%;
     height: 8px;
+    z-index: 1;
     border-bottom: ${({ isVariantMonomer }) =>
       isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
     background: ${({ code, theme, item }) => {
       if (!item) return theme.ketcher.monomer.color.default?.regular;
-
       const monomerItem = item as MonomerItemType;
       const isPeptideTab = monomerItem.props?.MonomerType === 'PEPTIDE';
       if (
@@ -79,14 +124,13 @@ export const Card = styled.div<{
       ) {
         return theme.ketcher.peptide.color[code as string]?.regular;
       }
-
-      const monomerColor =
+      return (
         theme.ketcher.monomer.color[code as string]?.regular ||
-        theme.ketcher.monomer.color.default?.regular;
-      return monomerColor;
+        theme.ketcher.monomer.color.default?.regular
+      );
     }};
   }
-  ,
+
   > span {
     position: absolute;
     bottom: ${({ selected }) => (selected ? '4px' : '6px')};
@@ -96,6 +140,7 @@ export const Card = styled.div<{
     white-space: nowrap;
     max-width: 85%;
   }
+
   > .star {
     color: #cad3dd;
     position: absolute;
@@ -109,16 +154,18 @@ export const Card = styled.div<{
     border: 0;
     background: transparent;
     padding: 0;
-    cursor: pointer;
+    z-index: 10;
+    cursor: pointer !important;
+    pointer-events: auto;
     &.visible {
       visibility: visible;
       opacity: 1;
+      color: #faa500;
     }
     &:active {
       transform: scale(1.4);
     }
-    &:hover,
-    &.visible {
+    &.visible:hover {
       color: #faa500;
     }
   }
@@ -154,7 +201,8 @@ export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
   transition: 0.2s ease;
   flex-shrink: 0;
   width: 13px;
-
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')} !important;
+  pointer-events: auto;
   &:active {
     transform: scale(1.2);
   }
@@ -167,4 +215,41 @@ export const AutochainIconWrapper = styled('div')({
   position: 'absolute',
   top: '12px',
   left: '4px',
+  zIndex: 10,
+  cursor: 'pointer',
+  pointerEvents: 'auto',
+});
+
+export const MenuIcon = styled(Icon)<{ disabled?: boolean }>`
+  color: #cad3dd;
+  stroke-width: 0;
+  opacity: 0;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+  width: 13px;
+  svg {
+    pointer-events: none;
+  }
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')} !important;
+  pointer-events: auto;
+  &:active {
+    transform: scale(1.2);
+  }
+  &:hover {
+    color: ${({ disabled }) => (disabled ? '#cad3dd' : '#333333')};
+  }
+`;
+
+export const MenuIconWrapper = styled('div')({
+  position: 'absolute',
+  top: '12px',
+  right: '4px',
+  zIndex: 10,
+  width: '20px',
+  height: '20px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  pointerEvents: 'auto',
 });

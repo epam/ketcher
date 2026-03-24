@@ -17,13 +17,48 @@ export const useLibraryItemDrag = (
 
     const itemElement = select(itemRef.current);
 
+    const libraryContainer = itemRef.current?.closest(
+      '[data-testid="monomer-library"]',
+    ) as HTMLElement;
+
+    if (!libraryContainer) {
+      return;
+    }
+
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (
+        target.closest('.star, .autochain, [data-testid*="autochain"], .dots')
+      ) {
+        return;
+      }
+
+      if (editor.mode.modeName !== 'sequence-layout-mode') {
+        document.body.style.cursor = 'grabbing';
+        itemRef.current?.setAttribute('data-dragging', 'true');
+        libraryContainer.classList.add('is-library-dragging');
+      }
+    };
+
+    itemRef.current.addEventListener('mousedown', handleMouseDown);
+
     const dragBehavior = drag<HTMLElement, unknown>()
+      .filter((event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+        const target = (event as any).sourceEvent?.target as HTMLElement;
+        if (target?.closest('.star, .autochain, [data-testid*="autochain"]')) {
+          return false;
+        }
+        return true;
+      })
       .on('start', () => {
-        // In sequence layout we do not allow DnD; cancel visual drag early
         editor.isLibraryItemDragCancelled =
           editor.mode.modeName === 'sequence-layout-mode';
         if (!editor.isLibraryItemDragCancelled) {
           document.body.style.cursor = 'grabbing';
+        } else {
+          itemRef.current?.removeAttribute('data-dragging');
+          libraryContainer.classList.remove('is-library-dragging');
+          document.body.style.cursor = '';
         }
       })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -65,6 +100,8 @@ export const useLibraryItemDrag = (
 
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
+        itemRef.current?.removeAttribute('data-dragging');
+        libraryContainer.classList.remove('is-library-dragging');
         document.body.style.cursor = '';
       });
 
@@ -72,6 +109,10 @@ export const useLibraryItemDrag = (
 
     return () => {
       itemElement.on('.drag', null);
+      itemRef.current?.removeEventListener('mousedown', handleMouseDown);
+      itemRef.current?.removeAttribute('data-dragging');
+      libraryContainer.classList.remove('is-library-dragging');
+      document.body.style.cursor = '';
     };
   }, [editor, item, itemRef]);
 };

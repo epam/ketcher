@@ -84,8 +84,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
-    if (focusable) {
-      (dialogElement as HTMLElement).focus();
+    if (focusable && dialogElement) {
+      setTimeout(() => {
+        (dialogElement as HTMLElement).focus();
+      }, 0);
     }
 
     return () => {
@@ -117,6 +119,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
       const { key } = event;
       const active = document.activeElement;
       const activeTextarea = active?.tagName === 'TEXTAREA';
@@ -139,7 +149,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       ref={dialogRef}
       open
       data-testid={'info-modal-window'}
-      tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >

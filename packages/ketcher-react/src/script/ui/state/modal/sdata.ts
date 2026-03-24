@@ -120,8 +120,7 @@ const onContextChange = (
   const radiobuttons = String(
     payload.radiobuttons || state.result.radiobuttons,
   );
-  const type =
-    (payload.type as SdataResult['type'] | undefined) ?? state.result.type;
+  const type = payload.type ?? state.result.type;
 
   const fieldName = getSdataDefaultValue(sdataCustomSchema, 'fieldName');
 
@@ -151,8 +150,7 @@ const onFieldNameChange = (
   const radiobuttons = String(
     payload.radiobuttons || state.result.radiobuttons,
   );
-  const type =
-    (payload.type as SdataResult['type'] | undefined) ?? state.result.type;
+  const type = payload.type ?? state.result.type;
 
   let fieldValue = String(payload.fieldValue || '');
 

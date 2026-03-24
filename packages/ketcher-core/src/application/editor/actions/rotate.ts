@@ -47,7 +47,7 @@ export function fromFlip(
   center: Vec2,
 ) {
   const action = new Action();
-  const structToFlip = selection || structSelection(reStruct.molecule);
+  const structToFlip = selection ?? structSelection(reStruct.molecule);
 
   action.mergeWith(
     fromStructureFlip(reStruct, structToFlip, flipDirection, center),

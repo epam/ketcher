@@ -58,7 +58,6 @@ describe('getPreset function', () => {
       base: thymine,
       sugar: ribose,
       phosphate,
-      connections: rnaPresetsTemplates[3].connections,
       default: true,
     };
 
@@ -67,7 +66,6 @@ describe('getPreset function', () => {
       base: guanine,
       sugar: ribose,
       phosphate,
-      connections: rnaPresetsTemplates[2].connections,
       default: true,
     };
 
@@ -114,15 +112,14 @@ describe('getPreset function', () => {
         {
           ...rnaPresetsTemplates[0],
           connections: [
-            rnaPresetsTemplates[0].connections[0],
             {
               connectionType: KetConnectionType.SINGLE,
               endpoint1: {
-                monomerTemplateId: 'monomerTemplate-R___Ribose',
+                templateId: 'monomerTemplate-R___Ribose',
                 attachmentPointId: AttachmentPointName.R1,
               },
               endpoint2: {
-                monomerTemplateId: 'monomerTemplate-P___Phosphate',
+                templateId: 'monomerTemplate-P___Phosphate',
                 attachmentPointId: AttachmentPointName.R2,
               },
             },

@@ -130,49 +130,4 @@ describe('Test Rna Editor Expanded component', () => {
     expect(onDuplicateHandler).toBeCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
-
-  it('should require phosphate position selection before saving when both options are available', () => {
-    useLayoutModeMock.mockReturnValue('macro');
-
-    render(
-      withThemeAndStoreProvider(
-        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
-        {
-          rnaBuilder: {
-            activePreset: {
-              name: 'Preset',
-              nameInList: '',
-              sugar: {
-                props: {
-                  MonomerName: 'R',
-                  MonomerCaps: { R1: {}, R2: {}, R3: {} },
-                },
-              },
-              phosphate: {
-                props: {
-                  MonomerName: 'P',
-                  MonomerCaps: { R1: {}, R2: {} },
-                },
-              },
-            },
-            groupItemValidations: {
-              Sugars: [],
-              Bases: [],
-              Phosphates: [],
-            },
-            presetsDefault: [],
-            presetsCustom: [],
-          },
-        },
-      ),
-    );
-
-    const saveBtn = screen.getByTestId('save-btn');
-    expect(saveBtn).toBeDisabled();
-
-    fireEvent.click(screen.getByTestId('phosphate-position-right'));
-
-    expect(saveBtn).toBeEnabled();
-    useLayoutModeMock.mockReturnValue('sequence-layout-mode');
-  });
 });

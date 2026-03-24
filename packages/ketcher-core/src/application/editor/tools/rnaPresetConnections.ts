@@ -33,8 +33,8 @@ const isSugarPhosphateConnection = (
   phosphateTemplateId?: string,
 ) => {
   const endpointIds = [
-    connection.endpoint1.monomerTemplateId,
-    connection.endpoint2.monomerTemplateId,
+    connection.endpoint1.templateId,
+    connection.endpoint2.templateId,
   ];
 
   if (sugarTemplateId && phosphateTemplateId) {
@@ -82,7 +82,7 @@ export const getRnaPresetPhosphatePosition = (
 
   const sugarEndpoint =
     !sugarTemplateId ||
-    sugarPhosphateConnection.endpoint1.monomerTemplateId === sugarTemplateId
+    sugarPhosphateConnection.endpoint1.templateId === sugarTemplateId
       ? sugarPhosphateConnection.endpoint1
       : sugarPhosphateConnection.endpoint2;
 
@@ -104,11 +104,11 @@ export const buildRnaPresetConnections = (
     connections.push({
       connectionType: KetConnectionType.SINGLE,
       endpoint1: {
-        monomerTemplateId: baseTemplateId,
+        templateId: baseTemplateId,
         attachmentPointId: AttachmentPointName.R1,
       },
       endpoint2: {
-        monomerTemplateId: sugarTemplateId,
+        templateId: sugarTemplateId,
         attachmentPointId: AttachmentPointName.R3,
       },
     });
@@ -118,14 +118,14 @@ export const buildRnaPresetConnections = (
     connections.push({
       connectionType: KetConnectionType.SINGLE,
       endpoint1: {
-        monomerTemplateId: sugarTemplateId,
+        templateId: sugarTemplateId,
         attachmentPointId:
           phosphatePosition === 'left'
             ? AttachmentPointName.R1
             : AttachmentPointName.R2,
       },
       endpoint2: {
-        monomerTemplateId: phosphateTemplateId,
+        templateId: phosphateTemplateId,
         attachmentPointId:
           phosphatePosition === 'left'
             ? AttachmentPointName.R2

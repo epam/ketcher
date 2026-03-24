@@ -22,10 +22,7 @@ import {
   SnakeMode,
 } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import {
-  getRnaPresetPhosphatePosition,
-  toolsMap,
-} from 'application/editor/tools';
+import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
@@ -1204,15 +1201,13 @@ export class CoreEditor {
     }
 
     const modelChanges = new Command();
-    const phosphateShift =
-      getRnaPresetPhosphatePosition(rnaPresetItem) === 'left' ? -1.5 : 1.5;
     const { command: addPresetModelChanges, monomers } =
       this.drawingEntitiesManager.addRnaPreset({
         sugar: rnaPresetItem.sugar,
         sugarPosition: new Vec2(sugarPosition.x, sugarPosition.y),
         phosphate: rnaPresetItem.phosphate,
         phosphatePosition: rnaPresetItem.phosphate
-          ? new Vec2(sugarPosition.x + phosphateShift, sugarPosition.y)
+          ? new Vec2(sugarPosition.x + 1.5, sugarPosition.y)
           : undefined,
         rnaBase: rnaPresetItem.base,
         rnaBasePosition: rnaPresetItem.base

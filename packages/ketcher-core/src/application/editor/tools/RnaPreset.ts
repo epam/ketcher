@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
-import { IKetTemplateConnection } from 'application/formatters';
 import { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 
@@ -35,7 +34,6 @@ class RnaPresetTool implements Tool {
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
   connections: IKetTemplateConnection[] | undefined;
-  phosphatePosition: 'left' | 'right' | undefined;
 
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;

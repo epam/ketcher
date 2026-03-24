@@ -24,11 +24,12 @@ import { IRnaEditorCollapsedProps } from './types';
 
 const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
   const displayName = name ?? fullName;
-  const title = fullName ?? displayName;
 
   if (!displayName) {
     return null;
   }
+
+  const title = fullName ?? displayName;
 
   return (
     <RnaEditorCollapsedContainer title={title}>

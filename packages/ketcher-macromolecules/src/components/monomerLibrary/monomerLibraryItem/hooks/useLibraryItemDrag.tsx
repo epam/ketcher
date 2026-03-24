@@ -44,7 +44,7 @@ export const useLibraryItemDrag = (
 
     const dragBehavior = drag<HTMLElement, unknown>()
       .filter((event: D3DragEvent<HTMLElement, unknown, unknown>) => {
-        const target = (event as any).sourceEvent?.target as HTMLElement;
+        const target = (event.sourceEvent as MouseEvent)?.target as HTMLElement;
         if (target?.closest('.star, .autochain, [data-testid*="autochain"]')) {
           return false;
         }

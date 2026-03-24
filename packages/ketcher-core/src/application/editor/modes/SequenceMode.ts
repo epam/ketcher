@@ -163,6 +163,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public resetEditMode() {
+    if (this.isEditMode) this.turnOffEditMode();
     this.turnOffAntisenseEditMode();
     this.turnOffSyncEditMode();
   }

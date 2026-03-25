@@ -16,7 +16,7 @@
 
 import {
   findStereoAtoms,
-  fromAtomsAttrs,
+  fromStereoAtomAttrs,
   fromStereoFlagUpdate,
 } from 'ketcher-core';
 
@@ -69,26 +69,44 @@ class EnhancedStereoTool implements Tool {
         return null;
       }
 
-      const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
-          const frid = struct.atoms.get(stereoAtom)?.fragment;
-          const frag =
-            frid !== undefined ? restruct.molecule.frags.get(frid) : null;
+      const [firstStereoAtom, ...restStereoAtoms] = stereoAtoms;
+      if (firstStereoAtom === undefined) {
+        return null;
+      }
 
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
-        },
-        fromAtomsAttrs(
+      const action = restStereoAtoms.reduce(
+        (acc, stereoAtom) =>
+          acc.mergeWith(
+            fromStereoAtomAttrs(
+              restruct,
+              stereoAtom,
+              {
+                stereoLabel,
+              },
+              false,
+            ),
+          ),
+        fromStereoAtomAttrs(
           restruct,
-          stereoAtoms,
+          firstStereoAtom,
           {
             stereoLabel,
           },
           false,
         ),
       );
+
+      const fragmentIds = new Set<number>();
+      stereoAtoms.forEach((stereoAtom) => {
+        const frid = struct.atoms.get(stereoAtom)?.fragment;
+        if (frid !== undefined) {
+          fragmentIds.add(frid);
+        }
+      });
+
+      fragmentIds.forEach((frid) => {
+        action.mergeWith(fromStereoFlagUpdate(restruct, frid));
+      });
       action.operations.reverse();
       return action;
     });

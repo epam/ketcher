@@ -48,7 +48,7 @@ export function dropAndMerge(
     dropItemAction = dropItemAction.mergeWith(action);
   }
 
-  const bonds = editor.selection()?.bonds ?? [];
+  const bonds = editor.explicitSelected()?.bonds ?? [];
   for (const bondId of bonds) {
     const rebond = restruct.bonds.get(bondId);
     if (rebond) {

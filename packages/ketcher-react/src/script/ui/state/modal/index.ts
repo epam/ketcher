@@ -74,9 +74,14 @@ function ensureFormState(
     return null;
   }
 
+  const result =
+    'result' in form && form.result && typeof form.result === 'object'
+      ? (form.result as ModalFormResult)
+      : {};
+
   return {
     ...form,
-    result: form.result ?? {},
+    result,
   };
 }
 

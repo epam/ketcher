@@ -1457,6 +1457,9 @@ class Editor implements KetcherEditor {
         ({ monomerTemplate }) =>
           monomerTemplate.class === KetMonomerClass.Phosphate,
       )?.monomerTemplate;
+      const baseMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) => monomerTemplate.class === KetMonomerClass.Base,
+      )?.monomerTemplate;
       const rnaPresetConnections: IKetTemplateConnection[] = [];
 
       if (sugarMonomerTemplate && phosphateMonomerTemplate) {
@@ -1472,16 +1475,26 @@ class Editor implements KetcherEditor {
         rnaPresetConnections.push({
           connectionType: KetConnectionType.SINGLE,
           endpoint1: {
-            monomerTemplateId: setMonomerTemplatePrefix(
-              sugarMonomerTemplate.id,
-            ),
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
             attachmentPointId: sugarAttachmentPointId,
           },
           endpoint2: {
-            monomerTemplateId: setMonomerTemplatePrefix(
-              phosphateMonomerTemplate.id,
-            ),
+            templateId: setMonomerTemplatePrefix(phosphateMonomerTemplate.id),
             attachmentPointId: phosphateAttachmentPointId,
+          },
+        });
+      }
+
+      if (sugarMonomerTemplate && baseMonomerTemplate) {
+        rnaPresetConnections.push({
+          connectionType: KetConnectionType.SINGLE,
+          endpoint1: {
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R3,
+          },
+          endpoint2: {
+            templateId: setMonomerTemplatePrefix(baseMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R1,
           },
         });
       }
@@ -1507,7 +1520,7 @@ class Editor implements KetcherEditor {
       ket.root.templates.push(getKetRef(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
-
+    console.log(ket);
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {
       format: 'ket',
       shouldPersist: true,

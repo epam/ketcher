@@ -137,11 +137,17 @@ export class NewSequenceButton {
     this.buttonElement?.style('color', HOVER_COLOR);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
-  drawSelection(): void {}
+  drawSelection(): void {
+    // intentional no-op: this renderer type does not render a selection view
+  }
 
-  moveSelection(): void {}
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   protected removeHover(): void {
     this.buttonElement?.style('color', TEXT_COLOR);

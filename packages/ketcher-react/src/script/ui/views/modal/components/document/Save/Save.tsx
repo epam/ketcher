@@ -231,7 +231,7 @@ const PreviewContent = ({
 );
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
-  static contextType = ErrorsContext;
+  static readonly contextType = ErrorsContext;
   declare context: React.ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;

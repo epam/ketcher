@@ -113,7 +113,13 @@ const RnaElementsTabsView = ({
                 {groups.map(({ groupItems, groupTitle }) => (
                   <MonomerGroup
                     key={groupTitle}
-                    title={groups.length > 1 ? groupTitle : undefined}
+                    title={
+                      [MonomerGroups.BASES, MonomerGroups.NUCLEOTIDES].includes(
+                        groupName as MonomerGroups,
+                      ) || groups.length > 1
+                        ? groupTitle
+                        : undefined
+                    }
                     groupName={groupName}
                     items={groupItems}
                     selectedMonomerUniqueKey={activeMonomerKey}

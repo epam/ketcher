@@ -16,8 +16,16 @@
 
 import classes from './Atom.module.less';
 import clsx from 'clsx';
+import type { ButtonHTMLAttributes } from 'react';
+import type { Element } from 'ketcher-core';
 
-function Atom({ el, shortcut, selected, ...props }) {
+type AtomProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value'> & {
+  el: Element;
+  shortcut?: string | null;
+  selected?: boolean;
+};
+
+function Atom({ el, shortcut, selected, ...props }: Readonly<AtomProps>) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}

@@ -183,6 +183,7 @@ export abstract class BaseMode {
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
     EditorHistory.getInstance(editor).update(modelChanges);
+    editor.events.mouseLeaveSequenceItem.dispatch();
     this.scrollForView();
   }
 
@@ -280,5 +281,7 @@ export abstract class BaseMode {
     );
   }
 
-  public destroy() {}
+  public destroy() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 }

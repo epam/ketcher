@@ -101,7 +101,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const handleClickCreateComponent = useCallback(
     (rnaComponentKey: RnaPresetComponentKey) => {
       // Get the current selection from the editor
-      const selection = editor.selection();
+      const selection = editor.explicitSelected();
       const atomIds = selection?.atoms || [];
       const bondIds = selection?.bonds || [];
 

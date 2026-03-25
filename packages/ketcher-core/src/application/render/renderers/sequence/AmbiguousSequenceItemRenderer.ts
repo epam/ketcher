@@ -17,5 +17,7 @@ export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
     return this.node.monomer.label;
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 }

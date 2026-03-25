@@ -3,7 +3,10 @@ import {
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import { IKetMonomerGroupTemplate } from 'application/formatters';
+import {
+  IKetMonomerGroupTemplate,
+  IKetTemplateConnection,
+} from 'application/formatters';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -97,6 +100,7 @@ export interface IRnaPreset {
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
+  connections?: IKetTemplateConnection[];
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;
@@ -104,7 +108,9 @@ export interface IRnaPreset {
 
 export interface IRnaLabeledPreset
   extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
-    Pick<IKetMonomerGroupTemplate, 'templates'> {}
+    Pick<IKetMonomerGroupTemplate, 'templates'> {
+  connections?: IKetTemplateConnection[];
+}
 
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;

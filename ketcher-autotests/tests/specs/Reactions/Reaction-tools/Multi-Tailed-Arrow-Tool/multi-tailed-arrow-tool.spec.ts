@@ -908,6 +908,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
     });
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Verify that Multi-Tailed Arrows with elements can be saved to template and added to Canvas with correct position and layer level', async () => {
@@ -934,21 +935,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByText('multi_tail_arrows_with_elements').click();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-  });
-
-  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: selection, movement of arrow itself, changing of size and position of head', async () => {
-    /*
-    Test case: https://github.com/epam/ketcher/issues/5055
-    Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
-    elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
-    */
-    await setupElementsAndModifyMultiTailArrow(page);
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'KET/modified-multitail-arrow-expected.ket',
-      FileType.KET,
-    );
   });
 
   test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: changing size and positions of added tails, add/remove tails', async () => {
@@ -3313,6 +3299,21 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: selection, movement of arrow itself, changing of size and position of head', async () => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
+    elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
+    */
+    await setupElementsAndModifyMultiTailArrow(page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/modified-multitail-arrow-expected.ket',
+      FileType.KET,
+    );
   });
 
   const testConfigs1 = [

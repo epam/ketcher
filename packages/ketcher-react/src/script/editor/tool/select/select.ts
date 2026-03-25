@@ -427,6 +427,11 @@ class SelectTool implements Tool {
 
   dblclick(event) {
     const editor = this.editor;
+
+    if (editor.isMonomerCreationWizardActive) {
+      return false;
+    }
+
     const struct = editor.render.ctab;
     const { molecule, sgroups } = struct;
     const functionalGroups = molecule.functionalGroups;

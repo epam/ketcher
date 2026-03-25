@@ -20,7 +20,7 @@ import {
 } from '@utils/canvas';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
@@ -110,7 +110,7 @@ test('3. Verify the star atom can be added to the canvas using the extended tabl
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await selectExtendedTableElement(page, ExtendedTableButton.STAR);
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
@@ -128,7 +128,7 @@ test('4. Verify the star atom can be added to the canvas using the hotkey (Shift
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
@@ -211,7 +211,7 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   // Change to getAtomLocator later
@@ -238,7 +238,7 @@ test('8. Verify that the star atom is displayed correctly when zooming in and ou
    * Version 3.7
    */
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
 
@@ -264,7 +264,7 @@ test('9. Verify the copy-paste functionality for structures containing the star 
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
   await cutToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);

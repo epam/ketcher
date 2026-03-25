@@ -15,7 +15,7 @@ import {
   takeTopToolbarScreenshot,
   clickOnCanvas,
   Monomer,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
@@ -1107,7 +1107,7 @@ test.describe('RNA Library', () => {
 
       await page.keyboard.press('Escape');
       await Library(page).openRNASection(RNASection.Nucleotides);
-      await clickOnMiddleOfCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1240,7 +1240,7 @@ test.describe('RNA Library', () => {
         fromCenter: true,
       });
       await page.keyboard.press('Escape');
-      await clickOnMiddleOfCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

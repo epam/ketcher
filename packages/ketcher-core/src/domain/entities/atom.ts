@@ -870,7 +870,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (Atom.isHeteroAtom(this.label) && this.implicitHCount !== null) {
+    if (this.implicitHCount !== null) {
       return this.implicitHCount;
     }
     return hydrogenCount;

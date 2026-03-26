@@ -20,6 +20,7 @@
 .headerContent {
   display: flex;
   gap: 8px;
+  align-items: center;
 
   .title {
     padding-right: 4px;
@@ -43,6 +44,77 @@
     &:disabled {
       color: @color-icon-disabled;
     }
+  }
+}
+
+.settingsMenuWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.settingsMenuButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid @color-border-input;
+  border-radius: 8px;
+  background-color: @color-background-primary;
+  color: @color-text-primary;
+  padding: 6px 12px;
+
+  &:hover {
+    border-color: @color-primary-green;
+  }
+}
+
+.settingsMenuIcon {
+  width: 16px;
+  height: 16px;
+  transform: rotate(0deg);
+  transition: transform 200ms ease-in-out;
+}
+
+.settingsMenuIconOpened {
+  transform: rotate(180deg);
+}
+
+.settingsMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+  padding: 8px;
+  border: 1px solid @color-border-input;
+  border-radius: 8px;
+  background-color: @color-background-primary;
+  box-shadow: 0 6px 10px @color-select-box-shadow;
+  z-index: 11;
+}
+
+.settingsMenuItem {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: @color-text-primary;
+  padding: 6px 10px;
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    background-color: fade(@color-primary-green, 10%);
+  }
+
+  &:disabled {
+    color: @color-icon-disabled;
+  }
+
+  input[type='file'] {
+    display: none;
   }
 }
 
@@ -113,10 +185,4 @@
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
-}
-
-.acsStyleButton {
-  margin-right: auto;
-
-  .button-primary();
 }

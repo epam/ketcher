@@ -21,6 +21,7 @@ import {
   updateFormState,
 } from '../../../../../state/modal/form';
 import { useEffect, useState } from 'react';
+import { ClickAwayListener } from '@mui/material';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -43,6 +44,7 @@ import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
+import clsx from 'clsx';
 
 interface SettingsProps extends BaseProps {
   initState: any;
@@ -70,47 +72,103 @@ const HeaderContent = ({
   server,
   onOpenFile,
   onReset,
+  onACSStyle,
   formState,
   initState,
 }) => {
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
     else return isEqual(defaultSettings, formState.result);
   };
 
+  const getIsACSDisabled = () =>
+    isEqual(formState.result, {
+      ...formState.result,
+      ...ACS_STYLE_DEFAULT_SETTINGS,
+    });
+
+  const closeSettingsMenu = () => {
+    setIsSettingsMenuOpen(false);
+  };
+
   return (
     <div className={classes.headerContent}>
       <span className={classes.title}> Settings</span>
-      <OpenButton
-        title="Open from File"
-        key="settings"
-        server={server}
-        onLoad={onOpenFile}
-        className={classes.button}
-        data-testid="open-settings-from-file-button"
-      >
-        <Icon name="open-1" />
-      </OpenButton>
-      <SaveButton
-        title="Save to File"
-        key="ketcher-settings"
-        data={JSON.stringify(formState.result)}
-        filename="ketcher-settings"
-        className={classes.button}
-        data-testid="save-settings-to-file-button"
-      >
-        <Icon name="save-1" />
-      </SaveButton>
-      <button
-        title="Reset"
-        key="settings-button"
-        onClick={onReset}
-        className={classes.button}
-        data-testid="reset-settings-button"
-        disabled={getIsResetDisabled()}
-      >
-        <Icon name="reset" />
-      </button>
+      <div className={classes.settingsMenuWrapper}>
+        <button
+          type="button"
+          className={classes.settingsMenuButton}
+          data-testid="settings-presets-button"
+          onClick={() =>
+            setIsSettingsMenuOpen((previousValue) => !previousValue)
+          }
+        >
+          <span>Reset to...</span>
+          <Icon
+            name="chevron"
+            className={clsx(
+              classes.settingsMenuIcon,
+              isSettingsMenuOpen && classes.settingsMenuIconOpened,
+            )}
+          />
+        </button>
+        {isSettingsMenuOpen && (
+          <ClickAwayListener onClickAway={closeSettingsMenu}>
+            <div className={classes.settingsMenu}>
+              <button
+                type="button"
+                className={classes.settingsMenuItem}
+                onClick={() => {
+                  onReset();
+                  closeSettingsMenu();
+                }}
+                data-testid="reset-settings-button"
+                disabled={getIsResetDisabled()}
+              >
+                Default
+              </button>
+              <button
+                type="button"
+                className={classes.settingsMenuItem}
+                onClick={() => {
+                  onACSStyle();
+                  closeSettingsMenu();
+                }}
+                data-testid="acs-style-button"
+                disabled={getIsACSDisabled()}
+              >
+                ACS
+              </button>
+              <SaveButton
+                title="Save Settings"
+                key="ketcher-settings"
+                data={JSON.stringify(formState.result)}
+                filename="ketcher-settings"
+                className={classes.settingsMenuItem}
+                testId="save-settings-to-file-button"
+                onSave={closeSettingsMenu}
+              >
+                Save Settings
+              </SaveButton>
+              <OpenButton
+                title="Load Settings"
+                key="settings"
+                server={server}
+                onLoad={(result) => {
+                  onOpenFile(result);
+                  closeSettingsMenu();
+                }}
+                className={classes.settingsMenuItem}
+                data-testid="open-settings-from-file-button"
+              >
+                Load Settings
+              </OpenButton>
+            </div>
+          </ClickAwayListener>
+        )}
+      </div>
     </div>
   );
 };
@@ -367,17 +425,6 @@ const SettingsDialog = (props: Props) => {
     });
   };
 
-  const ACSStyleButton = (
-    <button
-      className={classes.acsStyleButton}
-      key="acsstylebutton"
-      onClick={onACSStyle}
-      data-testid="acs-style-button"
-    >
-      Set ACS Settings
-    </button>
-  );
-
   const tabs = [
     generalTab,
     stereoTab,
@@ -395,7 +442,7 @@ const SettingsDialog = (props: Props) => {
       valid={() => formState.valid}
       params={prop}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={[ACSStyleButton, 'Cancel', 'OK']}
+      buttons={['Cancel', 'OK']}
       withDivider
       needMargin={false}
       headerContent={
@@ -403,6 +450,7 @@ const SettingsDialog = (props: Props) => {
           server={server}
           onOpenFile={onOpenFile}
           onReset={onReset}
+          onACSStyle={onACSStyle}
           formState={formState}
           initState={initState}
         />

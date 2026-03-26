@@ -59,8 +59,8 @@ describe('Zoom Tool', () => {
     });
 
     it('should not create scrollbar rects when canvas has no children', () => {
-      const drawnStructures = canvas.querySelector('.drawn-structures')!;
-      while (drawnStructures.firstChild) {
+      const drawnStructures = canvas.querySelector('.drawn-structures');
+      while (drawnStructures?.firstChild) {
         drawnStructures.removeChild(drawnStructures.firstChild);
       }
 

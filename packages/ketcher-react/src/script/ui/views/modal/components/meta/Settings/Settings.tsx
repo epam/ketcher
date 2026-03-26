@@ -81,14 +81,23 @@ const SETTINGS_MENU_OFFSET = 4;
 const SETTINGS_MENU_EDGE_OFFSET = 8;
 const SETTINGS_MENU_FALLBACK_WIDTH = 170;
 const SETTINGS_MENU_FALLBACK_HEIGHT = 136;
+const SETTINGS_SUBMENU_OFFSET = 8;
+const SETTINGS_SUBMENU_FALLBACK_WIDTH = 140;
 
 const getSettingsMenuPosition = (
   triggerRect: DOMRect,
+  isResetSubmenuOpen: boolean,
   menuRect?: DOMRect,
 ): CSSProperties => {
   const menuWidth = menuRect?.width ?? SETTINGS_MENU_FALLBACK_WIDTH;
   const menuHeight = menuRect?.height ?? SETTINGS_MENU_FALLBACK_HEIGHT;
-  const maxLeft = window.innerWidth - menuWidth - SETTINGS_MENU_EDGE_OFFSET;
+  const totalMenuWidth =
+    menuWidth +
+    (isResetSubmenuOpen
+      ? SETTINGS_SUBMENU_OFFSET + SETTINGS_SUBMENU_FALLBACK_WIDTH
+      : 0);
+  const maxLeft =
+    window.innerWidth - totalMenuWidth - SETTINGS_MENU_EDGE_OFFSET;
   const menuBottom = triggerRect.bottom + SETTINGS_MENU_OFFSET;
   const shouldOpenAbove =
     menuBottom + menuHeight > window.innerHeight - SETTINGS_MENU_EDGE_OFFSET;
@@ -151,8 +160,10 @@ const HeaderContent = ({
     const triggerRect = settingsMenuButtonRef.current.getBoundingClientRect();
     const menuRect = settingsMenuRef.current?.getBoundingClientRect();
 
-    setSettingsMenuPosition(getSettingsMenuPosition(triggerRect, menuRect));
-  }, []);
+    setSettingsMenuPosition(
+      getSettingsMenuPosition(triggerRect, isResetSubmenuOpen, menuRect),
+    );
+  }, [isResetSubmenuOpen]);
 
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen((previousValue) => !previousValue);

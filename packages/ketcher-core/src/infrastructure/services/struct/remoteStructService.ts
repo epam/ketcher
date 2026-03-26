@@ -432,6 +432,7 @@ export class RemoteStructService implements StructService {
       { struct: data },
       {
         ...this.getStandardServerOptions(options),
+        font: options?.font,
         'render-coloring': options?.['render-coloring'],
         'render-font-size': options?.['render-font-size'],
         'render-font-size-unit': options?.['render-font-size-unit'],

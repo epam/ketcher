@@ -129,7 +129,6 @@ export const RnaEditorExpanded = ({
       ? getRnaPresetPhosphatePosition(activePreset)
       : undefined,
   );
-  const [isPhosphateSelectorOpen, setIsPhosphateSelectorOpen] = useState(false);
 
   const resolvePhosphatePosition = (
     preset: typeof newPreset,
@@ -438,7 +437,6 @@ export const RnaEditorExpanded = ({
           disabled={isDisabled}
           onClick={() => {
             setPhosphatePosition(position);
-            setIsPhosphateSelectorOpen(false);
           }}
         >
           {renderPhosphateTriggerIcon(position, false, true)}
@@ -447,6 +445,9 @@ export const RnaEditorExpanded = ({
     </Tooltip>
   );
 
+  const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
+    position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
+
   const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
     if (!newPreset?.phosphate) {
       return null;
@@ -454,32 +455,41 @@ export const RnaEditorExpanded = ({
 
     const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
     const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
+    const isPhosphateGroupActive =
+      activeMonomerGroup === MonomerGroups.PHOSPHATES;
+    const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
 
     return (
       <div
-        className={styles.phosphatePositionIconWrapperOnPresetCard}
-        onMouseEnter={() => {
-          if (!triggerDisabled) {
-            setIsPhosphateSelectorOpen(true);
-          }
-        }}
-        onMouseLeave={() => {
-          setIsPhosphateSelectorOpen(false);
-        }}
+        className={clsx(
+          styles.phosphatePositionIconWrapperOnPresetCard,
+          isPhosphateGroupActive &&
+            !triggerDisabled &&
+            styles.phosphatePositionIconWrapperOnPresetCardActive,
+        )}
       >
-        <button
-          type="button"
-          className={styles.phosphatePositionTrigger}
-          disabled={triggerDisabled}
-          aria-label="Select phosphate position"
-          aria-expanded={!triggerDisabled && isPhosphateSelectorOpen}
+        <Tooltip
+          title={
+            showPhosphatePositionTooltip
+              ? getPhosphatePositionTooltip(triggerPosition)
+              : ''
+          }
         >
-          {renderPhosphateTriggerIcon(
-            triggerPosition,
-            activeMonomerGroup === MonomerGroups.PHOSPHATES,
-          )}
-        </button>
-        {!triggerDisabled && isPhosphateSelectorOpen ? (
+          <span>
+            <button
+              type="button"
+              className={styles.phosphatePositionTrigger}
+              disabled={triggerDisabled}
+              aria-label="Select phosphate position"
+            >
+              {renderPhosphateTriggerIcon(
+                triggerPosition,
+                isPhosphateGroupActive,
+              )}
+            </button>
+          </span>
+        </Tooltip>
+        {!triggerDisabled && !showPhosphatePositionTooltip ? (
           <div className={styles.phosphatePositionSelector}>
             {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
             {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
@@ -539,8 +549,6 @@ export const RnaEditorExpanded = ({
   };
 
   const onCancel = () => {
-    setIsPhosphateSelectorOpen(false);
-
     if (isSequenceEditInRNABuilderMode) {
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {

@@ -18,6 +18,7 @@ import {
   ChangeEvent,
   KeyboardEvent,
   MouseEvent as ReactMouseEvent,
+  CSSProperties,
   useCallback,
   useEffect,
   useId,
@@ -25,6 +26,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
@@ -78,6 +80,11 @@ const DEFAULT_COLOR = '#000000';
 const COMPLETE_HEX_PATTERN = /^[0-9A-F]{6}$/;
 const HUE_SLIDER_BACKGROUND =
   'linear-gradient(90deg, #FF0000 0%, #FFFF00 17%, #00FF00 33%, #00FFFF 50%, #0000FF 67%, #FF00FF 83%, #FF0000 100%)';
+const PORTAL_OFFSET = 4;
+const PORTAL_EDGE_OFFSET = 8;
+const PICKER_FALLBACK_WIDTH = 396;
+const PICKER_FALLBACK_COLLAPSED_HEIGHT = 240;
+const PICKER_FALLBACK_EXPANDED_HEIGHT = 420;
 
 type HslColor = {
   h: number;
@@ -232,6 +239,32 @@ const hexToHsl = (color: string) => rgbToHsl(hexToRgb(color));
 
 const hslToHex = (color: HslColor) => rgbToHex(hslToRgb(color));
 
+const getPickerPosition = (
+  triggerRect: DOMRect,
+  isPaletteOpen: boolean,
+  pickerRect?: DOMRect,
+): CSSProperties => {
+  const pickerWidth = pickerRect?.width ?? PICKER_FALLBACK_WIDTH;
+  const pickerHeight =
+    pickerRect?.height ??
+    (isPaletteOpen
+      ? PICKER_FALLBACK_EXPANDED_HEIGHT
+      : PICKER_FALLBACK_COLLAPSED_HEIGHT);
+  const maxLeft = window.innerWidth - pickerWidth - PORTAL_EDGE_OFFSET;
+  const maxTop = window.innerHeight - pickerHeight - PORTAL_EDGE_OFFSET;
+
+  return {
+    left: `${Math.max(
+      PORTAL_EDGE_OFFSET,
+      Math.min(triggerRect.left, maxLeft),
+    )}px`,
+    top: `${Math.max(
+      PORTAL_EDGE_OFFSET,
+      Math.min(triggerRect.bottom + PORTAL_OFFSET, maxTop),
+    )}px`,
+  };
+};
+
 const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -246,6 +279,12 @@ const ColorPicker = (props: Props) => {
   const paletteId = 'color-picker-' + useId();
   const inputId = 'color-picker-input-' + useId();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const pickerRef = useRef<HTMLDivElement | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [pickerPosition, setPickerPosition] = useState<CSSProperties>({
+    left: '0px',
+    top: '0px',
+  });
 
   const syncDraftState = useCallback((nextColor: string) => {
     const normalizedColor = normalizeHexColor(nextColor);
@@ -274,8 +313,8 @@ const ColorPicker = (props: Props) => {
 
     const handleMouseDown = (event: globalThis.MouseEvent) => {
       if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
+        !wrapperRef.current?.contains(event.target as Node) &&
+        !pickerRef.current?.contains(event.target as Node)
       ) {
         handlePaletteClose();
       }
@@ -287,6 +326,40 @@ const ColorPicker = (props: Props) => {
       document.removeEventListener('mousedown', handleMouseDown);
     };
   }, [handlePaletteClose, isOpen]);
+
+  const updatePickerPosition = useCallback(() => {
+    if (!triggerRef.current) {
+      return;
+    }
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const pickerRect = pickerRef.current?.getBoundingClientRect();
+
+    setPickerPosition(
+      getPickerPosition(triggerRect, isPaletteOpen, pickerRect),
+    );
+  }, [isPaletteOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    const animationFrameId = window.requestAnimationFrame(updatePickerPosition);
+
+    const handleViewportChange = () => {
+      updatePickerPosition();
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isOpen, isPaletteOpen, updatePickerPosition]);
 
   const updateDraftFromColor = useCallback(
     (nextColor: string) => {
@@ -388,6 +461,7 @@ const ColorPicker = (props: Props) => {
       role="none"
     >
       <button
+        ref={triggerRef}
         type="button"
         className={clsx({
           [classes.colorPickerInput]: true,
@@ -413,128 +487,132 @@ const ColorPicker = (props: Props) => {
           name="chevron"
         />
       </button>
-      {isOpen && (
-        <div
-          className={classes.colorPickerWrap}
-          id={paletteId}
-          data-testid="color-picker-preset"
-          role="dialog"
-          aria-label="Color picker"
-        >
-          <div className={classes.presetColors}>
-            {presetColors.map((color) => (
+      {isOpen &&
+        createPortal(
+          <div
+            ref={pickerRef}
+            className={classes.colorPickerWrap}
+            id={paletteId}
+            data-testid="color-picker-preset"
+            role="dialog"
+            aria-label="Color picker"
+            style={pickerPosition}
+          >
+            <div className={classes.presetColors}>
+              {presetColors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => updateDraftFromColor(color)}
+                  style={{ backgroundColor: color }}
+                  className={clsx(
+                    classes.presetColor,
+                    draftColor === color && classes.selectedPresetColor,
+                  )}
+                  aria-label={`Select ${color} color`}
+                />
+              ))}
+            </div>
+
+            <div className={classes.paletteHeader}>
+              <span className={classes.paletteTitle}>Custom Colors</span>
               <button
-                key={color}
                 type="button"
-                onClick={() => updateDraftFromColor(color)}
-                style={{ backgroundColor: color }}
-                className={clsx(
-                  classes.presetColor,
-                  draftColor === color && classes.selectedPresetColor,
-                )}
-                aria-label={`Select ${color} color`}
-              />
-            ))}
-          </div>
+                className={classes.paletteToggle}
+                onClick={handlePaletteToggle}
+                data-testid="color-picker-btn"
+                aria-expanded={isPaletteOpen}
+                aria-controls={`${paletteId}-custom`}
+              >
+                <Icon name={isPaletteOpen ? 'close' : 'plus'} />
+              </button>
+            </div>
 
-          <div className={classes.paletteHeader}>
-            <span className={classes.paletteTitle}>Custom Colors</span>
-            <button
-              type="button"
-              className={classes.paletteToggle}
-              onClick={handlePaletteToggle}
-              data-testid="color-picker-btn"
-              aria-expanded={isPaletteOpen}
-              aria-controls={`${paletteId}-custom`}
-            >
-              <Icon name={isPaletteOpen ? 'close' : 'plus'} />
-            </button>
-          </div>
-
-          {isPaletteOpen && (
-            <div
-              className={classes.colorPicker}
-              data-testid="color-palette"
-              id={`${paletteId}-custom`}
-            >
-              <div className={classes.colorPickerControls}>
-                <div className={classes.sliderContainer}>
-                  <input
-                    type="range"
-                    min="0"
-                    max="360"
-                    value={draftHsl.h}
-                    onChange={handleHueChange}
-                    className={classes.colorSlider}
-                    style={{ backgroundImage: HUE_SLIDER_BACKGROUND }}
-                    aria-label="Hue"
-                  />
-                </div>
-                <div className={classes.sliderAndPreview}>
+            {isPaletteOpen && (
+              <div
+                className={classes.colorPicker}
+                data-testid="color-palette"
+                id={`${paletteId}-custom`}
+              >
+                <div className={classes.colorPickerControls}>
                   <div className={classes.sliderContainer}>
                     <input
                       type="range"
                       min="0"
-                      max="100"
-                      value={draftHsl.l}
-                      onChange={handleLightnessChange}
+                      max="360"
+                      value={draftHsl.h}
+                      onChange={handleHueChange}
                       className={classes.colorSlider}
-                      style={{ backgroundImage: selectedLightnessBackground }}
-                      aria-label="Lightness"
+                      style={{ backgroundImage: HUE_SLIDER_BACKGROUND }}
+                      aria-label="Hue"
                     />
                   </div>
-                  <div
-                    className={classes.colorPreviewBox}
-                    style={{ backgroundColor: draftColor }}
-                    aria-label={`Selected color ${draftColor}`}
+                  <div className={classes.sliderAndPreview}>
+                    <div className={classes.sliderContainer}>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={draftHsl.l}
+                        onChange={handleLightnessChange}
+                        className={classes.colorSlider}
+                        style={{ backgroundImage: selectedLightnessBackground }}
+                        aria-label="Lightness"
+                      />
+                    </div>
+                    <div
+                      className={classes.colorPreviewBox}
+                      style={{ backgroundColor: draftColor }}
+                      aria-label={`Selected color ${draftColor}`}
+                    />
+                  </div>
+                </div>
+                <div className={classes.colorContainer}>
+                  <label className={classes.hex} htmlFor={inputId}>
+                    HEX#
+                  </label>
+                  <input
+                    id={inputId}
+                    data-testid="color-picker-input"
+                    className={classes.hexInput}
+                    value={draftHexValue}
+                    onChange={handleHexChange}
+                    maxLength={6}
+                    inputMode="text"
+                    autoComplete="off"
+                    spellCheck={false}
                   />
+                  <button
+                    type="button"
+                    className={classes.clearButton}
+                    onClick={() => setDraftHexValue('')}
+                    data-testid="clear-custom-color-button"
+                    aria-label="Clear custom color"
+                  >
+                    <Icon name="delete" />
+                  </button>
                 </div>
               </div>
-              <div className={classes.colorContainer}>
-                <label className={classes.hex} htmlFor={inputId}>
-                  HEX#
-                </label>
-                <input
-                  id={inputId}
-                  data-testid="color-picker-input"
-                  className={classes.hexInput}
-                  value={draftHexValue}
-                  onChange={handleHexChange}
-                  maxLength={6}
-                  inputMode="text"
-                  autoComplete="off"
-                  spellCheck={false}
-                />
-                <button
-                  type="button"
-                  className={classes.clearButton}
-                  onClick={() => setDraftHexValue('')}
-                  data-testid="clear-custom-color-button"
-                  aria-label="Clear custom color"
-                >
-                  <Icon name="delete" />
-                </button>
-              </div>
+            )}
+            <div className={classes.actions}>
+              <button
+                type="button"
+                className={clsx(classes.actionButton, classes.cancelButton)}
+                onClick={handlePaletteClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={clsx(classes.actionButton, classes.applyButton)}
+                onClick={handleApply}
+              >
+                Apply
+              </button>
             </div>
-          )}
-          <div className={classes.actions}>
-            <button
-              type="button"
-              className={clsx(classes.actionButton, classes.cancelButton)}
-              onClick={handlePaletteClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className={clsx(classes.actionButton, classes.applyButton)}
-              onClick={handleApply}
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };

@@ -35,11 +35,21 @@ describe('should be rendered correctly', () => {
 
 describe('should toggle color picker dialog', () => {
   it('should show color preset on click', async () => {
+    renderColorPicker();
+    await openPreset();
+    expect(screen.getByTestId('color-picker-preset')).toBeInTheDocument();
+  });
+
+  it('should render the popup outside the field wrapper', async () => {
     const { container } = renderColorPicker();
     await openPreset();
-    expect(
-      container.getElementsByClassName('classes.colorPickerWrap'),
-    ).toBeDefined();
+
+    expect(screen.getByTestId('color-picker-preset').parentElement).toBe(
+      document.body,
+    );
+    expect(container).not.toContainElement(
+      screen.getByTestId('color-picker-preset'),
+    );
   });
 
   it('should show color picker dialog on click', async () => {

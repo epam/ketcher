@@ -90,4 +90,28 @@ test.describe('Macromolecules custom presets', () => {
 
     await takeEditorScreenshot(page);
   });
+
+  test('Create two presets with same component codes should create separate entries', async ({
+    page,
+  }) => {
+    // Create Preset A
+    await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await Library(page).rnaBuilder.addToPresets();
+
+    // The preset gets created with a generated name, verify it's there
+    await takeMonomerLibraryScreenshot(page);
+
+    // Create Preset B with same component codes but different name
+    await Library(page).rnaBuilder.expand();
+
+    await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await Library(page).rnaBuilder.addToPresets();
+
+    // Both presets should exist as separate entries in the library
+    // This screenshot should show TWO presets with the same component codes
+    // but different IDs/names in the library
+    await takeMonomerLibraryScreenshot(page);
+  });
 });

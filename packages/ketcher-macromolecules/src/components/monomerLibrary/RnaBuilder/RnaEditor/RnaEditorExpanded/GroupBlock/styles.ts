@@ -51,16 +51,31 @@ export const GroupBlockContainer = styled.div<{
       outline: theme.ketcher.outline.small,
     },
 
-    ':after': {
-      content: '""',
-      position: 'absolute',
-      right: '100%',
-      bottom: 'calc(50% - 1px)',
-      borderLeft: theme.ketcher.outline.medium,
-      borderBottom: theme.ketcher.outline.medium,
-      borderRadius: '0 0 0 4px',
-      height: '130px',
-      width: '17px',
+    ':not(:last-child)': {
+      ':after': {
+        content: '""',
+        position: 'absolute',
+        right: '100%',
+        bottom: 'calc(50% - 1px)',
+        borderLeft: theme.ketcher.outline.medium,
+        borderBottom: theme.ketcher.outline.medium,
+        height: '2px',
+        width: '17px',
+      },
+    },
+
+    ':last-child': {
+      ':after': {
+        content: '""',
+        position: 'absolute',
+        right: '100%',
+        bottom: 'calc(50% - 1px)',
+        borderLeft: theme.ketcher.outline.medium,
+        borderBottom: theme.ketcher.outline.medium,
+        borderRadius: '0 0 0 4px',
+        height: '130px',
+        width: '17px',
+      },
     },
   };
 });

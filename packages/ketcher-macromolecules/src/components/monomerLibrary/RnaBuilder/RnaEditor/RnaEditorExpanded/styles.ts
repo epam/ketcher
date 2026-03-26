@@ -52,9 +52,7 @@ export const GroupsContainer = styled.div<{ compact?: boolean }>`
   justify-content: ${({ compact }) =>
     compact ? 'space-between' : 'flex-start'};
   gap: 8px;
-  padding-top: 15px;
-  margin-top: 1px;
-  overflow: hidden;
+  margin-top: 16px;
 `;
 
 export const PhosphatePositionContainer = styled.div({

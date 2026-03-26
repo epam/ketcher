@@ -700,23 +700,23 @@ export const RnaEditorExpanded = ({
           const isPhosphateGroup = groupName === MonomerGroups.PHOSPHATES;
 
           return (
-            <div key={groupName} className={styles.groupBlockWrapper}>
-              <GroupBlock
-                selected={activeMonomerGroup === groupName}
-                groupName={groupName}
-                monomerName={
-                  isSequenceEditInRNABuilderMode
-                    ? getMonomersName(groupName)
-                    : getMonomerName(groupName)
-                }
-                iconName={iconName}
-                testid={testId}
-                onClick={selectGroup(groupName)}
-              />
+            <GroupBlock
+              selected={activeMonomerGroup === groupName}
+              groupName={groupName}
+              key={groupName}
+              monomerName={
+                isSequenceEditInRNABuilderMode
+                  ? getMonomersName(groupName)
+                  : getMonomerName(groupName)
+              }
+              iconName={iconName}
+              testid={testId}
+              onClick={selectGroup(groupName)}
+            >
               {isPhosphateGroup
                 ? renderPhosphatePositionSelector(phosphatePosition)
                 : null}
-            </div>
+            </GroupBlock>
           );
         })}
       </GroupsContainer>

@@ -101,6 +101,7 @@ type SettingsDialogLocators = {
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
+  resetToSubmenuButton: Locator;
   defaultSettingsButton: Locator;
   closeWindowButton: Locator;
   generalSection: Locator;
@@ -280,6 +281,7 @@ export const SettingsDialog = (page: Page) => {
     openFromFileButton: page.getByTestId('open-settings-from-file-button'),
     saveToFileButton: page.getByTestId('save-settings-to-file-button'),
     resetButton: page.getByTestId('settings-presets-button'),
+    resetToSubmenuButton: page.getByTestId('reset-to-submenu-button'),
     defaultSettingsButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     generalSection,
@@ -333,6 +335,7 @@ export const SettingsDialog = (page: Page) => {
 
     async setACSSettings() {
       await this.openSettingsPresetsMenu();
+      await locators.resetToSubmenuButton.click();
       await locators.setACSSettingsButton.click();
     },
 
@@ -362,6 +365,7 @@ export const SettingsDialog = (page: Page) => {
     async reset() {
       if (await locators.resetButton.isEnabled()) {
         await this.openSettingsPresetsMenu();
+        await locators.resetToSubmenuButton.click();
         await locators.defaultSettingsButton.click();
       }
     },

@@ -77,6 +77,7 @@ const HeaderContent = ({
   initState,
 }) => {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+  const [isResetSubmenuOpen, setIsResetSubmenuOpen] = useState(false);
 
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
@@ -91,6 +92,12 @@ const HeaderContent = ({
 
   const closeSettingsMenu = () => {
     setIsSettingsMenuOpen(false);
+    setIsResetSubmenuOpen(false);
+  };
+
+  const toggleSettingsMenu = () => {
+    setIsSettingsMenuOpen((previousValue) => !previousValue);
+    setIsResetSubmenuOpen(false);
   };
 
   return (
@@ -99,48 +106,67 @@ const HeaderContent = ({
       <div className={classes.settingsMenuWrapper}>
         <button
           type="button"
-          className={classes.settingsMenuButton}
+          className={classes.button}
           data-testid="settings-presets-button"
-          onClick={() =>
-            setIsSettingsMenuOpen((previousValue) => !previousValue)
-          }
+          onClick={toggleSettingsMenu}
+          title="Settings menu"
         >
-          <span>Reset to...</span>
-          <Icon
-            name="chevron"
-            className={clsx(
-              classes.settingsMenuIcon,
-              isSettingsMenuOpen && classes.settingsMenuIconOpened,
-            )}
-          />
+          <Icon name="reset" />
         </button>
         {isSettingsMenuOpen && (
           <ClickAwayListener onClickAway={closeSettingsMenu}>
             <div className={classes.settingsMenu}>
-              <button
-                type="button"
-                className={classes.settingsMenuItem}
-                onClick={() => {
-                  onReset();
-                  closeSettingsMenu();
-                }}
-                data-testid="reset-settings-button"
-                disabled={getIsResetDisabled()}
-              >
-                Default
-              </button>
-              <button
-                type="button"
-                className={classes.settingsMenuItem}
-                onClick={() => {
-                  onACSStyle();
-                  closeSettingsMenu();
-                }}
-                data-testid="acs-style-button"
-                disabled={getIsACSDisabled()}
-              >
-                ACS
-              </button>
+              <div className={classes.settingsSubmenuWrapper}>
+                <button
+                  type="button"
+                  className={clsx(
+                    classes.settingsMenuItem,
+                    isResetSubmenuOpen && classes.settingsMenuItemOpened,
+                  )}
+                  onClick={() =>
+                    setIsResetSubmenuOpen((previousValue) => !previousValue)
+                  }
+                  data-testid="reset-to-submenu-button"
+                >
+                  <span>Reset to...</span>
+                  <Icon
+                    name="chevron"
+                    className={clsx(
+                      classes.settingsMenuIcon,
+                      classes.settingsSubmenuIcon,
+                      isResetSubmenuOpen && classes.settingsSubmenuIconOpened,
+                    )}
+                  />
+                </button>
+                {isResetSubmenuOpen && (
+                  <div className={classes.settingsSubmenu}>
+                    <button
+                      type="button"
+                      className={classes.settingsMenuItem}
+                      onClick={() => {
+                        onReset();
+                        closeSettingsMenu();
+                      }}
+                      data-testid="reset-settings-button"
+                      disabled={getIsResetDisabled()}
+                    >
+                      Default
+                    </button>
+                    <button
+                      type="button"
+                      className={classes.settingsMenuItem}
+                      onClick={() => {
+                        onACSStyle();
+                        closeSettingsMenu();
+                      }}
+                      data-testid="acs-style-button"
+                      disabled={getIsACSDisabled()}
+                    >
+                      ACS
+                    </button>
+                  </div>
+                )}
+              </div>
               <SaveButton
                 title="Save Settings"
                 key="ketcher-settings"

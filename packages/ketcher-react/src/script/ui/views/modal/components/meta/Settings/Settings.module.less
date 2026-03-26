@@ -52,21 +52,6 @@
   margin-left: auto;
 }
 
-.settingsMenuButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid @color-border-input;
-  border-radius: 8px;
-  background-color: @color-background-primary;
-  color: @color-text-primary;
-  padding: 6px 12px;
-
-  &:hover {
-    border-color: @color-primary-green;
-  }
-}
-
 .settingsMenuIcon {
   width: 16px;
   height: 16px;
@@ -93,9 +78,27 @@
   z-index: 11;
 }
 
+.settingsSubmenuWrapper {
+  position: relative;
+}
+
+.settingsSubmenu {
+  position: absolute;
+  top: 0;
+  right: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 8px;
+  border: 1px solid @color-border-input;
+  border-radius: 8px;
+  background-color: @color-background-primary;
+  box-shadow: 0 6px 10px @color-select-box-shadow;
+}
+
 .settingsMenuItem {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   min-height: 32px;
   border: none;
@@ -109,6 +112,10 @@
     background-color: fade(@color-primary-green, 10%);
   }
 
+  &:focus-visible {
+    outline: 1px solid @color-primary-green;
+  }
+
   &:disabled {
     color: @color-icon-disabled;
   }
@@ -116,6 +123,19 @@
   input[type='file'] {
     display: none;
   }
+}
+
+.settingsMenuItemOpened {
+  background-color: fade(@color-primary-green, 10%);
+}
+
+.settingsSubmenuIcon {
+  margin-left: 16px;
+  transform: rotate(90deg);
+}
+
+.settingsSubmenuIconOpened {
+  transform: rotate(180deg);
 }
 
 .accordion {

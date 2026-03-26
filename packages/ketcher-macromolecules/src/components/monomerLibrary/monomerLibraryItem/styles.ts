@@ -85,8 +85,6 @@ export const Card = styled.div<{
   .is-library-dragging &:not([data-dragging='true']):hover .autochain,
   .is-library-dragging &:not([data-dragging='true']):hover .menu,
   .is-library-dragging &:not([data-dragging='true']):hover .dots {
-    visibility: hidden !important;
-    opacity: 0 !important;
     pointer-events: none !important;
   }
 

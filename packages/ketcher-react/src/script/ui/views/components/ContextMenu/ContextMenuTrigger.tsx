@@ -39,17 +39,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { ketcherId } = useAppContext();
   const { show } = useContextMenu<ContextMenuProps>();
 
-  const shouldBlockMonomerCreationContextMenu = useCallback(
-    (editor: Editor, showProps: ContextMenuProps | null) => {
-      if (!editor.isMonomerCreationWizardActive || !showProps) {
-        return false;
-      }
-
-      return showProps.id === CONTEXT_MENU_ID.FOR_BONDS + ketcherId;
-    },
-    [ketcherId],
-  );
-
   const getSelectedGroupsInfo = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct = editor.struct();
@@ -200,10 +189,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      if (shouldBlockMonomerCreationContextMenu(editor, showProps)) {
-        return;
-      }
-
       showProps &&
         show({
           id: showProps.id,
@@ -211,12 +196,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           props: { ...showProps, ketcherId },
         });
     },
-    [
-      getSelectedGroupsInfo,
-      shouldBlockMonomerCreationContextMenu,
-      show,
-      ketcherId,
-    ],
+    [getSelectedGroupsInfo, show, ketcherId],
   );
 
   return (

@@ -47,4 +47,29 @@ describe('Zoom Tool', () => {
     );
     expect(zoomed).toHaveBeenCalled();
   });
+
+  describe('drawScrollBars', () => {
+    beforeEach(() => {
+      jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
+      // eslint-disable-next-line no-new
+      new CoreEditor({
+        theme: polymerEditorTheme,
+        canvas,
+      });
+    });
+
+    it('should not create scrollbar rects when canvas has no children', () => {
+      const drawnStructures = canvas.querySelector('.drawn-structures')!;
+      while (drawnStructures.firstChild) {
+        drawnStructures.removeChild(drawnStructures.firstChild);
+      }
+
+      ZoomTool.instance.drawScrollBars();
+
+      const scrollbarRects = canvas.querySelectorAll(
+        'rect[data-testid$="-bar"]',
+      );
+      expect(scrollbarRects.length).toBe(0);
+    });
+  });
 });

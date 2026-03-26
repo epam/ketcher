@@ -629,7 +629,7 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(this, options.showHydrogenLabels) &&
+        displayHydrogen(struct, this, options.showHydrogenLabels) &&
         !shouldHideHydrogenInPreview
       ) {
         const data = showHydrogen(this, render, implh, {
@@ -1307,13 +1307,17 @@ function shouldDisplayStereoLabel(
 function isLabelVisible(restruct, options, atom: ReAtom) {
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(
+    restruct.molecule,
+    atom,
+  );
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero;
 
   const neighborsLength =
-    atom.a.neighbors.length === 0 ||
-    (atom.a.neighbors.length < 2 && visibleTerminal);
+    visibleNeighbors.length === 0 ||
+    (visibleNeighbors.length < 2 && visibleTerminal);
 
   if (isAttachmentPointAtom && isCarbon) {
     return false;
@@ -1335,9 +1339,9 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
 
   if (shouldBeVisible) return true;
 
-  if (atom.a.neighbors.length === 2) {
-    const nei1 = atom.a.neighbors[0];
-    const nei2 = atom.a.neighbors[1];
+  if (visibleNeighbors.length === 2) {
+    const nei1 = visibleNeighbors[0];
+    const nei2 = visibleNeighbors[1];
     const hb1 = restruct.molecule.halfBonds.get(nei1);
     const hb2 = restruct.molecule.halfBonds.get(nei2);
     const bond1 = restruct.bonds.get(hb1.bid);
@@ -1356,20 +1360,28 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
   return false;
 }
 
-function displayHydrogen(atom: ReAtom, hydrogenLabels: ShowHydrogenLabels) {
+function displayHydrogen(
+  struct: Struct,
+  atom: ReAtom,
+  hydrogenLabels: ShowHydrogenLabels,
+) {
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
-      atom.a.neighbors.length < 2) ||
+      visibleNeighbors.length < 2) ||
     (hydrogenLabels === ShowHydrogenLabels.Hetero &&
       atom.label?.text.toLowerCase() !== 'c') ||
     (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
-      (atom.a.neighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
+      (visibleNeighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
   );
 }
 
 function shouldHydrogenBeOnLeft(struct, atom) {
-  if (atom.a.neighbors.length === 0) {
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+
+  if (visibleNeighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
       return false;
     } else {
@@ -1378,14 +1390,28 @@ function shouldHydrogenBeOnLeft(struct, atom) {
     }
   }
 
-  if (atom.a.neighbors.length === 1) {
-    const neighbor = atom.a.neighbors[0];
+  if (visibleNeighbors.length === 1) {
+    const neighbor = visibleNeighbors[0];
     const neighborDirection = struct.halfBonds.get(neighbor).dir;
 
     return neighborDirection.x > 0;
   }
 
   return false;
+}
+
+function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
+  return atom.a.neighbors.filter((neighborHalfBondId) => {
+    const halfBond = struct.halfBonds.get(neighborHalfBondId);
+
+    if (!halfBond) {
+      return false;
+    }
+
+    const bond = struct.bonds.get(halfBond.bid);
+
+    return !bond || !Bond.isBondToHiddenLeavingGroup(struct, bond);
+  });
 }
 
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {

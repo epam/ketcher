@@ -52,6 +52,58 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 
+test(`Verify that undo/redo functionality restores deleted bonds correctly in macromolecules mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6318
+   * Description: Verify that undo/redo functionality restores deleted bonds correctly in macromolecules mode
+   *
+   * Case:
+   * 1. Load ket file with 14 bonds at Macro
+   * 2. Take screenshot to witness initial state
+   * 3. Delete every bond one by one
+   * 4. Undo every deletion and take screenshot after each undo
+   * 5. Redo every deletion and take screenshot after each redo
+   */
+  test.slow();
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
+  );
+  await CommonLeftToolbar(page).erase();
+
+  const bondsToDelete = [
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Double, bondStereo: BondStereo.None },
+    { bondType: BondType.Triple },
+    { bondType: BondType.Any },
+    { bondType: BondType.Aromatic },
+    { bondType: BondType.SingleDouble },
+    { bondType: BondType.SingleAromatic },
+    { bondType: BondType.DoubleAromatic },
+    { bondType: BondType.Dative },
+    { bondType: BondType.Hydrogen },
+    { bondType: BondType.Single, bondStereo: BondStereo.Up },
+    { bondType: BondType.Single, bondStereo: BondStereo.Down },
+    { bondType: BondType.Single, bondStereo: BondStereo.Either },
+    { bondType: BondType.Double, bondStereo: BondStereo.CisTrans },
+  ];
+
+  for (const bond of bondsToDelete) {
+    const bondLocator = getBondLocator(page, bond);
+    await bondLocator.first().click({ force: true });
+  }
+
+  for (let i = bondsToDelete.length - 1; i >= 0; i--) {
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+  }
+
+  for (let i = bondsToDelete.length - 1; i >= 0; i--) {
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page);
+  }
+});
+
 test(`Verify that bond lines between atoms do not overlap in any angle in macro mode`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5960
@@ -430,7 +482,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   await CommonLeftToolbar(page).erase();
 
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Single, bondStereo: BondStereo.None },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
@@ -452,58 +504,6 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-  }
-});
-
-test(`Verify that undo/redo functionality restores deleted bonds correctly in macromolecules mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/6318
-   * Description: Verify that undo/redo functionality restores deleted bonds correctly in macromolecules mode
-   *
-   * Case:
-   * 1. Load ket file with 14 bonds at Macro
-   * 2. Take screenshot to witness initial state
-   * 3. Delete every bond one by one
-   * 4. Undo every deletion and take screenshot after each undo
-   * 5. Redo every deletion and take screenshot after each redo
-   */
-  test.slow();
-  await openFileAndAddToCanvasAsNewProject(
-    page,
-    'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
-  );
-  await CommonLeftToolbar(page).erase();
-
-  const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
-    { bondType: BondType.Double, bondStereo: BondStereo.None },
-    { bondType: BondType.Triple },
-    { bondType: BondType.Any },
-    { bondType: BondType.Aromatic },
-    { bondType: BondType.SingleDouble },
-    { bondType: BondType.SingleAromatic },
-    { bondType: BondType.DoubleAromatic },
-    { bondType: BondType.Dative },
-    { bondType: BondType.Hydrogen },
-    { bondType: BondType.Single, bondStereo: BondStereo.Up },
-    { bondType: BondType.Single, bondStereo: BondStereo.Down },
-    { bondType: BondType.Single, bondStereo: BondStereo.Either },
-    { bondType: BondType.Double, bondStereo: BondStereo.CisTrans },
-  ];
-
-  for (const bond of bondsToDelete) {
-    const bondLocator = getBondLocator(page, bond);
-    await bondLocator.first().click({ force: true });
-  }
-
-  for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page);
-  }
-
-  for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await CommonTopLeftToolbar(page).redo();
-    await takeEditorScreenshot(page);
   }
 });
 
@@ -590,7 +590,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Single, bondStereo: BondStereo.None },
     { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },

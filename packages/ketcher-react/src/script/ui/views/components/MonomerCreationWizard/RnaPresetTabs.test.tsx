@@ -455,4 +455,31 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     // But since there's no structure, no highlights should be created
     expect(mockEditor.highlights.create).not.toHaveBeenCalled();
   });
+
+  it('should show component-specific hints for base, sugar, and phosphate tabs', () => {
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-base-tab'));
+    expect(
+      screen.getByText('Select all atoms that form the base.'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('nucleotide-sugar-tab'));
+    expect(
+      screen.getByText('Select all atoms that form the sugar.'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+    expect(
+      screen.getByText('Select all atoms that form the phosphate.'),
+    ).toBeInTheDocument();
+  });
 });

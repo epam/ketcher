@@ -1007,6 +1007,9 @@ test.describe('Selection tools', () => {
     }
     await page.keyboard.up('Shift');
     await expect(page).toHaveScreenshot();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
   });
 
   test('Selection Drop-down list', async () => {

@@ -20,8 +20,15 @@ import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
-import { useEffect, useState } from 'react';
-import { ClickAwayListener } from '@mui/material';
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -67,6 +74,42 @@ interface SettingsCallProps extends BaseCallProps {
 }
 
 const defaultSettings = getDefaultOptions();
+// Keep the portaled settings menu aligned to the trigger while preserving
+// the SETTINGS_MENU_EDGE_OFFSET viewport margin and a stable fallback size
+// before the menu is measured.
+const SETTINGS_MENU_OFFSET = 4;
+const SETTINGS_MENU_EDGE_OFFSET = 8;
+const SETTINGS_MENU_FALLBACK_WIDTH = 170;
+const SETTINGS_MENU_FALLBACK_HEIGHT = 136;
+
+const getSettingsMenuPosition = (
+  triggerRect: DOMRect,
+  menuRect?: DOMRect,
+): CSSProperties => {
+  const menuWidth = menuRect?.width ?? SETTINGS_MENU_FALLBACK_WIDTH;
+  const menuHeight = menuRect?.height ?? SETTINGS_MENU_FALLBACK_HEIGHT;
+  const maxLeft = window.innerWidth - menuWidth - SETTINGS_MENU_EDGE_OFFSET;
+  const menuBottom = triggerRect.bottom + SETTINGS_MENU_OFFSET;
+  const shouldOpenAbove =
+    menuBottom + menuHeight > window.innerHeight - SETTINGS_MENU_EDGE_OFFSET;
+  const top = shouldOpenAbove
+    ? triggerRect.top - menuHeight - SETTINGS_MENU_OFFSET
+    : menuBottom;
+
+  return {
+    top: `${Math.max(
+      SETTINGS_MENU_EDGE_OFFSET,
+      Math.min(
+        top,
+        window.innerHeight - menuHeight - SETTINGS_MENU_EDGE_OFFSET,
+      ),
+    )}px`,
+    left: `${Math.max(
+      SETTINGS_MENU_EDGE_OFFSET,
+      Math.min(triggerRect.right - menuWidth, maxLeft),
+    )}px`,
+  };
+};
 
 const HeaderContent = ({
   server,
@@ -78,6 +121,11 @@ const HeaderContent = ({
 }) => {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const [isResetSubmenuOpen, setIsResetSubmenuOpen] = useState(false);
+  const [settingsMenuPosition, setSettingsMenuPosition] = useState<
+    CSSProperties | undefined
+  >(undefined);
+  const settingsMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const settingsMenuRef = useRef<HTMLDivElement>(null);
 
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
@@ -90,21 +138,90 @@ const HeaderContent = ({
       ...ACS_STYLE_DEFAULT_SETTINGS,
     });
 
-  const closeSettingsMenu = () => {
+  const closeSettingsMenu = useCallback(() => {
     setIsSettingsMenuOpen(false);
     setIsResetSubmenuOpen(false);
-  };
+  }, []);
+
+  const updateSettingsMenuPosition = useCallback(() => {
+    if (!settingsMenuButtonRef.current) {
+      return;
+    }
+
+    const triggerRect = settingsMenuButtonRef.current.getBoundingClientRect();
+    const menuRect = settingsMenuRef.current?.getBoundingClientRect();
+
+    setSettingsMenuPosition(getSettingsMenuPosition(triggerRect, menuRect));
+  }, []);
 
   const toggleSettingsMenu = () => {
     setIsSettingsMenuOpen((previousValue) => !previousValue);
     setIsResetSubmenuOpen(false);
   };
 
+  const resetSubmenuState = isSettingsMenuOpen && isResetSubmenuOpen;
+
+  // Recalculate when the nested submenu opens so the measured portal height
+  // can still fit inside the viewport.
+  useLayoutEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return;
+    }
+
+    updateSettingsMenuPosition();
+  }, [resetSubmenuState, isSettingsMenuOpen, updateSettingsMenuPosition]);
+
+  useEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return undefined;
+    }
+
+    const handleViewportChange = () => {
+      updateSettingsMenuPosition();
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    // Listen in the capture phase so scrolls from any scrollable ancestor
+    // reposition the portaled menu, not only window scrolling.
+    window.addEventListener('scroll', handleViewportChange, true);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isSettingsMenuOpen, updateSettingsMenuPosition]);
+
+  useEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return undefined;
+    }
+
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+
+      if (
+        settingsMenuRef.current?.contains(target) ||
+        settingsMenuButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeSettingsMenu();
+    };
+
+    document.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [closeSettingsMenu, isSettingsMenuOpen]);
+
   return (
     <div className={classes.headerContent}>
       <span className={classes.title}> Settings</span>
       <div className={classes.settingsMenuWrapper}>
         <button
+          ref={settingsMenuButtonRef}
           type="button"
           className={classes.button}
           data-testid="settings-presets-button"
@@ -113,9 +230,13 @@ const HeaderContent = ({
         >
           <Icon name="reset" />
         </button>
-        {isSettingsMenuOpen && (
-          <ClickAwayListener onClickAway={closeSettingsMenu}>
-            <div className={classes.settingsMenu}>
+        {isSettingsMenuOpen &&
+          createPortal(
+            <div
+              ref={settingsMenuRef}
+              className={classes.settingsMenu}
+              style={settingsMenuPosition}
+            >
               <div className={classes.settingsSubmenuWrapper}>
                 <button
                   type="button"
@@ -191,9 +312,9 @@ const HeaderContent = ({
               >
                 Load Settings
               </OpenButton>
-            </div>
-          </ClickAwayListener>
-        )}
+            </div>,
+            document.body,
+          )}
       </div>
     </div>
   );

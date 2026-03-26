@@ -64,9 +64,7 @@
 }
 
 .settingsMenu {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  position: fixed;
   display: flex;
   flex-direction: column;
   min-width: 170px;
@@ -75,7 +73,8 @@
   border-radius: 8px;
   background-color: @color-background-primary;
   box-shadow: 0 6px 10px @color-select-box-shadow;
-  z-index: 11;
+  // Keep the portaled menu above the MUI dialog layer (1300).
+  z-index: 1301;
 }
 
 .settingsSubmenuWrapper {
@@ -94,6 +93,7 @@
   border-radius: 8px;
   background-color: @color-background-primary;
   box-shadow: 0 6px 10px @color-select-box-shadow;
+  z-index: 1;
 }
 
 .settingsMenuItem {

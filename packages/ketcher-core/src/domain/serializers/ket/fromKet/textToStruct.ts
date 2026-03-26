@@ -69,6 +69,7 @@ interface KETTextV2 extends KETFontStyleOverrides {
  * Convert KET v2.0 format to internal format (pos array + Lexical content).
  */
 function convertKetV2ToInternal(ketText: KETTextV2): {
+  position: { x: number; y: number; z?: number };
   pos: Array<{ x: number; y: number; z?: number }>;
   content: string;
 } {
@@ -147,6 +148,7 @@ function convertKetV2ToInternal(ketText: KETTextV2): {
   };
 
   return {
+    position: { x, y, z },
     pos,
     content: JSON.stringify(lexicalRoot),
   };

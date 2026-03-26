@@ -125,19 +125,15 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     >
       Cancel
     </button>
-    <span
+    <button
       aria-label=""
-      class=""
+      class="css-wciliw"
       data-mui-internal-clone-element="true"
+      data-testid="add-to-presets-btn"
+      disabled=""
     >
-      <button
-        class="css-wciliw"
-        data-testid="add-to-presets-btn"
-        disabled=""
-      >
-        Add to Presets
-      </button>
-    </span>
+      Add to Presets
+    </button>
   </div>
 </div>
 `;
@@ -268,19 +264,15 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     >
       Cancel
     </button>
-    <span
+    <button
       aria-label=""
-      class=""
+      class="css-wciliw"
       data-mui-internal-clone-element="true"
+      data-testid="save-btn"
+      disabled=""
     >
-      <button
-        class="css-wciliw"
-        data-testid="save-btn"
-        disabled=""
-      >
-        Update
-      </button>
-    </span>
+      Update
+    </button>
   </div>
 </div>
 `;

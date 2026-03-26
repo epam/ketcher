@@ -52,3 +52,16 @@ body {
     margin: 20px;
     box-shadow: 1px 4px 12px rgba(103, 104, 132, 0.18);
 }
+
+body.library-dragging .monomer-library {
+  pointer-events: none !important;
+}
+
+body.library-dragging * {
+  cursor: grabbing !important;
+}
+
+body.library-dragging .star,
+body.library-dragging .autochain {
+  pointer-events: none !important;
+}

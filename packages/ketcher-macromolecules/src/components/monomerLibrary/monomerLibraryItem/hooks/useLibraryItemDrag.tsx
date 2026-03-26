@@ -18,12 +18,21 @@ export const useLibraryItemDrag = (
     const itemElement = select(itemRef.current);
 
     const dragBehavior = drag<HTMLElement, unknown>()
-      .on('start', () => {
-        // In sequence layout we do not allow DnD; cancel visual drag early
+      .on('start', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
+        const target = event.sourceEvent.target as HTMLElement;
+        const isInteractiveElement = target.closest('.star, .autochain');
+
+        if (isInteractiveElement) {
+          editor.isLibraryItemDragCancelled = true;
+          return;
+        }
+
         editor.isLibraryItemDragCancelled =
           editor.mode.modeName === 'sequence-layout-mode';
+
         if (!editor.isLibraryItemDragCancelled) {
           document.body.style.cursor = 'grabbing';
+          document.body.classList.add('library-dragging');
         }
       })
       .on('drag', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -66,6 +75,7 @@ export const useLibraryItemDrag = (
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
         document.body.style.cursor = '';
+        document.body.classList.remove('library-dragging');
       });
 
     itemElement.call(dragBehavior);

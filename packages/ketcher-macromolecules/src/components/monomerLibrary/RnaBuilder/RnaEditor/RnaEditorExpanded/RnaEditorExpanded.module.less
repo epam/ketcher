@@ -26,10 +26,17 @@
   height: 100%;
   border-radius: 4px;
   border: 1px solid #b4b9d6;
-  background-color: #E1E6ED;
 
   &.active {
     border-color: #585858;
+  }
+
+  &:not(&.hover) {
+    background-color: #f3f8f9;
+  }
+
+  &.hover {
+    background-color: #E1E6ED;
   }
 
   &.hover:hover {

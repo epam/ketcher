@@ -613,35 +613,31 @@ export const RnaEditorExpanded = ({
   if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
       <Tooltip title={saveButtonDisabledTooltip}>
-        <span>
-          <StyledButton
-            disabled={isSaveButtonDisabled}
-            primary
-            data-testid="add-to-presets-btn"
-            onClick={onSave}
-          >
-            Add to Presets
-          </StyledButton>
-        </span>
+        <StyledButton
+          disabled={isSaveButtonDisabled}
+          primary
+          data-testid="add-to-presets-btn"
+          onClick={onSave}
+        >
+          Add to Presets
+        </StyledButton>
       </Tooltip>
     );
   } else if (isEditMode) {
     mainButton = (
       <Tooltip title={saveButtonDisabledTooltip}>
-        <span>
-          <StyledButton
-            primary
-            disabled={
-              isSequenceEditInRNABuilderMode
-                ? !isSequenceSelectionUpdated
-                : isSaveButtonDisabled
-            }
-            data-testid="save-btn"
-            onClick={isSequenceEditInRNABuilderMode ? onUpdateSequence : onSave}
-          >
-            {isSequenceEditInRNABuilderMode ? 'Update' : 'Save'}
-          </StyledButton>
-        </span>
+        <StyledButton
+          primary
+          disabled={
+            isSequenceEditInRNABuilderMode
+              ? !isSequenceSelectionUpdated
+              : isSaveButtonDisabled
+          }
+          data-testid="save-btn"
+          onClick={isSequenceEditInRNABuilderMode ? onUpdateSequence : onSave}
+        >
+          {isSequenceEditInRNABuilderMode ? 'Update' : 'Save'}
+        </StyledButton>
       </Tooltip>
     );
   } else {

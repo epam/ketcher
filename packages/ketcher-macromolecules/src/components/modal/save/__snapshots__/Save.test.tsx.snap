@@ -170,6 +170,7 @@ exports[`Save modal renders correctly 1`] = `
                   readonly=""
                 >
                   {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [],
         "connections": [],

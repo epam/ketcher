@@ -785,8 +785,7 @@
             "right": {
               "type": "number"
             }
-          },
-          "additionalProperties": false
+          }
         }
       ]
     },
@@ -815,8 +814,7 @@
         "superscript": {
           "type": "boolean"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "textPart": {
       "type": "object",
@@ -827,9 +825,23 @@
         },
         "font": {
           "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
         }
-      },
-      "additionalProperties": false
+      }
     },
     "textParagraph": {
       "type": "object",
@@ -844,6 +856,21 @@
         },
         "font": {
           "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
         },
         "parts": {
           "type": "array",
@@ -928,11 +955,11 @@
                 },
                 "width": {
                   "type": "number",
-                  "exclusiveMinimum": 0
+                  "minimum": 0
                 },
                 "height": {
                   "type": "number",
-                  "exclusiveMinimum": 0
+                  "minimum": 0
                 }
               }
             },
@@ -951,6 +978,21 @@
             },
             "font": {
               "$ref": "#/definitions/textFont"
+            },
+            "color": {
+              "type": "string"
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "subscript": {
+              "type": "boolean"
+            },
+            "superscript": {
+              "type": "boolean"
             }
           }
         }

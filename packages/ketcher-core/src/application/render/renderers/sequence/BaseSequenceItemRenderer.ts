@@ -401,7 +401,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );

@@ -386,10 +386,26 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
+  test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
     /* 
     Test case: Macro-Micro-Switcher
-    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
+    Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
+    */
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 150,
+    });
+  });
+
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
+    /*
+    Test case: Macro-Micro-Switcher
+    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs
     when switching from Macro mode to Micro mode and back to Macro is saved
     */
 
@@ -406,22 +422,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
-  });
-
-  test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
-    */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      await readFileContent('KET/one-functional-group-expanded.ket'),
-    );
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
-      padding: 150,
-    });
   });
 
   test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async () => {

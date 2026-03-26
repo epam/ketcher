@@ -15,6 +15,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   resetZoomLevelToDefault,
+  Arrows,
 } from '@utils';
 import {
   copyAndPaste,
@@ -34,6 +35,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { INPUT_DELAY } from '@utils/globals';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -437,19 +439,22 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y, {
-        from: 'pageTopLeft',
+      const arrow = getArrowLocator(page, {
+        arrowType: Arrows.EquilibriumFilledHalfBow,
       });
-
+      await arrow.hover({ force: true });
+      await arrow.click({ force: true });
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
-
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         maxDiffPixels: 1,
       });
       await CommonTopLeftToolbar(page).redo();
+      await takeEditorScreenshot(page, {
+        maxDiffPixels: 1,
+      });
     });
 
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({

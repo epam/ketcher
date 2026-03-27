@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
@@ -323,6 +323,12 @@ const mapDispatchToProps = (
   },
 });
 
-const Check = connect(mapStateToProps, mapDispatchToProps)(CheckDialog);
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CheckDialogAny = CheckDialog as any;
+const Check = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CheckDialogAny) as React.ComponentType<CheckDialogOwnProps>;
 
 export default Check;

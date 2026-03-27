@@ -305,10 +305,6 @@ function Field(props: FieldProps) {
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  const getExtraSchema = () => {
-    return rest.extraSchema || schema.properties[extraName ?? ''];
-  };
-
   const Component = component as React.ComponentType<Record<string, unknown>>;
   const formField = Component ? (
     <Component
@@ -317,7 +313,9 @@ function Field(props: FieldProps) {
       className={className}
       onExtraChange={onExtraChange}
       extraValue={extraValue}
-      {...(extraName && { extraSchema: getExtraSchema() })}
+      {...(extraName && {
+        extraSchema: rest.extraSchema || schema.properties[extraName],
+      })}
       {...fieldOpts}
       {...rest}
     />

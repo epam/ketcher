@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Save Dialog should be rendered correctly should render opened file format dropdown when the closed dropdown is clicked 1`] = `
 {

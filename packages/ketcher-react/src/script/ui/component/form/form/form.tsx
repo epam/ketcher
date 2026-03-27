@@ -201,7 +201,7 @@ export default connect(null, (dispatch) => ({
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}))(Form as any);
+}))(Form as any) as React.ComponentType<FormOwnProps & FormStateProps>;
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;

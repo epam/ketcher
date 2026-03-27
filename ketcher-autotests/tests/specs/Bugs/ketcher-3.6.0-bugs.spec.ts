@@ -31,7 +31,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
+import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Chem } from '@tests/pages/constants/monomers/Chem';

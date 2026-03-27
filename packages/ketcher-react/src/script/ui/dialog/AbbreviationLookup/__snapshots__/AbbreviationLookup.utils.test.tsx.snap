@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should ignore space at the beginning and the end 1`] = `"SHORTABBR (Very long test name)"`;
 

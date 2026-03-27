@@ -61,6 +61,26 @@ interface TextNode {
   };
 }
 
+interface LexicalTextChild {
+  type?: string;
+  text?: string;
+  format?: number;
+  font?: string;
+  style?: string;
+}
+
+interface LexicalParagraph {
+  alignment?: string;
+  indent?: KETIndent;
+  font?: KETFont;
+  color?: string;
+  bold?: boolean;
+  italic?: boolean;
+  superscript?: boolean;
+  subscript?: boolean;
+  children?: LexicalTextChild[];
+}
+
 const IS_BOLD = 1;
 const IS_ITALIC = 2;
 const IS_SUBSCRIPT = 32;
@@ -72,7 +92,7 @@ const IS_SUPERSCRIPT = 64;
  */
 function applyFontStyleOverrides(
   target: KETFontStyleOverrides,
-  child: any,
+  child: LexicalTextChild,
 ): void {
   const format = child.format || 0;
 
@@ -140,34 +160,36 @@ export function textToKet(textNode) {
     if (root.subscript !== undefined) ketText.subscript = root.subscript;
 
     // Build paragraphs array
-    ketText.paragraphs = (root.children || []).map((paragraph: any) => {
-      const paraObj: KETParagraph = { parts: [] };
-      if (paragraph.alignment !== undefined)
-        paraObj.alignment = paragraph.alignment;
-      if (paragraph.indent !== undefined) paraObj.indent = paragraph.indent;
-      if (paragraph.font !== undefined) paraObj.font = paragraph.font;
-      if (paragraph.color !== undefined) paraObj.color = paragraph.color;
-      if (paragraph.bold !== undefined) paraObj.bold = paragraph.bold;
-      if (paragraph.italic !== undefined) paraObj.italic = paragraph.italic;
-      if (paragraph.superscript !== undefined)
-        paraObj.superscript = paragraph.superscript;
-      if (paragraph.subscript !== undefined)
-        paraObj.subscript = paragraph.subscript;
+    ketText.paragraphs = (root.children || []).map(
+      (paragraph: LexicalParagraph) => {
+        const paraObj: KETParagraph = { parts: [] };
+        if (paragraph.alignment !== undefined)
+          paraObj.alignment = paragraph.alignment;
+        if (paragraph.indent !== undefined) paraObj.indent = paragraph.indent;
+        if (paragraph.font !== undefined) paraObj.font = paragraph.font;
+        if (paragraph.color !== undefined) paraObj.color = paragraph.color;
+        if (paragraph.bold !== undefined) paraObj.bold = paragraph.bold;
+        if (paragraph.italic !== undefined) paraObj.italic = paragraph.italic;
+        if (paragraph.superscript !== undefined)
+          paraObj.superscript = paragraph.superscript;
+        if (paragraph.subscript !== undefined)
+          paraObj.subscript = paragraph.subscript;
 
-      // Build parts array from text children
-      paraObj.parts = (paragraph.children || [])
-        .map((child: any) => {
-          if (child.type !== 'text' || child.text === undefined) return null;
+        // Build parts array from text children
+        paraObj.parts = (paragraph.children || [])
+          .map((child: LexicalTextChild) => {
+            if (child.type !== 'text' || child.text === undefined) return null;
 
-          const part: KETTextPart = { text: child.text };
-          applyFontStyleOverrides(part, child);
+            const part: KETTextPart = { text: child.text };
+            applyFontStyleOverrides(part, child);
 
-          return part;
-        })
-        .filter((p: KETTextPart | null): p is KETTextPart => Boolean(p));
+            return part;
+          })
+          .filter((p: KETTextPart | null): p is KETTextPart => Boolean(p));
 
-      return paraObj;
-    });
+        return paraObj;
+      },
+    );
 
     return ketText;
   };

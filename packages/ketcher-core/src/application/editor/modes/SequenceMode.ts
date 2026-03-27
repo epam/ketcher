@@ -1278,7 +1278,7 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Delete'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          if (SequenceRenderer.selections.length > 0) {
+          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
             this.deleteSelection();
           } else {
             deleteNode(Direction.Right);
@@ -1289,7 +1289,7 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Backspace'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          if (SequenceRenderer.selections.length > 0) {
+          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
             this.deleteSelection();
           } else {
             deleteNode(Direction.Left);

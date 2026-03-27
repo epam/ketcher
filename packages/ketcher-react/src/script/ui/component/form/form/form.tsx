@@ -109,7 +109,7 @@ class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
-  constructor(props) {
+  constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
 
@@ -127,7 +127,7 @@ class Form extends Component<FormProps> {
     this._contextValue = { schema, stateStore: this };
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: FormProps) {
     const {
       schema,
       result,
@@ -145,30 +145,30 @@ class Form extends Component<FormProps> {
     }
   }
 
-  updateState(newState) {
+  updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
     const errs = getErrorsObj(errors);
     onUpdate(instance, valid, errs);
   }
 
-  field(name, onChange, extraName) {
+  field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
     const { result, errors } = this.props;
     const value = result[name];
     const extraValue = extraName ? result[extraName] : null;
 
-    const handleOnChange = (name, value) => {
-      const newState = { ...this.props.result, [name]: value };
+    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
+      const newState = { ...this.props.result, [fieldName]: fieldValue };
       this.updateState(newState);
-      if (onChange) onChange(value);
+      if (onChange) onChange(fieldValue);
     };
 
     return {
       dataError: errors?.[name],
       value,
       extraValue,
-      onChange: (val) => handleOnChange(name, val),
-      onExtraChange: (val) => handleOnChange(extraName, val),
+      onChange: (val: unknown) => handleOnChange(name, val),
+      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
     };
   }
 

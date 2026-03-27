@@ -40,7 +40,8 @@ export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
   init?: Record<string, unknown> | null;
-  customValid?: Record<string, (value: unknown) => boolean | string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customValid?: Record<string, (value: any) => boolean | string>;
   serialize?: Record<string, string>;
   deserialize?: Record<string, string>;
 }
@@ -82,13 +83,15 @@ export interface FieldProps {
   extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
-  onChange?: (value: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange?: (value: any) => void;
   placeholder?: string;
   checked?: boolean;
 }
 
 export interface FieldWithModalProps extends FieldProps {
-  onEdit?: (onChange: (value: unknown) => void) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onEdit?: (onChange: (value: any) => void) => void;
   autoFocus?: boolean;
 }
 
@@ -100,9 +103,12 @@ export interface CustomQueryFieldProps extends FieldProps {
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
-    formState: Record<string, unknown>,
-    onChange: (value: unknown) => void,
-    updateFormState: (settings: Record<string, unknown>) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formState: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange: (value: any) => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateFormState: (settings: any) => void,
   ) => void;
 }
 

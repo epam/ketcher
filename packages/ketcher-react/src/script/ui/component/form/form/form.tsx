@@ -31,6 +31,13 @@ import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
+export interface FormProps {
+  children: React.ReactNode;
+  init?: object | null;
+  schema?: object;
+  customValid?: object;
+}
+
 class Form extends Component {
   constructor(props) {
     super(props);

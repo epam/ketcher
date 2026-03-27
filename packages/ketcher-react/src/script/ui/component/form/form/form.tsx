@@ -87,7 +87,7 @@ export interface FieldProps {
 }
 
 export interface FieldWithModalProps extends FieldProps {
-  onEdit?: (onChange: (value: string) => void) => void;
+  onEdit?: (onChange: (value: unknown) => void) => void;
   autoFocus?: boolean;
 }
 

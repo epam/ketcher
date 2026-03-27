@@ -92,18 +92,12 @@ export type SelectOneOfProps = FieldProps;
 
 export interface CustomQueryFieldProps extends FieldProps {
   name: string;
-  component?: React.ComponentType<never>;
-  options?: Array<{ value: string; label: string }>;
-  disabled?: boolean;
-  formName?: string;
-  'data-testid'?: string;
   labelPos: string;
-  className?: string;
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
     formState: Record<string, unknown>,
-    _,
+    onChange: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
   ) => void;
 }

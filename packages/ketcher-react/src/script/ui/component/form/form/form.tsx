@@ -579,17 +579,17 @@ function propSchema(
 
   return {
     key: schema.key || '',
-    serialize: (inst) => {
-      validate(inst);
+    serialize: (inst: Record<string, unknown>) => {
+      const isValid = validate(inst);
+      const errors = validate.errors || [];
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
-        valid: validate(inst),
-        errors: validate.errors || [],
+        valid: isValid,
+        errors,
       };
     },
-    deserialize: (inst) => {
-      validate(inst);
+    deserialize: (inst: Record<string, unknown>) => {
       return deserializeRewrite(deserialize, inst);
     },
   };

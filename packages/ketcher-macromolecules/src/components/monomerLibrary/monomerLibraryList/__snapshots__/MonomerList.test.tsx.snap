@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Monomer List should render correct with groups 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -172,7 +172,7 @@ Object {
 `;
 
 exports[`Monomer List should render correct without groups 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>

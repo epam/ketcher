@@ -46,7 +46,7 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
 `;
 
 exports[`Monomer Group should render correct with title prop 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -555,7 +555,7 @@ Object {
 `;
 
 exports[`Monomer Group should render correct without title prop 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Menu component should render menu component in a container 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>

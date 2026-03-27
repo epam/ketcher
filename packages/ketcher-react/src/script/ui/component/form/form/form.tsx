@@ -16,7 +16,7 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import Ajv from 'ajv';
+import Ajv, { ErrorObject } from 'ajv';
 import { ErrorPopover } from './errorPopover';
 import {
   FormContext,
@@ -105,6 +105,10 @@ export interface CustomQueryFieldProps extends FieldProps {
   ) => void;
 }
 
+type AjvErrorWithInvalidMessage = ErrorObject & {
+  parentSchema?: { invalidMessage?: string | ((data: unknown) => string) };
+};
+
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
@@ -117,7 +121,7 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors);
+      const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
@@ -148,8 +152,8 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors);
-    onUpdate(instance, valid, errs);
+    const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+    onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
   field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
@@ -272,7 +276,7 @@ function Label({ labelPos, title, children, ...props }: LabelProps) {
   );
 }
 
-function Field(props) {
+function Field(props: FieldProps) {
   const {
     name,
     extraName,
@@ -283,24 +287,24 @@ function Field(props) {
     extraLabel,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
   }, []);
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
+  const desc = rest.schema || schema.properties[name ?? ''];
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
-    stateStore.field(name, onChange, extraName);
+    stateStore.field(name ?? '', onChange, extraName);
 
   const getExtraSchema = () => {
-    return rest.extraSchema || schema.properties[extraName];
+    return rest.extraSchema || schema.properties[extraName ?? ''];
   };
 
-  const Component = component;
-  const formField = component ? (
+  const Component = component as React.ComponentType<Record<string, unknown>>;
+  const formField = Component ? (
     <Component
       name={name}
       schema={desc}
@@ -354,14 +358,14 @@ function Field(props) {
   );
 }
 
-function FieldWithModal(props) {
+function FieldWithModal(props: FieldWithModalProps) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
+  const desc = rest.schema || schema.properties[name ?? ''];
+  const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
+  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
   }, []);
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
@@ -388,9 +392,8 @@ function FieldWithModal(props) {
         <Input name={name} schema={desc} {...fieldOpts} {...rest} />
         <IconButton
           onClick={() => {
-            onEdit(fieldOpts.onChange);
+            onEdit?.(fieldOpts.onChange);
           }}
-          name="testname"
           iconName="edit"
           className={classes.editButton}
           testId={`edit-button`}
@@ -408,7 +411,7 @@ function FieldWithModal(props) {
   );
 }
 
-function CustomQueryField(props) {
+function CustomQueryField(props: CustomQueryFieldProps) {
   const {
     name,
     onChange,
@@ -418,18 +421,18 @@ function CustomQueryField(props) {
     checkboxValue,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name];
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
-  const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget);
+  const desc = rest.schema || schema.properties[name ?? ''];
+  const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
+  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
   }, []);
   const handlePopoverClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const handleCheckboxChange = (value) => {
-    onCheckboxChange(
+  const handleCheckboxChange = (value: boolean) => {
+    onCheckboxChange?.(
       value,
       stateStore.props.result,
       fieldOpts.onChange,
@@ -443,7 +446,7 @@ function CustomQueryField(props) {
         <Input
           name="customQueryCheckBox"
           schema={{ default: false, type: 'boolean' }}
-          value={checkboxValue}
+          value={checkboxValue ?? false}
           onChange={handleCheckboxChange}
           data-testid="custom-query-checkbox"
         />
@@ -478,19 +481,27 @@ function CustomQueryField(props) {
   );
 }
 
-const SelectOneOf = (props) => {
+const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
 
-  const selectDesc = {
+  const selectDesc: {
+    title?: string;
+    enum: (string | number)[];
+    enumNames: string[];
+  } = {
     title,
     enum: [],
     enumNames: [],
   };
 
-  Object.keys(schema).forEach((item) => {
-    selectDesc.enum.push(item);
-    selectDesc.enumNames.push(schema[item].title || item);
-  });
+  if (schema) {
+    Object.keys(schema).forEach((item) => {
+      selectDesc.enum.push(item);
+      selectDesc.enumNames.push(
+        (schema as Record<string, SchemaProperty>)[item]?.title ?? item,
+      );
+    });
+  }
 
   return (
     <Field
@@ -498,19 +509,32 @@ const SelectOneOf = (props) => {
       options={getSelectOptionsFromSchema(selectDesc)}
       title={title}
       {...prop}
-      component={Select}
+      component={
+        Select as unknown as React.ComponentType<Record<string, unknown>>
+      }
       data-testid={props['data-testid']}
     />
   );
 };
 
-function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
+function propSchema(
+  schema: FormSchema,
+  {
+    customValid,
+    serialize = {},
+    deserialize = {},
+  }: {
+    customValid?: Record<string, (value: unknown) => boolean | string>;
+    serialize?: Record<string, string>;
+    deserialize?: Record<string, string>;
+  },
+) {
   const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
   const schemaCopy = cloneDeep(schema);
 
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator);
+      ajv.addFormat(formatName, formatValidator as (data: string) => boolean);
 
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
@@ -546,36 +570,46 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   };
 }
 
-function serializeRewrite(serializeMap, instance, schema) {
-  const res = {};
-  if (typeof instance !== 'object' || !schema.properties) {
+function serializeRewrite(
+  serializeMap: Record<string, string>,
+  instance: unknown,
+  schema: FormSchema,
+): unknown {
+  const res: Record<string, unknown> = {};
+  if (typeof instance !== 'object' || instance === null || !schema.properties) {
     return instance !== undefined ? instance : schema.default;
   }
 
+  const instanceObj = instance as Record<string, unknown>;
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instance) res[p] = instance[serializeMap[p]] || instance[p];
+    if (p in instanceObj)
+      res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
   });
 
   return res;
 }
 
-function deserializeRewrite(deserializeMap, instance) {
+function deserializeRewrite(
+  _deserializeMap: Record<string, string>,
+  instance: unknown,
+): unknown {
   return instance;
 }
 
-function getInvalidMessage(item) {
-  if (!item.parentSchema.invalidMessage) return item.message;
+function getInvalidMessage(item: AjvErrorWithInvalidMessage): string {
+  if (!item.parentSchema?.invalidMessage) return item.message ?? '';
   return typeof item.parentSchema.invalidMessage === 'function'
     ? item.parentSchema.invalidMessage(item.data)
     : item.parentSchema.invalidMessage;
 }
 
-function getErrorsObj(errors) {
-  const errs = {};
-  let field;
+function getErrorsObj(
+  errors: AjvErrorWithInvalidMessage[],
+): Record<string, string> {
+  const errs: Record<string, string> = {};
 
   errors.forEach((item) => {
-    field = item.instancePath.slice(1);
+    const field = item.instancePath.slice(1);
     if (!errs[field]) errs[field] = getInvalidMessage(item);
   });
 

@@ -31,6 +31,7 @@ export interface SchemaProperty {
 export interface FormSchema {
   key?: string;
   title?: string;
+  default?: unknown;
   properties: Record<string, SchemaProperty>;
 }
 

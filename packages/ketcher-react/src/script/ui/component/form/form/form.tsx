@@ -88,6 +88,8 @@ export interface FieldWithModalProps extends FieldProps {
   autoFocus?: boolean;
 }
 
+export type SelectOneOfProps = FieldProps;
+
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;

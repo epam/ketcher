@@ -221,6 +221,7 @@ function renderLabelContent(
   if (tooltip) {
     return (
       <div
+        // TODO Here the condition is the literal true, so it always includes the class — clsx adds no value and just obscures intent.
         className={clsx({
           [classes.divWithTooltipAndAboutIcon]: true,
         })}
@@ -266,13 +267,20 @@ function renderLabelContentAfter(
   return <span>{title}</span>;
 }
 
-function Label({ labelPos, title, children, ...props }: LabelProps) {
-  const tooltip = props.tooltip ?? null;
+function Label({
+  labelPos,
+  title,
+  tooltip,
+  error: _error,
+  children,
+  ...props
+}: LabelProps) {
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip)}
+      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
       {children}
-      {labelPos === 'after' && renderLabelContentAfter(title ?? '', tooltip)}
+      {labelPos === 'after' &&
+        renderLabelContentAfter(title ?? '', tooltip ?? null)}
     </label>
   );
 }

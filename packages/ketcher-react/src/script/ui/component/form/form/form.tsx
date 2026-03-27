@@ -66,7 +66,8 @@ export type { FormProps };
 export interface FieldProps {
   title?: string;
   name?: string;
-  component?: React.ComponentType<Record<string, unknown>> | string;
+  // Select props is not assignable to Record<string, unknown> causes error in components
+  component?: React.ComponentType<any> | string; // eslint-disable-line @typescript-eslint/no-explicit-any
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -317,7 +318,8 @@ function Field(props: FieldProps) {
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
-  const Component = component as React.ComponentType<Record<string, unknown>>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component = component as React.ComponentType<any>;
   const formField = Component ? (
     <Component
       name={name}
@@ -540,9 +542,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
       options={getSelectOptionsFromSchema(selectDesc)}
       title={title}
       {...prop}
-      component={
-        Select as unknown as React.ComponentType<Record<string, unknown>>
-      }
+      component={Select}
       data-testid={props['data-testid']}
     />
   );

@@ -62,6 +62,27 @@ type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 // Keep backward-compatible export
 export type { FormProps };
 
+export interface FieldProps {
+  name?: string;
+  component?: React.ComponentType<never> | string;
+  options?: Array<{ value: string; label: string }>;
+  disabled?: boolean;
+  formName?: string;
+  'data-testid'?: string;
+  maxLength?: number;
+  labelPos?: string | boolean;
+  className?: string;
+  extraName?: string;
+  tooltip?: string;
+  extraLabel?: string;
+  schema?: object;
+  type?: string;
+  value?: string | number | boolean;
+  onChange?: (value: string) => void;
+  placeholder?: string;
+  checked?: boolean;
+}
+
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;

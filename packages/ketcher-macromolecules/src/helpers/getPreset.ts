@@ -1,5 +1,7 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
+  buildRnaPresetConnections,
+  IKetTemplateConnection,
   IKetMonomerGroupTemplate,
   monomerFactory,
   MonomerItemType,
@@ -14,10 +16,10 @@ import { getMonomerUniqueKey } from 'state/library';
 interface RnaPresetsTemplatesType
   extends Pick<
       IKetMonomerGroupTemplate,
-      'templates' | 'idtAliases' | 'connections'
+      'templates' | 'idtAliases' | 'aliasAxoLabs'
     >,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
-  aliasAxoLabs?: string;
+  connections?: IKetTemplateConnection[];
 }
 
 export const getPresets = (
@@ -76,8 +78,14 @@ export const getPresets = (
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
+        connections:
+          rnaPresetsTemplate.connections ??
+          buildRnaPresetConnections({
+            base: rnaBase,
+            sugar: ribose,
+            phosphate,
+          }),
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
-        connections: rnaPresetsTemplate.connections,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };

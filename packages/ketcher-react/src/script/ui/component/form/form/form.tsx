@@ -22,6 +22,7 @@ import {
   FormContext,
   FormContextValue,
   FormSchema,
+  SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';
@@ -63,8 +64,9 @@ type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 export type { FormProps };
 
 export interface FieldProps {
+  title?: string;
   name?: string;
-  component?: React.ComponentType<never> | string;
+  component?: React.ComponentType<Record<string, unknown>> | string;
   options?: Array<{ value: string; label: string }>;
   disabled?: boolean;
   formName?: string;
@@ -75,10 +77,11 @@ export interface FieldProps {
   extraName?: string;
   tooltip?: string;
   extraLabel?: string;
-  schema?: object;
+  schema?: SchemaProperty;
+  extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
-  onChange?: (value: string) => void;
+  onChange?: (value: unknown) => void;
   placeholder?: string;
   checked?: boolean;
 }

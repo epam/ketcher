@@ -366,9 +366,21 @@ function Field(props: FieldProps) {
 
 function FieldWithModal(props: FieldWithModalProps) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
+  // Separate Label/wrapper-only props from Input-compatible props
+  const {
+    title,
+    tooltip,
+    options: _options,
+    formName: _formName,
+    extraName: _extraName,
+    extraLabel: _extraLabel,
+    extraSchema: _extraSchema,
+    component: _component,
+    ...inputRest
+  } = rest;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name ?? ''];
+  const desc = inputRest.schema || schema.properties[name ?? ''];
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
   const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
     setAnchorEl(event.currentTarget as HTMLElement);
@@ -381,9 +393,9 @@ function FieldWithModal(props: FieldWithModalProps) {
     <Label
       className={className}
       error={dataError}
-      title={rest.title || desc.title}
+      title={title || desc.title}
       labelPos={labelPos}
-      tooltip={rest?.tooltip}
+      tooltip={tooltip}
     >
       <span
         className={clsx({
@@ -395,7 +407,7 @@ function FieldWithModal(props: FieldWithModalProps) {
         onMouseLeave={handlePopoverClose}
         role="none"
       >
-        <Input name={name} schema={desc} {...fieldOpts} {...rest} />
+        <Input name={name} schema={desc} {...fieldOpts} {...inputRest} />
         <IconButton
           onClick={() => {
             onEdit?.(fieldOpts.onChange);
@@ -425,6 +437,13 @@ function CustomQueryField(props: CustomQueryFieldProps) {
     className,
     onCheckboxChange,
     checkboxValue,
+    component: _component,
+    title: _title,
+    tooltip: _tooltip,
+    options: _options,
+    formName: _formName,
+    extraLabel: _extraLabel,
+    extraSchema: _extraSchema,
     ...rest
   } = props;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

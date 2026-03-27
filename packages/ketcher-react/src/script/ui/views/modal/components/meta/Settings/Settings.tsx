@@ -20,7 +20,15 @@ import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
-import { useEffect, useState } from 'react';
+import {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
@@ -43,6 +51,7 @@ import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
+import clsx from 'clsx';
 
 interface SettingsProps extends BaseProps {
   initState: any;
@@ -65,52 +74,259 @@ interface SettingsCallProps extends BaseCallProps {
 }
 
 const defaultSettings = getDefaultOptions();
+// Keep the portaled settings menu aligned to the trigger while preserving
+// the SETTINGS_MENU_EDGE_OFFSET viewport margin and a stable fallback size
+// before the menu is measured.
+const SETTINGS_MENU_OFFSET = 4;
+const SETTINGS_MENU_EDGE_OFFSET = 8;
+const SETTINGS_MENU_FALLBACK_WIDTH = 170;
+const SETTINGS_MENU_FALLBACK_HEIGHT = 136;
+const SETTINGS_SUBMENU_OFFSET = 8;
+const SETTINGS_SUBMENU_FALLBACK_WIDTH = 140;
+
+const getSettingsMenuPosition = (
+  triggerRect: DOMRect,
+  isResetSubmenuOpen: boolean,
+  menuRect?: DOMRect,
+): CSSProperties => {
+  const menuWidth = menuRect?.width ?? SETTINGS_MENU_FALLBACK_WIDTH;
+  const menuHeight = menuRect?.height ?? SETTINGS_MENU_FALLBACK_HEIGHT;
+  const totalMenuWidth =
+    menuWidth +
+    (isResetSubmenuOpen
+      ? SETTINGS_SUBMENU_OFFSET + SETTINGS_SUBMENU_FALLBACK_WIDTH
+      : 0);
+  const maxLeft =
+    window.innerWidth - totalMenuWidth - SETTINGS_MENU_EDGE_OFFSET;
+  const menuBottom = triggerRect.bottom + SETTINGS_MENU_OFFSET;
+  const shouldOpenAbove =
+    menuBottom + menuHeight > window.innerHeight - SETTINGS_MENU_EDGE_OFFSET;
+  const top = shouldOpenAbove
+    ? triggerRect.top - menuHeight - SETTINGS_MENU_OFFSET
+    : menuBottom;
+
+  return {
+    top: `${Math.max(
+      SETTINGS_MENU_EDGE_OFFSET,
+      Math.min(
+        top,
+        window.innerHeight - menuHeight - SETTINGS_MENU_EDGE_OFFSET,
+      ),
+    )}px`,
+    left: `${Math.max(
+      SETTINGS_MENU_EDGE_OFFSET,
+      Math.min(triggerRect.right - menuWidth, maxLeft),
+    )}px`,
+  };
+};
 
 const HeaderContent = ({
   server,
   onOpenFile,
   onReset,
+  onACSStyle,
   formState,
   initState,
 }) => {
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+  const [isResetSubmenuOpen, setIsResetSubmenuOpen] = useState(false);
+  const [settingsMenuPosition, setSettingsMenuPosition] = useState<
+    CSSProperties | undefined
+  >(undefined);
+  const settingsMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const settingsMenuRef = useRef<HTMLDivElement>(null);
+
   const getIsResetDisabled = () => {
     if (formState.result.init) return isEqual(defaultSettings, initState);
     else return isEqual(defaultSettings, formState.result);
   };
 
+  const getIsACSDisabled = () =>
+    isEqual(formState.result, {
+      ...formState.result,
+      ...ACS_STYLE_DEFAULT_SETTINGS,
+    });
+
+  const closeSettingsMenu = useCallback(() => {
+    setIsSettingsMenuOpen(false);
+    setIsResetSubmenuOpen(false);
+  }, []);
+
+  const updateSettingsMenuPosition = useCallback(() => {
+    if (!settingsMenuButtonRef.current) {
+      return;
+    }
+
+    const triggerRect = settingsMenuButtonRef.current.getBoundingClientRect();
+    const menuRect = settingsMenuRef.current?.getBoundingClientRect();
+
+    setSettingsMenuPosition(
+      getSettingsMenuPosition(triggerRect, isResetSubmenuOpen, menuRect),
+    );
+  }, [isResetSubmenuOpen]);
+
+  const toggleSettingsMenu = () => {
+    setIsSettingsMenuOpen((previousValue) => !previousValue);
+    setIsResetSubmenuOpen(false);
+  };
+
+  const resetSubmenuState = isSettingsMenuOpen && isResetSubmenuOpen;
+
+  // Recalculate when the nested submenu opens so the measured portal height
+  // can still fit inside the viewport.
+  useLayoutEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return;
+    }
+
+    updateSettingsMenuPosition();
+  }, [resetSubmenuState, isSettingsMenuOpen, updateSettingsMenuPosition]);
+
+  useEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return undefined;
+    }
+
+    const handleViewportChange = () => {
+      updateSettingsMenuPosition();
+    };
+
+    window.addEventListener('resize', handleViewportChange);
+    // Listen in the capture phase so scrolls from any scrollable ancestor
+    // reposition the portaled menu, not only window scrolling.
+    window.addEventListener('scroll', handleViewportChange, true);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [isSettingsMenuOpen, updateSettingsMenuPosition]);
+
+  useEffect(() => {
+    if (!isSettingsMenuOpen) {
+      return undefined;
+    }
+
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+
+      if (
+        settingsMenuRef.current?.contains(target) ||
+        settingsMenuButtonRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      closeSettingsMenu();
+    };
+
+    document.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [closeSettingsMenu, isSettingsMenuOpen]);
+
   return (
     <div className={classes.headerContent}>
       <span className={classes.title}> Settings</span>
-      <OpenButton
-        title="Open from File"
-        key="settings"
-        server={server}
-        onLoad={onOpenFile}
-        className={classes.button}
-        data-testid="open-settings-from-file-button"
-      >
-        <Icon name="open-1" />
-      </OpenButton>
-      <SaveButton
-        title="Save to File"
-        key="ketcher-settings"
-        data={JSON.stringify(formState.result)}
-        filename="ketcher-settings"
-        className={classes.button}
-        data-testid="save-settings-to-file-button"
-      >
-        <Icon name="save-1" />
-      </SaveButton>
-      <button
-        title="Reset"
-        key="settings-button"
-        onClick={onReset}
-        className={classes.button}
-        data-testid="reset-settings-button"
-        disabled={getIsResetDisabled()}
-      >
-        <Icon name="reset" />
-      </button>
+      <div className={classes.settingsMenuWrapper}>
+        <button
+          ref={settingsMenuButtonRef}
+          type="button"
+          className={classes.button}
+          data-testid="settings-presets-button"
+          onClick={toggleSettingsMenu}
+          title="Settings menu"
+        >
+          <Icon name="reset" />
+        </button>
+        {isSettingsMenuOpen &&
+          createPortal(
+            <div
+              ref={settingsMenuRef}
+              className={classes.settingsMenu}
+              style={settingsMenuPosition}
+            >
+              <div className={classes.settingsSubmenuWrapper}>
+                <button
+                  type="button"
+                  className={clsx(
+                    classes.settingsMenuItem,
+                    isResetSubmenuOpen && classes.settingsMenuItemOpened,
+                  )}
+                  onClick={() =>
+                    setIsResetSubmenuOpen((previousValue) => !previousValue)
+                  }
+                  data-testid="reset-to-submenu-button"
+                >
+                  <span>Reset to...</span>
+                  <Icon
+                    name="chevron"
+                    className={clsx(
+                      classes.settingsMenuIcon,
+                      classes.settingsSubmenuIcon,
+                      isResetSubmenuOpen && classes.settingsSubmenuIconOpened,
+                    )}
+                  />
+                </button>
+                {isResetSubmenuOpen && (
+                  <div className={classes.settingsSubmenu}>
+                    <button
+                      type="button"
+                      className={classes.settingsMenuItem}
+                      onClick={() => {
+                        onReset();
+                        closeSettingsMenu();
+                      }}
+                      data-testid="reset-settings-button"
+                      disabled={getIsResetDisabled()}
+                    >
+                      Default
+                    </button>
+                    <button
+                      type="button"
+                      className={classes.settingsMenuItem}
+                      onClick={() => {
+                        onACSStyle();
+                        closeSettingsMenu();
+                      }}
+                      data-testid="acs-style-button"
+                      disabled={getIsACSDisabled()}
+                    >
+                      ACS
+                    </button>
+                  </div>
+                )}
+              </div>
+              <SaveButton
+                title="Save Settings"
+                key="ketcher-settings"
+                data={JSON.stringify(formState.result)}
+                filename="ketcher-settings"
+                className={classes.settingsMenuItem}
+                testId="save-settings-to-file-button"
+                onSave={closeSettingsMenu}
+              >
+                Save Settings
+              </SaveButton>
+              <OpenButton
+                title="Load Settings"
+                key="settings"
+                server={server}
+                onLoad={(result) => {
+                  onOpenFile(result);
+                  closeSettingsMenu();
+                }}
+                className={classes.settingsMenuItem}
+                data-testid="open-settings-from-file-button"
+              >
+                Load Settings
+              </OpenButton>
+            </div>,
+            document.body,
+          )}
+      </div>
     </div>
   );
 };
@@ -367,17 +583,6 @@ const SettingsDialog = (props: Props) => {
     });
   };
 
-  const ACSStyleButton = (
-    <button
-      className={classes.acsStyleButton}
-      key="acsstylebutton"
-      onClick={onACSStyle}
-      data-testid="acs-style-button"
-    >
-      Set ACS Settings
-    </button>
-  );
-
   const tabs = [
     generalTab,
     stereoTab,
@@ -395,7 +600,7 @@ const SettingsDialog = (props: Props) => {
       valid={() => formState.valid}
       params={prop}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={[ACSStyleButton, 'Cancel', 'OK']}
+      buttons={['Cancel', 'OK']}
       withDivider
       needMargin={false}
       headerContent={
@@ -403,6 +608,7 @@ const SettingsDialog = (props: Props) => {
           server={server}
           onOpenFile={onOpenFile}
           onReset={onReset}
+          onACSStyle={onACSStyle}
           formState={formState}
           initState={initState}
         />

@@ -638,21 +638,22 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 23: Set a new name for the button ACS style', async () => {
+  test('Case 23: Show ACS settings in the presets menu', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5561
-     * Description: Set a new name for the button ACS style. A new name for button should be "Set ACS Settings"
+     * Description: Settings presets are grouped in a menu and should provide an ACS entry.
      * Scenario:
      * 1. Toggle to Micro
      * 2. Press Settings
      * 3. Check that the button name is "Set ACS Settings"
      */
-    const setACSSettings = SettingsDialog(page).setACSSettingsButton;
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
+    await SettingsDialog(page).openSettingsPresetsMenu();
+    const setACSSettings = SettingsDialog(page).setACSSettingsButton;
     await expect(setACSSettings).toBeVisible();
-    await expect(setACSSettings).toHaveText('Set ACS Settings');
+    await expect(setACSSettings).toHaveText('ACS');
     await takeEditorScreenshot(page, {
       mask: [SettingsDialog(page).resetButton],
     });

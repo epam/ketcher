@@ -197,7 +197,18 @@ export default connect(null, (dispatch) => ({
   },
 }))(Form);
 
-function renderLabelContent(title, tooltip) {
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  labelPos?: string | boolean;
+  title?: string;
+  tooltip?: string;
+  error?: string;
+  children?: React.ReactNode;
+}
+
+function renderLabelContent(
+  title: string,
+  tooltip: string | null,
+): React.ReactNode {
   if (!title) {
     return '';
   }
@@ -222,7 +233,10 @@ function renderLabelContent(title, tooltip) {
   return <span>{title}</span>;
 }
 
-function renderLabelContentAfter(title, tooltip) {
+function renderLabelContentAfter(
+  title: string,
+  tooltip: string | null,
+): React.ReactNode {
   if (!title) {
     return '';
   }
@@ -247,13 +261,13 @@ function renderLabelContentAfter(title, tooltip) {
   return <span>{title}</span>;
 }
 
-function Label({ labelPos, title, children, ...props }) {
-  const tooltip = props.tooltip ? props.tooltip : null;
+function Label({ labelPos, title, children, ...props }: LabelProps) {
+  const tooltip = props.tooltip ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title, tooltip)}
+      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip)}
       {children}
-      {labelPos === 'after' && renderLabelContentAfter(title, tooltip)}
+      {labelPos === 'after' && renderLabelContentAfter(title ?? '', tooltip)}
     </label>
   );
 }

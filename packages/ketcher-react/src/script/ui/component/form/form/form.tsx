@@ -196,10 +196,16 @@ class Form extends Component<FormProps> {
 }
 
 export default connect(null, (dispatch) => ({
-  onUpdate: (result, valid, errors) => {
+  onUpdate: (
+    result: Record<string, unknown>,
+    valid: boolean,
+    errors: Record<string, string>,
+  ) => {
     dispatch(updateFormState({ result, valid, errors }));
   },
-}))(Form);
+  // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}))(Form as any);
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;

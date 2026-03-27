@@ -83,6 +83,11 @@ export interface FieldProps {
   checked?: boolean;
 }
 
+export interface FieldWithModalProps extends FieldProps {
+  onEdit?: (onChange: (value: string) => void) => void;
+  autoFocus?: boolean;
+}
+
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;

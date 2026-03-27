@@ -18,7 +18,11 @@ import { Component, useCallback, useState } from 'react';
 
 import Ajv from 'ajv';
 import { ErrorPopover } from './errorPopover';
-import { FormContext } from '../../../../../contexts';
+import {
+  FormContext,
+  FormContextValue,
+  FormSchema,
+} from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';
 import classes from './form.module.less';
@@ -31,14 +35,37 @@ import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
-export interface FormProps {
+export interface FormOwnProps {
   children: React.ReactNode;
-  init?: object | null;
-  schema?: object;
-  customValid?: object;
+  schema: FormSchema;
+  init?: Record<string, unknown> | null;
+  customValid?: Record<string, (value: unknown) => boolean | string>;
+  serialize?: Record<string, string>;
+  deserialize?: Record<string, string>;
 }
 
-class Form extends Component {
+interface FormDispatchProps {
+  onUpdate: (
+    result: Record<string, unknown>,
+    valid: boolean,
+    errors: Record<string, string>,
+  ) => void;
+}
+
+interface FormStateProps {
+  result: Record<string, unknown>;
+  errors?: Record<string, string>;
+}
+
+type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
+
+// Keep backward-compatible export
+export type { FormProps };
+
+class Form extends Component<FormProps> {
+  schema: ReturnType<typeof propSchema>;
+  private _cachedSchema: FormSchema;
+  private _contextValue: FormContextValue;
   constructor(props) {
     super(props);
     const { onUpdate, schema, init } = this.props;

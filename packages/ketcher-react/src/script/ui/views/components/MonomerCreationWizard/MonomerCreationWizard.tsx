@@ -1207,6 +1207,38 @@ const MonomerCreationWizard = () => {
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
 
+      // For base component, always validate that mandatory Natural analogue field is filled
+      if (
+        rnaComponentKey === 'base' &&
+        isNaturalAnalogueRequired(valuesToSave.type) &&
+        !valuesToSave.naturalAnalogue?.trim()
+      ) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            naturalAnalogue: true,
+          },
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'emptyMandatoryFields',
+              {
+                type: 'error',
+                message: NotificationMessages.emptyMandatoryFields,
+              },
+            ],
+          ]),
+          rnaComponentKey,
+          editor,
+        });
+        return;
+      }
+
       // Check if all mandatory properties are filled
       // If not, we'll auto-assign properties instead of validating
       const hasMandatoryProperties =
@@ -1234,7 +1266,7 @@ const MonomerCreationWizard = () => {
           return;
         }
       }
-      // If no mandatory properties filled, skip validation - properties will be auto-assigned
+      // If no mandatory properties filled (but not base with empty naturalAnalogue), skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {

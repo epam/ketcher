@@ -282,6 +282,17 @@ function Label({ labelPos, title, children, ...props }: LabelProps) {
   );
 }
 
+function usePopoverAnchor() {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const handleOpen = useCallback((event: React.MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
+  }, []);
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  return { anchorEl, handleOpen, handleClose };
+}
+
 function Field(props: FieldProps) {
   const {
     name,
@@ -293,13 +304,11 @@ function Field(props: FieldProps) {
     extraLabel,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handlePopoverClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc = rest.schema || schema.properties[name ?? ''];
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
@@ -376,16 +385,14 @@ function FieldWithModal(props: FieldWithModalProps) {
     component: _component,
     ...inputRest
   } = rest;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc = inputRest.schema || schema.properties[name ?? ''];
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
-  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handlePopoverClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
 
   return (
     <Label
@@ -444,16 +451,14 @@ function CustomQueryField(props: CustomQueryFieldProps) {
     extraSchema: _extraSchema,
     ...rest
   } = props;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc = rest.schema || schema.properties[name ?? ''];
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
-  const handlePopoverOpen = useCallback((event: React.MouseEvent) => {
-    setAnchorEl(event.currentTarget as HTMLElement);
-  }, []);
-  const handlePopoverClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
   const handleCheckboxChange = (value: boolean) => {
     onCheckboxChange?.(
       value,

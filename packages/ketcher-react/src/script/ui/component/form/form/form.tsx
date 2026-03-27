@@ -34,7 +34,6 @@ import { useFormContext } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
-import { BondSettings } from 'src/script/ui/views/modal/components/toolbox/Bond/Bond';
 
 export interface FormOwnProps {
   children: React.ReactNode;
@@ -103,9 +102,9 @@ export interface CustomQueryFieldProps extends FieldProps {
   checkboxValue?: boolean;
   onCheckboxChange?: (
     value: boolean,
-    formState: BondSettings,
+    formState: Record<string, unknown>,
     _,
-    updateFormState: (settings: BondSettings) => void,
+    updateFormState: (settings: Record<string, unknown>) => void,
   ) => void;
 }
 

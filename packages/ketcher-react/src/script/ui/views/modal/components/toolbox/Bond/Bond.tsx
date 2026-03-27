@@ -192,5 +192,5 @@ function getBondCustomQuery(bond: BondSettings) {
   }
   return queryAttrsText;
 }
-export type { BondProps, BondSettings };
+export type { BondProps };
 export default Bond;

@@ -39,7 +39,8 @@ import { Tooltip } from '@mui/material';
 export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
-  init?: Record<string, unknown> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  init?: Record<string, any> | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customValid?: Record<string, (value: any) => boolean | string>;
   serialize?: Record<string, string>;

@@ -132,18 +132,13 @@ class Form extends Component<FormProps> {
   }
 
   componentDidUpdate(prevProps: FormProps) {
-    const {
-      schema,
-      result,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      ...rest
-    } = this.props;
+    const { schema, result, customValid, serialize, deserialize } = this.props;
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
-      (rest.customValid !== prevProps.customValid &&
+      (customValid !== prevProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
-      this.schema = propSchema(schema, rest);
+      this.schema = propSchema(schema, { customValid, serialize, deserialize });
       this.schema.serialize(result); // hack: valid first state
       this.updateState(result);
     }

@@ -140,9 +140,18 @@ export function textToKet(textNode) {
     const width = pos[2].x - pos[0].x;
     const height = Math.abs(pos[1].y - pos[0].y);
 
-    // Parse Lexical content
+    // Parse content – may be Lexical (has "root") or legacy Draft.js format
     const textContent = JSON.parse(source.content);
     const root = textContent.root;
+
+    // If this is legacy Draft.js content (no root key), return raw data
+    if (!root) {
+      return {
+        type: 'text',
+        data: source,
+      } as unknown as KETText;
+    }
+
     const ketText: KETText = {
       type: 'text',
       boundingBox: { x, y, width, height },

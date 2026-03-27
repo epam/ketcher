@@ -208,7 +208,8 @@ class BondTool implements Tool {
       beginPos,
     ));
 
-    const dist = endPos !== undefined ? Vec2.dist(dragCtx.xy0, endPos) : 0;
+    const dist =
+      endPos !== undefined ? Vec2.dist(dragCtx.xy0, endPos) : Number.MAX_VALUE;
     this.applyBondAction(event, dragCtx, rnd, molecule, {
       beginAtom,
       endAtom,

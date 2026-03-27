@@ -1,6 +1,7 @@
 module.exports = {
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
+  testEnvironment: 'jsdom',
   transform: {
     '\\.js?$': 'babel-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest',

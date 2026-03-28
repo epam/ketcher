@@ -25,8 +25,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/index';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -242,9 +242,9 @@ test('8. Verify that the star atom is displayed correctly when zooming in and ou
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
 
-  await ZoomInByKeyboard(page, { repeat: 11 });
+  await zoomInByKeyboard(page, { repeat: 11 });
   await takeEditorScreenshot(page);
-  await ZoomOutByKeyboard(page, { repeat: 6 });
+  await zoomOutByKeyboard(page, { repeat: 6 });
   await takeEditorScreenshot(page);
 });
 

@@ -14,7 +14,7 @@ import {
   waitForRender,
   resetZoomLevelToDefault,
   getCachedBodyCenter,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -1116,7 +1116,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
        *       6. Take screenshot to witness export preview
        */
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
@@ -1151,7 +1151,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
        *       6. Take screenshot to witness export preview
        */
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
@@ -1456,7 +1456,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
         monomerComposition.KETFile,
       );
       await resetZoomLevelToDefault(page);
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });

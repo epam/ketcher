@@ -8,9 +8,9 @@ import {
   waitForRender,
   waitForPageInit,
   clickOnCanvas,
-  ZoomInByKeyboard,
+  zoomInByKeyboard,
   moveMouseAway,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   deleteByKeyboard,
 } from '@utils';
@@ -234,10 +234,10 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 

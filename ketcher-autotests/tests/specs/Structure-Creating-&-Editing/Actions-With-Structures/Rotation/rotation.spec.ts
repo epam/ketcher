@@ -7,7 +7,7 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   takeElementScreenshot,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -340,7 +340,7 @@ test.describe('Rotation', () => {
       Description: Click on rotation handle doesn't change its position
     */
     await page.setViewportSize({ width: 1200, height: 1080 });
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await addStructureAndSelect(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);

@@ -6,8 +6,8 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   waitForPageInit,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
   clickOnCanvas,
@@ -186,7 +186,7 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomInByKeyboard(page);
+    await zoomInByKeyboard(page);
     await zoomSelector.click();
     await zoomInButton.click();
     await checkZoomLevel(page, '120%');
@@ -203,7 +203,7 @@ test.describe('Zoom changes', () => {
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
     await zoomSelector.click();
     await zoomOutButton.click();
     await checkZoomLevel(page, '80%');

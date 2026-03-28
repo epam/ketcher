@@ -31,7 +31,7 @@ import {
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
@@ -1191,7 +1191,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         page,
         'KET/Chromium-popup/5. Unsplit nucleotide 5hMedC (from library).ket',
       );
-      await ZoomOutByKeyboard(page, { repeat: 2 });
+      await zoomOutByKeyboard(page, { repeat: 2 });
       await takeEditorScreenshot(page);
       await expandMonomer(
         page,

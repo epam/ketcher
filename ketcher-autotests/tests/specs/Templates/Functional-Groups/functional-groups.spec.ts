@@ -715,8 +715,9 @@ test.describe('Functional Groups', () => {
       force: true,
     });
     await page.keyboard.press('Shift+t');
-    await StructureLibraryDialog(page).switchToFunctionalGroupTab();
-    await page.getByTitle('Boc').click();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);

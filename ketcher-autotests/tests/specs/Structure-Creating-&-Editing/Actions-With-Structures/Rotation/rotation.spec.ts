@@ -46,13 +46,7 @@ test.describe('Rotation', () => {
     await selectAllStructuresOnCanvas(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
 
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await clickOnCanvas(
       page,
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -282,20 +276,9 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-12992, 12997, 12993, 12995
       Description: Add any structure and select it. Click and hold rotation handle
     */
-    const shift = 10;
     await addStructureAndSelect(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
-    const rotationHandle = page.getByTestId('rotation-handle');
-    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
-    if (!rotationHandleBoundingBox) {
-      throw new Error('Rotation handle bounding box is not available.');
-    }
-    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
-    rotationHandleX += rotationHandleBoundingBox.width / 2;
-    rotationHandleY += rotationHandleBoundingBox.height / 2;
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(rotationHandleX, rotationHandleY - shift);
+    await rotateToCoordinates(page, { x: 726, y: 235 }, false);
     await takeEditorScreenshot(page);
   });
 
@@ -381,13 +364,7 @@ test.describe('Rotation', () => {
     const screenBeforeRotation = await takeElementScreenshot(page, targetAtom, {
       padding: 150,
     });
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await page.keyboard.press('Escape');
 
     const screenAfterRotation = await takeElementScreenshot(page, targetAtom, {
@@ -425,20 +402,7 @@ test.describe('Rotation', () => {
     const screenBeforeRotation = await takeElementScreenshot(page, targetAtom, {
       padding: 160,
     });
-    const rotationHandle = page.getByTestId('rotation-handle');
-    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
-    if (!rotationHandleBoundingBox) {
-      throw new Error('Rotation handle bounding box is not available.');
-    }
-    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
-    rotationHandleX += rotationHandleBoundingBox.width / 2;
-    rotationHandleY += rotationHandleBoundingBox.height / 2;
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await page.keyboard.press('Escape');
 
     const screenAfterRotation = await takeElementScreenshot(page, targetAtom, {

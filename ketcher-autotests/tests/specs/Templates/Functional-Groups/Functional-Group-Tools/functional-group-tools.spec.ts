@@ -48,9 +48,11 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   horizontalFlip,
+  rotateToCoordinates,
   verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -131,14 +133,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
-    await page.mouse.up();
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -162,14 +157,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
-    await page.mouse.up();
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -916,7 +904,9 @@ test.describe('Templates - Functional Group Tools3', () => {
       force: true,
     });
     await page.keyboard.press('Shift+f');
-    await page.getByText('Boc').click();
+    await StructureLibraryDialog(page).addFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -935,7 +925,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.skip(
+  test(
     // Consider review since test doesn't do that it should. Copied functional group doesn't attach to atom
     // Is that a bug?
     'Attach copied Functional Group to atoms of structure',
@@ -951,11 +941,11 @@ test.describe('Templates - Functional Group Tools3', () => {
         page,
         'Molfiles-V2000/functional-group-and-benzene.mol',
       );
-      await page.getByText('Boc').click();
+      await getAbbreviationLocator(page, { name: 'Boc' }).click();
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
-      await waitForRender(page, async () => {
-        await getAtomLocator(page, { atomLabel: 'C', atomId: 25 }).click({
+      await waitForItemsToMergeInitialization(page, async () => {
+        await getAtomLocator(page, { atomLabel: 'C' }).first().click({
           force: true,
         });
       });

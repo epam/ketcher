@@ -498,7 +498,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
-    await page.getByTestId('reaction-arrow-multitail').click();
+    await page.getByTestId(ArrowType.MultiTailedArrow).click();
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,

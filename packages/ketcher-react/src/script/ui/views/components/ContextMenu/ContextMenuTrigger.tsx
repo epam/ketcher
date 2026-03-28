@@ -1,19 +1,3 @@
-/****************************************************************************
- * Copyright 2022 EPAM Systems
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ***************************************************************************/
-
 import {
   FunctionalGroup,
   ketcherProvider,
@@ -54,7 +38,6 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct = editor.struct();
     const selectedAtomIds = editor.selection()?.atoms;
-    // Map and Set can do deduplication
     const selectedFunctionalGroups = new Map<number, FunctionalGroup>();
     const selectedSGroupsIds: Set<number> = new Set();
 
@@ -92,6 +75,78 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
     };
   }, [ketcherId]);
 
+  const handleAttachmentPointMenu = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>, target: Element): boolean => {
+      const rLabelElement = target.closest('[data-attachment-point-name]');
+      if (!rLabelElement) return false;
+
+      const attachmentPointName = rLabelElement.getAttribute(
+        'data-attachment-point-name',
+      );
+      if (!attachmentPointName) return false;
+
+      show({
+        id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+        event,
+        props: {
+          attachmentPointName,
+          ketcherId,
+        },
+      });
+      return true;
+    },
+    [ketcherId, show],
+  );
+
+  const determineTriggerType = useCallback(
+    (
+      closestItem: ReturnType<Editor['findItem']>,
+      selection: ReturnType<Editor['selection']>,
+      selectedFunctionalGroups: Map<number, FunctionalGroup>,
+      selectedSGroupsIds: Set<number>,
+      editor: Editor,
+      event: React.MouseEvent<HTMLDivElement>,
+    ): ContextMenuTriggerType | null => {
+      if (!closestItem) {
+        const isLeftMouseButtonPressed = event.buttons === 1;
+        const isRotationReverted = isLeftMouseButtonPressed;
+        if (selection && !isRotationReverted) {
+          editor.selection(null);
+        }
+        return null;
+      }
+
+      if (!selection) {
+        return ContextMenuTriggerType.ClosestItem;
+      }
+
+      if (
+        getIsItemInSelection({
+          item: closestItem,
+          selection,
+          selectedFunctionalGroups,
+          selectedSGroupsIds,
+        })
+      ) {
+        if (
+          !selection.bonds &&
+          !selection.atoms &&
+          !selection.rgroupAttachmentPoints
+        ) {
+          return selection[MULTITAIL_ARROW_KEY]
+            ? ContextMenuTriggerType.ClosestItem
+            : ContextMenuTriggerType.None;
+        }
+        return ContextMenuTriggerType.Selection;
+      }
+
+      // closestItem is outside of selection
+      editor.selection(null);
+      return ContextMenuTriggerType.ClosestItem;
+    },
+    [],
+  );
+
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       event.preventDefault();
@@ -110,24 +165,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
 
       // TODO: Consider a better approach to handle context menus for auxiliary UI elements
       const target = event.target as Element;
-      if (editor.isMonomerCreationWizardActive) {
-        const rLabelElement = target.closest('[data-attachment-point-name]');
-        if (rLabelElement) {
-          const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-name',
-          );
-          if (attachmentPointName) {
-            show({
-              id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
-              event,
-              props: {
-                attachmentPointName,
-                ketcherId,
-              },
-            });
-            return;
-          }
-        }
+      if (
+        editor.isMonomerCreationWizardActive &&
+        handleAttachmentPointMenu(event, target)
+      ) {
+        return;
       }
 
       const closestItem = editor.findItem(event, null);
@@ -135,58 +177,26 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
 
-      let showProps: ContextMenuProps | null = null;
-      let triggerType: ContextMenuTriggerType;
+      const triggerType = determineTriggerType(
+        closestItem,
+        selection,
+        selectedFunctionalGroups,
+        selectedSGroupsIds,
+        editor,
+        event,
+      );
 
-      if (!closestItem) {
-        const isLeftMouseButtonPressed = event.buttons === 1;
-        const isRotationReverted = isLeftMouseButtonPressed;
-        if (selection && !isRotationReverted) {
-          // if it was a click outside of any item
-          editor.selection(null);
-        }
-
+      if (triggerType === null || triggerType === ContextMenuTriggerType.None) {
         return;
-      } else if (!selection) {
-        triggerType = ContextMenuTriggerType.ClosestItem;
-      } else if (
-        getIsItemInSelection({
-          item: closestItem,
-          selection,
-          selectedFunctionalGroups,
-          selectedSGroupsIds,
-        })
-      ) {
-        if (
-          !selection.bonds &&
-          !selection.atoms &&
-          !selection.rgroupAttachmentPoints
-        ) {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
-        } else {
-          triggerType = ContextMenuTriggerType.Selection;
-        }
-      } else {
-        // closestItem is outside of selection
-        editor.selection(null);
-        triggerType = ContextMenuTriggerType.ClosestItem;
       }
 
-      switch (triggerType) {
-        case ContextMenuTriggerType.None: {
-          return;
-        }
+      let showProps: ContextMenuProps | null = null;
 
+      switch (triggerType) {
         case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(
-            editor,
-            closestItem,
-            ketcherId,
-          );
+          showProps = closestItem
+            ? getMenuPropsForClosestItem(editor, closestItem, ketcherId)
+            : null;
           break;
         }
 
@@ -214,6 +224,8 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
     [
       getSelectedGroupsInfo,
       shouldBlockMonomerCreationContextMenu,
+      handleAttachmentPointMenu,
+      determineTriggerType,
       show,
       ketcherId,
     ],

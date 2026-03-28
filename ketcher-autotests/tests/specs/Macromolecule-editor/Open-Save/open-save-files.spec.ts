@@ -71,7 +71,7 @@ test.describe('Open/save file tests: ', () => {
 
     await expect(openStructureTextarea).toHaveValue(textToPaste);
 
-    await openStructureTextarea.press('Control+A');
+    await openStructureTextarea.press('ControlOrMeta+A');
     await openStructureTextarea.press('Backspace');
 
     await expect(openStructureTextarea).toHaveValue('');

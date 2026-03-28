@@ -11,6 +11,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -93,14 +94,11 @@ test.describe('Open/save file tests: ', () => {
       MacromoleculesFileFormatType.FASTA,
     );
 
-    const errorMessageDialog = page.getByRole('dialog');
-    const errorMessageText =
-      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
-    await expect(errorMessageDialog).toBeVisible();
-    await expect(page.getByText(errorMessageText)).toBeVisible();
-
-    await page.keyboard.press('Escape');
-
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
 

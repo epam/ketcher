@@ -1711,7 +1711,7 @@ test.describe('Atom Properties', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('GH*').first().dblclick();
+    await getAtomLocator(page, { atomLabel: 'GH*' }).dblclick();
     await takeEditorScreenshot(page);
   });
 

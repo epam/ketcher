@@ -49,6 +49,7 @@ import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   horizontalFlip,
   rotateToCoordinates,
+  selectionDelete,
   verticalFlip,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
@@ -396,7 +397,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await selectionDelete(page);
     await takeEditorScreenshot(page);
   });
 

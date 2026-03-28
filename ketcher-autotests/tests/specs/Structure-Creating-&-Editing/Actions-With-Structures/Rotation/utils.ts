@@ -124,6 +124,13 @@ export async function verticalFlipByKeyboard(page: Page) {
   });
 }
 
+export async function selectionDeleteByKeyboard(page: Page) {
+  await moveMouseAway(page);
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Delete');
+  });
+}
+
 export async function horizontalFlip(page: Page) {
   await waitForRender(page, async () => {
     await page.getByTestId('transform-flip-h').click();
@@ -133,6 +140,12 @@ export async function horizontalFlip(page: Page) {
 export async function verticalFlip(page: Page) {
   await waitForRender(page, async () => {
     await page.getByTestId('transform-flip-v').click();
+  });
+}
+
+export async function selectionDelete(page: Page) {
+  await waitForRender(page, async () => {
+    await page.getByTestId('delete').click();
   });
 }
 

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
 {

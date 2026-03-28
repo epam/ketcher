@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`SelectCheckbox component should be rendered correctly should render with boolean schema 1`] = `
 <DocumentFragment>

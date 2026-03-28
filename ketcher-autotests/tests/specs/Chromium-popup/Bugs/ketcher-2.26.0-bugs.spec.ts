@@ -99,6 +99,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -952,7 +953,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/monomers-cycled.ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('1Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
@@ -1192,7 +1193,10 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       );
       await ZoomOutByKeyboard(page, { repeat: 2 });
       await takeEditorScreenshot(page);
-      await expandMonomer(page, page.getByText('5hMedC'));
+      await expandMonomer(
+        page,
+        getAbbreviationLocator(page, { name: '5hMedC' }),
+      );
       await takeEditorScreenshot(page);
       await ContextMenu(
         page,

@@ -30,7 +30,10 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import {
+  rotateToCoordinates,
+  verticalFlipByKeyboard,
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
@@ -1054,11 +1057,6 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
        *       5. Open Save dialog and select PNG Image option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
@@ -1092,11 +1090,6 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
        *       5. Open Save dialog and select SVG Document option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
@@ -1130,20 +1123,14 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
        *       5. Open Save dialog and select PNG Image option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
-      const rotationHandle = page.getByTestId('rotation-handle');
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
+      await ZoomOutByKeyboard(page);
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await rotationHandle.hover();
-      await dragMouseTo(page, 750, 150);
+      await rotateToCoordinates(page, { x: 750, y: 150 });
       await verifyPNGExport(page);
+      await resetZoomLevelToDefault(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,

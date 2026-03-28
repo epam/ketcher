@@ -69,25 +69,6 @@ async function saveToTemplates(page: Page) {
   await TemplateEditDialog(page).save();
 }
 
-async function setupElementsAndModifyMultiTailArrow(page: Page) {
-  await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-  await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-  await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await page.getByTestId('head-resize').hover({ force: true });
-  await dragMouseTo(page, 800, 500);
-  await page.getByTestId('head-move').hover({ force: true });
-  await dragMouseTo(page, 800, 500);
-  await page.getByTestId('bottomTail-resize').hover({ force: true });
-  await dragMouseTo(page, 200, 500);
-  await takeEditorScreenshot(page);
-  await page.mouse.move(610, 350);
-  await dragMouseTo(page, 610, 100);
-  await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
-}
-
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
     await ContextMenu(page, { x, y }).click(MultiTailedArrowOption.AddNewTail);
@@ -3307,7 +3288,24 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
     elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
     */
-    await setupElementsAndModifyMultiTailArrow(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
+    await page.getByTestId('head-resize').hover({ force: true });
+    await dragMouseTo(page, 800, 500);
+    await page.getByTestId('head-move').hover({ force: true });
+    await dragMouseTo(page, 800, 500);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(610, 350);
+    await dragMouseTo(page, 610, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

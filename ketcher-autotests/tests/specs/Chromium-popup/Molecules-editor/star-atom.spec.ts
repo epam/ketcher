@@ -21,7 +21,6 @@ import {
 import {
   clickOnCanvas,
   clickOnMiddleOfCanvas,
-  dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
@@ -46,6 +45,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   horizontalFlipByKeyboard,
+  rotateToCoordinates,
   verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
@@ -647,16 +647,13 @@ test('24. Verify that the star atom retains its properties when the structure is
    *
    * Version 3.7
    */
-  const rotationHandle = page.getByTestId('rotation-handle');
-
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Star-Atom/LayoutValidation.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await rotationHandle.hover();
-  await dragMouseTo(page, 720, 300);
+  await rotateToCoordinates(page, { x: 720, y: 300 });
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

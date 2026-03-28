@@ -66,6 +66,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
 
@@ -697,7 +698,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('1Nal'));
+    await expandMonomers(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
     const atom = getAtomLocator(page, { atomId: 35 });
     await collapseMonomers(page, atom);
@@ -939,7 +940,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await Library(page).switchToRNATab();
-    await expect(page.getByTestId(Preset.MOE_A_P.testId)).toBeInViewport();
+    await expect(getMonomerLocator(page, Preset.MOE_A_P)).toBeInViewport();
     await Library(page).selectMonomer(Preset.MOE_A_P);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(
@@ -961,7 +962,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Bug: https://github.com/epam/ketcher/issues/6557
      * Description: Modified phosphates not shift away from main structure during expand in Micro Mode
      * Scenario:
-     * 1. Open Ketcher in Macro mode
+     * 1. Open Ketcher in Micro mode
      * 2. Select all structure
      * 3. Expand structure
      * 4. Take a screenshot
@@ -972,7 +973,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/Bugs/modified-phosphates.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('mph').first());
+    await expandMonomers(
+      page,
+      getAbbreviationLocator(page, { name: 'mph' }).first(),
+    );
     await takeEditorScreenshot(page);
   });
 

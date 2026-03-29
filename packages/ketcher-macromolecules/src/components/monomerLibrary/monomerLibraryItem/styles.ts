@@ -160,6 +160,9 @@ export const Card = styled.div<{
       opacity: 1;
       color: #faa500;
     }
+    &:hover {
+      color: #faa500;
+    }
     &:active {
       transform: scale(1.4);
     }
@@ -207,6 +210,10 @@ export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
   &:hover {
     color: ${({ disabled }) => (disabled ? '#cad3dd' : '#333333')};
   }
+  .is-library-dragging & {
+    cursor: grabbing !important;
+    pointer-events: none !important;
+  }
 `;
 
 export const AutochainIconWrapper = styled('div')({
@@ -216,6 +223,10 @@ export const AutochainIconWrapper = styled('div')({
   zIndex: 10,
   cursor: 'pointer',
   pointerEvents: 'auto',
+  '.is-library-dragging &': {
+    cursor: 'grabbing !important',
+    pointerEvents: 'none',
+  },
 });
 
 export const MenuIcon = styled(Icon)<{ disabled?: boolean }>`

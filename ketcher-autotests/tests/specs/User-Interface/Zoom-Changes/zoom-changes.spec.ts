@@ -51,7 +51,7 @@ test.describe('Zoom changes', () => {
     const numberOfMouseWheelScroll = 2;
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -78,7 +78,7 @@ test.describe('Zoom changes', () => {
     const numberOfMouseWheelScroll = 2;
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -102,7 +102,7 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -127,7 +127,7 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomOut = CommonTopRightToolbar(page).zoomOutButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -151,7 +151,7 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -180,7 +180,7 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);

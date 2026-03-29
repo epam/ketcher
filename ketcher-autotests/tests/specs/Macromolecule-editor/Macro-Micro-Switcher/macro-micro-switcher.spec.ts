@@ -1049,7 +1049,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1076,7 +1076,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });

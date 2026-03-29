@@ -71,7 +71,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: A bond is added to a contracted functional group and form a bond
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -88,7 +88,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: A chain is added to a contracted functional group and form a bond
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -187,7 +187,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: A duplicate is not created, the original Functional Group is dragged with the cursor
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -261,7 +261,7 @@ test.describe('Templates - Functional Group Tools', () => {
     FG is removed (ungrouped and displayed in expanded view).
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -376,7 +376,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     EDIT ABBREVIATION window appears if click by Erase tool on expanded FG without selection.
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -435,7 +435,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     The 'Remove Abbreviation' option does not remove the atoms and bonds.
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -466,7 +466,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Undo/Redo actions are correct expand and contract Functional Group.
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -567,7 +567,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/benzene-with-two-bonds.mol',
     );
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
@@ -575,7 +575,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     });
     await CommonLeftToolbar(page).areaSelectionTool();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CPh3,
     );
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
@@ -608,7 +608,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene-with-bonds.mol');
     await clickInTheMiddleOfTheScreen(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Ac,
     );
     await clickOnCanvas(page, COORDS_CLICK.x2, COORDS_CLICK.y2, {
@@ -640,7 +640,7 @@ test.describe('Templates - Functional Group Tools2', () => {
    */
     const atomToolbar = RightToolbar(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -695,7 +695,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     const leftToolbar = LeftToolbar(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -814,7 +814,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     };
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
@@ -823,7 +823,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
@@ -863,7 +863,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     };
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CCl3,
     );
     await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1, {
@@ -872,7 +872,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.C2H5,
     );
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2, {
@@ -905,7 +905,7 @@ test.describe('Templates - Functional Group Tools3', () => {
       force: true,
     });
     await page.keyboard.press('Shift+f');
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
@@ -918,7 +918,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Oxygen atoms replace a Functional Groups abbreviations on canvas
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -983,7 +983,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Contracted Functional Group shown as expanded in 3D view
    */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);

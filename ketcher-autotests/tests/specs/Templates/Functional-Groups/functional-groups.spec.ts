@@ -123,7 +123,7 @@ test.describe('Functional Groups', () => {
     Description: Contracted functional group is on the canvas. FG added on canvas near cursor.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -198,7 +198,7 @@ test.describe('Functional Groups', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/structure-co2et.mol');
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -472,7 +472,7 @@ test.describe('Functional Groups', () => {
     Description: Ordinary elements should not show explicit valences for 'S'.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.SO3H,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -488,7 +488,7 @@ test.describe('Functional Groups', () => {
     Description: Ordinary elements should not show explicit valences for 'P'.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.PO4H2,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -504,7 +504,7 @@ test.describe('Functional Groups', () => {
     Description: Selection highlight all abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.PhCOOH,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -522,7 +522,7 @@ test.describe('Functional Groups', () => {
     Description: Selection highlight all abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -540,7 +540,7 @@ test.describe('Functional Groups', () => {
     Description: Selection highlight appears immediately after hover over text.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -579,7 +579,7 @@ test.describe('Functional Groups', () => {
     Description: When Adding 'Atom' by hotkey to expanded Salts and Solvents system display 'Edit Abbreviation' pop-up window.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
 
@@ -608,7 +608,7 @@ test.describe('Functional Groups', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CN,
     );
     const point = await getAtomLocator(page, { atomLabel: 'C' })
@@ -618,7 +618,7 @@ test.describe('Functional Groups', () => {
       await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     }
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Ms,
     );
     await clickOnCanvas(page, 540, 350, { from: 'pageTopLeft' });
@@ -632,7 +632,7 @@ test.describe('Functional Groups', () => {
     Description: Hotkey (Del) delete Functional Groups abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -652,7 +652,7 @@ test.describe('Functional Groups', () => {
     Description: Hotkey (Del) delete Salts and Solvents abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -672,7 +672,7 @@ test.describe('Functional Groups', () => {
     Description: Hotkey for Atom (e.g. N) replace Functional Group abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -692,7 +692,7 @@ test.describe('Functional Groups', () => {
     Description: Hotkey for Atom (e.g. N) replace Salts and Solvents abbreviation.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -715,7 +715,7 @@ test.describe('Functional Groups', () => {
       force: true,
     });
     await page.keyboard.press('Shift+t');
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -744,13 +744,13 @@ test.describe('Functional Groups', () => {
       Description: Expanded Functional Groups not overlap each other
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
@@ -782,7 +782,7 @@ test.describe('Functional Groups', () => {
     Test working not properly. We have open bug https://github.com/epam/ketcher/issues/2591
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);

@@ -279,7 +279,7 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -307,7 +307,7 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -342,7 +342,7 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -370,7 +370,7 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);

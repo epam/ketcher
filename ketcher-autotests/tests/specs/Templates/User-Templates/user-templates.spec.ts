@@ -48,7 +48,7 @@ test.describe('Click User Templates on canvas', () => {
       Description: open template
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -67,7 +67,7 @@ test.describe('Click User Templates on canvas', () => {
     const inputText = ' name ';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -95,7 +95,7 @@ test.describe('Click User Templates on canvas', () => {
     const inputText = 'to_delete';
 
     await BottomToolbar(page).structureLibrary();
-    await structureLibraryDialog.addTemplate(
+    await structureLibraryDialog.selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
@@ -229,7 +229,7 @@ test.describe('Create and Save Templates', () => {
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
@@ -286,7 +286,7 @@ test.describe('Templates field lenght validations', () => {
       Description: warning message validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -302,7 +302,7 @@ test.describe('Templates field lenght validations', () => {
       Description: no mote than 128 symbols error validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -324,7 +324,7 @@ test.describe('Templates field lenght validations', () => {
       Description: empty field validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -345,7 +345,7 @@ test.describe('Templates field lenght validations', () => {
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );

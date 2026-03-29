@@ -913,7 +913,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'multi_tail_arrows_with_elements',
     );
     await takeEditorScreenshot(page);
-    await page.getByText('multi_tail_arrows_with_elements').click();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.UserTemplate,
+      'multi_tail_arrows_with_elements',
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

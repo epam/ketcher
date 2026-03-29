@@ -940,7 +940,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await Library(page).switchToRNATab();
-    await expect(getMonomerLocator(page, Preset.MOE_A_P)).toBeInViewport();
+    await expect(
+      Library(page).getMonomerLibraryCardLocator(Preset.MOE_A_P),
+    ).toBeInViewport();
     await Library(page).selectMonomer(Preset.MOE_A_P);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(

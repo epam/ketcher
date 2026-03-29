@@ -80,7 +80,10 @@ export function parseStruct(
     const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
     const service = factory.create(
       format,
-      formatterOptions,
+      {
+        preferCoordlessSmilesConversion: fragment,
+        ...formatterOptions,
+      },
       queryPropertiesAreUsed,
     );
     return service.getStructureFromStringAsync(struct);

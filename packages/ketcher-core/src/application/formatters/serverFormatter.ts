@@ -22,7 +22,11 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
-import { StructFormatter, SupportedFormat } from './structFormatter.types';
+import {
+  FormatterBehaviorOptions,
+  StructFormatter,
+  SupportedFormat,
+} from './structFormatter.types';
 
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
@@ -46,17 +50,22 @@ export class ServerFormatter implements StructFormatter {
   readonly #ketSerializer: KetSerializer;
   readonly #format: SupportedFormat;
   readonly #options?: StructServiceOptions;
+  readonly #preferCoordlessSmilesConversion: boolean;
 
   constructor(
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
     options?: StructServiceOptions,
+    formatterBehaviorOptions?: FormatterBehaviorOptions,
   ) {
     this.#structService = structService;
     this.#ketSerializer = ketSerializer;
     this.#format = format;
     this.#options = options;
+    this.#preferCoordlessSmilesConversion = Boolean(
+      formatterBehaviorOptions?.preferCoordlessSmilesConversion,
+    );
   }
 
   async getStructureFromStructAsync(
@@ -100,10 +109,14 @@ export class ServerFormatter implements StructFormatter {
     struct: string;
   } {
     if (this.#format === SupportedFormat.smiles) {
+      const hasCoordinates =
+        SmilesFormatter.isContainsCoordinates(stringifiedStruct);
+
       return {
-        method: SmilesFormatter.isContainsCoordinates(stringifiedStruct)
-          ? this.#structService.convert
-          : this.#structService.layout,
+        method:
+          hasCoordinates || this.#preferCoordlessSmilesConversion
+            ? this.#structService.convert
+            : this.#structService.layout,
         struct: stringifiedStruct,
       };
     }

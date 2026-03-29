@@ -60,6 +60,11 @@ export enum SupportedFormat {
   rdfV3000 = 'rdfV3000',
 }
 
+export interface FormatterBehaviorOptions {
+  preferCoordlessSmilesConversion?: boolean;
+}
+
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions
->;
+> &
+  FormatterBehaviorOptions;

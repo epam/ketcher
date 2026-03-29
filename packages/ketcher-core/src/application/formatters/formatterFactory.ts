@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  FormatterBehaviorOptions,
   FormatterFactoryOptions,
   StructFormatter,
   SupportedFormat,
@@ -38,19 +39,27 @@ export class FormatterFactory {
 
   private separateOptions(
     options?: FormatterFactoryOptions,
-  ): [Partial<MolSerializerOptions>, Partial<StructServiceOptions>] {
+  ): [
+    Partial<MolSerializerOptions>,
+    Partial<StructServiceOptions>,
+    FormatterBehaviorOptions,
+  ] {
     if (!options) {
-      return [{}, {}];
+      return [{}, {}, {}];
     }
 
     const {
       reactionRelayout,
       badHeaderRecover,
       ignoreChiralFlag,
+      preferCoordlessSmilesConversion,
       ...structServiceOptions
     } = options;
 
     const molfileParseOptions: Partial<MolSerializerOptions> = {};
+    const formatterBehaviorOptions: FormatterBehaviorOptions = {
+      preferCoordlessSmilesConversion,
+    };
 
     if (typeof reactionRelayout === 'boolean') {
       molfileParseOptions.reactionRelayout = reactionRelayout;
@@ -64,7 +73,11 @@ export class FormatterFactory {
       structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag;
     }
 
-    return [molfileParseOptions, structServiceOptions];
+    return [
+      molfileParseOptions,
+      structServiceOptions,
+      formatterBehaviorOptions,
+    ];
   }
 
   create(
@@ -72,8 +85,11 @@ export class FormatterFactory {
     options?: FormatterFactoryOptions,
     queryPropertiesAreUsed?: boolean,
   ): StructFormatter {
-    const [molSerializerOptions, structServiceOptions] =
-      this.separateOptions(options);
+    const [
+      molSerializerOptions,
+      structServiceOptions,
+      formatterBehaviorOptions,
+    ] = this.separateOptions(options);
 
     let formatter: StructFormatter;
     switch (format) {
@@ -88,6 +104,7 @@ export class FormatterFactory {
             new KetSerializer(),
             format,
             structServiceOptions,
+            formatterBehaviorOptions,
           );
         } else {
           formatter = new MolfileV2000Formatter(
@@ -116,6 +133,7 @@ export class FormatterFactory {
           new KetSerializer(),
           format,
           structServiceOptions,
+          formatterBehaviorOptions,
         );
     }
 

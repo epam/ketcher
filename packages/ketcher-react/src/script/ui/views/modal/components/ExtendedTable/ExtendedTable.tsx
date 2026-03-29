@@ -67,6 +67,7 @@ const Table = (props: TableProps) => {
       title="Extended Table"
       withDivider
       className={classes.extendedTable}
+      data-testid="extended-table-dialog"
       params={props}
       result={result}
       buttons={['Cancel', 'OK']}

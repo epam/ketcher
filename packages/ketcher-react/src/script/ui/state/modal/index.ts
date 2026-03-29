@@ -24,11 +24,11 @@ type ModalFormState = Omit<BaseModalFormState, 'result'> & {
 };
 
 interface ModalDialogProps {
-  [key: string]: unknown;
   isNestedModal?: boolean;
   isRestoredModal?: boolean;
   onResult?: (value: unknown) => void;
   onCancel?: (reason?: unknown) => void;
+  [key: string]: unknown;
 }
 
 interface ModalState {
@@ -113,23 +113,23 @@ function modalReducer(
   state: ModalState | null = null,
   action: UnknownAction,
 ): ModalState | null {
-  if (isUpdateFormAction(action)) {
-    // Don't update if modal has already been closed
-    // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
-    // not send 'UPDATE_FORM' action to a closed modal in the first place
-    if (!state) {
-      return null;
-    }
-
-    const formState = ensureFormState(
-      formReducer(state.form ?? undefined, action),
-    );
-    return { ...state, form: formState };
-  }
-
   const { type } = action;
 
   switch (type) {
+    case 'UPDATE_FORM': {
+      // Don't update if modal has already been closed
+      // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
+      // not send 'UPDATE_FORM' action to a closed modal in the first place
+      if (!state || !isUpdateFormAction(action)) {
+        return null;
+      }
+
+      const formState = ensureFormState(
+        formReducer(state.form ?? undefined, action),
+      );
+      return { ...state, form: formState };
+    }
+
     case 'MODAL_CLOSE':
       if (state?.parentModal) {
         return {
@@ -143,18 +143,21 @@ function modalReducer(
       }
       return null;
 
-    case 'MODAL_OPEN':
-      if (isModalOpenAction(action)) {
-        const { data } = action;
-
-        return {
-          name: data.name,
-          form: ensureFormState(formsState[data.name]),
-          prop: data.prop || null,
-          parentModal: data.prop?.isNestedModal ? state : null,
-        };
+    case 'MODAL_OPEN': {
+      // Safely extract data, defaulting to empty object if missing
+      const data = isModalOpenAction(action) ? action.data : null;
+      if (!data || !data.name) {
+        // Invalid MODAL_OPEN action, return current state
+        return state;
       }
-      return state;
+
+      return {
+        name: data.name,
+        form: ensureFormState(formsState[data.name]),
+        prop: data.prop || null,
+        parentModal: data.prop?.isNestedModal ? state : null,
+      };
+    }
 
     default:
       return state;

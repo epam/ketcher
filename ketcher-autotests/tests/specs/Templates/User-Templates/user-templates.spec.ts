@@ -212,10 +212,10 @@ test.describe('Create and Save Templates', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'My Template',
     );
-    await page.getByText('My Template').click();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -242,10 +242,10 @@ test.describe('Create and Save Templates', () => {
     await IndigoFunctionsToolbar(page).cleanUp();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'user_template_1',
     );
-    await page.getByText('user_template_1').click();
     await takeEditorScreenshot(page);
   });
 
@@ -262,10 +262,10 @@ test.describe('Create and Save Templates', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'My Template',
     );
-    await page.getByText('My Template').click();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
@@ -292,7 +292,7 @@ test.describe('Templates field lenght validations', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await page.getByRole('button', { name: 'Save to Templates' }).click();
+    await SaveStructureDialog(page).saveToTemplates();
     await getEditorScreenshot(page);
   });
 
@@ -309,12 +309,11 @@ test.describe('Templates field lenght validations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
-    await page.getByPlaceholder('template').click();
 
     const tooLongValueLength = 130;
-    await page
-      .getByPlaceholder('template')
-      .fill('a'.repeat(tooLongValueLength));
+    await TemplateEditDialog(page).setMoleculeName(
+      'a'.repeat(tooLongValueLength),
+    );
     await getEditorScreenshot(page);
   });
 

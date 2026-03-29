@@ -10,6 +10,7 @@ import {
 import { closeOpenStructure, pageReload } from '@utils/common/helpers';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -1330,7 +1331,7 @@ test.describe('Import incorrect HELM sequence: ', () => {
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
       await ErrorMessageDialog(page).close();
-      await closeOpenStructure(page);
+      await OpenStructureDialog(page).closeWindow();
 
       // Test should be skipped if related bug exists
       test.fixme(

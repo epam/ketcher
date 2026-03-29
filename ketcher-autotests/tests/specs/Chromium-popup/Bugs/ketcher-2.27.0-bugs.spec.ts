@@ -47,6 +47,7 @@ import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedS
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -275,8 +276,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Chromium-popup/Bugs/benzene-ring-with-two-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
-    const attachmentPointR1 = page.getByText('R1');
-    await ContextMenu(page, attachmentPointR1).click([
+    // R1 group is actually H atom
+    await ContextMenu(page, getAtomLocator(page, { atomLabel: 'H' })).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
     ]);

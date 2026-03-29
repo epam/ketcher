@@ -110,7 +110,9 @@ test.describe('R-Group Label Tool', () => {
 
     await CommonLeftToolbar(page).erase();
     await waitForRender(page, async () => {
-      await page.getByText('R5').click();
+      await getAtomLocator(page, { atomLabel: 'R#' }).click({
+        force: true,
+      });
     });
     await takeEditorScreenshot(page);
   });
@@ -127,7 +129,9 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await page.getByText('R5').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await RGroupDialog(page).changeRGroupLabels({
       unsetGroups: RGroup.R5,
       setGroups: RGroup.R8,
@@ -187,7 +191,9 @@ test.describe('R-Group Label Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await RGroupDialog(page).setRGroupLabels(RGroup.R5);
 
-    await page.getByText('R5').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await RGroupDialog(page).changeRGroupLabels({
       unsetGroups: RGroup.R5,
       setGroups: [RGroup.R7, RGroup.R8],
@@ -256,7 +262,9 @@ test.describe('R-Group Label Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('R5').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -270,7 +278,9 @@ test.describe('R-Group Label Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('R1').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
@@ -282,7 +292,9 @@ test.describe('R-Group Label Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/chain-r1.mol');
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('R1').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
@@ -304,7 +316,9 @@ test.describe('R-Group Label Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
@@ -324,7 +338,9 @@ test.describe('R-Group Label Tool', () => {
     });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
   });
@@ -361,10 +377,12 @@ test.describe('R-Group Label Tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/chain-with-r-group.rxn');
     await LeftToolbar(page).chargePlus();
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
     await LeftToolbar(page).chargeMinus();
     await waitForRender(page, async () => {
-      await page.getByText('R13').click();
+      await getAtomLocator(page, { atomLabel: 'R#' }).nth(1).click();
     });
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 1 });
   });
@@ -379,7 +397,9 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await page.getByText('R8').hover();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).hover({
+      force: true,
+    });
     await dragMouseTo(page, 100, 100);
     await takeEditorScreenshot(page);
   });
@@ -394,7 +414,9 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await LeftToolbar(page).chain();
-    await page.getByText('R10').hover();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(1).hover({
+      force: true,
+    });
     await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
   });
@@ -409,7 +431,9 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await page.getByText('R10').hover();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(1).hover({
+      force: true,
+    });
     await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
   });

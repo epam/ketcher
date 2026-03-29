@@ -930,7 +930,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -986,7 +989,11 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/structure-with-two-attachment-points.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await ContextMenu(page, page.getByText('R2')).open();
+    // R1 group is actually H atom
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'H' }).nth(1),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1971,7 +1978,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
@@ -1991,7 +2001,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R18);
     await takeEditorScreenshot(page);
   });
@@ -2006,7 +2019,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
@@ -2025,14 +2041,20 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).chargePlus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
     });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).chargeMinus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
@@ -2050,7 +2072,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

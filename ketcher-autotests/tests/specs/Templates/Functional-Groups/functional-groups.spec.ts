@@ -217,10 +217,10 @@ test.describe('Functional Groups', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'My Template',
     );
-    await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);

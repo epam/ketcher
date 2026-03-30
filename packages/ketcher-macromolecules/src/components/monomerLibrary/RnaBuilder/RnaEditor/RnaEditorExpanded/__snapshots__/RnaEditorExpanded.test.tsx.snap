@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Test Rna Editor Expanded component should render correctly in edit mode 1`] = `
 <div
@@ -126,7 +126,9 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       Cancel
     </button>
     <button
+      aria-label=""
       class="css-wciliw"
+      data-mui-internal-clone-element="true"
       data-testid="add-to-presets-btn"
       disabled=""
     >
@@ -263,7 +265,9 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       Cancel
     </button>
     <button
+      aria-label=""
       class="css-wciliw"
+      data-mui-internal-clone-element="true"
       data-testid="save-btn"
       disabled=""
     >
@@ -387,6 +391,43 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       >
         Phosphate
       </p>
+      <div
+        class="phosphatePositionIconWrapperOnPresetCard"
+      >
+        <span
+          aria-label="Phosphate on the right"
+          class=""
+          data-mui-internal-clone-element="true"
+        >
+          <button
+            aria-label="Select phosphate position"
+            class="phosphatePositionTrigger"
+            disabled=""
+            type="button"
+          >
+            <div
+              class="phosphatePositionIconWrapper"
+            >
+              <svg
+                fill="none"
+                height="12"
+                viewBox="0 0 12 12"
+                width="12"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.312 1.313c0-.208.168-.375.375-.375h3.375c.208 0 .375.167.375.375v3.375a.375.375 0 01-.375.375H1.687a.375.375 0 01-.375-.375V1.313zM3.11 6.239a.375.375 0 01.53 0l2.122 2.12a.375.375 0 010 .531L3.64 11.011a.375.375 0 01-.53 0L.99 8.892a.375.375 0 010-.531L3.11 6.239z"
+                  fill="#CAD3DD"
+                />
+                <path
+                  d="M11.25 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                  fill="#167782"
+                />
+              </svg>
+            </div>
+          </button>
+        </span>
+      </div>
     </div>
   </div>
   <div

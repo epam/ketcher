@@ -44,7 +44,6 @@ test.describe('Open Ketcher', () => {
      */
     await CommonTopRightToolbar(page).helpButton.hover();
     await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Menu bar: UI Verification', async ({ page }) => {
@@ -55,7 +54,7 @@ test.describe('Open Ketcher', () => {
     await takeTopToolbarScreenshot(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
     await clickInTheMiddleOfTheScreen(page);

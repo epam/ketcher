@@ -16,14 +16,11 @@
 
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
-
-// AtomTypeValue includes 'gen' for compatibility with PeriodTable.tsx,
-// even though it's not displayed as an option in the UI
-type AtomTypeValue = 'atom' | 'list' | 'not-list' | 'gen';
+import { PeriodTableType } from '../../types';
 
 interface TypeSchemaItem {
   title: string;
-  value: AtomTypeValue;
+  value: PeriodTableType;
   testId: string;
 }
 
@@ -34,12 +31,12 @@ const typeSchema: TypeSchemaItem[] = [
 ];
 
 interface TypeChoiceProps {
-  value: AtomTypeValue;
-  onChange: (value: AtomTypeValue) => void;
+  value: PeriodTableType;
+  onChange: (value: PeriodTableType) => void;
   disabled?: boolean;
 }
 
-function TypeChoice({ value, onChange, disabled }: TypeChoiceProps) {
+function TypeChoice({ value, onChange, disabled }: Readonly<TypeChoiceProps>) {
   return (
     <fieldset className={classes.fieldset} disabled={disabled}>
       {typeSchema.map((type) => (

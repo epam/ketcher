@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -7,7 +8,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
@@ -15,22 +15,21 @@ import {
   takeTopToolbarScreenshot,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
   MolFileFormat,
   clickOnCanvas,
   openFile,
-  delay,
+  takeElementScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -104,24 +103,14 @@ async function openPPTXFileAndValidateStructurePreview(
 let page: Page;
 
 test.describe('Ketcher bugs in 3.4.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Tooltips in sequence mode disappear after right-click on letters', async () => {
@@ -574,7 +563,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takeEditorScreenshot(page);
     await page.keyboard.press('Alt+C');
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
   });
 
@@ -1313,7 +1302,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).rnaTab.click();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -1334,12 +1323,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('140');
     await CalculateVariablesPanel(page).setOligonucleotidesValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -1354,13 +1343,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );

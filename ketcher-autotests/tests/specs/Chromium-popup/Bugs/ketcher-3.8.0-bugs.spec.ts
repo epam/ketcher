@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
@@ -6,6 +7,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -73,10 +75,9 @@ test.describe('Ketcher bugs in 3.8.0', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -366,7 +367,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(550, 250, page);
+    await dragMouseTo(page, 550, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -395,7 +396,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
     await ContextMenu(page, targetAtom).open();
     await takeEditorScreenshot(page);
@@ -476,7 +477,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -499,11 +500,11 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-    await page.keyboard.press('Control+M');
+    await page.keyboard.press('ControlOrMeta+M');
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -886,10 +887,12 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Nucleotide '5Br-dU' has no 'three-prime end' IDT alias.",
+    );
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 34: Export to IDT work for baseless preset', async ({

@@ -99,7 +99,7 @@ test.describe('Lasso Selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
       force: true,
     });
-    await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
+    await dragMouseTo(page, point.x + xDelta, point.y - yDelta);
     await takeEditorScreenshot(page);
   });
 
@@ -152,7 +152,7 @@ test.describe('Lasso Selection tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).click({
       force: true,
     });
-    await dragMouseTo(point.x - xShift, point.y - yAxis, page);
+    await dragMouseTo(page, point.x - xShift, point.y - yAxis);
     await takeEditorScreenshot(page);
   });
 
@@ -191,7 +191,7 @@ test.describe('Lasso Selection tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectObjects(page, selectCoords.x, selectCoords.y);
     await getBondLocator(page, { bondId: 11 }).hover({ force: true });
-    await dragMouseTo(680, 250, page);
+    await dragMouseTo(page, 680, 250);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -205,9 +205,9 @@ test.describe('Lasso Selection tool', () => {
     const centerY = box.y + box.height / 2;
 
     await dragMouseTo(
+      page,
       centerX - xDelta + shiftCoords2.x,
       centerY + yDelta + shiftCoords2.y,
-      page,
     );
     await takeEditorScreenshot(page);
   });
@@ -249,9 +249,9 @@ test.describe('Lasso Selection tool', () => {
       .boundingBox();
     if (atomPoint) {
       await dragMouseTo(
+        page,
         atomPoint.x - randomCoords.x,
         atomPoint.y - randomCoords.y,
-        page,
       );
     }
 
@@ -264,7 +264,7 @@ test.describe('Lasso Selection tool', () => {
 
     const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
     const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
-    await dragMouseTo(centerX + shiftCoords.x, centerY + shiftCoords.y, page);
+    await dragMouseTo(page, centerX + shiftCoords.x, centerY + shiftCoords.y);
 
     await selectObjects(page, yAxis, yAxis);
     await clickOnCanvas(
@@ -274,9 +274,9 @@ test.describe('Lasso Selection tool', () => {
       { from: 'pageTopLeft' },
     );
     await dragMouseTo(
+      page,
       centerPoint.x + randomCoords.x,
       centerPoint.y - randomCoords.y,
-      page,
     );
     await CommonTopLeftToolbar(page).undo();
 

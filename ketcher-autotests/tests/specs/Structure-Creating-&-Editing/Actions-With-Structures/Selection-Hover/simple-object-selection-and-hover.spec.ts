@@ -22,7 +22,7 @@ test.describe('Selection and hover for simple objects', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(ellipseCoordinates.x, ellipseCoordinates.y, page);
+    await dragMouseTo(page, ellipseCoordinates.x, ellipseCoordinates.y);
     return ellipseCoordinates;
   };
 

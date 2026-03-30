@@ -15,7 +15,7 @@ type Data = {
 };
 
 class RGroupAttachmentPointAdd extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(data: Data) {
     super(

@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   MonomerType,
@@ -29,29 +29,23 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
 });
+
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-  await CommonTopRightToolbar(page).resetZoom();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface ICommonPart {
@@ -1490,7 +1484,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
     hideMonomerPreview: true,
   });
 
-  await page.getByTitle('Yes').click();
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

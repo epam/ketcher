@@ -227,7 +227,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square
@@ -294,7 +294,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square

@@ -191,6 +191,25 @@ export const {
   setSelectedTabIndex,
 } = librarySlice.actions;
 
+export const selectAxoLabsAliasesByPresetName = createSelector(
+  (state: RootState) => state.library.defaultRnaPresets,
+  (defaultPresets: IKetMonomerGroupTemplate[]): Map<string, string> => {
+    const presets = defaultPresets ?? [];
+    return presets.reduce(
+      (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
+        if (preset.aliasAxoLabs && preset.name) {
+          aliases.set(
+            preset.name.toLowerCase(),
+            preset.aliasAxoLabs.toLowerCase(),
+          );
+        }
+        return aliases;
+      },
+      new Map<string, string>(),
+    );
+  },
+);
+
 export const selectLibrarySlice = (state: RootState): LibraryState =>
   state.library;
 
@@ -426,10 +445,7 @@ export const selectFilteredMonomers = createSelector(
 
           return (
             idtBase?.endsWith(aliasRest) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.endsWith(aliasRest)))
+            idtModifications?.split(' ').some((mod) => mod.endsWith(aliasRest))
           );
         }
 

@@ -18,6 +18,7 @@ import {
   AtomMove,
   BondAttr,
   EnhancedFlagMove,
+  EnhancedFlagClear,
   RxnArrowMove,
   RxnArrowRotate,
   RxnPlusMove,
@@ -67,6 +68,17 @@ export function fromFlip(
   if (structToFlip.texts) {
     action.mergeWith(
       fromTextFlip(reStruct, structToFlip.texts, flipDirection, center),
+    );
+  }
+
+  if (structToFlip.enhancedFlags) {
+    action.mergeWith(
+      fromEnhancedFlagsFlip(
+        reStruct,
+        structToFlip.enhancedFlags,
+        flipDirection,
+        center,
+      ),
     );
   }
 
@@ -150,6 +162,29 @@ function fromTextFlip(
 
     const difference = flipPointByCenter(textCenter, center, flipDirection);
     action.addOp(new TextMove(textId, difference));
+  });
+
+  return action.perform(reStruct);
+}
+
+function fromEnhancedFlagsFlip(
+  reStruct: ReStruct,
+  enhancedFlagIds: number[],
+  _flipDirection: FlipDirection,
+  _center: Vec2,
+) {
+  const action = new Action();
+
+  // Clear stored flag positions so they recalculate based on new atom positions
+  enhancedFlagIds.forEach((flagId) => {
+    const frId = flagId;
+    const frag = reStruct.molecule.frags.get(frId);
+    if (!frag) {
+      return;
+    }
+
+    // Clear the position - it will auto-recalculate to top-right of new bounding box
+    action.addOp(new EnhancedFlagClear(flagId));
   });
 
   return action.perform(reStruct);

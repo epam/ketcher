@@ -154,7 +154,7 @@ test.describe('3D Viewer', () => {
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y + 75, page);
+    await dragMouseTo(page, x, y + 75);
     await waitForRender(page, async () => {
       await MiewDialog(page).apply();
     });

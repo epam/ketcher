@@ -47,6 +47,7 @@ export type WizardNotificationId =
   | 'editingIsNotAllowed'
   | 'noAttachmentPoints'
   | 'incorrectAttachmentPointsOrder'
+  | 'attachmentPointsNotUnique'
   | 'creationSuccessful'
   | 'creationRNASuccessful'
   | 'incontinuousStructure'

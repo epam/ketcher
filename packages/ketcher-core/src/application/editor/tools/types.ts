@@ -3,7 +3,7 @@ export enum ToolName {
   preset = 'preset',
   selectRectangle = 'select-rectangle',
   selectLasso = 'select-lasso',
-  selectFragment = 'select-fragment',
+  selectStructure = 'select-structure',
   bondSingle = 'bond-single',
   bondHydrogen = 'bond-hydrogen',
   erase = 'erase',

@@ -17,7 +17,16 @@
 import { Icon, IconName } from 'components';
 import classes from './SpecialSymbolsList.module.less';
 
-const SpecialSymbolsList = ({ select }) => {
+interface SpecialSymbolsListProps {
+  id: string;
+  onSelect: (event: React.MouseEvent<HTMLButtonElement>, value: string) => void;
+}
+
+const SpecialSymbolsList = ({
+  onSelect,
+  ...props
+}: Omit<React.HTMLAttributes<HTMLMenuElement>, 'onSelect'> &
+  SpecialSymbolsListProps) => {
   const symbols: IconName[] = [
     'α',
     'β',
@@ -68,22 +77,23 @@ const SpecialSymbolsList = ({ select }) => {
     '≥',
   ];
   return (
-    <div className={classes.window}>
+    <menu className={classes.window} {...props}>
       {symbols.map((symbol) => {
         return (
           <button
             className={classes.button}
             key={symbol}
             value={symbol}
-            onMouseDown={(event) => {
-              select(event, symbol);
+            onClick={(event) => {
+              onSelect(event, symbol);
             }}
+            role="menuitem"
           >
             <Icon name={symbol} />
           </button>
         );
       })}
-    </div>
+    </menu>
   );
 };
 export { SpecialSymbolsList };

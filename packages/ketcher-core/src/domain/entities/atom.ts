@@ -339,7 +339,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: any = {};
+    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attr in Atom.attrlist) {
       if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr];
     }
@@ -670,7 +670,7 @@ export class Atom extends BaseMicromoleculeEntity {
           hydrogenCount: 3 - radicalCount - connectionCount,
         };
       }
-      if (label === 'N' || radicalCount + connectionCount + absCharge <= 3) {
+      if (radicalCount + connectionCount + absCharge <= 3) {
         return {
           valence: 3,
           hydrogenCount: 3 - radicalCount - connectionCount - absCharge,
@@ -767,16 +767,14 @@ export class Atom extends BaseMicromoleculeEntity {
       let valence = connectionCount;
       let hydrogenCount = 0;
 
-      if (charge === -1) {
-        if (connectionCount <= 2) {
-          valence = 2;
-          hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
-        }
+      if (
+        (charge === -1 || charge === 0 || charge === 2) &&
+        connectionCount <= 2
+      ) {
+        valence = 2;
+        hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
       } else if (charge === 0 || charge === 2) {
-        if (connectionCount <= 2) {
-          valence = 2;
-          hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
-        } else if (connectionCount <= 4) {
+        if (connectionCount <= 4) {
           valence = 4;
           hydrogenCount = 4 - radicalCount - connectionCount - absCharge;
         } else if (charge === 0 && connectionCount <= 6) {
@@ -872,7 +870,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (Atom.isHeteroAtom(this.label) && this.implicitHCount !== null) {
+    if (this.implicitHCount !== null) {
       return this.implicitHCount;
     }
     return hydrogenCount;
@@ -914,10 +912,15 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       }
     } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1 || charge === 2) return rad + conn;
-      } else if (label === 'Sb' || label === 'Bi' || label === 'As') {
-        if (charge === 1 || charge === 2) return rad + conn;
+      if (
+        (label === 'N' ||
+          label === 'P' ||
+          label === 'Sb' ||
+          label === 'Bi' ||
+          label === 'As') &&
+        (charge === 1 || charge === 2)
+      ) {
+        return rad + conn;
       }
     } else if (groupno === 6) {
       if (label === 'O') {
@@ -939,7 +942,9 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sgroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.atomId === atomId);
@@ -950,10 +955,15 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
+    let sgroup: SGroup | undefined;
+
+    if (structOrSgroup instanceof SGroup) {
+      sgroup = structOrSgroup;
+    } else if (searchBySgroups) {
+      sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
+    } else {
+      sgroup = structOrSgroup.getGroupFromAtomId(atomId);
+    }
 
     return sgroup
       ?.getAttachmentPoints()
@@ -1068,32 +1078,34 @@ export class Atom extends BaseMicromoleculeEntity {
       struct,
       atomId,
     );
-    const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     const isMonomer = sGroup instanceof MonomerMicromolecule;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
     }
 
-    return (
+    return Boolean(
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-      attachmentAtomExternalConnections?.find((_, bond) =>
-        bond.begin === attachmentPoint?.atomId
-          ? bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber
-          : bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber,
-      )
+        attachmentAtomExternalConnections?.find((_, bond) =>
+          bond.begin === attachmentPoint?.atomId
+            ? bond.beginSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber
+            : bond.endSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber,
+        ) !== null,
     );
   }
 }
 
-export function radicalElectrons(radical: any) {
-  radical -= 0;
-  if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1;
+export function radicalElectrons(radical: unknown) {
+  const normalizedRadical = Number(radical);
+  if (normalizedRadical === Atom.PATTERN.RADICAL.DOUPLET) return 1;
   else if (
-    radical === Atom.PATTERN.RADICAL.SINGLET ||
-    radical === Atom.PATTERN.RADICAL.TRIPLET
+    normalizedRadical === Atom.PATTERN.RADICAL.SINGLET ||
+    normalizedRadical === Atom.PATTERN.RADICAL.TRIPLET
   ) {
     return 2;
   } else {

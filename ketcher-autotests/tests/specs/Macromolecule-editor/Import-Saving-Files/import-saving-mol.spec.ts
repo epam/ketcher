@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
@@ -23,7 +24,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -31,28 +32,28 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
     enableFlexMode: false,
     goToPeptides: false,
   });
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-  await processResetToDefaultState(testInfo, page);
+test.afterEach(async () => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .mol Files', () => {
@@ -90,9 +91,10 @@ test.describe('Import-Saving .mol Files', () => {
       // error expected
       true,
     );
-    await expect(
-      page.getByText('Convert error! Error during file parsing.'),
-    ).toBeVisible();
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Export monomers and chem', async () => {
@@ -302,7 +304,12 @@ test.describe('Import-Saving .mol Files', () => {
       MacroFileType.MOLv3000,
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got   -', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {

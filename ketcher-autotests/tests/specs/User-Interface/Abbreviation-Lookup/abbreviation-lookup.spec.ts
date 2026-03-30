@@ -29,7 +29,7 @@ test.describe('Lookup Abbreviations window', () => {
   test('is shown, when entering some text', async ({ page }) => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('mek');
-    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
+    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     expect(await abbreviationLookup.isVisible()).toBe(true);
     await takeEditorScreenshot(page);
   });

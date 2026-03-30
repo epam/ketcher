@@ -1,20 +1,19 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@fixtures';
 import {
   resetZoomLevelToDefault,
-  waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -32,26 +31,18 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 test.setTimeout(20000);
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`1. Verify context menu in Snake and Flex modes when right-clicking a monomer (Copy and Delete (Paste disabled))`, async () => {
@@ -491,7 +482,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     MacroFileType.HELM,
     'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
   );
-  await ZoomInByKeyboard(page, { repeat: 2 });
+  await zoomInByKeyboard(page, { repeat: 2 });
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
@@ -499,7 +490,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     ContextMenu(page, peptideA).contextMenuBody,
   );
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
     page,
@@ -533,7 +524,7 @@ test(`10. Verify that context menu works correctly on canvas after panning`, asy
   await selectAllStructuresOnCanvas(page);
 
   await page.mouse.move(100, 100);
-  await dragMouseTo(200, 200, page);
+  await dragMouseTo(page, 200, 200);
 
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(

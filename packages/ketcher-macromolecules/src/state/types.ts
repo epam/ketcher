@@ -45,6 +45,7 @@ export interface PresetPreviewState extends BasePreviewState {
   readonly position: PresetPosition;
   readonly name?: string;
   readonly idtAliases?: IKetIdtAliases;
+  readonly aliasAxoLabs?: string;
 }
 
 export interface BondPreviewState extends BasePreviewState {

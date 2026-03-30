@@ -1,36 +1,22 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test } from '@fixtures';
-import {
-  openFileAndAddToCanvasMacro,
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
+import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
-import {
-  markResetToDefaultState,
-  processResetToDefaultState,
-} from '@utils/testAnnotations/resetToDefaultState';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { verifySVGExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await processResetToDefaultState(testInfo, page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Saving in .svg files', () => {

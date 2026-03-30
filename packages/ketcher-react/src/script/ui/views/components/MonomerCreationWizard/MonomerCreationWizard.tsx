@@ -20,7 +20,7 @@ import {
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import clsx from 'clsx';
 import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/NaturalAnaloguePicker';
 import {
@@ -61,6 +61,7 @@ import { createPortal } from 'react-dom';
 import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
+import { inferPhosphatePosition } from './PhosphatePositionInference';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
@@ -88,6 +89,7 @@ const initialRnaPresetWizardState: RnaPresetWizardState = {
     name: '',
     errors: {
       name: undefined,
+      phosphatePosition: undefined,
     },
     notifications: new Map(),
     manuallyModifiedSymbols: {
@@ -718,6 +720,9 @@ const MonomerCreationWizard = () => {
     KetMonomerClass | string | null
   >(null);
   const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
+  const [phosphatePosition, setPhosphatePosition] = useState<
+    '3' | '5' | undefined
+  >();
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -816,6 +821,7 @@ const MonomerCreationWizard = () => {
 
   const applyTypeChange = (newType: KetMonomerClass | string) => {
     setModificationTypes([]);
+    setPhosphatePosition(undefined);
     if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
       wizardStateDispatch({
         type: 'ResetWizard',
@@ -884,8 +890,31 @@ const MonomerCreationWizard = () => {
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
     rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
+    setPhosphatePosition(undefined);
     setAttachmentPointEditPopupData(null);
   };
+
+  const handlePhosphatePositionChange = useCallback(
+    (value: '3' | '5' | undefined) => {
+      setPhosphatePosition(value);
+      if (!value) {
+        return;
+      }
+
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          phosphatePosition: undefined,
+        },
+        rnaComponentKey: 'preset',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'RemoveNotification',
+        id: 'phosphatePositionNotSelected',
+      });
+    },
+    [],
+  );
 
   const selectRectangleAction = tools['select-rectangle'].action;
 
@@ -925,6 +954,70 @@ const MonomerCreationWizard = () => {
       });
     }
   }, [monomerCreationState?.hasDefaultAttachmentPoints]);
+
+  useEffect(() => {
+    if (!monomerCreationState || !isRnaPresetType) {
+      return;
+    }
+
+    const sugarAttachmentPoints = new Map<
+      AttachmentPointName,
+      [number, number]
+    >();
+    const phosphateAttachmentPoints = new Map<
+      AttachmentPointName,
+      [number, number]
+    >();
+
+    monomerCreationState.assignedAttachmentPoints.forEach(
+      ([attachmentAtomId, leavingGroupAtomId], attachmentPointName) => {
+        if (
+          rnaPresetWizardState.sugar.structure?.atoms?.includes(
+            attachmentAtomId,
+          )
+        ) {
+          sugarAttachmentPoints.set(attachmentPointName, [
+            attachmentAtomId,
+            leavingGroupAtomId,
+          ]);
+        }
+
+        if (
+          rnaPresetWizardState.phosphate.structure?.atoms?.includes(
+            attachmentAtomId,
+          )
+        ) {
+          phosphateAttachmentPoints.set(attachmentPointName, [
+            attachmentAtomId,
+            leavingGroupAtomId,
+          ]);
+        }
+      },
+    );
+
+    const autoPhosphatePosition = inferPhosphatePosition(
+      editor.struct(),
+      rnaPresetWizardState.sugar.structure,
+      sugarAttachmentPoints,
+      rnaPresetWizardState.phosphate.structure,
+      phosphateAttachmentPoints,
+    );
+
+    if (autoPhosphatePosition === phosphatePosition) {
+      return;
+    }
+
+    handlePhosphatePositionChange(autoPhosphatePosition);
+  }, [
+    editor,
+    isRnaPresetType,
+    monomerCreationState,
+    monomerCreationState?.assignedAttachmentPoints,
+    phosphatePosition,
+    rnaPresetWizardState.phosphate.structure,
+    rnaPresetWizardState.sugar.structure,
+    handlePhosphatePositionChange,
+  ]);
 
   if (!monomerCreationState) {
     return null;
@@ -1064,13 +1157,22 @@ const MonomerCreationWizard = () => {
       });
     }
 
+    const sugarPhosphateAttachmentPointName =
+      phosphatePosition === '5'
+        ? AttachmentPointName.R1
+        : AttachmentPointName.R2;
+    const phosphateSugarAttachmentPointName =
+      phosphatePosition === '5'
+        ? AttachmentPointName.R2
+        : AttachmentPointName.R1;
+
     if (
       assignedAttachmentPointsByMonomer
         .get(rnaPresetWizardState.sugar)
-        ?.get(AttachmentPointName.R2) ||
+        ?.get(sugarPhosphateAttachmentPointName) ||
       assignedAttachmentPointsByMonomer
         .get(rnaPresetWizardState.phosphate)
-        ?.get(AttachmentPointName.R1) ||
+        ?.get(phosphateSugarAttachmentPointName) ||
       assignedAttachmentPointsByMonomer
         .get(rnaPresetWizardState.sugar)
         ?.get(AttachmentPointName.R3) ||
@@ -1087,6 +1189,34 @@ const MonomerCreationWizard = () => {
             {
               type: 'error',
               message: NotificationMessages.attachmentPointsNotUnique,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
+    }
+
+    if (
+      rnaPresetWizardState.phosphate.structure?.atoms?.length &&
+      !phosphatePosition
+    ) {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          phosphatePosition: true,
+        },
+        rnaComponentKey: 'preset',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'phosphatePositionNotSelected',
+            {
+              type: 'error',
+              message: NotificationMessages.phosphatePositionNotSelected,
             },
           ],
         ]),
@@ -1344,6 +1474,14 @@ const MonomerCreationWizard = () => {
                 phosphateStructure.atoms || [],
               )
             : undefined;
+        const sugarPhosphateAttachmentPointName =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R1
+            : AttachmentPointName.R2;
+        const phosphateSugarAttachmentPointName =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R2
+            : AttachmentPointName.R1;
 
         if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
           const sugarAtoms = sugarStructure.atoms || [];
@@ -1398,38 +1536,38 @@ const MonomerCreationWizard = () => {
         ) {
           const sugarAtoms = sugarStructure.atoms || [];
           const phosphateAtoms = phosphateStructure.atoms || [];
-          const sugarR2AttachmentPointAtomId = sugarAtoms.includes(
+          const sugarPhosphateAttachmentPointAtomId = sugarAtoms.includes(
             bondBetweenSugarAndPhosphate.begin,
           )
             ? bondBetweenSugarAndPhosphate.begin
             : bondBetweenSugarAndPhosphate.end;
-          const sugarR2AttachmentAtom = struct.atoms.get(
-            sugarR2AttachmentPointAtomId,
+          const sugarPhosphateAttachmentAtom = struct.atoms.get(
+            sugarPhosphateAttachmentPointAtomId,
           );
-          const phosphateR1AttachmentPointAtomId = phosphateAtoms.includes(
+          const phosphateSugarAttachmentPointAtomId = phosphateAtoms.includes(
             bondBetweenSugarAndPhosphate.begin,
           )
             ? bondBetweenSugarAndPhosphate.begin
             : bondBetweenSugarAndPhosphate.end;
-          const phosphateR1AttachmentAtom = struct.atoms.get(
-            phosphateR1AttachmentPointAtomId,
+          const phosphateSugarAttachmentAtom = struct.atoms.get(
+            phosphateSugarAttachmentPointAtomId,
           );
 
           editor.assignConnectionPointAtom(
-            sugarR2AttachmentPointAtomId,
-            AttachmentPointName.R2,
+            sugarPhosphateAttachmentPointAtomId,
+            sugarPhosphateAttachmentPointName,
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
             getLeavingAtomForAttachmentPoint(
               KetMonomerClass.Sugar,
-              AttachmentPointName.R2,
+              sugarPhosphateAttachmentPointName,
             ),
-            phosphateR1AttachmentAtom?.pp,
+            phosphateSugarAttachmentAtom?.pp,
           );
           editor.assignConnectionPointAtom(
-            phosphateR1AttachmentPointAtomId,
-            AttachmentPointName.R1,
+            phosphateSugarAttachmentPointAtomId,
+            phosphateSugarAttachmentPointName,
             assignedAttachmentPointsByMonomer.get(
               rnaPresetWizardState.phosphate,
             ),
@@ -1437,9 +1575,9 @@ const MonomerCreationWizard = () => {
             true,
             getLeavingAtomForAttachmentPoint(
               KetMonomerClass.Phosphate,
-              AttachmentPointName.R1,
+              phosphateSugarAttachmentPointName,
             ),
-            sugarR2AttachmentAtom?.pp,
+            sugarPhosphateAttachmentAtom?.pp,
           );
         }
       }
@@ -1509,6 +1647,7 @@ const MonomerCreationWizard = () => {
       editor.finishNewMonomersCreation(
         monomersData,
         rnaPresetWizardState.preset.name,
+        phosphatePosition,
       );
 
       dispatch(onAction(selectRectangleAction));
@@ -1591,6 +1730,8 @@ const MonomerCreationWizard = () => {
                 wizardState={rnaPresetWizardState}
                 wizardStateDispatch={rnaPresetWizardStateDispatch}
                 editor={editor}
+                phosphatePosition={phosphatePosition}
+                onPhosphatePositionChange={handlePhosphatePositionChange}
               />
             ) : (
               <MonomerCreationWizardFields

@@ -1269,7 +1269,7 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await createMonomerDialog.discard();
 });
 
-test(`1. Verify that options/toolbar icons are now enabled for atoms in create monomer wizard: in the right-click menu, only options Edit and Delete are enabled`, async () => {
+test(`24. Verify that options/toolbar icons are now enabled for atoms in create monomer wizard: in the right-click menu, only options Edit and Delete are enabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that options/toolbar icons are now enabled for atoms in create monomer wizard: in the right-click menu, only options Edit and Delete are enabled
@@ -1306,7 +1306,7 @@ test(`1. Verify that options/toolbar icons are now enabled for atoms in create m
   await CreateMonomerDialog(page).discard();
 });
 
-test(`2. Verify that right-click menu Delete option works correct for atoms in Create Monomer Wizard`, async () => {
+test(`25. Verify that right-click menu Delete option works correct for atoms in Create Monomer Wizard`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that right-click menu Delete option works correct for atoms in Create Monomer Wizard
@@ -1342,7 +1342,7 @@ test(`2. Verify that right-click menu Delete option works correct for atoms in C
   await CreateMonomerDialog(page).discard();
 });
 
-test(`3. Verify that in create monomer wizard: In the right-click menu, Edit option, users can edit only single atom properties`, async () => {
+test(`26. Verify that in create monomer wizard: In the right-click menu, Edit option, users can edit only single atom properties`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: In the right-click menu, Edit option, users can edit only single atom properties
@@ -1400,7 +1400,7 @@ test(`3. Verify that in create monomer wizard: In the right-click menu, Edit opt
   await CreateMonomerDialog(page).discard();
 });
 
-test(`4. Verify that in create monomer wizard: for bonds in the right-click menu, options Edit, Different bond types, Change direction, and Delete are enabled`, async () => {
+test(`27. Verify that in create monomer wizard: for bonds in the right-click menu, options Edit, Different bond types, Change direction, and Delete are enabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: for bonds in the right-click menu, options Edit, Different
@@ -1449,7 +1449,7 @@ test(`4. Verify that in create monomer wizard: for bonds in the right-click menu
   await CreateMonomerDialog(page).discard();
 });
 
-test(`5. Verify that in create monomer wizard: in the right-click menu, Edit option, users can edit only the Type`, async () => {
+test(`28. Verify that in create monomer wizard: in the right-click menu, Edit option, users can edit only the Type`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: in the right-click menu, Edit option, users can edit only the Type
@@ -1507,7 +1507,7 @@ test(`5. Verify that in create monomer wizard: in the right-click menu, Edit opt
   await CreateMonomerDialog(page).discard();
 });
 
-test(`6. Verify that in create monomer wizard: on the right toolbar, Elements and the Periodic table are enabled`, async () => {
+test(`29. Verify that in create monomer wizard: on the right toolbar, Elements and the Periodic table are enabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: on the right toolbar, Elements and the Periodic table are enabled
@@ -1547,7 +1547,7 @@ test(`6. Verify that in create monomer wizard: on the right toolbar, Elements an
   await CreateMonomerDialog(page).discard();
 });
 
-test(`7. Verify that in create monomer wizard: in the periodic table, only Single atoms are allowed (List and Not list options are disabled)`, async () => {
+test(`30. Verify that in create monomer wizard: in the periodic table, only Single atoms are allowed (List and Not list options are disabled)`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: in the periodic table, only Single atoms are allowed (List and Not list options are disabled)
@@ -1580,7 +1580,7 @@ test(`7. Verify that in create monomer wizard: in the periodic table, only Singl
   await CreateMonomerDialog(page).discard();
 });
 
-test(`8. Verify that in create monomer wizard: it is possible to change atom using Periodic table`, async () => {
+test(`31. Verify that in create monomer wizard: it is possible to change atom using Periodic table`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: it is possible to change atom using Periodic table
@@ -1619,7 +1619,7 @@ test(`8. Verify that in create monomer wizard: it is possible to change atom usi
   await CreateMonomerDialog(page).discard();
 });
 
-test(`9. Verify that in create monomer wizard: it is possible to change atom using Elements from toolbar`, async () => {
+test(`32. Verify that in create monomer wizard: it is possible to change atom using Elements from toolbar`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: it is possible to change atom using Elements from toolbar
@@ -1657,7 +1657,7 @@ test(`9. Verify that in create monomer wizard: it is possible to change atom usi
   await CreateMonomerDialog(page).discard();
 });
 
-test(`10. Verify that in create monomer wizard: on the bottom toolbar, everything is now enabled`, async () => {
+test(`33. Verify that in create monomer wizard: on the bottom toolbar, everything is now enabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: on the bottom toolbar, everything is now enabled
@@ -1692,7 +1692,7 @@ test(`10. Verify that in create monomer wizard: on the bottom toolbar, everythin
   await CreateMonomerDialog(page).discard();
 });
 
-test(`11. Verify that in create monomer wizard: it is possible to put molecules on the canvas from bottom toolbar`, async () => {
+test(`34. Verify that in create monomer wizard: it is possible to put molecules on the canvas from bottom toolbar`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: it is possible to put molecules on the canvas from bottom toolbar
@@ -1732,7 +1732,7 @@ test(`11. Verify that in create monomer wizard: it is possible to put molecules 
   await CreateMonomerDialog(page).discard();
 });
 
-test(`12. Verify that in create monomer wizard: in the Structure library, the Functional Groups section and the option Save to SDF are disabled`, async () => {
+test(`35. Verify that in create monomer wizard: in the Structure library, the Functional Groups section and the option Save to SDF are disabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: in the Structure library, the Functional Groups section and the option Save to SDF are disabled
@@ -1762,7 +1762,7 @@ test(`12. Verify that in create monomer wizard: in the Structure library, the Fu
   await CreateMonomerDialog(page).discard();
 });
 
-test(`13. Verify that in create monomer wizard: on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled`, async () => {
+test(`36. Verify that in create monomer wizard: on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: on the left toolbar, Erase, Bond tool, Chain, Charge plus, and Charge minus are now enabled
@@ -1793,7 +1793,7 @@ test(`13. Verify that in create monomer wizard: on the left toolbar, Erase, Bond
   await CreateMonomerDialog(page).discard();
 });
 
-test(`14. Verify that in create monomer wizard: user can delete atoms and bonds with Erase button`, async () => {
+test(`37. Verify that in create monomer wizard: user can delete atoms and bonds with Erase button`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: user can delete atoms and bonds with Erase button
@@ -1827,7 +1827,7 @@ test(`14. Verify that in create monomer wizard: user can delete atoms and bonds 
   await CreateMonomerDialog(page).discard();
 });
 
-test(`15. Verify that in create monomer wizard: user can add bonds to molecule and modify bonds using Bond tool`, async () => {
+test(`38. Verify that in create monomer wizard: user can add bonds to molecule and modify bonds using Bond tool`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: user can add bonds to molecule and modify bonds using Bond tool
@@ -1865,7 +1865,7 @@ test(`15. Verify that in create monomer wizard: user can add bonds to molecule a
   await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
 
   await targetSingleBond.first().click({ force: true });
-  expect(targetDoubleBond.first()).toBeVisible();
+  await expect(targetDoubleBond.first()).toBeVisible();
 
   await targetAtom.click({ force: true });
 
@@ -1874,7 +1874,7 @@ test(`15. Verify that in create monomer wizard: user can add bonds to molecule a
   await CreateMonomerDialog(page).discard();
 });
 
-test(`16. Verify that in create monomer wizard: user can add bonds using Chain tool`, async () => {
+test(`39. Verify that in create monomer wizard: user can add bonds using Chain tool`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: user can add bonds using Chain tool
@@ -1912,7 +1912,7 @@ test(`16. Verify that in create monomer wizard: user can add bonds using Chain t
   await CreateMonomerDialog(page).discard();
 });
 
-test(`17. Verify that in create monomer wizard: user can use Charge plus and Charge minus tools to charge atoms on the canvas`, async () => {
+test(`40. Verify that in create monomer wizard: user can use Charge plus and Charge minus tools to charge atoms on the canvas`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: user can use Charge plus and Charge minus tools to charge atoms on the canvas
@@ -1945,17 +1945,17 @@ test(`17. Verify that in create monomer wizard: user can use Charge plus and Cha
   await LeftToolbar(page).chargePlus();
 
   await targetAtomBr.click({ force: true });
-  expect(targetAtomBr).toHaveAttribute('data-atomCharge', '1');
+  await expect(targetAtomBr).toHaveAttribute('data-atomCharge', '1');
 
   await LeftToolbar(page).chargeMinus();
 
   await targetAtomN.click({ force: true });
-  expect(targetAtomN).toHaveAttribute('data-atomCharge', '-1');
+  await expect(targetAtomN).toHaveAttribute('data-atomCharge', '-1');
 
   await CreateMonomerDialog(page).discard();
 });
 
-test(`18. Verify that in create monomer wizard: user can use Copy, Paste, Cut buttons and they works correct`, async () => {
+test(`41. Verify that in create monomer wizard: user can use Copy, Paste, Cut buttons and they works correct`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8340
    * Description: Verify that in create monomer wizard: user can use Copy, Paste, Cut buttons and they works correct
@@ -1996,11 +1996,11 @@ test(`18. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await selectAllStructuresOnCanvas(page);
   await MoleculesTopToolbar(page).cut();
 
-  expect(targetAtom).not.toBeVisible();
-  expect(targetBond).not.toBeVisible();
+  await expect(targetAtom).not.toBeVisible();
+  await expect(targetBond).not.toBeVisible();
 
   await MoleculesTopToolbar(page).paste();
-  expect(ErrorMessageDialog(page).window).toBeVisible();
+  await expect(ErrorMessageDialog(page).window).toBeVisible();
   await ErrorMessageDialog(page).close();
 
   await pasteFromClipboardByKeyboard(page);
@@ -2014,8 +2014,8 @@ test(`18. Verify that in create monomer wizard: user can use Copy, Paste, Cut bu
   await selectAllStructuresOnCanvas(page);
   await CommonLeftToolbar(page).erase();
 
-  expect(targetAtom).not.toBeVisible();
-  expect(targetBond).not.toBeVisible();
+  await expect(targetAtom).not.toBeVisible();
+  await expect(targetBond).not.toBeVisible();
 
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });

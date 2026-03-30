@@ -30,7 +30,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     page,
   }) => {
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await getAtomLocator(page, { atomId: 7 }).hover({
@@ -44,7 +44,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     page,
   }) => {
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await getAtomLocator(page, { atomId: 7 }).hover({
@@ -59,7 +59,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     page,
   }) => {
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await getAtomLocator(page, { atomId: 7 }).click({
@@ -73,7 +73,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     page,
   }) => {
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     const atom = getAtomLocator(page, { atomId: 7 });

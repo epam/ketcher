@@ -55,6 +55,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 declare global {
   interface Window {
@@ -804,7 +805,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
   );
 
-  const dC2SGroup = page.getByText('dC_2').first();
+  const dC2SGroup = getAbbreviationLocator(page, { name: 'dC_2' }).first();
 
   await expandAbbreviation(page, dC2SGroup);
 

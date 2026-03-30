@@ -26,8 +26,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/index';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -46,6 +46,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   horizontalFlipByKeyboard,
+  rotateToCoordinates,
   verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
@@ -242,9 +243,9 @@ test('8. Verify that the star atom is displayed correctly when zooming in and ou
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
 
-  await ZoomInByKeyboard(page, { repeat: 11 });
+  await zoomInByKeyboard(page, { repeat: 11 });
   await takeEditorScreenshot(page);
-  await ZoomOutByKeyboard(page, { repeat: 6 });
+  await zoomOutByKeyboard(page, { repeat: 6 });
   await takeEditorScreenshot(page);
 });
 
@@ -647,16 +648,13 @@ test('24. Verify that the star atom retains its properties when the structure is
    *
    * Version 3.7
    */
-  const rotationHandle = page.getByTestId('rotation-handle');
-
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Star-Atom/LayoutValidation.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await rotationHandle.hover();
-  await dragMouseTo(page, 720, 300);
+  await rotateToCoordinates(page, { x: 720, y: 300 });
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

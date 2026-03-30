@@ -194,6 +194,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
                   setLookupValue(event.target.value);
                   setLoweredLookupValue(event.target.value.toLowerCase());
                 }}
+                data-testid={`AbbreviationLookup-input`}
               />
             </div>
           );

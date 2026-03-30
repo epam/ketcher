@@ -9,8 +9,8 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
@@ -470,11 +470,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  await ZoomInByKeyboard(page, { repeat: 5 });
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page, { repeat: 5 });
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 });
 
@@ -502,11 +502,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  await ZoomInByKeyboard(page, { repeat: 5 });
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page, { repeat: 5 });
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
@@ -537,11 +537,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  await ZoomInByKeyboard(page, { repeat: 5 });
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page, { repeat: 5 });
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });

@@ -405,7 +405,7 @@ test.describe('Bond Tool', () => {
        *Description: A bond is added to a contracted functional group and form a bond
        */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.Boc,
       );
       await clickInTheMiddleOfTheScreen(page);

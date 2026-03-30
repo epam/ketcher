@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -257,7 +257,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
-              <>
+              <Fragment key={rnaComponentKey}>
                 <div className={styles.createComponentWrapper}>
                   <div>{RNA_COMPONENT_HINTS[rnaComponentKey]}</div>
                   <button
@@ -273,7 +273,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   </button>
                 </div>
                 <MonomerCreationWizardFields
-                  key={rnaComponentKey}
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   onFieldChange={(
@@ -284,7 +283,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   }}
                   wizardState={wizardState[rnaComponentKey]}
                 />
-              </>
+              </Fragment>
             )
           );
         })}

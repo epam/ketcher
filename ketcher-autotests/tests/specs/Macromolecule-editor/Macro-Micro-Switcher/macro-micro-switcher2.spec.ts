@@ -863,11 +863,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId(`sequence-item`).first().waitFor({
       state: 'attached',
     });
-    await keyboardPressOnCanvas(page, 'Control+Alt+D');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+P');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+R');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
     await takeMonomerLibraryScreenshot(page);
   });
 

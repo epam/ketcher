@@ -1687,7 +1687,7 @@ test.describe('Import incorrect IDT sequence: ', () => {
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
       await ErrorMessageDialog(page).close();
-      await closeOpenStructure(page);
+      await OpenStructureDialog(page).closeWindow();
     });
   }
 });

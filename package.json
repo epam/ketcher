@@ -33,7 +33,7 @@
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",
     "serve:demo": "cd demo && npm run serve",
-    "up": "node ./scripts/build-run.js"
+    "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.61.0",

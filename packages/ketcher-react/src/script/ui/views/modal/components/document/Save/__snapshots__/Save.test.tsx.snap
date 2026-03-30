@@ -14,7 +14,6 @@ exports[`Save Dialog should be rendered correctly should render opened file form
         data-testid="info-modal-window"
         open=""
         tabindex="-1"
-        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -426,7 +425,6 @@ exports[`Save Dialog should be rendered correctly should render opened file form
       data-testid="info-modal-window"
       open=""
       tabindex="-1"
-      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"

@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
+import { ReactNode } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -46,7 +47,16 @@ jest.mock('../../../../../hooks', () => ({
 // Mock MonomerCreationWizardFields to avoid additional dependencies
 jest.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
-  default: () => <div data-testid="monomer-creation-wizard-fields" />,
+  default: ({
+    attachmentPointsExtra,
+  }: {
+    attachmentPointsExtra?: ReactNode;
+  }) => (
+    <div data-testid="monomer-creation-wizard-fields">
+      <div data-testid="attachment-points-section">Attachment points</div>
+      {attachmentPointsExtra}
+    </div>
+  ),
 }));
 
 // Create a mock store
@@ -519,7 +529,12 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
     fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
 
-    expect(screen.getByTestId('phosphate-position-picker')).toBeInTheDocument();
+    const fieldsSection = screen.getByTestId('monomer-creation-wizard-fields');
+
+    expect(screen.getByTestId('attachment-points-section')).toBeInTheDocument();
+    expect(
+      within(fieldsSection).getByTestId('phosphate-position-picker'),
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('phosphate-position-5-button'));
 

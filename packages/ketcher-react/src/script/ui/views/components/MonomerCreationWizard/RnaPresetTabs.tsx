@@ -282,6 +282,67 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 <MonomerCreationWizardFields
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
+                  attachmentPointsExtra={
+                    rnaComponentKey === 'phosphate' ? (
+                      <AttributeField
+                        title="Position"
+                        required
+                        control={
+                          <div
+                            data-testid="phosphate-position-picker"
+                            className={clsx(
+                              styles.phosphatePositionPicker,
+                              wizardState.preset.errors.phosphatePosition &&
+                                styles.phosphatePositionPickerError,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              className={clsx(
+                                styles.phosphatePositionButton,
+                                phosphatePosition === '5' &&
+                                  styles.phosphatePositionButtonActive,
+                              )}
+                              data-testid="phosphate-position-5-button"
+                              aria-pressed={phosphatePosition === '5'}
+                              onClick={() => handlePhosphatePositionChange('5')}
+                            >
+                              <Icon
+                                name="preset-left-phosphate"
+                                className={styles.phosphatePositionIcon}
+                              />
+                              <span
+                                className={styles.phosphatePositionButtonLabel}
+                              >
+                                5&apos;-left
+                              </span>
+                            </button>
+                            <button
+                              type="button"
+                              className={clsx(
+                                styles.phosphatePositionButton,
+                                phosphatePosition === '3' &&
+                                  styles.phosphatePositionButtonActive,
+                              )}
+                              data-testid="phosphate-position-3-button"
+                              aria-pressed={phosphatePosition === '3'}
+                              onClick={() => handlePhosphatePositionChange('3')}
+                            >
+                              <Icon
+                                name="preset-right-phosphate"
+                                className={styles.phosphatePositionIcon}
+                              />
+                              <span
+                                className={styles.phosphatePositionButtonLabel}
+                              >
+                                3&apos;-right
+                              </span>
+                            </button>
+                          </div>
+                        }
+                      />
+                    ) : null
+                  }
                   onFieldChange={(
                     fieldId: StringWizardFormFieldId,
                     value: string,
@@ -290,61 +351,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   }}
                   wizardState={wizardState[rnaComponentKey]}
                 />
-                {rnaComponentKey === 'phosphate' && (
-                  <AttributeField
-                    title="Position"
-                    required
-                    control={
-                      <div
-                        data-testid="phosphate-position-picker"
-                        className={clsx(
-                          styles.phosphatePositionPicker,
-                          wizardState.preset.errors.phosphatePosition &&
-                            styles.phosphatePositionPickerError,
-                        )}
-                      >
-                        <button
-                          type="button"
-                          className={clsx(
-                            styles.phosphatePositionButton,
-                            phosphatePosition === '5' &&
-                              styles.phosphatePositionButtonActive,
-                          )}
-                          data-testid="phosphate-position-5-button"
-                          aria-pressed={phosphatePosition === '5'}
-                          onClick={() => handlePhosphatePositionChange('5')}
-                        >
-                          <Icon
-                            name="preset-left-phosphate"
-                            className={styles.phosphatePositionIcon}
-                          />
-                          <span className={styles.phosphatePositionButtonLabel}>
-                            5&apos;-left
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          className={clsx(
-                            styles.phosphatePositionButton,
-                            phosphatePosition === '3' &&
-                              styles.phosphatePositionButtonActive,
-                          )}
-                          data-testid="phosphate-position-3-button"
-                          aria-pressed={phosphatePosition === '3'}
-                          onClick={() => handlePhosphatePositionChange('3')}
-                        >
-                          <Icon
-                            name="preset-right-phosphate"
-                            className={styles.phosphatePositionIcon}
-                          />
-                          <span className={styles.phosphatePositionButtonLabel}>
-                            3&apos;-right
-                          </span>
-                        </button>
-                      </div>
-                    }
-                  />
-                )}
               </Fragment>
             )
           );

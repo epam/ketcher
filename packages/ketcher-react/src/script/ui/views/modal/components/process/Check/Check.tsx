@@ -64,7 +64,7 @@ interface CheckState {
 interface FormState {
   result?: CheckState;
   moleculeErrors: MoleculeErrors;
-  errors?: Record<string, unknown>;
+  errors?: Record<string, string>;
   valid?: boolean;
 }
 

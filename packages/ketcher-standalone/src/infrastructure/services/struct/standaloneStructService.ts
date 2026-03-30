@@ -318,18 +318,21 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
-        console.log('convert action', data);
         const msg: OutputMessage<string> = data;
-        if (msg.inputData === struct) {
-          if (!msg.hasError) {
-            const result: ConvertResult = {
-              struct: msg.payload,
-              format: outputFormat,
-            };
-            resolve(result);
-          } else {
-            reject(new Error(msg.error));
-          }
+        if (msg.inputData !== undefined && msg.inputData !== struct) {
+          return;
+        }
+
+        this.EE.removeListener(WorkerEvent.Convert, action);
+
+        if (!msg.hasError) {
+          const result: ConvertResult = {
+            struct: msg.payload,
+            format: outputFormat,
+          };
+          resolve(result);
+        } else {
+          reject(new Error(msg.error));
         }
       };
       const monomerLibrary = JSON.stringify(
@@ -364,7 +367,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.once(WorkerEvent.Convert, action);
+      this.EE.on(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
     });

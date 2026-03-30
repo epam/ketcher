@@ -1,8 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -11,7 +13,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  openPasteFromClipboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -88,8 +89,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     /*
      * Test case: EPMLSOPKET-1836
      */
-    const smileString = 'C1=CC=CC=C1';
-    await openPasteFromClipboard(page, smileString);
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('C1=CC=CC=C1');
     await takeElementScreenshot(
       page,
       OpenStructureDialog(page).previewTextArea,

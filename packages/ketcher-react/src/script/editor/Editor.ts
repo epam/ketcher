@@ -2282,7 +2282,7 @@ class Editor implements KetcherEditor {
               },
             );
 
-            this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
+            this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
 

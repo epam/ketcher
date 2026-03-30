@@ -56,7 +56,8 @@ interface FormDispatchProps {
 }
 
 interface FormStateProps {
-  result: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  result: Record<string, any>;
   errors?: Record<string, string>;
 }
 
@@ -80,7 +81,8 @@ export interface FieldProps {
   extraName?: string;
   tooltip?: string;
   extraLabel?: string;
-  schema?: SchemaProperty;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema?: SchemaProperty | any[];
   extraSchema?: SchemaProperty;
   type?: string;
   value?: string | number | boolean;
@@ -321,7 +323,9 @@ function Field(props: FieldProps) {
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name ?? ''];
+  const desc: SchemaProperty =
+    (!Array.isArray(rest.schema) && rest.schema) ||
+    schema.properties[name ?? ''];
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
@@ -403,7 +407,9 @@ function FieldWithModal(props: FieldWithModalProps) {
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
-  const desc = inputRest.schema || schema.properties[name ?? ''];
+  const desc: SchemaProperty =
+    (!Array.isArray(inputRest.schema) && inputRest.schema) ||
+    schema.properties[name ?? ''];
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
 
   return (
@@ -469,7 +475,9 @@ function CustomQueryField(props: CustomQueryFieldProps) {
     handleClose: handlePopoverClose,
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
-  const desc = rest.schema || schema.properties[name ?? ''];
+  const desc: SchemaProperty =
+    (!Array.isArray(rest.schema) && rest.schema) ||
+    schema.properties[name ?? ''];
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
   const handleCheckboxChange = (value: boolean) => {
     onCheckboxChange?.(

@@ -1822,7 +1822,7 @@ test(`37. Verify that in create monomer wizard: user can delete atoms and bonds 
   await targetAtom.click({ force: true });
 
   await expect(targetAtom).not.toBeVisible();
-  expect(await targetBond.count()).toBe(1);
+  await expect(targetBond).toHaveCount(1);
 
   await CreateMonomerDialog(page).discard();
 });

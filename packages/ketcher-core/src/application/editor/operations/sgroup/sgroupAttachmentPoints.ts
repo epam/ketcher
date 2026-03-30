@@ -1,4 +1,4 @@
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { SGroupAttachmentPoint } from 'domain/entities';

@@ -75,6 +75,9 @@ import {
   MonomerCreationComponentStructureUpdateEvent,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
+  LayerMap,
+  Visel,
+  paperPathFromSVGElement,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -92,6 +95,7 @@ import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
 import {
+  HoverTarget,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
@@ -99,6 +103,7 @@ import {
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 import assert from 'assert';
 import { isNumber } from 'lodash';
+import paperjs from 'paper';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
@@ -138,7 +143,6 @@ const highlightTargets = [
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];
-
 function selectStereoFlagsIfNecessary(
   atoms: Pool<Atom>,
   explicitlySelectedAtoms: number[],
@@ -196,6 +200,7 @@ class Editor implements KetcherEditor {
   rotateController: RotateController;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
@@ -229,7 +234,7 @@ class Editor implements KetcherEditor {
       clientArea,
       {
         microModeScale: SCALE,
-        ...(options || {}),
+        ...(options ?? {}),
       },
       prevEditor?.render,
       options.reuseRestructIfExist !== false,
@@ -257,6 +262,7 @@ class Editor implements KetcherEditor {
 
     this.event = {
       message: new Subscription(),
+      tooltip: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
       zoomIn: new PipelineSubscription(),
@@ -322,7 +328,8 @@ class Editor implements KetcherEditor {
       return null;
     }
 
-    const isSelectToolChosen = name === 'select';
+    const isSelectToolChosen =
+      name === 'select' || name === 'fragmentSelection';
     if (!isSelectToolChosen) {
       this.rotateController.clean();
     }
@@ -369,7 +376,7 @@ class Editor implements KetcherEditor {
     KetcherLogger.log('Editor.struct(), start', value, needToCenterStruct);
 
     this.selection(null);
-    const struct = value || new Struct();
+    const struct = value ?? new Struct();
 
     const molecule = this.renderAndRecoordinateStruct(
       struct,
@@ -429,7 +436,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(this.render.clientArea, {
       microModeScale: SCALE,
-      ...(value || {}),
+      ...(value ?? {}),
     });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
@@ -605,7 +612,7 @@ class Editor implements KetcherEditor {
     const currentState = this.render.monomerCreationState;
     if (!currentState) return;
 
-    const rnaComponentAtoms = currentState.rnaComponentAtoms || new Map();
+    const rnaComponentAtoms = currentState.rnaComponentAtoms ?? new Map();
     rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
 
     this.render.monomerCreationState = {
@@ -1283,7 +1290,9 @@ class Editor implements KetcherEditor {
 
     const attachmentPoints: IKetAttachmentPoint[] = [];
     const sortedAttachmentPointsData = new Map<string, [number, number]>(
-      [...data.attachmentPoints].sort(),
+      [...data.attachmentPoints].sort(([leftName], [rightName]) =>
+        leftName.localeCompare(rightName),
+      ),
     );
 
     sortedAttachmentPointsData.forEach(
@@ -1483,6 +1492,15 @@ class Editor implements KetcherEditor {
     const newAction = new Action();
     const structFromWizard = this.struct();
 
+    // Store positions only for atoms that were selected (wizard participants)
+    const originalAtomPositions = new Map<number, Vec2>();
+    this.selectedToOriginalAtomsIdMap.forEach((originalAtomId) => {
+      const atom = this.originalStruct.atoms.get(originalAtomId);
+      if (atom?.pp) {
+        originalAtomPositions.set(originalAtomId, new Vec2(atom.pp));
+      }
+    });
+
     this.struct(this.originalStruct, false);
 
     // this.struct(struct) uses setTimeout to defer some calculations,
@@ -1512,15 +1530,27 @@ class Editor implements KetcherEditor {
         true,
       );
 
+      // Restore original atom positions after merge
+      const struct = this.struct();
+
       const originalToSelectedAtomsIdMap = new Map<number, number>();
 
+      // Restore positions for selected atoms (now part of monomer)
       this.selectedToOriginalAtomsIdMap.forEach(
         (originalAtomId, selectedAtomId) => {
           originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+
+          // Restore position using the atomIdMap
+          const originalPosition = originalAtomPositions.get(originalAtomId);
+          const newAtomId = atomIdMap.get(selectedAtomId);
+          if (originalPosition && isNumber(newAtomId)) {
+            const atom = struct.atoms.get(newAtomId);
+            if (atom) {
+              atom.pp = new Vec2(originalPosition);
+            }
+          }
         },
       );
-
-      const struct = this.struct();
 
       externalBonds.forEach((bond) => {
         const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
@@ -1730,7 +1760,7 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
     this.render.update(true);
   }
 
@@ -1830,7 +1860,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const rnaComponentToAssign = beginAtomRnaComponent || endAtomRnaComponent;
+    const rnaComponentToAssign = beginAtomRnaComponent ?? endAtomRnaComponent;
     const struct = this.struct();
     const atomIdToStartFrom = beginAtomRnaComponent ? bond.begin : bond.end;
     const visitedAtomIds = new Set<number>();
@@ -1938,7 +1968,7 @@ class Editor implements KetcherEditor {
 
     const beginAtomComponent = this.getRnaComponentForAtom(bond.begin);
     const endAtomComponent = this.getRnaComponentForAtom(bond.end);
-    const componentToMark = beginAtomComponent || endAtomComponent;
+    const componentToMark = beginAtomComponent ?? endAtomComponent;
 
     if (!componentToMark) {
       return;
@@ -2421,7 +2451,7 @@ class Editor implements KetcherEditor {
       }
     }
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
   }
 
   public setRnaMonomerCreationMode(isActive: boolean) {
@@ -2442,10 +2472,11 @@ class Editor implements KetcherEditor {
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
+    let resolvedCi = ci;
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      ci = structObjects.reduce((res, key) => {
+      resolvedCi = structObjects.reduce((res, key) => {
         res[key] = Array.from(ReStruct[key].keys());
         return res;
       }, {});
@@ -2453,16 +2484,16 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab;
-      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
+      resolvedCi = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
     }
 
-    if (ci) {
+    if (resolvedCi) {
       const res: Selection = {};
 
-      Object.keys(ci).forEach((key) => {
-        if (ci[key].length > 0)
+      Object.keys(resolvedCi).forEach((key) => {
+        if (resolvedCi[key].length > 0)
           // TODO: deep merge
-          res[key] = ci[key].slice();
+          res[key] = resolvedCi[key].slice();
       });
 
       if (Object.keys(res).length !== 0) {
@@ -2494,19 +2525,17 @@ class Editor implements KetcherEditor {
     return this._selection; // eslint-disable-line
   }
 
-  hover(
-    ci: { id: number; map: string } | null,
-    newTool?: any,
-    event?: PointerEvent,
-  ) {
-    const tool = newTool || this._tool; // eslint-disable-line
+  hover(ci: HoverTarget | null, newTool?: any, event?: PointerEvent) {
+    const tool = newTool ?? this._tool; // eslint-disable-line
 
-    if (
-      'ci' in tool &&
-      (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
-    ) {
-      setHover(tool.ci, false, this.render);
-      delete tool.ci;
+    const hoverState = (tool as { ci?: HoverTarget }).ci;
+    if (hoverState) {
+      const previousId = this.getHoverId(hoverState);
+      const nextId = this.getHoverId(ci);
+      if (!ci || hoverState.map !== ci.map || previousId !== nextId) {
+        setHover(hoverState, false, this.render);
+        delete (tool as { ci?: HoverTarget }).ci;
+      }
     }
 
     if (ci && setHover(ci, true, this.render)) {
@@ -2528,6 +2557,10 @@ class Editor implements KetcherEditor {
         isShow: true,
       });
     }
+  }
+
+  private getHoverId(target: HoverTarget | null | undefined) {
+    return target && 'id' in target ? target.id : undefined;
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {
@@ -2710,7 +2743,7 @@ class Editor implements KetcherEditor {
   }
 
   explicitSelected(autoSelectBonds = true) {
-    const selection = this.selection() || {};
+    const selection = this.selection() ?? {};
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : [];
       return acc;
@@ -2723,7 +2756,7 @@ class Editor implements KetcherEditor {
       res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          res.atoms = res.atoms || [];
+          res.atoms = res.atoms ?? [];
           if (res.atoms.indexOf(bond.begin) < 0) {
             res.atoms.push(bond.begin);
           }
@@ -2743,7 +2776,7 @@ class Editor implements KetcherEditor {
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
-          res.bonds = res.bonds || [];
+          res.bonds = res.bonds ?? [];
           res.bonds.push(bid);
         }
       });
@@ -2937,43 +2970,40 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       updateLastCursorPosition(editor, event);
 
       if (
-        ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-        !isMouseMainButtonPressed(event)
+        !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||
+        isMouseMainButtonPressed(event)
       ) {
-        return true;
-      }
-
-      if (eventName === 'mousemove') {
-        const itemUnderCursor = editor.findItem(event, [
-          'atoms',
-          'bonds',
-          'sgroups',
-        ]);
-        if (!itemUnderCursor) {
-          editor.hover(null);
+        if (eventName === 'mousemove') {
+          const itemUnderCursor = editor.findItem(event, [
+            'atoms',
+            'bonds',
+            'sgroups',
+          ]);
+          if (!itemUnderCursor) {
+            editor.hover(null);
+          }
         }
-      }
 
-      if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
-        // to complete drag actions
-        if (!event.target || event.target.nodeName === 'DIV') {
+        const isScrollClick =
+          eventName !== 'mouseup' &&
+          eventName !== 'mouseleave' &&
+          (!event.target || event.target.nodeName === 'DIV');
+
+        if (isScrollClick) {
           // click on scroll
           editor.hover(null);
-          return true;
+        } else {
+          const isToolUsed = useToolIfNeeded(
+            editor,
+            toolEventHandler,
+            clientArea,
+            event,
+          );
+          if (!isToolUsed) {
+            resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
+          }
         }
       }
-
-      const isToolUsed = useToolIfNeeded(
-        editor,
-        toolEventHandler,
-        clientArea,
-        event,
-      );
-      if (isToolUsed) {
-        return true;
-      }
-
-      resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
 
       return true;
     }, -1);
@@ -2996,10 +3026,78 @@ function setHover(ci: any, visible: any, render: any) {
         item = render.ctab[mp].get(dstId)!;
 
         if (item) {
-          item.setHover(visible, render);
+          item.setHover(visible, render, false);
         }
       });
     });
+
+    if (visible) {
+      const hoveredRenderers = Object.keys(ci.items).flatMap((mp) => {
+        return ci.items[mp].flatMap((dstId) => {
+          return render.ctab[mp].get(dstId);
+        });
+      });
+
+      const hoversToCombine = hoveredRenderers
+        .map((r) => r?.makeHoverPlate?.(render))
+        .filter(Boolean);
+
+      paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
+
+      // Generate Paper.js paths from all SVG elements
+      let combinedPath: any = null;
+      const options = render.options;
+      const hoverVisel = new Visel('mergedHover');
+      const elements: Element[] = [];
+
+      hoversToCombine.forEach((item) => {
+        if (item?.node) {
+          elements.push(item.node);
+          item.node.remove();
+        }
+      });
+
+      elements.forEach((element) => {
+        const paperPath = paperPathFromSVGElement(element);
+
+        if (!paperPath) {
+          return;
+        }
+
+        if (!paperPath.closed) {
+          paperPath.closePath();
+        }
+
+        if (!combinedPath) {
+          combinedPath = paperPath;
+        } else {
+          combinedPath = combinedPath.unite(paperPath);
+        }
+      });
+
+      if (!combinedPath) {
+        return;
+      }
+
+      const combinedPathD = combinedPath.pathData;
+
+      render.ctab.addReObjectPath(
+        LayerMap.hovering,
+        hoverVisel,
+        render.paper.path(combinedPathD).attr({
+          stroke: options.hoverStyle.stroke,
+          'stroke-width': options.hoverStyle['stroke-width'],
+        }),
+      );
+
+      render.combinedHover = hoverVisel;
+    } else {
+      render.combinedHover?.paths.forEach((path) => {
+        path.remove();
+      });
+
+      render.combinedHover = null;
+    }
 
     return true;
   }
@@ -3028,5 +3126,6 @@ function setHover(ci: any, visible: any, render: any) {
   } else {
     item.setHover(visible, render);
   }
+
   return true;
 }

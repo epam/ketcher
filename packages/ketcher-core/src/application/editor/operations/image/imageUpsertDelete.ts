@@ -31,7 +31,7 @@ interface ImageDeleteData {
 }
 
 export class ImageUpsert extends BaseOperation {
-  data: ImageUpsertData;
+  readonly data: ImageUpsertData;
   constructor(private readonly image: Image, id?: number) {
     super(OperationType.IMAGE_UPSERT);
     this.data = { id };
@@ -58,7 +58,7 @@ export class ImageUpsert extends BaseOperation {
 
 export class ImageDelete extends BaseOperation {
   private image?: Image;
-  data: ImageDeleteData;
+  readonly data: ImageDeleteData;
   constructor(id: number) {
     super(OperationType.IMAGE_DELETE);
     this.data = { id };

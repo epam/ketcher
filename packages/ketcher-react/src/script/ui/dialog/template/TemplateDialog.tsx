@@ -54,7 +54,6 @@ function TabPanel(props) {
   return (
     <div
       className={classes.tabPanel}
-      component="div"
       role="tabpanel"
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}

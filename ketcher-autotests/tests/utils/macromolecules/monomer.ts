@@ -1,12 +1,8 @@
 import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  dragMouseTo,
-  Monomer,
-  MonomerType,
-  SymbolType,
-  waitForRender,
-} from '@utils';
+import { dragMouseTo } from '../clicks';
+import { Monomer, MonomerType, SymbolType } from '../types';
+import { waitForRender } from '../common/loaders/waitForRender';
 import {
   MacroBondType,
   MicroBondType,
@@ -26,7 +22,7 @@ export async function moveMonomer(
 ) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function moveMonomerOnMicro(
@@ -40,7 +36,7 @@ export async function moveMonomerOnMicro(
   await waitForRender(page, async () => {
     await monomer.click();
   });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function connectMonomersWithBonds(

@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities } from 'ketcher-core';
+import {
+  buildRnaPresetConnections,
+  Entities,
+  getRnaPresetPhosphatePosition,
+  RnaPhosphatePosition,
+} from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -73,6 +78,10 @@ import {
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import clsx from 'clsx';
+import Tooltip from '@mui/material/Tooltip';
+import { getPhosphatePositionAvailability } from 'helpers/rnaValidations';
+import { Icon } from 'ketcher-react';
+import styles from './RnaEditorExpanded.module.less';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -103,6 +112,7 @@ export const RnaEditorExpanded = ({
   ] as const;
 
   const dispatch = useDispatch();
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activePreset = useAppSelector(selectActivePreset);
   const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
@@ -112,6 +122,59 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
+  const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
+    RnaPhosphatePosition | undefined
+  >(
+    activePreset?.connections?.length
+      ? getRnaPresetPhosphatePosition(activePreset)
+      : undefined,
+  );
+
+  const resolvePhosphatePosition = (
+    preset: typeof newPreset,
+  ): RnaPhosphatePosition | undefined => {
+    if (!preset?.phosphate) {
+      return undefined;
+    }
+
+    const {
+      is3PrimeAvailable: isRightPositionAvailable,
+      is5PrimeAvailable: isLeftPositionAvailable,
+    } = getPhosphatePositionAvailability(preset);
+
+    if (selectedPhosphatePosition === 'left' && isLeftPositionAvailable) {
+      return 'left';
+    }
+
+    if (selectedPhosphatePosition === 'right' && isRightPositionAvailable) {
+      return 'right';
+    }
+
+    if (preset.connections?.length) {
+      const presetPhosphatePosition = getRnaPresetPhosphatePosition(preset);
+
+      if (
+        (presetPhosphatePosition === 'left' && isLeftPositionAvailable) ||
+        (presetPhosphatePosition === 'right' && isRightPositionAvailable)
+      ) {
+        return presetPhosphatePosition;
+      }
+    }
+
+    if (isSequenceMode && isRightPositionAvailable) {
+      return 'right';
+    }
+
+    if (isLeftPositionAvailable && !isRightPositionAvailable) {
+      return 'left';
+    }
+
+    if (isRightPositionAvailable && !isLeftPositionAvailable) {
+      return 'right';
+    }
+
+    return undefined;
+  };
 
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
@@ -125,8 +188,20 @@ export const RnaEditorExpanded = ({
     useState<SequenceSelectionGroupNames | undefined>(
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
-
-  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
+  const phosphatePosition = resolvePhosphatePosition(newPreset);
+  const { is3PrimeAvailable, is5PrimeAvailable } =
+    getPhosphatePositionAvailability(newPreset || {});
+  const isPhosphateOrientationRequired =
+    Boolean(newPreset?.phosphate) && is3PrimeAvailable && is5PrimeAvailable;
+  const saveButtonDisabledByPhosphatePosition =
+    !phosphatePosition && isPhosphateOrientationRequired;
+  const saveButtonDisabledTooltip = saveButtonDisabledByPhosphatePosition
+    ? 'Before saving you must choose the position of the phosphate.'
+    : '';
+  const phosphatePositionDisabledTooltip = {
+    left: 'Sugar must have R1, and phosphate must have R2.',
+    right: 'Sugar must have R2, and phosphate must have R1.',
+  };
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -144,6 +219,11 @@ export const RnaEditorExpanded = ({
 
   useEffect(() => {
     setNewPreset(activePreset);
+    setSelectedPhosphatePosition(
+      activePreset?.connections?.length
+        ? getRnaPresetPhosphatePosition(activePreset)
+        : undefined,
+    );
   }, [activePreset]);
 
   useEffect(() => {
@@ -194,14 +274,28 @@ export const RnaEditorExpanded = ({
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
         const currentPreset = updatePresetMonomerGroup();
+        const resolvedPhosphatePosition =
+          resolvePhosphatePosition(currentPreset);
         let presetFullName = newPreset?.name;
+
         if (!currentPreset.editedName) {
-          presetFullName = selectPresetFullName(currentPreset);
+          presetFullName = selectPresetFullName({
+            ...currentPreset,
+            connections: buildRnaPresetConnections(
+              currentPreset,
+              resolvedPhosphatePosition,
+            ),
+          });
         }
+
         setNewPreset({ ...currentPreset, name: presetFullName });
       }
     }
-  }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
+  }, [
+    activePresetMonomerGroup?.groupItem,
+    isSequenceEditInRNABuilderMode,
+    selectedPhosphatePosition,
+  ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -246,7 +340,11 @@ export const RnaEditorExpanded = ({
 
     dispatch(setActiveRnaBuilderItem(selectedGroup));
     dispatch(
-      recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
+      recalculateRnaBuilderValidations({
+        rnaPreset: newPreset,
+        isEditMode,
+        selectedPhosphatePosition,
+      }),
     );
 
     // If all the selected nodes in sequence have the same base, set the monomer as active in the library
@@ -288,6 +386,119 @@ export const RnaEditorExpanded = ({
     }
   };
 
+  const setPhosphatePosition = (position?: RnaPhosphatePosition) => {
+    setSelectedPhosphatePosition(position);
+    dispatch(
+      recalculateRnaBuilderValidations({
+        rnaPreset: newPreset,
+        isEditMode,
+        selectedPhosphatePosition: position,
+      }),
+    );
+  };
+
+  const renderPhosphateTriggerIcon = (
+    position: RnaPhosphatePosition,
+    isActive = false,
+    highlightOnHover = false,
+  ) => {
+    return (
+      <div
+        className={clsx(
+          styles.phosphatePositionIconWrapper,
+          isActive && styles.active,
+          highlightOnHover && styles.hover,
+        )}
+      >
+        {position === 'left' ? (
+          <Icon name="preset-left-phosphate" />
+        ) : (
+          <Icon name="preset-right-phosphate" />
+        )}
+      </div>
+    );
+  };
+
+  const renderPhosphatePositionOption = (
+    position: RnaPhosphatePosition,
+    isDisabled: boolean,
+  ) => (
+    <Tooltip
+      key={position}
+      title={isDisabled ? phosphatePositionDisabledTooltip[position] : ''}
+    >
+      <span>
+        <button
+          type="button"
+          className={clsx(
+            styles.phosphatePositionOption,
+            isDisabled && styles.phosphatePositionOptionDisabled,
+          )}
+          disabled={isDisabled}
+          onClick={() => {
+            setPhosphatePosition(position);
+          }}
+        >
+          {renderPhosphateTriggerIcon(position, false, true)}
+        </button>
+      </span>
+    </Tooltip>
+  );
+
+  const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
+    position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
+
+  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
+    if (!newPreset?.phosphate) {
+      return null;
+    }
+
+    const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
+    const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
+    const isPhosphateGroupActive =
+      activeMonomerGroup === MonomerGroups.PHOSPHATES;
+    const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
+
+    return (
+      <div
+        className={clsx(
+          styles.phosphatePositionIconWrapperOnPresetCard,
+          isPhosphateGroupActive &&
+            !triggerDisabled &&
+            styles.phosphatePositionIconWrapperOnPresetCardActive,
+        )}
+      >
+        <Tooltip
+          title={
+            showPhosphatePositionTooltip
+              ? getPhosphatePositionTooltip(triggerPosition)
+              : ''
+          }
+        >
+          <span>
+            <button
+              type="button"
+              className={styles.phosphatePositionTrigger}
+              disabled={triggerDisabled}
+              aria-label="Select phosphate position"
+            >
+              {renderPhosphateTriggerIcon(
+                triggerPosition,
+                isPhosphateGroupActive,
+              )}
+            </button>
+          </span>
+        </Tooltip>
+        {!triggerDisabled && !showPhosphatePositionTooltip ? (
+          <div className={styles.phosphatePositionSelector}>
+            {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
+            {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
   const onUpdateSequence = () => {
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
@@ -301,23 +512,38 @@ export const RnaEditorExpanded = ({
     if (!newPreset?.name) {
       return;
     }
+
+    const resolvedPhosphatePosition = resolvePhosphatePosition(newPreset);
+
+    if (newPreset?.phosphate && !resolvedPhosphatePosition) {
+      return;
+    }
+
+    const presetToSave = {
+      ...newPreset,
+      connections: buildRnaPresetConnections(
+        newPreset,
+        resolvedPhosphatePosition,
+      ),
+    };
+
     const presetWithSameName = presets.find(
-      (preset) => preset.name === newPreset.name,
+      (preset) => preset.name === presetToSave.name,
     );
     if (
       presetWithSameName &&
       activePreset.nameInList !== presetWithSameName.name
     ) {
-      dispatch(setUniqueNameError(newPreset.name));
+      dispatch(setUniqueNameError(presetToSave.name!));
       return;
     }
-    dispatch(savePreset(newPreset));
-    dispatch(setActivePreset(newPreset));
+    dispatch(savePreset(presetToSave));
+    dispatch(setActivePreset(presetToSave));
     if (!isSequenceMode) {
-      editor?.events.selectPreset.dispatch(newPreset);
+      editor?.events.selectPreset.dispatch(presetToSave);
     }
     setTimeout(() => {
-      scrollToSelectedPreset(newPreset.name);
+      scrollToSelectedPreset(presetToSave.name);
     }, 0);
     resetRnaBuilder(dispatch);
   };
@@ -327,6 +553,11 @@ export const RnaEditorExpanded = ({
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {
       setNewPreset(activePreset);
+      setSelectedPhosphatePosition(
+        activePreset?.connections?.length
+          ? getRnaPresetPhosphatePosition(activePreset)
+          : undefined,
+      );
       resetRnaBuilder(dispatch);
     }
   };
@@ -375,30 +606,39 @@ export const RnaEditorExpanded = ({
   }, [editor, sequenceSelection]);
 
   let mainButton: JSX.Element;
+  const isSaveButtonDisabled =
+    !selectIsPresetReadyToSave(newPreset) ||
+    saveButtonDisabledByPhosphatePosition;
 
   if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
-      <StyledButton
-        disabled={!selectIsPresetReadyToSave(newPreset)}
-        primary
-        data-testid="add-to-presets-btn"
-        onClick={onSave}
-      >
-        Add to Presets
-      </StyledButton>
+      <Tooltip title={saveButtonDisabledTooltip}>
+        <StyledButton
+          disabled={isSaveButtonDisabled}
+          primary
+          data-testid="add-to-presets-btn"
+          onClick={onSave}
+        >
+          Add to Presets
+        </StyledButton>
+      </Tooltip>
     );
   } else if (isEditMode) {
     mainButton = (
-      <StyledButton
-        primary
-        disabled={
-          isSequenceEditInRNABuilderMode ? !isSequenceSelectionUpdated : false
-        }
-        data-testid="save-btn"
-        onClick={isSequenceEditInRNABuilderMode ? onUpdateSequence : onSave}
-      >
-        {isSequenceEditInRNABuilderMode ? 'Update' : 'Save'}
-      </StyledButton>
+      <Tooltip title={saveButtonDisabledTooltip}>
+        <StyledButton
+          primary
+          disabled={
+            isSequenceEditInRNABuilderMode
+              ? !isSequenceSelectionUpdated
+              : isSaveButtonDisabled
+          }
+          data-testid="save-btn"
+          onClick={isSequenceEditInRNABuilderMode ? onUpdateSequence : onSave}
+        >
+          {isSequenceEditInRNABuilderMode ? 'Update' : 'Save'}
+        </StyledButton>
+      </Tooltip>
     );
   } else {
     mainButton = (
@@ -461,11 +701,13 @@ export const RnaEditorExpanded = ({
       )}
       <GroupsContainer compact={isCompactView}>
         {groupsData.map(({ groupName, iconName, testId }) => {
+          const isPhosphateGroup = groupName === MonomerGroups.PHOSPHATES;
+
           return (
             <GroupBlock
-              key={groupName}
               selected={activeMonomerGroup === groupName}
               groupName={groupName}
+              key={groupName}
               monomerName={
                 isSequenceEditInRNABuilderMode
                   ? getMonomersName(groupName)
@@ -474,7 +716,11 @@ export const RnaEditorExpanded = ({
               iconName={iconName}
               testid={testId}
               onClick={selectGroup(groupName)}
-            />
+            >
+              {isPhosphateGroup
+                ? renderPhosphatePositionSelector(phosphatePosition)
+                : null}
+            </GroupBlock>
           );
         })}
       </GroupsContainer>

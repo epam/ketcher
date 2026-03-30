@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 
@@ -46,7 +46,6 @@ class Form extends Component {
     }
     this.updateState = this.updateState.bind(this);
 
-    // Cache the context value to avoid creating new objects on every render
     this._cachedSchema = schema;
     this._contextValue = { schema, stateStore: this };
   }
@@ -247,6 +246,7 @@ function Field(props) {
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
         data-testid={props['data-testid'] + '-input-span'}
+        role="none"
       >
         {formField}
       </span>
@@ -292,6 +292,7 @@ function FieldWithModal(props) {
         })}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        role="none"
       >
         <Input name={name} schema={desc} {...fieldOpts} {...rest} />
         <IconButton
@@ -363,6 +364,7 @@ function CustomQueryField(props) {
           [classes.dataError]: dataError,
           [classes.inputWrapper]: true,
         })}
+        role="none"
       >
         <Input
           type="textarea"
@@ -418,15 +420,14 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator);
-      const {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        pattern,
-        maxLength,
-        enum: enumIsReservedWord,
-        enumNames,
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-        ...rest
-      } = schemaCopy.properties[formatName];
+
+      const rest = omit(schemaCopy.properties[formatName], [
+        'pattern',
+        'maxLength',
+        'enum',
+        'enumNames',
+      ]);
+
       schemaCopy.properties[formatName] = {
         ...rest,
         format: formatName,

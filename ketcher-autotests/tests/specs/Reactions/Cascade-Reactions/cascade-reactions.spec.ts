@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   openFile,
   openFileAndAddToCanvas,
-  resetZoomLevelToDefault,
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
@@ -38,6 +37,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
@@ -48,26 +48,20 @@ async function addTail(page: Page, x: number, y: number) {
 test.describe('Cascade Reactions', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Verify that RDF file with RXN V2000 empty reaction (0:0) can be loaded, nothing is added to Canvas', async () => {
-    /* 
+    /*
     Test case: https://github.com/epam/Indigo/issues/2102
-    Description: RDF file with RXN V2000 empty reaction (0:0) can be loaded, nothing is added to Canvas. 
+    Description: RDF file with RXN V2000 empty reaction (0:0) can be loaded, nothing is added to Canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -77,9 +71,9 @@ test.describe('Cascade Reactions', () => {
   });
 
   test('Verify that RDF file with RXN V3000 empty reaction (0:0) can be loaded, nothing is added to Canvas', async () => {
-    /* 
+    /*
     Test case: https://github.com/epam/Indigo/issues/2102
-    Description: RDF file with RXN V3000 empty reaction (0:0) can be loaded, nothing is added to Canvas. 
+    Description: RDF file with RXN V3000 empty reaction (0:0) can be loaded, nothing is added to Canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -89,10 +83,10 @@ test.describe('Cascade Reactions', () => {
   });
 
   test('Verify that RDF file with elements without reaction MOL V2000 cant be loaded and error is displayed', async () => {
-    /* 
+    /*
     Test case: https://github.com/epam/Indigo/issues/2102
-    Description: RDF file with elements without reaction MOL V2000 can't be loaded and error is displayed - 
-    Convert error! struct data not recognized as molecule, query, reaction or reaction query. 
+    Description: RDF file with elements without reaction MOL V2000 can't be loaded and error is displayed -
+    Convert error! struct data not recognized as molecule, query, reaction or reaction query.
     We have a bug https://github.com/epam/ketcher/issues/5273
     After fix we should update snapshot.
     */
@@ -107,30 +101,6 @@ test.describe('Cascade Reactions', () => {
     await ErrorMessageDialog(page).close();
     await PasteFromClipboardDialog(page).cancel();
   });
-
-  test.fail(
-    'Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed',
-    async () => {
-      // Test fail due to specs/Reactions/Cascade-Reactions/cascade-reactions.spec.ts:113
-      /* 
-    Test case: https://github.com/epam/Indigo/issues/2102
-    Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed - 
-    Convert error! struct data not recognized as molecule, query, reaction or reaction query. 
-    */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
-        // error expected
-        true,
-      );
-      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(
-        "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header ', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header '",
-      );
-      await ErrorMessageDialog(page).close();
-      await PasteFromClipboardDialog(page).cancel();
-    },
-  );
 
   const testCases = [
     {
@@ -217,14 +187,14 @@ test.describe('Cascade Reactions', () => {
 
   testCases.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
       Case:
         1. Open RDF file
         2. Save and verify KET file
-        3. Open saved KET file 
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
@@ -251,10 +221,10 @@ test.describe('Cascade Reactions', () => {
 
   testCases1.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
+      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
       Case:
         1. Open RDF file
         2. Save and verify KET file
@@ -285,14 +255,14 @@ test.describe('Cascade Reactions', () => {
 
   testCases2.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
       Case:
         1. Open RDF file
         2. Save and verify KET file
-        3. Open saved KET file 
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
       await takeEditorScreenshot(page);
@@ -331,9 +301,9 @@ test.describe('Cascade Reactions', () => {
 
   testCases3.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with 
+      Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with
       Multi-Tailed and filled single arrows, verify that sizes of arrows are correct (single arrow: length = 7, Multi-Tailed arrow: head = 6.5, tail = 0.5, spine = 2.5).
       We have a bug https://github.com/epam/Indigo/issues/2583 after fix we need update snapshots and test files.
       Case:
@@ -462,9 +432,9 @@ test.describe('Cascade Reactions', () => {
 
   testCases4.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with 
+      Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with
       Multi-Tailed and filled single arrows, verify that sizes of arrows are correct (single arrow: length = 7, Multi-Tailed arrow: head = 6.5, tail = 0.5, spine = 2.5).
       Case:
         1. Open RDF file
@@ -508,9 +478,9 @@ test.describe('Cascade Reactions', () => {
 
   testCases5.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
       Case:
         1. Open RDF file
@@ -626,9 +596,9 @@ test.describe('Cascade Reactions', () => {
 
   testCases6.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
       Case:
         1. Open RDF file
@@ -644,14 +614,14 @@ test.describe('Cascade Reactions', () => {
   });
 
   test('Verify that Cascade and Single reactions can be added to selected place on Canvas from 2 different RDF files', async () => {
-    /* 
+    /*
     Test case: https://github.com/epam/Indigo/issues/2102
-    Description: Cascade and Single reactions can be added to selected place on Canvas from 2 different RDF files with correct positions 
+    Description: Cascade and Single reactions can be added to selected place on Canvas from 2 different RDF files with correct positions
     and they can be saved together to .ket file with correct parameters.
     Case:
         1. Open two RDF file v2000 and v3000
         2. Save and verify KET file
-        3. Open saved KET file 
+        3. Open saved KET file
     */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -721,7 +691,7 @@ test.describe('Cascade Reactions', () => {
 
   testCases7.forEach(({ rdfFile, testCaseDescription }) => {
     test(`Load ${testCaseDescription} verify that reagents are ignored and not added to Canvas`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: Reagents are ignored and not added to Canvas.
       Case:
@@ -752,11 +722,11 @@ test.describe('Cascade Reactions', () => {
 
   testCases8.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
     test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
-      /* 
+      /*
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
-      We have a bugs: 
+      We have a bugs:
       https://github.com/epam/Indigo/issues/2406
       https://github.com/epam/Indigo/issues/2320
       https://github.com/epam/Indigo/issues/2408
@@ -767,38 +737,10 @@ test.describe('Cascade Reactions', () => {
         3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(page, rdfFile);
-      await takeEditorScreenshot(page);
+      // await takeEditorScreenshot(page);
       await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(page, ketFile);
-      await takeEditorScreenshot(page);
-    });
-  });
-
-  const testCases9 = [
-    {
-      testName:
-        '1. Verify that Cascade Reaction is correctly displayed in RDF RXN V2000 format in Open Structure Preview',
-      rdfFile: 'RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf',
-    },
-    {
-      testName:
-        '2. Verify that Cascade Reaction is correctly displayed in RDF RXN V3000 format in Open Structure Preview',
-      rdfFile: 'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
-    },
-  ];
-
-  testCases9.forEach(({ testName, rdfFile }) => {
-    test(testName, async () => {
-      /* 
-      Test case: https://github.com/epam/Indigo/issues/2102
-      Description: Cascade Reaction is correctly displayed in RDF RXN V2000/V3000 format in Open Structure Preview
-      Case:
-        1. Open RDF file Open Structure Preview
-        2. Take screenshot
-      */
-      await CommonTopLeftToolbar(page).openFile();
-      await openFile(page, rdfFile);
-      await takeEditorScreenshot(page);
+      // await takeEditorScreenshot(page);
     });
   });
 
@@ -1020,7 +962,7 @@ test.describe('Cascade Reactions', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).hover({
         force: true,
       });
-      await dragMouseTo(300, 600, page);
+      await dragMouseTo(page, 300, 600);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
@@ -2796,4 +2738,57 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
     });
   });
+
+  const testCases9 = [
+    {
+      testName:
+        '1. Verify that Cascade Reaction is correctly displayed in RDF RXN V2000 format in Open Structure Preview',
+      rdfFile: 'RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf',
+    },
+    {
+      testName:
+        '2. Verify that Cascade Reaction is correctly displayed in RDF RXN V3000 format in Open Structure Preview',
+      rdfFile: 'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
+    },
+  ];
+
+  testCases9.forEach(({ testName, rdfFile }) => {
+    test(testName, async () => {
+      /*
+      Test case: https://github.com/epam/Indigo/issues/2102
+      Description: Cascade Reaction is correctly displayed in RDF RXN V2000/V3000 format in Open Structure Preview
+      Case:
+        1. Open RDF file Open Structure Preview
+        2. Take screenshot
+      */
+      await CommonTopLeftToolbar(page).openFile();
+      await openFile(page, rdfFile);
+      await takeEditorScreenshot(page);
+      await OpenStructureDialog(page).closeWindow();
+    });
+  });
+
+  test.fail(
+    'Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed',
+    async () => {
+      // Test fail due to specs/Reactions/Cascade-Reactions/cascade-reactions.spec.ts:113
+      /*
+    Test case: https://github.com/epam/Indigo/issues/2102
+    Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed -
+    Convert error! struct data not recognized as molecule, query, reaction or reaction query.
+    */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
+        // error expected
+        true,
+      );
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(
+        "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header ', 'SEQUENCE loader: Unknown polymer type ''.', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'scanner: readIntFix(3): invalid number representation: \"M  \"', 'RXN loader: bad header '",
+      );
+      await ErrorMessageDialog(page).close();
+      await PasteFromClipboardDialog(page).cancel();
+    },
+  );
 });

@@ -79,7 +79,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       }).hover({
         force: true,
       });
-      await dragMouseTo(x - 350, y - 150, page);
+      await dragMouseTo(page, x - 350, y - 150);
       await openFileAndAddToCanvas(page, testCase.secondFile);
     });
   }
@@ -179,7 +179,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await getAtomLocator(page, { atomLabel: 'H' }).first().hover({
         force: true,
       });
-      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
+      await dragMouseTo(page, pointXToMoveElement, pointYToMoveElement);
     }
 
     async function addAndMovePlusSymbol() {
@@ -188,7 +188,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await CommonLeftToolbar(page).areaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(x - shiftForReactionPlus, y, page);
+      await dragMouseTo(page, x - shiftForReactionPlus, y);
       await clickInTheMiddleOfTheScreen(page);
     }
 
@@ -205,7 +205,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
         force: true,
       });
-      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
+      await dragMouseTo(page, pointXToMoveElement, pointYToMoveElement);
     }
 
     async function addArrowSymbol() {

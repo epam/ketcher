@@ -205,7 +205,7 @@ export async function dragTo(
   });
 }
 
-export async function dragMouseTo(x: number, y: number, page: Page) {
+export async function dragMouseTo(page: Page, x: number, y: number) {
   await page.mouse.down();
   await page.mouse.move(x, y);
   await waitForRender(page, async () => {
@@ -217,14 +217,14 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
-  await dragMouseTo(coordinatesWithShift, y, page);
+  await dragMouseTo(page, coordinatesWithShift, y);
 }
 
 export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
   await CommonLeftToolbar(page).handTool();
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   await page.mouse.move(x, y);
-  await dragMouseTo(x + xShift, y + yShift, page);
+  await dragMouseTo(page, x + xShift, y + yShift);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 }
 

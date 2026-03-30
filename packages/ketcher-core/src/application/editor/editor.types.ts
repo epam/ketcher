@@ -23,8 +23,9 @@ import { IRnaPreset } from 'application/editor/tools';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
+} & {
+  enhancedFlags?: number[];
 };
-
 export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };
@@ -62,6 +63,7 @@ export interface Editor {
   errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;

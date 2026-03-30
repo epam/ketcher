@@ -14,6 +14,7 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  normalizeError,
 } from 'utilities';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
@@ -181,7 +182,8 @@ export abstract class BaseMode {
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
-    new EditorHistory(editor).update(modelChanges);
+    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.events.mouseLeaveSequenceItem.dispatch();
     this.scrollForView();
   }
 
@@ -237,8 +239,7 @@ export abstract class BaseMode {
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
 
       this.unsupportedSymbolsError(errorMessage);
@@ -280,5 +281,7 @@ export abstract class BaseMode {
     );
   }
 
-  public destroy() {}
+  public destroy() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 }

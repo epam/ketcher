@@ -35,6 +35,8 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
+import { Visel } from 'application/render';
+import { Coordinates } from 'application/editor';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -132,8 +134,8 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
-  drawHover(render: Render) {
-    const ret = this.makeHoverPlate(render);
+  drawHover(render: Render, drawOutline = true) {
+    const ret = this.makeHoverPlate(render, drawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -278,7 +280,7 @@ class ReBond extends ReObject {
     return paper.path(pathString);
   }
 
-  makeHoverPlate(render: Render) {
+  makeHoverPlate(render: Render, drawOutline = true) {
     const restruct = render.ctab;
     const options = render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
@@ -287,7 +289,11 @@ class ReBond extends ReObject {
 
     const rect = this.getSelectionContour(render, false);
 
-    return rect.attr({ ...options.hoverStyle });
+    return rect.attr(
+      drawOutline
+        ? { ...options.hoverStyle }
+        : { fill: options.hoverStyle.fill, stroke: 'none' },
+    );
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
@@ -543,6 +549,129 @@ class ReBond extends ReObject {
         bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
       }
     }
+  }
+
+  public drawFragmentSelectionPreview(
+    render: Render,
+    atomIdToDrawArrows: number,
+  ) {
+    this.hovering?.node?.remove();
+
+    const halfBond1 =
+      this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
+    const halfBond2 =
+      this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
+    const atom1 = render.ctab.molecule.atoms.get(this.b.begin);
+    const atom2 = render.ctab.molecule.atoms.get(this.b.end);
+
+    if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
+      return null;
+    }
+
+    const contourBorderRadius = 10;
+    const arrowsOffsetFromContour = 5;
+    const atom1Position = Coordinates.modelToCanvas(atom1.pp);
+    const atom2Position = Coordinates.modelToCanvas(atom2.pp);
+    const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
+    const bondLength = Vec2.dist(atom2Position, atom1Position);
+    const arrowsDirection =
+      this.b.begin === atomIdToDrawArrows
+        ? bondDirection
+        : bondDirection.scaled(-1);
+    const arrowStart =
+      atomIdToDrawArrows === this.b.begin ? atom1Position : atom2Position;
+    const arrowsOffset = 2;
+    const arrowHeadLength = 4;
+    const offsets = [0, -5, -10];
+    const contourSize = new Vec2(bondLength, 20);
+    const backgroundStart = new Vec2(
+      atomIdToDrawArrows === this.b.begin
+        ? atom1Position.x
+        : atom1Position.x + bondLength / 2,
+      atom1Position.y - contourSize.y / 2,
+    );
+    const newVisel = new Visel('fragment-selection-bond-preview');
+    const backgroundRect = render.paper
+      .rect(
+        backgroundStart.x,
+        backgroundStart.y,
+        contourSize.x / 2,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: '#fff', stroke: 'none', 'stroke-width': 0 });
+
+    render.ctab.addReObjectPath(
+      LayerMap.additionalInfo,
+      newVisel,
+      backgroundRect,
+    );
+    backgroundRect.rotate(this.b.angle, atom1Position.x, atom1Position.y);
+
+    const contour = render.paper
+      .rect(
+        atom1Position.x,
+        atom1Position.y - contourSize.y / 2,
+        contourSize.x,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: 'none', stroke: '#365CFF', 'stroke-width': 0.7 });
+
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, contour);
+    // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
+    render.ctab.movePathOnTopOfLayer(
+      this.visel.paths[0],
+      LayerMap.bondSkeleton,
+    );
+
+    contour.rotate(this.b.angle, atom1Position.x, atom1Position.y);
+
+    const arrowsSet = render.paper.set();
+
+    offsets.forEach((delta) => {
+      const start = new Vec2(
+        arrowStart.x -
+          arrowsOffsetFromContour * arrowsDirection.x +
+          delta * arrowsDirection.x,
+        arrowStart.y -
+          arrowsOffsetFromContour * arrowsDirection.y +
+          delta * arrowsDirection.y,
+      );
+
+      const path = render.paper
+        .path(
+          `M ${
+            start.x -
+            arrowsOffset * arrowsDirection.x +
+            arrowHeadLength * arrowsDirection.y
+          } ${
+            start.y -
+            arrowsOffset * arrowsDirection.y -
+            arrowHeadLength * arrowsDirection.x
+          }` +
+            ` L ${start.x} ${start.y}` +
+            ` L ${
+              start.x -
+              arrowsOffset * arrowsDirection.x -
+              arrowHeadLength * arrowsDirection.y
+            } ${
+              start.y -
+              arrowsOffset * arrowsDirection.y +
+              arrowHeadLength * arrowsDirection.x
+            }`,
+        )
+        .attr({
+          stroke: '#365CFF',
+          'stroke-width': 2,
+        });
+
+      arrowsSet.push(path);
+    });
+
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, arrowsSet);
+
+    return newVisel;
   }
 }
 

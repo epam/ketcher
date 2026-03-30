@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay, waitForRender } from '@utils/index';
+import { waitForRender } from '@utils/index';
 import {
   AntisenseStrandType,
   LayoutMode,
@@ -64,7 +64,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.createAntisenseStrandDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await createAntisenseStrandDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -76,7 +76,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.createAntisenseStrandDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await createAntisenseStrandDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -130,7 +130,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
       try {
         await locators.switchLayoutModeDropdownButton.click();
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await switchLayoutModeDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -142,7 +142,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.switchLayoutModeDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await switchLayoutModeDropdown.waitFor({
           state: 'visible',
           timeout: 5000,

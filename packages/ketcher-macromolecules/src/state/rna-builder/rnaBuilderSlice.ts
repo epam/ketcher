@@ -18,9 +18,11 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import {
+  getRnaPresetPhosphatePosition,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
   MonomerItemType,
+  RnaPhosphatePosition,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
@@ -31,7 +33,10 @@ import {
 } from 'helpers/manipulateCachedRnaPresets';
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
-import { selectSearchFilter } from 'state/library';
+import {
+  selectAxoLabsAliasesByPresetName,
+  selectSearchFilter,
+} from 'state/library';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -145,10 +150,19 @@ export const rnaBuilderSlice = createSlice({
     },
     recalculateRnaBuilderValidations: (
       state,
-      action: PayloadAction<{ rnaPreset: IRnaPreset; isEditMode: boolean }>,
+      action: PayloadAction<{
+        rnaPreset: IRnaPreset;
+        isEditMode: boolean;
+        selectedPhosphatePosition?: RnaPhosphatePosition;
+      }>,
     ) => {
       const { sugarValidations, phosphateValidations, baseValidations } =
-        getValidations(action.payload.rnaPreset, action.payload.isEditMode);
+        getValidations(
+          action.payload.rnaPreset,
+          action.payload.isEditMode,
+          action.payload.selectedPhosphatePosition ??
+            getRnaPresetPhosphatePosition(action.payload.rnaPreset),
+        );
 
       state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
       state.groupItemValidations[MonomerGroups.BASES] = baseValidations;
@@ -370,6 +384,7 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label || preset.base?.props.MonomerName || '';
   const phosphate =
     preset.phosphate?.label || preset.phosphate?.props.MonomerName || '';
+  const phosphatePosition = getRnaPresetPhosphatePosition(preset);
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -380,7 +395,12 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
     fullName += base;
   }
 
-  fullName += phosphate;
+  if (phosphate) {
+    fullName =
+      phosphatePosition === 'left'
+        ? `${phosphate}${fullName}`
+        : `${fullName}${phosphate}`;
+  }
 
   return fullName;
 };
@@ -427,7 +447,12 @@ export const selectAllPresets = createSelector(
 export const selectFilteredPresets = createSelector(
   selectAllPresets,
   selectSearchFilter,
-  (presetsAll, searchFilter): Array<IRnaPreset & { favorite?: boolean }> => {
+  selectAxoLabsAliasesByPresetName,
+  (
+    presetsAll,
+    searchFilter,
+    axoLabsAliasesByPresetName,
+  ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
 
     return presetsAll.filter((item: IRnaPreset) => {
@@ -436,6 +461,10 @@ export const selectFilteredPresets = createSelector(
       const phosphateName = item.phosphate?.label?.toLowerCase();
       const baseName = item.base?.label?.toLowerCase();
       const idtName = item.idtAliases?.base?.toLowerCase();
+      const axoLabsAlias =
+        item.aliasAxoLabs?.toLowerCase() ??
+        (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
+        '';
       const modifications = item.idtAliases?.modifications;
       let transformedIdtText = idtName;
 
@@ -492,7 +521,8 @@ export const selectFilteredPresets = createSelector(
         sugarName?.includes(searchText) ||
         phosphateName?.includes(searchText) ||
         baseName?.includes(searchText) ||
-        transformedIdtText?.toLowerCase().includes(searchText)
+        transformedIdtText?.toLowerCase().includes(searchText) ||
+        axoLabsAlias.includes(searchText)
       );
     });
   },

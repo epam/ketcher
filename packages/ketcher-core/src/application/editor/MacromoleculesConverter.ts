@@ -157,10 +157,6 @@ export class MacromoleculesConverter {
     reStruct?: ReStruct,
   ) {
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
-    const monomerToMonomerMicromolecule = new Map<
-      BaseMonomer,
-      MonomerMicromolecule
-    >();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
@@ -195,8 +191,6 @@ export class MacromoleculesConverter {
           monomer instanceof AmbiguousMonomer
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomer.monomerItem.struct.bonds;
-
-        monomerToMonomerMicromolecule.set(monomer, monomerMicromolecule);
 
         monomerAtoms.forEach((oldAtom, oldAtomId) => {
           const { atom, atomId } = this.addMonomerAtomToStruct(
@@ -507,7 +501,7 @@ export class MacromoleculesConverter {
 
     fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
-      const fragmentStruct = struct.getFragment(_fragment, false, atomIdMap);
+      const fragmentStruct = struct.getFragmentOnly(_fragment, atomIdMap);
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,
@@ -542,6 +536,7 @@ export class MacromoleculesConverter {
               radical: atom.radical,
               alias: atom.alias,
               cip: atom.cip,
+              stereoLabel: atom.stereoLabel,
             },
           );
 

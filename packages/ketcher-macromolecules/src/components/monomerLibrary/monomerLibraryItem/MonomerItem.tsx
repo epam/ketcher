@@ -17,6 +17,7 @@ import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
   AutochainIcon,
   AutochainIconWrapper,
@@ -75,17 +76,6 @@ const MonomerItem = ({
     (event: MouseEvent) => {
       event.stopPropagation();
       dispatch(toggleMonomerFavorites(item));
-    },
-    [dispatch, item],
-  );
-
-  const handleFavoriteKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        event.stopPropagation();
-        dispatch(toggleMonomerFavorites(item));
-      }
     },
     [dispatch, item],
   );
@@ -169,13 +159,9 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
-      data-modificationtype={
-        monomerItem?.props.modificationTypes
-          ? Array.isArray(monomerItem?.props.modificationTypes)
-            ? monomerItem?.props.modificationTypes.join(', ')
-            : monomerItem?.props.modificationTypes
-          : undefined
-      }
+      data-modificationtype={getModificationTypeAttribute(
+        monomerItem?.props.modificationTypes,
+      )}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
@@ -195,16 +181,14 @@ const MonomerItem = ({
               </AutochainIconWrapper>
             </Tooltip>
           )}
-          <div
+          <button
+            type="button"
             onClick={addFavorite}
-            onKeyDown={handleFavoriteKeyDown}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            role="button"
-            tabIndex={0}
             aria-label="Toggle favorite"
           >
             {FavoriteStarSymbol}
-          </div>
+          </button>
         </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

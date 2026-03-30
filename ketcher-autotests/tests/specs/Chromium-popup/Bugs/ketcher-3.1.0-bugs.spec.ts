@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -9,14 +10,13 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
-  delay,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -24,7 +24,7 @@ import {
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -51,23 +51,14 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 let page: Page;
 
 test.describe('Ketcher bugs in 3.1.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Circular hydrogen bond connection between three (or more) chains, those hydrogen bonds is considered as side chain connection for layout purposes', async () => {
@@ -282,7 +273,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       symbolAlias: 'A',
       nodeIndexOverall: 11,
     }).click();
-    await delay(2);
+    await page.waitForTimeout(2 * 1000);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 11,

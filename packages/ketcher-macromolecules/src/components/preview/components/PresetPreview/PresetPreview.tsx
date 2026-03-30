@@ -43,7 +43,7 @@ interface Props {
 const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
-  const { monomers, name, position, idtAliases } = preview;
+  const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
 
   // Check if this is a CHEM chain (all monomers are CHEMs)
   const isChemChain = monomers.every(
@@ -52,7 +52,7 @@ const PresetPreview = ({ className }: Props) => {
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
-  const axoLabsText = baseMonomer?.props.aliasAxoLabs;
+  const axoLabsText = aliasAxoLabs ?? baseMonomer?.props.aliasAxoLabs;
 
   const idtAliasesText = useIDTAliasesTextForPreset({
     presetName,
@@ -67,6 +67,8 @@ const PresetPreview = ({ className }: Props) => {
       className={className}
       style={{ alignItems: 'flex-start' }}
       data-testid="polymer-library-preview"
+      data-idtaliases={idtAliasesText ?? undefined}
+      data-axolabs={axoLabsText ?? undefined}
     >
       <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
       {monomers.map((monomer, index) =>

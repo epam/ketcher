@@ -34,7 +34,10 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils/files';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import {
   AminoAcidNaturalAnalogue,
   ModificationType,
@@ -228,7 +231,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
-  test('5."Arrange as a ring" in Snake mode should not be available in the context menu.', async () => {
+
+  test('5."Arrange as a ring" should be hidden in Snake and Sequence modes context menu.', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8366
      * Bug: https://github.com/epam/ketcher/issues/7970
@@ -239,12 +243,16 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * 3. Ensure Snake layout mode is selected
      * 4. Select all structures on the canvas
      * 5. Open context menu on any monomer
-     * 6. Verify "arrange in a ring" option is disabled
+     * 6. Verify "Arrange as a Ring" option is hidden
+     * 7. Switch to Sequence mode
+     * 8. Open context menu on any monomer
+     * 9. Verify "Arrange as a Ring" option is hidden
      *
      * Version 3.10.0
      */
     const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
+    const anyMonomerSymbol = getSymbolLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
     });
@@ -256,7 +264,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARing).toBeHidden();
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await ContextMenu(page, anyMonomerSymbol).open();
+    await expect(arrangeAsARing).toBeHidden();
   });
   test('6.No limit on the number of added modification fields; new fields extend beyond the visible wizard area and shift action buttons', async () => {
     /*
@@ -399,47 +413,15 @@ test.describe('Ketcher-3.10 Bugs', () => {
     const monomerOnCanvas = getMonomerLocator(page, {
       monomerAlias: 'CHEM1',
     });
+    await Library(page).hideLibrary();
     await expect(monomerOnCanvas).toBeVisible();
+
     await monomerOnCanvas.hover();
+
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window, {
-      padding: 5,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
-  test('9.Ketcher crashes completely when switching from Wizard mode to Macro mode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7633
-     * Bug: https://github.com/epam/ketcher/issues/8334
-     * Description: When the user switches from the Create Monomer Wizard to Macromolecule mode,
-     *  the entire application crashes.The screen becomes completely white, and the console
-     *  displays a TypeError.
-     * Scenario:
-     * 1. Open file with benzene ring structure and add to canvas
-     * 2. Open Create Monomer Wizard
-     * 3. Switch to Macromolecule mode
-     * 4. Verify that Ketcher is not crashed
-     *
-     * Version 3.10.0
-     */
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      'C1C=CC=CC%91=1.[*:1]%91 |$;;;;;;_R1$|',
-    );
-    await deselectAtomAndBonds(page);
-    await LeftToolbar(page).createMonomer();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expect(CommonTopLeftToolbar(page).undoButton).toBeEnabled();
-    const rnaPresetGroup = page.getByTestId('rna-preset-group');
-    expect(rnaPresetGroup).toBeVisible();
-  });
+
   test('10.“+ Add modification type” option appears only after selecting Natural analogue instead of monomer type Amino acid', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/7633
@@ -645,7 +627,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

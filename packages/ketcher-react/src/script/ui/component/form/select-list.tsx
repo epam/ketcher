@@ -22,7 +22,10 @@ interface Schema {
 }
 
 interface SelectListProps
-  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onSelect'> {
+  extends Omit<
+    React.SelectHTMLAttributes<HTMLSelectElement>,
+    'onSelect' | 'value' | 'onChange' | 'size'
+  > {
   schema: Schema;
   value: string;
   onSelect: (opt: string, index: number) => void;
@@ -49,35 +52,32 @@ function SelectList({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
-}: SelectListProps) {
-  const handleKeyDown =
-    (opt: string, index: number) =>
-    (event: React.KeyboardEvent<HTMLLIElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        onSelect(opt, index);
-      }
-    };
+}: Readonly<SelectListProps>) {
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const index = event.target.selectedIndex;
+    onSelect(schema.enum[index], index);
+  };
 
   return (
-    <ul {...props} role="listbox">
+    <select
+      {...props}
+      size={schema.enum.length}
+      value={value}
+      onChange={handleChange}
+    >
       {schema.enum.map((opt, index) => (
-        <li
+        <option
           key={opt}
-          onClick={() => onSelect(opt, index)}
-          onKeyDown={handleKeyDown(opt, index)}
+          value={opt}
           className={
             (opt === value ? `${classes.selected} ` : '') +
             (isSplitIndex(index, splitIndexes) ? ` ${classes.split}` : '')
           }
-          role="option"
-          tabIndex={0}
-          aria-selected={opt === value}
         >
           {schema.enumNames ? schema.enumNames[index] : opt}
-        </li>
+        </option>
       ))}
-    </ul>
+    </select>
   );
 }
 

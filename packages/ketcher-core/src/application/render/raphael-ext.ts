@@ -19,17 +19,25 @@
 import { Vec2 } from 'domain/entities';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let Raphael: any;
+const raphaelModule: any =
+  typeof window !== 'undefined' ? require('raphael') : undefined;
+
+// Some environments (vite, webpack etc) might resolve this import differently
+// this is a workaround to make it work in all environments
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let raphaelModule: any;
+function resolveRaphael(): any {
+  if (!raphaelModule) {
+    return undefined;
+  }
 
-if (typeof window !== 'undefined') {
-  raphaelModule = require('raphael');
-  // Some environments (vite, webpack etc) might resolve this import differently
-  // this is a workaround to make it work in all environments
-  Raphael =
-    typeof raphaelModule === 'function' ? raphaelModule : raphaelModule.default;
+  return typeof raphaelModule === 'function'
+    ? raphaelModule
+    : raphaelModule.default;
+}
 
+const Raphael = resolveRaphael();
+
+if (Raphael) {
   // TODO: refactor ugly prototype extensions to plain old functions
   Raphael.el.translateAbs = function (x: number, y: number): void {
     this.delta = this.delta || new Vec2();

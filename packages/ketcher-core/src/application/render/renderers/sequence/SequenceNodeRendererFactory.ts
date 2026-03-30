@@ -72,15 +72,13 @@ export class SequenceNodeRendererFactory {
           case Peptide:
             RendererClass = PeptideSequenceItemRenderer;
             break;
-          case Chem:
-            RendererClass = ChemSequenceItemRenderer;
-            break;
           case UnresolvedMonomer:
             RendererClass = UnresolvedMonomerSequenceItemRenderer;
             break;
           case UnsplitNucleotide:
             RendererClass = UnsplitNucleotideSequenceItemRenderer;
             break;
+          case Chem:
           default:
             RendererClass = ChemSequenceItemRenderer;
             break;

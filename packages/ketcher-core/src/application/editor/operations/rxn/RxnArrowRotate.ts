@@ -12,7 +12,7 @@ interface RxnArrowRotateData {
 }
 
 export class RxnArrowRotate extends Base {
-  data: RxnArrowRotateData;
+  readonly data: RxnArrowRotateData;
 
   constructor(id: number, angle: number, center: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_ROTATE);

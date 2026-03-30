@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page, test, expect } from '@fixtures';
 import {
@@ -5,8 +6,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForPageInit,
-  resetZoomLevelToDefault,
   MonomerType,
 } from '@utils';
 import {
@@ -17,8 +16,6 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 test.describe('Connection rules for peptides: ', () => {
@@ -26,21 +23,14 @@ test.describe('Connection rules for peptides: ', () => {
   test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.afterEach(async () => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   interface IMolecule {
@@ -363,7 +353,7 @@ test.describe('Connection rules for peptides: ', () => {
       monomerAlias: peptide.alias,
     }).first();
     await peptideLocator.hover();
-    await dragMouseTo(550, 370, page);
+    await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
     for await (const peptideAttachmentPoint of Object.values(
@@ -415,7 +405,7 @@ test.describe('Connection rules for peptides: ', () => {
       monomerAlias: CHEM.alias,
     }).first();
     await CHEMLocator.hover();
-    await dragMouseTo(550, 370, page);
+    await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
     for await (const CHEMAttachmentPoint of Object.values(
@@ -463,7 +453,7 @@ test.describe('Connection rules for peptides: ', () => {
 
     await leftMonomerLocator.hover({ force: true });
 
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(page, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -478,7 +468,7 @@ test.describe('Connection rules for peptides: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(page, 600, 375);
     await moveMouseAway(page);
 
     return {
@@ -1131,7 +1121,7 @@ test.describe('Connection rules for peptides: ', () => {
     }).first();
 
     await leftMonomerLocator.hover();
-    await dragMouseTo(300, 380, page);
+    await dragMouseTo(page, 300, 380);
     await moveMouseAway(page);
   }
 

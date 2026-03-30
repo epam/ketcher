@@ -1,6 +1,6 @@
 ## Prerequisites
 
-- Stable [Node.js](https://nodejs.org) version >= 22.22.2
+- Stable [Node.js](https://nodejs.org) version >= 24.14.1
 - Stable [npm](https://npmjs.com) version >= 7
 
 # NOTES

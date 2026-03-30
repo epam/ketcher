@@ -6,15 +6,14 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   clickInTheMiddleOfTheScreen,
-  screenshotBetweenUndoRedoInMacro,
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
   clickOnCanvas,
   zoomWithMouseWheel,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   MacroFileType,
 } from '@utils';
 import {
@@ -33,13 +32,13 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, -zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
-  await page.keyboard.down('Control');
+  await page.keyboard.down('ControlOrMeta');
   await page.mouse.wheel(0, zoomLevelDelta);
-  await page.keyboard.up('Control');
+  await page.keyboard.up('ControlOrMeta');
   await takeEditorScreenshot(page);
 }
 
@@ -118,14 +117,14 @@ test.describe('Zoom Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
     await CommonTopRightToolbar(page).selectZoomInTool(30);
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that mouse scrolling IN/OUT - zooms into center of current mouse position', async ({
@@ -156,7 +155,7 @@ test.describe('Zoom Tool', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await ZoomOutByKeyboard(page, { repeat: 10 });
+    await zoomOutByKeyboard(page, { repeat: 10 });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await CommonTopRightToolbar(page).resetZoom();
@@ -176,7 +175,7 @@ test.describe('Zoom Tool', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 10 });
+    await zoomInByKeyboard(page, { repeat: 10 });
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
@@ -195,9 +194,9 @@ test.describe('Zoom Tool', () => {
       'Molfiles-V3000/monomers-and-chem.mol',
       MacroFileType.MOLv3000,
     );
-    await ZoomInByKeyboard(page, { repeat: 10 });
+    await zoomInByKeyboard(page, { repeat: 10 });
     await takeEditorScreenshot(page);
-    await ZoomOutByKeyboard(page, { repeat: 10 });
+    await zoomOutByKeyboard(page, { repeat: 10 });
     await takeEditorScreenshot(page);
   });
 
@@ -215,7 +214,7 @@ test.describe('Zoom Tool', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 10 });
+    await zoomInByKeyboard(page, { repeat: 10 });
     await page.keyboard.down('Shift');
     await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
@@ -259,8 +258,8 @@ test.describe('Zoom Tool', () => {
         );
       }
     });
-    await ZoomInByKeyboard(page, { repeat: 30 });
-    await ZoomOutByKeyboard(page, { repeat: 30 });
+    await zoomInByKeyboard(page, { repeat: 30 });
+    await zoomOutByKeyboard(page, { repeat: 30 });
   });
 
   test('Check if you create a peptide chain, zoom in and add new elements to chain then zoom out and add another elements', async ({
@@ -271,25 +270,21 @@ test.describe('Zoom Tool', () => {
     Description: After create a peptide chain, zoom in and add new elements to chain then zoom out and add
     another elements, then after back to zoom 100% all structure is create properly.
     */
-    const x = 800;
-    const y = 350;
-    const x1 = 650;
-    const y1 = 150;
     await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
-    await ZoomInByKeyboard(page, { repeat: 3 });
+    await zoomInByKeyboard(page, { repeat: 3 });
     await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-      x,
-      y,
+      x: 800,
+      y: 350,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await Library(page).dragMonomerOnCanvas(Peptide.meD, {
-      x: x1,
-      y: y1,
+      x: 650,
+      y: 150,
     });
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
@@ -301,21 +296,21 @@ test.describe('Zoom Tool', () => {
     Description: After creating structure on canvas and then
     click zoom in, and then Undo, Redo the structure is the same size as before.
     */
-    const x = 800;
-    const y = 350;
     await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
       x: 0,
       y: 0,
       fromCenter: true,
     });
     await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-      x,
-      y,
+      x: 800,
+      y: 350,
     });
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
-    await ZoomInByKeyboard(page, { repeat: 5 });
-    await screenshotBetweenUndoRedoInMacro(page);
+    await zoomInByKeyboard(page, { repeat: 5 });
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -331,9 +326,9 @@ test.describe('Zoom Tool', () => {
       `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
     );
     await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
-    await dragMouseTo(100, 100, page);
-    await ZoomInByKeyboard(page, { repeat: 30, timeout: 1 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await dragMouseTo(page, 100, 100);
+    await zoomInByKeyboard(page, { repeat: 30, timeout: 1 });
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

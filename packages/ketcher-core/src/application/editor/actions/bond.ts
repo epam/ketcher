@@ -389,7 +389,7 @@ export function removeAttachmentPointFromSuperatom(
         fromSgroupAttachmentPointRemove(
           restruct,
           sgroup.item?.id as number,
-          atomId as number,
+          atomId,
           anotherSideAtomId,
           false,
         ),

@@ -1,24 +1,22 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   takeMonomerLibraryScreenshot,
-  delay,
-  BondType,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
   copyContentToClipboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -26,7 +24,7 @@ import {
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -34,7 +32,6 @@ import {
 } from '@utils/keyboard/index';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   AtomsSetting,
@@ -44,32 +41,24 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
 test.describe('Ketcher bugs in 3.1.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Circular hydrogen bond connection between three (or more) chains, those hydrogen bonds is considered as side chain connection for layout purposes', async () => {
@@ -250,7 +239,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 5. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 600, { from: 'pageTopLeft' });
@@ -280,7 +269,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       symbolAlias: 'A',
       nodeIndexOverall: 11,
     }).click();
-    await delay(2);
+    await page.waitForTimeout(2 * 1000);
     await getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 11,
@@ -306,7 +295,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await keyboardTypeOnCanvas(page, 'Backspace');
 
     await MacromoleculesTopToolbar(page).expandSwitchLayoutModeDropdown();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
+      { padding: 20 },
+    );
   });
 
   test(`Case 11: System not shows Edit S-Group option for bond of molecule if it has attachment point`, async () => {
@@ -324,7 +317,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       page,
       'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 5 });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
@@ -347,10 +340,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.D_OAla);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(
-      page,
-      MonomerPreviewTooltip(page).monomerPreviewTooltipWindow,
-    );
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {
@@ -373,10 +363,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     await Library(page).hoverMonomer(Peptide.U);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async () => {

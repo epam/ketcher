@@ -1,22 +1,30 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs, StereoLabel, Vec2 } from 'domain/entities';
 import util from '../util';
 import assert from 'assert';
+import {
+  BAD_VALENCE_WARNING_COLOR,
+  BAD_VALENCE_LINE_OFFSET,
+} from 'application/render/renderers/constants';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
+  private stereoLabelElementBBox?: SVGRect;
+  private stereoTextElementBBox?: SVGRect;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -33,6 +41,8 @@ export class AtomRenderer extends BaseRenderer {
 
   private appendRootElement() {
     const editor = CoreEditor.provideEditorInstance();
+    const { hydrogenAmount } = this.atom.calculateValence();
+    const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
     const rootElement = this.canvas
       .insert('g', ':first-child')
@@ -41,16 +51,38 @@ export class AtomRenderer extends BaseRenderer {
       .attr('data-testid', 'atom')
       .attr('data-atomalias', this.atom.label)
       .attr('data-atomid', this.atom.id)
+      .attr('data-atom-id', atomId)
+      .attr('data-atom-type', 'single')
+      .attr('data-atomLabel', this.atom.label ?? '')
+      .attr('data-atomCharge', this.atom.properties.charge ?? '')
+      .attr('data-atomIsotopeAtomicMass', this.atom.properties.isotope ?? '')
+      .attr('data-atomValence', this.atom.properties.explicitValence ?? '')
+      .attr('data-atomRadical', this.atom.properties.radical ?? '')
+      .attr('data-atomRingBondCount', '')
+      .attr('data-atomHCount', hydrogenAmount ?? '')
+      .attr('data-atomSubstitutionCount', '')
+      .attr('data-atomUnsaturated', '')
+      .attr('data-atomAromaticity', '')
+      .attr('data-atomImplicitHCount', '')
+      .attr('data-atomRingMembership', '')
+      .attr('data-atomRingSize', '')
+      .attr('data-atomConnectivity', '')
+      .attr('data-atomChirality', '')
+      .attr('data-atomInversion', '')
+      .attr('data-atomExactChange', '')
+      .attr('data-atomCustomQuery', '')
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     rootElement
-      ?.on('mouseover', () => {
+      ?.on('mouseover', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {
@@ -74,9 +106,15 @@ export class AtomRenderer extends BaseRenderer {
       (this.labelLength < 2 || !this.isLabelVisible) &&
       !this.atom.hasCharge
     ) {
+      // Calculate selection radius based on scale factor.
+      // This formula matches the one used in options.ts for calculating atomSelectionPlateRadius
+      // in micro mode: labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6))
+      const macroModeScale = this.editorSettings.macroModeScale;
+      const selectionRadius = Math.ceil(1.9 * (macroModeScale / 6));
+
       return this.rootElement
         ?.insert('circle', ':first-child')
-        .attr('r', 10)
+        .attr('r', selectionRadius)
         .attr('cx', 0)
         .attr('cy', 0);
     } else {
@@ -123,6 +161,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
+    if (this.hoverElement) {
+      return this.hoverElement;
+    }
+
     const selectionContourElement = this.appendSelectionContour();
 
     return (
@@ -133,9 +175,29 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', 'none')
+        .attr('fill', '#CCFFDD')
         .attr('opacity', '0')
+        .attr('class', 'dynamic-element')
     );
+  }
+
+  /**
+   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+   * via showHover/hideHover, unlike other renderers that add/remove elements.
+   * When the model layer turns on hover (e.g., Fragment selection tool), we need
+   * to explicitly show the hover element after it's created/returned by appendHover.
+   */
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      this.showHover();
+    } else {
+      this.hideHover();
+    }
   }
 
   public showHover() {
@@ -359,8 +421,15 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
+    this.stereoLabelElement?.remove();
+    this.stereoLabelElement = undefined;
+    this.stereoLabelElementBBox = undefined;
+    this.stereoTextElementBBox = undefined;
+    this.badValenceElement?.remove();
+    this.badValenceElement = undefined;
     this.updateSelectionContour();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
   }
 
   public appendSelection() {
@@ -502,12 +571,39 @@ export class AtomRenderer extends BaseRenderer {
     this.appendExplicitValence();
   }
 
+  private appendBadValenceWarning() {
+    if (!this.atom.hasBadValence || !this.isLabelVisible) {
+      return;
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    if (!labelBbox) {
+      return;
+    }
+
+    const lineY = labelBbox.height / 2 + BAD_VALENCE_LINE_OFFSET;
+    const lineStartX = labelBbox.x;
+    const lineEndX = labelBbox.x + labelBbox.width;
+
+    this.badValenceElement = this.rootElement
+      ?.append('line')
+      .attr('x1', lineStartX)
+      .attr('y1', lineY)
+      .attr('x2', lineEndX)
+      .attr('y2', lineY)
+      .attr('stroke', BAD_VALENCE_WARNING_COLOR)
+      .attr('stroke-width', 1)
+      .attr('pointer-events', 'none');
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
+    this.appendBadValenceWarning();
     this.appendCIPLabel();
+    this.appendStereoLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }
@@ -598,6 +694,107 @@ export class AtomRenderer extends BaseRenderer {
     return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));
   }
 
+  private getStereoLabelColor(): string {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return '#000';
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    switch (stereoLabelType) {
+      case StereoLabel.And:
+        return '#0000cd'; // Default AND Centers color
+      case StereoLabel.Or:
+        return '#228b22'; // Default OR Centers color
+      case StereoLabel.Abs:
+        return '#ff0000'; // Default Absolute Center color
+      default:
+        return '#000';
+    }
+  }
+
+  private shouldDisplayStereoLabel(): boolean {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return false;
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    return (
+      stereoLabelType === StereoLabel.And || stereoLabelType === StereoLabel.Or
+    );
+  }
+
+  private appendStereoLabel() {
+    if (!this.shouldDisplayStereoLabel()) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const stereoLabel = this.atom.properties.stereoLabel!;
+
+    this.stereoLabelElement = this.canvas
+      ?.append('g')
+      ?.attr('id', `stereo-atom-${this.atom.id}`);
+
+    const stereoTextElement = this.stereoLabelElement
+      ?.append('text')
+      .text(stereoLabel)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', this.getStereoLabelColor())
+      .attr('pointer-events', 'none');
+
+    this.stereoTextElementBBox = stereoTextElement?.node()?.getBBox();
+    if (!this.stereoTextElementBBox) {
+      return;
+    }
+
+    this.stereoLabelElementBBox = this.stereoLabelElement?.node()?.getBBox();
+
+    this.positionStereoLabel();
+  }
+
+  private positionStereoLabel() {
+    if (!this.stereoTextElementBBox || !this.stereoLabelElementBBox) {
+      return;
+    }
+
+    const { width, height } = this.stereoTextElementBBox;
+
+    const modifiedTextBBox = {
+      x: this.scaledPosition.x - width / 2,
+      y: this.scaledPosition.y - height / 2,
+      width,
+      height,
+    };
+    const direction = this.bisectLargestSector();
+
+    const baseDistance = 3;
+    const shiftDistance =
+      baseDistance +
+      util.shiftRayBox(
+        this.scaledPosition,
+        direction.negated(),
+        Box2Abs.fromRelBox(modifiedTextBBox),
+      );
+    const shiftVector = direction.scaled(baseDistance + shiftDistance);
+
+    const stereoPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x - this.stereoLabelElementBBox.width / 2,
+        shiftVector.y + this.stereoLabelElementBBox.height / 2,
+      ),
+    );
+
+    this.stereoLabelElement?.attr(
+      'transform',
+      `translate(${stereoPosition.x}, ${stereoPosition.y})`,
+    );
+  }
+
   public move() {
     this.rootElement?.attr(
       'transform',
@@ -605,15 +802,22 @@ export class AtomRenderer extends BaseRenderer {
     );
 
     this.positionCIPLabel();
+    this.positionStereoLabel();
   }
 
   public remove() {
     this.removeSelection();
     this.cipLabelElement?.remove();
+    this.stereoLabelElement?.remove();
     super.remove();
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
-  protected removeHover(): void {}
+  protected removeHover(): void {
+    this.hoverElement?.remove();
+    this.hoverElement = undefined;
+  }
 }

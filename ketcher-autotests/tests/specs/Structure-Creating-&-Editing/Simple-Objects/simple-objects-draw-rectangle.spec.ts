@@ -23,7 +23,7 @@ const setupRectangle = async (page: Page) => {
     y: y + rectangleHeight,
   };
   await clickInTheMiddleOfTheScreen(page);
-  await dragMouseTo(rectangleCoordinates.x, rectangleCoordinates.y, page);
+  await dragMouseTo(page, rectangleCoordinates.x, rectangleCoordinates.y);
   return rectangleCoordinates;
 };
 
@@ -48,11 +48,11 @@ async function resizeRectangle(page: Page) {
   const point4 = { x: 881, y: 174 };
   const point5 = { x: 584, y: 371 };
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
   await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point3.x, point3.y, page);
+  await dragMouseTo(page, point3.x, point3.y);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(page, point5.x, point5.y);
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -64,18 +64,16 @@ async function separetingAndMovingRecatngles(page: Page) {
   const point4 = { x: 496, y: 280 };
   const point5 = { x: 194, y: 167 };
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
   await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point3.x, point3.y, page);
+  await dragMouseTo(page, point3.x, point3.y);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await page.mouse.down();
-  await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(page, point5.x, point5.y);
 }
 
 test.describe('Draw Rectangle', () => {
@@ -104,7 +102,7 @@ test.describe('Draw Rectangle', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -119,7 +117,7 @@ test.describe('Draw Rectangle', () => {
     await resizeRectangle(page);
     await createSomeStructure(page);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 

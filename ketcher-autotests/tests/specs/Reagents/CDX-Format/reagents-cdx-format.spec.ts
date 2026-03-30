@@ -1,11 +1,11 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
-  FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -51,10 +51,10 @@ test.describe('Reagents CDX format', () => {
       Test case: EPMLSOPKET-4710
       Description: Reagents 'NH3' displays above reaction arrow and HCl below.
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCdx,
+    const fileContent = await readFileContent(
+      'CDX/reagents-below-and-above-arrow.cdx',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -71,6 +71,10 @@ test.describe('Reagents CDX format', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDX,
     );
-    await takeEditorScreenshot(page);
+    const CDXExportResult = await SaveStructureDialog(page).getTextAreaValue();
+
+    expect(CDXExportResult).toEqual('Can not display binary content');
+
+    await SaveStructureDialog(page).cancel();
   });
 });

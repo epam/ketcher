@@ -463,15 +463,15 @@
             <atom id="a406" elementType="O" x2="6.12677" y2="-9.5861"/>
         </atomArray>
         <bondArray>
-            <bond atomRefs2="a0 a44" order="1"/>
-            <bond atomRefs2="a1 a66" order="1"/>
-            <bond atomRefs2="a2 a88" order="1"/>
-            <bond atomRefs2="a3 a110" order="1"/>
-            <bond atomRefs2="a4 a132" order="1"/>
-            <bond atomRefs2="a5 a154" order="1"/>
-            <bond atomRefs2="a6 a176" order="1"/>
-            <bond atomRefs2="a7 a198" order="1"/>
-            <bond atomRefs2="a8 a215" order="1"/>
+            <bond atomRefs2="a33 a232" order="1"/>
+            <bond atomRefs2="a55 a243" order="1"/>
+            <bond atomRefs2="a77 a264" order="1"/>
+            <bond atomRefs2="a101 a295" order="1"/>
+            <bond atomRefs2="a123 a306" order="1"/>
+            <bond atomRefs2="a145 a327" order="1"/>
+            <bond atomRefs2="a163 a358" order="1"/>
+            <bond atomRefs2="a185 a369" order="1"/>
+            <bond atomRefs2="a207 a390" order="1"/>
             <bond atomRefs2="a20 a18" order="2">
                 <bondStereo atomRefs4="a19 a20 a18 a22">C</bondStereo>
             </bond>
@@ -514,7 +514,7 @@
                 <bondStereo atomRefs4="a40 a42 a0 a44">C</bondStereo>
             </bond>
             <bond atomRefs2="a35 a41" order="1"/>
-            <bond atomRefs2="a9 a234" order="1"/>
+            <bond atomRefs2="a0 a44" order="1"/>
             <bond atomRefs2="a44 a45" order="2">
                 <bondStereo atomRefs4="a0 a44 a45 a43">C</bondStereo>
             </bond>
@@ -553,7 +553,7 @@
                 <bondStereo atomRefs4="a62 a64 a1 a66">C</bondStereo>
             </bond>
             <bond atomRefs2="a57 a63" order="1"/>
-            <bond atomRefs2="a10 a244" order="1"/>
+            <bond atomRefs2="a1 a66" order="1"/>
             <bond atomRefs2="a66 a67" order="2">
                 <bondStereo atomRefs4="a1 a66 a67 a65">C</bondStereo>
             </bond>
@@ -592,7 +592,7 @@
                 <bondStereo atomRefs4="a84 a86 a2 a88">C</bondStereo>
             </bond>
             <bond atomRefs2="a79 a85" order="1"/>
-            <bond atomRefs2="a11 a266" order="1"/>
+            <bond atomRefs2="a2 a88" order="1"/>
             <bond atomRefs2="a88 a89" order="2">
                 <bondStereo atomRefs4="a2 a88 a89 a87">C</bondStereo>
             </bond>
@@ -631,7 +631,7 @@
             <bond atomRefs2="a108 a3" order="2">
                 <bondStereo atomRefs4="a107 a108 a3 a110">C</bondStereo>
             </bond>
-            <bond atomRefs2="a12 a297" order="1"/>
+            <bond atomRefs2="a3 a110" order="1"/>
             <bond atomRefs2="a110 a111" order="2">
                 <bondStereo atomRefs4="a3 a110 a111 a109">C</bondStereo>
             </bond>
@@ -670,7 +670,7 @@
             <bond atomRefs2="a130 a4" order="2">
                 <bondStereo atomRefs4="a129 a130 a4 a132">C</bondStereo>
             </bond>
-            <bond atomRefs2="a13 a307" order="1"/>
+            <bond atomRefs2="a4 a132" order="1"/>
             <bond atomRefs2="a132 a133" order="2">
                 <bondStereo atomRefs4="a4 a132 a133 a131">C</bondStereo>
             </bond>
@@ -709,7 +709,7 @@
             <bond atomRefs2="a152 a5" order="2">
                 <bondStereo atomRefs4="a151 a152 a5 a154">C</bondStereo>
             </bond>
-            <bond atomRefs2="a14 a329" order="1"/>
+            <bond atomRefs2="a5 a154" order="1"/>
             <bond atomRefs2="a154 a155" order="2">
                 <bondStereo atomRefs4="a5 a154 a155 a153">C</bondStereo>
             </bond>
@@ -748,7 +748,7 @@
             </bond>
             <bond atomRefs2="a165 a172" order="1"/>
             <bond atomRefs2="a167 a173" order="1"/>
-            <bond atomRefs2="a15 a360" order="1"/>
+            <bond atomRefs2="a6 a176" order="1"/>
             <bond atomRefs2="a176 a177" order="2">
                 <bondStereo atomRefs4="a6 a176 a177 a175">C</bondStereo>
             </bond>
@@ -787,7 +787,7 @@
             </bond>
             <bond atomRefs2="a187 a194" order="1"/>
             <bond atomRefs2="a189 a195" order="1"/>
-            <bond atomRefs2="a16 a370" order="1"/>
+            <bond atomRefs2="a7 a198" order="1"/>
             <bond atomRefs2="a198 a199" order="2">
                 <bondStereo atomRefs4="a7 a198 a199 a197">C</bondStereo>
             </bond>
@@ -824,6 +824,7 @@
             <bond atomRefs2="a237 a8" order="1"/>
             <bond atomRefs2="a209 a216" order="1"/>
             <bond atomRefs2="a211 a217" order="1"/>
+            <bond atomRefs2="a8 a215" order="1"/>
             <bond atomRefs2="a215 a218" order="1"/>
             <bond atomRefs2="a218 a219" order="1"/>
             <bond atomRefs2="a219 a220" order="1"/>
@@ -849,7 +850,7 @@
             <bond atomRefs2="a235 a236" order="1"/>
             <bond atomRefs2="a236 a237" order="1"/>
             <bond atomRefs2="a236 a238" order="2"/>
-            <bond atomRefs2="a33 a232" order="1"/>
+            <bond atomRefs2="a9 a234" order="1"/>
             <bond atomRefs2="a234 a239" order="1"/>
             <bond atomRefs2="a239 a240" order="1"/>
             <bond atomRefs2="a240 a241" order="1"/>
@@ -875,7 +876,7 @@
             <bond atomRefs2="a256 a257" order="1"/>
             <bond atomRefs2="a257 a258" order="1"/>
             <bond atomRefs2="a257 a259" order="2"/>
-            <bond atomRefs2="a55 a243" order="1"/>
+            <bond atomRefs2="a10 a244" order="1"/>
             <bond atomRefs2="a244 a260" order="1"/>
             <bond atomRefs2="a260 a261" order="1"/>
             <bond atomRefs2="a261 a262" order="1"/>
@@ -901,7 +902,7 @@
             <bond atomRefs2="a277 a278" order="1"/>
             <bond atomRefs2="a278 a279" order="1"/>
             <bond atomRefs2="a278 a280" order="2"/>
-            <bond atomRefs2="a77 a264" order="1"/>
+            <bond atomRefs2="a11 a266" order="1"/>
             <bond atomRefs2="a266 a281" order="1"/>
             <bond atomRefs2="a281 a282" order="1"/>
             <bond atomRefs2="a282 a283" order="1"/>
@@ -927,7 +928,7 @@
             <bond atomRefs2="a298 a299" order="1"/>
             <bond atomRefs2="a299 a300" order="1"/>
             <bond atomRefs2="a299 a301" order="2"/>
-            <bond atomRefs2="a101 a295" order="1"/>
+            <bond atomRefs2="a12 a297" order="1"/>
             <bond atomRefs2="a297 a302" order="1"/>
             <bond atomRefs2="a302 a303" order="1"/>
             <bond atomRefs2="a303 a304" order="1"/>
@@ -953,7 +954,7 @@
             <bond atomRefs2="a319 a320" order="1"/>
             <bond atomRefs2="a320 a321" order="1"/>
             <bond atomRefs2="a320 a322" order="2"/>
-            <bond atomRefs2="a123 a306" order="1"/>
+            <bond atomRefs2="a13 a307" order="1"/>
             <bond atomRefs2="a307 a323" order="1"/>
             <bond atomRefs2="a323 a324" order="1"/>
             <bond atomRefs2="a324 a325" order="1"/>
@@ -979,7 +980,7 @@
             <bond atomRefs2="a340 a341" order="1"/>
             <bond atomRefs2="a341 a342" order="1"/>
             <bond atomRefs2="a341 a343" order="2"/>
-            <bond atomRefs2="a145 a327" order="1"/>
+            <bond atomRefs2="a14 a329" order="1"/>
             <bond atomRefs2="a329 a344" order="1"/>
             <bond atomRefs2="a344 a345" order="1"/>
             <bond atomRefs2="a345 a346" order="1"/>
@@ -1005,7 +1006,7 @@
             <bond atomRefs2="a361 a362" order="1"/>
             <bond atomRefs2="a362 a363" order="1"/>
             <bond atomRefs2="a362 a364" order="2"/>
-            <bond atomRefs2="a163 a358" order="1"/>
+            <bond atomRefs2="a15 a360" order="1"/>
             <bond atomRefs2="a360 a365" order="1"/>
             <bond atomRefs2="a365 a366" order="1"/>
             <bond atomRefs2="a366 a367" order="1"/>
@@ -1031,7 +1032,7 @@
             <bond atomRefs2="a382 a383" order="1"/>
             <bond atomRefs2="a383 a384" order="1"/>
             <bond atomRefs2="a383 a385" order="2"/>
-            <bond atomRefs2="a185 a369" order="1"/>
+            <bond atomRefs2="a16 a370" order="1"/>
             <bond atomRefs2="a370 a386" order="1"/>
             <bond atomRefs2="a386 a387" order="1"/>
             <bond atomRefs2="a387 a388" order="1"/>
@@ -1056,7 +1057,6 @@
             <bond atomRefs2="a403 a404" order="1"/>
             <bond atomRefs2="a404 a405" order="1"/>
             <bond atomRefs2="a404 a406" order="2"/>
-            <bond atomRefs2="a207 a390" order="1"/>
         </bondArray>
         <molecule id="sg0" atomRefs="a106" role="SuperatomSgroup" title="H">
             <MBracket type="SQUARE">

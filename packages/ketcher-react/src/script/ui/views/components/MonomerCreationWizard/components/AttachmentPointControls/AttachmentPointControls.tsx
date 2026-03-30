@@ -1,4 +1,4 @@
-import { AttachmentPointName } from 'ketcher-core';
+import { AtomLabel, AttachmentPointName } from 'ketcher-core';
 import Select from '../../../../../component/form/Select';
 import { AttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
 import styles from './AttachmentPointControls.module.less';
@@ -8,7 +8,7 @@ import { forwardRef, ReactNode } from 'react';
 type Props = {
   data: AttachmentPointSelectData;
   onNameChange: (newName: AttachmentPointName) => void;
-  onLeavingAtomChange: (newLeavingAtomId: number) => void;
+  onLeavingAtomChange: (newLeavingAtomLabel: AtomLabel) => void;
   className?: string;
   additionalControls?: ReactNode;
   highlight?: boolean;
@@ -40,8 +40,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
     };
 
     const handleLeavingAtomChange = (value: string) => {
-      const atomId = parseInt(value, 10);
-      onLeavingAtomChange(atomId);
+      onLeavingAtomChange(value as AtomLabel);
     };
 
     return (

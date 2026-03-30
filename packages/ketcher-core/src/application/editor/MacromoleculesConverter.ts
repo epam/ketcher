@@ -118,7 +118,7 @@ export class MacromoleculesConverter {
     return {
       globalAttachmentAtomId:
         isNumber(attachmentPointAtomId) &&
-        atomIdMap?.get(attachmentPointAtomId as number),
+        atomIdMap?.get(attachmentPointAtomId),
       attachmentAtomId:
         isNumber(attachmentPointAtomId) && attachmentPointAtomId,
       attachmentPointNumber,
@@ -127,7 +127,7 @@ export class MacromoleculesConverter {
 
   public static convertMonomerAttachmentPointsToSGroupAttachmentPoints(
     monomer: BaseMonomer,
-    atomIdsMap: Map<number, number>,
+    atomIdsMap?: Map<number, number>,
   ) {
     return monomer.listOfAttachmentPoints.map(
       (attachmentPointName, attachmentPointIndex) => {
@@ -138,8 +138,12 @@ export class MacromoleculesConverter {
         ] as IKetAttachmentPoint;
 
         return new SGroupAttachmentPoint(
-          atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
-          atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
+          atomIdsMap
+            ? (atomIdsMap.get(attachmentPoint.attachmentAtom) as number)
+            : attachmentPoint.attachmentAtom,
+          atomIdsMap
+            ? atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0])
+            : attachmentPoint.leavingGroup?.atoms[0],
           undefined,
           attachmentPointNumber,
         );
@@ -153,10 +157,6 @@ export class MacromoleculesConverter {
     reStruct?: ReStruct,
   ) {
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
-    const monomerToMonomerMicromolecule = new Map<
-      BaseMonomer,
-      MonomerMicromolecule
-    >();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
@@ -191,8 +191,6 @@ export class MacromoleculesConverter {
           monomer instanceof AmbiguousMonomer
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomer.monomerItem.struct.bonds;
-
-        monomerToMonomerMicromolecule.set(monomer, monomerMicromolecule);
 
         monomerAtoms.forEach((oldAtom, oldAtomId) => {
           const { atom, atomId } = this.addMonomerAtomToStruct(
@@ -354,6 +352,7 @@ export class MacromoleculesConverter {
     struct.findConnectedComponents();
     struct.setImplicitHydrogen();
     struct.setStereoLabelsToAtoms();
+    struct.applyStereoBondsToExpandedMonomers();
     struct.markFragments();
 
     return { struct, reStruct, conversionErrorMessage };
@@ -502,7 +501,7 @@ export class MacromoleculesConverter {
 
     fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
-      const fragmentStruct = struct.getFragment(_fragment, false, atomIdMap);
+      const fragmentStruct = struct.getFragmentOnly(_fragment, atomIdMap);
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,
@@ -514,9 +513,10 @@ export class MacromoleculesConverter {
       const atomsMap = new Map<number, Atom>();
 
       _fragment.forEach((fragmentId) => {
-        fragmentIdToMonomer.set(fragmentId as number, monomer);
+        fragmentIdToMonomer.set(fragmentId, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
       });
+
       command.merge(monomerAddCommand);
 
       if (
@@ -536,6 +536,7 @@ export class MacromoleculesConverter {
               radical: atom.radical,
               alias: atom.alias,
               cip: atom.cip,
+              stereoLabel: atom.stereoLabel,
             },
           );
 
@@ -567,7 +568,6 @@ export class MacromoleculesConverter {
           );
         });
       }
-
       fragmentNumber++;
     });
 
@@ -621,11 +621,11 @@ export class MacromoleculesConverter {
           atomIdInMicromolecules,
           globalAtomIdToMonomerMap.get(moleculeAtomId),
         );
+      const attachmentPointNumber =
+        bond.beginSuperatomAttachmentPointNumber ??
+        bond.endSuperatomAttachmentPointNumber;
 
-      if (
-        !atomToConnect ||
-        !isNumber(bond.beginSuperatomAttachmentPointNumber)
-      ) {
+      if (!atomToConnect || !isNumber(attachmentPointNumber)) {
         return;
       }
 
@@ -633,7 +633,7 @@ export class MacromoleculesConverter {
         drawingEntitiesManager.addMonomerToAtomBond(
           monomer,
           atomToConnect,
-          getAttachmentPointLabel(bond.beginSuperatomAttachmentPointNumber),
+          getAttachmentPointLabel(attachmentPointNumber),
         ),
       );
     });

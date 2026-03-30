@@ -37,7 +37,6 @@ export class FlexMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.recalculateAntisenseChains();
-
     command.merge(
       editor.drawingEntitiesManager.selectDrawingEntities(
         mergedDrawingEntities.allEntitiesArray,
@@ -65,5 +64,7 @@ export class FlexMode extends BaseMode {
     return true;
   }
 
-  scrollForView(): void {}
+  scrollForView(): void {
+    // intentional no-op: flex mode does not implement automatic scroll for view
+  }
 }

@@ -35,8 +35,8 @@ export default function MonomerPreviewProperties({
 
   return (
     <MonomerPreviewContainer preset={preset}>
-      {rows.map((item, idx) => (
-        <MonomerPreviewText key={idx}>
+      {rows.map((item) => (
+        <MonomerPreviewText key={item.label}>
           <MonomerPreviewTitle>{item.label}:</MonomerPreviewTitle>
           <MonomerPreviewList>{item.text}</MonomerPreviewList>
         </MonomerPreviewText>

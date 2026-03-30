@@ -6,6 +6,7 @@ import {
 import { RightToolbar } from '../RightToolbar';
 
 type PeriodicTableDialogLocators = {
+  window: Locator;
   singleRadioButton: Locator;
   listRadioButton: Locator;
   notListRadioButton: Locator;
@@ -16,9 +17,10 @@ type PeriodicTableDialogLocators = {
 
 export const PeriodicTableDialog = (page: Page) => {
   const getButton = (dataTestId: string): Locator =>
-    page.getByTestId(dataTestId);
+    page.getByTestId('period-table-dialog').getByTestId(dataTestId);
 
   const locators: PeriodicTableDialogLocators = {
+    window: page.getByTestId('period-table-dialog'),
     singleRadioButton: page.getByTestId('single-radio-button'),
     listRadioButton: page.getByTestId('list-radio-button'),
     notListRadioButton: page.getByTestId('not-list-radio-button'),
@@ -29,6 +31,10 @@ export const PeriodicTableDialog = (page: Page) => {
 
   return {
     ...locators,
+
+    async isVisible() {
+      return await locators.window.isVisible();
+    },
 
     async close() {
       await locators.closeWindowButton.click();

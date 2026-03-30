@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -7,13 +8,13 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
-  waitForPageInit,
   openFile,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -22,10 +23,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  markResetToDefaultState,
-  processResetToDefaultState,
-} from '@utils/testAnnotations/resetToDefaultState';
+import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -61,20 +59,14 @@ const fileTestData = [
   },
 ];
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await processResetToDefaultState(testInfo, page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .ket Files', () => {
@@ -127,13 +119,13 @@ test.describe('Import-Saving .ket Files', () => {
       'KET/hundred-monomers-expected.ket',
       FileType.KET,
     );
-
-    const numberOfPressZoomOut = 7;
+    const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
+    await resetZoomLevelToDefault(page);
   });
 
   test('Check that empty file can be saved in .ket format', async () => {
@@ -162,7 +154,7 @@ test.describe('Import-Saving .ket Files', () => {
     await resetZoomLevelToDefault(page);
     await getMonomerLocator(page, Peptide.bAla).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {
@@ -183,7 +175,7 @@ test.describe('Import-Saving .ket Files', () => {
     await CommonTopLeftToolbar(page).undo();
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
-    await dragMouseTo(400, 400, page);
+    await dragMouseTo(page, 400, 400);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -385,7 +377,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         page,
         `KET/Base-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -412,7 +404,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         page,
         `KET/CHEM-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -439,7 +431,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         page,
         `KET/Peptide-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -466,7 +458,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         page,
         `KET/Phosphate-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -493,7 +485,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         page,
         `KET/Sugar-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);

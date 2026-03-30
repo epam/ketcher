@@ -5,14 +5,12 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   MolFileFormat,
 } from '@utils';
 
@@ -37,6 +35,8 @@ import {
   applyEnhancedStereochemistry,
 } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.describe('Enhanced Stereochemistry Tool', () => {
@@ -47,6 +47,11 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await EnhancedStereochemistry(page).isVisible()) {
+      await EnhancedStereochemistry(page).closeWindow();
+    }
+  });
 
   test('OR stereo mark assignment', async () => {
     /*
@@ -58,7 +63,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewOrGroup();
     await EnhancedStereochemistry(page).cancel();
@@ -78,12 +85,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -99,12 +110,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.AddToOrGroup,
     });
@@ -120,12 +135,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -141,7 +160,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await takeEditorScreenshot(page);
   });
@@ -168,14 +189,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
     And above one structure appears 'Mixed' stereo flag.
     */
-    const xDelta = 300;
-    const yDelta = 600;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/two-stereostructures.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y - yDelta, page);
+    await dragMouseTo(page, x + 300, y - 600);
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -222,7 +241,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await LeftToolbar(page).stereochemistry();
     await EnhancedStereochemistry(page).selectCreateNewAndGroup();
     await EnhancedStereochemistry(page).cancel();
@@ -242,12 +263,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 20 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -263,12 +288,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
       'Molfiles-V2000/stereo-structure-enchanced.mol',
     );
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.AddToAndGroup,
     });
@@ -290,12 +319,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -317,12 +350,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -344,12 +381,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -371,12 +412,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewOrGroup,
     });
@@ -398,12 +443,16 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       FileType.KET,
     );
 
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 21 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
 
-    await clickOnAtom(page, 'C', 4);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await applyEnhancedStereochemistry(page, {
       selectRadioButton: EnhancedStereochemistryRadio.CreateNewAndGroup,
     });
@@ -663,13 +712,18 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2924
     Description: Values 'ABS' and "CH3" aren't overlapped on canvas.
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', 3);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+
     await takeEditorScreenshot(page);
   });
 
@@ -678,10 +732,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-8917
     Description: Stereo flag is presented as 'ABS' without 'Chiral'
     */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
-    await clickOnAtom(page, 'C', 1);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

@@ -34,13 +34,12 @@ test.describe('Ignore Chiral Flag', () => {
     const pointY = 211;
     await resetSettingsValuesToDefault(page);
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
     await clickInTheMiddleOfTheScreen(page);
-    // await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -53,8 +52,8 @@ test.describe('Ignore Chiral Flag', () => {
     const pointY = 204;
     const pointZ = 211;
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
@@ -69,8 +68,8 @@ test.describe('Ignore Chiral Flag', () => {
   }) => {
     // Test case: EPMLSOPKET-16919
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );

@@ -199,7 +199,7 @@ function maxOfOrs(stereLabels): number {
   return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
-export default connect((state) => ({
-  formState: (state as any).modal.form || { result: {}, valid: false },
-  struct: (state as any).editor.struct(),
+export default connect((state: any) => ({
+  formState: state.modal.form || { result: {}, valid: false },
+  struct: state.editor.struct(),
 }))(EnhancedStereo);

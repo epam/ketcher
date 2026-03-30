@@ -31,6 +31,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     modificationTypes: template.modificationTypes,
     ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
     ...(template.aliasAxoLabs ? { aliasAxoLabs: template.aliasAxoLabs } : {}),
+    ...(template.hidden ? { hidden: template.hidden } : {}),
   };
 }
 
@@ -80,7 +81,8 @@ export function createMonomersForVariantMonomer(
       expanded: false,
       struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
-      attachmentPoints: monomerTemplate.attachmentPoints,
+      attachmentPoints:
+        KetSerializer.getTemplateAttachmentPoints(monomerTemplate),
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
     KetSerializer.fillStructRgLabelsByMonomerTemplate(

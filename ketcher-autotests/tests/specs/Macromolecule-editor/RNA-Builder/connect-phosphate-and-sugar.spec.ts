@@ -19,7 +19,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
       'KET/connection-of-phosphate-and-sugar.ket',
     );
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
 
     const firstRsp = page.locator('use[href="#phosphate"]').first();
     const sugar = page.locator('use[href="#sugar"]');

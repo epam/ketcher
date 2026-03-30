@@ -4,9 +4,9 @@ import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
 type TemplateEditDialogLocators = {
-  dialog: Locator;
+  window: Locator;
   closeWindowButton: Locator;
-  moleculeNameInput: Locator;
+  moleculeNameEditbox: Locator;
   selectedAttachmentPoints: Locator;
   cancelButton: Locator;
   editButton: Locator;
@@ -15,9 +15,9 @@ type TemplateEditDialogLocators = {
 };
 export const TemplateEditDialog = (page: Page) => {
   const locators: TemplateEditDialogLocators = {
-    dialog: page.getByTestId('attach-dialog'),
+    window: page.getByTestId('attach-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
-    moleculeNameInput: page.getByTestId('name-input'),
+    moleculeNameEditbox: page.getByTestId('name-input'),
     selectedAttachmentPoints: page.getByTestId('attach-output'),
     cancelButton: page.getByTestId('template-cancel-button'),
     editButton: page.getByTestId('template-edit-button'),
@@ -45,13 +45,13 @@ export const TemplateEditDialog = (page: Page) => {
       await locators.cancelButton.click({ force: true });
     },
     async setMoleculeName(name: string) {
-      await locators.moleculeNameInput.fill(name);
+      await locators.moleculeNameEditbox.fill(name);
     },
     async getMoleculeName(): Promise<string> {
-      return await locators.moleculeNameInput.inputValue();
+      return await locators.moleculeNameEditbox.inputValue();
     },
     async clickMoleculeName() {
-      await locators.moleculeNameInput.click({ force: true });
+      await locators.moleculeNameEditbox.click({ force: true });
     },
     async clickCanvas() {
       await page.getByTestId('attach-dialog').getByTestId('canvas').click();

@@ -221,9 +221,6 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
   ifDef(params, 'customQuery', source.customQuery);
-  // if (params.stereo)
-  // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
-  // params.xxx = 0;
   ifDef(params, 'begin', source.atoms[0] + atomOffset);
   ifDef(params, 'end', source.atoms[1] + atomOffset);
   ifDef(params, 'initiallySelected', source.selected);
@@ -243,14 +240,17 @@ export function sgroupToStruct(source) {
   const sgroup = new SGroup(source.type);
   ifDef(sgroup, 'atoms', source.atoms);
   switch (source.type) {
-    case 'GEN':
-      break;
     case 'MUL': {
       ifDef(sgroup.data, 'mul', source.mul);
       break;
     }
     case 'SRU': {
       ifDef(sgroup.data, 'subscript', source.subscript);
+      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
+      break;
+    }
+    case 'COP': {
+      ifDef(sgroup.data, 'subtype', source.subtype);
       ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
       break;
     }
@@ -282,6 +282,7 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'fieldValue', source.fieldData);
       break;
     }
+    case 'GEN':
     default:
       break;
   }

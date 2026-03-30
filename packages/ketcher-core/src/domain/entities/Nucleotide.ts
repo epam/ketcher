@@ -20,11 +20,14 @@ import { KetMonomerClass } from 'application/formatters';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 
 export class Nucleotide {
+  private readonly monomersCache: BaseMonomer[] = [];
   constructor(
-    public sugar: Sugar,
-    public rnaBase: RNABase | AmbiguousMonomer,
-    public phosphate: Phosphate,
-  ) {}
+    public readonly sugar: Sugar,
+    public readonly rnaBase: RNABase | AmbiguousMonomer,
+    public readonly phosphate: Phosphate,
+  ) {
+    this.monomersCache = [sugar, rnaBase, phosphate];
+  }
 
   toString() {
     return (
@@ -115,19 +118,19 @@ export class Nucleotide {
   }
 
   public get monomer() {
-    return this.sugar;
+    return this.firstMonomerInNode;
   }
 
   public get monomers(): BaseMonomer[] {
-    return [this.sugar, this.rnaBase, this.phosphate];
+    return this.monomersCache;
   }
 
   public get firstMonomerInNode() {
-    return this.sugar;
+    return this.isFiveEndPhosphate ? this.phosphate : this.sugar;
   }
 
   public get lastMonomerInNode() {
-    return this.phosphate;
+    return this.isFiveEndPhosphate ? this.sugar : this.phosphate;
   }
 
   public get renderer() {
@@ -139,6 +142,16 @@ export class Nucleotide {
       this.rnaBase.isModification ||
       this.sugar.isModification ||
       this.phosphate.isModification
+    );
+  }
+
+  public get isFiveEndPhosphate() {
+    return (
+      this.sugar.attachmentPointsToBonds.R1?.getAnotherEntity(this.sugar) ===
+        this.phosphate &&
+      this.phosphate.attachmentPointsToBonds.R2?.getAnotherEntity(
+        this.phosphate,
+      ) === this.sugar
     );
   }
 }

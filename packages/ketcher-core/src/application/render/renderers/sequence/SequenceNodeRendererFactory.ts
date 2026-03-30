@@ -39,9 +39,9 @@ export class SequenceNodeRendererFactory {
     chain: Chain,
     nodeIndexOverall: number,
     editingNodeIndexOverall: number,
-    previousRowsWithAntisense = 0,
     twoStrandedNode: ITwoStrandedChainItem,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
+    previousRowsWithAntisense = 0,
   ): BaseSequenceItemRenderer {
     let RendererClass;
 
@@ -72,15 +72,13 @@ export class SequenceNodeRendererFactory {
           case Peptide:
             RendererClass = PeptideSequenceItemRenderer;
             break;
-          case Chem:
-            RendererClass = ChemSequenceItemRenderer;
-            break;
           case UnresolvedMonomer:
             RendererClass = UnresolvedMonomerSequenceItemRenderer;
             break;
           case UnsplitNucleotide:
             RendererClass = UnsplitNucleotideSequenceItemRenderer;
             break;
+          case Chem:
           default:
             RendererClass = ChemSequenceItemRenderer;
             break;
@@ -97,8 +95,8 @@ export class SequenceNodeRendererFactory {
       editingNodeIndexOverall,
       renderer?.monomerSize,
       renderer?.scaledMonomerPosition,
-      previousRowsWithAntisense,
       twoStrandedNode,
+      previousRowsWithAntisense,
     );
   }
 }

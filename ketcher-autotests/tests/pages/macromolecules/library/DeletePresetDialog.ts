@@ -1,7 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 
 type DeletePresetDialogLocators = {
-  deletePresetWindow: Locator;
+  window: Locator;
   closeWindowButton: Locator;
   textMessageBody: Locator;
   cancelButton: Locator;
@@ -10,7 +10,7 @@ type DeletePresetDialogLocators = {
 
 export const DeletePresetDialog = (page: Page) => {
   const locators: DeletePresetDialogLocators = {
-    deletePresetWindow: page.getByTestId('delete-preset-modal'),
+    window: page.getByTestId('delete-preset-modal'),
     closeWindowButton: page.getByTestId('close-window-button'),
     textMessageBody: page.getByTestId('delete-preset-popup-content'),
     cancelButton: page.getByTestId('cancel-delete-preset-button'),
@@ -20,7 +20,7 @@ export const DeletePresetDialog = (page: Page) => {
   return {
     ...locators,
     async isVisible() {
-      return await locators.deletePresetWindow.isVisible();
+      return await locators.window.isVisible();
     },
 
     async closeWindow() {

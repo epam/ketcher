@@ -12,11 +12,11 @@ import {
   readFileContent,
   SequenceFileFormat,
   resetZoomLevelToDefault,
-  delay,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
+  verifySequence1LetterCodeExport,
 } from '@utils/files/receiveFileComparisonData';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -88,7 +88,7 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeEditorScreenshot(page);
   });
 
@@ -283,13 +283,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXXX');
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -316,13 +310,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXX');
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -349,13 +337,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
-      await takeEditorScreenshot(page);
-
-      await SaveStructureDialog(page).cancel();
+      await verifySequence1LetterCodeExport(page, 'XXXXXXXXXX XXXXXXXXXX');
       await zoomWithMouseWheel(page, 200);
     },
   );

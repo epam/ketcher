@@ -3,8 +3,9 @@ export enum MonomerType {
   Sugar = 'Sugar-option',
   Base = 'Base-option',
   Phosphate = 'Phosphate-option',
-  Nucleotide = 'Nucleotide-option',
+  NucleotideMonomer = 'Nucleotide (monomer)-option',
   CHEM = 'CHEM-option',
+  NucleotidePreset = 'Nucleotide (preset)-option',
 }
 
 export enum AminoAcidNaturalAnalogue {
@@ -40,4 +41,14 @@ export enum NucleotideNaturalAnalogue {
   T = 'natural-analogue-picker-option-T',
   U = 'natural-analogue-picker-option-U',
   X = 'natural-analogue-picker-option-X',
+}
+
+export enum ModificationType {
+  NaturalAminoAcid = 'modification-type-option-Natural amino acid',
+  Citrullination = 'modification-type-option-Citrullination',
+  Hydroxylation = 'modification-type-option-Hydroxylation',
+  Inversion = 'modification-type-option-Inversion',
+  NMethylation = 'modification-type-option-N-methylation',
+  Phosphorylation = 'modification-type-option-Phosphorylation',
+  SideChainAcetylation = 'modification-type-option-Side chain acetylation',
 }

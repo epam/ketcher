@@ -1,10 +1,10 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickOnCanvas,
   waitForPageInit,
-  clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { mapTwoAtoms } from '@utils/canvas/autoMapTools';
@@ -16,6 +16,9 @@ import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -76,7 +79,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       ReactionMappingType.ReactionAutoMapping,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('automap-mode-input-span').click();
+    await ReactionAutoMappingDialog(page).modeDropdown.click();
     await takeEditorScreenshot(page);
   });
 
@@ -93,8 +96,6 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
-        const atomNumber1 = 1;
-        const atomNumber2 = 2;
         await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
         const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
         await LeftToolbar(page).selectReactionMappingTool(
@@ -107,10 +108,14 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await LeftToolbar(page).selectReactionMappingTool(
           ReactionMappingType.ReactionMapping,
         );
-        await clickOnAtom(page, 'C', atomNumber1);
-        await clickOnAtom(page, 'C', atomNumber2);
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).click({
+          force: true,
+        });
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+          force: true,
+        });
         await takeEditorScreenshot(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
         await LeftToolbar(page).selectReactionMappingTool(
@@ -124,7 +129,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test.describe('With autoMapping', () => {
     test.afterEach(async ({ page }) => {
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takeEditorScreenshot(page);
@@ -160,13 +165,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
     });
 
@@ -178,13 +183,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
     });
 
@@ -214,11 +219,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     );
     await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Clear);
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 2 },
+      getAtomLocator(page, { atomLabel: 'C' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await takeEditorScreenshot(page);
     await LeftToolbar(page).selectReactionMappingTool(

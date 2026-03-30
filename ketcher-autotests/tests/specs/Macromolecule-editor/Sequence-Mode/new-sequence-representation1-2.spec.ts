@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -5,7 +6,6 @@ import { Page, test, expect, Locator } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  delay,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -15,7 +15,6 @@ import {
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -26,41 +25,32 @@ import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { pressYesInConfirmYourActionDialog } from '@utils/macromolecules/sequence';
 import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
 });
 
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
+
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomerToAdd {
@@ -1418,7 +1408,6 @@ function filterBugsInTests(
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
       item.MonomerId === undefined ||
-      item.MonomerId === undefined ||
       (monomerId !== undefined && item.MonomerId.includes(monomerId));
 
     return testNameMatch && sequenceIdMatch && replaceMonomerIdMatch;
@@ -1498,7 +1487,7 @@ async function callContextMenuForSelectedAllSymbol(
     }
     attempts++;
     await closeContextMenu(page);
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await selectAllStructuresOnCanvas(page);
   }
   logTestWarning(
@@ -2079,7 +2068,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         SequenceSymbolOption.DeleteHydrogenBonds,
       );
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
-      await pressYesInConfirmYourActionDialog(page);
+      await ConfirmYourActionDialog(page).yes();
       await selectAllStructuresOnCanvas(page);
       await antisenseSymbolWithHBond.hover();
       await ContextMenu(page, antisenseSymbolWithHBond).open();
@@ -2198,7 +2187,7 @@ test(`Case 15. Verify warning message on deleting all hydrogen bonds between two
   await ContextMenu(page, anySymbolA).click(
     SequenceSymbolOption.DeleteHydrogenBonds,
   );
-  await pressYesInConfirmYourActionDialog(page);
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -2233,7 +2222,7 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
   await ContextMenu(page, anySymbolA).click(
     SequenceSymbolOption.DeleteHydrogenBonds,
   );
-  await pressYesInConfirmYourActionDialog(page);
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

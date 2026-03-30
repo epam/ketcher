@@ -135,7 +135,7 @@ export function replaceMonomer(
       drawingEntitiesManager.addMonomerToAtomBond(
         monomerToAtomBondInfo.monomer,
         monomerToAtomBondInfo.atom,
-        monomerToAtomBondInfo.attachmentPoint as AttachmentPointName,
+        monomerToAtomBondInfo.attachmentPoint,
       ),
     );
   }

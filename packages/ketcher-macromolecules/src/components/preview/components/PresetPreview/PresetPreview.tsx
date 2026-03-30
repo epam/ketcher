@@ -24,12 +24,13 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
+import { KetMonomerClass } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState } from 'state';
 
-const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
+const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'>[] = [
   'sugar',
   'base',
   'phosphate',
@@ -42,11 +43,16 @@ interface Props {
 const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
-  const { monomers, name, position, idtAliases } = preview;
+  const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
+
+  // Check if this is a CHEM chain (all monomers are CHEMs)
+  const isChemChain = monomers.every(
+    (monomer) => monomer?.props.MonomerClass === KetMonomerClass.CHEM,
+  );
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
-  const axoLabsText = baseMonomer?.props.aliasAxoLabs;
+  const axoLabsText = aliasAxoLabs ?? baseMonomer?.props.aliasAxoLabs;
 
   const idtAliasesText = useIDTAliasesTextForPreset({
     presetName,
@@ -61,17 +67,18 @@ const PresetPreview = ({ className }: Props) => {
       className={className}
       style={{ alignItems: 'flex-start' }}
       data-testid="polymer-library-preview"
+      data-idtaliases={idtAliasesText ?? undefined}
+      data-axolabs={axoLabsText ?? undefined}
     >
       <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
-      {monomers.map(
-        (monomer, index) =>
-          monomer && (
-            <PresetMonomerRow key={index}>
-              <PresetIcon name={icons[index]} />
-              <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-              <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
-            </PresetMonomerRow>
-          ),
+      {monomers.map((monomer, index) =>
+        monomer ? (
+          <PresetMonomerRow key={monomer.props.id}>
+            <PresetIcon name={isChemChain ? 'chem' : icons[index]} />
+            <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
+            <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+          </PresetMonomerRow>
+        ) : null,
       )}
       {isMonomerPreviewPropertiesVisible && (
         <MonomerPreviewProperties

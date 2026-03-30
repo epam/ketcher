@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
@@ -23,7 +24,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -31,28 +32,28 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
     enableFlexMode: false,
     goToPeptides: false,
   });
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-  await processResetToDefaultState(testInfo, page);
+test.afterEach(async () => {
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import-Saving .mol Files', () => {
@@ -90,9 +91,10 @@ test.describe('Import-Saving .mol Files', () => {
       // error expected
       true,
     );
-    await expect(
-      page.getByText('Convert error! Error during file parsing.'),
-    ).toBeVisible();
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Export monomers and chem', async () => {
@@ -155,7 +157,7 @@ test.describe('Import-Saving .mol Files', () => {
       await getMonomerLocator(page, { monomerAlias: `cdaC` }).count(),
     ).toBe(1);
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getMonomerLocator(page, { monomerAlias: `cdaC` }).hover();
@@ -302,7 +304,12 @@ test.describe('Import-Saving .mol Files', () => {
       MacroFileType.MOLv3000,
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got   -', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
+    );
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {
@@ -584,18 +591,11 @@ test.describe('Import modified .mol files from external editor', () => {
 
 test.describe('Base monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Base) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
-
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (Base) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '04 - (R1,R2) - R3 gap',
@@ -615,7 +615,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         MacroFileType.MOLv3000,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -633,17 +633,11 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
 test.describe('CHEM monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (CHEM) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (CHEM) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -670,7 +664,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         MacroFileType.MOLv3000,
       );
-      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -688,17 +682,11 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
 
 test.describe('Peptide monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Peptide) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   *  Test case: https://github.com/epam/ketcher/issues/3780
+   *  Description: These bunch of tests validates that system correctly load every type of monomer
+   *  (Peptide) from .mol file, correctly show them on canvas (name, shape, color),
+   *  shows correct number or connections and shows correct preview tooltip
+   */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -738,17 +726,11 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
 
 test.describe('Phosphate monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/3780
-    Description: These bunch of tests validates that system correctly load every type of monomer
-    (Phosphate) from .mol file, correctly show them on canvas (name, shape, color),
-    shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  */
+   * Test case: https://github.com/epam/ketcher/issues/3780
+   * Description: These bunch of tests validates that system correctly load every type of monomer
+   * (Phosphate) from .mol file, correctly show them on canvas (name, shape, color),
+   * shows correct number or connections and shows correct preview tooltip
+   */
 
   const fileNames = [
     '01 - (R1) - Left only',
@@ -793,12 +775,6 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     Description: These bunch of tests validates that system correctly load every type of monomer
     (Sugar) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
-  */
-  /*
-    test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
   */
   const fileNames = [
     '01 - (R1) - Left only',

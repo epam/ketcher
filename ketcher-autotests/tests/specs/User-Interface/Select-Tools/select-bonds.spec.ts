@@ -6,10 +6,9 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  clickOnCanvas,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Bonds plus atoms selection ', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,15 +24,14 @@ test.describe('Bonds plus atoms selection ', () => {
 
   for (const bond of BondTypeId) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
-      await CommonLeftToolbar(page).selectBondTool(bond);
+      await CommonLeftToolbar(page).bondTool(bond);
       await clickInTheMiddleOfTheScreen(page);
 
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await page.keyboard.down('Shift');
-      const point = await getBondByIndex(page, {}, 0);
-      await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+      await getBondLocator(page, { bondId: 0 }).click({ force: true });
       await getAtomLocator(page, { atomId: 0 }).click();
       await getAtomLocator(page, { atomId: 1 }).click();
       await takeEditorScreenshot(page);

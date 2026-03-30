@@ -118,7 +118,7 @@ class SimpleObjectTool implements Tool {
 
   mouseup(event) {
     if (!this.dragCtx) {
-      return true;
+      return;
     }
 
     if (this.dragCtx.action) {
@@ -139,7 +139,6 @@ class SimpleObjectTool implements Tool {
     }
 
     delete this.dragCtx;
-    return true;
   }
 }
 

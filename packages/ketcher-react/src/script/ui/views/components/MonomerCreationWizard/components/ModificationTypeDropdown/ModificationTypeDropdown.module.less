@@ -26,35 +26,3 @@
     }
   }
 }
-
-.inputField {
-  &:global(.MuiTextField-root) {
-    :global(.MuiFormLabel-root) {
-      display: none;
-    }
-
-    :global(.MuiInputBase-root) {
-      margin: 0;
-      padding: 0 !important;
-
-      &::before {
-        display: none;
-      }
-
-      &::after {
-        display: none;
-      }
-
-      :global(.MuiInputBase-input) {
-        padding: 0 8px;
-      }
-    }
-  }
-
-  &.error {
-    & :global(.MuiInputBase-input) {
-      border-color: @color-secondary-red !important;
-      background: #FDE0DF !important;
-    }
-  }
-}

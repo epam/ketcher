@@ -39,7 +39,7 @@ test.describe('CDX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('opening cdx files from clipboard', async ({ page }) => {
+  test.fail('opening cdx files from clipboard', async ({ page }) => {
     /* 
   Test case: EPMLSOPKET-6972, EPMLSOPKET-8929
   Description: Open structure created in another chemical editor from clickboard

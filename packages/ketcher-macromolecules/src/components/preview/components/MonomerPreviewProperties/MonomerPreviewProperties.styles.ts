@@ -40,5 +40,7 @@ export const MonomerPreviewTitle = styled.span`
 
 export const MonomerPreviewList = styled.span`
   color: #585858;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;

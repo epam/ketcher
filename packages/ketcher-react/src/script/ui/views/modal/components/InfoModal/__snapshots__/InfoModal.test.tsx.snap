@@ -1,14 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
+      <dialog
         class="dialog infoModal"
         data-testid="info-modal-window"
-        role="dialog"
+        open=""
         tabindex="-1"
       >
         <header
@@ -37,6 +37,7 @@ Object {
           <div>
             <div
               class="pasteErrorModalBody"
+              data-testid="error-message-body"
             >
               <div>
                 Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
@@ -71,14 +72,14 @@ Object {
             Close
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
   </body>,
   "container": <div>
-    <div
+    <dialog
       class="dialog infoModal"
       data-testid="info-modal-window"
-      role="dialog"
+      open=""
       tabindex="-1"
     >
       <header
@@ -107,6 +108,7 @@ Object {
         <div>
           <div
             class="pasteErrorModalBody"
+            data-testid="error-message-body"
           >
             <div>
               Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
@@ -141,7 +143,7 @@ Object {
           Close
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -193,7 +195,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],
@@ -205,14 +207,14 @@ Object {
 `;
 
 exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
+      <dialog
         class="dialog infoModal"
         data-testid="info-modal-window"
-        role="dialog"
+        open=""
         tabindex="-1"
       >
         <header
@@ -252,14 +254,14 @@ Object {
             Close
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
   </body>,
   "container": <div>
-    <div
+    <dialog
       class="dialog infoModal"
       data-testid="info-modal-window"
-      role="dialog"
+      open=""
       tabindex="-1"
     >
       <header
@@ -299,7 +301,7 @@ Object {
           Close
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -351,7 +353,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],

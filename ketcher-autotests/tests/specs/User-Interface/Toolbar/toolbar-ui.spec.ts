@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   takeRightToolbarScreenshot,
-  clickOnAtom,
   waitForIndigoToLoad,
   keyboardPressOnCanvas,
 } from '@utils';
@@ -23,6 +22,7 @@ import {
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,7 +44,6 @@ test.describe('Open Ketcher', () => {
      */
     await CommonTopRightToolbar(page).helpButton.hover();
     await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Menu bar: UI Verification', async ({ page }) => {
@@ -54,17 +53,15 @@ test.describe('Open Ketcher', () => {
      */
     await takeTopToolbarScreenshot(page);
 
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });
@@ -140,13 +137,15 @@ test.describe('Open Ketcher', () => {
      * Iodine tool is applied
      * Single bond tool kept selected and applied on further mouse clicks
      */
-    const anyAtom = 2;
-    const secondAtom = 4;
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', anyAtom);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
-    await clickOnAtom(page, 'C', secondAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
   });
 
   test('Highlight currently selected tool with mouse cursor and toolbox icons', async ({

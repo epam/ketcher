@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 export enum TabSection {
-  TemplateLibraryTab = 'template-library-tab',
-  FunctionalGroupsTab = 'functional-groups-tab',
-  SaltsAndSolventsTab = 'salts-and-solvents-tab',
+  TemplateLibrary = 'template-library-tab',
+  FunctionalGroups = 'functional-groups-tab',
+  SaltsAndSolvents = 'salts-and-solvents-tab',
 }
 
 // Items on Template Library Tab

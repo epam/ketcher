@@ -2,6 +2,7 @@
 import { Page, Locator } from '@playwright/test';
 
 type CalculatedValuesDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   chemicalFormulaInput: Locator;
   molecularWeightInput: Locator;
@@ -10,8 +11,6 @@ type CalculatedValuesDialogLocators = {
   exactMassSelect: Locator;
   elementalAnalysisInput: Locator;
   closeButton: Locator;
-  //
-  // Exact Mass-select
 };
 
 export const CalculatedValuesDialog = (page: Page) => {
@@ -21,6 +20,7 @@ export const CalculatedValuesDialog = (page: Page) => {
   };
 
   const locators: CalculatedValuesDialogLocators = {
+    window: page.getByTestId('analyse-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     chemicalFormulaInput: page.getByTestId('Chemical Formula-wrapper'),
     molecularWeightInput: page.getByTestId('Molecular Weight-input'),
@@ -34,7 +34,7 @@ export const CalculatedValuesDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

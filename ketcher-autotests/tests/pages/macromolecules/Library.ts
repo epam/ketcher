@@ -10,8 +10,9 @@ import {
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
-import { waitForRender } from '@utils/common';
-import { getCoordinatesOfTheMiddleOfTheCanvas, moveMouseAway } from '@utils';
+import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
+import { waitForRender } from '../../utils/common/loaders/waitForRender';
+import { moveMouseAway } from '../../utils/moveMouseAway';
 import { KETCHER_CANVAS } from '../constants/canvas/Constants';
 import { Preset } from '../constants/monomers/Presets';
 
@@ -193,7 +194,6 @@ export const Library = (page: Page) => {
 
       const monomerCard = getElement(monomer.testId);
       const monomerCardBbox = await monomerCard.boundingBox();
-
       await monomerCard.click({
         position: {
           // eslint-disable-next-line no-magic-numbers
@@ -223,6 +223,37 @@ export const Library = (page: Page) => {
 
     getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
       return getElement(monomer.testId);
+    },
+
+    getMonomerHELMAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-helm');
+    },
+
+    getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-axolabs');
+    },
+
+    getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-idtalias-base');
+    },
+
+    getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint5',
+      );
+    },
+    getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-endpoint3',
+      );
+    },
+    getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute(
+        'data-idtalias-modifications-internal',
+      );
+    },
+    getMonomerModificationTypes(monomer: Monomer | PresetType) {
+      return getElement(monomer.testId).getAttribute('data-modificationtype');
     },
 
     async isMonomerExist(
@@ -256,7 +287,7 @@ export const Library = (page: Page) => {
     },
 
     /** Click on the arrow button on the monomer card */
-    async clickMonomerAutochain(monomer: Monomer) {
+    async clickMonomerAutochain(monomer: Monomer | PresetType) {
       await this.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);

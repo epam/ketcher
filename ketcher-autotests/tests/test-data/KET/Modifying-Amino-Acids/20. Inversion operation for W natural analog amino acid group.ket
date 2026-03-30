@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -471,6 +472,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Inversion"
         ],
         "naturalAnalogShort": "W"
     },

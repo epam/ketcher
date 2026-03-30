@@ -18,10 +18,11 @@ import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'components';
-
 interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
+  disabled?: boolean;
+  name?: string;
 }
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -61,13 +62,19 @@ const StyledIcon = styled(Icon)<IStyledIconProps>`
   opacity: ${({ hidden }) => (hidden ? '0' : '100')};
 `;
 
-const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)<IStyledIconProps>`
   display: none;
   @media only screen {
     @container (min-width: 900px) {
       display: flex;
     }
   }
+`;
+
+const ModeIconWrapper = styled('div')<IStyledIconProps>`
+  display: inline-flex;
+  align-items: center;
+  opacity: ${({ disabled }) => (disabled ? '0.38' : '1')};
 `;
 
 const CornerIcon = styled(Icon)`
@@ -140,19 +147,31 @@ const DropDownContent = styled('div')`
 interface ModeProps {
   toggle: (isEnabled: boolean) => void;
   isPolymerEditor: boolean;
+  disabled?: boolean;
 }
 
-export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
+export const ModeControl = ({
+  toggle,
+  isPolymerEditor,
+  disabled = false,
+}: ModeProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const onClose = () => {
+  const handleModeSwitch = (isPolymer: boolean) => {
+    toggle(isPolymer);
     setIsExpanded(false);
+    setTimeout(() => {
+      if (btnRef.current) btnRef.current.blur();
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      const canvas = document.querySelector('canvas') as HTMLElement;
+      if (canvas) canvas.focus();
+    }, 10);
   };
 
-  const onExpand = () => {
-    setIsExpanded(true);
-  };
+  const onClose = () => setIsExpanded(false);
+  const onExpand = () => setIsExpanded(true);
 
   const modeLabel = isPolymerEditor ? 'Macromolecules' : 'Molecules';
   const modeIcon = isPolymerEditor ? 'macromolecules-mode' : 'molecules-mode';
@@ -164,20 +183,23 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
     <ElementAndDropdown title={title}>
       <DropDownButton
         data-testid="polymer-toggler"
+        disabled={disabled}
         onClick={onExpand}
         ref={btnRef}
       >
-        <Icon name={modeIcon} />
-        <>
-          <ModeLabel>{modeLabel}</ModeLabel>
-          <StyledIconForMacromoleculesToggler
-            name="chevron"
-            expanded={isExpanded}
-          />
-        </>
-        <>
-          <CornerIcon name="dropdown" />
-        </>
+        <ModeIconWrapper
+          disabled={disabled}
+          data-disabled={disabled}
+          data-testid="mode-switcher-icon"
+        >
+          <Icon name={modeIcon} />
+        </ModeIconWrapper>
+        <ModeLabel>{modeLabel}</ModeLabel>
+        <StyledIconForMacromoleculesToggler
+          name="chevron"
+          expanded={isExpanded}
+        />
+        <CornerIcon name="dropdown" />
       </DropDownButton>
       <Dropdown
         title=""
@@ -188,13 +210,13 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           vertical: 'bottom',
           horizontal: 'left',
         }}
+        container={document.fullscreenElement}
       >
         <DropDownContent>
           <ModeControlButton
             data-testid="molecules_mode"
             onClick={() => {
-              toggle(false);
-              onClose();
+              handleModeSwitch(false);
             }}
           >
             <Icon name="molecules-mode" />
@@ -205,8 +227,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           <ModeControlButton
             data-testid="macromolecules_mode"
             onClick={() => {
-              toggle(true);
-              onClose();
+              handleModeSwitch(true);
             }}
           >
             <Icon name="macromolecules-mode" />

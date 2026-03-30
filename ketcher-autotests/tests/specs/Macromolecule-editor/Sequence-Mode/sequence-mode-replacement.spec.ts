@@ -9,15 +9,9 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import {
-  pressCancelInConfirmYourActionDialog,
-  pressYesInConfirmYourActionDialog,
-} from '@utils/macromolecules/sequence';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
@@ -37,6 +31,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -44,12 +39,11 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);
@@ -58,13 +52,10 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await keyboardPressOnCanvas(page, 'Escape');
   await keyboardPressOnCanvas(page, 'Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IBaseReplaceMonomer {
@@ -501,11 +492,8 @@ function filterBugsInTests(
       item.TestNameContains === undefined ||
       item.TestNameContains.some((substring) => testName.includes(substring));
     const sequenceIdMatch =
-      // item.SequenceId === undefined || item.SequenceId === sequenceId;
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
-      item.ReplaceMonomerId === undefined ||
-      // item.ReplaceMonomerId === replaceMonomerId;
       item.ReplaceMonomerId === undefined ||
       item.ReplaceMonomerId.includes(replaceMonomerId);
 
@@ -517,57 +505,66 @@ async function createTestPresets(page: Page) {
   await Library(page).switchToRNATab();
 
   // Create preset without base
-  await Library(page).newPreset();
-  await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugar.R);
+  if (!(await Library(page).isMonomerExist(Preset.R__P))) {
+    await Library(page).newPreset();
 
-  await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphate.P);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugar.R);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphate.P);
 
-  await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.addToPresets();
+  }
 
   // Create preset without phosphate
-  await Library(page).newPreset();
-  await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugar.R);
+  if (!(await Library(page).isMonomerExist(Preset.R_A_))) {
+    await Library(page).newPreset();
 
-  await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Base.A);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugar.R);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.A);
 
-  await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.addToPresets();
+  }
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
-  await Library(page).newPreset();
-  await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugar._25mo3r);
+  if (!(await Library(page).isMonomerExist(Preset._25mo3r_nC6n5C_Test_6_Ph))) {
+    await Library(page).newPreset();
 
-  await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Base.nC6n5C);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugar._25mo3r);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.nC6n5C);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
-  await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
-
-  await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.addToPresets();
+  }
 
   // Create preset 25mo3r(nC6n5C)
-  await Library(page).newPreset();
-  await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugar._25mo3r);
+  if (!(await Library(page).isMonomerExist(Preset._25mo3r_nC6n5C_))) {
+    await Library(page).newPreset();
 
-  await Library(page).rnaBuilder.selectBaseSlot();
-  await Library(page).selectMonomer(Base.nC6n5C);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugar._25mo3r);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.nC6n5C);
 
-  await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.addToPresets();
+  }
 
   // Create preset 25mo3r()Test-6-Ph
-  await Library(page).newPreset();
-  await Library(page).rnaBuilder.selectSugarSlot();
-  await Library(page).selectMonomer(Sugar._25mo3r);
+  if (!(await Library(page).isMonomerExist(Preset._25mo3r__Test_6_Ph))) {
+    await Library(page).newPreset();
 
-  await Library(page).rnaBuilder.selectPhosphateSlot();
-  await Library(page).selectMonomer(Phosphate.Test_6_Ph);
+    await Library(page).rnaBuilder.selectSugarSlot();
+    await Library(page).selectMonomer(Sugar._25mo3r);
+    await Library(page).rnaBuilder.selectPhosphateSlot();
+    await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
-  await Library(page).rnaBuilder.addToPresets();
+    await Library(page).rnaBuilder.addToPresets();
+  }
 }
 
 async function clickOnMonomerFromLibrary(page: Page, monomer: IReplaceMonomer) {
@@ -592,7 +589,7 @@ async function selectAndReplaceSymbol(
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -633,7 +630,7 @@ async function selectAndReplaceAllSymbols(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -690,7 +687,7 @@ async function selectAndReplaceAllSymbolsInEditMode(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
 }
 
@@ -732,7 +729,7 @@ async function selectAndReplaceSymbolInEditMode(
   }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await pressYesInConfirmYourActionDialog(page);
+    await ConfirmYourActionDialog(page).yes();
   }
   await moveMouseToTheMiddleOfTheScreen(page);
   await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
@@ -1404,11 +1401,6 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
-      // const title = test.info().title;
-      // // If (for some reasons) on random test ErrorMessage doesn't work - use that dirty hack - page reload helps
-      // if (title.includes('Case 15-1-17.')) {
-      //   await pageReload(page);
-      // }
 
       await openFileAndAddToCanvasMacro(page, sequence.FileName);
       await selectAndReplaceAllSymbolsWithError(
@@ -1967,12 +1959,9 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -2031,12 +2020,9 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
-  const fullDialogMessage = page.getByText(
-    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-  );
-  await expect(fullDialogMessage).toBeVisible();
+  expect(await ConfirmYourActionDialog(page).isVisible()).toBeTruthy();
+  await ConfirmYourActionDialog(page).cancel();
 
-  pressCancelInConfirmYourActionDialog(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

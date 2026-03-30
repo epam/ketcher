@@ -1,7 +1,23 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
+import { forwardRef, HTMLAttributes } from 'react';
 import styles from './ModificationTypeDropdown.module.less';
-import { CoreEditor } from 'ketcher-core';
+import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
+import { CoreEditor, compareByTitleWithNaturalFirst } from 'ketcher-core';
+
+const OptionsListbox = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
+  (props, ref) => {
+    return (
+      <div
+        {...props}
+        ref={ref}
+        className={clsx(props.className, styles.optionsList)}
+      />
+    );
+  },
+);
+
+OptionsListbox.displayName = 'OptionsListbox';
 
 interface IOptionType {
   title: string;
@@ -14,10 +30,11 @@ interface IModificationTypeDropdownProps {
   value: string | null;
   error?: string | null;
   onChange: (value: string) => void;
+  testId?: string;
 }
 
 export default function ModificationTypeDropdown(
-  props: IModificationTypeDropdownProps,
+  props: Readonly<IModificationTypeDropdownProps>,
 ) {
   const editor = CoreEditor.provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
@@ -36,12 +53,12 @@ export default function ModificationTypeDropdown(
     ),
   ];
 
-  const options = modificationTypesOthersFromCurrentNaturalAnalogue.map(
-    (modificationType) => {
+  const options = modificationTypesOthersFromCurrentNaturalAnalogue
+    .map((modificationType) => {
       return { title: modificationType };
-    },
-  );
-  const value = props.value || '';
+    })
+    .sort(compareByTitleWithNaturalFirst);
+  const value = props.value ?? '';
 
   const onValueChange = (newValue) => {
     if (props.onChange) {
@@ -97,6 +114,7 @@ export default function ModificationTypeDropdown(
           <li
             key={key}
             {...optionProps}
+            data-testid={`modification-type-option-${option.title}`}
             className={clsx(
               props.className,
               styles.option,
@@ -107,14 +125,7 @@ export default function ModificationTypeDropdown(
           </li>
         );
       }}
-      ListboxComponent={(props) => {
-        return (
-          <div
-            {...props}
-            className={clsx(props.className, styles.optionsList)}
-          ></div>
-        );
-      }}
+      ListboxComponent={OptionsListbox}
       sx={{ width: '100%' }}
       freeSolo
       forcePopupIcon
@@ -123,8 +134,12 @@ export default function ModificationTypeDropdown(
           {...params}
           variant="standard"
           error={Boolean(props.error)}
-          className={clsx(styles.inputField, props.error && styles.error)}
+          className={clsx(
+            monomerWizardStyles.inputField,
+            props.error && monomerWizardStyles.error,
+          )}
           placeholder="..."
+          data-testid={props.testId}
         />
       )}
     />

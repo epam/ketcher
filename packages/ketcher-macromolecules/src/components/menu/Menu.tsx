@@ -61,7 +61,7 @@ const Menu = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null;
+      return child && child.type === Group ? child : null;
     },
   );
 

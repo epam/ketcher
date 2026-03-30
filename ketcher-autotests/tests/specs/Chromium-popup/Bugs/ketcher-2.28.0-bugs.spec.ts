@@ -8,7 +8,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -21,7 +20,6 @@ import {
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -44,7 +42,6 @@ import {
 } from '@utils/keyboard/index';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   getSettingsOptionValue,
@@ -56,6 +53,9 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 declare global {
   interface Window {
@@ -65,22 +65,14 @@ declare global {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async () => {
@@ -95,7 +87,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await selectRingButton(page, RingButton.Benzene);
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -308,7 +300,11 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
    * 6. Take a screenshot to validate the cursor blinks in the right place
    */
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  await addMonomerToCenterOfCanvas(page, Preset.T);
+  await Library(page).dragMonomerOnCanvas(Preset.T, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();
@@ -809,7 +805,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
   );
 
-  const dC2SGroup = page.getByText('dC_2').first();
+  const dC2SGroup = getAbbreviationLocator(page, { name: 'dC_2' }).first();
 
   await expandAbbreviation(page, dC2SGroup);
 

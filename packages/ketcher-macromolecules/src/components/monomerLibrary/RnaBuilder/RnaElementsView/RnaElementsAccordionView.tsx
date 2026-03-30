@@ -109,18 +109,26 @@ const RnaElementsAccordionView = ({
           ) : (
             <DetailsContainer>
               <>
-                {groupData.groups.map(({ groupItems, groupTitle }) => (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={groupData.groups.length > 1 ? groupTitle : undefined}
-                    groupName={groupData.groupName}
-                    items={groupItems}
-                    selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) =>
-                      onSelectItem(monomer, groupData.groupName)
-                    }
-                  />
-                ))}
+                {groupData.groups.map(({ groupItems, groupTitle }) => {
+                  const shouldShowTitle = [
+                    MonomerGroups.BASES,
+                    MonomerGroups.NUCLEOTIDES,
+                    MonomerGroups.PEPTIDES,
+                  ].includes(groupData.groupName as MonomerGroups);
+
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={shouldShowTitle ? groupTitle : undefined}
+                      groupName={groupData.groupName}
+                      items={groupItems}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        onSelectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
                 {variantMonomers.map((group) => (
                   <MonomerGroup
                     key={group.groupTitle}

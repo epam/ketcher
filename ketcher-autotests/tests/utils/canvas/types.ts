@@ -81,10 +81,6 @@ export enum Arrows {
   MultiTailedArrow = 'multitail-arrow',
 }
 
-export enum Pluses {
-  Plus = 'rxn-plus',
-}
-
 export type BondAttributes = {
   angle?: number;
   begin?: number;

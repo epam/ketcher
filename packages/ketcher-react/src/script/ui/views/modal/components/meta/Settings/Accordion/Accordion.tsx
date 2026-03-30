@@ -35,26 +35,17 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
     );
   };
 
-  const handleAccordionKeyDown = (accordion) => (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleAccordionChange(accordion)();
-    }
-  };
-
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {
         const shouldGroupBeRended = expandedAccordions.includes(label);
         return (
           <div key={key}>
-            <div
+            <button
               onClick={handleAccordionChange(label)}
-              onKeyDown={handleAccordionKeyDown(label)}
               className={classes.accordionSummaryWrapper}
               data-testid={`${label}-accordion`}
-              role="button"
-              tabIndex={0}
+              type="button"
             >
               <div className={classes.accordionSummary}>
                 <Icon
@@ -72,7 +63,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
                   <span className={classes.changeMarker}></span>
                 )}
               </div>
-            </div>
+            </button>
             <div
               className={clsx({
                 [classes.accordionDetailsWrapper]: true,

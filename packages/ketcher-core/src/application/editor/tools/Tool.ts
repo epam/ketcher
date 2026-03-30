@@ -3,7 +3,10 @@ import {
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import { IKetMonomerGroupTemplate } from 'application/formatters';
+import {
+  IKetMonomerGroupTemplate,
+  IKetTemplateConnection,
+} from 'application/formatters';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -91,20 +94,26 @@ interface ToolEventHandler {
   selectEntities?(event: Event): void;
 }
 
+export type RnaPhosphatePosition = 'left' | 'right';
+
 export interface IRnaPreset {
   name?: string;
   nameInList?: string;
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
+  connections?: IKetTemplateConnection[];
+  phosphatePosition?: 'left' | 'right';
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
-    Pick<IKetMonomerGroupTemplate, 'templates'> {}
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+    Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
+  connections?: IKetTemplateConnection[];
+}
 
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;
@@ -132,12 +141,10 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// export type ToolOptions = MonomerItemType;
-// !todo
-export type ToolConstructorInterface = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (editor, ...args: any[]): Tool | BaseTool;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
+  | Tool
+  | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;
 

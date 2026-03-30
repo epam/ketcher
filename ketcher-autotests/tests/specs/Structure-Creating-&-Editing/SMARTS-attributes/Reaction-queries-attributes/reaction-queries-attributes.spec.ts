@@ -1,10 +1,8 @@
 import { Page, test } from '@fixtures';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -13,7 +11,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -21,13 +18,14 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -38,15 +36,15 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
-  await dragMouseTo(x - shiftForHydrogen, y, page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await dragMouseTo(page, x - shiftForHydrogen, y);
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
 
@@ -65,22 +63,25 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[H]>>[#8]');
+    await verifySMARTSExport(page, '[H]>>[#8]');
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 1);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6:1]-[#6:2]');
+    await verifySMARTSExport(page, '[#6:1]-[#6:2]');
   });
 
   test('Checking SMARTS with S-Group', async ({ page }) => {
@@ -89,17 +90,16 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      * Description: pasting SMARTS with query groups should not trigger any error
      */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.QueryComponent,
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
+    await verifySMARTSExport(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
   });
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
@@ -110,7 +110,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const shiftValue = 50;
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, RingButton.Cyclopropane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclopropane);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);
@@ -122,7 +122,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
       Type: TypeOption.QueryComponent,
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
+    await verifySMARTSExport(page, '([#6]1-[#6]-[#6]-1.[#6])');
   });
 
   test('Checking SMARTS with reaction mapping and S-Group', async ({
@@ -146,9 +146,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'F', 0);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'F', atomId: 1 }).click({
+      force: true,
+    });
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     const carbonPoint = await getAtomLocator(page, { atomLabel: 'C' })
@@ -174,7 +177,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     });
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '([#6:1].[#9:2])');
+    await verifySMARTSExport(page, '([#6:1].[#9:2])');
   });
 });
 

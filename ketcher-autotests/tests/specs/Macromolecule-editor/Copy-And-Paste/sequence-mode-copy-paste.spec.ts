@@ -59,13 +59,13 @@ test.describe('Sequence mode copy&paste for view mode', () => {
   test('Select entire chain with Ctrl+Lclick then copy and paste and undo', async ({
     page,
   }) => {
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
     })
       .first()
       .click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
@@ -80,13 +80,13 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     'Verify that when there is at least one sequence on canvas, ' +
       'pasting is performed in next row, and canvas is moved to make newly added sequence visible',
     async ({ page }) => {
-      await page.keyboard.down('Control');
+      await page.keyboard.down('ControlOrMeta');
       await getSymbolLocator(page, {
         symbolAlias: 'G',
       })
         .first()
         .click();
-      await page.keyboard.up('Control');
+      await page.keyboard.up('ControlOrMeta');
       await copyToClipboardByKeyboard(page);
 
       for (let i = 0; i < 10; i++) {
@@ -214,12 +214,12 @@ test.describe('Sequence-edit mode', () => {
     */
     await keyboardTypeOnCanvas(page, 'tcgtuctucc');
     await keyboardPressOnCanvas(page, 'Escape');
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 2,
     }).click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await copyToClipboardByKeyboard(page);
     await keyboardPressOnCanvas(page, 'Enter');
     await pasteFromClipboardByKeyboard(page);

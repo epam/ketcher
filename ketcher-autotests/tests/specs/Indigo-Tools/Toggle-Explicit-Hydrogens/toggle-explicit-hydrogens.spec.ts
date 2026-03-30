@@ -3,17 +3,17 @@
 import { test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  screenshotBetweenUndoRedo,
   clickOnCanvas,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,7 +37,11 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -48,10 +52,8 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     Test case: #4128 https://github.com/epam/ketcher/issues/4128
     Description: Adding hydrogens not moves molecules to center of canvas.
     */
-    const x = 200;
-    const y = 200;
-    await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -365,10 +367,6 @@ test.describe('6. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-       await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -456,10 +454,6 @@ test.describe('8. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -494,10 +488,6 @@ test.describe('9. Fold/unfold hydrogens for', () => {
     await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
   });
 });
 
@@ -600,10 +590,6 @@ test.describe('11. Fold/unfold hydrogens for', () => {
         await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
         await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
         await takeEditorScreenshot(page);
-        /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
       },
     );
   }
@@ -643,10 +629,6 @@ test.describe('12. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -728,7 +710,6 @@ test.describe('13. Fold/unfold hydrogens for', () => {
       await takeEditorScreenshot(page);
 
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
-      // await takeEditorScreenshot(page);
     });
   }
 });
@@ -769,10 +750,6 @@ test.describe('14. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -813,10 +790,6 @@ test.describe('15. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });
@@ -927,10 +900,6 @@ test.describe('17. Fold/unfold hydrogens for', () => {
       await clickOnCanvas(page, 20, 20, { from: 'pageTopLeft' });
       await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
-      /*
-      await removeExplicitHydrogens(page);
-      await takeEditorScreenshot(page);
-      */
     });
   }
 });

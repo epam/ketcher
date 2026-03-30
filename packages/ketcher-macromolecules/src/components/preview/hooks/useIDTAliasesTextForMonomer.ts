@@ -69,7 +69,7 @@ const useIDTAliasesTextForMonomer = ({
 
     const baseToPositionsMap: Record<string, string[]> = {};
     Object.values(modifications).forEach((modification) => {
-      const cleanModification = removeSlashesFromIdtAlias(modification) || '';
+      const cleanModification = removeSlashesFromIdtAlias(modification) ?? '';
       const [position, base] = [
         cleanModification.charAt(0),
         cleanModification.slice(1),

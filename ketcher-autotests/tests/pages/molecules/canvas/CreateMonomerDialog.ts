@@ -1,7 +1,8 @@
-﻿/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
+  ModificationType,
   MonomerType,
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -16,11 +17,50 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
+import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
+
+export enum ModificationTypeDropdown {
+  First = 'modificationTypeDropdown1',
+  Second = 'modificationTypeDropdown2',
+  Third = 'modificationTypeDropdown3',
+  Fourth = 'modificationTypeDropdown4',
+  Fifth = 'modificationTypeDropdown5',
+}
+
+export enum DeleteModificationTypeButton {
+  First = 'deleteModificationTypeButton1',
+  Second = 'deleteModificationTypeButton2',
+  Third = 'deleteModificationTypeButton3',
+  Fourth = 'deleteModificationTypeButton4',
+  Fifth = 'deleteModificationTypeButton5',
+}
+
+type ModificationSectionLocators = {
+  modificationTypeDropdown1: Locator;
+  modificationTypeDropdown2: Locator;
+  modificationTypeDropdown3: Locator;
+  modificationTypeDropdown4: Locator;
+  modificationTypeDropdown5: Locator;
+  deleteModificationTypeButton1: Locator;
+  deleteModificationTypeButton2: Locator;
+  deleteModificationTypeButton3: Locator;
+  deleteModificationTypeButton4: Locator;
+  deleteModificationTypeButton5: Locator;
+  addModificationTypeButton: Locator;
+};
+
+type AliasesSectionLocators = {
+  helmAliasEditbox: Locator;
+  helmAliasEditboxClearButton: Locator;
+};
 
 type CreateMonomerDialogLocators = {
+  window: Locator;
   typeCombobox: Locator;
   symbolEditbox: Locator;
   nameEditbox: Locator;
@@ -58,64 +98,136 @@ type CreateMonomerDialogLocators = {
   r6DeleteButton: Locator;
   r7DeleteButton: Locator;
   r8DeleteButton: Locator;
+  modificationSection: Locator & ModificationSectionLocators;
+  aliasesSection: Locator & AliasesSectionLocators;
+  terminalIndicatorTooltip: Locator;
   submitButton: Locator;
   discardButton: Locator;
 };
 
 const createAttachmentPointControlGroupMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1ControlGroup,
-  [AttachmentPointName.R2]: dialogLocators.r2ControlGroup,
-  [AttachmentPointName.R3]: dialogLocators.r3ControlGroup,
-  [AttachmentPointName.R4]: dialogLocators.r4ControlGroup,
-  [AttachmentPointName.R5]: dialogLocators.r5ControlGroup,
-  [AttachmentPointName.R6]: dialogLocators.r6ControlGroup,
-  [AttachmentPointName.R7]: dialogLocators.r7ControlGroup,
-  [AttachmentPointName.R8]: dialogLocators.r8ControlGroup,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1ControlGroup,
+  [AttachmentPointOption.R2]: dialogLocators.r2ControlGroup,
+  [AttachmentPointOption.R3]: dialogLocators.r3ControlGroup,
+  [AttachmentPointOption.R4]: dialogLocators.r4ControlGroup,
+  [AttachmentPointOption.R5]: dialogLocators.r5ControlGroup,
+  [AttachmentPointOption.R6]: dialogLocators.r6ControlGroup,
+  [AttachmentPointOption.R7]: dialogLocators.r7ControlGroup,
+  [AttachmentPointOption.R8]: dialogLocators.r8ControlGroup,
 });
 
 const createAttachmentPointNameComboboxMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1NameCombobox,
-  [AttachmentPointName.R2]: dialogLocators.r2NameCombobox,
-  [AttachmentPointName.R3]: dialogLocators.r3NameCombobox,
-  [AttachmentPointName.R4]: dialogLocators.r4NameCombobox,
-  [AttachmentPointName.R5]: dialogLocators.r5NameCombobox,
-  [AttachmentPointName.R6]: dialogLocators.r6NameCombobox,
-  [AttachmentPointName.R7]: dialogLocators.r7NameCombobox,
-  [AttachmentPointName.R8]: dialogLocators.r8NameCombobox,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1NameCombobox,
+  [AttachmentPointOption.R2]: dialogLocators.r2NameCombobox,
+  [AttachmentPointOption.R3]: dialogLocators.r3NameCombobox,
+  [AttachmentPointOption.R4]: dialogLocators.r4NameCombobox,
+  [AttachmentPointOption.R5]: dialogLocators.r5NameCombobox,
+  [AttachmentPointOption.R6]: dialogLocators.r6NameCombobox,
+  [AttachmentPointOption.R7]: dialogLocators.r7NameCombobox,
+  [AttachmentPointOption.R8]: dialogLocators.r8NameCombobox,
 });
 
 const createAttachmentPointAtomComboboxMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1AtomCombobox,
-  [AttachmentPointName.R2]: dialogLocators.r2AtomCombobox,
-  [AttachmentPointName.R3]: dialogLocators.r3AtomCombobox,
-  [AttachmentPointName.R4]: dialogLocators.r4AtomCombobox,
-  [AttachmentPointName.R5]: dialogLocators.r5AtomCombobox,
-  [AttachmentPointName.R6]: dialogLocators.r6AtomCombobox,
-  [AttachmentPointName.R7]: dialogLocators.r7AtomCombobox,
-  [AttachmentPointName.R8]: dialogLocators.r8AtomCombobox,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1AtomCombobox,
+  [AttachmentPointOption.R2]: dialogLocators.r2AtomCombobox,
+  [AttachmentPointOption.R3]: dialogLocators.r3AtomCombobox,
+  [AttachmentPointOption.R4]: dialogLocators.r4AtomCombobox,
+  [AttachmentPointOption.R5]: dialogLocators.r5AtomCombobox,
+  [AttachmentPointOption.R6]: dialogLocators.r6AtomCombobox,
+  [AttachmentPointOption.R7]: dialogLocators.r7AtomCombobox,
+  [AttachmentPointOption.R8]: dialogLocators.r8AtomCombobox,
 });
 
 const createAttachmentPointDeleteButtonMap = (
   dialogLocators: CreateMonomerDialogLocators,
-): Record<AttachmentPointName, Locator> => ({
-  [AttachmentPointName.R1]: dialogLocators.r1DeleteButton,
-  [AttachmentPointName.R2]: dialogLocators.r2DeleteButton,
-  [AttachmentPointName.R3]: dialogLocators.r3DeleteButton,
-  [AttachmentPointName.R4]: dialogLocators.r4DeleteButton,
-  [AttachmentPointName.R5]: dialogLocators.r5DeleteButton,
-  [AttachmentPointName.R6]: dialogLocators.r6DeleteButton,
-  [AttachmentPointName.R7]: dialogLocators.r7DeleteButton,
-  [AttachmentPointName.R8]: dialogLocators.r8DeleteButton,
+): Record<AttachmentPointOption, Locator> => ({
+  [AttachmentPointOption.R1]: dialogLocators.r1DeleteButton,
+  [AttachmentPointOption.R2]: dialogLocators.r2DeleteButton,
+  [AttachmentPointOption.R3]: dialogLocators.r3DeleteButton,
+  [AttachmentPointOption.R4]: dialogLocators.r4DeleteButton,
+  [AttachmentPointOption.R5]: dialogLocators.r5DeleteButton,
+  [AttachmentPointOption.R6]: dialogLocators.r6DeleteButton,
+  [AttachmentPointOption.R7]: dialogLocators.r7DeleteButton,
+  [AttachmentPointOption.R8]: dialogLocators.r8DeleteButton,
+});
+
+const createModificationTypeDropdownMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.modificationTypeDropdown1,
+  [ModificationTypeDropdown.Second]: section.modificationTypeDropdown2,
+  [ModificationTypeDropdown.Third]: section.modificationTypeDropdown3,
+  [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
+  [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
+});
+
+const deleteModificationTypeMap = (
+  section: ModificationSectionLocators,
+): Record<ModificationTypeDropdown, Locator> => ({
+  [ModificationTypeDropdown.First]: section.deleteModificationTypeButton1,
+  [ModificationTypeDropdown.Second]: section.deleteModificationTypeButton2,
+  [ModificationTypeDropdown.Third]: section.deleteModificationTypeButton3,
+  [ModificationTypeDropdown.Fourth]: section.deleteModificationTypeButton4,
+  [ModificationTypeDropdown.Fifth]: section.deleteModificationTypeButton5,
 });
 
 export const CreateMonomerDialog = (page: Page) => {
+  const modificationSection: Locator & ModificationSectionLocators =
+    Object.assign(page.getByTestId('modification-types-accordion'), {
+      modificationTypeDropdown1: page.getByTestId(
+        'modification-type-dropdown-0',
+      ),
+      modificationTypeDropdown2: page.getByTestId(
+        'modification-type-dropdown-1',
+      ),
+      modificationTypeDropdown3: page.getByTestId(
+        'modification-type-dropdown-2',
+      ),
+      modificationTypeDropdown4: page.getByTestId(
+        'modification-type-dropdown-3',
+      ),
+      modificationTypeDropdown5: page.getByTestId(
+        'modification-type-dropdown-4',
+      ),
+      deleteModificationTypeButton1: page.getByTestId(
+        'delete-modification-type-button-0',
+      ),
+      deleteModificationTypeButton2: page.getByTestId(
+        'delete-modification-type-button-1',
+      ),
+      deleteModificationTypeButton3: page.getByTestId(
+        'delete-modification-type-button-2',
+      ),
+      deleteModificationTypeButton4: page.getByTestId(
+        'delete-modification-type-button-3',
+      ),
+      deleteModificationTypeButton5: page.getByTestId(
+        'delete-modification-type-button-4',
+      ),
+      addModificationTypeButton: page.getByTestId(
+        'add-modification-type-button',
+      ),
+    });
+  const aliasesSection: Locator & AliasesSectionLocators = Object.assign(
+    page.getByTestId('aliases-accordion'),
+    {
+      helmAliasEditbox: page.getByTestId('helm-alias-input'),
+      helmAliasEditboxClearButton: page
+        .getByTestId('helm-alias-input')
+        .getByTestId('CloseIcon'),
+    },
+  );
+
+  const nucleotidePresetSection = NucleotidePresetSection(page);
+
   const locators: CreateMonomerDialogLocators = {
+    window: page.getByTestId('monomer-creation-wizard'),
     typeCombobox: page.getByTestId('type-select'),
     symbolEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
@@ -153,6 +265,9 @@ export const CreateMonomerDialog = (page: Page) => {
     r6DeleteButton: page.getByTestId('attachment-point-delete-button-R6'),
     r7DeleteButton: page.getByTestId('attachment-point-delete-button-R7'),
     r8DeleteButton: page.getByTestId('attachment-point-delete-button-R8'),
+    modificationSection,
+    aliasesSection,
+    terminalIndicatorTooltip: page.getByTestId('atom-info-tooltip'),
     submitButton: page.getByTestId('submit-button'),
     discardButton: page.getByTestId('discard-button'),
   };
@@ -169,22 +284,30 @@ export const CreateMonomerDialog = (page: Page) => {
   const attachmentPointDeleteButtonByAP =
     createAttachmentPointDeleteButtonMap(locators);
 
+  const modificationTypeDropdownByEnum =
+    createModificationTypeDropdownMap(modificationSection);
+
+  const deleteModificationTypeButtonEnum =
+    deleteModificationTypeMap(modificationSection);
+
   return {
     ...locators,
 
-    getAttachmentPointControlGroup(ap: AttachmentPointName) {
+    nucleotidePresetSection,
+
+    getAttachmentPointControlGroup(ap: AttachmentPointOption) {
       return attachmentPointControlGroupByAP[ap];
     },
 
-    getAttachmentPointNameCombobox(ap: AttachmentPointName) {
+    getAttachmentPointNameCombobox(ap: AttachmentPointOption) {
       return attachmentPointNameComboboxByAP[ap];
     },
 
-    getAttachmentPointAtomCombobox(ap: AttachmentPointName) {
+    getAttachmentPointAtomCombobox(ap: AttachmentPointOption) {
       return attachmentPointAtomComboboxByAP[ap];
     },
 
-    getAttachmentPointDeleteButton(ap: AttachmentPointName) {
+    getAttachmentPointDeleteButton(ap: AttachmentPointOption) {
       return attachmentPointDeleteButtonByAP[ap];
     },
 
@@ -209,8 +332,8 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async changeAttachmentPointName(options: {
-      oldName: AttachmentPointName;
-      newName: AttachmentPointName;
+      oldName: AttachmentPointOption;
+      newName: AttachmentPointOption;
     }) {
       const combobox = attachmentPointNameComboboxByAP[options.oldName];
       await combobox.click();
@@ -218,7 +341,7 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async changeAttachmentPointAtom(options: {
-      attachmentPointName: AttachmentPointName;
+      attachmentPointName: AttachmentPointOption;
       newAtom: AttachmentPointAtom;
     }) {
       const combobox =
@@ -227,11 +350,135 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.getByTestId(options.newAtom).first().click();
     },
 
-    async deleteAttachmentPoint(attachmentPointName: AttachmentPointName) {
+    async deleteAttachmentPoint(attachmentPointName: AttachmentPointOption) {
       const deleteButton = attachmentPointDeleteButtonByAP[attachmentPointName];
       await waitForRender(page, async () => {
         await deleteButton.click();
       });
+    },
+
+    async expandModificationSection() {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'false') {
+        await modificationSection.click();
+      }
+    },
+
+    async collapseModificationSection() {
+      const modificationSectionState = await modificationSection.getAttribute(
+        'aria-expanded',
+      );
+      if (modificationSectionState === 'true') {
+        await modificationSection.click();
+      }
+    },
+
+    async expandAliasesSection() {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'false') {
+        await aliasesSection.click();
+      }
+      await aliasesSection.helmAliasEditbox.waitFor();
+    },
+
+    async collapseAliasesSection() {
+      const aliasesSectionState = await aliasesSection.getAttribute(
+        'aria-expanded',
+      );
+      if (aliasesSectionState === 'true') {
+        await aliasesSection.click();
+      }
+    },
+
+    async addModificationType() {
+      await this.expandModificationSection();
+      await modificationSection.addModificationTypeButton.click();
+    },
+
+    async selectModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      type: ModificationType;
+    }) {
+      await this.expandModificationSection();
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
+      await dropdown.click();
+      const option = page.getByTestId(options.type);
+      await option.waitFor();
+      await option.click();
+    },
+
+    async selectModificationTypes(
+      options: (
+        | {
+            dropdown: ModificationTypeDropdown;
+            type: ModificationType;
+          }
+        | {
+            dropdown: ModificationTypeDropdown;
+            customModification: string;
+          }
+      )[],
+    ) {
+      for (const option of options) {
+        if ('type' in option) {
+          await this.selectModificationType(option);
+        } else {
+          await this.setModificationType(option);
+        }
+      }
+    },
+
+    async setModificationType(options: {
+      dropdown: ModificationTypeDropdown;
+      customModification: string;
+    }) {
+      await this.expandModificationSection();
+      const dropdown = modificationTypeDropdownByEnum[options.dropdown];
+      while ((await dropdown.isVisible()) === false) {
+        await this.addModificationType();
+      }
+      await dropdown.click();
+      await page.keyboard.type(options.customModification);
+      await page.keyboard.press('Escape');
+    },
+
+    async deleteModificationType(dropdown: ModificationTypeDropdown) {
+      await this.expandModificationSection();
+      const deleteButton = deleteModificationTypeButtonEnum[dropdown];
+      await deleteButton.click();
+    },
+
+    async clearHELMAlias() {
+      await this.expandAliasesSection();
+      const helmAliasEditbox = aliasesSection.helmAliasEditbox;
+      await helmAliasEditbox.click();
+      const clearButton = aliasesSection.helmAliasEditboxClearButton;
+      await clearButton.click();
+    },
+
+    async setHELMAlias(helmAlias: string) {
+      await this.expandAliasesSection();
+      await this.clearHELMAlias();
+      const helmAliasEditbox = aliasesSection.helmAliasEditbox;
+      await helmAliasEditbox.click();
+      await page.keyboard.type(helmAlias);
+      // to avoid helm alias lost on submit due to async validation
+      await this.collapseAliasesSection();
+      await this.expandAliasesSection();
+      await page.waitForTimeout(0.3 * 1000);
+    },
+
+    async waitForTerminalIndicatorTooltip(
+      options: { state?: 'visible' | 'hidden' } = {},
+    ) {
+      await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
     async submit({ ignoreWarning = false } = {}) {
@@ -256,7 +503,19 @@ export async function createMonomer(
     symbol: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
+    modificationTypes?: (
+      | {
+          dropdown: ModificationTypeDropdown;
+          type: ModificationType;
+        }
+      | {
+          dropdown: ModificationTypeDropdown;
+          customModification: string;
+        }
+    )[];
+    HELMAlias?: string;
   },
+  ignoreWarning = true,
 ) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
@@ -266,10 +525,18 @@ export async function createMonomer(
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);
   }
-  await createMonomerDialog.submit({ ignoreWarning: true });
+  if (options.modificationTypes) {
+    await createMonomerDialog.selectModificationTypes(
+      options.modificationTypes,
+    );
+  }
+  if (options.HELMAlias) {
+    await createMonomerDialog.setHELMAlias(options.HELMAlias);
+  }
+  await createMonomerDialog.submit({ ignoreWarning });
 }
 
-export async function prepareMoleculeForMonomerCreation(
+export async function deselectAtomAndBonds(
   page: Page,
   AtomIDsToExclude?: string[],
   BondIDsToExclude?: string[],
@@ -286,11 +553,43 @@ export async function prepareMoleculeForMonomerCreation(
   }
   if (BondIDsToExclude) {
     for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
+      await getBondLocator(page, { bondId: Number(bondId) }).click({
+        force: true,
+      });
     }
   }
   await page.keyboard.up('Shift');
   await waitForCustomEvent(page, 'monomerCreationEnabled', 200);
+}
+
+export { selectAtomAndBonds } from './createMonomer/selectAtomAndBonds';
+
+export async function selectMonomersAndBonds(
+  page: Page,
+  options: {
+    monomerIds?: number[];
+    bondIds?: number[];
+  },
+) {
+  await CommonLeftToolbar(page).handTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
+  await clickOnCanvas(page, 0, 0);
+  await page.keyboard.down('Shift');
+  if (options.monomerIds) {
+    for (const monomerId of options.monomerIds) {
+      await getMonomerLocator(page, { monomerId }).click({
+        force: true,
+      });
+    }
+  }
+  if (options.bondIds) {
+    for (const bondId of options.bondIds) {
+      await getBondLocator(page, { bondId }).click({
+        force: true,
+      });
+    }
+  }
+  await page.keyboard.up('Shift');
 }
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

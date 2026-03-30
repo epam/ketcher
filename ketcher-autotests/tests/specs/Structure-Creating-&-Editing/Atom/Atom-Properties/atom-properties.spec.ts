@@ -1,16 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  pressButton,
-  doubleClickOnAtom,
-  moveOnAtom,
-  clickOnAtom,
   waitForRender,
-  waitForAtomPropsModal,
   clickOnCanvas,
   MolFileFormat,
   RxnFileFormat,
@@ -34,8 +29,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
@@ -71,9 +66,7 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
-
-const CANVAS_CLICK_X = 200;
-const CANVAS_CLICK_Y = 200;
+import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 test.describe('Atom Properties', () => {
   let page: Page;
@@ -84,6 +77,11 @@ test.describe('Atom Properties', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await AtomPropertiesDialog(page).window.isVisible()) {
+      await AtomPropertiesDialog(page).cancel();
+    }
+  });
 
   test('Check Atom Properties modal window by double click on atom', async () => {
     /*
@@ -106,8 +104,10 @@ test.describe('Atom Properties', () => {
       The 'Atom Properties' header.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'N', 0);
-    await waitForAtomPropsModal(page);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -132,7 +132,9 @@ test.describe('Atom Properties', () => {
       The 'Atom Properties' header.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await moveOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
+      force: true,
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('/');
     });
@@ -146,8 +148,9 @@ test.describe('Atom Properties', () => {
       The selected carbon atom isn`t changed with 'Na' atom symbol.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'C', 0);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillLabel('Na');
     await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -160,7 +163,9 @@ test.describe('Atom Properties', () => {
       The selected carbon atom is changed with 'Sb' atom symbol.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'Sb' },
@@ -176,9 +181,10 @@ test.describe('Atom Properties', () => {
       when the cursor is over the field. The Apply button becomes disabled.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'N', 0);
-
-    await page.getByLabel('Label').fill('J%');
+    await getAtomLocator(page, { atomLabel: 'N' }).first().dblclick({
+      force: true,
+    });
+    await AtomPropertiesDialog(page).fillLabel('J%');
     await takeEditorScreenshot(page);
   });
 
@@ -191,7 +197,9 @@ test.describe('Atom Properties', () => {
       The 'N' atom symbol isn`t changed with an incorrect symbol.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).fillLabel('J%');
     await AtomPropertiesDialog(page).cancel();
@@ -203,26 +211,27 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 3;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await doubleClickOnAtom(page, 'C', 1);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'N' },
     });
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'O' },
     });
 
-    await doubleClickOnAtom(page, 'C', secondAnyAtom);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'Cl' },
     });
@@ -239,20 +248,23 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-with-three-atoms.mol',
     );
 
-    await doubleClickOnAtom(page, 'N', 0);
-
+    await getAtomLocator(page, { atomLabel: 'N' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'Br' },
     });
 
-    await doubleClickOnAtom(page, 'O', 0);
-
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'F' },
     });
 
-    await doubleClickOnAtom(page, 'Cl', 0);
-
+    await getAtomLocator(page, { atomLabel: 'Cl' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'Zn' },
     });
@@ -282,15 +294,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1595
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
-    const atomToolbar = RightToolbar(page);
-
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await selectAllStructuresOnCanvas(page);
 
-    await atomToolbar.clickAtom(Atom.Oxygen);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
     await takeEditorScreenshot(page);
   });
 
@@ -304,15 +314,20 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'N', 0);
-
-    await clickOnAtom(page, 'O', 0);
-
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'N', atomId: 21 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'O', atomId: 13 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
-    await doubleClickOnAtom(page, 'C', 0);
-
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Label: 'Zn' },
     });
@@ -345,8 +360,9 @@ test.describe('Atom Properties', () => {
       The selected carbon atom does not changed.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).fillAlias('abc123TesREasd!@');
     await AtomPropertiesDialog(page).cancel();
@@ -361,8 +377,9 @@ test.describe('Atom Properties', () => {
       The selected carbon atom is changed with typed text.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Alias: 'abc123TesREasd!@' },
@@ -383,7 +400,9 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-ring-with-alias.mol',
     );
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Alias: 'TesREasd!@' },
@@ -398,16 +417,21 @@ test.describe('Atom Properties', () => {
       Nitrogen = 7, Oxygen = 8
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await AtomPropertiesDialog(page).cancel();
 
-    await doubleClickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await AtomPropertiesDialog(page).cancel();
 
-    await doubleClickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -420,7 +444,9 @@ test.describe('Atom Properties', () => {
       - "Not list (checkbox)" should be added
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).selectAtomType(AtomType.List);
     await takeEditorScreenshot(page);
   });
@@ -433,7 +459,9 @@ test.describe('Atom Properties', () => {
       - new item "Special" (input field) and "edit" icon should be added
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).selectAtomType(AtomType.Special);
     await takeEditorScreenshot(page);
   });
@@ -449,20 +477,25 @@ test.describe('Atom Properties', () => {
       The '2-' symbol appears near the selected atom on top-right side.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '1' },
     });
     await takeEditorScreenshot(page);
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '2' },
     });
     await takeEditorScreenshot(page);
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '-2' },
     });
@@ -477,8 +510,9 @@ test.describe('Atom Properties', () => {
       The 'Apply' button becomes disabled.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillCharge('A');
     await takeEditorScreenshot(page);
   });
@@ -492,8 +526,9 @@ test.describe('Atom Properties', () => {
       The 'Apply' button becomes disabled.
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
-
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillCharge('9999');
     await AtomPropertiesDialog(page).hoverCharge();
     await takeEditorScreenshot(page);
@@ -528,14 +563,22 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'I', 0);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
-    await doubleClickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '3' },
@@ -553,17 +596,23 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
-    await doubleClickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '1' },
     });
 
-    await doubleClickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '-3' },
     });
 
-    await doubleClickOnAtom(page, 'I', 0);
+    await getAtomLocator(page, { atomLabel: 'I' }).first().dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '5' },
     });
@@ -579,7 +628,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillIsotope('18');
     await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -594,7 +645,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Isotope: '13' },
     });
@@ -609,7 +662,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillIsotope('b');
     await takeEditorScreenshot(page);
   });
@@ -622,7 +677,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).fillIsotope('-88');
     await AtomPropertiesDialog(page).hoverIsotope();
     await takeEditorScreenshot(page);
@@ -654,14 +711,22 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
-    await doubleClickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Isotope: '18' },
@@ -674,15 +739,12 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1617
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
-    const timeout = 2000;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-
-    await page.getByLabel('Atom').fill('18O');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('18O');
     await takeEditorScreenshot(page);
   });
 
@@ -691,24 +753,27 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1618
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
-    const timeout = 2000;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/heteroatoms-structure.mol',
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
+
     await page.keyboard.up('Shift');
 
-    await moveOnAtom(page, 'S', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-
-    await page.getByLabel('Atom').fill('18S');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('18S');
     await takeEditorScreenshot(page);
   });
 
@@ -722,7 +787,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).selectValence(Valence.Three);
     await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -737,7 +804,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Valence: Valence.Three },
     });
@@ -771,14 +840,22 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
-    await doubleClickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Valence: Valence.Five },
@@ -796,7 +873,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).selectRadical(Radical.Monoradical);
     await AtomPropertiesDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -814,7 +893,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Radical: Radical.Monoradical },
     });
@@ -844,12 +925,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1633
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/chain-with-radicals.mol',
     );
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Radical: Radical.Diradical_Triplet },
     });
@@ -861,28 +943,25 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1634
       Description: All selected atoms is replaced with the typed atom symbols and Radicals.
     */
-    const timeout = 2000;
-    const anyAtom = 2;
-    const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('O.');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('O.');
 
-    await clickOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('N:');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('N:');
 
-    await moveOnAtom(page, 'C', secondAnyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('F^^');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('F^^');
     await takeEditorScreenshot(page);
   });
 
@@ -898,14 +977,22 @@ test.describe('Atom Properties', () => {
     );
 
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+    await getAtomLocator(page, { atomLabel: 'S' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
 
-    await doubleClickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
 
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Radical: Radical.Diradical_Triplet },
@@ -929,7 +1016,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).selectRingBondCount(
       RingBondCount.As_Drawn,
@@ -947,7 +1036,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn },
     });
@@ -977,12 +1068,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1636
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/chain-with-ring-bond-count.mol',
     );
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Three },
     });
@@ -995,28 +1087,25 @@ test.describe('Atom Properties', () => {
       Description: Several atoms are selected.
       All selected atoms are replaced with the correct atom symbol with the correct atom properties.
     */
-    const timeout = 2000;
-    const anyAtom = 2;
-    const secondAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('15s^^2-');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('15s^^2-');
 
-    await clickOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('209Pb:2+');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('209Pb:2+');
 
-    await moveOnAtom(page, 'C', secondAnyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('22F.3+');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('22F.3+');
     await takeEditorScreenshot(page);
   });
 
@@ -1025,31 +1114,38 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1638
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 3;
-    const thirdAnyAtom = 4;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn },
     });
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Zero },
     });
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Two },
     });
 
-    await doubleClickOnAtom(page, 'C', secondAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Three },
     });
 
-    await doubleClickOnAtom(page, 'C', thirdAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Four },
     });
@@ -1061,47 +1157,55 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 3;
-    const thirdAnyAtom = 4;
-    const numberOfPress = 2;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.As_Drawn },
     });
 
-    await doubleClickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Zero },
     });
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Two },
     });
 
-    await doubleClickOnAtom(page, 'C', secondAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Three },
     });
 
-    await doubleClickOnAtom(page, 'C', thirdAnyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Four },
     });
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { RingBondCount: RingBondCount.Three },
     });
 
-    for (let i = 0; i < numberOfPress; i++) {
+    for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < numberOfPress; i++) {
+    for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
@@ -1117,7 +1221,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).selectHCount(HCount.Zero);
     await AtomPropertiesDialog(page).cancel();
@@ -1133,7 +1239,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { HCount: HCount.Two },
     });
@@ -1147,12 +1255,16 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { HCount: HCount.Two },
     });
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { HCount: HCount.Four },
     });
@@ -1183,7 +1295,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { HCount: HCount.Empty },
     });
@@ -1201,7 +1315,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).selectSubstitutionCount(
       SubstitutionCount.Zero,
@@ -1219,7 +1335,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Two },
     });
@@ -1233,12 +1351,16 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Two },
     });
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Four },
     });
@@ -1272,7 +1394,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { SubstitutionCount: SubstitutionCount.Empty },
     });
@@ -1288,7 +1412,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandQuerySpecific();
     await AtomPropertiesDialog(page).setUnsaturatedCheckbox(true);
     await AtomPropertiesDialog(page).cancel();
@@ -1302,10 +1428,11 @@ test.describe('Atom Properties', () => {
       The 'Unsaturated' checkbox is set.
       The 'u' mark appears below the carbon atom.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { UnsaturatedCheckbox: true },
     });
@@ -1317,13 +1444,14 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1649
       Description: The 'Unsaturated' dissapear from structure.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/chain-with-unsaturated.mol',
     );
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: { UnsaturatedCheckbox: false },
     });
@@ -1335,10 +1463,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-8931
       Description: Modal window opens without errors. All sections are displayed correctly.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1352,7 +1481,7 @@ test.describe('Atom Properties', () => {
     await atomToolbar.clickAtom(Atom.Phosphorus);
     await clickInTheMiddleOfTheScreen(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -1364,15 +1493,13 @@ test.describe('Atom Properties', () => {
       "E" symbol appeared in "Atom" field next to "F".
       Selected atom now has "Fe" label.
     */
-    const timeout = 2000;
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await moveOnAtom(page, 'C', anyAtom);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
-    await page.getByLabel('Atom').fill('FE');
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
+    await LabelEditDialog(page).setLabel('FE');
     await takeEditorScreenshot(page);
   });
 
@@ -1389,11 +1516,17 @@ test.describe('Atom Properties', () => {
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await clickOnAtom(page, 'N', 0);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'F', 0);
+    await getAtomLocator(page, { atomLabel: 'F' }).first().click({
+      force: true,
+    });
 
-    await clickOnAtom(page, 'O', 0);
+    await getAtomLocator(page, { atomLabel: 'O' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1408,7 +1541,7 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/all-possible-atoms-properties.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -1459,7 +1592,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandReactionFlags();
     await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
     await AtomPropertiesDialog(page).cancel();
@@ -1472,10 +1607,11 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Inverts - .Inv, ext.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).expandReactionFlags();
     await AtomPropertiesDialog(page).selectInversion(Inversion.Inverts);
     await AtomPropertiesDialog(page).setExactChangeCheckbox(true);
@@ -1489,10 +1625,11 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Retains - .Ret, ext.
     */
-    const anyAtom = 3;
     await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
-    await doubleClickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
+      force: true,
+    });
     await AtomPropertiesDialog(page).setOptions({
       ReactionFlags: {
         Inversion: Inversion.Retains,
@@ -1531,7 +1668,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1547,7 +1684,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.W,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1559,7 +1696,7 @@ test.describe('Atom Properties', () => {
     */
     await selectExtendedTableElement(page, ExtendedTableButton.G);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
   });
@@ -1571,10 +1708,10 @@ test.describe('Atom Properties', () => {
     */
     await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('GH*').first().dblclick();
+    await getAtomLocator(page, { atomLabel: 'GH*' }).dblclick();
     await takeEditorScreenshot(page);
   });
 
@@ -1595,7 +1732,6 @@ test.describe('Atom Properties', () => {
       QueryAtomOption.Connectivity,
     ];
 
-    // const anyAtom = 2;
     await drawBenzeneRing(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).hover();

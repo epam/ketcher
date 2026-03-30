@@ -46,7 +46,7 @@ export function LeftMenuComponent() {
           <Menu.Submenu
             testId="select-drop-down-button"
             subMenuId={SELECT_SUBMENU_ID}
-            needOpenByMenuItemClick={false}
+            needOpenByMenuItemClick={true}
           >
             <Menu.Item
               itemId="select-rectangle"
@@ -59,9 +59,9 @@ export function LeftMenuComponent() {
               testId="select-lasso"
             />
             <Menu.Item
-              itemId="select-fragment"
-              title={`Fragment selection (${hotkeysShortcuts.switchSelectTool})`}
-              testId="select-fragment"
+              itemId="select-structure"
+              title={`Structure Selection (${hotkeysShortcuts.switchSelectTool})`}
+              testId="select-structure"
             />
           </Menu.Submenu>
         </Menu.Group>

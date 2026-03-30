@@ -1,50 +1,25 @@
-import { Page, test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
-  checkSmartsValue,
-  checkSmartsWarnings,
-  clickInTheMiddleOfTheScreen,
-  doubleClickOnAtom,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
-  waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
 import { Inversion } from '@tests/pages/constants/atomProperties/Constants';
-
-const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
-
-async function drawStructure(page: Page, numberOfClicks: number) {
-  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-  for (let i = 0; i < numberOfClicks; i++) {
-    await clickInTheMiddleOfTheScreen(page);
-  }
-}
-
-async function drawStructureAndDoubleClickOnAtom(
-  page: Page,
-  numberOfBondsAtStructure: number,
-  atomType: string,
-  numberOfAtom: number,
-) {
-  await waitForPageInit(page);
-  await drawStructure(page, numberOfBondsAtStructure);
-  await page.keyboard.press('Escape');
-  await doubleClickOnAtom(page, atomType, numberOfAtom);
-  await waitForAtomPropsModal(page);
-}
+import {
+  verifySMARTSExport,
+  verifySMARTSExportWarnings,
+} from '@utils/files/receiveFileComparisonData';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    const numberOfAtom = 0;
-    const numberOfBondsAtStructure = 3;
-    await drawStructureAndDoubleClickOnAtom(
-      page,
-      numberOfBondsAtStructure,
-      'C',
-      numberOfAtom,
-    );
+    await waitForPageInit(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C(C)(C)C');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).dblclick({
+      force: true,
+    });
+    await expect(AtomPropertiesDialog(page).window).toBeVisible();
   });
 
   test('Setting reaction flag - Inverts', async ({ page }) => {
@@ -58,8 +33,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting reaction flag - Retains', async ({ page }) => {
@@ -73,8 +48,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 
   test('Setting reaction flag - Exact change checked', async ({ page }) => {
@@ -88,7 +63,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       },
     });
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, expectedSmarts);
-    await checkSmartsWarnings(page);
+    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])-[#6]');
+    await verifySMARTSExportWarnings(page);
   });
 });

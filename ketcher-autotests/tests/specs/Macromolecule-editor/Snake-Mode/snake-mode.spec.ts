@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -19,21 +19,14 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(
@@ -61,7 +54,7 @@ test(
 
 const modifiedMonomers: string[] = [
   'RNA1{[12ddR][bnn].[25d3r]([4ime6A])[bP].[25mo3r]([az8A])[cm].[25moe3]([baA])[cmp].[25R]([br8A])[co].' +
-    '[3A6]([c3A])[en].[3FAM][eop].[3SS6][fl2me].[4sR]([c7io7A])[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].' +
+    '[3A6]([c3A])[en].[3FAM][eop].[3FAM][3SS6].[3FAM][fl2me].[4sR]([c7io7A])[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].' +
     '[am6][sP-].[Am2d]([m2A])[sP].[am12][Smp].[ALtri2]([io2A])[s2p].[ALtri1]([imprn2])[Rsp].' +
     '[ALmecl]([impr6n])[Rmp].[allyl2]([fl2A])[prn].[aFR]([eaA])[P-].[afl2Nm]([e6A])[oxy].' +
     '[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].[5S6Sm5]([cyh6A])[moen].' +

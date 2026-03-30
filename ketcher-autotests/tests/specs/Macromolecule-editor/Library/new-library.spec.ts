@@ -4,11 +4,11 @@ import { Page, expect, test } from '@fixtures';
 import {
   MacroFileType,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForRender } from '@utils/common/loaders';
+import { waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -34,8 +34,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/keyboard';
 import {
   FileType,
@@ -51,35 +51,27 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { pageReload } from '@utils/common/helpers';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-// import { pageReload } from '@utils/common/helpers';
+import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
   await MacromoleculesTopToolbar(page).rna();
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
   await Library(page).openRNASection(RNASection.Presets);
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('1. Verify that the header of the library changed to remove the "Library" title and move the "Hide" option to the ear instead of to the right of the title', async () => {
@@ -637,8 +629,8 @@ for (const monomer of monomerToDrag2) {
 
     await page.mouse.down();
     await page.mouse.move(
-      box.x + box.width / 2 - 4,
-      box.y + box.height / 2 - 4,
+      box.x + box.width / 2 + 4,
+      box.y + box.height / 2 + 4,
     );
     await takeMonomerLibraryScreenshot(page);
     await page.mouse.move(200, 200);
@@ -675,14 +667,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -718,14 +710,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1037,7 +1029,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1076,7 +1068,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1542,8 +1534,9 @@ for (const monomer of monomerToDrag) {
      * 1. Open Ketcher and turn on Macromolecules editor
      * 2. Go to Flex mode
      * 3. Add target monomer to Favorites
-     * 4. Press Calculate Properties button
-     * 5. Take screenshot to validate it is visible
+     * 4. Drop monomer on the canvas
+     * 5. Press Calculate Properties button
+     * 6. Take screenshot to validate it is visible
      *
      * Version 3.6
      */
@@ -1551,7 +1544,8 @@ for (const monomer of monomerToDrag) {
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    expect(await CalculateVariablesPanel(page).isVisible()).toBeTruthy();
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 }
@@ -1944,3 +1938,56 @@ for (const monomer of monomerToDrag) {
     await resetZoomLevelToDefault(page);
   });
 }
+
+test('39 Verify library searching using HELM aliases', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some HELM alias to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using HELM aliases
+   */
+
+  await Library(page).setSearchValue('5eU');
+  await Library(page).openRNASection(RNASection.Bases);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).setSearchValue('Hyl_5xi');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('40 Verify library searching using AxoLabs aliases', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some AxoLabs alias to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using AxoLabs aliases
+   */
+
+  await Library(page).setSearchValue('invdC');
+  await Library(page).openRNASection(RNASection.Nucleotides);
+  await takeMonomerLibraryScreenshot(page);
+
+  await Library(page).switchToCHEMTab();
+  await Library(page).setSearchValue('(NHC');
+  await takeMonomerLibraryScreenshot(page);
+});
+
+test('41 Verify library searching using modification types', async () => {
+  /*
+   * Task: https://github.com/epam/ketcher/issues/8383
+   * Steps:
+   * 1. switch to Macromolecules mode
+   * 2. Input some modification types to 'Search by name' filed in the library
+   *
+   * Expected result: Library should be searchable using modification types
+   */
+
+  await Library(page).setSearchValue('Side chain acetylation');
+  await Library(page).switchToPeptidesTab();
+  await takeMonomerLibraryScreenshot(page);
+});

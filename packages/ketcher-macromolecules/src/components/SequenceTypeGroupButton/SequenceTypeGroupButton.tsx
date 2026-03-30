@@ -114,43 +114,41 @@ export const SequenceTypeGroupButton = () => {
   };
 
   return isSequenceMode ? (
-    <>
-      <Box sx={{ mr: 1, ml: 1 }}>
-        <ButtonGroup disabled={isDisabled}>
-          <SequenceTypeButton
-            data-testid={`${SequenceType.RNA}Btn`}
-            title="RNA (Ctrl+Alt+R)"
-            variant={
-              activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
-            }
-            onClick={() => handleSelectSequenceType(SequenceType.RNA)}
-          >
-            RNA
-          </SequenceTypeButton>
-          <SequenceTypeButton
-            data-testid={`${SequenceType.DNA}Btn`}
-            title="DNA (Ctrl+Alt+D)"
-            variant={
-              activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
-            }
-            onClick={() => handleSelectSequenceType(SequenceType.DNA)}
-          >
-            DNA
-          </SequenceTypeButton>
-          <SequenceTypeButton
-            data-testid={`${SequenceType.PEPTIDE}Btn`}
-            title="Peptides (Ctrl+Alt+P)"
-            variant={
-              activeSequenceType === SequenceType.PEPTIDE
-                ? 'contained'
-                : 'outlined'
-            }
-            onClick={() => handleSelectSequenceType(SequenceType.PEPTIDE)}
-          >
-            PEP
-          </SequenceTypeButton>
-        </ButtonGroup>
-      </Box>
-    </>
+    <Box sx={{ mr: 1, ml: 1 }}>
+      <ButtonGroup disabled={isDisabled}>
+        <SequenceTypeButton
+          data-testid={`${SequenceType.RNA}Btn`}
+          title="RNA (Ctrl+Alt+R)"
+          variant={
+            activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
+          }
+          onClick={() => handleSelectSequenceType(SequenceType.RNA)}
+        >
+          RNA
+        </SequenceTypeButton>
+        <SequenceTypeButton
+          data-testid={`${SequenceType.DNA}Btn`}
+          title="DNA (Ctrl+Alt+D)"
+          variant={
+            activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
+          }
+          onClick={() => handleSelectSequenceType(SequenceType.DNA)}
+        >
+          DNA
+        </SequenceTypeButton>
+        <SequenceTypeButton
+          data-testid={`${SequenceType.PEPTIDE}Btn`}
+          title="Peptides (Ctrl+Alt+P)"
+          variant={
+            activeSequenceType === SequenceType.PEPTIDE
+              ? 'contained'
+              : 'outlined'
+          }
+          onClick={() => handleSelectSequenceType(SequenceType.PEPTIDE)}
+        >
+          PEP
+        </SequenceTypeButton>
+      </ButtonGroup>
+    </Box>
   ) : null;
 };

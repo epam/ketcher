@@ -23,6 +23,7 @@ export interface AtomProperties {
   radical?: AtomRadical;
   alias?: string | null;
   cip?: AtomCIP | null;
+  stereoLabel?: string | null;
 }
 
 export class Atom extends DrawingEntity {
@@ -119,6 +120,15 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  public get hasBadValence() {
+    const { hydrogenAmount } = this.calculateValence();
+    return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
+  }
+
   private get radicalAmount() {
     switch (this.properties.radical) {
       case AtomRadical.Single:
@@ -135,11 +145,6 @@ export class Atom extends DrawingEntity {
     const charge = this.properties.charge ?? 0;
     const label = this.label;
     const element = Elements.get(this.label);
-    // if (!element) {
-    //   // query atom, skip
-    //   this.implicitH = 0;
-    //   return 0;
-    // }
 
     const elementGroupNumber = element?.group;
     const radicalAmount = this.radicalAmount;
@@ -233,9 +238,6 @@ export class Atom extends DrawingEntity {
       if (label === AtomLabel.D || label === AtomLabel.T) {
         valence = 1;
         hydrogenAmount = 1 - radicalAmount - connectionAmount - absCharge;
-      } else {
-        // this.implicitH = 0;
-        // return true;
       }
     } else if (elementGroupNumber === 1) {
       if (
@@ -321,10 +323,7 @@ export class Atom extends DrawingEntity {
         } else if (charge === 2) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount;
-        } else if (
-          label === AtomLabel.N ||
-          radicalAmount + connectionAmount + absCharge <= 3
-        ) {
+        } else if (radicalAmount + connectionAmount + absCharge <= 3) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount - absCharge;
         } else {
@@ -451,7 +450,6 @@ export class Atom extends DrawingEntity {
           ) {
             if (radicalAmount === 1) {
               valence = connectionAmount;
-              hydrogenAmount = 0;
             } else {
               hydrogenAmount = -1; // will throw an error in the end
             }
@@ -461,21 +459,23 @@ export class Atom extends DrawingEntity {
         }
       }
     } else if (elementGroupNumber === 8) {
-      if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-      else hydrogenAmount = -1;
+      // Special handling for Platinum (Pt) - accepts valences 2 and 4
+      if (label === AtomLabel.Pt) {
+        if (connectionAmount + radicalAmount + absCharge <= 2) {
+          valence = 2;
+          hydrogenAmount = 2 - radicalAmount - connectionAmount - absCharge;
+        } else if (connectionAmount + radicalAmount + absCharge <= 4) {
+          valence = 4;
+          hydrogenAmount = 4 - radicalAmount - connectionAmount - absCharge;
+        } else {
+          hydrogenAmount = -1;
+        }
+      } else if (connectionAmount + radicalAmount + absCharge === 0) {
+        valence = 1;
+      } else {
+        hydrogenAmount = -1;
+      }
     }
-
-    // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
-    //   hydrogenAmount = this.implicitHCount;
-    // }
-    // this.valence = valence;
-    // this.implicitH = hydrogenAmount;
-    // if (this.implicitH < 0) {
-    //   this.valence = connectionAmount;
-    //   this.implicitH = 0;
-    //   this.badConn = true;
-    //   return false;
-    // }
 
     return {
       valence,

@@ -4,12 +4,12 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {
   verifyFileExport,
   FileType,
+  verifySMARTSExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -40,12 +40,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMARTS,
+    await verifySMARTSExport(
+      page,
+      '[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1>[#7]>[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule below arrow as reagent
@@ -56,7 +54,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4681
     Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
     format in "Preview" tab (e.g.
-      [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]1(-[#35])-[#6](-[#6])=[#6]-[#6](-[#53])=[#6](-[#8])-[#6]=1
+      [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>Cl>[#6]1(-Br)-[#6](-[#6])=[#6]-[#6](-I)=[#6](-[#8])-[#6]=1
     )
     */
     await openFileAndAddToCanvas(
@@ -70,12 +68,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMARTS,
+    await verifySMARTSExport(
+      page,
+      '[#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>Cl>[#6]1(-Br)-[#6](-[#6])=[#6]-[#6](-I)=[#6](-[#8])-[#6]=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {

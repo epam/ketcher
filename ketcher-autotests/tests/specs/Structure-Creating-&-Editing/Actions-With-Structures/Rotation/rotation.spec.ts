@@ -1,14 +1,15 @@
-import { expect, test } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-magic-numbers */
+import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  waitForPageInit,
-  ZoomOutByKeyboard,
+  takeElementScreenshot,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
   addStructureAndSelect,
@@ -16,8 +17,8 @@ import {
   resetSelection,
   selectPartOfStructure,
   checkUndoRedo,
-  performVerticalFlip,
-  performHorizontalFlip,
+  verticalFlipByKeyboard,
+  horizontalFlipByKeyboard,
   selectPartOfChain,
   selectPartOfBenzeneRing,
   anyStructure,
@@ -25,13 +26,18 @@ import {
   EMPTY_SPACE_X,
   selectChain,
 } from './utils';
-
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
 test.describe('Rotation', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Cancel rotation on right click', async ({ page }) => {
+  test('Cancel rotation on right click', async () => {
     /*
       Test case: EPMLSOPKET-16894
       Description: Rotation is cancelled via "right click"
@@ -39,15 +45,8 @@ test.describe('Rotation', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol-1855-to-open.mol');
     await selectAllStructuresOnCanvas(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await clickOnCanvas(
       page,
       COORDINATES_TO_PERFORM_ROTATION.x,
@@ -59,7 +58,7 @@ test.describe('Rotation', () => {
     expect(screenAfterRotation).toEqual(screenBeforeRotation);
   });
 
-  test('Floating icons are shown', async ({ page }) => {
+  test('Floating icons are shown', async () => {
     /*
       Test case: EPMLSOPKET-1685, 13004
       Description: Floating icon are shown, when structure is selected
@@ -68,7 +67,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Floating icons have tooltips', async ({ page }) => {
+  test('Floating icons have tooltips', async () => {
     /*
       Test case: EPMLSOPKET-1685
       Description: Floating icon have tooltips
@@ -96,7 +95,7 @@ test.describe('Rotation', () => {
     }
   });
 
-  test('Rotate by 60 degrees', async ({ page }) => {
+  test('Rotate by 60 degrees', async () => {
     /*
       Test case: EPMLSOPKET-1686, 1687, 13006
       Description: Structure is rotated by 15 degrees steps
@@ -107,20 +106,20 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate by 1 degree step', async ({ page }) => {
+  test('Rotate by 1 degree step', async () => {
     /*
       Test case: EPMLSOPKET-1686, 1687
       Description: Structure is rotated by 1 degree step with Ctrl
     */
     await addStructureAndSelect(page);
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate part of structure', async ({ page }) => {
+  test('Rotate part of structure', async () => {
     /*
       Test case: EPMLSOPKET-1688
       Description: Select and rotate part of structure
@@ -132,7 +131,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate only selected structure', async ({ page }) => {
+  test('Rotate only selected structure', async () => {
     /*
       Test case: EPMLSOPKET-1689
       Description: Multiple structures are drawn on the canvas. Only selected structures are rotated
@@ -144,9 +143,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Performs horizontal flip for non-selected structure', async ({
-    page,
-  }) => {
+  test('Performs horizontal flip for non-selected structure', async () => {
     /*
       Test case: EPMLSOPKET-1690, 1692
       Description: Multiple structures are draw on the canvas. Horizontal flip is performed via shortcut
@@ -156,13 +153,11 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Performs vertical flip for non-selected structure', async ({
-    page,
-  }) => {
+  test('Performs vertical flip for non-selected structure', async () => {
     /*
       Test case: EPMLSOPKET-1691, 1692
       Description: Multiple structures are draw on the canvas. Vertical flip is performed via shortcut
@@ -172,11 +167,11 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/multiple-structures.mol',
     );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate reaction', async ({ page }) => {
+  test('Rotate reaction', async () => {
     /*
       Test case: EPMLSOPKET-1693
       Description: Reaction is rotated
@@ -192,7 +187,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Reaction is flipped', async ({ page }) => {
+  test('Reaction is flipped', async () => {
     /*
       Test case: EPMLSOPKET-1694
       Description: Reaction is flipped vertically and horizontally
@@ -200,14 +195,14 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(page, anyReaction);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Check rotate history', async ({ page }) => {
+  test('Check rotate history', async () => {
     /*
       Test case: EPMLSOPKET-1695
       Description: Check history actions for rotation and flip
@@ -217,16 +212,14 @@ test.describe('Rotation', () => {
     await resetSelection(page);
     await checkUndoRedo(page);
 
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await checkUndoRedo(page);
 
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await checkUndoRedo(page);
   });
 
-  test('Horizontal flip for part of structure with selected bond', async ({
-    page,
-  }) => {
+  test('Horizontal flip for part of structure with selected bond', async () => {
     /*
       Test case: EPMLSOPKET-8935
       Description: Select and make horizontal flip for part of structure with selected bond
@@ -234,14 +227,12 @@ test.describe('Rotation', () => {
     const extraShiftToCoverBond = 25;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Vertical flip for part of structure with selected bond', async ({
-    page,
-  }) => {
+  test('Vertical flip for part of structure with selected bond', async () => {
     /*
       Test case: EPMLSOPKET-8935
       Description: Select and make vertical flip for part of structure with selected bond
@@ -249,14 +240,12 @@ test.describe('Rotation', () => {
     const extraShiftToCoverBond = 25;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Horizontal flip for part of structure without selected bond', async ({
-    page,
-  }) => {
+  test('Horizontal flip for part of structure without selected bond', async () => {
     /*
       Test case: EPMLSOPKET-8936
       Description: Select and make horizontal flip for part of structure without selected bond
@@ -264,14 +253,12 @@ test.describe('Rotation', () => {
     const shift = 1;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Vertical flip for part of structure without selected bond', async ({
-    page,
-  }) => {
+  test('Vertical flip for part of structure without selected bond', async () => {
     /*
       Test case: EPMLSOPKET-8936
       Description: Select and make vertical flip for part of structure without selected bond
@@ -279,31 +266,23 @@ test.describe('Rotation', () => {
     const shift = 1;
     await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await resetSelection(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Click on rotation handle activates rotation mode', async ({ page }) => {
+  test('Click on rotation handle activates rotation mode', async () => {
     /*
       Test case: EPMLSOPKET-12992, 12997, 12993, 12995
       Description: Add any structure and select it. Click and hold rotation handle
     */
-    const shift = 10;
     await addStructureAndSelect(page, anyStructure);
     await selectAllStructuresOnCanvas(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
-
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(rotationHandleX, rotationHandleY - shift);
+    await rotateToCoordinates(page, { x: 726, y: 235 }, false);
     await takeEditorScreenshot(page);
   });
 
-  test('Set of angles shown always covers [-90 - +90] range relatively to the handle position', async ({
-    page,
-  }) => {
+  test('Set of angles shown always covers [-90 - +90] range relatively to the handle position', async () => {
     /*
       Test case: EPMLSOPKET-12994, 12999, 13000, 13001, 13004, 13005
       Description: Add any structure and select it. Rotate it by 60 degrees.
@@ -317,7 +296,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Rotate structure and release mouse', async ({ page }) => {
+  test('Rotate structure and release mouse', async () => {
     /*
       Test case: EPMLSOPKET-12996
       Description: Structure is rotated by 60 degrees. Mouse released
@@ -327,88 +306,108 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test("Rotate handle doesn't change its position", async ({ page }) => {
+  test("Rotate handle doesn't change its position", async () => {
     /*
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
     await addStructureAndSelect(page);
-    const { x: rotationHandleX, y: rotationHandleY } =
-      await getRotationHandleCoordinates(page);
+    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandleBoundingBox = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBox) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x: rotationHandleX, y: rotationHandleY } = rotationHandleBoundingBox;
+    rotationHandleX += rotationHandleBoundingBox.width / 2;
+    rotationHandleY += rotationHandleBoundingBox.height / 2;
     await clickOnCanvas(page, rotationHandleX, rotationHandleY, {
       from: 'pageTopLeft',
     });
-    const { x, y } = await getRotationHandleCoordinates(page);
+    const rotationHandleBoundingBoxAfter = await rotationHandle.boundingBox();
+    if (!rotationHandleBoundingBoxAfter) {
+      throw new Error('Rotation handle bounding box is not available.');
+    }
+    let { x, y } = rotationHandleBoundingBoxAfter;
+    x += rotationHandleBoundingBoxAfter.width / 2;
+    y += rotationHandleBoundingBoxAfter.height / 2;
     expect(x).toEqual(rotationHandleX);
     expect(y).toEqual(rotationHandleY);
   });
 
-  test('Works with different zoom level and screen resolution', async ({
-    page,
-  }) => {
+  test('Works with different zoom level and screen resolution', async () => {
     /*
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
     await page.setViewportSize({ width: 1200, height: 1080 });
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await addStructureAndSelect(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);
-    await takeEditorScreenshot(page);
+    const targetAtom = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 32,
+    });
+    await takeElementScreenshot(page, targetAtom, { padding: 100 });
   });
 
-  test('Cancel rotation on "Escape" key', async ({ page }) => {
+  test('Cancel rotation on "Escape" key', async () => {
     /*
       Test case: EPMLSOPKET-15499
       Description: Cancel rotation on "Escape" key
     */
     await addStructureAndSelect(page);
-    const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    const targetAtom = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 32,
+    });
+    const screenBeforeRotation = await takeElementScreenshot(page, targetAtom, {
+      padding: 150,
+    });
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await page.keyboard.press('Escape');
 
-    const screenAfterRotation = await takeEditorScreenshot(page);
+    const screenAfterRotation = await takeElementScreenshot(page, targetAtom, {
+      padding: 150,
+    });
     expect(screenAfterRotation).toEqual(screenBeforeRotation);
   });
 
-  test('Structure remains selected after "Escape" key', async ({ page }) => {
+  test('Structure remains selected after "Escape" key', async () => {
     /*
       Test case: EPMLSOPKET-15501
       Description: Structure remains selected after "Escape" key
     */
+    const targetAtom = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 32,
+    });
     await addStructureAndSelect(page);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, targetAtom, {
+      padding: 160,
+    });
   });
 
-  test('Multiple "Escape" key presses cancel rotation', async ({ page }) => {
+  test('Multiple "Escape" key presses cancel rotation', async () => {
     /*
       Test case: EPMLSOPKET-15502
       Description: Multiple "Escape" key presses cancel rotation
     */
+    const targetAtom = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 32,
+    });
     await addStructureAndSelect(page);
-    const screenBeforeRotation = await takeEditorScreenshot(page);
-    const coordinates = await getRotationHandleCoordinates(page);
-    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
-
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
+    const screenBeforeRotation = await takeElementScreenshot(page, targetAtom, {
+      padding: 160,
+    });
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION, false);
     await page.keyboard.press('Escape');
 
-    const screenAfterRotation = await takeEditorScreenshot(page);
+    const screenAfterRotation = await takeElementScreenshot(page, targetAtom, {
+      padding: 160,
+    });
     expect(screenAfterRotation).toEqual(screenBeforeRotation);
 
     const smallShift = 10;
@@ -418,13 +417,17 @@ test.describe('Rotation', () => {
     );
     await page.keyboard.press('Escape');
 
-    const screenAfterSecondRotation = await takeEditorScreenshot(page);
+    const screenAfterSecondRotation = await takeElementScreenshot(
+      page,
+      targetAtom,
+      {
+        padding: 160,
+      },
+    );
     expect(screenAfterSecondRotation).toEqual(screenBeforeRotation);
   });
 
-  test('Non-selected end of the selected bond should be the rotation center', async ({
-    page,
-  }) => {
+  test('Non-selected end of the selected bond should be the rotation center', async () => {
     /*
       Test case: EPMLSOPKET-15542
       Description: Non-selected end of the selected bond should be the rotation center
@@ -436,7 +439,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Unselected label rotation', async ({ page }) => {
+  test('Unselected label rotation', async () => {
     /*
       Test case: EPMLSOPKET-15543
       Description: Label is not rotated with the structure, if it is not selected
@@ -448,7 +451,7 @@ test.describe('Rotation', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Selected label rotation', async ({ page }) => {
+  test('Selected label rotation', async () => {
     /*
       Test case: EPMLSOPKET-15544
       Description: Label is rotated with the structure, if it is selected
@@ -461,11 +464,8 @@ test.describe('Rotation', () => {
 });
 
 test.describe('Rotation snapping', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('for 90, 120 and 180 degrees', async ({ page }) => {
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test('for 90, 120 and 180 degrees', async () => {
     /*
       Test case: EPMLSOPKET-16906
       Description: Bond has 90, 120 and 180 snaps
@@ -496,7 +496,7 @@ test.describe('Rotation snapping', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('bisector snapping for 2+ bonds', async ({ page }) => {
+  test('bisector snapping for 2+ bonds', async () => {
     /*
       Test case: EPMLSOPKET-16907
       Description: For 2+ bonds counterclockwise see a prompt for the bisector, then snap to it
@@ -522,7 +522,7 @@ test.describe('Rotation snapping', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('around new center', async ({ page }) => {
+  test('around new center', async () => {
     /*
       Test case: EPMLSOPKET-17657, 17658
       Description: Center of rotation can be selected and structure is rotated around new center.

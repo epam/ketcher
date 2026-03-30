@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
   addTextBoxToCanvas,
   TextEditorDialog,
@@ -76,7 +76,7 @@ test.describe('Clear canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await TextEditorDialog(page).setText('one two three');
     await TextEditorDialog(page).apply();
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
     await clearCanvasByKeyboard(page);

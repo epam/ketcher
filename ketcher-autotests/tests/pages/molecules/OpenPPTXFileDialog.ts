@@ -57,10 +57,10 @@ export const OpenPPTXFileDialog = (page: Page) => {
 export async function openPPTXFile(
   page: Page,
   filePath: string,
+  action: Action,
   numberOf: {
     Structure: number;
   } = { Structure: 1 },
-  action: Action,
 ) {
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {

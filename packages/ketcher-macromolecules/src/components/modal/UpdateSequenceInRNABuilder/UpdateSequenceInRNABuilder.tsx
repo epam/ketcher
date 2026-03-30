@@ -60,8 +60,9 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
       isOpen={isModalOpen}
       title="Update sequence"
       onClose={onCloseCallback}
+      data-testid="update-sequence-modal"
     >
-      <Modal.Content>
+      <Modal.Content data-testid="update-sequence-modal-body">
         <TextWrapper>
           You are going to modify {countOfNucleoelements} nucleotides. Are you
           sure?
@@ -73,8 +74,16 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
           clickHandler={cancelHandler}
           label="Cancel"
           styleType="secondary"
+          title=""
+          data-testid="update-sequence-cancel-button"
         />
-        <ActionButton key="update" clickHandler={updateHandler} label="Yes" />
+        <ActionButton
+          key="update"
+          clickHandler={updateHandler}
+          label="Yes"
+          title=""
+          data-testid="update-sequence-yes-button"
+        />
       </Modal.Footer>
     </Modal>
   );

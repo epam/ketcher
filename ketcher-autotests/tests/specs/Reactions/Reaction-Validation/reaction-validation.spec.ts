@@ -3,12 +3,12 @@ import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  clickOnAtom,
   openFileAndAddToCanvas,
   RxnFileFormat,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
@@ -114,12 +114,13 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1492
     Description: Reaction with combination of products can be edited after opening
     */
-    const anyAtom = 0;
     const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(page, 'KET/combination-of-products.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -128,12 +129,11 @@ test.describe('Reaction validation', () => {
     Test case: EPMLSOPKET-1493
     Description: Reaction with combination of reactants can be edited after opening
     */
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'KET/combination-of-reactants.ket');
-    await atomToolbar.clickAtom(Atom.Fluorine);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Fluorine);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });

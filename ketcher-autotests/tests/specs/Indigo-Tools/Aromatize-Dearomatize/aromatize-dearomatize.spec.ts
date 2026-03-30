@@ -23,11 +23,8 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-const CANVAS_CLICK_X = 200;
-const CANVAS_CLICK_Y = 200;
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -135,7 +132,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await IndigoFunctionsToolbar(page).aromatize();
@@ -155,7 +152,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 200, 200, {
       from: 'pageTopLeft',
     });
     await IndigoFunctionsToolbar(page).aromatize();
@@ -172,7 +169,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).aromatize();
     await selectAllStructuresOnCanvas(page);

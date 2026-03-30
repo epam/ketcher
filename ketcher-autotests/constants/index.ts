@@ -1,5 +1,4 @@
-export const DEFAULT_KETCHER_STANDALONE_URL =
-  'https://rc.test.lifescience.opensource.epam.com/KetcherDemoSA/index.html';
+export const DEFAULT_KETCHER_STANDALONE_URL = 'http://localhost:5173';
 
 export const STANDALONE_URL = '/KetcherDemoSA/index.html';
 export const REMOTE_URL = '/KetcherDemo/index.html';

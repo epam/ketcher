@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay, waitForRender } from '@utils/index';
+import { waitForRender } from '@utils/index';
 import {
   AntisenseStrandType,
   LayoutMode,
@@ -8,8 +8,10 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
 type MacromoleculesTopToolbarLocators = {
+  arrangeAsRingButton: Locator;
   createAntisenseStrandDropdownButton: Locator;
   createAntisenseStrandDropdownExpandButton: Locator;
+  arrangeAsARingButton: Locator;
   calculatePropertiesButton: Locator;
   syncSequenceEditModeButton: Locator;
   switchLayoutModeDropdownButton: Locator;
@@ -17,14 +19,18 @@ type MacromoleculesTopToolbarLocators = {
   rnaButton: Locator;
   dnaButton: Locator;
   peptidesButton: Locator;
+  arrowScrollLeftButton: Locator;
+  arrowScrollRightButton: Locator;
 };
 
 export const MacromoleculesTopToolbar = (page: Page) => {
   const locators: MacromoleculesTopToolbarLocators = {
+    arrangeAsRingButton: page.getByTestId('arrange-ring'),
     createAntisenseStrandDropdownButton: page.getByTestId('antisenseRnaStrand'),
     createAntisenseStrandDropdownExpandButton: page
       .getByTestId('Create Antisense Strand')
       .getByTestId('dropdown-expand'),
+    arrangeAsARingButton: page.getByTestId('arrange-ring'),
     calculatePropertiesButton: page.getByTestId(
       'calculate-macromolecule-properties-button',
     ),
@@ -36,6 +42,8 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     rnaButton: page.getByTestId('RNABtn'),
     dnaButton: page.getByTestId('DNABtn'),
     peptidesButton: page.getByTestId('PEPTIDEBtn'),
+    arrowScrollLeftButton: page.getByTestId('arrow-scroll-left-button'),
+    arrowScrollRightButton: page.getByTestId('arrow-scroll-right-button'),
   };
 
   return {
@@ -56,7 +64,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.createAntisenseStrandDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await createAntisenseStrandDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -68,7 +76,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.createAntisenseStrandDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await createAntisenseStrandDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -82,6 +90,12 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       await this.expandCreateAntisenseStrandDropdown();
       await waitForRender(page, async () => {
         await page.getByTestId(antisenseStrandType).first().click();
+      });
+    },
+
+    async arrangeAsARing() {
+      await waitForRender(page, async () => {
+        await locators.arrangeAsARingButton.click();
       });
     },
 
@@ -116,7 +130,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
       try {
         await locators.switchLayoutModeDropdownButton.click();
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await switchLayoutModeDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -128,7 +142,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
         await locators.switchLayoutModeDropdownExpandButton.click({
           force: true,
         });
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await switchLayoutModeDropdown.waitFor({
           state: 'visible',
           timeout: 5000,
@@ -158,6 +172,14 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
     async peptides() {
       await locators.peptidesButton.click();
+    },
+
+    async arrowScrollLeft() {
+      return locators.arrowScrollLeftButton.click();
+    },
+
+    async arrowScrollRight() {
+      return locators.arrowScrollRightButton.click();
     },
   };
 };

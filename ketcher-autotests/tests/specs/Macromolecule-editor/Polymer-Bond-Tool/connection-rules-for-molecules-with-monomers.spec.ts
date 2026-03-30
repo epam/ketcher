@@ -9,13 +9,12 @@ import {
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import {
-  BondType,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for molecules with monomers: ', () => {
   test.beforeEach(async ({ page }) => {
@@ -54,7 +53,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
       page,
       'KET/molecule-connected-to-monomers.ket',
     );
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 18);
+    const point = await getBondLocator(page, { bondId: 23 });
     await ContextMenu(page, point).click(MicroBondOption.Delete);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

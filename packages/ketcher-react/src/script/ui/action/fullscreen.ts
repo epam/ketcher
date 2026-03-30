@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { getFullscreenElement } from '../../../utils';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
@@ -51,9 +51,7 @@ const getIfFullScreen = () => {
 };
 
 const toggleFullscreen = () => {
-  const fullscreenElement: HTMLElement =
-    document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
-    document.documentElement;
+  const fullscreenElement = getFullscreenElement();
   getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
 };
 

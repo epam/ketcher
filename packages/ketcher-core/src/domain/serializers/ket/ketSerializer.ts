@@ -19,7 +19,6 @@ import {
   Bond,
   SGroupAttachmentPoint,
   Struct,
-  UnresolvedMonomer,
   Vec2,
   RxnArrow as MicromoleculeRxnArrow,
   MultitailArrow as MicromoleculeMultitailArrow,
@@ -40,6 +39,7 @@ import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
   IKetAmbiguousMonomerTemplate,
+  IKetAttachmentPoint,
   IKetConnection,
   IKetConnectionEndPoint,
   IKetConnectionMoleculeEndPoint,
@@ -104,10 +104,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 function parseNode(node: any, struct: any) {
   const type = node.type;
   switch (type) {
-    case 'arrow': {
-      rxnToStruct(node, struct);
-      break;
-    }
+    case 'arrow':
     case 'plus': {
       rxnToStruct(node, struct);
       break;
@@ -224,7 +221,7 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
-    return JSON.stringify(result, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -304,6 +301,7 @@ export class KetSerializer implements Serializer<Struct> {
       deserializedContent?.drawingEntitiesManager,
       struct,
     );
+
     return struct;
   }
 
@@ -348,9 +346,43 @@ export class KetSerializer implements Serializer<Struct> {
     return fileContentForMicromolecules;
   }
 
+  private static normalizeTemplateAttachmentPoints(
+    template: IKetMonomerTemplate,
+  ) {
+    const attachmentPointsDict = (
+      template as IKetMonomerTemplate & {
+        attachmentPointsDict?: Record<string, IKetAttachmentPoint>;
+      }
+    ).attachmentPointsDict;
+
+    if (!attachmentPointsDict) {
+      return template.attachmentPoints;
+    }
+
+    return Object.entries(attachmentPointsDict).map(
+      ([key, attachmentPoint]) => {
+        const normalizedLabel =
+          attachmentPoint.type === 'left'
+            ? AttachmentPointName.R1
+            : attachmentPoint.type === 'right'
+            ? AttachmentPointName.R2
+            : undefined;
+
+        return {
+          ...attachmentPoint,
+          label: attachmentPoint.label ?? key,
+          ...(normalizedLabel ? { type: attachmentPoint.type } : {}),
+        };
+      },
+    );
+  }
+
   public static getTemplateAttachmentPoints(template: IKetMonomerTemplate) {
+    const attachmentPoints =
+      KetSerializer.normalizeTemplateAttachmentPoints(template) ?? [];
+
     return template.unresolved
-      ? template.attachmentPoints?.map((_, index) => {
+      ? attachmentPoints.map((_, index) => {
           return {
             attachmentAtom: index,
             leavingGroup: {
@@ -358,11 +390,12 @@ export class KetSerializer implements Serializer<Struct> {
             },
           };
         })
-      : template.attachmentPoints;
+      : attachmentPoints;
   }
 
   public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
-    const attachmentPoints = template.attachmentPoints ?? [];
+    const attachmentPoints =
+      KetSerializer.getTemplateAttachmentPoints(template) ?? [];
 
     return KetSerializer.fillStruct({
       root: {
@@ -394,7 +427,7 @@ export class KetSerializer implements Serializer<Struct> {
               };
             })
           : template.bonds,
-        attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
+        attachmentPoints,
       },
       header: {
         moleculeName: template.fullName,
@@ -427,39 +460,36 @@ export class KetSerializer implements Serializer<Struct> {
       return;
     }
 
-    const { attachmentPointsList } =
-      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
-        template.attachmentPoints || [],
-      );
+    const attachmentPoints =
+      KetSerializer.getTemplateAttachmentPoints(template);
 
-    template.attachmentPoints?.forEach(
-      (attachmentPoint, attachmentPointIndex) => {
-        const firstAtomInLeavingGroup = attachmentPoint.leavingGroup?.atoms[0];
-        const leavingGroupAtom = monomerItem.struct.atoms.get(
-          isNumber(firstAtomInLeavingGroup)
-            ? firstAtomInLeavingGroup
-            : attachmentPoint.attachmentAtom,
-        );
-        assert(leavingGroupAtom);
-        leavingGroupAtom.rglabel = (
-          0 |
-          (1 <<
-            (Number(
-              (attachmentPoint.label
-                ? attachmentPoint.label
-                : attachmentPointsList[attachmentPointIndex]
-              ).replace('R', ''),
-            ) -
-              1))
-        ).toString();
-        assert(monomerItem.props.MonomerCaps);
-        monomerItem.props.MonomerCaps[
-          getAttachmentPointLabelWithBinaryShift(
-            Number(leavingGroupAtom.rglabel),
-          )
-        ] = leavingGroupAtom.label;
-      },
-    );
+    const { attachmentPointsList } =
+      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(attachmentPoints);
+
+    attachmentPoints?.forEach((attachmentPoint, attachmentPointIndex) => {
+      const firstAtomInLeavingGroup = attachmentPoint.leavingGroup?.atoms[0];
+      const leavingGroupAtom = monomerItem.struct.atoms.get(
+        isNumber(firstAtomInLeavingGroup)
+          ? firstAtomInLeavingGroup
+          : attachmentPoint.attachmentAtom,
+      );
+      assert(leavingGroupAtom);
+      leavingGroupAtom.rglabel = (
+        0 |
+        (1 <<
+          (Number(
+            (attachmentPoint.label
+              ? attachmentPoint.label
+              : attachmentPointsList[attachmentPointIndex]
+            ).replace('R', ''),
+          ) -
+            1))
+      ).toString();
+      assert(monomerItem.props.MonomerCaps);
+      monomerItem.props.MonomerCaps[
+        getAttachmentPointLabelWithBinaryShift(Number(leavingGroupAtom.rglabel))
+      ] = leavingGroupAtom.label;
+    });
   }
 
   deserializeToDrawingEntities(fileContent: string) {
@@ -726,9 +756,11 @@ export class KetSerializer implements Serializer<Struct> {
       fullName: monomer.monomerItem.props.Name,
       alias: monomer.monomerItem.label,
       aliasHELM: monomer.monomerItem.props.aliasHELM,
+      aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
-      unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
+      unresolved: monomer.monomerItem.props.unresolved ? true : undefined,
+      modificationTypes: monomer.monomerItem.props.modificationTypes,
     };
     // CHEMs do not have natural analog
     if (monomer.monomerItem.props.MonomerType !== 'CHEM') {
@@ -764,7 +796,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     variantMonomer.monomers.forEach((monomer) => {
       const monomerTemplateId =
-        monomer.monomerItem.props.id ||
+        monomer.monomerItem.props.id ??
         getMonomerUniqueKey(monomer.monomerItem);
 
       this.serializeMonomerTemplate(monomerTemplateId, monomer, fileContent);
@@ -838,7 +870,7 @@ export class KetSerializer implements Serializer<Struct> {
                 '_' +
                 option.templateId +
                 '_' +
-                (option.probability || option.ratio || ''),
+                (option.probability ?? option.ratio ?? ''),
               '',
             );
         } else {
@@ -1062,7 +1094,7 @@ export class KetSerializer implements Serializer<Struct> {
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
           sgroup.removeAttachmentPoint(attachmentPointToDelete);
-          sgroup.addAttachmentPoint(attachmentPointToAdd);
+          sgroup.addAttachmentPoint(attachmentPointToAdd, false);
         },
       );
     });
@@ -1161,7 +1193,7 @@ export class KetSerializer implements Serializer<Struct> {
             template as IKetAmbiguousMonomerTemplate;
           const variantMonomerLibraryItem: AmbiguousMonomerType = {
             id: variantMonomerTemplate.id,
-            label: variantMonomerTemplate.alias || '%',
+            label: variantMonomerTemplate.alias ?? '%',
             idtAliases: variantMonomerTemplate.idtAliases,
             isAmbiguous: true,
             monomers: createMonomersForVariantMonomer(

@@ -9,7 +9,7 @@ import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
 
 interface ChipGridSelectProps {
-  monomerType: KetMonomerClass | undefined;
+  monomerType: KetMonomerClass | 'rnaPreset' | undefined;
   value: string;
   onChange: (value: string) => void;
   className?: string;
@@ -56,7 +56,7 @@ const rnaOptions = [
 ];
 
 export const isNaturalAnalogueRequired = (
-  monomerType: KetMonomerClass | undefined,
+  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
 ) => {
   return (
     monomerType === KetMonomerClass.AminoAcid ||

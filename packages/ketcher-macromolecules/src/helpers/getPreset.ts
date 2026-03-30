@@ -1,5 +1,7 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
+  buildRnaPresetConnections,
+  IKetTemplateConnection,
   IKetMonomerGroupTemplate,
   monomerFactory,
   MonomerItemType,
@@ -12,8 +14,13 @@ import {
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
-  extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
-    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
+  extends Pick<
+      IKetMonomerGroupTemplate,
+      'templates' | 'idtAliases' | 'aliasAxoLabs'
+    >,
+    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
+  connections?: IKetTemplateConnection[];
+}
 
 export const getPresets = (
   monomers: ReadonlyArray<MonomerItemType>,
@@ -71,18 +78,28 @@ export const getPresets = (
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
+        connections:
+          rnaPresetsTemplate.connections ??
+          buildRnaPresetConnections({
+            base: rnaBase,
+            sugar: ribose,
+            phosphate,
+          }),
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };
 
-      if (!rnaPresetsTemplate.idtAliases) {
-        return result;
-      }
-
-      return {
+      const presetWithAliases: IRnaPreset = {
         ...result,
-        idtAliases: rnaPresetsTemplate.idtAliases,
+        ...(rnaPresetsTemplate.idtAliases && {
+          idtAliases: rnaPresetsTemplate.idtAliases,
+        }),
+        ...(rnaPresetsTemplate.aliasAxoLabs && {
+          aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
+        }),
       };
+
+      return presetWithAliases;
     });
 };

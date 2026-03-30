@@ -5,18 +5,15 @@ import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  getCoordinatesTopAtomOfBenzeneRing,
-  clickOnAtom,
-  pressButton,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
   RxnFileFormat,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,
@@ -40,6 +37,7 @@ import {
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
@@ -48,6 +46,7 @@ async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
     : expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  await SaveStructureDialog(page).cancel();
 }
 
 let page: Page;
@@ -79,22 +78,23 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R7);
 
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
-    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
+    await clickOnCanvas(page, 40, 0, { from: 'pageCenter' });
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 11 }),
       { primary: true },
     );
     await CommonTopLeftToolbar(page).saveFile();
@@ -102,11 +102,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await SaveStructureDialog(page).cancel();
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R22);
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Open and Save file - Reaction from file that contains Sgroup', async () => {
@@ -141,17 +143,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDelta = 300;
-    const xDeltaHalf = 150;
-    const yDelta50 = 50;
-    const yDelta20 = 20;
-    const xCoordinatesWithShift = x + xDelta;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
-    const yCoordinatesWithShift = y + yDelta50;
-    await dragMouseTo(xCoordinatesWithShift, y, page);
+    const xCoordinatesWithShift = x + 300;
+    const xCoordinatesWithShiftHalf = x + 150;
+    const yCoordinatesWithShift = y + 50;
+    await dragMouseTo(page, xCoordinatesWithShift, y);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(
       page,
@@ -159,13 +156,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       yCoordinatesWithShift,
       { from: 'pageTopLeft' },
     );
-    const ySecondChain = yCoordinatesWithShift + yDelta50;
+    const ySecondChain = yCoordinatesWithShift + 50;
     await LeftToolbar(page).chain();
     await page.mouse.move(x, ySecondChain);
-    await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
+    await dragMouseTo(page, xCoordinatesWithShift, ySecondChain);
     await savedFileInfoStartsWithRxn(page);
 
-    await pressButton(page, 'Cancel');
     await CommonLeftToolbar(page).erase();
     await clickOnCanvas(
       page,
@@ -174,17 +170,16 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { from: 'pageTopLeft' },
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
+    const yArrowStart = y + 20;
+    const yArrowEnd = yArrowStart + 20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await dragMouseTo(page, xCoordinatesWithShiftHalf, yArrowEnd);
     await savedFileInfoStartsWithRxn(page, true);
 
-    await pressButton(page, 'Cancel');
     await CommonTopLeftToolbar(page).clearCanvas();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await dragMouseTo(page, xCoordinatesWithShiftHalf, yArrowEnd);
     await savedFileInfoStartsWithRxn(page, true);
   });
 
@@ -193,21 +188,14 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-8904
      * Description: Structure isn't missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures
      */
-    test.slow();
-    const RING_OFFSET = 150;
-    const ARROW_OFFSET = 20;
-    const ARROW_LENGTH = 100;
-    await drawReactionWithTwoBenzeneRings(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
-      RING_OFFSET,
-      ARROW_OFFSET,
-      ARROW_LENGTH,
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
-    const xOffsetFromCenter = 50;
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
+    await clickOnCanvas(page, 50, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -359,7 +347,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -388,7 +376,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -417,7 +405,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(700, 100, page);
+    await dragMouseTo(page, 700, 100);
 
     await verifyFileExport(
       page,
@@ -446,7 +434,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
     await verifyFileExport(
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
@@ -474,7 +462,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,
@@ -503,7 +491,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await CommonLeftToolbar(page).erase();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
 
     await verifyFileExport(
       page,

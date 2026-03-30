@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -7,12 +8,10 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  pressButton,
   clickInTheMiddleOfTheScreen,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
-  BondType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   takeLeftToolbarScreenshot,
@@ -26,24 +25,22 @@ import {
   cutToClipboardByKeyboard,
   readFileContent,
   pasteFromClipboardAndOpenAsNewProject,
-  moveMouseToTheMiddleOfTheScreen,
-  copyToClipboardByIcon,
   moveMouseAway,
   getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
-import { delay, selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForPageInit, waitForRender } from '@utils/common';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { waitForRender } from '@utils/common';
+
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -59,7 +56,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
-  AttachmentPoint,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -69,6 +65,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
+  setACSSettings,
   setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
@@ -95,7 +92,6 @@ import {
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -103,6 +99,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -117,25 +114,14 @@ async function removeTail(page: Page, tailName: string, index?: number) {
 let page: Page;
 
 test.describe('Ketcher bugs in 2.26.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).reset();
-    await SettingsDialog(page).apply();
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: The options for layout about smart-layout, aromatize-skip-superatoms and etc is sent as not undefined', async () => {
@@ -197,13 +183,15 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
     const applyButton = MiewDialog(page).applyButton;
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await expect(applyButton).toBeDisabled();
     await takeEditorScreenshot(page);
-    await MiewDialog(page).closeByX();
+    await MiewDialog(page).closeWindow();
     await disableViewOnlyModeBySetOptions(page);
   });
 
@@ -222,10 +210,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/equilibrium-arrows.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -244,7 +229,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-wedge-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 6 });
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
   });
@@ -557,7 +542,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
+    const point = await getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -581,7 +566,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
+    const point = await getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -628,16 +613,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 3. Switch to "View Only" mode. ketcher.editor.options({ viewOnlyMode: true })
      * 4. Change the selection mode.
      */
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await enableViewOnlyModeBySetOptions(page);
     await CommonLeftToolbar(page).handTool();
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeLeftToolbarScreenshot(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await takeLeftToolbarScreenshot(page);
     await disableViewOnlyModeBySetOptions(page);
   });
@@ -702,7 +683,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/Bond tooltip preview placed wrong in on edge cases (popup).ket',
     );
     await CommonTopRightToolbar(page).setZoomInputValue('75');
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Peptide.Cys_Bn).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -737,12 +718,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         MultiTailedArrowOption.AddNewTail,
       );
     });
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
@@ -778,10 +759,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
-    await AttachmentPointsDialog(page).selectAttachmentPoints({
-      leftMonomer: AttachmentPoint.R2,
-      rightMonomer: AttachmentPoint.R1,
-    });
+
+    await AttachmentPointsDialog(page).selectAttachmentPoints({});
     await AttachmentPointsDialog(page).reconnect();
     await ContextMenu(page, bondLine).click(
       MacroBondOption.EditAttachmentPoints,
@@ -922,7 +901,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       .locator('rect')
       .nth(1)
       .hover();
-    await dragMouseTo(600, 350, page);
+    await dragMouseTo(page, 600, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -974,7 +953,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/monomers-cycled.ket',
     );
     await takeEditorScreenshot(page);
-    await expandMonomer(page, page.getByText('1Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await takeLeftToolbarScreenshot(page);
@@ -1018,10 +997,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/error with cat and arr.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1055,7 +1031,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       page,
       'Molfiles-V3000/Chromium-popup/monomers-connected-to-microstructures-expected.mol',
     );
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1215,9 +1191,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         page,
         'KET/Chromium-popup/5. Unsplit nucleotide 5hMedC (from library).ket',
       );
-      await ZoomOutByKeyboard(page, { repeat: 2 });
+      await zoomOutByKeyboard(page, { repeat: 2 });
       await takeEditorScreenshot(page);
-      await expandMonomer(page, page.getByText('5hMedC'));
+      await expandMonomer(
+        page,
+        getAbbreviationLocator(page, { name: '5hMedC' }),
+      );
       await takeEditorScreenshot(page);
       await ContextMenu(
         page,
@@ -1299,10 +1278,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/The diagonal bond in the molecule is displayed incorrect with ACS style.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1662,10 +1638,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/Chromium-popup/The reaction with reaction mapping tool is displayed incorrect.ket',
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
-    await SettingsDialog(page).setACSSettings();
-    await SettingsDialog(page).apply();
-    await pressButton(page, 'OK');
+    await setACSSettings(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1690,8 +1663,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

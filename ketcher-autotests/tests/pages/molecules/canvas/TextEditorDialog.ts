@@ -155,6 +155,7 @@ export async function addTextToCanvas(
     await clickInTheMiddleOfTheScreen(page);
   }
   await TextEditorDialog(page).setText(text);
+  await TextEditorDialog(page).apply();
 }
 
 export type TextEditorDialogType = ReturnType<typeof TextEditorDialog>;

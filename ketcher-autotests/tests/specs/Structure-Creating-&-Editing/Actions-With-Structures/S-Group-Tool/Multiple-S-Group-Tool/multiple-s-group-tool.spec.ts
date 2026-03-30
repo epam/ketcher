@@ -4,10 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  BondType,
-  clickOnAtom,
-  clickOnBond,
-  screenshotBetweenUndoRedo,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
@@ -28,15 +24,15 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
-
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 500;
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { selectionDelete } from '../../Rotation/utils';
 
 test.describe('Multiple S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,7 +46,9 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.MultipleGroup,
       RepeatCount: '88',
@@ -65,7 +63,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
     await SGroupPropertiesDialog(page).setOptions({
       Type: TypeOption.MultipleGroup,
       RepeatCount: '88',
@@ -94,7 +92,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true },
     );
     await selectAllStructuresOnCanvas(page);
@@ -113,11 +111,11 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+    const point = await getBondLocator(page, { bondId: 9 });
     await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
     await SGroupPropertiesDialog(page).setRepeatCountValue('99');
     await SGroupPropertiesDialog(page).apply();
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -126,12 +124,12 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 3);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -144,10 +142,16 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -160,10 +164,14 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await selectionDelete(page);
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -176,12 +184,18 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -192,7 +206,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 500, 500, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -318,7 +332,7 @@ test.describe('Multiple S-Group tool', () => {
     });
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
     await takeEditorScreenshot(page);

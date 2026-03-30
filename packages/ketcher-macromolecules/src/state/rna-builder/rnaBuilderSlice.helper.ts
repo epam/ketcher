@@ -1,5 +1,7 @@
 import omit from 'lodash/omit';
 import {
+  buildRnaPresetConnections,
+  getRnaPresetPhosphatePosition,
   IRnaLabeledPreset,
   IRnaPreset,
   setAmbiguousMonomerTemplatePrefix,
@@ -7,12 +9,11 @@ import {
 } from 'ketcher-core';
 
 // transform preset from IRnaPreset to IRnaLabeledPreset
-export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
+export const transformRnaPresetToRnaLabeledPreset = (
+  rnaPreset: IRnaPreset,
+): IRnaLabeledPreset => {
   const fieldsToLabel = ['sugar', 'base', 'phosphate'];
-  const rnaLabeledPreset = omit(
-    rnaPreset,
-    fieldsToLabel,
-  ) as Partial<IRnaLabeledPreset>;
+  const rnaLabeledPreset = omit(rnaPreset, fieldsToLabel) as IRnaLabeledPreset;
 
   rnaLabeledPreset.templates = [];
   for (const monomerName of fieldsToLabel) {
@@ -27,6 +28,10 @@ export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
         : setMonomerTemplatePrefix(templateId),
     });
   }
+  rnaLabeledPreset.connections = buildRnaPresetConnections(
+    rnaPreset,
+    getRnaPresetPhosphatePosition(rnaPreset),
+  );
 
-  return rnaLabeledPreset as IRnaLabeledPreset;
+  return rnaLabeledPreset;
 };

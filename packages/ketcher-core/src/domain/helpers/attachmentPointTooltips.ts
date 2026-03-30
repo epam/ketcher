@@ -2,7 +2,7 @@ import { KetMonomerClass } from 'application/formatters/types/ket';
 import { AttachmentPointName } from 'domain/types';
 
 export function getAttachmentPointTooltip(
-  monomerClass: KetMonomerClass | undefined,
+  monomerClass: KetMonomerClass | 'rnaPreset' | undefined,
   ap: AttachmentPointName,
 ): string | null {
   const isTargetClass =

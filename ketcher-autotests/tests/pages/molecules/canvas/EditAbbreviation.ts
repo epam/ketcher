@@ -3,14 +3,14 @@ import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
 type EditAbbreviationDialogLocators = {
-  editAbbreviationWindow: Locator;
+  window: Locator;
   removeAbbreviationButton: Locator;
   cancelButton: Locator;
 };
 
 export const EditAbbreviationDialog = (page: Page) => {
   const locators: EditAbbreviationDialogLocators = {
-    editAbbreviationWindow: page.getByTestId('edit-abbreviation-window'),
+    window: page.getByTestId('edit-abbreviation-window'),
     removeAbbreviationButton: page.getByTestId('remove-abbreviation-button'),
     cancelButton: page.getByTestId('Cancel'),
   };
@@ -19,7 +19,7 @@ export const EditAbbreviationDialog = (page: Page) => {
     ...locators,
 
     async isVisible() {
-      return await locators.editAbbreviationWindow.isVisible();
+      return await locators.window.isVisible();
     },
 
     async removeAbbreviation() {

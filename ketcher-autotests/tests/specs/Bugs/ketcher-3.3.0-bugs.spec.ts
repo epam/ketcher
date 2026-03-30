@@ -1,41 +1,38 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   clickInTheMiddleOfTheScreen,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { RNASection } from '@tests/pages/constants/library/Constants';
@@ -48,28 +45,19 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { SaltsAndSolventsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
 test.describe('Ketcher bugs in 3.3.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Able to create antisense RNA/DNA chain in case of multipal chain selection (if not eligable for antisense chain selected)', async () => {
@@ -231,13 +219,15 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await Library(page).selectMonomer(Base.h456UR);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await Library(page).selectMonomer(Base.e6A);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+    );
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '2-amino-6-etoxypurine',
+    );
   });
 
   test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async () => {
@@ -261,9 +251,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getMonomerLocator(page, Peptide.A).click();
-    await dragMouseTo(500, 350, page);
+    await dragMouseTo(page, 500, 350);
     await getMonomerLocator(page, Peptide.C).click();
-    await dragMouseTo(600, 350, page);
+    await dragMouseTo(page, 600, 350);
     await getMonomerLocator(page, Peptide.D).click();
     await page.mouse.down();
     await page.mouse.move(700, 350, { steps: 20 });
@@ -285,6 +275,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Click on any monomer in the RNA Builder section
      * 4. Observe that the corresponding monomer in the library is highlighted
      */
+    const library = Library(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
@@ -292,19 +283,31 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       Base.C,
       Phosphate.Test_6_Ph,
     ]);
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Phosphate.Test_6_Ph),
+    );
     await Library(page).rnaBuilder.selectSugarSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Sugar.UNA),
+    );
     await Library(page).rnaBuilder.selectBaseSlot();
     // doubled selection of base slot to fix test behaviour after upgrate to react 19
     // need to be investigated and fixed
     await Library(page).rnaBuilder.selectBaseSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Base.C),
+    );
     // doubled selection of base slot to fix test behaviour after upgrate to react 19
     // need to be investigated and fixed
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).rnaBuilder.selectPhosphateSlot();
-    await takeMonomerLibraryScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      library.getMonomerLibraryCardLocator(Phosphate.Test_6_Ph),
+    );
   });
 
   test('Case 12: Able to delete multiple sequences at once via right-click menu in Sequence mode', async () => {
@@ -812,7 +815,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       .getByTestId(KETCHER_CANVAS)
       .getByText(Peptide._1Nal.alias, { exact: true });
     await expandMonomer(page, peptide1Nal);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -828,8 +831,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Select DBU
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
     );
     await clickInTheMiddleOfTheScreen(page);

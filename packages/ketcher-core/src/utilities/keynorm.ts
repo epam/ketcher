@@ -155,8 +155,9 @@ const setHotKey = (
   actName: string,
   hotKeys: Record<string, string | string[]>,
 ) => {
-  if (Array.isArray(hotKeys[key])) {
-    (hotKeys[key] as string[]).push(actName);
+  const existing = hotKeys[key];
+  if (Array.isArray(existing)) {
+    existing.push(actName);
   } else {
     hotKeys[key] = [actName];
   }

@@ -1,4 +1,4 @@
-export enum AttachmentPointName {
+export enum AttachmentPointOption {
   R1 = 'R1-option',
   R2 = 'R2-option',
   R3 = 'R3-option',

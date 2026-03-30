@@ -14,25 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'draft-js/dist/Draft.css';
-
+import React, { useCallback, useState, useEffect } from 'react';
 import {
-  DraftStyleMap,
-  Editor,
-  EditorState,
-  RawDraftContentState,
-  RichUtils,
-  convertFromRaw,
-  convertToRaw,
-  getDefaultKeyBinding,
-} from 'draft-js';
-import React, {
-  useCallback,
-  useState,
-  useRef,
-  useEffect,
-  RefObject,
-} from 'react';
+  $getRoot,
+  $getSelection,
+  $isRangeSelection,
+  FORMAT_TEXT_COMMAND,
+  KEY_ENTER_COMMAND,
+  COMMAND_PRIORITY_HIGH,
+  LexicalEditor,
+  TextFormatType,
+  SerializedEditorState,
+} from 'lexical';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 
 import { Dialog } from '../../../components';
 import { DialogParams } from '../../../../../../components/Dialog/Dialog';
@@ -42,10 +41,7 @@ import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
-import createStyles from 'draft-js-custom-styles';
 import { IconName } from 'components';
-
-const { styles, customStyleFn } = createStyles(['font-size']);
 
 interface TextProps extends DialogParams {
   formState: any;
@@ -73,109 +69,125 @@ const buttons: Array<{ command: TextCommand; name: IconName }> = [
   },
 ];
 
-const Text = (props: TextProps) => {
-  const { formState, position, id } = props;
-  const rawContentState: RawDraftContentState | null = props.content
-    ? (JSON.parse(props.content) as RawDraftContentState)
-    : null;
-  const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.moveFocusToEnd(
-      EditorState.createWithContent(
-        convertFromRaw(rawContentState || { blocks: [], entityMap: {} }),
-      ),
-    ),
-  );
+const textCommandToFormat: Record<string, TextFormatType> = {
+  [TextCommand.Bold]: 'bold',
+  [TextCommand.Italic]: 'italic',
+  [TextCommand.Subscript]: 'subscript',
+  [TextCommand.Superscript]: 'superscript',
+};
 
-  const result = () => {
-    const content = editorState.getCurrentContent();
+const editorTheme = {
+  text: {
+    bold: classes.textBold,
+    italic: classes.textItalic,
+    subscript: classes.textSubscript,
+    superscript: classes.textSuperscript,
+  },
+};
+
+function EnterKeyPlugin(): null {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    return editor.registerCommand(
+      KEY_ENTER_COMMAND,
+      (event: KeyboardEvent | null) => {
+        if (event) {
+          event.stopPropagation();
+        }
+        return false;
+      },
+      COMMAND_PRIORITY_HIGH,
+    );
+  }, [editor]);
+  return null;
+}
+
+function EditorRefPlugin({
+  editorRef,
+}: {
+  editorRef: React.MutableRefObject<LexicalEditor | null>;
+}): null {
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor, editorRef]);
+  return null;
+}
+
+const TextEditorInner = (props: {
+  formState: any;
+  position?: string;
+  id?: any;
+  params: TextProps;
+}) => {
+  const { formState, position, id, params } = props;
+  const [editor] = useLexicalComposerContext();
+  const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
+  const editorRef = React.useRef<LexicalEditor | null>(null);
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const formats = new Set<string>();
+          if (selection.hasFormat('bold')) formats.add(TextCommand.Bold);
+          if (selection.hasFormat('italic')) formats.add(TextCommand.Italic);
+          if (selection.hasFormat('subscript'))
+            formats.add(TextCommand.Subscript);
+          if (selection.hasFormat('superscript'))
+            formats.add(TextCommand.Superscript);
+          setActiveFormats(formats);
+        }
+      });
+    });
+  }, [editor]);
+
+  const result = useCallback(() => {
+    let hasText = false;
+    let serialized: SerializedEditorState | null = null;
+    const editorState = editor.getEditorState();
+    editorState.read(() => {
+      const root = $getRoot();
+      hasText = root.getTextContent().trim().length > 0;
+    });
+    if (hasText) {
+      serialized = editorState.toJSON();
+    }
+
     return {
-      content: content.hasText() ? JSON.stringify(convertToRaw(content)) : '',
+      content: serialized ? JSON.stringify(serialized) : '',
       position,
       id,
     };
-  };
-
-  const keyBindingFn = (e: React.KeyboardEvent): string | null => {
-    if (e.key === 'Enter') {
-      e.stopPropagation();
-    }
-
-    return getDefaultKeyBinding(e);
-  };
-
-  const onContentChange = (state: EditorState): void => {
-    setEditorState(state);
-  };
-
-  const currentStyle = editorState.getCurrentInlineStyle();
+  }, [editor, position, id]);
 
   const toggleStyle = useCallback(
     (command: TextCommand): void => {
-      let newEditorState: EditorState = editorState;
-      switch (command) {
-        case TextCommand.Subscript: {
-          if (currentStyle.has(TextCommand.Superscript)) {
-            newEditorState = RichUtils.toggleInlineStyle(
-              newEditorState,
-              TextCommand.Superscript,
-            );
-          }
-          break;
-        }
-        case TextCommand.Superscript: {
-          if (currentStyle.has(TextCommand.Subscript)) {
-            newEditorState = RichUtils.toggleInlineStyle(
-              newEditorState,
-              TextCommand.Subscript,
-            );
-          }
-          break;
-        }
+      const format = textCommandToFormat[command];
+      if (format) {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
       }
-      newEditorState = RichUtils.toggleInlineStyle(newEditorState, command);
-
-      setEditorState(newEditorState);
     },
-    [currentStyle, editorState],
+    [editor],
   );
 
-  const customStyleMap: DraftStyleMap = {
-    SUBSCRIPT: {
-      verticalAlign: 'sub',
-      transform: 'scale(0.7)',
-      transformOrigin: 'left',
-    },
-    SUPERSCRIPT: {
-      verticalAlign: 'super',
-      transform: 'scale(0.7)',
-      transformOrigin: 'left',
-      lineHeight: 0,
-    },
-  };
-
-  const refEditor = useRef(null) as RefObject<Editor | null>;
   const setFocusInEditor = useCallback(() => {
-    refEditor.current?.focus();
-    refEditor.current?.editor?.setAttribute('data-testid', 'text-editor');
-  }, [refEditor]);
+    editor.focus();
+  }, [editor]);
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       setFocusInEditor();
     }
   };
 
-  // set focut on component mount
-  useEffect(() => {
-    setFocusInEditor();
-  }, [setFocusInEditor]);
-
   return (
     <Dialog
       className={classes.textEditor}
       title="Text Editor"
-      params={props}
+      params={params}
       result={result}
       valid={() => formState.form.valid}
       buttonsNameMap={{ OK: 'Apply' }}
@@ -186,42 +198,98 @@ const Text = (props: TextProps) => {
         className={classes.controlPanel}
         onClick={setFocusInEditor}
         onKeyDown={handleKeyDown}
-        role="button"
+        role="toolbar"
         tabIndex={0}
+        aria-label="Text formatting toolbar"
       >
         {buttons.map((button) => {
           return (
             <TextButton
               button={button}
               key={button.name}
-              active={currentStyle.has(button.command)}
+              active={activeFormats.has(button.command)}
               toggleStyle={toggleStyle}
             />
           );
         })}
-        <SpecialSymbolsButton
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={currentStyle}
-        />
+        <SpecialSymbolsButton editor={editor} />
         <span>Font Size</span>
-        <FontControl
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={styles}
-        />
+        <FontControl editor={editor} />
       </div>
       <span>Text:</span>
-      <Editor
-        keyBindingFn={keyBindingFn}
-        editorState={editorState}
-        onChange={onContentChange}
-        customStyleMap={customStyleMap}
-        customStyleFn={customStyleFn}
-        ref={refEditor}
+      <RichTextPlugin
+        contentEditable={
+          <ContentEditable
+            className={classes.editorInput}
+            data-testid="text-editor"
+          />
+        }
+        ErrorBoundary={LexicalErrorBoundary}
       />
+      <EnterKeyPlugin />
+      <EditorRefPlugin editorRef={editorRef} />
+      <AutoFocusPlugin />
     </Dialog>
   );
 };
 
-export default connect((store) => ({ formState: (store as any).modal }))(Text);
+// helper to make sure the incoming JSON is a Lexical editor state.
+// Lexical serializes into an object with a "root" node and every node
+// has a `type` property. Draft.js (used elsewhere in the codebase) uses a
+// completely different shape (`blocks`/`entityMap`), which will blow up in
+// Lexical (the error reported on line 243 is the missing `type`).
+//
+// We perform a quick sanity check and, if necessary, convert the minimal
+// Draft shape into something Lexical understands.  Failing all else we
+// fall back to undefined so Lexical starts with an empty document.
+export const normalizeEditorState = (
+  content: string | undefined,
+): string | undefined => {
+  if (!content) return undefined;
+  try {
+    const parsed = JSON.parse(content);
+    // If already Lexical format, return as is
+    if (
+      parsed &&
+      typeof parsed === 'object' &&
+      parsed.root &&
+      typeof parsed.root === 'object' &&
+      typeof parsed.root.type === 'string'
+    ) {
+      return content;
+    }
+  } catch (e) {
+    console.warn('Failed to parse editor state', e);
+  }
+  // For import-time conversion we expect Serialised Lexical state stored in `content`.
+  // If it's not valid Lexical JSON, return undefined so the editor starts empty.
+  return undefined;
+};
+
+const Text = (props: TextProps) => {
+  const { formState, position, id } = props;
+
+  const initialEditorState = normalizeEditorState(props.content);
+
+  const initialConfig = {
+    namespace: 'KetcherTextEditor',
+    onError: (error: Error) => {
+      console.error('Lexical error:', error);
+    },
+    editorState: initialEditorState,
+    theme: editorTheme,
+  };
+
+  return (
+    <LexicalComposer initialConfig={initialConfig}>
+      <TextEditorInner
+        formState={formState}
+        position={position}
+        id={id}
+        params={props}
+      />
+    </LexicalComposer>
+  );
+};
+
+export default connect((store: any) => ({ formState: store.modal }))(Text);

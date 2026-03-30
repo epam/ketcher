@@ -5,6 +5,7 @@ export type ClickTarget = Locator | { x: number; y: number };
 export enum MonomerOption {
   Copy = 'copy',
   Paste = 'paste',
+  ArrangeAsARing = 'layout_circular',
   CreateAntisenseRNAStrand = 'create_antisense_rna_chain',
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',
@@ -20,6 +21,8 @@ export enum ModifyAminoAcidsOption {
   NMethylation = 'aminoAcidModification-N-methylation',
   Phosphorylation = 'aminoAcidModification-Phosphorylation',
   SideChainAcetylation = 'aminoAcidModification-Side chain acetylation',
+  // Modification below does not exist by default in Ketcher, it is created for test purposes
+  CustomModification = 'aminoAcidModification-Custom Modification',
 }
 
 export enum MonomerOnMicroOption {
@@ -37,6 +40,7 @@ export enum SuperatomOption {
 
 export enum MacroBondOption {
   EditAttachmentPoints = 'edit_attachment_points',
+  Delete = 'delete',
 }
 
 export enum SequenceSymbolOption {
@@ -96,6 +100,7 @@ export enum QueryBondOption {
 export enum MicroAtomOption {
   EditSelectedAtoms = 'Edit selected atoms...-option',
   Edit = 'Edit...-option',
+  CreateAMonomer = 'Create a monomer-option',
   EnhancedStereochemistry = 'Enhanced stereochemistry...-option',
   QueryProperties = 'Query properties-option',
   AddAttachmentPoint = 'Add attachment point-option',
@@ -254,6 +259,13 @@ export enum ConnectionPointOption {
   MarkAsConnectionPoint = 'mark-as-connection-point',
 }
 
+export enum MonomerWizardOption {
+  MarkAs = 'Mark as a...-option',
+  Sugar = 'Mark as Sugar-option',
+  Base = 'Mark as Base-option',
+  Phosphate = 'Mark as Phosphate-option',
+}
+
 export type ContextMenuOption =
   | MonomerOption
   | ModifyAminoAcidsOption
@@ -277,4 +289,5 @@ export type ContextMenuOption =
   | ConnectivityOption
   | MultiTailedArrowOption
   | LibraryPresetOption
-  | ConnectionPointOption;
+  | ConnectionPointOption
+  | MonomerWizardOption;

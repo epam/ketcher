@@ -44,6 +44,10 @@ export const RightToolbar = (page: Page) => {
       await getButton(atom).click();
     },
 
+    async anyAtom() {
+      await locators.anyAtomButton.click();
+    },
+
     async periodicTable() {
       await locators.periodicTableButton.click();
     },

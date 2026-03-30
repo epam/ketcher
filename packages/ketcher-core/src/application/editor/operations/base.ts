@@ -99,7 +99,7 @@ class BaseOperation {
 
   protected static invalidateLoop(restruct: ReStruct, bondId: number) {
     const bond = restruct.bonds.get(bondId);
-    if (!bond || !bond.b.hb1 || !bond.b.hb2) {
+    if (!bond?.b.hb1 || !bond.b.hb2) {
       return;
     }
 

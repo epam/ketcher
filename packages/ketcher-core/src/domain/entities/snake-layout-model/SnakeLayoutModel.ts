@@ -377,7 +377,8 @@ export class SnakeLayoutModel {
 
   private fillMolecules(drawingEntitiesManager: DrawingEntitiesManager) {
     const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
-    const handledMolecules = new Set<BaseMonomer>();
+    const handledMonomerConnectedToMolecules = new Set<BaseMonomer>();
+    const handledMolecules = [] as (Atom | Bond)[]; // for checking existing of molecule we can check only one atom;
 
     this.chains.forEach((chain, chainIndex) => {
       const newChain = new SnakeLayoutModelChain();
@@ -408,15 +409,31 @@ export class SnakeLayoutModel {
                 [Atom],
               );
 
-              if (!handledMolecules.has(monomerToAtomBond.atom.monomer)) {
-                handledMolecules.add(monomerToAtomBond.atom.monomer);
+              if (
+                !handledMonomerConnectedToMolecules.has(
+                  monomerToAtomBond.atom.monomer,
+                )
+              ) {
+                handledMonomerConnectedToMolecules.add(
+                  monomerToAtomBond.atom.monomer,
+                );
               }
 
               if (!nodeIndexToMolecules.has(nodeIndex)) {
                 nodeIndexToMolecules.set(nodeIndex, []);
               }
 
-              nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
+              const isHandledMolecule = molecule.find((atom) =>
+                handledMolecules.find(
+                  (atomConnectedToMonomer) =>
+                    atomConnectedToMonomer.id === atom.id,
+                ),
+              );
+
+              if (!isHandledMolecule) {
+                handledMolecules.push(molecule[0]);
+                nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
+              }
             });
           });
         });
@@ -424,7 +441,7 @@ export class SnakeLayoutModel {
         if (isLastRowOfLastChain) {
           // Add all unhandled molecules in end of the last row of the last chain
           drawingEntitiesManager.atoms.forEach((atom) => {
-            if (handledMolecules.has(atom.monomer)) {
+            if (handledMonomerConnectedToMolecules.has(atom.monomer)) {
               return;
             }
 
@@ -432,7 +449,7 @@ export class SnakeLayoutModel {
               Atom,
             ]);
 
-            handledMolecules.add(atom.monomer);
+            handledMonomerConnectedToMolecules.add(atom.monomer);
 
             if (!nodeIndexToMolecules.has(row.snakeLayoutModelItems.length)) {
               nodeIndexToMolecules.set(row.snakeLayoutModelItems.length, []);

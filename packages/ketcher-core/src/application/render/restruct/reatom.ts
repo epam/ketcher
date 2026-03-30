@@ -118,13 +118,14 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp);
   }
 
-  drawHover(render: Render) {
-    const ret = this.makeHoverPlate(render);
+  drawHover(render: Render, drawOutline = true) {
+    const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
+      drawOutline,
     );
 
     return ret;
@@ -181,8 +182,9 @@ class ReAtom extends ReObject {
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
     render: Render,
+    drawOutline = true,
   ) {
-    if (!render.monomerCreationState) {
+    if (!render.monomerCreationState || !drawOutline) {
       return;
     }
 
@@ -224,8 +226,8 @@ class ReAtom extends ReObject {
     }
   }
 
-  setHover(hover: boolean, render: Render) {
-    super.setHover(hover, render);
+  setHover(hover: boolean, render: Render, drawOutline = true) {
+    super.setHover(hover, render, drawOutline);
 
     if (!hover || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
@@ -243,6 +245,8 @@ class ReAtom extends ReObject {
       this.expandedMonomerAttachmentPoints =
         this.makeMonomerAttachmentPointHighlightPlate(render);
     }
+
+    return this.hover;
   }
 
   public makeMonomerAttachmentPointHighlightPlate(render: Render) {
@@ -347,14 +351,18 @@ class ReAtom extends ReObject {
     return this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
-  makeHoverPlate(render: Render) {
+  makeHoverPlate(render: Render, drawOutline = true) {
     const atom = this.a;
     const { options } = render;
     if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
 
-    return this.getSelectionContour(render).attr(options.hoverStyle);
+    return this.getSelectionContour(render).attr(
+      drawOutline
+        ? options.hoverStyle
+        : { fill: options.hoverStyle.fill, stroke: 'none' },
+    );
   }
 
   makeSelectionPlate(restruct: ReStruct) {
@@ -366,6 +374,29 @@ class ReAtom extends ReObject {
       return null;
     }
     return this.getSelectionContour(render).attr(options.selectionStyle);
+  }
+
+  // Keep atom available in DOM for tests even when the label is hidden
+  private createInvisibleAtomTarget(
+    restruct: ReStruct,
+    render: Render,
+    position: Vec2,
+  ) {
+    const invisibleAtomTarget = this.getSelectionContour(render).attr({
+      opacity: 0,
+      fill: '#000',
+      stroke: 'none',
+      'stroke-width': 0,
+    });
+
+    restruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      invisibleAtomTarget,
+      position,
+    );
+
+    return invisibleAtomTarget;
   }
 
   private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
@@ -598,7 +629,7 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(this, options.showHydrogenLabels) &&
+        displayHydrogen(struct, this, options.showHydrogenLabels) &&
         !shouldHideHydrogenInPreview
       ) {
         const data = showHydrogen(this, render, implh, {
@@ -744,7 +775,13 @@ class ReAtom extends ReObject {
           const leavingGroupPos = leavingGroupAtom.pp;
           const direction = leavingGroupPos.sub(attachmentPos).normalized();
 
-          const labelPos = ps.addScaled(direction, 35);
+          // Use getShiftedSegmentPosition to account for atom label extent
+          const shiftedPos = this.getShiftedSegmentPosition(
+            render.options,
+            direction,
+            leavingGroupPos,
+          );
+          const labelPos = shiftedPos.addScaled(direction, 8);
 
           const isProblematic =
             problematicAttachmentPoints.has(attachmentPointName);
@@ -1087,68 +1124,69 @@ class ReAtom extends ReObject {
       );
     }
 
-    if (label?.path) {
-      label?.path.node?.setAttribute('data-testid', 'atom');
-      label?.path.node?.setAttribute(
-        'data-atom-id',
-        restruct.molecule.atoms.keyOf(this.a ?? ''),
-      );
-      label?.path.node?.setAttribute('data-atom-type', getAtomType(this.a));
-      label?.path.node?.setAttribute('data-atomLabel', this.a.label ?? '');
-      label?.path.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomIsotopeAtomicMass',
-        this.a.isotope ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomValence', this.a.valence ?? '');
-      label?.path.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomRingBondCount',
-        this.a.ringBondCount ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomSubstitutionCount',
-        this.a.substitutionCount ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomUnsaturated',
-        this.a.unsaturatedAtom ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomAromaticity',
-        this.a.queryProperties.aromaticity ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomImplicitHCount',
-        this.a.implicitHCount ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomRingMembership',
-        this.a.queryProperties.ringMembership ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomRingSize',
-        this.a.queryProperties.ringSize ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomConnectivity',
-        this.a.queryProperties.connectivity ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomChirality',
-        this.a.queryProperties.chirality ?? '',
-      );
-      label?.path.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
-      label?.path.node?.setAttribute(
-        'data-atomExactChange',
-        this.a.exactChangeFlag ?? '',
-      );
-      label?.path.node?.setAttribute(
-        'data-atomCustomQuery',
-        this.a.queryProperties.customQuery ?? '',
-      );
-    }
+    const atomElement =
+      label?.path ?? this.createInvisibleAtomTarget(restruct, render, ps);
+
+    atomElement?.node?.setAttribute('data-testid', 'atom');
+    atomElement?.node?.setAttribute(
+      'data-atom-id',
+      restruct.molecule.atoms.keyOf(this.a ?? ''),
+    );
+    atomElement?.node?.setAttribute('data-atom-type', getAtomType(this.a));
+    atomElement?.node?.setAttribute('data-atomLabel', this.a.label ?? '');
+    atomElement?.node?.setAttribute('data-atomCharge', this.a.charge ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomIsotopeAtomicMass',
+      this.a.isotope ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomValence', this.a.valence ?? '');
+    atomElement?.node?.setAttribute('data-atomRadical', this.a.radical ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomRingBondCount',
+      this.a.ringBondCount ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomHCount', this.a.hCount ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomSubstitutionCount',
+      this.a.substitutionCount ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomUnsaturated',
+      this.a.unsaturatedAtom ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomAromaticity',
+      this.a.queryProperties.aromaticity ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomImplicitHCount',
+      this.a.implicitHCount ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingMembership',
+      this.a.queryProperties.ringMembership ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomRingSize',
+      this.a.queryProperties.ringSize ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomConnectivity',
+      this.a.queryProperties.connectivity ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomChirality',
+      this.a.queryProperties.chirality ?? '',
+    );
+    atomElement?.node?.setAttribute('data-atomInversion', this.a.invRet ?? '');
+    atomElement?.node?.setAttribute(
+      'data-atomExactChange',
+      this.a.exactChangeFlag ?? '',
+    );
+    atomElement?.node?.setAttribute(
+      'data-atomCustomQuery',
+      this.a.queryProperties.customQuery ?? '',
+    );
   }
 
   getLargestSectorFromNeighbors(struct: Struct): {
@@ -1269,13 +1307,17 @@ function shouldDisplayStereoLabel(
 function isLabelVisible(restruct, options, atom: ReAtom) {
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(
+    restruct.molecule,
+    atom,
+  );
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero;
 
   const neighborsLength =
-    atom.a.neighbors.length === 0 ||
-    (atom.a.neighbors.length < 2 && visibleTerminal);
+    visibleNeighbors.length === 0 ||
+    (visibleNeighbors.length < 2 && visibleTerminal);
 
   if (isAttachmentPointAtom && isCarbon) {
     return false;
@@ -1297,9 +1339,9 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
 
   if (shouldBeVisible) return true;
 
-  if (atom.a.neighbors.length === 2) {
-    const nei1 = atom.a.neighbors[0];
-    const nei2 = atom.a.neighbors[1];
+  if (visibleNeighbors.length === 2) {
+    const nei1 = visibleNeighbors[0];
+    const nei2 = visibleNeighbors[1];
     const hb1 = restruct.molecule.halfBonds.get(nei1);
     const hb2 = restruct.molecule.halfBonds.get(nei2);
     const bond1 = restruct.bonds.get(hb1.bid);
@@ -1318,20 +1360,28 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
   return false;
 }
 
-function displayHydrogen(atom: ReAtom, hydrogenLabels: ShowHydrogenLabels) {
+function displayHydrogen(
+  struct: Struct,
+  atom: ReAtom,
+  hydrogenLabels: ShowHydrogenLabels,
+) {
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
-      atom.a.neighbors.length < 2) ||
+      visibleNeighbors.length < 2) ||
     (hydrogenLabels === ShowHydrogenLabels.Hetero &&
       atom.label?.text.toLowerCase() !== 'c') ||
     (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
-      (atom.a.neighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
+      (visibleNeighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
   );
 }
 
 function shouldHydrogenBeOnLeft(struct, atom) {
-  if (atom.a.neighbors.length === 0) {
+  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+
+  if (visibleNeighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
       return false;
     } else {
@@ -1340,8 +1390,8 @@ function shouldHydrogenBeOnLeft(struct, atom) {
     }
   }
 
-  if (atom.a.neighbors.length === 1) {
-    const neighbor = atom.a.neighbors[0];
+  if (visibleNeighbors.length === 1) {
+    const neighbor = visibleNeighbors[0];
     const neighborDirection = struct.halfBonds.get(neighbor).dir;
 
     return neighborDirection.x > 0;
@@ -1350,9 +1400,23 @@ function shouldHydrogenBeOnLeft(struct, atom) {
   return false;
 }
 
+function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
+  return atom.a.neighbors.filter((neighborHalfBondId) => {
+    const halfBond = struct.halfBonds.get(neighborHalfBondId);
+
+    if (!halfBond) {
+      return false;
+    }
+
+    const bond = struct.bonds.get(halfBond.bid);
+
+    return !bond || !Bond.isBondToHiddenLeavingGroup(struct, bond);
+  });
+}
+
 function getOnlyQueryAttributesCustomQuery(atom: Atom) {
   const queryText =
-    atom.queryProperties.customQuery ||
+    atom.queryProperties.customQuery ??
     getAtomCustomQuery(
       {
         ...atom,

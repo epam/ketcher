@@ -58,21 +58,18 @@ const assembleMenuItems = (
   const items: ReactElement[] = [];
 
   menuItems.forEach(
-    (
-      {
-        name,
-        title,
-        icon,
-        hidden,
-        disabled,
-        isMenuTitle,
-        separator,
-        subMenuItems,
-        onMouseOver,
-        onMouseOut,
-      },
-      index,
-    ) => {
+    ({
+      name,
+      title,
+      icon,
+      hidden,
+      disabled,
+      isMenuTitle,
+      separator,
+      subMenuItems,
+      onMouseOver,
+      onMouseOut,
+    }) => {
       const item = subMenuItems?.length ? (
         <Submenu label={title} data-testid={name} key={name}>
           {assembleMenuItems(subMenuItems, handleMenuChange) as never}
@@ -101,9 +98,7 @@ const assembleMenuItems = (
           onMouseOut={() => onMouseOut?.(name)}
         >
           {icon && (
-            <span className="context_menu-icon">
-              <>{icon}</>
-            </span>
+            <span className="context_menu-icon">{icon as React.ReactNode}</span>
           )}
           <span
             className={
@@ -118,7 +113,7 @@ const assembleMenuItems = (
       );
       items.push(item);
       if (separator) {
-        items.push(<Separator key={index} />);
+        items.push(<Separator key={`separator-${name}`} />);
       }
     },
   );

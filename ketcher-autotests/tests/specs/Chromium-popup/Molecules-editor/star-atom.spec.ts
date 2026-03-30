@@ -13,21 +13,20 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectRedoByKeyboard,
-  selectUndoByKeyboard,
+  redoByKeyboard,
+  undoByKeyboard,
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
 import {
   clickOnCanvas,
   clickOnMiddleOfCanvas,
-  dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/index';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -39,12 +38,15 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
-  performHorizontalFlip,
-  performVerticalFlip,
+  horizontalFlipByKeyboard,
+  rotateToCoordinates,
+  verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
 let page: Page;
@@ -218,9 +220,9 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
     .locator(':scope:visible')
     .first();
   await expect(starAtom).toHaveCount(1);
-  await selectUndoByKeyboard(page);
+  await undoByKeyboard(page);
   await expect(starAtom).toHaveCount(0);
-  await selectRedoByKeyboard(page);
+  await redoByKeyboard(page);
   await expect(starAtom).toHaveCount(1);
 });
 
@@ -240,9 +242,9 @@ test('8. Verify that the star atom is displayed correctly when zooming in and ou
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
 
-  await ZoomInByKeyboard(page, { repeat: 11 });
+  await zoomInByKeyboard(page, { repeat: 11 });
   await takeEditorScreenshot(page);
-  await ZoomOutByKeyboard(page, { repeat: 6 });
+  await zoomOutByKeyboard(page, { repeat: 6 });
   await takeEditorScreenshot(page);
 });
 
@@ -562,8 +564,7 @@ test('20. Verify export/import of structures containing the star atom in the PNG
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  // Commeted out due to the issue with PNG export: https://github.com/epam/Indigo/issues/3079
-  // await verifyPNGExport(page);
+  await verifyPNGExport(page);
 });
 
 test('21. Verify export/import of structures containing the star atom in the SVG format', async () => {
@@ -581,8 +582,7 @@ test('21. Verify export/import of structures containing the star atom in the SVG
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  // Commeted out due to the issue with SVG export: https://github.com/epam/Indigo/issues/3079
-  // await verifySVGExport(page);
+  await verifySVGExport(page);
 });
 
 test('22. Verify the star atom remains visible and functional after switching between modes', async () => {
@@ -647,16 +647,13 @@ test('24. Verify that the star atom retains its properties when the structure is
    *
    * Version 3.7
    */
-  const rotationHandle = page.getByTestId('rotation-handle');
-
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Star-Atom/LayoutValidation.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await rotationHandle.hover();
-  await dragMouseTo(720, 300, page);
+  await rotateToCoordinates(page, { x: 720, y: 300 });
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });
@@ -679,7 +676,7 @@ test('25. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performHorizontalFlip(page);
+  await horizontalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });
@@ -702,7 +699,7 @@ test('26. Verify the behavior of the star atom when the structure is mirrored or
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await performVerticalFlip(page);
+  await verticalFlipByKeyboard(page);
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

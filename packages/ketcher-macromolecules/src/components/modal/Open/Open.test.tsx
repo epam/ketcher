@@ -76,4 +76,61 @@ describe('Open component', () => {
     expect(clipboardTextarea).toBeInTheDocument();
     expect(clipboardTextarea).toHaveValue(mockTypedText);
   });
+
+  it('buttons should be disabled when textarea is empty', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).toBeDisabled();
+    expect(addToCanvasButton).toBeDisabled();
+  });
+
+  it('buttons should be disabled when textarea contains only whitespace', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, { target: { value: '   \n\t  ' } });
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).toBeDisabled();
+    expect(addToCanvasButton).toBeDisabled();
+  });
+
+  it('buttons should be enabled when textarea has valid content', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, { target: { value: 'Valid content' } });
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).not.toBeDisabled();
+    expect(addToCanvasButton).not.toBeDisabled();
+  });
 });

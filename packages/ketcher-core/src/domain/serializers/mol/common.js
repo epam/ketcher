@@ -87,6 +87,7 @@ const prepareForSaving = {
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
+  COP: prepareCopForSaving,
   queryComponent: prepareQueryComponentForSaving,
 };
 
@@ -101,6 +102,27 @@ function prepareSruForSaving(sgroup, mol) {
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
     ) {
       /* eslint-enable no-mixed-operators */
+      xBonds.push(bid);
+    }
+  }, sgroup);
+  if (xBonds.length !== 0 && xBonds.length !== 2) {
+    const error = new Error('Unsupported cross-bonds number');
+    error.id = sgroup.id;
+    error['error-type'] = 'cross-bond-number';
+    throw error;
+  }
+  sgroup.bonds = xBonds;
+}
+
+function prepareCopForSaving(sgroup, mol) {
+  const xBonds = [];
+  mol.bonds.forEach((bond, bid) => {
+    const a1 = mol.atoms.get(bond.begin);
+    const a2 = mol.atoms.get(bond.end);
+    if (
+      (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
+      (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
+    ) {
       xBonds.push(bid);
     }
   }, sgroup);
@@ -148,6 +170,7 @@ function prepareDatForSaving(sgroup, mol) {
 const saveToMolfile = {
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
+  COP: saveCopToMolfile,
   SUP: saveSupToMolfile,
   DAT: saveDatToMolfile,
   GEN: saveGenToMolfile,
@@ -182,6 +205,17 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 }
 
 function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+  // eslint-disable-line max-params
+  const idstr = (sgMap[sgroup.id] + '').padStart(3);
+
+  let lines = [];
+  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  return lines.join('\n');
+}
+
+function saveCopToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   // eslint-disable-line max-params
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 

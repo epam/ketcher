@@ -454,7 +454,7 @@ const GrossFormulaPart = ({ part }) => {
   return (
     <span>
       {element}
-      <sub>{count}</sub>{' '}
+      <sub>{count}</sub>
     </span>
   );
 };
@@ -1057,14 +1057,12 @@ export const MacromoleculePropertiesWindow = () => {
       <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
-          .map((atomNameWithAmount, i) => {
-            return (
-              <GrossFormulaPart
-                part={atomNameWithAmount}
-                key={i}
-              ></GrossFormulaPart>
-            );
-          })}
+          .map((atomNameWithAmount, index, array) => (
+            <span key={`${atomNameWithAmount}-${index}`}>
+              <GrossFormulaPart part={atomNameWithAmount} />
+              {index < array.length - 1 ? ' ' : ''}
+            </span>
+          ))}
       </GrossFormula>
     );
   }, [firstMacromoleculesProperties?.grossFormula]);
@@ -1094,6 +1092,7 @@ export const MacromoleculePropertiesWindow = () => {
           hasPeptidesTabError) ||
         (selectedTabIndex === PROPERTIES_TABS.RNA && hasNucleotidesTabError)
       }
+      data-testid="macromolecule-properties-window"
     >
       <WindowControlsArea>
         <WindowDragControl>

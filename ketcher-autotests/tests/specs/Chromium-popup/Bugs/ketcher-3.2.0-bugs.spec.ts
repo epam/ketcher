@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -13,14 +14,14 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  FILE_TEST_DATA,
   resetZoomLevelToDefault,
   clickOnCanvas,
   setMolecule,
   MolFileFormat,
+  readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import {
   FileType,
   verifyFileExport,
@@ -35,7 +36,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -52,24 +53,14 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 let page: Page;
 
 test.describe('Ketcher bugs in 3.2.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: All snapping related elements (and bonds) not become invisible after switching to Molecules mode and back', async () => {
@@ -714,24 +705,17 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    const fileContent = await readFileContent(
+      'RDF-V3000/molecule-with-specific-coordinates.rdf',
+    );
     await waitForSpinnerFinishedWork(
       page,
-      async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
-          { x: 10, y: 10 },
-        ),
+      async () => await setMolecule(page, fileContent, { x: 10, y: 10 }),
     );
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
-      async () =>
-        await setMolecule(
-          page,
-          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
-          { x: 10, y: 10 },
-        ),
+      async () => await setMolecule(page, fileContent, { x: 10, y: 10 }),
     );
     await takeEditorScreenshot(page);
   });

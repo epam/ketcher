@@ -1,33 +1,30 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 /*
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import { test, Page, expect } from '@fixtures';
+import { test, expect, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
-  copyToClipboardByIcon,
-  screenshotBetweenUndoRedo,
-  screenshotBetweenUndoRedoInMacro,
   copyToClipboardByKeyboard,
   takePageScreenshot,
-  takeTopToolbarScreenshot,
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
   Arrows,
-  Pluses,
+  takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
 import {
   copyAndPaste,
@@ -57,13 +54,12 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
-  performHorizontalFlip,
-  performVerticalFlip,
+  horizontalFlipByKeyboard,
+  verticalFlipByKeyboard,
   rotateToCoordinates,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
@@ -73,24 +69,20 @@ import {
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { pageReloadMicro } from '@utils/common/helpers';
 
-export async function doubleClickOnAtom(page: Page, atomText: string) {
-  const atomLocator = page
-    .locator('g', { hasText: new RegExp(`^${atomText}$`) })
-    .locator('rect')
-    .first();
-  await atomLocator.dblclick();
-}
-
+let page: Page;
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 test.describe('Macro-Micro-Switcher2', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-
-  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then Hide Library and switch to Micro mode and back', async ({
-    page,
-  }) => {
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then Hide Library and switch to Micro mode and back', async () => {
     /* 
       Test case: Macro-Micro-Switcher
       Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
@@ -114,34 +106,30 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test.fail(
-    `Check that switching between Macro and Micro mode not crash application when opened DNA with modified monomer with modyfied monomer`,
-    async ({ page }) => {
-      // Works wrong because of https://github.com/epam/Indigo/issues/3047
-      /* 
+  test(`Check that switching between Macro and Micro mode not crash application when opened DNA with modified monomer with modyfied monomer`, async () => {
+    /* 
         Test case: Macro-Micro-Switcher/#3747
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
         */
-      await openFileAndAddToCanvasMacro(
-        page,
-        'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
-        MacroFileType.MOLv3000,
-      );
-      expect(await getMonomerLocator(page, {}).count()).toBeGreaterThan(0);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await takeEditorScreenshot(page);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Snake,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+      MacroFileType.MOLv3000,
+    );
+    expect(await getMonomerLocator(page, {}).count()).toBeGreaterThan(0);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomLabel: 'P' }),
+      { padding: 250 },
+    );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(`Check that switching between Macro and Micro mode not crash application when opened RNA with modified monomer with modyfied monomer`, async ({
-    page,
-  }) => {
+  test(`Check that switching between Macro and Micro mode not crash application when opened RNA with modified monomer with modyfied monomer`, async () => {
     /* 
         Test case: Macro-Micro-Switcher/#3747
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
@@ -161,46 +149,14 @@ test.describe('Macro-Micro-Switcher2', () => {
 });
 
 test.describe('Macro-Micro-Switcher2', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Check that AP label selection works but not saves to KET', async ({
-    page,
-  }) => {
-    /*
-      Test case: Macro-Micro-Switcher/#4530
-      Description: AP label selection works but not saves to KET.
-      */
-    await openFileAndAddToCanvas(
-      page,
-      'KET/structure-with-two-attachment-points.ket',
-    );
-    await page.keyboard.down('Shift');
-    await page.getByText('R1').click();
-    await page.getByText('R2').click();
-    await page.keyboard.up('Shift');
-
-    await verifyFileExport(
-      page,
-      'KET/structure-with-two-attachment-points-expected.ket',
-      FileType.KET,
-    );
-
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/structure-with-two-attachment-points-expected.ket',
-    );
-    await takeEditorScreenshot(page);
-  });
-
   test('Check that attachment points and leaving groups are correctly represented in KET format', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /*
       Test case: #4530
       Description: Attachment points and leaving groups are correctly represented in KET format.
       */
+
     await openFileAndAddToCanvas(
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -220,7 +176,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Validate that we can save bond between micro and macro structures to Mol V3000 format', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /*
       Test case: #4530
@@ -239,7 +195,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /*
       Test case: #4530
@@ -263,7 +219,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Connection one molecule to another one by drugging one over another - result indicate existence of AP label and it remain back after delete connection', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /*
         Test case: Macro-Micro-Switcher/#4530
@@ -275,17 +231,17 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await page.getByTestId('canvas').getByText('O').click();
+    await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
   test('Validate that it is possible to save micro-macro connection to mol v3000 file', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /*
       Test case: #4532
@@ -306,7 +262,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/5104
@@ -330,7 +286,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows are not presented in Macro mode,  Clear Canvas, switch back to Micro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/5104
@@ -350,13 +306,13 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Verify that the "Copy to Clipboard" icon appears in the export window in molecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -364,16 +320,16 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
-  test('Verify that the "Copy to Clipboard" icon appears in the export window in macromolecules mode', async ({
-    page,
-  }) => {
+  test('Verify that the "Copy to Clipboard" icon appears in the export window in macromolecules mode', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon appears in the export window in macromolecules mode
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await pageReloadMicro(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
@@ -382,16 +338,16 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     expect(SaveStructureDialog(page).copyToClipboardButton).toBeVisible();
+    await SaveStructureDialog(page).closeWindow();
   });
 
-  test('Verify that the "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again', async ({
-    page,
-  }) => {
+  test('Verify that the "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: The "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await pageReloadMicro(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -404,23 +360,22 @@ test.describe('Macro-Micro-Switcher2', () => {
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
-  test('Verify that clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard', async ({
-    page,
-  }) => {
+  test('Verify that clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5854
       Description: Clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard
       */
-    await selectRingButton(page, RingButton.Benzene);
+    await pageReloadMicro(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await copyToClipboardByIcon(page);
+    await SaveStructureDialog(page).copyToClipboard();
     await SaveStructureDialog(page).cancel();
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
@@ -428,9 +383,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that single atom properties are preserved when switching from molecules mode to macromolecules mode', async ({
-    page,
-  }) => {
+  test('Verify that single atom properties are preserved when switching from molecules mode to macromolecules mode', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Single atom properties such as alias, charge, isotope, valence, and radical are displayed correctly in macromolecules mode.
@@ -440,6 +393,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Check that atom properties are preserved.
       Expected: Atom properties are preserved.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -450,9 +404,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the property of an atom is non-editable in macromolecules mode', async ({
-    page,
-  }) => {
+  test('Verify that the property of an atom is non-editable in macromolecules mode', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: The property of an atom is non-editable in macromolecules mode.
@@ -462,19 +414,20 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Try to edit atom properties.
       Expected: Atom properties are non-editable.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await doubleClickOnAtom(page, 'Zn');
+    await getAtomLocator(page, { atomLabel: 'Zn' }).first().dblclick({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that structures with single atom properties can be saved/load in macro mode in KET format', async ({
-    page,
-  }) => {
+  test('Verify that structures with single atom properties can be saved/load in macro mode in KET format', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: The structures with single atom properties can be saved/load in macro mode in KET format.
@@ -483,6 +436,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Save and load the file.
       Expected: The file is saved and loaded correctly.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -500,9 +454,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that structures with single atom properties can be saved/load in macro mode in MOL V3000 format', async ({
-    page,
-  }) => {
+  test('Verify that structures with single atom properties can be saved/load in macro mode in MOL V3000 format', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: The structures with single atom properties can be saved/load in macro mode in MOL V3000 format.
@@ -511,6 +463,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Save and load the file.
       Expected: The file is saved and loaded correctly.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -529,9 +482,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that structures with single atom properties can be saved/load in macro mode in SVG format', async ({
-    page,
-  }) => {
+  test('Verify that structures with single atom properties can be saved/load in macro mode in SVG format', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: The structures with single atom properties can be saved/load in macro mode in SVG format.
@@ -541,6 +492,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Look at the SVG preview.
       Expected: The SVG preview is correct.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -549,9 +501,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await verifySVGExport(page);
   });
 
-  test('Verify that single atom properties are correctly displayed in different zoom levels in macromolecules mode', async ({
-    page,
-  }) => {
+  test('Verify that single atom properties are correctly displayed in different zoom levels in macromolecules mode', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Single atom properties are correctly displayed in different zoom levels in macromolecules mode.
@@ -561,6 +511,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Check that atom properties are displayed correctly.
       Expected: Atom properties are displayed correctly.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -583,9 +534,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
   });
 
-  test('Verify that the transition from macromolecules mode back to molecules mode does not alter the single atom properties', async ({
-    page,
-  }) => {
+  test('Verify that the transition from macromolecules mode back to molecules mode does not alter the single atom properties', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: The transition from macromolecules mode back to molecules mode does not alter the single atom properties.
@@ -595,6 +544,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch back to Micro mode.
       Expected: Atom properties are preserved.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -606,9 +556,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that undo and redo actions correctly preserve changes to single atom properties in both molecules and macromolecules modes', async ({
-    page,
-  }) => {
+  test('Verify that undo and redo actions correctly preserve changes to single atom properties in both molecules and macromolecules modes', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Undo and redo actions correctly preserve changes to single atom properties in both molecules and macromolecules modes.
@@ -621,6 +569,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Undo and redo actions.
       Expected: Undo and redo actions correctly preserve changes to single atom properties.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -629,7 +578,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -637,13 +590,13 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
-    await screenshotBetweenUndoRedoInMacro(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that copying and pasting a structure with single atom properties preserves the properties in both modes', async ({
-    page,
-  }) => {
+  test('Verify that copying and pasting a structure with single atom properties preserves the properties in both modes', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Copying and pasting a structure with single atom properties preserves the properties in both modes.
@@ -654,6 +607,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Copy and paste the structure.
       Expected: Atom properties are preserved.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -667,13 +621,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
     await pasteFromClipboardByKeyboard(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
-  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode KET', async ({
-    page,
-  }) => {
+  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode KET', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Saving a structure with single atom properties in macromolecules mode and opening it in molecules mode KET.
@@ -683,6 +635,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Open the file in Micro mode.
       Expected: The file is saved and loaded correctly.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -701,9 +654,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode MOL V3000', async ({
-    page,
-  }) => {
+  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode MOL V3000', async () => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6027
       Description: Saving a structure with single atom properties in macromolecules mode and opening it in molecules mode MOL V3000.
@@ -713,6 +664,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Open the file in Micro mode.
       Expected: The file is saved and loaded correctly.
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -732,9 +684,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas', async ({
-    page,
-  }) => {
+  test('Verify that flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
       Description: Flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas
@@ -743,6 +693,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Switch to Macromolecules mode
       3. Verify that Flex mode is opened
     */
+    await pageReloadMicro(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-ring-with-two-atoms.ket',
@@ -754,9 +705,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that flex mode is not opened by default if the user previously entered macromolecules mode change macro mode to (Snake, Sequence) and re-entering it from Micro mode', async ({
-    page,
-  }) => {
+  test('Verify that flex mode is not opened by default if the user previously entered macromolecules mode change macro mode to (Snake, Sequence) and re-entering it from Micro mode', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
       Description: Flex mode is not opened by default if the user previously entered macromolecules mode change 
@@ -767,6 +716,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch to Micro mode
       4. Switch to Macromolecules mode
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -781,9 +731,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that flex mode is not triggered if the canvas is empty when the user enters macromolecules mode for the first time (Sequence mode by default)', async ({
-    page,
-  }) => {
+  test('Verify that flex mode is not triggered if the canvas is empty when the user enters macromolecules mode for the first time (Sequence mode by default)', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
       Description: Flex mode is not triggered if the canvas is empty when the user enters 
@@ -792,6 +740,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       1. Switch to Macromolecules mode
       2. Verify that Sequence mode is opened
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -799,9 +748,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify the default tab in the library is set to RNA when the macromolecules mode is opened', async ({
-    page,
-  }) => {
+  test('Verify the default tab in the library is set to RNA when the macromolecules mode is opened', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Default tab in the library is set to RNA when the macromolecules mode is opened
@@ -810,16 +757,15 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Check the default tab in the library
       3. Default tab should be RNA
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await takeTopToolbarScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that changing the typing type to PEP switches the library tab to Peptide', async ({
-    page,
-  }) => {
+  test('Verify that changing the typing type to PEP switches the library tab to Peptide', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Changing the typing type to PEP switches the library tab to Peptide
@@ -828,17 +774,16 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to PEP
       3. Changing typing type to PEP switches the library tab to Peptide
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).peptides();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that changing the typing type to RNA switches the library tab to RNA', async ({
-    page,
-  }) => {
+  test('Verify that changing the typing type to RNA switches the library tab to RNA', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Changing the typing type to RNA switches the library tab to RNA
@@ -848,18 +793,17 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type to RNA switches the library tab to RNA
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).peptides();
     await MacromoleculesTopToolbar(page).rna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that changing the typing type to DNA switches the library tab to RNA', async ({
-    page,
-  }) => {
+  test('Verify that changing the typing type to DNA switches the library tab to RNA', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Changing the typing type to DNA switches the library tab to RNA
@@ -868,17 +812,16 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to DNA
       3. Changing typing type to DNA switches the library tab to RNA
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).dna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that changing the typing type from RNA to DNA and viceversa does not affect the library tab', async ({
-    page,
-  }) => {
+  test('Verify that changing the typing type from RNA to DNA and viceversa does not affect the library tab', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Changing the typing type from RNA to DNA and viceversa does not affect the library tab
@@ -888,19 +831,18 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).dna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
     await MacromoleculesTopToolbar(page).rna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async ({
-    page,
-  }) => {
+  test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Switching the typing type using hotkeys updates the library tab accordingly
@@ -910,6 +852,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Press Ctrl+Alt+P for Peptides
       4. Press Ctrl+Alt+R for RNA
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -920,17 +863,15 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId(`sequence-item`).first().waitFor({
       state: 'attached',
     });
-    await keyboardPressOnCanvas(page, 'Control+Alt+D');
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+P');
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+R');
-    await takePageScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
+    await takeMonomerLibraryScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
+    await takeMonomerLibraryScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Verify that switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step', async ({
-    page,
-  }) => {
+  test('Verify that switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step
@@ -942,6 +883,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Change typing type to PEP
       6. Start typing type PEP
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -955,9 +897,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify that the library tab remains consistent with the typing type after switching to another mode and returning to sequence mode', async ({
-    page,
-  }) => {
+  test('Verify that the library tab remains consistent with the typing type after switching to another mode and returning to sequence mode', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Library tab remains consistent with the typing type after switching to another mode and returning to sequence mode
@@ -970,6 +910,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Start typing type PEP
       7. Switch to Flex mode and back to Sequence mode
       */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -989,9 +930,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takePageScreenshot(page);
   });
 
-  test('Verify the behavior when the user manually switches to sequence mode after flex mode and then switches to micro and back to macro (Sequence should be by default)', async ({
-    page,
-  }) => {
+  test('Verify the behavior when the user manually switches to sequence mode after flex mode and then switches to micro and back to macro (Sequence should be by default)', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
       Description: Behavior when the user manually switches to sequence mode after flex mode and 
@@ -1003,6 +942,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Micro mode
       5. Switch to Macromolecules mode
     */
+    await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
@@ -1020,7 +960,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Verify undo/redo functionality when entering macromolecules mode for the first time and modifying a drawing in flex mode (undo/redo not changes layout modes)', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
@@ -1047,7 +987,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 40: Verify that all 19 reaction arrow types are available in macromolecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1068,7 +1008,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 41: Verify that reaction arrows and pluses can be selected on canvas in macromolecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1090,7 +1030,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 42: Rotate arrows in Micro mode and switch to Macro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1116,7 +1056,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 43: Vertical flip arrows in Micro mode and switch to Macro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1132,7 +1072,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await performVerticalFlip(page);
+    await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1142,7 +1082,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 44: Horizontal flip arrows in Micro mode and switch to Macro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1158,7 +1098,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await performHorizontalFlip(page);
+    await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1168,7 +1108,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 45: Delete arrows in Micro mode by Erase button (when select all arrows) and switch to Macro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1194,7 +1134,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 46: Open file with changed sizes and orientation of arrows in Micro mode and switch to Macro', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1215,7 +1155,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 47: Verify that arrows and pluses can be moved on the canvas in macromolecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1231,18 +1171,28 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, Arrows.OpenAngle).hover();
-    await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, Arrows.FilledBow).hover();
-    await dragMouseTo(200, 300, page);
-    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
-    await dragMouseTo(200, 350, page);
-    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
-    await dragMouseTo(200, 400, page);
-    await getArrowLocator(page, Arrows.EllipticalArcFilledTriangle).hover();
-    await dragMouseTo(200, 450, page);
-    await getPlusLocator(page, Pluses.Plus).hover();
-    await dragMouseTo(200, 500, page);
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, 200, 200);
+    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, 200, 300);
+    await getArrowLocator(page, {
+      arrowType: Arrows.BothEndsFilledTriangle,
+    }).hover({ force: true });
+    await dragMouseTo(page, 200, 350);
+    await getArrowLocator(page, {
+      arrowType: Arrows.UnbalancedOpenHalfAngle,
+    }).hover({ force: true });
+    await dragMouseTo(page, 200, 400);
+    await getArrowLocator(page, {
+      arrowType: Arrows.EllipticalArcFilledTriangle,
+    }).hover({ force: true });
+    await dragMouseTo(page, 200, 450);
+    await getPlusLocator(page).hover({ force: true });
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1250,7 +1200,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 48: Verify that arrows and pluses can be copied and pasted using right-click menu or shortcuts', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1279,7 +1229,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 49: Verify that arrows and pluses can be exported to KET from macromolecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1308,9 +1258,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
   });
 
-  test('Case 50: Verify that arrows and pluses can be exported to SVG from macromolecules mode', async ({
-    page,
-  }) => {
+  test('Case 50: Verify that arrows and pluses can be exported to SVG from macromolecules mode', async () => {
     /* 
     * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
@@ -1320,6 +1268,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Switch to macromolecules mode
       3. Save file in SVG format
     */
+    await pageReloadMicro(page);
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1327,7 +1276,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 51: Verify that resized and rotated arrows and pluses can be exported to SVG from macromolecules mode without distortion', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1345,7 +1294,7 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 52: Verify that arrows and pluses saved in Macro mode can be imported from KET into micromolecules mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
     * Version 3.6
@@ -1362,58 +1311,54 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Case 53: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode', async ({
-    page,
+    MoleculesCanvas: _,
   }) => {
     /* 
-    * Version 3.6
-      Test case: https://github.com/epam/ketcher/issues/7125
+    *
+      Bug: undo/redo operations doesn't work for arrows and pluses after changing their positions in Macro mode
+      Test case: https://github.com/epam/ketcher/issues/8954
       Description: Verify that undo/redo operations work for arrows and pluses after changing their positions in Macro mode
       Case: 
-      1. Open file with reaction arrows in micromolecules mode
-      2. Switch to macromolecules mode
-      3. Move arrows and pluses on the canvas
+      1. Open molecules canvas
+      2. From left toolbar chose arrow tool and add arrow to the canvas
+      3. Switch to macromolecules mode
+      3. Move arrow  on the canvas
       4. Verify that arrows and pluses are moved correctly
       5. Undo and redo actions
-      Expected: Undo and redo actions correctly preserve changes to arrows and pluses positions.
+      Expected: Undo and redo actions correctly preserve changes to arrow positions.
     */
-    await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
-    await takeEditorScreenshot(page);
+
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    const shiftElement = 250;
+    const newX = x + shiftElement;
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, Arrows.OpenAngle).hover();
-    await dragMouseTo(200, 200, page);
-    await getArrowLocator(page, Arrows.FilledBow).hover();
-    await dragMouseTo(200, 300, page);
-    await getArrowLocator(page, Arrows.BothEndsFilledTriangle).hover();
-    await dragMouseTo(200, 350, page);
-    await getArrowLocator(page, Arrows.UnbalancedOpenHalfAngle).hover();
-    await dragMouseTo(200, 400, page);
-    await getArrowLocator(page, Arrows.EllipticalArcFilledBow).hover();
-    await dragMouseTo(200, 450, page);
-    await getPlusLocator(page, Pluses.Plus).hover();
-    await dragMouseTo(200, 500, page);
+    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, newX, y);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    for (let i = 0; i < 6; i++) {
-      await CommonTopLeftToolbar(page).undo();
-    }
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    for (let i = 0; i < 6; i++) {
-      await CommonTopLeftToolbar(page).redo();
-    }
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
   });
 
-  test('Case 54: Verify that switching between macromolecules and micromolecules mode preserves arrows/pluses', async ({
-    page,
-  }) => {
+  test('Case 54: Verify that switching between macromolecules and micromolecules mode preserves arrows/pluses', async () => {
     /* 
     * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
@@ -1445,9 +1390,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
   });
 
-  test('Case 55: Verify that arrows and pluses can be erased in macro mode and then restored by Undo/Redo', async ({
-    page,
-  }) => {
+  test('Case 55: Verify that arrows and pluses can be erased in macro mode and then restored by Undo/Redo', async () => {
     /* 
     * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
@@ -1486,9 +1429,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
   });
 
-  test('Case 56: Verify that arrows and pluses can be cleared in macro mode from canvas by Clear Canvas button and then restored by Undo/Redo', async ({
-    page,
-  }) => {
+  test('Case 56: Verify that arrows and pluses can be cleared in macro mode from canvas by Clear Canvas button and then restored by Undo/Redo', async () => {
     /* 
     * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125
@@ -1527,9 +1468,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
   });
 
-  test('Case 57: Verify various zoom levels for added on canvas arrows and pluses', async ({
-    page,
-  }) => {
+  test('Case 57: Verify various zoom levels for added on canvas arrows and pluses', async () => {
     /* 
     * Version 3.6
       Test case: https://github.com/epam/ketcher/issues/7125

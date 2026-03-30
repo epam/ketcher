@@ -254,7 +254,11 @@ export function getAttachmentPointLabelWithBinaryShift(
 }
 
 export function isSingleRGroupAttachmentPoint(rGroupLabel: number) {
-  return rGroupLabel > 0 && (rGroupLabel & (rGroupLabel - 1)) === 0;
+  if (rGroupLabel === 0) return false;
+  // Convert to unsigned 32-bit integer to handle R32+ which become negative
+  // due to sign bit in JavaScript's 32-bit signed integer arithmetic
+  const unsigned = rGroupLabel >>> 0;
+  return (unsigned & (unsigned - 1)) === 0;
 }
 
 export function getAttachmentPointLabel(attachmentPointNumber: number) {

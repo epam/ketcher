@@ -16,6 +16,10 @@ export const Base = createMonomerGroup(MonomerType.Base, {
     alias: 'Base',
     testId: 'Base___Base Test monomer',
   },
+  Base2: {
+    alias: 'Base2',
+    testId: 'Base2___Base2 Test monomer',
+  },
   NoBase: {
     alias: 'No Base On The Canvas',
     testId: 'No Such Base In The Library',
@@ -108,6 +112,17 @@ export const Base = createMonomerGroup(MonomerType.Base, {
   h456UR: {
     alias: 'h456UR',
     testId: 'h456UR___(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+  },
+  // for library update test, doesn't exist initially
+  Base1: { alias: 'Base1', testId: 'Base1___Base1' },
+  _Base1: { alias: '_Base1', testId: '_Base1____Base1' },
+  _Base2: { alias: '_Base2', testId: '_Base2____Base2' },
+  _Base3: { alias: '_Base3', testId: '_Base3____Base3' },
+  BaseX: { alias: 'BaseX', testId: 'BaseX___BaseX' },
+  Aargh: { alias: 'Aargh', testId: 'Aargh___Aargh' },
+  DefaultBaseRnaComponent: {
+    alias: 'PresetB',
+    testId: 'PresetB___PresetB',
   },
 });
 

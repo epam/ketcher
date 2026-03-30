@@ -265,7 +265,7 @@
         <graphic id="93" BoundingBox="236.463882 151.261353 349.645691 58.329521" Center3D="293.054779 104.795441 0" MajorAxisEnd3D="349.645691 104.795441 0" MinorAxisEnd3D="293.054779 151.261353 0" GraphicType="Oval"/>
         <graphic id="96" BoundingBox="333.282043 75.579544 248.736588 132.170441" GraphicType="Line"/>
         <graphic id="99" BoundingBox="250.100235 133.534073 335.327515 73.534088" GraphicType="Rectangle"/>
-        <t id="102" p="123.813385 38.537857" InterpretChemically="no">
+        <t id="102" p="123.813385 38.537861" InterpretChemically="no">
             <s font="4" size="26" face="0">Test case</s>
         </t>
         <t id="105" p="364.577484 134.541260" InterpretChemically="no">

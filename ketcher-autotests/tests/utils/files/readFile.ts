@@ -7,8 +7,8 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacroFileType,
-  delay,
   StructureFormat,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { MolfileFormat } from 'ketcher-core';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -21,6 +21,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -42,36 +43,6 @@ export async function openFile(page: Page, filename: string) {
   await OpenStructureDialog(page).openFromFile();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
-}
-
-export async function selectOptionInDropdown(filename: string, page: Page) {
-  const options = {
-    mol: 'MDL Molfile V3000',
-    fasta: 'FASTA',
-    seq: 'Sequence',
-  };
-  const extention = filename.split('.')[1] as keyof typeof options;
-  const optionText = options[extention];
-  const contentTypeSelector =
-    PasteFromClipboardDialog(page).contentTypeSelector;
-  const selectorExists = await contentTypeSelector.isVisible();
-
-  if (
-    selectorExists &&
-    extention &&
-    optionText &&
-    extention !== ('ket' as string)
-  ) {
-    const selectorText = (await contentTypeSelector.innerText()).replace(
-      /(\r\n|\n|\r)/gm,
-      '',
-    );
-    await contentTypeSelector.getByText(selectorText).click();
-    const option = page.getByRole('option');
-    await option.getByText(optionText).click();
-    // to stabilize the test
-    await contentTypeSelector.getByRole('combobox').allInnerTexts();
-  }
 }
 
 /**
@@ -155,7 +126,7 @@ export async function openImageAndAddToCanvas(
   const debugDelay = 0.15;
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await delay(debugDelay);
+  await page.waitForTimeout(debugDelay * 1000);
   await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
@@ -167,6 +138,23 @@ export async function openImageAndAddToCanvas(
 
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
+}
+
+export async function openPPTXFileAndAddToCanvasAsNewProject(
+  page: Page,
+  filePath: string,
+  numberOf: {
+    Structure: number;
+  } = { Structure: 1 },
+) {
+  await CommonTopLeftToolbar(page).openFile();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await openFile(page, filePath);
+  });
+  if (numberOf.Structure !== 1) {
+    await OpenPPTXFileDialog(page).selectStructure(numberOf);
+  }
+  await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
 }
 
 export async function filteredFile(
@@ -210,7 +198,7 @@ async function setupStructureFormatComboboxes(
   page: Page,
   structureFormat: StructureFormat,
 ) {
-  let structureType: MacroFileType = MacroFileType.KetFormat;
+  let structureType;
   let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
   let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
 
@@ -331,28 +319,6 @@ export async function receiveMolFileComparisonData(
   return { molFileExpected, molFile };
 }
 
-export async function receiveRxnFileComparisonData(
-  page: Page,
-  metaDataIndexes: number[],
-  expectedRxnFileName: string,
-  rxnFileType?: MolfileFormat,
-) {
-  const rxnFileExpected = fs
-    .readFileSync(expectedRxnFileName, 'utf8')
-    .split('\n')
-    .filter((_str, index) => !metaDataIndexes.includes(index));
-  const rxnFile = (
-    await page.evaluate(
-      (fileType) => window.ketcher.getRxn(fileType),
-      rxnFileType,
-    )
-  )
-    .split('\n')
-    .filter((_str, index) => !metaDataIndexes.includes(index));
-
-  return { rxnFileExpected, rxnFile };
-}
-
 // The function is used to save the structure that is placed in the center
 // of canvas when opened. So when comparing files, the coordinates
 // always match and there is no difference between the results when comparing.
@@ -365,21 +331,6 @@ export async function saveToFile(filename: string, data: string) {
     });
     return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
-}
-
-export async function openPasteFromClipboard(
-  page: Page,
-  fillStructure: string,
-) {
-  const openStructureTextarea =
-    PasteFromClipboardDialog(page).openStructureTextarea;
-
-  await CommonTopLeftToolbar(page).openFile();
-  await OpenStructureDialog(page).pasteFromClipboard();
-  await openStructureTextarea.fill(fillStructure);
-  // The 'Add to Canvas' button step is removed.
-  // If you need to use this function in another context and include the button press, you can do so separately.
-  // await waitForLoad(page);
 }
 
 export async function copyContentToClipboard(page: Page, content: string) {

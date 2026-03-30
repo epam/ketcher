@@ -25,7 +25,9 @@ export function fileOpener(server) {
         const fso = new ActiveXObject('Scripting.FileSystemObject'); // eslint-disable-line no-undef
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
       } catch (e) {
-        reject(e);
+        reject(
+          e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
+        );
       }
     } else if (server) {
       resolve(
@@ -70,7 +72,7 @@ function throughFileReader(file) {
           content = rd.result.split(',').at(-1);
           break;
         case PPTX:
-          cfb = CFB.read(e.target.result, { type: 'binary' });
+          cfb = CFB.read(new Uint8Array(e.target.result), { type: 'array' });
           structures = [];
           cfb.FullPaths.forEach((path) => {
             if (path.endsWith('.bin')) {
@@ -92,15 +94,15 @@ function throughFileReader(file) {
       resolve(content);
     };
 
-    rd.onerror = (event) => {
-      reject(event);
+    rd.onerror = () => {
+      reject(new Error(`Failed to read file: ${file.name}`));
     };
     switch (fileType) {
       case CDX:
         rd.readAsDataURL(file);
         break;
       case PPTX:
-        rd.readAsBinaryString(file);
+        rd.readAsArrayBuffer(file);
         break;
       default:
         rd.readAsText(file, 'UTF-8');

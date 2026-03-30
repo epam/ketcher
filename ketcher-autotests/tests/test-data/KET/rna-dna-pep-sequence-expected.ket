@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -512,6 +513,7 @@
         "fullName": "Phosphate",
         "alias": "P",
         "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -909,6 +911,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "P"
     },

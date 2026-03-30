@@ -8,11 +8,10 @@ import {
   SGroupPropertiesSettings,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type SGroupPropertiesLocators = {
-  sGroupDialog: Locator;
+  window: Locator;
   closeWindowButton: Locator;
   typeDropdown: Locator;
   contextDropdown: Locator;
@@ -32,7 +31,7 @@ type SGroupPropertiesLocators = {
 
 export const SGroupPropertiesDialog = (page: Page) => {
   const locators: SGroupPropertiesLocators = {
-    sGroupDialog: page.getByTestId('sgroup-dialog'),
+    window: page.getByTestId('sgroup-dialog').getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),
     typeDropdown: page.getByTestId('s-group-type-input-span'),
     contextDropdown: page.getByTestId('context-input-span'),
@@ -53,7 +52,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
   return {
     ...locators,
 
-    async close() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
@@ -73,7 +72,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.typeDropdown.waitFor({ state: 'visible' });
       await locators.typeDropdown.click();
       try {
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await typeToSelect.waitFor({ state: 'visible' });
         await typeToSelect.click();
         await typeToSelect.waitFor({ state: 'hidden' });
@@ -82,7 +81,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
         // one more attempt to click
         if (!(await typeToSelect.isVisible())) {
           await locators.typeDropdown.click();
-          await delay(0.1);
+          await page.waitForTimeout(0.1 * 1000);
           await typeToSelect.waitFor({ state: 'visible' });
         }
         await typeToSelect.click();

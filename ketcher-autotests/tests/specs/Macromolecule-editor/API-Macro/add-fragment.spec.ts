@@ -26,7 +26,7 @@ async function shiftStructure(page: Page) {
   await selectRectangleArea(page, startX, startY, endX, endY);
   const alanine = getMonomerLocator(page, Peptide.A).first();
   await alanine.hover();
-  await dragMouseTo(toShiftToCoordinates, toShiftToCoordinates, page);
+  await dragMouseTo(page, toShiftToCoordinates, toShiftToCoordinates);
 }
 
 test.describe('addFragment', () => {

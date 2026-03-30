@@ -4203,7 +4203,7 @@
         ]
       }
     ],
-    "class": "Sugar",
+    "class": "Phosphate",
     "classHELM": "RNA",
     "id": "3SS6___Thiol Modifier 6 S-S (3' end)",
     "fullName": "Thiol Modifier 6 S-S (3' end)",
@@ -4229,7 +4229,7 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "R"
+    "naturalAnalogShort": "P"
   },
   "monomerTemplate-4sR___4-Thio-Ribose": {
     "type": "monomerTemplate",
@@ -9679,7 +9679,7 @@
           1,
           7
         ],
-        "stereo": 1
+        "stereo": 6
       },
       {
         "type": 1,
@@ -220203,7 +220203,7 @@
           3,
           19
         ],
-        "stereo": 1
+        "stereo": 6
       },
       {
         "type": 2,
@@ -230528,7 +230528,7 @@
           3,
           21
         ],
-        "stereo": 1
+        "stereo": 6
       },
       {
         "type": 1,

@@ -29,6 +29,7 @@ import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { UpdateSequenceDialog } from '@tests/pages/macromolecules/library/UpdateSequenceDialog';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -115,7 +116,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await Library(page).rnaBuilder.save();
     // Click 'Yes' in modal
-    await page.getByText('Yes').click();
+    await UpdateSequenceDialog(page).yes();
     await takePageScreenshot(page);
   });
 
@@ -153,7 +154,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await Library(page).rnaBuilder.save();
     // should see modal to apply or cancel modification
     await takeEditorScreenshot(page);
-    await page.getByText('Yes').click();
+    await UpdateSequenceDialog(page).yes();
     // should see updated nucleotides in chain
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -165,9 +166,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
       symbolAlias: 'T',
       nodeIndexOverall: 1,
     }).first();
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await symbolT.click();
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
     // should see the whole chain selected
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -322,7 +323,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await takeRNABuilderScreenshot(page);
     await Library(page).selectMonomer(Phosphate.sP_);
     await Library(page).rnaBuilder.save();
-    await page.getByText('Yes').click();
+    await UpdateSequenceDialog(page).yes();
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);

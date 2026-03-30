@@ -157,7 +157,14 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
-    const attachmentPoints = sg.cloneAttachmentPoints(aidMap);
+    let attachmentPoints;
+    try {
+      attachmentPoints = sg.cloneAttachmentPoints(aidMap);
+    } catch (e) {
+      // For macromolecules, attachment points may reference atoms not in aidMap
+      // This is expected behavior, use empty array instead
+      attachmentPoints = [];
+    }
     if (
       sg.isNotContractible(pstruct) &&
       !(sg instanceof MonomerMicromolecule)
@@ -191,6 +198,8 @@ export function fromPaste(
     const operation = new RxnArrowAdd(
       rxnArrow.pos.map((p) => p.add(offset)),
       rxnArrow.mode,
+      undefined,
+      rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
     items.rxnArrows.push(operation.data.id);

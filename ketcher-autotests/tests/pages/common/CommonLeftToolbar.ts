@@ -6,7 +6,6 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
-import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   handToolButton: Locator;
@@ -50,7 +49,7 @@ export const CommonLeftToolbar = (page: Page) => {
       await locators.handToolButton.click();
     },
 
-    async selectAreaSelectionTool(
+    async areaSelectionTool(
       toolType: SelectionToolType = SelectionToolType.Rectangle,
     ) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
@@ -73,7 +72,7 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       try {
-        await delay(0.2);
+        await page.waitForTimeout(200);
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',
@@ -90,7 +89,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async selectBondTool(bondType: MacroBondType | MicroBondType) {
+    async bondTool(bondType: MacroBondType | MicroBondType) {
       let attempts = 0;
       const maxAttempts = 5;
       const bondTypeButton = page

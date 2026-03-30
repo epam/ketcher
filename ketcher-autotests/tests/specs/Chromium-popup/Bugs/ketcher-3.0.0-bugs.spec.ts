@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -7,29 +8,24 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  addMonomerToCenterOfCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  pressButton,
-  moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
   setMolecule,
-  FILE_TEST_DATA,
   moveMouseAway,
   MolFileFormat,
   SequenceFileFormat,
+  readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -42,7 +38,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -53,8 +49,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -68,7 +64,9 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 let page: Page;
 
@@ -109,23 +107,14 @@ async function interactWithMicroMolecule(
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
@@ -176,13 +165,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Chromium-popup/switching-from-sequence-mode-to-snake-mode-and-back.ket',
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await takePageScreenshot(page, { hideMonomerPreview: true });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {
@@ -200,7 +192,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
   });
@@ -238,7 +230,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     }).click();
     await page.keyboard.up('Shift');
     await Library(page).selectMonomer(Peptide.C);
-    await pressButton(page, 'Yes');
+    await ConfirmYourActionDialog(page).yes();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -263,7 +255,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const baseLocator = getMonomerLocator(page, Base.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -322,7 +314,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await addMonomerToCenterOfCanvas(page, Preset.A);
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -343,7 +340,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 6. Take a screenshot to validate the cursor blinks in the right place
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await addMonomerToCenterOfCanvas(page, Preset.T);
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -381,7 +382,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await interactWithMicroMolecule(page, 'H3C', 'hover', 1);
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -400,12 +401,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'O');
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'N');
     await takeEditorScreenshot(page);
   });
@@ -693,9 +698,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('1Nal'));
+    await expandMonomers(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
-    const atom = await getAtomById(page, 35);
+    const atom = getAtomLocator(page, { atomId: 35 });
     await collapseMonomers(page, atom);
     await takeEditorScreenshot(page);
   });
@@ -835,9 +840,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.MOLv3000,
     );
     await takeEditorScreenshot(page);
+    const fileContent = await readFileContent('Molfiles-V3000/macromol.mol');
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, FILE_TEST_DATA.macromol),
+      async () => await setMolecule(page, fileContent),
     );
     await takeEditorScreenshot(page);
   });
@@ -876,7 +882,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Create antisense for that chain
      * 4. Take a screenshot
      */
-    // test.slow();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -935,7 +940,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await Library(page).switchToRNATab();
-    await expect(page.getByTestId(Preset.MOE_A_P.testId)).toBeInViewport();
+    await expect(
+      Library(page).getMonomerLibraryCardLocator(Preset.MOE_A_P),
+    ).toBeInViewport();
     await Library(page).selectMonomer(Preset.MOE_A_P);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(
@@ -957,7 +964,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Bug: https://github.com/epam/ketcher/issues/6557
      * Description: Modified phosphates not shift away from main structure during expand in Micro Mode
      * Scenario:
-     * 1. Open Ketcher in Macro mode
+     * 1. Open Ketcher in Micro mode
      * 2. Select all structure
      * 3. Expand structure
      * 4. Take a screenshot
@@ -968,7 +975,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/Bugs/modified-phosphates.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await expandMonomers(page, page.getByText('mph').first());
+    await expandMonomers(
+      page,
+      getAbbreviationLocator(page, { name: 'mph' }).first(),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -997,7 +1007,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .filter({ has: page.locator(':visible') })
       .getByText('A', { exact: true });
     await expandMonomer(page, baseA);
-    await selectRingButton(page, RingButton.Cyclohexane);
+    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });

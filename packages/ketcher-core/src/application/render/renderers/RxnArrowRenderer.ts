@@ -252,7 +252,8 @@ export class RxnArrowRenderer extends BaseRenderer {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
-        .attr('data-testid', this.arrow.type + '-arrow')
+        .attr('data-testid', 'rxn-arrow')
+        .attr('data-arrowtype', this.arrow.type + '-arrow')
         .attr('fill', 'none')
         .attr('stroke', '#000')
         .attr('stroke-width', ARROW_STROKE_WIDTH)
@@ -349,5 +350,7 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.removeSelection();
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

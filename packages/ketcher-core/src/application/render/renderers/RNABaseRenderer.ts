@@ -1,7 +1,10 @@
 import { Selection } from 'd3';
 import { RNABase } from 'domain/entities/RNABase';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import {
+  MONOMER_SYMBOLS_IDS,
+  UNRESOLVED_MONOMER_COLOR,
+} from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
 const RNABASE_HOVERED_ELEMENT_ID =
@@ -23,10 +26,16 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return '#fff';
+    }
     return this.monomer.isModification ? '#fff' : '#333333';
   }
 
   protected get modificationConfig() {
+    if (this.monomer.monomerItem.props.unresolved) {
+      return undefined;
+    }
     return { backgroundId: '#rna-base-modified-background' };
   }
 
@@ -34,11 +43,15 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
+    const isUnresolved = this.monomer.monomerItem.props.unresolved;
+    const color = isUnresolved
+      ? UNRESOLVED_MONOMER_COLOR
+      : this.getMonomerColor(theme);
     return rootElement
       .append('use')
       .data([this])
       .attr('href', RNABASE_SYMBOL_ELEMENT_ID)
-      .attr('fill', this.getMonomerColor(theme));
+      .attr('fill', color);
   }
 
   show(theme) {

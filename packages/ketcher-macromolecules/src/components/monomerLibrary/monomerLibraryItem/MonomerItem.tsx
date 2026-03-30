@@ -17,6 +17,7 @@ import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
   AutochainIcon,
   AutochainIconWrapper,
@@ -31,7 +32,10 @@ import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import { selectEditor, selectIsSequenceMode } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
-import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
+import {
+  cardMouseOverHandler,
+  getAutochainErrorMessage,
+} from 'components/monomerLibrary/monomerLibraryItem/shared';
 
 export const AUTOCHAIN_ELEMENT_CLASSNAME = 'autochain';
 
@@ -76,28 +80,24 @@ const MonomerItem = ({
     [dispatch, item],
   );
 
-  const handleFavoriteKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        event.stopPropagation();
-        dispatch(toggleMonomerFavorites(item));
-      }
-    },
-    [dispatch, item],
-  );
-
   const onAutochainIconClick = useCallback(
     (event) => {
       event.stopPropagation();
 
-      if (autochainErrorMessage) {
-        return;
+      // Validate before executing autochain to ensure validation runs even on consecutive clicks
+      if (editor) {
+        const errorMessage = getAutochainErrorMessage(editor, item);
+        setAutochainErrorMessage(errorMessage);
+
+        // If there's an error, don't proceed with autochain
+        if (errorMessage) {
+          return;
+        }
       }
 
       editor?.events.autochain.dispatch(item);
     },
-    [editor, autochainErrorMessage, item],
+    [editor, item],
   );
 
   const onMouseOver = useCallback(
@@ -107,12 +107,18 @@ const MonomerItem = ({
   );
 
   const onAutochainIconMouseOver = useCallback(() => {
-    if (autochainErrorMessage) {
-      return;
+    // Re-validate on hover to ensure tooltip shows current validation state
+    if (editor) {
+      const errorMessage = getAutochainErrorMessage(editor, item);
+      setAutochainErrorMessage(errorMessage);
+
+      if (errorMessage) {
+        return;
+      }
     }
 
     editor?.events.previewAutochain.dispatch(item);
-  }, [autochainErrorMessage, editor, item]);
+  }, [editor, item]);
 
   const onAutochainIconMouseOut = useCallback(() => {
     editor?.events.removeAutochainPreview.dispatch(item);
@@ -141,6 +147,21 @@ const MonomerItem = ({
       }}
       {...(!isDisabled ? { onClick } : {})}
       ref={cardRef}
+      data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
+      data-idtalias-modifications-endpoint5={
+        monomerItem?.props.idtAliases?.modifications?.endpoint5 ?? undefined
+      }
+      data-idtalias-modifications-endpoint3={
+        monomerItem?.props.idtAliases?.modifications?.endpoint3 ?? undefined
+      }
+      data-idtalias-modifications-internal={
+        monomerItem?.props.idtAliases?.modifications?.internal ?? undefined
+      }
+      data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
+      data-helm={monomerItem?.props.aliasHELM ?? undefined}
+      data-modificationtype={getModificationTypeAttribute(
+        monomerItem?.props.modificationTypes,
+      )}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
@@ -160,16 +181,14 @@ const MonomerItem = ({
               </AutochainIconWrapper>
             </Tooltip>
           )}
-          <div
+          <button
+            type="button"
             onClick={addFavorite}
-            onKeyDown={handleFavoriteKeyDown}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            role="button"
-            tabIndex={0}
             aria-label="Toggle favorite"
           >
             {FavoriteStarSymbol}
-          </div>
+          </button>
         </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

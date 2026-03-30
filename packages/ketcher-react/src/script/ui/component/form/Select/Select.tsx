@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -32,7 +33,7 @@ interface Props {
   options: Array<Option>;
   onChange: (value: string) => void;
   className?: string;
-  value?: string;
+  value?: string | number;
   multiple?: boolean;
   disabled?: boolean;
   formName?: string;
@@ -60,6 +61,10 @@ const Select = ({
   error,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
+  const isFullscreen = !!document.fullscreenElement;
+  const portalContainer = isFullscreen
+    ? document.querySelector('#root')
+    : undefined;
 
   useEffect(() => {
     let option;
@@ -78,10 +83,21 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
+      renderValue={(selected: string) =>
+        (currentValue?.children ??
+          currentValue?.label ??
+          placeholder ??
+          selected ??
+          '') as any
+      }
+      displayEmpty
       multiple={multiple}
       disabled={disabled}
       placeholder={placeholder}
-      MenuProps={{ className: styles.dropdownList }}
+      MenuProps={{
+        container: portalContainer,
+        className: styles.dropdownList,
+      }}
       IconComponent={ChevronIcon}
       data-testid={testId}
       error={error}

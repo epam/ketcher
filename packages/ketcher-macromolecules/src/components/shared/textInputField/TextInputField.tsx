@@ -73,18 +73,16 @@ export const TextInputField = ({
   };
 
   return (
-    <>
-      <Label htmlFor={id} className={className}>
-        {label && <span>{label}</span>}
-        <Input
-          type={type || 'text'}
-          id={id}
-          value={value}
-          className={inputClassName}
-          onChange={handleChange}
-          {...rest}
-        />
-      </Label>
-    </>
+    <Label htmlFor={id} className={className}>
+      {label && <span>{label}</span>}
+      <Input
+        type={type || 'text'}
+        id={id}
+        value={value}
+        className={inputClassName}
+        onChange={handleChange}
+        {...rest}
+      />
+    </Label>
   );
 };

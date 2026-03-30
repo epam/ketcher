@@ -1,5 +1,5 @@
 import { ZoomTransform } from 'd3';
-import { memo, ReactElement, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { LayoutMode } from 'ketcher-core';
 
 import styles from './RulerArea.module.less';
@@ -69,13 +69,13 @@ const RulerScale = ({
   }, [layoutMode, transform]);
 
   const svgChildren = useMemo(() => {
-    const children: ReactElement[] = [];
+    const children: JSX.Element[] = [];
 
     positions.forEach((position, i) => {
       if (layoutMode === 'sequence-layout-mode') {
         children.push(
           <line
-            key={`ruler-mark-${i}`}
+            key={`ruler-mark-${position}`}
             x1={transform.applyX(position)}
             y1={14}
             x2={transform.applyX(position)}
@@ -90,7 +90,7 @@ const RulerScale = ({
           if (isMultipleOfFive) {
             children.push(
               <text
-                key={`ruler-label-${i}`}
+                key={`ruler-label-${position}`}
                 x={transform.applyX(position)}
                 y={18}
                 fontSize={10}
@@ -105,7 +105,7 @@ const RulerScale = ({
           } else {
             children.push(
               <line
-                key={`ruler-mark-${i}`}
+                key={`ruler-mark-${position}`}
                 x1={transform.applyX(position)}
                 y1={14}
                 x2={transform.applyX(position)}
@@ -118,7 +118,7 @@ const RulerScale = ({
         } else {
           children.push(
             <text
-              key={`ruler-label-${i}`}
+              key={`ruler-label-${position}`}
               x={transform.applyX(position)}
               y={18}
               fontSize={10}
@@ -133,7 +133,8 @@ const RulerScale = ({
         }
       }
 
-      if (i === positions.length - 1) {
+      const nextPosition = positions[i + 1];
+      if (nextPosition === undefined) {
         return;
       }
 
@@ -144,10 +145,10 @@ const RulerScale = ({
 
       children.push(
         <line
-          key={`ruler-fill-${i}`}
+          key={`ruler-fill-${position}-${nextPosition}`}
           x1={transform.applyX(position + 10)}
           y1={18}
-          x2={transform.applyX(positions[i + 1] - 10)}
+          x2={transform.applyX(nextPosition - 10)}
           y2={18}
           stroke="#B4B9D6"
           strokeDasharray="2,2"
@@ -161,7 +162,7 @@ const RulerScale = ({
 
   return (
     <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale">
-      <>{svgChildren}</>
+      {svgChildren}
     </svg>
   );
 };

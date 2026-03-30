@@ -14,8 +14,9 @@ export const Row = styled.div({
 });
 
 export const StyledDropdown = styled(DropDown)(({ theme }) => ({
-  width: 'calc(50% - 6px)',
+  width: '230px',
   height: '28px',
+  flexShrink: 0,
 
   '& .MuiOutlinedInput-root:hover:not(.Mui-disabled)': {
     border: `1px solid ${theme.ketcher.color.input.border.hover}`,

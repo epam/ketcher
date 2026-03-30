@@ -7,8 +7,6 @@ import {
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { editorEvents } from 'application/editor/editorEvents';
-import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
@@ -24,7 +22,6 @@ import { SettingsManager } from 'utilities';
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
-  private readonly editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -46,11 +43,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private readonly editingNodeIndexOverall: number,
     public readonly monomerSize: { width: number; height: number },
     public readonly scaledMonomerPosition: Vec2,
-    private readonly previousRowsWithAntisense = 0,
     public readonly twoStrandedNode: ITwoStrandedChainItem,
+    private readonly previousRowsWithAntisense = 0,
   ) {
     super(node.monomer);
-    this.editorEvents = editorEvents;
   }
 
   abstract get symbolToDisplay(): string;
@@ -86,8 +82,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
-  moveSelection(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
+
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   public get currentChain() {
     return this.chain;
@@ -146,6 +147,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'sequence-item')
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
@@ -157,8 +159,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             acc +
             monomer.covalentBonds.filter(
               (bond) =>
-                bond instanceof PolymerBond &&
-                (bond as PolymerBond).isSideChainConnection,
+                bond instanceof PolymerBond && bond.isSideChainConnection,
             ).length,
           0,
         ),
@@ -201,6 +202,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
+      .attr('data-element-type', 'background')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -216,7 +218,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendSpacerElement() {
     const spacerGroupElement = this.rootElement
       ?.append('g')
-      .attr('transform', 'translate(14, -16)');
+      .attr('transform', 'translate(14, -16)')
+      .attr('data-element-type', 'spacer');
 
     spacerGroupElement
       ?.append('rect')
@@ -398,7 +401,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
@@ -688,6 +692,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
       )
       .attr('style', 'user-select: none;')
+      .attr('data-element-type', 'text')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -695,7 +700,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           : 'default',
       );
 
-    this.appendEvents();
     this.redrawCounter();
 
     this.drawSelection();
@@ -770,19 +774,39 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {}
-  public redrawEnumeration() {}
-  public redrawAttachmentPoints() {}
-  public redrawAttachmentPointsCoordinates() {}
+  public setEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
   public get enumeration() {
     return null;
   }
 
-  public redrawChainBeginning() {}
-  public hoverAttachmentPoint(): void {}
-  public updateAttachmentPoints() {}
+  public redrawChainBeginning() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 
-  private drawBackgroundElementHover() {
+  public hoverAttachmentPoint(): void {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public updateAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
@@ -797,49 +821,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
   }
 
-  private removeBackgroundElementHover() {
+  public removeBackgroundElementHover() {
     this.backgroundElement?.attr('fill', 'none');
 
     if (this.node.modified) {
       this.drawModification();
     }
-  }
-
-  private appendEvents() {
-    assert(this.textElement);
-
-    this.textElement.on('mouseover', (event) => {
-      this.drawBackgroundElementHover();
-      this.editorEvents.mouseOverSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mousemove', (event) => {
-      this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mouseleave', (event) => {
-      this.removeBackgroundElementHover();
-      this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
-    });
-    this.spacerElement?.on('mousedown', (event) => {
-      this.editorEvents.mousedownBetweenSequenceItems.dispatch(event);
-    });
-    this.backgroundElement?.on('click', (event) => {
-      this.editorEvents.clickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mousedown', (event) => {
-      this.editorEvents.mouseDownOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.textElement.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mouseover', () => {
-      this.drawBackgroundElementHover();
-    });
-    this.backgroundElement?.on('mouseleave', () => {
-      this.removeBackgroundElementHover();
-    });
   }
 
   private isSubChainNode(node: SequenceNode): node is SubChainNode {

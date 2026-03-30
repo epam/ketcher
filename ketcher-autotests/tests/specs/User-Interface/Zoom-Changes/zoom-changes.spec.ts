@@ -6,8 +6,8 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   waitForPageInit,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
   clickOnCanvas,
@@ -50,19 +50,19 @@ test.describe('Zoom changes', () => {
     */
     const numberOfMouseWheelScroll = 2;
 
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
       await page.mouse.wheel(0, randomNegativeNumber);
     }
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
 
     await checkZoomLevel(page, '120%');
     await takeEditorScreenshot(page);
@@ -77,19 +77,19 @@ test.describe('Zoom changes', () => {
     */
     const numberOfMouseWheelScroll = 2;
 
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
       await page.mouse.wheel(0, randomPositiveNumber);
     }
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
 
     await checkZoomLevel(page, '80%');
     await takeEditorScreenshot(page);
@@ -101,12 +101,12 @@ test.describe('Zoom changes', () => {
     */
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await expandAbbreviation(
       page,
@@ -126,12 +126,12 @@ test.describe('Zoom changes', () => {
     */
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomOut = CommonTopRightToolbar(page).zoomOutButton;
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await expandAbbreviation(
       page,
@@ -150,13 +150,13 @@ test.describe('Zoom changes', () => {
     */
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
     await zoomSelector.click();
     await zoomInButton.click();
@@ -164,12 +164,10 @@ test.describe('Zoom changes', () => {
     await zoomSelector.click({ force: true, delay: 100 });
     await zoomInButton.waitFor({ state: 'detached' });
 
-    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    // await CommonLeftToolbar(page).selectAreaSelectionTool();
     await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
@@ -181,14 +179,14 @@ test.describe('Zoom changes', () => {
       */
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomInByKeyboard(page);
+    await zoomInByKeyboard(page);
     await zoomSelector.click();
     await zoomInButton.click();
     await checkZoomLevel(page, '120%');
@@ -203,9 +201,9 @@ test.describe('Zoom changes', () => {
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
 
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
     await zoomSelector.click();
     await zoomOutButton.click();
     await checkZoomLevel(page, '80%');

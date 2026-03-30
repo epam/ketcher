@@ -3,9 +3,9 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  FILE_TEST_DATA,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
+  readFileContent,
 } from '@utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -108,11 +108,10 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4722
       Description: Reagent 'NH3' displays above reaction arrow
       */
-    // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
+    const fileContent = await readFileContent(
+      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
     );
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

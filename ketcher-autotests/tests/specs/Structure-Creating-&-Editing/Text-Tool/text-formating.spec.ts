@@ -149,13 +149,11 @@ test.describe('Text tools test cases', () => {
   test(' Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
     // Verify if user is able to copy and paste the created text objects
-    const x = 250;
-    const y = 300;
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('TEXT001');
     await TextEditorDialog(page).apply();
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 250, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

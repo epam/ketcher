@@ -3,7 +3,6 @@
 import { expect, Page, test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   openFileAndAddToCanvas,
@@ -16,6 +15,7 @@ import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 test.describe('Calculated Values Tools', () => {
@@ -26,6 +26,14 @@ test.describe('Calculated Values Tools', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await ErrorMessageDialog(page).isVisible()) {
+      await ErrorMessageDialog(page).close();
+    }
+    if (await CalculatedValuesDialog(page).window.isVisible()) {
+      await CalculatedValuesDialog(page).close();
+    }
+  });
 
   test('Calculate selected structure', async () => {
     /*
@@ -150,10 +158,10 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C2H4] > [C8H10]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.114]+[28.054] > [106.168]',
+      '[78.11]+[28.05] > [106.17]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '[78.047]+[28.031] > [106.078]',
+      '[78.05]+[28.03] > [106.08]',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -187,7 +195,7 @@ test.describe('Calculated Values Tools', () => {
     changes according to the selected values in the fields for the decimal places count.
     */
 
-    await selectRingButton(page, RingButton.Benzene);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
 
@@ -227,21 +235,18 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculated values dialog appears, the exact mass of
     the chosen fragment (C9H9O2) is 149.060
     */
-
-    const xDelta = 300;
-    const yDelta = 600;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/ritalin.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y - yDelta, page);
+    await dragMouseTo(page, x + 300, y - 600);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.169',
+      '149.2',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.060',
+      '149.1',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -333,12 +338,9 @@ test.describe('Calculated Values Tools', () => {
     Description: If the R-group label is absent in the selected object the calculation is represented
     in the common way (as simple structure).
     */
-
-    const xDelta = 200;
-    const yDelta = 200;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-label.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(page, x + 200, y + 200);
     await IndigoFunctionsToolbar(page).calculatedValues();
     /*
     TODO:It is necessary to ensure the correctness of the test results.
@@ -377,11 +379,9 @@ test.describe('Calculated Values Tools', () => {
     Description: Regardless of the method of selection all fields contain
     'Cannot calculate properties for RGroups' message.
     */
-    const xDelta = 100;
-    const yDelta = 100;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/r-group-all-chain.mol');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -408,14 +408,12 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Rgroup attachment point is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    const xDelta = 100;
-    const yDelta = 100;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/attachment-points-structure.mol',
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + xDelta, y + yDelta, page);
+    await dragMouseTo(page, x + 100, y + 100);
     await IndigoFunctionsToolbar(page).calculatedValues();
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain('Cannot calculate properties for RGroups');
@@ -664,12 +662,9 @@ test.describe('Calculated Values Tools', () => {
      * Elemental Analysis:
      * [O 100.0]+[C 52.1 H 13.1 O 34.7]
      */
-
-    const xDelta = 500;
-    const yDelta = 800;
     await openFileAndAddToCanvas(page, 'KET/reaction-arrow.ket');
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - xDelta, y + yDelta, page);
+    await dragMouseTo(page, x - 500, y + 800);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -717,16 +712,6 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).elementalAnalysisInput,
     ).toHaveValue('C 77.3 H 22.7');
   });
-});
-
-test.describe('Calculated Values Tools', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-  });
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Structure Check window', async () => {
     /*

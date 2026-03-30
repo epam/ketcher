@@ -44,7 +44,7 @@ class BondTool implements Tool {
     this.editor = editor;
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;
-    if (editor.selection() && editor.selection()?.bonds) {
+    if (editor.selection()?.bonds) {
       const action = fromBondsAttrs(
         editor.render.ctab,
         editor.selection().bonds,

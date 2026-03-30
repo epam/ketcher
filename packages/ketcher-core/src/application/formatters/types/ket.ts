@@ -70,7 +70,7 @@ export enum KetConnectionType {
 }
 
 export interface IKetTemplateConnectionEndPoint {
-  monomerTemplateId: string;
+  templateId: string;
   attachmentPointId: AttachmentPointName;
 }
 
@@ -180,6 +180,7 @@ export interface IKetMonomerTemplate {
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
+  hidden?: boolean;
 }
 
 export interface IKetAmbiguousMonomerTemplate {
@@ -205,8 +206,9 @@ export interface IKetMonomerGroupTemplate {
   type: KetTemplateType;
   class?: KetMonomerGroupTemplateClass;
   templates: IKetMonomerTemplateRef[];
-  connections: IKetTemplateConnection[];
+  connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
+  aliasAxoLabs?: string;
 }
 
 export interface IKetNodeRef {

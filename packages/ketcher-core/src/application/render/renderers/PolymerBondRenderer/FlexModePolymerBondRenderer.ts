@@ -6,7 +6,6 @@ import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import {
@@ -30,7 +29,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
-    super(polymerBond as DrawingEntity);
+    super(polymerBond);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
   }
@@ -360,18 +359,14 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-      this.hoverAreaElement
-    )) = this.rootElement
+    this.hoverAreaElement = this.rootElement
       ?.append('path')
       .attr('d', this.path)
       .attr('fill', 'none')
       .attr('stroke', 'transparent')
       .attr('stroke-width', '10');
 
-    (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
-      this.hoverCircleAreaElement
-    )) = this.rootElement
+    this.hoverCircleAreaElement = this.rootElement
       ?.append('circle')
       .attr('cursor', 'pointer')
       .attr('r', '1')

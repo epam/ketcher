@@ -4,7 +4,7 @@ import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { waitForRender } from '@utils/common';
 
 type RGroupDialogLocators = {
-  rGroupDialog: Locator;
+  window: Locator;
   closeWindowButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
@@ -12,7 +12,7 @@ type RGroupDialogLocators = {
 
 export const RGroupDialog = (page: Page) => {
   const locators: RGroupDialogLocators = {
-    rGroupDialog: page.getByTestId('rgroup-dialog'),
+    window: page.getByTestId('rgroup-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),

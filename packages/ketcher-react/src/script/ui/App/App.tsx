@@ -20,8 +20,8 @@ import {
   RightToolbarContainer,
   TopToolbarContainer,
 } from '../views/toolbars';
-import { useEffect } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { useCallback, useEffect } from 'react';
+import { createTheme, Snackbar, ThemeProvider } from '@mui/material';
 import AppClipArea from '../views/AppClipArea';
 import { AppHiddenContainer } from './AppHidden';
 import AppModalContainer from '../views/modal';
@@ -37,6 +37,9 @@ import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
 import { useAppDispatch } from '../state/hooks';
+import { selectSnackbarNotificationText } from '../state/notifications';
+import { useSelector } from 'react-redux';
+import { IconButton } from 'components';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -58,9 +61,14 @@ type Props = AppCallProps;
 const App = (props: Props) => {
   const dispatch = useAppDispatch();
   const { checkServer } = props;
+  const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
 
   useSubscriptionOnEvents();
   const { ketcherId, prevKetcherId } = useAppContext();
+
+  const handleCloseSnackbarNotification = useCallback(() => {
+    dispatch({ type: 'HIDE_SNACKBAR_NOTIFICATION' });
+  }, [dispatch]);
 
   useEffect(() => {
     checkServer();
@@ -119,6 +127,23 @@ const App = (props: Props) => {
         }
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={Boolean(snackbarNotificationText)}
+          onClose={handleCloseSnackbarNotification}
+          autoHideDuration={6000}
+        >
+          <div className={classes.toastNotification}>
+            <div className={classes.toastNotificationText}>
+              {snackbarNotificationText}
+            </div>
+            <IconButton
+              iconName="close"
+              className={classes.toastNotificationCloseIcon}
+              onClick={handleCloseSnackbarNotification}
+            />
+          </div>
+        </Snackbar>
       </div>
     </ThemeProvider>
   );

@@ -54,7 +54,6 @@ function TabPanel(props) {
   return (
     <div
       className={classes.tabPanel}
-      component="div"
       role="tabpanel"
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
@@ -409,14 +408,13 @@ const onModalClose = (props, dispatch) => {
 };
 
 export default connect(
-  (store) => ({
-    ...omit(['attach'], (store as any).templates),
-    initialTab: (store as any).modal?.prop?.tab,
-    renderOptions: (store as any).editor?.render?.options,
+  (store: any) => ({
+    ...omit(['attach'], store.templates),
+    initialTab: store.modal?.prop?.tab,
+    renderOptions: store.editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store),
-    isMonomerCreationWizardActive: (store as any).editor
-      ?.isMonomerCreationWizardActive,
+    isMonomerCreationWizardActive: store.editor?.isMonomerCreationWizardActive,
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),

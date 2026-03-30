@@ -35,12 +35,12 @@ test.describe('Click Functional Group on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -49,17 +49,17 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10106
       Description: when clicking with an FG template on an FG it should replace it
     */
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -69,17 +69,17 @@ test.describe('Click Functional Group on canvas', () => {
       Description: when clicking with an FG template on a Salts and Solvents it should replace it
     */
 
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CCl3,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -95,13 +95,13 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await atomToolbar.clickAtom(Atom.Bromine);
     await dragMouseAndMoveTo(page, 50);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2tBu,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -114,20 +114,20 @@ test.describe('Click Functional Group on canvas', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
-    await BottomToolbar(page).StructureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await dragMouseTo(page, coordinatesWithShift, y);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Ms,
     );
     await clickOnCanvas(page, coordinatesWithShift, y, { from: 'pageTopLeft' });
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

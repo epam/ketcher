@@ -1,12 +1,8 @@
 import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  dragMouseTo,
-  Monomer,
-  MonomerType,
-  SymbolType,
-  waitForRender,
-} from '@utils';
+import { dragMouseTo } from '../clicks';
+import { Monomer, MonomerType, SymbolType } from '../types';
+import { waitForRender } from '../common/loaders/waitForRender';
 import {
   MacroBondType,
   MicroBondType,
@@ -24,11 +20,9 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function moveMonomerOnMicro(
@@ -38,13 +32,11 @@ export async function moveMonomerOnMicro(
   y: number,
 ) {
   await CommonLeftToolbar(page).handTool();
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await waitForRender(page, async () => {
     await monomer.click();
   });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function connectMonomersWithBonds(
@@ -52,7 +44,7 @@ export async function connectMonomersWithBonds(
   monomerNames: string[],
   bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await CommonLeftToolbar(page).selectBondTool(bondType);
+  await CommonLeftToolbar(page).bondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];
@@ -69,42 +61,11 @@ export async function connectMonomersWithBonds(
   }
 }
 
-export async function getMonomerIDsByAlias(
-  page: Page,
-  name: string,
-): Promise<number[]> {
-  const monomerIDs = await page
-    .locator('[data-testid="monomer"]')
-    .evaluateAll((elements, alias) => {
-      return elements
-        .filter(
-          (element) => element.getAttribute('data-monomeralias') === alias,
-        )
-        .map((element) => {
-          const monomerId = element.getAttribute('data-monomerid');
-          return monomerId ? parseInt(monomerId, 10) : null;
-        })
-        .filter((id) => id !== null);
-    }, name);
-  return monomerIDs as number[];
-}
-
-export function getMonomerLocatorByAlias(page: Page, monomerAlias: string) {
-  return page.locator(
-    `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
-  );
-}
-
-export function getMonomerLocatorById(page: Page, id: number | string) {
-  return page
-    .locator(`[data-testid="monomer"][data-monomerid="${id}"]`)
-    .first();
-}
-
 export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;
+  naturalAnalogue?: string;
 } & (
   | {
       monomerAlias?: string;
@@ -198,7 +159,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
     attributes['data-monomertype'] = options.monomerType;
-    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
@@ -206,8 +166,12 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     if (monomerId) attributes['data-monomerid'] = String(monomerId);
   }
 
-  const { numberOfAttachmentPoints, rValues, hydrogenConnectionNumber } =
-    options;
+  const {
+    numberOfAttachmentPoints,
+    rValues,
+    hydrogenConnectionNumber,
+    naturalAnalogue,
+  } = options;
 
   if (numberOfAttachmentPoints) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
@@ -223,6 +187,10 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     rValues.forEach((value, index) => {
       attributes[`data-R${index + 1}`] = `${value}`;
     });
+  }
+
+  if (naturalAnalogue) {
+    attributes['data-naturalAnalogue'] = naturalAnalogue;
   }
 
   const attributeSelectors = Object.entries(attributes)

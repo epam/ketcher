@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page, expect } from '@fixtures';
@@ -6,20 +7,17 @@ import {
   clickInTheMiddleOfTheScreen,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
-  clickOnAtom,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  moveOnAtom,
-  screenshotBetweenUndoRedo,
   selectPartOfMolecules,
-  getCoordinatesTopAtomOfBenzeneRing,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
+  dragTo,
 } from '@utils';
 import {
   copyAndPaste,
@@ -49,8 +47,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { ExtendedTableDialog } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 
-const X_DELTA_ONE = 100;
-
 test.describe('Atom Tool', () => {
   let page: Page;
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -60,6 +56,14 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+  test.afterEach(async () => {
+    if (await ExtendedTableDialog(page).isVisible()) {
+      await ExtendedTableDialog(page).closeWindow();
+    }
+    if (await PeriodicTableDialog(page).isVisible()) {
+      await PeriodicTableDialog(page).close();
+    }
+  });
 
   test('Periodic table dialog', async () => {
     /*
@@ -112,7 +116,7 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -130,7 +134,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Am,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -140,15 +144,16 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on structure with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.List, [
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
       PeriodicTableElement.Am,
     ]);
-    await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -164,7 +169,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Cs,
     ]);
     await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -174,15 +179,16 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on structure with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
       PeriodicTableElement.V,
       PeriodicTableElement.Ti,
       PeriodicTableElement.Cs,
     ]);
-    await clickOnAtom(page, 'C', anyAtom);
-    await CommonLeftToolbar(page).selectAreaSelectionTool();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -204,15 +210,15 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1527
     Description: The whole structure is moved.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -226,8 +232,12 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await page.getByText('AH').click();
-    await screenshotBetweenUndoRedo(page);
+    await getAtomLocator(page, { atomLabel: 'AH' }).click();
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -242,7 +252,11 @@ test.describe('Atom Tool', () => {
     );
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).erase();
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -255,11 +269,11 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -268,14 +282,12 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1528
     Description: Structure with List/Not List and Generic Group is copy and pasted.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await copyAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -284,14 +296,12 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1528
     Description: Structure with List/Not List and Generic Group is cut and pasted.
     */
-    const x = 300;
-    const y = 300;
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await cutAndPaste(page);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -300,23 +310,21 @@ test.describe('Atom Tool', () => {
       Test case: EPMLSOPKET-1581
       Description: when drag & drop an atom on an atom it should replace it
     */
-    const atomToolbar = RightToolbar(page);
-
     await drawBenzeneRing(page);
 
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    const bromineCoordinates = { x: x + X_DELTA_ONE, y };
-
-    await atomToolbar.clickAtom(Atom.Bromine);
-    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y, {
+    await RightToolbar(page).clickAtom(Atom.Bromine);
+    await clickOnCanvas(page, 740, 320, {
       from: 'pageTopLeft',
     });
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
-    await dragMouseTo(x, y, page);
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'Br' }).first(),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -447,7 +455,6 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-10071
     Description: Only one atom should be removed and the other should remain
     */
-    const numberOfAtom = 0;
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
@@ -456,12 +463,16 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'Br', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await clickOnAtom(page, 'N', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -470,10 +481,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-10072
     Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
     */
-    const numberOfAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/three-bonded-atoms.ket');
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'N', numberOfAtom);
+    await getAtomLocator(page, { atomLabel: 'N' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -487,6 +499,23 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Default colours of atom symbols', async () => {
+    /*
+    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
+    Description:
+    "H" and "C" are #000000, black.
+    "N" is #304FF7, blue.
+    "O" is #FF0D0D, red.
+    "S" is #C99A19, yellow.
+    "P" is #FF8000, brick red.
+    "F" is #78BC42, grass green.
+    "Cl" is #1FD01F, light green.
+    "Br" is #A62929, red-brown.
+    "I" is #940094, purple.
+    */
+    await takeRightToolbarScreenshot(page);
+  });
 
   test('Addition element buttons to right atom panel', async () => {
     /*
@@ -553,10 +582,11 @@ test.describe('Atom Tool', () => {
       await selectElementFromPeriodicTable(page, elementName);
     }
 
-    const anyAtom = 0;
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await RightToolbar(page).clickAtom(Atom.Aurum);
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -569,7 +599,7 @@ test.describe('Atom Tool', () => {
 
     for (const labelKey of atomShortcuts) {
       await CommonTopLeftToolbar(page).clearCanvas();
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await CommonLeftToolbar(page).areaSelectionTool();
       await clickOnCanvas(page, 0, 0);
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
@@ -578,23 +608,6 @@ test.describe('Atom Tool', () => {
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);
     }
-  });
-
-  test('Default colours of atom symbols', async () => {
-    /*
-    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
-    Description:
-    "H" and "C" are #000000, black.
-    "N" is #304FF7, blue.
-    "O" is #FF0D0D, red.
-    "S" is #C99A19, yellow.
-    "P" is #FF8000, brick red.
-    "F" is #78BC42, grass green.
-    "Cl" is #1FD01F, light green.
-    "Br" is #A62929, red-brown.
-    "I" is #940094, purple.
-    */
-    await takeRightToolbarScreenshot(page);
   });
 
   /*
@@ -616,14 +629,15 @@ test.describe('Atom Tool', () => {
   ];
 
   for (const atomName of atomsNames) {
-    const anyAtom = 0;
     test(`Add ${atomName} from right toolbar to Benzene ring`, async () => {
       const atomToolbar = RightToolbar(page);
 
       await drawBenzeneRing(page);
       await atomToolbar.clickAtom(atomName);
-      await clickOnAtom(page, 'C', anyAtom);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
+      await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+        force: true,
+      });
+      await CommonLeftToolbar(page).areaSelectionTool();
       await takeEditorScreenshot(page);
     });
   }
@@ -635,10 +649,11 @@ test.describe('Atom Tool', () => {
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
       Description: Atom added to Benzene ring.
       */
-      const anyAtom = 2;
       await drawBenzeneRing(page);
-      await CommonLeftToolbar(page).selectAreaSelectionTool();
-      await clickOnAtom(page, 'C', anyAtom);
+      await CommonLeftToolbar(page).areaSelectionTool();
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+        force: true,
+      });
       await page.keyboard.press(atomName);
       await takeEditorScreenshot(page);
     });
@@ -653,15 +668,12 @@ test.describe('Atom Tool', () => {
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
       Description: Atom added to Benzene ring.
       */
-      const anyAtom = 2;
-      const atomToolbar = RightToolbar(page);
-
       await drawBenzeneRing(page);
-      await atomToolbar.clickAtom(atomName);
-      await moveOnAtom(page, 'C', anyAtom);
-      const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-      const coordinatesWithShift = y - MAX_BOND_LENGTH;
-      await dragMouseTo(x, coordinatesWithShift, page);
+      await RightToolbar(page).clickAtom(atomName);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+        force: true,
+      });
+      await dragMouseTo(page, 640, 270);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
     });

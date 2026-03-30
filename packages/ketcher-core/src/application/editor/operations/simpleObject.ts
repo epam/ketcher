@@ -30,7 +30,7 @@ interface SimpleObjectAddData {
   toCircle: boolean;
 }
 export class SimpleObjectAdd extends Base {
-  data: SimpleObjectAddData;
+  readonly data: SimpleObjectAddData;
 
   constructor(
     pos: Array<Vec2> = [],
@@ -50,7 +50,7 @@ export class SimpleObjectAdd extends Base {
       const index = struct.simpleObjects.add(item);
       this.data.id = index;
     } else {
-      struct.simpleObjects.set(this.data.id!, item);
+      struct.simpleObjects.set(this.data.id, item);
     }
 
     const itemId = this.data.id!;
@@ -82,7 +82,7 @@ interface SimpleObjectDeleteData {
 }
 
 export class SimpleObjectDelete extends Base {
-  data: SimpleObjectDeleteData;
+  readonly data: SimpleObjectDeleteData;
   performed: boolean;
 
   constructor(id: number) {
@@ -93,7 +93,7 @@ export class SimpleObjectDelete extends Base {
 
   execute(restruct: any): void {
     const struct = restruct.molecule;
-    const item = struct.simpleObjects.get(this.data.id) as any;
+    const item = struct.simpleObjects.get(this.data.id);
     // save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos;
     this.data.mode = item.mode;
@@ -190,7 +190,7 @@ function handleRectangleChangeWithAnchor(item, anchor, current) {
 }
 
 export class SimpleObjectResize extends Base {
-  data: SimpleObjectResizeData;
+  readonly data: SimpleObjectResizeData;
 
   constructor(
     id: number,

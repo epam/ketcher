@@ -1,10 +1,9 @@
 import { Page, Locator } from '@playwright/test';
 import { MoleculesFileFormatType } from '../constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFileFormats';
-import { delay } from '@utils/canvas';
 
 type SaveStructureDialogLocators = {
-  saveStructureDialog: Locator;
+  window: Locator;
   fileNameEditbox: Locator;
   fileFormatDropdownList: Locator;
   previewTab: Locator;
@@ -19,8 +18,10 @@ type SaveStructureDialogLocators = {
 };
 
 export const SaveStructureDialog = (page: Page) => {
+  const millisecondsInSecond = 1000;
+
   const locators: SaveStructureDialogLocators = {
-    saveStructureDialog: page.getByTestId('save-structure-dialog'),
+    window: page.getByTestId('save-structure-dialog'),
     fileNameEditbox: page.getByTestId('filename-input'),
     fileFormatDropdownList: page.getByTestId('file-format-list').first(),
     previewTab: page.getByTestId('Preview-tab'),
@@ -42,7 +43,7 @@ export const SaveStructureDialog = (page: Page) => {
     ) {
       const delayTime = 0.15;
       await locators.fileFormatDropdownList.click();
-      await delay(delayTime);
+      await page.waitForTimeout(delayTime * millisecondsInSecond);
       await page.getByTestId(format).click({ force: true });
       const loadingSpinner = page.getByTestId('loading-spinner');
       if (await loadingSpinner.isVisible()) {
@@ -90,16 +91,28 @@ export const SaveStructureDialog = (page: Page) => {
       await locators.saveStructureTextarea.waitFor({ state: 'visible' });
     },
 
+    async copyToClipboard() {
+      await locators.saveStructureTextarea.hover();
+      await locators.copyToClipboardButton.click();
+    },
+
     async save() {
       await locators.saveButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
       await locators.cancelButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
 
-    async close() {
+    async saveToTemplates() {
+      await locators.saveToTemplatesButton.click();
+    },
+
+    async closeWindow() {
       await locators.closeWindowButton.click();
+      await this.window.waitFor({ state: 'hidden' });
     },
   };
 };

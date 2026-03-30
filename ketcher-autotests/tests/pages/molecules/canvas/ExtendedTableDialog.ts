@@ -3,6 +3,7 @@ import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/
 import { RightToolbar } from '../RightToolbar';
 
 type ExtendedTableDialogLocators = {
+  window: Locator;
   closeWindowButton: Locator;
   addButton: Locator;
   cancelButton: Locator;
@@ -14,6 +15,7 @@ export const ExtendedTableDialog = (page: Page) => {
     page.getByTestId(dataTestId);
 
   const locators: ExtendedTableDialogLocators = {
+    window: page.getByTestId('extended-table-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),
     addButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
@@ -25,7 +27,11 @@ export const ExtendedTableDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async isVisible() {
+      return await locators.extendedTableWindow.isVisible();
+    },
+
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

@@ -17,7 +17,11 @@
 import { Axis, Axises, Struct, Vec2 } from 'domain/entities';
 import { cloneDeep, cloneDeepWith } from 'lodash';
 import { EditorSelection } from 'application/editor';
-import { KetMonomerClass, MonomerTransformation } from 'application/formatters';
+import {
+  KetMonomerClass,
+  KetTemplateType,
+  MonomerTransformation,
+} from 'application/formatters';
 import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
 import { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
@@ -36,6 +40,9 @@ export const getNodeWithInvertedYCoord = <T>(node: T): T =>
 export const setMonomerTemplatePrefix = (templateName: string) =>
   `monomerTemplate-${templateName}`;
 export const setMonomerPrefix = (monomerId: number) => `monomer${monomerId}`;
+
+export const setMonomerGroupTemplatePrefix = (templateName: string) =>
+  `${KetTemplateType.MONOMER_GROUP_TEMPLATE}-${templateName}`;
 
 export const setAmbiguousMonomerTemplatePrefix = (templateName: string) =>
   `ambiguousMonomerTemplate-${templateName}`;

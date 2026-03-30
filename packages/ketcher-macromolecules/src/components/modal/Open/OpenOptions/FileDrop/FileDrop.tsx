@@ -64,6 +64,21 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const DropzoneButton = styled.button`
+  all: unset;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+`;
+
 const FileDrop = ({
   textLabel,
   iconName,
@@ -96,12 +111,14 @@ const FileDrop = ({
   };
 
   return (
-    <div
+    <DropzoneButton
       {...getRootProps({ style })}
+      role={undefined}
       onClick={open}
       onKeyDown={handleKeyDown}
-      role="button"
       tabIndex={disabled ? -1 : 0}
+      disabled={disabled}
+      type="button"
     >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
@@ -115,7 +132,7 @@ const FileDrop = ({
           <OpenOptionText>Open from file</OpenOptionText>
         </>
       )}
-    </div>
+    </DropzoneButton>
   );
 };
 

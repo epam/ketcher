@@ -16,9 +16,9 @@
 
 import {
   FC,
-  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
@@ -41,9 +41,10 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
+  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -52,6 +53,7 @@ interface DialogProps {
     [key in string]: string;
   };
   focusable?: boolean;
+  primaryButtons?: string[];
 }
 
 interface DialogCallProps {
@@ -72,22 +74,25 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
+    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,
     focusable = true,
+    primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useLayoutEffect(() => {
+    const dialogElement = dialogRef.current;
     if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+      (dialogElement as HTMLElement).focus();
     }
 
     return () => {
       (
-        dialogRef.current
+        dialogElement
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();
@@ -98,6 +103,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return button === 'OK' || button === 'Save';
   };
 
+  const isPrimary = (button) => {
+    if (primaryButtons && primaryButtons.length > 0) {
+      return primaryButtons.includes(button);
+    }
+    return isButtonOk(button);
+  };
+
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
@@ -105,26 +117,40 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const { key } = event;
-    const active = document.activeElement;
-    const activeTextarea = active?.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
-    <div
+    <dialog
       ref={dialogRef}
-      role="dialog"
+      open
       data-testid={'info-modal-window'}
-      onSubmit={(event) => event.preventDefault()}
-      onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header
@@ -160,7 +186,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   key={button}
                   type="button"
                   className={clsx(
-                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
                   value={buttonsNameMap?.[button] ?? button}
@@ -172,6 +198,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-    </div>
+    </dialog>
   );
 };

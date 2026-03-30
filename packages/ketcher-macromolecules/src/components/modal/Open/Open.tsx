@@ -30,6 +30,7 @@ import {
   ModeTypes,
   SnakeMode,
   FlexMode,
+  normalizeError,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -174,7 +175,7 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
-  const editorHistory = new EditorHistory(editor);
+  const editorHistory = EditorHistory.getInstance(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
   const isSnakeMode = editor.mode instanceof SnakeMode;
   const isFlexMode = editor.mode instanceof FlexMode;
@@ -286,8 +287,7 @@ const onOk = async ({
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
-    const stringError =
-      typeof error === 'string' ? error : JSON.stringify(error);
+    const stringError = normalizeError(error).message;
     showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {
@@ -364,7 +364,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const openHandler = () => {
     const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
+    const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
     history.update(modelChanges);
@@ -414,7 +414,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <FooterButtonContainer>
         <FooterButton
           key="openButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
@@ -422,7 +422,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         />
         <FooterButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"

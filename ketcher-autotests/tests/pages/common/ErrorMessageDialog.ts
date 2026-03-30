@@ -3,7 +3,7 @@ import { Page, Locator, expect } from '@playwright/test';
 type ErrorMessageDialogLocators = {
   window: Locator;
   errorMessageBody: Locator;
-  errorMessageClose: Locator;
+  closeButton: Locator;
 };
 
 export const ErrorMessageDialog = (page: Page) => {
@@ -12,7 +12,7 @@ export const ErrorMessageDialog = (page: Page) => {
     errorMessageBody: page
       .getByTestId('info-modal-window')
       .getByTestId('error-message-body'),
-    errorMessageClose: page.getByTestId('info-modal-close'),
+    closeButton: page.getByTestId('info-modal-close'),
   };
 
   return {
@@ -22,8 +22,8 @@ export const ErrorMessageDialog = (page: Page) => {
     },
 
     async close() {
-      await locators.errorMessageClose.click();
-      await locators.errorMessageClose.waitFor({ state: 'detached' });
+      await locators.closeButton.click();
+      await locators.closeButton.waitFor({ state: 'detached' });
     },
 
     async getErrorMessage() {

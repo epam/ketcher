@@ -14,12 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-  IconButton,
-} from 'ketcher-react';
+import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
@@ -69,14 +66,30 @@ const ButtonContainer = styled.div`
 `;
 
 export const FullscreenButton = (props) => {
-  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
+  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen);
+
+  useEffect(() => {
+    const syncFullscreenMode = () => setFullScreenMode(isFullScreen());
+
+    document.addEventListener('fullscreenchange', syncFullscreenMode);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenMode);
+    document.addEventListener('mozfullscreenchange', syncFullscreenMode);
+    document.addEventListener('MSFullscreenChange', syncFullscreenMode);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreenMode);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        syncFullscreenMode,
+      );
+      document.removeEventListener('mozfullscreenchange', syncFullscreenMode);
+      document.removeEventListener('MSFullscreenChange', syncFullscreenMode);
+    };
+  }, []);
+
   const toggleFullscreen = () => {
-    // TODO: add selector / ref prop when will be shared component
-    const fullscreenElement: HTMLElement =
-      document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ||
-      document.documentElement;
-    fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
-    setFullScreenMode(!fullScreenMode);
+    const fullscreenElement = getFullscreenElement();
+    isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
   };
   return (
     <ButtonContainer className={props.className}>

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { StructureCheckSetting } from '@tests/pages/constants/structureCheck/Constants';
-import { delay, waitForRender, waitForSpinnerFinishedWork } from '@utils/index';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/index';
 
 type StructureCheckDialogLocators = {
   closeWindowButton: Locator;
@@ -49,7 +49,7 @@ export const StructureCheckDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 
@@ -58,7 +58,7 @@ export const StructureCheckDialog = (page: Page) => {
     },
 
     async apply() {
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });

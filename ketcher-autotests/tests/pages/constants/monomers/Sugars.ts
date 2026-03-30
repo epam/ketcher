@@ -10,9 +10,9 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     testId: "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",
   },
   _3A6: { alias: '3A6', testId: "3A6___6-amino-hexanol (3' end)" },
-  _3SS6: {
-    alias: '3SS6',
-    testId: "3SS6___Thiol Modifier 6 S-S (3' end)",
+  _3FAM: {
+    alias: '3FAM',
+    testId: "3FAM___6-FAM (3' end)",
   },
   _5A6: {
     alias: '5A6',
@@ -59,6 +59,31 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
   UNA: {
     alias: 'UNA',
     testId: "UNA___2'-3'-Unlocked-ribose",
+  },
+  // for library update test, doesn't exist initially
+  Sugar1: {
+    alias: 'Sugar1',
+    testId: 'Sugar1___Sugar1',
+  },
+  Sugar2: {
+    alias: 'Sugar2',
+    testId: 'Sugar2___Sugar2',
+  },
+  Sugar3: {
+    alias: 'Sugar3',
+    testId: 'Sugar3___Sugar3',
+  },
+  _Sugar1: {
+    alias: '_Sugar1',
+    testId: '_Sugar1____Sugar1',
+  },
+  sAargh: {
+    alias: 'sAargh',
+    testId: 'sAargh___sAargh',
+  },
+  DefaultSugarRnaComponent: {
+    alias: 'PresetS',
+    testId: 'PresetS___PresetS',
   },
 });
 

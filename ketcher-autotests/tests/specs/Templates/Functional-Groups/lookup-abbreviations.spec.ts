@@ -3,14 +3,14 @@ import { test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { AbbreviationLookup } from '@tests/pages/molecules/canvas/AbbreviationLookupDialog';
 import {
   clickInTheMiddleOfTheScreen,
-  clickOnAtom,
   clickOnCanvas,
-  delay,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
 test.describe('Lookup Abbreviations tests', () => {
@@ -22,8 +22,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15523
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('dc');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -31,8 +30,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15524
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('dc');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await clickInTheMiddleOfTheScreen(page);
@@ -45,10 +43,9 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15525, EPMLSOPKET-15533
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('d');
-    await delay(5);
+    await page.waitForTimeout(5 * 1000);
     await page.keyboard.type('c');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toHaveCount(0);
+    await expect(AbbreviationLookup(page).window).toHaveCount(0);
     await takeEditorScreenshot(page);
   });
 
@@ -56,8 +53,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15526
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('co2me');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -65,8 +61,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15527
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('br');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -74,8 +69,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15528
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('xyz');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -87,8 +81,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('xyz');
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -98,8 +91,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15530
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('me');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -109,8 +101,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15531, EPMLSOPKET-15535
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('mer');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -123,8 +114,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await page.keyboard.type('bro');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -134,8 +124,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15534, EPMLSOPKET-15536
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('hg');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -145,8 +134,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15537
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('ca');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
+    await expect(AbbreviationLookup(page).window).toBeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -157,8 +145,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('ca');
     await page.keyboard.press('Escape');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toHaveCount(0);
+    await expect(AbbreviationLookup(page).window).toHaveCount(0);
     await takeEditorScreenshot(page);
   });
 
@@ -181,12 +168,13 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16926
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
-    const atomC = 0;
     await page.keyboard.type('mer');
     await page.keyboard.press('Enter');
-    await clickOnAtom(page, 'C', atomC);
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -195,13 +183,14 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await BottomToolbar(page).Benzene();
+    await BottomToolbar(page).benzene();
     await clickInTheMiddleOfTheScreen(page);
-    const atomC = 0;
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
-    await clickOnAtom(page, 'C', atomC);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await getAtomLocator(page, { atomLabel: 'C' }).first().click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });

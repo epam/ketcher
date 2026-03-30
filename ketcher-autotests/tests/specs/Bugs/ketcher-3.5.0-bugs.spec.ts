@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -7,7 +8,6 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
@@ -15,20 +15,18 @@ import {
   selectPartOfMolecules,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import {
   ModifyAminoAcidsOption,
@@ -38,30 +36,23 @@ import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { verifySVGExport } from '@utils/files/receiveFileComparisonData';
+import {
+  verifyHELMExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
+import { showRuler } from '@utils/canvas/ruler/helpers';
 
 let page: Page;
 
 test.describe('Ketcher bugs in 3.5.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-      disableChainLengthRuler: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Clicking on base card in RNA Builder scroll to selected base if multiple bases from the same section are selected', async () => {
@@ -76,9 +67,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 4. Right-click and select Modify in RNA Builder
      * 5. Click on the Base card in the RNA Builder.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -197,9 +185,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 3. Check that layout not shift
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,
@@ -269,6 +254,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     ).getMolecularMassValue();
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
+    await CalculateVariablesPanel(page).closeWindow();
   });
 
   test('Case 8: Monomer selection without bonds work the same as with bonds', async () => {
@@ -465,9 +451,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -642,9 +625,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Load from HELM
      * 3. Open Calculate properties (press Alt+C) and go to RNA/DNA tab
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -677,6 +657,8 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Use the ruler tool to adjust the layout of the sequence (e.g., move the slider from position 30 to 20).
      * 3. Observe the canvas after the ruler is released
      */
+    await showRuler(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
@@ -734,10 +716,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       MacroFileType.HELM,
       'RNA1{Raaa(Aaaa)Paaa}$$$$V2.0',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page);
+    await verifyHELMExport(page, 'RNA1{[Raaa]([Aaaa])[Paaa]}$$$$V2.0');
   });
 });

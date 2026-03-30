@@ -1,7 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import {
   AttachmentPointAtom,
-  AttachmentPointName,
+  AttachmentPointOption,
 } from './constants/editConnectionPointPopup/Constants';
 
 type EditConnectionPointPopupLocators = {
@@ -33,7 +33,7 @@ export const EditConnectionPointPopup = (
       return await locators.editConnectionPointPopupWindow.isVisible();
     },
 
-    async selectConnectionPointName(name: AttachmentPointName) {
+    async selectConnectionPointName(name: AttachmentPointOption) {
       if (attachmentPoint) await attachmentPoint.click();
       await locators.editConnectionPointPopupWindow.waitFor({
         state: 'visible',

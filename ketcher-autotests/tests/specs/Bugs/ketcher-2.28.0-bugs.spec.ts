@@ -8,7 +8,6 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -20,7 +19,6 @@ import {
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -45,10 +43,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import {
-  BottomToolbar,
-  selectRingButton,
-} from '@tests/pages/molecules/BottomToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   getSettingsOptionValue,
@@ -63,6 +58,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { Library } from '@tests/pages/macromolecules/Library';
 
 declare global {
   interface Window {
@@ -72,22 +68,14 @@ declare global {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async () => {
@@ -102,7 +90,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await selectRingButton(page, RingButton.Benzene);
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -139,8 +127,8 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
       console.log('hello'),
     );
   });
-  await BottomToolbar(page).StructureLibrary();
-  await StructureLibraryDialog(page).addFunctionalGroup(
+  await BottomToolbar(page).structureLibrary();
+  await StructureLibraryDialog(page).selectFunctionalGroup(
     FunctionalGroupsTabItems.CF3,
   );
   await clickInTheMiddleOfTheScreen(page);
@@ -312,7 +300,12 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
    * 6. Take a screenshot to validate the cursor blinks in the right place
    */
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-  await addMonomerToCenterOfCanvas(page, Preset.T);
+  await Library(page).dragMonomerOnCanvas(Preset.T, {
+    x: 0,
+    y: 0,
+    fromCenter: true,
+  });
+
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await CommonTopLeftToolbar(page).clearCanvas();

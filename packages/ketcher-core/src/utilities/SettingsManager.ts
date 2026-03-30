@@ -47,6 +47,7 @@ interface SavedOptions {
 
 export class SettingsManager {
   private static disableCustomQueryValue?: boolean;
+  private static persistMonomerLibraryUpdatesValue = true;
 
   static getSettings(): SavedSettings {
     try {
@@ -182,5 +183,13 @@ export class SettingsManager {
       updates.push(newUpdate);
       this.monomerLibraryUpdates = updates;
     }
+  }
+
+  static get persistMonomerLibraryUpdates(): boolean {
+    return this.persistMonomerLibraryUpdatesValue;
+  }
+
+  static set persistMonomerLibraryUpdates(value: boolean | undefined) {
+    this.persistMonomerLibraryUpdatesValue = value ?? true;
   }
 }

@@ -1,6 +1,6 @@
 import { MonomerType } from '@utils/types';
 
-export const FavoriteStarSymbol = '★' as const;
+export const FavoriteStarSymbol = '★';
 
 export enum LibraryTab {
   Favorites = 'FAVORITES-TAB',

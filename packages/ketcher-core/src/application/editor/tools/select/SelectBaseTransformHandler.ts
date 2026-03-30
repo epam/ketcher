@@ -44,7 +44,7 @@ export class SelectBaseTransformHandler {
     );
   }
 
-  public subscribeToRotationControls() {
+  public subscribeToRotationControls(): [() => void, () => void] {
     return this.rotationHandler.subscribeToRotationControls();
   }
 

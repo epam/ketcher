@@ -38,6 +38,8 @@ const { Command, SupportedFormat } = require('../indigoWorker.types');
 const { ChemicalMimeType } = require('ketcher-core');
 
 describe('StandaloneStructService convert', () => {
+  const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
+
   beforeEach(() => {
     mockWorker.onmessage = null;
     mockWorker.postMessage.mockClear();
@@ -50,6 +52,8 @@ describe('StandaloneStructService convert', () => {
       struct: 'ket-struct',
       output_format: ChemicalMimeType.DaylightSmiles,
     });
+
+    await flushPromises();
 
     expect(mockWorker.postMessage).toHaveBeenCalledWith({
       type: Command.Convert,
@@ -75,7 +79,7 @@ describe('StandaloneStructService convert', () => {
     });
   });
 
-  it('waits for the matching convert response when another response arrives first', async () => {
+  it('queues concurrent convert requests until the previous response is handled', async () => {
     const service = new IndigoService({});
     const firstPromise = service.convert({
       struct: 'first-struct',
@@ -86,18 +90,24 @@ describe('StandaloneStructService convert', () => {
       output_format: ChemicalMimeType.DaylightSmiles,
     });
 
+    await flushPromises();
+
+    expect(mockWorker.postMessage).toHaveBeenCalledTimes(1);
+    expect(mockWorker.postMessage).toHaveBeenLastCalledWith({
+      type: Command.Convert,
+      data: {
+        struct: 'first-struct',
+        format: SupportedFormat.Smiles,
+        options: {
+          monomerLibrary: undefined,
+        },
+      },
+    });
+
     mockWorker.onmessage?.({
       data: {
         type: Command.Convert,
         payload: 'C',
-        inputData: 'first-struct',
-      },
-    });
-    mockWorker.onmessage?.({
-      data: {
-        type: Command.Convert,
-        payload: 'CC',
-        inputData: 'second-struct',
       },
     });
 
@@ -105,6 +115,28 @@ describe('StandaloneStructService convert', () => {
       struct: 'C',
       format: ChemicalMimeType.DaylightSmiles,
     });
+
+    await flushPromises();
+
+    expect(mockWorker.postMessage).toHaveBeenCalledTimes(2);
+    expect(mockWorker.postMessage).toHaveBeenLastCalledWith({
+      type: Command.Convert,
+      data: {
+        struct: 'second-struct',
+        format: SupportedFormat.Smiles,
+        options: {
+          monomerLibrary: undefined,
+        },
+      },
+    });
+
+    mockWorker.onmessage?.({
+      data: {
+        type: Command.Convert,
+        payload: 'CC',
+      },
+    });
+
     await expect(secondPromise).resolves.toEqual({
       struct: 'CC',
       format: ChemicalMimeType.DaylightSmiles,

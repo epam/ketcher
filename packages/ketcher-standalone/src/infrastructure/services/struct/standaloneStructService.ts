@@ -216,6 +216,7 @@ class IndigoService implements StructService {
   private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
+  private pendingConvert: Promise<void> = Promise.resolve();
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
@@ -315,62 +316,68 @@ class IndigoService implements StructService {
       struct,
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
+    const releasePendingConvert = () => undefined;
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (msg.inputData !== undefined && msg.inputData !== struct) {
-          return;
-        }
-
-        this.EE.removeListener(WorkerEvent.Convert, action);
-
-        if (!msg.hasError) {
-          const result: ConvertResult = {
-            struct: msg.payload,
-            format: outputFormat,
+    const queuedConvert = this.pendingConvert.then(
+      () =>
+        new Promise<ConvertResult>((resolve, reject) => {
+          const action = ({ data }: OutputMessageWrapper) => {
+            const msg: OutputMessage<string> = data;
+            if (!msg.hasError) {
+              const result: ConvertResult = {
+                struct: msg.payload,
+                format: outputFormat,
+              };
+              resolve(result);
+            } else {
+              reject(new Error(msg.error));
+            }
           };
-          resolve(result);
-        } else {
-          reject(new Error(msg.error));
-        }
-      };
-      const monomerLibrary = JSON.stringify(
-        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
-      );
-      const commandOptions: CommandOptions = {
-        ...this.getStandardServerOptions(options),
-        'bond-length-unit': options?.['bond-length-unit'],
-        'bond-length': options?.['bond-length'],
-        'reaction-component-margin-size-unit':
-          options?.['reaction-component-margin-size-unit'],
-        'reaction-component-margin-size':
-          options?.['reaction-component-margin-size'],
-        'image-resolution': options?.['image-resolution'],
-        'input-format': inputFormat,
-        'molfile-saving-mode': options?.['molfile-saving-mode'],
-        'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
-        'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
-        'sequence-type': options?.['sequence-type'],
-        'output-content-type': options?.['output-content-type'],
-        monomerLibrary,
-      };
+          const monomerLibrary = JSON.stringify(
+            CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+          );
+          const commandOptions: CommandOptions = {
+            ...this.getStandardServerOptions(options),
+            'bond-length-unit': options?.['bond-length-unit'],
+            'bond-length': options?.['bond-length'],
+            'reaction-component-margin-size-unit':
+              options?.['reaction-component-margin-size-unit'],
+            'reaction-component-margin-size':
+              options?.['reaction-component-margin-size'],
+            'image-resolution': options?.['image-resolution'],
+            'input-format': inputFormat,
+            'molfile-saving-mode': options?.['molfile-saving-mode'],
+            'monomer-library-saving-mode':
+              options?.['monomer-library-saving-mode'],
+            'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
+            'sequence-type': options?.['sequence-type'],
+            'output-content-type': options?.['output-content-type'],
+            monomerLibrary,
+          };
 
-      const commandData: ConvertCommandData = {
-        struct,
-        format,
-        options: commandOptions,
-      };
+          const commandData: ConvertCommandData = {
+            struct,
+            format,
+            options: commandOptions,
+          };
 
-      const inputMessage: InputMessage<ConvertCommandData> = {
-        type: Command.Convert,
-        data: commandData,
-      };
+          const inputMessage: InputMessage<ConvertCommandData> = {
+            type: Command.Convert,
+            data: commandData,
+          };
 
-      this.EE.on(WorkerEvent.Convert, action);
+          this.EE.once(WorkerEvent.Convert, action);
 
-      this.worker.postMessage(inputMessage);
-    });
+          this.worker.postMessage(inputMessage);
+        }),
+    );
+
+    this.pendingConvert = queuedConvert.then(
+      releasePendingConvert,
+      releasePendingConvert,
+    );
+
+    return queuedConvert;
   }
 
   layout(

@@ -1,5 +1,7 @@
+import type { OutputMessageWrapper } from '../indigoWorker.types';
+
 const mockWorker = {
-  onmessage: null as ((event: { data: unknown }) => void) | null,
+  onmessage: null as ((event: OutputMessageWrapper) => void) | null,
   postMessage: jest.fn(),
   terminate: jest.fn(),
 };

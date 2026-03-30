@@ -1,6 +1,9 @@
 import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
+import { SelectBase } from 'application/editor/tools/select';
+import { Vec2 } from 'domain/entities';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
+import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -162,7 +165,7 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
-    it('should throw on HELM alias collision across monomers', () => {
+    it('should log HELM alias collision across monomers', () => {
       const monomerWithAlias = {
         root: {
           templates: [
@@ -222,7 +225,7 @@ describe('CoreEditor', () => {
       );
     });
 
-    it('should throw on IDT alias collision across monomers', () => {
+    it('should log IDT alias collision across monomers', () => {
       const monomerWithIdtAlias = {
         root: {
           templates: [
@@ -284,6 +287,176 @@ describe('CoreEditor', () => {
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
+    });
+
+    it('should reject monomer group template without name', () => {
+      const unnamedPreset = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-',
+            },
+          ],
+        },
+        'monomerGroupTemplate-': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: '   ',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+  });
+
+  describe('window blur handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: {},
+      });
+      editor.selectTool(ToolName.selectRectangle);
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should not stop selection tool when it is already in standby mode', () => {
+      const selectTool = editor.selectedTool as SelectBase;
+      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      selectTool.mode = 'standby';
+
+      window.dispatchEvent(new Event('blur'));
+
+      expect(stopMovementSpy).not.toHaveBeenCalled();
+    });
+
+    it('should stop selection tool when blur happens during active movement', () => {
+      const selectTool = editor.selectedTool as SelectBase;
+      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      selectTool.mode = 'moving';
+
+      window.dispatchEvent(new Event('blur'));
+
+      expect(stopMovementSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('context menu handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: polymerEditorTheme,
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should select monomer on right click when it was not selected', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      const modelChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+
+      editor.renderersContainer.update(modelChanges);
+
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      const rightClickSelectedMonomersHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      const monomerDomElement = document.createElement('div');
+      (monomerDomElement as unknown as { __data__: unknown }).__data__ =
+        monomer.renderer;
+      document.body.appendChild(monomerDomElement);
+
+      expect(monomer.selected).toBeFalsy();
+      monomerDomElement.dispatchEvent(
+        new MouseEvent('contextmenu', {
+          bubbles: true,
+          clientX: 0,
+          clientY: 0,
+        }),
+      );
+
+      expect(monomer.selected).toBeTruthy();
+      expect(rightClickSelectedMonomersHandler).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.anything(), [monomer]]),
+      );
+
+      monomerDomElement.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+  });
+
+  describe('remove autochain preview handling', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: {},
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should hide only autochain preview without clearing all transient views', () => {
+      const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
+      const hideAutochainPreviewSpy = jest.spyOn(
+        editor.transientDrawingView,
+        'hideAutochainPreview',
+      );
+      const updateSpy = jest.spyOn(editor.transientDrawingView, 'update');
+
+      editor.events.removeAutochainPreview.dispatch();
+
+      expect(hideAutochainPreviewSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(clearSpy).not.toHaveBeenCalled();
     });
   });
 });

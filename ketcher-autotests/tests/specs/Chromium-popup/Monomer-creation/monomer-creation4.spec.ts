@@ -35,7 +35,7 @@ import {
   AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
+import { TopLeftToolbar } from '@tests/pages/molecules/TopLeftToolbar';
 import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -989,7 +989,7 @@ test(`25. Verify that Copy button copies the selected structure fragment and Pas
   await dragMouseTo(page, 450, 250);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await MoleculesTopToolbar(page).copy();
+  await TopLeftToolbar(page).copy();
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);
@@ -1023,7 +1023,7 @@ test(`26. Verify that Cut button removes selected structure and stores it in the
   await dragMouseTo(page, 450, 250);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await MoleculesTopToolbar(page).cut();
+  await TopLeftToolbar(page).cut();
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 500, 350, { from: 'pageTopLeft' });
   await takeEditorScreenshot(page);

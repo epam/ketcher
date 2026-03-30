@@ -482,6 +482,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );

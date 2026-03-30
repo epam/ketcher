@@ -1,17 +1,8 @@
-import { AttachmentPointName, Bond, Struct } from 'ketcher-core';
+import { AttachmentPointName, Bond } from 'ketcher-core';
 
 import { inferPhosphatePosition } from './PhosphatePositionInference';
 
 type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
-
-const createWizardStruct = (
-  atomIds: number[],
-  bonds: Array<Pick<Bond, 'begin' | 'end'>>,
-): Struct =>
-  ({
-    atoms: new Map(atomIds.map((atomId) => [atomId, {}])),
-    bonds: new Map(bonds.map((bond, bondId) => [bondId, bond])),
-  } as Struct);
 
 describe('inferPhosphatePosition', () => {
   it.each<{
@@ -104,19 +95,10 @@ describe('inferPhosphatePosition', () => {
     },
   ])(
     'returns $expected for $name',
-    ({ sugarAttachmentPoints, phosphateAttachmentPoints, bonds, expected }) => {
+    ({ sugarAttachmentPoints, phosphateAttachmentPoints, expected }) => {
       expect(
         inferPhosphatePosition(
-          createWizardStruct([1, 2, 3, 4, 100, 101], bonds),
-          {
-            atoms: [1, 2],
-            bonds: [],
-          },
           sugarAttachmentPoints,
-          {
-            atoms: [3, 4],
-            bonds: [],
-          },
           phosphateAttachmentPoints,
         ),
       ).toBe(expected);

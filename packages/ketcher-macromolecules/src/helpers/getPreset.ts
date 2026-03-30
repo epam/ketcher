@@ -89,7 +89,6 @@ export const getPresets = (
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
-        connections: rnaPresetsTemplate.connections || [],
       };
 
       const presetWithAliases: IRnaPreset = {

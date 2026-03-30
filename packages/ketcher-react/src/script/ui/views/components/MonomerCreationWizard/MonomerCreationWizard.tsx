@@ -994,26 +994,15 @@ const MonomerCreationWizard = () => {
         }
       },
     );
-
     const autoPhosphatePosition = inferPhosphatePosition(
-      editor.struct(),
-      rnaPresetWizardState.sugar.structure,
       sugarAttachmentPoints,
-      rnaPresetWizardState.phosphate.structure,
       phosphateAttachmentPoints,
     );
 
-    if (autoPhosphatePosition === phosphatePosition) {
-      return;
-    }
-
     handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
-    editor,
     isRnaPresetType,
-    monomerCreationState,
     monomerCreationState?.assignedAttachmentPoints,
-    phosphatePosition,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
     handlePhosphatePositionChange,

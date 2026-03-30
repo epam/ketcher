@@ -27,7 +27,7 @@ const IfThenSelect = (props: Props) => {
   const { rgroupLabels, label, name } = props;
   const { schema } = useFormContext();
   const desc = {
-    title: schema.properties[name!].title,
+    title: schema.properties?.[name ?? '']?.title,
     enum: [0],
     enumNames: ['Always'],
   };

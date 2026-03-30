@@ -12,6 +12,7 @@ import {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
   IKetMonomerTemplate,
+  isValidHelmAlias,
   KetcherLogger,
   ketcherProvider,
   KetMonomerClass,
@@ -520,9 +521,7 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
     }
 
     if (key === 'aliasHELM') {
-      const helmAliasRegex = /^[A-Za-z0-9\-_\\*]*$/;
-
-      if (value && !helmAliasRegex.test(value)) {
+      if (value && !isValidHelmAlias(value)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('invalidHELMAlias', {
           type: 'error',

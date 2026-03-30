@@ -460,7 +460,14 @@ export const CreateMonomerDialog = (page: Page) => {
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
       await helmAliasEditbox.click();
       const clearButton = aliasesSection.helmAliasEditboxClearButton;
-      await clearButton.click();
+
+      if (await clearButton.isVisible()) {
+        await clearButton.click();
+        return;
+      }
+
+      await helmAliasEditbox.press('ControlOrMeta+A');
+      await helmAliasEditbox.press('Backspace');
     },
 
     async setHELMAlias(helmAlias: string) {

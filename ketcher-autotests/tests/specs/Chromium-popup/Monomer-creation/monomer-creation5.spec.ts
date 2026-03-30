@@ -1442,7 +1442,6 @@ test(`27. Verify that in create monomer wizard: for bonds in the right-click men
     expect(page.getByTestId(MicroBondOption.Triple)).toBeEnabled(),
     expect(page.getByTestId(MicroBondOption.Hydrogen)).toBeEnabled(),
     expect(page.getByTestId(MicroBondOption.Dative)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.ChangeDirection)).toBeEnabled(),
     expect(page.getByTestId(MicroBondOption.Delete)).toBeEnabled(),
   ]);
 

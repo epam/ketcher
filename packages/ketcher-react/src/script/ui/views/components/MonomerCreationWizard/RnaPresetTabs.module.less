@@ -113,10 +113,10 @@
 
 .phosphatePositionPicker {
   display: inline-flex;
-  gap: 8px;
-  padding: 4px;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  align-items: center;
+  padding: 2px;
+  border-radius: 8px;
+  background: @color-primary-light;
 }
 
 .phosphatePositionPickerError {
@@ -125,15 +125,41 @@
 }
 
 .phosphatePositionButton {
-  min-width: 48px;
-  height: 24px;
-  border: 1px solid #cad3dd;
-  border-radius: 4px;
-  background: #fff;
+  min-width: 100px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: @color-text-primary;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    background: fade(@color-background-primary, 70%);
+  }
 }
 
 .phosphatePositionButtonActive {
-  border-color: @color-primary;
-  color: @color-primary;
+  border-color: @color-grey-4;
+  background: @color-background-primary;
+  box-shadow: 0 2px 6px rgba(103, 104, 132, 0.18);
+}
+
+.phosphatePositionButtonLabel {
+  white-space: nowrap;
+}
+
+.phosphatePositionIcon {
+  width: 16px;
+  height: 16px;
 }

@@ -1632,7 +1632,7 @@ test(`32. Verify that in create monomer wizard: it is possible to change atom us
    *      4. Press Create Monomer button
    *      5. Select atom from toolbar (e.g., N)
    *      6. Click on Br atom on canvas
-   *      7. Verify that Br atom got changed to Nh
+   *      7. Verify that Br atom got changed to N
    *
    * Version 3.9
    */

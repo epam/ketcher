@@ -21,7 +21,6 @@ import {
 import {
   clickOnCanvas,
   clickInTheMiddleOfTheCanvas,
-  dragMouseTo,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form/form';
+import Form, { Field, FormState } from '../../../component/form/form/form';
 import React, { FC } from 'react';
 import { StereoLabel, Struct } from 'ketcher-core';
 
@@ -29,11 +29,7 @@ interface EnhancedStereoResult {
   type: StereoLabel;
 }
 
-interface EnhancedStereoFormState {
-  result: EnhancedStereoResult;
-  valid: boolean;
-  errors: Record<string, string>;
-}
+type EnhancedStereoFormState = FormState<EnhancedStereoResult>;
 
 interface EnhancedStereoProps {
   className: string;

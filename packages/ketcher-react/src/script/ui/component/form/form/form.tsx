@@ -61,6 +61,14 @@ interface FormStateProps {
   errors?: Record<string, string>;
 }
 
+// Generic shareable FormState interface for use in dialogs
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface FormState<TResult = Record<string, any>> {
+  result: TResult;
+  valid: boolean;
+  errors?: Record<string, string>;
+}
+
 type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
 
 // Keep backward-compatible export

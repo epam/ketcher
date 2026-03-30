@@ -16,7 +16,10 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, {
+  Field,
+  FormState,
+} from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
@@ -61,11 +64,8 @@ interface CheckState {
   checkOptions: CheckOption[];
 }
 
-interface FormState {
-  result?: CheckState;
+interface CheckFormState extends FormState<CheckState> {
   moleculeErrors: MoleculeErrors;
-  errors?: Record<string, string>;
-  valid?: boolean;
 }
 
 interface CheckDialogOwnProps {
@@ -74,7 +74,7 @@ interface CheckDialogOwnProps {
 }
 
 interface CheckDialogStateProps {
-  formState: FormState;
+  formState: CheckFormState;
   checkState: CheckState;
 }
 
@@ -89,7 +89,7 @@ type CheckDialogProps = CheckDialogOwnProps &
 
 interface State {
   modal: {
-    form: FormState;
+    form: CheckFormState;
   };
   options: {
     check: CheckState;

@@ -32,7 +32,8 @@ export interface FormSchema {
   key?: string;
   title?: string;
   default?: unknown;
-  properties: Record<string, SchemaProperty>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  properties?: Record<string, SchemaProperty | Record<string, any>>;
 }
 
 export interface FieldState {

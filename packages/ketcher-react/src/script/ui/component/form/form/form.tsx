@@ -324,8 +324,9 @@ function Field(props: FieldProps) {
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
-    (!Array.isArray(rest.schema) && rest.schema) ||
-    schema.properties[name ?? ''];
+    ((!Array.isArray(rest.schema) && rest.schema) ||
+      schema.properties?.[name ?? '']) ??
+    {};
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
 
@@ -339,7 +340,7 @@ function Field(props: FieldProps) {
       onExtraChange={onExtraChange}
       extraValue={extraValue}
       {...(extraName && {
-        extraSchema: rest.extraSchema || schema.properties[extraName],
+        extraSchema: rest.extraSchema || schema.properties?.[extraName],
       })}
       {...fieldOpts}
       {...rest}
@@ -408,8 +409,9 @@ function FieldWithModal(props: FieldWithModalProps) {
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
-    (!Array.isArray(inputRest.schema) && inputRest.schema) ||
-    schema.properties[name ?? ''];
+    ((!Array.isArray(inputRest.schema) && inputRest.schema) ||
+      schema.properties?.[name ?? '']) ??
+    {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
 
   return (
@@ -476,8 +478,9 @@ function CustomQueryField(props: CustomQueryFieldProps) {
   } = usePopoverAnchor();
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
-    (!Array.isArray(rest.schema) && rest.schema) ||
-    schema.properties[name ?? ''];
+    ((!Array.isArray(rest.schema) && rest.schema) ||
+      schema.properties?.[name ?? '']) ??
+    {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
   const handleCheckboxChange = (value: boolean) => {
     onCheckboxChange?.(
@@ -582,6 +585,7 @@ function propSchema(
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator as (data: string) => boolean);
 
+      if (!schemaCopy.properties) return;
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
         'maxLength',

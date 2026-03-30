@@ -10,7 +10,7 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
-import { ZoomOutByKeyboard } from '@utils/keyboard';
+import { zoomOutByKeyboard } from '@utils/keyboard';
 
 const KET_V2_TEXT_FILE = 'KET/text-formatting-v2.ket';
 
@@ -133,7 +133,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
 
     // Zoom out so all text objects fit within the snapshot area
     await clickInTheMiddleOfTheScreen(page);
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -265,7 +265,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     expect(para3Part.font?.size).toBe(25);
 
     await clickInTheMiddleOfTheScreen(page);
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -298,7 +298,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     ).toBeVisible();
 
     await clickInTheMiddleOfTheScreen(page);
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 });

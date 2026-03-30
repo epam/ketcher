@@ -50,7 +50,7 @@ test.describe('Click Atom on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -69,7 +69,7 @@ test.describe('Click Atom on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -112,7 +112,7 @@ test.describe('Click Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await moveMouseToTheMiddleOfTheScreen(page);

@@ -8,8 +8,8 @@ import {
   dragMouseTo,
   waitForRender,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -257,9 +257,9 @@ test.describe('Text tools test cases', () => {
     await selectAllStructuresOnCanvas(page);
     await getTextLabelLocator(page, { text: 'ABC123' }).click();
     await moveStructureToNewPosition(page);
-    await ZoomInByKeyboard(page, { repeat: 2 });
+    await zoomInByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
-    await ZoomOutByKeyboard(page, { repeat: 2 });
+    await zoomOutByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
   });
 

@@ -79,7 +79,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       ReactionMappingType.ReactionAutoMapping,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('automap-mode-input-span').click();
+    await ReactionAutoMappingDialog(page).modeDropdown.click();
     await takeEditorScreenshot(page);
   });
 

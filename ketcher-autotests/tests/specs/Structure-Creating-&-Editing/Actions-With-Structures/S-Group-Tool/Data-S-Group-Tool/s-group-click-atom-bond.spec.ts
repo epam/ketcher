@@ -6,8 +6,8 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   MolFileFormat,
   moveMouseAway,
 } from '@utils';
@@ -746,7 +746,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 3 });
+    await zoomInByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -773,7 +773,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomOutByKeyboard(page, { repeat: 3 });
+    await zoomOutByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({

@@ -38,6 +38,8 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { selectionDelete } from '../../Rotation/utils';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -143,7 +145,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await selectionDelete(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -258,7 +260,10 @@ test.describe('Superatom S-Group tool', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
     );
     await takeEditorScreenshot(page);
-    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
     await takeEditorScreenshot(page);
     await removeAbbreviation(
       page,
@@ -281,7 +286,10 @@ test.describe('Superatom S-Group tool', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
     );
     await takeEditorScreenshot(page);
-    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
     await takeEditorScreenshot(page);
 
     await removeAbbreviation(

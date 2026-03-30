@@ -35,11 +35,3 @@ export async function clearLocalStorage(page: Page) {
     localStorage.clear();
   });
 }
-
-export async function closeOpenStructure(page: Page) {
-  const openStructure = page.getByText('Open Structure', {
-    exact: true,
-  });
-  await OpenStructureDialog(page).closeWindow();
-  await openStructure.waitFor({ state: 'hidden' });
-}

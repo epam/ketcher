@@ -20,7 +20,7 @@ import type { Dispatch, UnknownAction } from 'redux';
 type ModalFormResult = Record<string, unknown>;
 type BaseModalFormState = typeof formsState[keyof typeof formsState];
 type ModalFormState = Omit<BaseModalFormState, 'result'> & {
-  result: ModalFormResult;
+  result?: ModalFormResult;
 };
 
 interface ModalDialogProps {
@@ -74,14 +74,18 @@ function ensureFormState(
     return null;
   }
 
-  const result =
-    'result' in form && form.result && typeof form.result === 'object'
-      ? (form.result as ModalFormResult)
-      : {};
+  if (!('result' in form)) {
+    return {
+      ...form,
+    };
+  }
 
   return {
     ...form,
-    result,
+    result:
+      form.result && typeof form.result === 'object'
+        ? (form.result as ModalFormResult)
+        : undefined,
   };
 }
 

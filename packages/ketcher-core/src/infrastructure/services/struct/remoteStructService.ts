@@ -16,6 +16,7 @@
 
 import { CoreEditor } from 'application/editor';
 import {
+  adjustCalculatedMassForCharge,
   AromatizeData,
   AromatizeResult,
   AutomapData,
@@ -382,7 +383,9 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, this.getStandardServerOptions(options));
+    )(data, this.getStandardServerOptions(options)).then((result) =>
+      adjustCalculatedMassForCharge(data, result),
+    );
   }
 
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {

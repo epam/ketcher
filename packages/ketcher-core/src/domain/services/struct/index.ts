@@ -16,3 +16,4 @@
 
 export * from './structService.types';
 export * from './structServiceProvider.types';
+export * from './calculateMass';

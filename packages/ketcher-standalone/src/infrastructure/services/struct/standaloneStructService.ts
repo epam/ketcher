@@ -38,6 +38,7 @@ import {
   WorkerEvent,
 } from './indigoWorker.types';
 import {
+  adjustCalculatedMassForCharge,
   AromatizeData,
   AromatizeResult,
   AutomapData,
@@ -677,8 +678,8 @@ class IndigoService implements StructService {
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data;
     return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
+      const action = ({ data: outputData }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = outputData;
         if (!msg.hasError) {
           const calculatedProperties: CalculateResult = JSON.parse(msg.payload);
           const result: CalculateResult = Object.entries(
@@ -694,7 +695,7 @@ class IndigoService implements StructService {
 
             return acc;
           }, {} as CalculateResult);
-          resolve(result);
+          resolve(adjustCalculatedMassForCharge(data, result));
         } else {
           reject(new Error(msg.error));
         }

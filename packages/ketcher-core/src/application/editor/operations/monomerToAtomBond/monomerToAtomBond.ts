@@ -19,6 +19,7 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { CoreEditor } from 'application/editor/internal';
 
 export class MonomerToAtomBondAddOperation implements Operation {
   public monomerToAtomBond: MonomerToAtomBond;
@@ -69,6 +70,10 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor?.mode.modeName === 'sequence-layout-mode') {
+      return;
+    }
     renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }
 }

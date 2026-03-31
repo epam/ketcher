@@ -777,6 +777,8 @@ export class SequenceMode extends BaseMode {
     );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
+    modelChanges.setUndoOperationReverse();
+    modelChanges.setUndoOperationsByPriority();
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
     this.selectionStartCaretPosition = -1;

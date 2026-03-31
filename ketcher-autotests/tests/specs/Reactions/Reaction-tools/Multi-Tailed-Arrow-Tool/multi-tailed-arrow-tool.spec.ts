@@ -69,25 +69,6 @@ async function saveToTemplates(page: Page) {
   await TemplateEditDialog(page).save();
 }
 
-async function setupElementsAndModifyMultiTailArrow(page: Page) {
-  await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-  await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-  await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
-  await page.getByTestId('head-resize').hover({ force: true });
-  await dragMouseTo(page, 800, 500);
-  await page.getByTestId('head-move').hover({ force: true });
-  await dragMouseTo(page, 800, 500);
-  await page.getByTestId('bottomTail-resize').hover({ force: true });
-  await dragMouseTo(page, 200, 500);
-  await takeEditorScreenshot(page);
-  await page.mouse.move(610, 350);
-  await dragMouseTo(page, 610, 100);
-  await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
-}
-
 async function addTail(page: Page, x: number, y: number) {
   await waitForRender(page, async () => {
     await ContextMenu(page, { x, y }).click(MultiTailedArrowOption.AddNewTail);
@@ -517,7 +498,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
-    await page.getByTestId('reaction-arrow-multitail').click();
+    await page.getByTestId(ArrowType.MultiTailedArrow).click();
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -908,6 +889,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
     });
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Verify that Multi-Tailed Arrows with elements can be saved to template and added to Canvas with correct position and layer level', async () => {
@@ -931,24 +913,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'multi_tail_arrows_with_elements',
     );
     await takeEditorScreenshot(page);
-    await page.getByText('multi_tail_arrows_with_elements').click();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.UserTemplate,
+      'multi_tail_arrows_with_elements',
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-  });
-
-  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: selection, movement of arrow itself, changing of size and position of head', async () => {
-    /*
-    Test case: https://github.com/epam/ketcher/issues/5055
-    Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
-    elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
-    */
-    await setupElementsAndModifyMultiTailArrow(page);
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'KET/modified-multitail-arrow-expected.ket',
-      FileType.KET,
-    );
   });
 
   test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: changing size and positions of added tails, add/remove tails', async () => {
@@ -3313,6 +3283,38 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: selection, movement of arrow itself, changing of size and position of head', async () => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
+    elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
+    */
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
+    await page.getByTestId('head-resize').hover({ force: true });
+    await dragMouseTo(page, 800, 500);
+    await page.getByTestId('head-move').hover({ force: true });
+    await dragMouseTo(page, 800, 500);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(610, 350);
+    await dragMouseTo(page, 610, 100);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/modified-multitail-arrow-expected.ket',
+      FileType.KET,
+    );
   });
 
   const testConfigs1 = [

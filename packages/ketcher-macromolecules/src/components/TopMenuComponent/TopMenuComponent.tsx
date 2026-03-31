@@ -99,6 +99,7 @@ export function TopMenuComponent() {
     } else if (name === 'undo' || name === 'redo') {
       editor?.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
+      editor?.events.resetSequenceEditMode.dispatch();
       editor?.events.selectTool.dispatch([name]);
       dispatch(selectTool(lastSelectedSelectionMenuItem));
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);

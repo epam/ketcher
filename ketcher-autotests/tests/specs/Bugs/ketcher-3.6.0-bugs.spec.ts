@@ -148,34 +148,69 @@ test.describe('Ketcher bugs in 3.6.0', () => {
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
-
-  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {
+  test('Case 6: The ruler is not limited to 190 divisions', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
-     * Bug: https://github.com/epam/ketcher/issues/6410
-     * Description: Correct bond attachment to micro molecules in Macro Mode. The bond should be attached to the correct atomic position,
-     * ensuring proper connectivity between the micro molecule and the rest of the structure.
-     * The bond should not overlap or extend outside of the expected attachment point.
+     * Bug: https://github.com/epam/ketcher/issues/7209
+     * Description: The ruler is not limited to 190 divisions.
      * Scenario:
-     * 1. Go to Macro - Flex mode (clean canvas)
-     * 2. Open the file with micro molecule
-     * 3. Select the bond tool
-     * 4. Connect the bond to the micro molecule
+     * 1. Go to Macro - Sequence mode
+     * 2. Set the ruler value to 210
+     * 3. Verify that the ruler value is set to 210
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      disableChainLengthRuler: false,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    // await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    // await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    // await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    //   LayoutMode.Sequence,
+    // );
+    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
+    await Ruler(page).setLength('210');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+  test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/7371
+     * Description: Mouse cursor positioned at the top left corner of preset when zoom 400%
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Set zoom level to 400%
+     * 4. Drag "ghost image" on the canvas
+     * 5. Take a screenshot
+     * We have a bug https://github.com/epam/ketcher/issues/7371 when it will be fixed need to update
+     * the screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
-    );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
+    await Library(page).hoverMonomer(Preset.A);
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await page.mouse.up();
+    await Library(page).hoverMonomer(Preset.A);
+    await page.mouse.down();
+    await page.mouse.move(200, 200);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.mouse.up();
   });
 
   test('Case 2: The tooltip not appears behind the context menu options', async () => {
@@ -297,31 +332,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 6: The ruler is not limited to 190 divisions', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7454
-     * Bug: https://github.com/epam/ketcher/issues/7209
-     * Description: The ruler is not limited to 190 divisions.
-     * Scenario:
-     * 1. Go to Macro - Sequence mode
-     * 2. Set the ruler value to 210
-     * 3. Verify that the ruler value is set to 210
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      disableChainLengthRuler: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-
-    await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
-    await Ruler(page).setLength('210');
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-  });
-
   test('Case 7: Rectangular input field wide enough to fit any (at least 4) digit number', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
@@ -366,43 +376,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await Library(page).hoverMonomer(Chem.SS3);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
-  });
-
-  test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7454
-     * Bug: https://github.com/epam/ketcher/issues/7371
-     * Description: Mouse cursor positioned at the top left corner of preset when zoom 400%
-     * Scenario:
-     * 1. Go to Macro
-     * 2. Switch to Flex mode
-     * 3. Set zoom level to 400%
-     * 4. Drag "ghost image" on the canvas
-     * 5. Take a screenshot
-     * We have a bug https://github.com/epam/ketcher/issues/7371 when it will be fixed need to update
-     * the screenshot
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
-    await CommonTopRightToolbar(page).setZoomInputValue('400');
-    await Library(page).hoverMonomer(Preset.A);
-    await page.mouse.down();
-    await page.mouse.move(200, 200);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await page.mouse.up();
-    await Library(page).hoverMonomer(Preset.A);
-    await page.mouse.down();
-    await page.mouse.move(200, 200);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await page.mouse.up();
   });
 
   test(`Case 10: Delete operation not causes exception: Uncaught (in promise) Error: Minified Redux error`, async () => {
@@ -493,6 +466,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
     ).toEqual('8.49');
+    await CalculateVariablesPanel(page).closeButton.click();
   });
 
   test('Case 13: Сorrect Implementation of PKA calculation', async () => {
@@ -724,6 +698,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       "Convert error! Sequence saver: Can't save micro-molecules to sequence format",
     );
     await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Case 20: Atom weights in indigo updated according to last IUPAC data', async () => {
@@ -752,6 +727,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     expect(await CalculateVariablesPanel(page).getMolecularMassValue()).toEqual(
       '4113.641',
     );
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 21: Select central monomer of chain of three', async () => {
@@ -816,6 +792,34 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.HELM,
       'RNA1{[5R6Rm5](A).[5R6Rm5](A).[5R6Rm5](A)}$$$$V2.0',
     );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7454
+     * Bug: https://github.com/epam/ketcher/issues/6410
+     * Description: Correct bond attachment to micro molecules in Macro Mode. The bond should be attached to the correct atomic position,
+     * ensuring proper connectivity between the micro molecule and the rest of the structure.
+     * The bond should not overlap or extend outside of the expected attachment point.
+     * Scenario:
+     * 1. Go to Macro - Flex mode (clean canvas)
+     * 2. Open the file with micro molecule
+     * 3. Select the bond tool
+     * 4. Connect the bond to the micro molecule
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
+    );
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -33,7 +33,7 @@
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",
     "serve:demo": "cd demo && npm run serve",
-    "up": "node ./scripts/build-run.js"
+    "up": "node ./scripts/build-run.mjs"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.61.0",
@@ -65,7 +65,7 @@
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=22.0.0",
+    "node": ">=24.14.1",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
@@ -74,12 +74,12 @@
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
-    "minimatch": "^10.0.3",
+    "minimatch": "^10.2.4",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
     "react-router": "^7.13.0",
     "react-router-dom": "^7.13.0",
-    "serve-handler": "^6.1.6"
+    "serve-handler": "^6.1.7"
   },
   "stylelint": {
     "overrides": [

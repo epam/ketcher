@@ -40,7 +40,7 @@ describe('Rotate controller', () => {
 
     // @ts-ignore
     controller.show();
-    expect(paper).toBeCalledTimes(0);
+    expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
     // @ts-ignore
@@ -82,7 +82,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.show();
 
-    expect(paper).toBeCalledTimes(0);
+    expect(paper).toHaveBeenCalledTimes(0);
   });
 
   /**
@@ -96,7 +96,7 @@ describe('Rotate controller', () => {
 
     editor.zoom(2);
 
-    expect(editor.rotateController.rerender).toBeCalledTimes(1);
+    expect(editor.rotateController.rerender).toHaveBeenCalledTimes(1);
   });
 
   /**
@@ -117,7 +117,7 @@ describe('Rotate controller', () => {
       stopPropagation: () => null,
     });
 
-    expect(changeCrossColor).toBeCalledTimes(0);
+    expect(changeCrossColor).toHaveBeenCalledTimes(0);
   });
 
   /**
@@ -219,7 +219,7 @@ describe('Rotate controller', () => {
     const selectTool = new SelectTool(editor, 'rectangle');
     selectTool.mouseup(new PointerEvent('mouseup'));
 
-    expect(updateRender).toBeCalled();
+    expect(updateRender).toHaveBeenCalled();
     expect(selectTool.isMouseDown).toBe(false);
 
     expect(editor.historyStack).toHaveLength(0);

@@ -151,8 +151,7 @@ test.describe('Open Ketcher', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });
-    await page.getByText('R8').click();
-    await RGroupDialog(page).apply();
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
     await takeEditorScreenshot(page);
   });
 
@@ -166,7 +165,9 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await RGroupDialog(page).unsetRGroupFragment(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -183,7 +184,9 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R7);
     await takeEditorScreenshot(page);
   });
@@ -195,13 +198,19 @@ test.describe('Open Ketcher', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R7);
 
-    await page.getByText('R16').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(2).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R8);
 
-    await page.getByText('R14').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(1).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R15);
     await takeEditorScreenshot(page);
   });
@@ -225,7 +234,6 @@ test.describe('Open Ketcher', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
-    await page.getByText('R8').click();
     await RGroupDialog(page).setRGroupFragment(RGroup.R5);
     await takeEditorScreenshot(page);
   });
@@ -240,7 +248,9 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/R-fragment-structure.mol',
     );
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -255,14 +265,18 @@ test.describe('Open Ketcher', () => {
     );
 
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
     await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
 
     await CommonLeftToolbar(page).erase();
-    await page.getByText('R8').click();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

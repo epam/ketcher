@@ -386,10 +386,26 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
+  test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
     /* 
     Test case: Macro-Micro-Switcher
-    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
+    Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
+    */
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 150,
+    });
+  });
+
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
+    /*
+    Test case: Macro-Micro-Switcher
+    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs
     when switching from Macro mode to Micro mode and back to Macro is saved
     */
 
@@ -406,22 +422,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
-  });
-
-  test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
-    */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      await readFileContent('KET/one-functional-group-expanded.ket'),
-    );
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
-      padding: 150,
-    });
   });
 
   test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async () => {
@@ -930,7 +930,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
@@ -986,7 +989,11 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/structure-with-two-attachment-points.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await ContextMenu(page, page.getByText('R2')).open();
+    // R1 group is actually H atom
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'H' }).nth(1),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1049,7 +1056,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.FMOC,
       );
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1076,7 +1083,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
       await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -1971,7 +1978,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
@@ -1991,7 +2001,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupFragment(RGroup.R18);
     await takeEditorScreenshot(page);
   });
@@ -2006,7 +2019,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
@@ -2025,14 +2041,20 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).chargePlus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
     });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).chargeMinus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
       force: true,
@@ -2050,7 +2072,10 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

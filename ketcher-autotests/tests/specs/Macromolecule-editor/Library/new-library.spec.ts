@@ -34,8 +34,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/keyboard';
 import {
   FileType,
@@ -667,14 +667,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -710,14 +710,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -500,7 +500,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-    await page.keyboard.press('Control+M');
+    await page.keyboard.press('ControlOrMeta+M');
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);

@@ -870,7 +870,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (Atom.isHeteroAtom(this.label) && this.implicitHCount !== null) {
+    if (this.implicitHCount !== null) {
       return this.implicitHCount;
     }
     return hydrogenCount;
@@ -1087,15 +1087,15 @@ export class Atom extends BaseMicromoleculeEntity {
       return false;
     }
 
-    return (
+    return Boolean(
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-      attachmentAtomExternalConnections?.find((_, bond) =>
-        bond.begin === attachmentPoint?.atomId
-          ? bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber
-          : bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber,
-      )
+        attachmentAtomExternalConnections?.find((_, bond) =>
+          bond.begin === attachmentPoint?.atomId
+            ? bond.beginSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber
+            : bond.endSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber,
+        ) !== null,
     );
   }
 }

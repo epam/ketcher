@@ -35,7 +35,7 @@ test.describe('Ignore Chiral Flag', () => {
     await resetSettingsValuesToDefault(page);
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
@@ -53,7 +53,7 @@ test.describe('Ignore Chiral Flag', () => {
     const pointZ = 211;
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
@@ -69,7 +69,7 @@ test.describe('Ignore Chiral Flag', () => {
     // Test case: EPMLSOPKET-16919
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );

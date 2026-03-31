@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 import { getPresets } from './getPreset';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
   monomers,
   phosphate,
@@ -28,7 +27,12 @@ import {
   adenine,
   rnaPresetsTemplates,
 } from '../testMockData/monomerPresets';
-import { MonomerItemType } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  getRnaPresetPhosphatePosition,
+  KetConnectionType,
+  MonomerItemType,
+} from 'ketcher-core';
 
 describe('getPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {
@@ -48,29 +52,80 @@ describe('getPreset function', () => {
       adenine,
     ];
 
-    const thymineNucleotide: IRnaPreset = {
-      name: 'T',
-      base: thymine,
-      sugar: ribose,
-      phosphate,
-      default: true,
-    };
-
-    const guanineNucleotide: IRnaPreset = {
-      name: 'G',
-      base: guanine,
-      sugar: ribose,
-      phosphate,
-      default: true,
-    };
-
     const testArr = getPresets(monomerData, rnaPresetsTemplates, true);
 
-    expect(testArr).toContainEqual(thymineNucleotide);
-    expect(testArr).toContainEqual(guanineNucleotide);
-    expect(testArr).not.toContainEqual({
-      MonomerName: '3FAM',
-      Name: '3-FAM',
-    });
+    expect(testArr).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'T',
+          base: thymine,
+          sugar: ribose,
+          phosphate,
+          default: true,
+        }),
+        expect.objectContaining({
+          name: 'G',
+          base: guanine,
+          sugar: ribose,
+          phosphate,
+          default: true,
+        }),
+      ]),
+    );
+
+    expect(testArr.find(({ name }) => name === '3FAM')).toBeUndefined();
+  });
+
+  it('should infer left phosphate position from preset connections', () => {
+    const phosphateWithId = {
+      ...phosphate,
+      props: {
+        ...phosphate.props,
+        id: 'P___Phosphate',
+      },
+    };
+    const riboseWithId = {
+      ...ribose,
+      props: {
+        ...ribose.props,
+        id: 'R___Ribose',
+      },
+    };
+    const adenineWithId = {
+      ...adenine,
+      props: {
+        ...adenine.props,
+        id: 'A___Adenine',
+      },
+    };
+    const monomerData: MonomerItemType[] = [
+      phosphateWithId,
+      riboseWithId,
+      adenineWithId,
+    ];
+    const leftPreset = getPresets(
+      monomerData,
+      [
+        {
+          ...rnaPresetsTemplates[0],
+          connections: [
+            {
+              connectionType: KetConnectionType.SINGLE,
+              endpoint1: {
+                templateId: 'monomerTemplate-R___Ribose',
+                attachmentPointId: AttachmentPointName.R1,
+              },
+              endpoint2: {
+                templateId: 'monomerTemplate-P___Phosphate',
+                attachmentPointId: AttachmentPointName.R2,
+              },
+            },
+          ],
+        },
+      ],
+      true,
+    )[0];
+
+    expect(getRnaPresetPhosphatePosition(leftPreset)).toBe('left');
   });
 });

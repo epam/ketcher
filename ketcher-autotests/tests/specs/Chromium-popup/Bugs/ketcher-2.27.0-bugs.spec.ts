@@ -46,6 +46,8 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptide.A).hover();
@@ -274,8 +276,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Chromium-popup/Bugs/benzene-ring-with-two-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
-    const attachmentPointR1 = page.getByText('R1');
-    await ContextMenu(page, attachmentPointR1).click([
+    // R1 group is actually H atom
+    await ContextMenu(page, getAtomLocator(page, { atomLabel: 'H' })).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
     ]);
@@ -453,7 +455,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
-    await page.getByText('X').hover();
+    await getAbbreviationLocator(page, { name: 'X' }).hover();
     await takeEditorScreenshot(page);
   });
 
@@ -549,7 +551,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await expandMonomer(page, page.getByText('2Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '2Nal' }));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -6,8 +6,8 @@ import {
   takeTopToolbarScreenshot,
   waitForPageInit,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   undoByKeyboard,
   redoByKeyboard,
   clearCanvasByKeyboard,
@@ -101,7 +101,7 @@ test.describe('Hotkeys', () => {
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -114,7 +114,7 @@ test.describe('Hotkeys', () => {
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -127,7 +127,7 @@ test.describe('Hotkeys', () => {
       page,
       'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);

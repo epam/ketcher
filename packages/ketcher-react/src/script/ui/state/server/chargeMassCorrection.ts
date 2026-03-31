@@ -70,7 +70,7 @@ function adjustReactionComponentMasses(
     const charge = getComponentCharge(struct, components[index]);
     if (charge === 0) return part;
 
-    return part.replace(/[\d.]+/g, (numStr) => {
+    return part.replace(/\d+\.?\d*/g, (numStr) => {
       const num = parseFloat(numStr);
       return String(num - charge * ELECTRON_MASS_AMU);
     });

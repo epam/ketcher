@@ -23,13 +23,14 @@ type ModalFormState = Omit<BaseModalFormState, 'result'> & {
   result?: ModalFormResult;
 };
 
-interface ModalDialogProps {
+interface ModalDialogBaseProps {
   isNestedModal?: boolean;
   isRestoredModal?: boolean;
   onResult?: (value: unknown) => void;
   onCancel?: (reason?: unknown) => void;
-  [key: string]: unknown;
 }
+
+type ModalDialogProps = ModalDialogBaseProps & Record<string, unknown>;
 
 interface ModalState {
   name: string;
@@ -60,11 +61,21 @@ type ModalAction = ModalOpenAction | ModalCloseAction | UpdateFormAction;
 type ModalDispatch = Dispatch<ModalAction>;
 
 function isUpdateFormAction(action: UnknownAction): action is UpdateFormAction {
-  return action.type === 'UPDATE_FORM' && 'data' in action;
+  return (
+    action.type === 'UPDATE_FORM' &&
+    'data' in action &&
+    action.data !== null &&
+    typeof action.data === 'object'
+  );
 }
 
 function isModalOpenAction(action: UnknownAction): action is ModalOpenAction {
-  return action.type === 'MODAL_OPEN' && 'data' in action;
+  return (
+    action.type === 'MODAL_OPEN' &&
+    'data' in action &&
+    action.data !== null &&
+    typeof action.data === 'object'
+  );
 }
 
 function ensureFormState(

@@ -1,5 +1,4 @@
-import { Atom, Struct } from 'ketcher-core';
-import { correctCalculatedExactMass } from './chargeMassCorrection';
+import { Atom, correctCalculatedExactMass, Struct } from 'ketcher-core';
 
 describe('correctCalculatedExactMass', () => {
   it('should subtract electron mass for positively charged structures', () => {

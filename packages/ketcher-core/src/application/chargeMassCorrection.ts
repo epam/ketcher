@@ -1,16 +1,15 @@
-import { CalculateProps, CalculateResult, Struct } from 'ketcher-core';
+import { CalculateProps, CalculateResult } from 'domain/services';
+import { Struct } from 'domain/entities';
 
-const ELECTRON_MASS = 0.00054857990946;
+export const ELECTRON_MASS = 0.00054857990946;
 const MONOISOTOPIC_MASS_PROPERTY: CalculateProps = 'monoisotopic-mass';
-
-type CalculateResultLike = Partial<CalculateResult>;
 
 function getTotalCharge(struct: Struct, selectedAtoms: number[] = []): number {
   const selectedAtomIds = selectedAtoms.length ? new Set(selectedAtoms) : null;
   let totalCharge = 0;
 
-  struct.atoms.forEach((atom, atomId) => {
-    if (!selectedAtomIds || selectedAtomIds.has(atomId)) {
+  struct.atoms.forEach((atom, atomKey) => {
+    if (!selectedAtomIds || selectedAtomIds.has(atomKey)) {
       totalCharge += atom.charge ?? 0;
     }
   });
@@ -19,7 +18,7 @@ function getTotalCharge(struct: Struct, selectedAtoms: number[] = []): number {
 }
 
 function correctMassValue(
-  value: CalculateResultLike[typeof MONOISOTOPIC_MASS_PROPERTY],
+  value: Partial<CalculateResult>[typeof MONOISOTOPIC_MASS_PROPERTY],
   totalCharge: number,
 ) {
   if (typeof value === 'number') {
@@ -38,11 +37,11 @@ function correctMassValue(
   return value;
 }
 
-export function correctCalculatedExactMass(
-  values: CalculateResultLike,
+export function correctCalculatedExactMass<T extends Partial<CalculateResult>>(
+  values: T,
   struct: Struct,
   selectedAtoms: number[] = [],
-): CalculateResultLike {
+): T {
   const totalCharge = getTotalCharge(struct, selectedAtoms);
 
   if (!totalCharge) {
@@ -55,5 +54,5 @@ export function correctCalculatedExactMass(
       values[MONOISOTOPIC_MASS_PROPERTY],
       totalCharge,
     ),
-  };
+  } as T;
 }

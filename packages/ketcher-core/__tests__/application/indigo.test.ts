@@ -18,7 +18,10 @@ describe('Indigo calculate', () => {
     const indigo = new Indigo(structService);
     const values = await indigo.calculate(struct);
 
-    expect(values['monoisotopic-mass']).toBe('18.03382522009054');
+    expect(Number(values['monoisotopic-mass'])).toBeCloseTo(
+      18.03382522009054,
+      12,
+    );
     expect(structService.calculate).toHaveBeenCalledTimes(1);
   });
 });

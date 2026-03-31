@@ -24,6 +24,7 @@ export * from 'domain/types';
 export * from 'infrastructure/services';
 
 export * from 'application/formatters';
+export * from 'application/chargeMassCorrection';
 export * from 'application/render';
 export * from 'application/editor';
 export * from 'application/ketcher';

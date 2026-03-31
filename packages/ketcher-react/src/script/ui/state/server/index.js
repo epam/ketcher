@@ -14,14 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
+import {
+  ChemicalMimeType,
+  correctCalculatedExactMass,
+  KetcherLogger,
+  KetSerializer,
+} from 'ketcher-core';
 import { appUpdate, setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
 import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
-import { correctCalculatedExactMass } from './chargeMassCorrection';
 
 export function checkServer() {
   return (dispatch, getState) => {

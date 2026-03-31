@@ -45,14 +45,14 @@ test.describe('Templates - Template Library', () => {
 
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
     );
     await clickOnCanvas(page, x - offsetX, y, { from: 'pageTopLeft' });
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.PhenylalanineMustard,
     );
@@ -107,7 +107,7 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-4267
     // Add structure from Functional Group into canvas
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);

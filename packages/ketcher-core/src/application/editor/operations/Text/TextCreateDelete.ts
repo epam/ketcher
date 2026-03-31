@@ -29,7 +29,7 @@ interface TextCreateData {
 }
 
 export class TextCreate extends BaseOperation {
-  data: TextCreateData;
+  readonly data: TextCreateData;
 
   constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE);
@@ -67,7 +67,7 @@ interface TextDeleteData {
 }
 
 export class TextDelete extends BaseOperation {
-  data: TextDeleteData;
+  readonly data: TextDeleteData;
 
   constructor(id: number) {
     super(OperationType.TEXT_DELETE);

@@ -30,7 +30,7 @@ export class FlipMonomerOperation extends BaseOperation {
   private previousValue: FlipDirection | null = null;
   private previousRotate: number | undefined;
 
-  constructor(public data: FlipMonomerData) {
+  constructor(public readonly data: FlipMonomerData) {
     super(OperationType.FLIP_MONOMER);
   }
 

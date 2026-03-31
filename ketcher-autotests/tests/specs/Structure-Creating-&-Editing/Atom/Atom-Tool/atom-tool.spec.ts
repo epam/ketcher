@@ -13,8 +13,8 @@ import {
   waitForRender,
   selectPartOfMolecules,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
   dragTo,
@@ -232,7 +232,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await page.getByText('AH').click();
+    await getAtomLocator(page, { atomLabel: 'AH' }).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -269,11 +269,11 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -500,6 +500,23 @@ test.describe('Atom Tool', () => {
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
+  test('Default colours of atom symbols', async () => {
+    /*
+    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
+    Description:
+    "H" and "C" are #000000, black.
+    "N" is #304FF7, blue.
+    "O" is #FF0D0D, red.
+    "S" is #C99A19, yellow.
+    "P" is #FF8000, brick red.
+    "F" is #78BC42, grass green.
+    "Cl" is #1FD01F, light green.
+    "Br" is #A62929, red-brown.
+    "I" is #940094, purple.
+    */
+    await takeRightToolbarScreenshot(page);
+  });
+
   test('Addition element buttons to right atom panel', async () => {
     /*
     Test case: EPMLSOPKET-1435
@@ -591,23 +608,6 @@ test.describe('Atom Tool', () => {
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);
     }
-  });
-
-  test('Default colours of atom symbols', async () => {
-    /*
-    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
-    Description:
-    "H" and "C" are #000000, black.
-    "N" is #304FF7, blue.
-    "O" is #FF0D0D, red.
-    "S" is #C99A19, yellow.
-    "P" is #FF8000, brick red.
-    "F" is #78BC42, grass green.
-    "Cl" is #1FD01F, light green.
-    "Br" is #A62929, red-brown.
-    "I" is #940094, purple.
-    */
-    await takeRightToolbarScreenshot(page);
   });
 
   /*

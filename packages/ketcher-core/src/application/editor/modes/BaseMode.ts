@@ -120,6 +120,27 @@ export abstract class BaseMode {
     }
   }
 
+  onCut(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
+      return;
+    }
+
+    const editor = CoreEditor.provideEditorInstance();
+
+    // Check if there's anything selected to cut
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    this.onCopy(event);
+
+    editor.events.deleteSelectedStructure.dispatch();
+
+    if (event) {
+      event.preventDefault();
+    }
+  }
+
   async onPaste(event?: ClipboardEvent) {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
@@ -183,6 +204,7 @@ export abstract class BaseMode {
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
     EditorHistory.getInstance(editor).update(modelChanges);
+    editor.events.mouseLeaveSequenceItem.dispatch();
     this.scrollForView();
   }
 

@@ -1,0 +1,473 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 15.0,
+                    "z": 0,
+                    "width": 3.0,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Plain text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 14.3,
+                    "z": 0,
+                    "width": 3.0,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Bold text",
+                                "bold": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 13.6,
+                    "z": 0,
+                    "width": 3.0,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Italic text",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 12.9,
+                    "z": 0,
+                    "width": 3.0,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Subscript text",
+                                "subscript": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 12.2,
+                    "z": 0,
+                    "width": 3.0,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Superscript text",
+                                "superscript": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 11.2,
+                    "z": 0,
+                    "width": 4.0,
+                    "height": 0.8
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Font size 30",
+                                "font": {
+                                    "size": 30
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 10.4,
+                    "z": 0,
+                    "width": 3.5,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Arial family",
+                                "font": {
+                                    "family": "Arial",
+                                    "size": 16
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 9.7,
+                    "z": 0,
+                    "width": 3.5,
+                    "height": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Red colored",
+                                "color": "#FF0000"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 9.0,
+                    "z": 0,
+                    "width": 6.0,
+                    "height": 0.8
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Mixed ",
+                                "bold": true,
+                                "font": {
+                                    "size": 20
+                                }
+                            },
+                            {
+                                "text": "formatting ",
+                                "italic": true,
+                                "color": "#0000FF"
+                            },
+                            {
+                                "text": "in ",
+                                "bold": true,
+                                "italic": true
+                            },
+                            {
+                                "text": "one",
+                                "superscript": true
+                            },
+                            {
+                                "text": " line",
+                                "subscript": true,
+                                "font": {
+                                    "family": "Tahoma"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -14.0,
+                    "y": 8.0,
+                    "z": 0,
+                    "width": 6.0,
+                    "height": 1.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "First paragraph bold",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "Second paragraph italic",
+                                "italic": true,
+                                "color": "#00AA00"
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "Third paragraph large",
+                                "font": {
+                                    "size": 25
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 15.0,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.5
+                },
+                "alignment": "center",
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Center aligned root"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 14.3,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.5
+                },
+                "alignment": "right",
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Right aligned root"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 13.3,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 1.5
+                },
+                "paragraphs": [
+                    {
+                        "alignment": "left",
+                        "parts": [
+                            {
+                                "text": "Para left aligned"
+                            }
+                        ]
+                    },
+                    {
+                        "alignment": "center",
+                        "parts": [
+                            {
+                                "text": "Para center aligned"
+                            }
+                        ]
+                    },
+                    {
+                        "alignment": "right",
+                        "parts": [
+                            {
+                                "text": "Para right aligned"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 12.2,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.5
+                },
+                "indent": {
+                    "first_line": 2.0,
+                    "left": 1.0,
+                    "right": 0.5
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Root indented text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 11.5,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.8
+                },
+                "paragraphs": [
+                    {
+                        "indent": {
+                            "first_line": 3.0,
+                            "left": 1.5,
+                            "right": 1.0
+                        },
+                        "parts": [
+                            {
+                                "text": "Paragraph indented text"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 10.7,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.5
+                },
+                "font": {
+                    "family": "Arial",
+                    "size": 18
+                },
+                "color": "#990099",
+                "bold": true,
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "Root styled defaults"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 9.9,
+                    "z": 0,
+                    "width": 5.0,
+                    "height": 0.8
+                },
+                "paragraphs": [
+                    {
+                        "font": {
+                            "family": "Tahoma",
+                            "size": 22
+                        },
+                        "color": "#006600",
+                        "bold": true,
+                        "italic": true,
+                        "parts": [
+                            {
+                                "text": "Paragraph styled defaults"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": -6.0,
+                    "y": 8.8,
+                    "z": 0,
+                    "width": 6.0,
+                    "height": 1.8
+                },
+                "font": {
+                    "family": "Arial",
+                    "size": 14
+                },
+                "bold": true,
+                "paragraphs": [
+                    {
+                        "font": {
+                            "size": 18
+                        },
+                        "italic": true,
+                        "parts": [
+                            {
+                                "text": "Root+Para ",
+                                "color": "#FF0000"
+                            },
+                            {
+                                "text": "override",
+                                "bold": true,
+                                "font": {
+                                    "size": 24,
+                                    "family": "Tahoma"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "Inherits root styles"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "ket_version": "2.0.0"
+}

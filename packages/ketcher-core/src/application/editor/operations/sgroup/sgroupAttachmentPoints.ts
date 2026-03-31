@@ -10,7 +10,7 @@ type Data = {
 };
 
 export class SGroupAttachmentPointAdd extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(
@@ -53,7 +53,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
 }
 
 export class SGroupAttachmentPointRemove extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(OperationType.S_GROUP_ATTACHMENT_POINT_REMOVE, 4);

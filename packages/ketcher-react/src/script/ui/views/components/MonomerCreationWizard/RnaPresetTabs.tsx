@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -33,6 +33,11 @@ interface IRnaPresetTabsProps {
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
 const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
 const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
+const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
+  base: 'Select all atoms that form the base.',
+  sugar: 'Select all atoms that form the sugar.',
+  phosphate: 'Select all atoms that form the phosphate.',
+};
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -252,11 +257,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
-              <>
+              <Fragment key={rnaComponentKey}>
                 <div className={styles.createComponentWrapper}>
-                  <div>
-                    Select all atoms that form this nucleotide component.
-                  </div>
+                  <div>{RNA_COMPONENT_HINTS[rnaComponentKey]}</div>
                   <button
                     data-testid={`Mark-as-${rnaComponentKey}-button`}
                     className={clsx(
@@ -270,7 +273,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   </button>
                 </div>
                 <MonomerCreationWizardFields
-                  key={rnaComponentKey}
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   onFieldChange={(
@@ -281,7 +283,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   }}
                   wizardState={wizardState[rnaComponentKey]}
                 />
-              </>
+              </Fragment>
             )
           );
         })}

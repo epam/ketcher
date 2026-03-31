@@ -401,7 +401,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
@@ -810,10 +811,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return;
     }
 
-    this.backgroundElement?.attr(
-      'fill',
-      this.node.monomer.selected ? 'none' : '#E1E8E9',
-    );
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr('fill', '#35f073');
+    } else {
+      this.backgroundElement?.attr('fill', '#E1E8E9');
+    }
 
     if (this.node.modified) {
       this.drawModification();
@@ -821,7 +823,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public removeBackgroundElementHover() {
-    this.backgroundElement?.attr('fill', 'none');
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn ? '#99D6DC' : '#57FF8F',
+      );
+    } else {
+      this.backgroundElement?.attr('fill', 'none');
+    }
 
     if (this.node.modified) {
       this.drawModification();

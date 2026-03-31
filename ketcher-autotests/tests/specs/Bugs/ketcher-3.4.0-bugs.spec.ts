@@ -15,7 +15,6 @@ import {
   takeTopToolbarScreenshot,
   SdfFileFormat,
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -1344,13 +1343,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );

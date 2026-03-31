@@ -35,6 +35,7 @@ export * from './reatom';
 export * from './rergroupAttachmentPoint';
 export * from './reImage';
 export * from './remultitailArrow';
+export * from './draftToLexical';
 export {
   ReObject,
   ReAtom,

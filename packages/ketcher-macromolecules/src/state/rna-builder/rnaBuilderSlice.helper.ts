@@ -1,5 +1,7 @@
 import omit from 'lodash/omit';
 import {
+  buildRnaPresetConnections,
+  getRnaPresetPhosphatePosition,
   IRnaLabeledPreset,
   IRnaPreset,
   setAmbiguousMonomerTemplatePrefix,
@@ -26,6 +28,10 @@ export const transformRnaPresetToRnaLabeledPreset = (
         : setMonomerTemplatePrefix(templateId),
     });
   }
+  rnaLabeledPreset.connections = buildRnaPresetConnections(
+    rnaPreset,
+    getRnaPresetPhosphatePosition(rnaPreset),
+  );
 
   return rnaLabeledPreset;
 };

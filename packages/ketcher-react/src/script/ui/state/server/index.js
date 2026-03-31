@@ -21,6 +21,7 @@ import { omit, without } from 'lodash/fp';
 import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
+import { correctCalculatedExactMass } from './chargeMassCorrection';
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -220,23 +221,29 @@ export function serverCall(editor, server, method, options, struct) {
     bonds: selectedBonds,
   });
 
-  return server.then(() =>
-    server[method](
-      {
-        struct: serializedStruct,
-        ...(method !== 'calculate' && method !== 'check'
-          ? {
-              output_format: ChemicalMimeType.KET,
-            }
-          : null),
-        ...(selectedAtoms && selectedAtoms.length > 0
-          ? {
-              selected: selectedAtoms,
-            }
-          : null),
-        ...options.data,
-      },
-      omit('data', options),
-    ),
-  );
+  return server
+    .then(() =>
+      server[method](
+        {
+          struct: serializedStruct,
+          ...(method !== 'calculate' && method !== 'check'
+            ? {
+                output_format: ChemicalMimeType.KET,
+              }
+            : null),
+          ...(selectedAtoms && selectedAtoms.length > 0
+            ? {
+                selected: selectedAtoms,
+              }
+            : null),
+          ...options.data,
+        },
+        omit('data', options),
+      ),
+    )
+    .then((result) =>
+      method === 'calculate'
+        ? correctCalculatedExactMass(result, currentStruct, selectedAtoms)
+        : result,
+    );
 }

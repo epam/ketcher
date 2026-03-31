@@ -50,6 +50,52 @@ const defaultCalcProps: Array<CalculateProps> = [
   'gross',
   'mass-composition',
 ];
+const electronMass = 0.00054857990946;
+
+function getTotalCharge(struct: StructOrString): number {
+  if (typeof struct === 'string') {
+    return 0;
+  }
+
+  let totalCharge = 0;
+
+  struct.atoms.forEach((atom) => {
+    totalCharge += atom.charge ?? 0;
+  });
+
+  return totalCharge;
+}
+
+function correctCalculatedExactMass(
+  values: CalculateResult,
+  totalCharge: number,
+): CalculateResult {
+  if (!totalCharge) {
+    return values;
+  }
+
+  const exactMass = values['monoisotopic-mass'];
+
+  if (typeof exactMass !== 'string' && typeof exactMass !== 'number') {
+    return values;
+  }
+
+  const numericMass = Number(exactMass);
+
+  if (!Number.isFinite(numericMass)) {
+    return values;
+  }
+
+  const correctedExactMass = numericMass - totalCharge * electronMass;
+
+  return {
+    ...values,
+    'monoisotopic-mass':
+      typeof exactMass === 'string'
+        ? String(correctedExactMass)
+        : correctedExactMass,
+  };
+}
 
 type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
@@ -201,11 +247,14 @@ export class Indigo {
     options?: CalculateOptions,
   ): Promise<CalculateResult> {
     const properties = options?.properties ?? defaultCalcProps;
+    const totalCharge = getTotalCharge(struct);
 
-    return this.#structService.calculate({
-      struct: convertStructToString(struct, this.#ketSerializer),
-      properties,
-    });
+    return this.#structService
+      .calculate({
+        struct: convertStructToString(struct, this.#ketSerializer),
+        properties,
+      })
+      .then((values) => correctCalculatedExactMass(values, totalCharge));
   }
 
   recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {

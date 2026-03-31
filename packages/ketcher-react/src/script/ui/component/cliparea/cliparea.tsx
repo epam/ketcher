@@ -214,14 +214,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              const windowWithKetcher = window as Window & {
-                ketcher?: {
-                  editor?: {
-                    errorHandler?: (message: string) => void;
-                  };
-                };
-              };
-              windowWithKetcher.ketcher?.editor?.errorHandler?.(
+              window.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }

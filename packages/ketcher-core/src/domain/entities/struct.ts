@@ -444,7 +444,6 @@ export class Struct {
           conn += 3;
           break;
         case Bond.PATTERN.TYPE.DATIVE:
-          break;
         case Bond.PATTERN.TYPE.HYDROGEN:
           break;
         case Bond.PATTERN.TYPE.AROMATIC:

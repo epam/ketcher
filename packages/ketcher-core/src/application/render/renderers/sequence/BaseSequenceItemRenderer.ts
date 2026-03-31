@@ -82,8 +82,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
-  moveSelection(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
+
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   public get currentChain() {
     return this.chain;
@@ -396,7 +401,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
@@ -768,27 +774,48 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {}
-  public redrawEnumeration() {}
-  public redrawAttachmentPoints() {}
-  public redrawAttachmentPointsCoordinates() {}
+  public setEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
   public get enumeration() {
     return null;
   }
 
-  public redrawChainBeginning() {}
-  public hoverAttachmentPoint(): void {}
-  public updateAttachmentPoints() {}
+  public redrawChainBeginning() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public hoverAttachmentPoint(): void {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public updateAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 
   public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
 
-    this.backgroundElement?.attr(
-      'fill',
-      this.node.monomer.selected ? 'none' : '#E1E8E9',
-    );
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr('fill', '#35f073');
+    } else {
+      this.backgroundElement?.attr('fill', '#E1E8E9');
+    }
 
     if (this.node.modified) {
       this.drawModification();
@@ -796,7 +823,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public removeBackgroundElementHover() {
-    this.backgroundElement?.attr('fill', 'none');
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn ? '#99D6DC' : '#57FF8F',
+      );
+    } else {
+      this.backgroundElement?.attr('fill', 'none');
+    }
 
     if (this.node.modified) {
       this.drawModification();

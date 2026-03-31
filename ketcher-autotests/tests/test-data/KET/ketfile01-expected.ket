@@ -1,38 +1,28 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"key\":\"c6e70\",\"text\":\"TEST321\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":7,\"style\":\"CUSTOM_FONT_SIZE_20px\"},{\"offset\":0,\"length\":7,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 14.700000000000001,
-                        "y": -8,
-                        "z": 0
-                    },
-                    "pos": [
-                        {
-                            "x": 14.700000000000001,
-                            "y": -8,
-                            "z": 0
-                        },
-                        {
-                            "x": 14.700000000000001,
-                            "y": -8.55,
-                            "z": 0
-                        },
-                        {
-                            "x": 16.812109375000002,
-                            "y": -8.55,
-                            "z": 0
-                        },
-                        {
-                            "x": 16.812109375000002,
-                            "y": -8,
-                            "z": 0
-                        }
-                    ]
-                }
+                "boundingBox": {
+                    "x": 14.700000000000001,
+                    "y": -8,
+                    "width": 2.112109375000001,
+                    "height": 0.5500000000000007
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "TEST321",
+                                "bold": true,
+                                "font": {
+                                    "size": 20
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         ],
         "connections": [],

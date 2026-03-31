@@ -1105,9 +1105,6 @@ test.describe('Open Ketcher', () => {
         5. Clear canvas
         6. Load Mol file
         7. Validate canvas
-        IMPORTANT: Test case is not functional due to https://github.com/epam/ketcher/issues/4197, 
-        https://github.com/epam/Indigo/issues/1778, https://github.com/epam/Indigo/issues/1779 bugs
-        Will require to update screens after fix
         */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1115,18 +1112,6 @@ test.describe('Open Ketcher', () => {
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-    /*
-        await verifyFileExport(
-      page,
-      'Molfiles-V2000/Query-Feature/Custom-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v2000,
-    );
-
-        await openFileAndAddToCanvasAsNewProject(page, 'Molfiles-V2000/Query-Feature/Custom-expected.mol', page);
-        await moveMouseAway(page);
-        await takeEditorScreenshot(page);
-        */
   });
 
   test('32. Custom: User can export and load back molecules with Custom query feature to SDF V2000 file. Feature values remain in place.', async () => {

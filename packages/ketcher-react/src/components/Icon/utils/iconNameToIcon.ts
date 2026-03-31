@@ -219,6 +219,8 @@ import Sugar from '../../../assets/icons/files/sugar.svg';
 import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
+import PresetRightPhosphate from '../../../assets/icons/files/preset-right-phosphate.svg';
+import PresetLeftPhosphate from '../../../assets/icons/files/preset-left-phosphate.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import Peptide from '../../../assets/icons/files/peptide.svg';
 import Chem from '../../../assets/icons/files/chem.svg';
@@ -477,6 +479,8 @@ export const iconNameToIcon = {
   base: Base,
   phosphate: Phosphate,
   preset: Preset,
+  'preset-left-phosphate': PresetLeftPhosphate,
+  'preset-right-phosphate': PresetRightPhosphate,
   nucleotide: Nucleotide,
   peptide: Peptide,
   chem: Chem,

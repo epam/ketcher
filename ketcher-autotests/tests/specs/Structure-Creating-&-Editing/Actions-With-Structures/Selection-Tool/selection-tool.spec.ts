@@ -38,7 +38,11 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { horizontalFlip, verticalFlip } from '../Rotation/utils';
+import {
+  horizontalFlip,
+  selectionDelete,
+  verticalFlip,
+} from '../Rotation/utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -680,7 +684,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await selectionDelete(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1007,6 +1011,9 @@ test.describe('Selection tools', () => {
     }
     await page.keyboard.up('Shift');
     await expect(page).toHaveScreenshot();
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
   });
 
   test('Selection Drop-down list', async () => {

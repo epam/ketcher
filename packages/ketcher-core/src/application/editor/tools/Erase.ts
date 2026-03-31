@@ -91,7 +91,9 @@ class EraserTool implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  destroy() {}
+  destroy() {
+    // intentional no-op: this tool holds no resources that require cleanup
+  }
 }
 
 export { EraserTool };

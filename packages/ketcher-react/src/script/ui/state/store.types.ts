@@ -45,7 +45,24 @@ export interface ModalState {
   };
 }
 
+export interface AnalyseValues {
+  gross?: string;
+  'molecular-weight'?: number;
+  'monoisotopic-mass'?: number;
+  'mass-composition'?: string;
+  [key: string]: string | number | undefined;
+}
+
+export interface AnalyseState {
+  values: AnalyseValues | null;
+  loading: boolean;
+  roundWeight: number;
+  roundMass: number;
+  roundElAnalysis: number;
+}
+
 export interface OptionsState {
+  analyse: AnalyseState;
   settings: Record<string, unknown>;
 }
 

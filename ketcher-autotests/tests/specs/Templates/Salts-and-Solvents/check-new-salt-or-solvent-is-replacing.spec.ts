@@ -30,13 +30,13 @@ test.describe('Salts and Solvents replacement', () => {
       test.slow();
 
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAnhydride,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
@@ -58,28 +58,28 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
       await atomToolbar.clickAtom(Atom.Carbon);
       await clickInTheMiddleOfTheScreen(page);
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.Bz,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addSaltsAndSolvents(
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
         SaltsAndSolventsTabItems.AceticAcid,
       );
       await clickInTheMiddleOfTheScreen(page);
@@ -96,7 +96,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);

@@ -405,7 +405,7 @@ test.describe('Bond Tool', () => {
        *Description: A bond is added to a contracted functional group and form a bond
        */
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.Boc,
       );
       await clickInTheMiddleOfTheScreen(page);
@@ -443,6 +443,7 @@ test.describe('Bond Tool', () => {
      */
     const hotKeys = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit0'];
     await page.keyboard.press('Escape');
+    await clickInTheMiddleOfTheScreen(page);
     for (const [index, hotKey] of hotKeys.entries()) {
       // Delay prevents the search field from opening after the hotkey press
       // (otherwise the main window is blocked and the panel tools can't be selected)
@@ -620,49 +621,6 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Aromatic - Ring inside the cycle structure', async () => {
-    /**
-     *Test case: EPMLSOPKET-1436
-     *Description: Aromatic Bond tool - Ring inside the cycle structure
-     */
-    await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
-    const bondIds = [11, 6, 7, 8, 9, 10];
-    let i = 0;
-    while (i < bondIds.length) {
-      await getBondLocator(page, { bondId: bondIds[i] }).click({ force: true });
-      i++;
-    }
-    await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).dearomatize();
-    await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).aromatize();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8254
-     * Requirements:
-     * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
-     * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
-     * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
-     * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
-     * Expected result: The schema with different connection should save in PNG and SVG format
-     */
-
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/stereo-bonds-between-aa-lga.ket',
-    );
-    await IndigoFunctionsToolbar(page).layout();
-    await verifyPNGExport(page);
-    await verifySVGExport(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await verifySVGExport(page);
-  });
-
   test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for KET format', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8254
@@ -734,3 +692,45 @@ for (const bondType of Object.values(MicroBondType)) {
     await commonLeftToolbar.handTool();
   });
 }
+test('Aromatic - Ring inside the cycle structure', async () => {
+  /**
+   *Test case: EPMLSOPKET-1436
+   *Description: Aromatic Bond tool - Ring inside the cycle structure
+   */
+  await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
+  await clickInTheMiddleOfTheScreen(page);
+  await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
+  const bondIds = [11, 6, 7, 8, 9, 10];
+  let i = 0;
+  while (i < bondIds.length) {
+    await getBondLocator(page, { bondId: bondIds[i] }).click({ force: true });
+    i++;
+  }
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).dearomatize();
+  await takeEditorScreenshot(page);
+  await IndigoFunctionsToolbar(page).aromatize();
+  await takeEditorScreenshot(page);
+});
+
+test('Allow for stereo-bonds (up and down) to be a bond between AA and LGA for PNG and SVG format', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8254
+   * Requirements:
+   * - If the stereo-bond has the LGA at the narrow end, it should be treated as a simple single bond.
+   * - If only one AP has a stereo bond between LGA and AA, and the narrow end of the bond is at the AA,
+   * the bond between the monomers should remain be that stereo-bond with the same AA at the narrow end.
+   * - If both APs have a stereo bond between LGA and AA, and the narrow ends of the bonds are at the AAa, the bond between the monomers should be a simple single bond.
+   * Expected result: The schema with different connection should save in PNG and SVG format
+   */
+
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/stereo-bonds-between-aa-lga.ket',
+  );
+  await IndigoFunctionsToolbar(page).layout();
+  await verifyPNGExport(page);
+  await verifySVGExport(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await verifySVGExport(page);
+});

@@ -18,40 +18,130 @@ import commonjs from 'vite-plugin-commonjs';
 const dotEnv = loadEnv('development', '.', '');
 Object.assign(process.env, dotEnv, exampleEnv);
 
-/**
- * To resolve alias in the range of the specific package,
- * notice that it can't be an arrow function,
- * see: https://github.com/rollup/plugins/blob/master/packages/alias/src/index.ts
- */
-function resolver(source, importer, options) {
-  const packageName = importer.match(/packages[\\/](.*?)[\\/]/)[1];
-  const updatedId = source.replace('%packageName%', packageName);
+const PACKAGE_DIRECTORIES = {
+  'ketcher-core': resolve(__dirname, '../packages/ketcher-core'),
+  'ketcher-macromolecules': resolve(
+    __dirname,
+    '../packages/ketcher-macromolecules',
+  ),
+  'ketcher-react': resolve(__dirname, '../packages/ketcher-react'),
+  'ketcher-standalone': resolve(__dirname, '../packages/ketcher-standalone'),
+};
 
-  return this.resolve(updatedId, importer, { skipSelf: true, ...options }).then(
-    (resolved) => resolved || { id: updatedId },
-  );
-}
+const PACKAGE_TS_CONFIGS = {
+  'ketcher-core': ketcherCoreTSConfig,
+  'ketcher-macromolecules': polymerEditorTSConfig,
+  'ketcher-react': ketcherReactTSConfig,
+  'ketcher-standalone': ketcherStandaloneTSConfig,
+};
 
-const getTSConfigByPackage = (packageName) => {
+const PACKAGE_TS_PATHS = Object.fromEntries(
+  Object.entries(PACKAGE_TS_CONFIGS).map(([packageName, tsConfig]) => {
+    const paths = Object.entries(tsConfig.compilerOptions.paths || {}).map(
+      ([pattern, replacements]) => ({
+        find: pattern.replace(/\/\*$/, ''),
+        hasWildcard: pattern.endsWith('/*'),
+        replacements: replacements.map((replacement) => ({
+          value: replacement.replace(/\/\*$/, ''),
+          hasWildcard: replacement.endsWith('/*'),
+        })),
+      }),
+    );
+
+    return [packageName, paths];
+  }),
+);
+
+const getImporterPackageName = (importer) => {
+  return importer?.match(/packages[\\/](.*?)(?:[\\/]|$)/)?.[1];
+};
+
+const resolvePackageAlias = (source, importer) => {
+  if (!importer || source.startsWith('.') || source.startsWith('\0')) {
+    return null;
+  }
+
+  const packageName = getImporterPackageName(importer);
+
+  if (!packageName) {
+    return null;
+  }
+
+  const packageDirectory = PACKAGE_DIRECTORIES[packageName];
+
+  if (source === 'src' || source.startsWith('src/')) {
+    return resolve(packageDirectory, source);
+  }
+
+  const aliases = PACKAGE_TS_PATHS[packageName] || [];
+
+  for (const alias of aliases) {
+    const matches = alias.hasWildcard
+      ? source.startsWith(`${alias.find}/`)
+      : source === alias.find;
+
+    if (!matches) {
+      continue;
+    }
+
+    const suffix = alias.hasWildcard ? source.slice(alias.find.length + 1) : '';
+    const replacement = alias.replacements[0];
+
+    if (!replacement) {
+      return null;
+    }
+
+    const replacementPath =
+      replacement.hasWildcard && suffix
+        ? `${replacement.value}/${suffix}`
+        : replacement.value;
+
+    return resolve(packageDirectory, replacementPath);
+  }
+
+  return null;
+};
+
+const PackageScopedAliasesPlugin = () => {
   return {
-    'ketcher-core': ketcherCoreTSConfig,
-    'ketcher-macromolecules': polymerEditorTSConfig,
-    'ketcher-react': ketcherReactTSConfig,
-    'ketcher-standalone': ketcherStandaloneTSConfig,
-  }[packageName];
+    name: 'ketcher-package-scoped-aliases',
+    async resolveId(source, importer, options) {
+      const updatedId = resolvePackageAlias(source, importer);
+
+      if (!updatedId) {
+        return null;
+      }
+
+      const resolved = await this.resolve(updatedId, importer, {
+        skipSelf: true,
+        ...options,
+      });
+
+      return resolved || { id: updatedId };
+    },
+  };
 };
 
-const getAliasesByPackage = (packageName) => {
-  const aliases = getTSConfigByPackage(packageName).compilerOptions.paths || [];
-  return Object.keys(aliases).map((alias) => {
-    const find = alias.replace('/*', '');
-    return {
-      find,
-      replacement: resolve(__dirname, `../packages/%packageName%/src/${find}`),
-      customResolver: resolver,
-    };
-  });
+const getDefineValue = (value) => {
+  return value === undefined ? 'undefined' : JSON.stringify(value);
 };
+
+const PROCESS_ENV_DEFINE_KEYS = [
+  'API_PATH',
+  'KETCHER_ENABLE_REDUX_LOGGER',
+  'MODE',
+  'NODE_ENV',
+  'PUBLIC_URL',
+  'REACT_APP_API_PATH',
+  'SEPARATE_INDIGO_RENDER',
+];
+
+const processEnvDefines = Object.fromEntries(
+  PROCESS_ENV_DEFINE_KEYS.map((key) => [
+    `process.env.${key}`,
+    getDefineValue(process.env[key]),
+  ]),
+);
 
 const HtmlReplaceVitePlugin = () => {
   return {
@@ -83,13 +173,49 @@ const CspNoncePlugin = (nonce) => ({
 });
 
 const DEV_NONCE = 'ketcher-dev-nonce';
+const normalizeHtmlTransformHook = (plugin) => {
+  if (!plugin || typeof plugin === 'function') {
+    return plugin;
+  }
+
+  if (Array.isArray(plugin)) {
+    return plugin.map(normalizeHtmlTransformHook);
+  }
+
+  const { transformIndexHtml } = plugin;
+
+  if (
+    transformIndexHtml &&
+    typeof transformIndexHtml !== 'function' &&
+    !transformIndexHtml.handler &&
+    transformIndexHtml.transform
+  ) {
+    const order =
+      transformIndexHtml.enforce === 'pre' ||
+      transformIndexHtml.enforce === 'post'
+        ? transformIndexHtml.enforce
+        : undefined;
+
+    return {
+      ...plugin,
+      transformIndexHtml: {
+        ...(order ? { order } : {}),
+        handler: transformIndexHtml.transform,
+      },
+    };
+  }
+
+  return plugin;
+};
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
 logger.warn = (msg, options) => {
   if (
     // This warning occurs when entry html is not at the root path
-    msg.includes('files in the public directory are served at the root path.')
+    msg
+      .toLowerCase()
+      .includes('files in the public directory are served at the root path.')
   ) {
     return;
   }
@@ -103,21 +229,22 @@ export default defineConfig({
       'Content-Security-Policy': `script-src 'self' 'unsafe-eval' 'nonce-${DEV_NONCE}'`,
     },
   },
-  esbuild: {
-    tsconfigRaw: {
-      compilerOptions: {
-        // doc: https://vitejs.dev/guide/features.html#usedefineforclassfields
-        useDefineForClassFields: false,
+  css: {
+    devSourcemap: true,
+    preprocessorOptions: {
+      less: {
+        paths: Object.values(PACKAGE_DIRECTORIES),
       },
     },
   },
-  css: {
-    devSourcemap: true,
-  },
   plugins: [
     react({ nonce: DEV_NONCE }),
+    PackageScopedAliasesPlugin(),
     svgr({
-      exportAsDefault: true,
+      include: '**/*.svg',
+      svgrOptions: {
+        exportType: 'default',
+      },
     }),
     vitePluginRaw({
       match: /\.sdf|\.ket/,
@@ -164,12 +291,31 @@ export default defineConfig({
         ],
       },
     }),
+    normalizeHtmlTransformHook(
+      createHtmlPlugin({
+        entry: '/src/index.tsx',
+        template: 'public/index.html',
+        inject: {
+          tags: [
+            {
+              /**
+               * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+               * Fix: global is not defined
+               */
+              injectTo: 'body',
+              tag: 'script',
+              children: 'var global = global || window',
+            },
+          ],
+        },
+      }),
+    ),
     HtmlReplaceVitePlugin(),
     CspNoncePlugin(DEV_NONCE),
     commonjs(),
   ],
   define: {
-    'process.env': process.env,
+    ...processEnvDefines,
   },
   resolve: {
     alias: [
@@ -208,17 +354,6 @@ export default defineConfig({
           __dirname,
           '../packages/ketcher-macromolecules/src/index.tsx',
         ),
-      },
-
-      /** Get aliases from packages' tsconfig.json */
-      ...getAliasesByPackage('ketcher-core'),
-      ...getAliasesByPackage('ketcher-react'),
-      ...getAliasesByPackage('ketcher-macromolecules'),
-      ...getAliasesByPackage('ketcher-standalone'),
-      {
-        find: 'src', // every package has this implicit alias
-        replacement: resolve(__dirname, `../packages/%packageName%/src`),
-        customResolver: resolver,
       },
 
       /** Web worker in ketcher-standalone */

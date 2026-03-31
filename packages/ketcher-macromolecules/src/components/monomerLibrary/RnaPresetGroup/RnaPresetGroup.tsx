@@ -168,6 +168,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
             monomers,
             name: preset.name,
             idtAliases: preset.idtAliases,
+            aliasAxoLabs: preset.aliasAxoLabs,
             position: PresetPosition.Library,
             style,
           };

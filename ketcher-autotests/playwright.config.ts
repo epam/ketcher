@@ -74,7 +74,10 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
         baseURL: baseURLFullScale(),
-        launchOptions: { headless: true },
+        launchOptions: {
+          headless: true,
+          args: ['--disable-gpu', '--no-sandbox'],
+        },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
       },
     },
@@ -86,7 +89,10 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
         baseURL: baseURLPopup(),
-        launchOptions: { headless: true },
+        launchOptions: {
+          headless: true,
+          args: ['--disable-gpu', '--no-sandbox'],
+        },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
       },
     },

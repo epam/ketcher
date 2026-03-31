@@ -25,7 +25,7 @@ import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {
   frid: any;
-  properties?: Array<StructProperty>;
+  readonly properties?: Array<StructProperty>;
 
   constructor(fragmentId?: any, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
@@ -55,8 +55,8 @@ class FragmentAdd extends BaseOperation {
 }
 
 class FragmentSetProperties extends BaseOperation {
-  frid: any;
-  properties?: Array<StructProperty>;
+  readonly frid: any;
+  readonly properties?: Array<StructProperty>;
 
   constructor(fragmentId: any, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_SET_PROPERTIES);
@@ -83,7 +83,7 @@ class FragmentSetProperties extends BaseOperation {
 }
 
 class FragmentDelete extends BaseOperation {
-  frid: any;
+  readonly frid: any;
 
   constructor(fragmentId: any) {
     super(OperationType.FRAGMENT_DELETE, 100);

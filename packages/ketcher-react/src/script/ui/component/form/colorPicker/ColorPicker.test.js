@@ -66,7 +66,7 @@ describe('should pick color correctly', () => {
     await openPalette();
     const colorInput = screen.getByTestId('color-picker-input');
     fireEvent.change(colorInput, { target: { value: '#4d4d4d' } });
-    expect(onChange).toBeCalledWith('#4d4d4d');
+    expect(onChange).toHaveBeenCalledWith('#4d4d4d');
   });
 
   it('should display picked color correctly', () => {

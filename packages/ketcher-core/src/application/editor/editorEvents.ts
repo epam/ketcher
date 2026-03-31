@@ -209,6 +209,37 @@ const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
   editor.events.selectTool.dispatch([toolName, { toolName }]);
 };
 
+const getEditorHistory = () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('application/editor/EditorHistory').EditorHistory;
+};
+
+const deleteHoveredMonomer = (editor: CoreEditor) => {
+  const hoveredMonomer = [
+    ...editor.drawingEntitiesManager.monomers.values(),
+  ].find((monomer) => monomer.hovered);
+
+  if (!hoveredMonomer) {
+    return false;
+  }
+
+  const modelChanges = editor.drawingEntitiesManager.deleteDrawingEntity(
+    hoveredMonomer,
+    true,
+    true,
+  );
+  modelChanges.merge(
+    editor.drawingEntitiesManager.recalculateAntisenseChains(),
+  );
+  getEditorHistory().getInstance(editor).update(modelChanges);
+  editor.renderersContainer.update(modelChanges);
+  editor.events.selectEntities.dispatch(
+    editor.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+  );
+
+  return true;
+};
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -265,10 +296,18 @@ export const hotkeysConfiguration = {
       if (editor.isSequenceMode) return;
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
-      editor.events.selectTool.dispatch([ToolName.erase]);
+
       if (hasSelectedEntities) {
+        editor.events.selectTool.dispatch([ToolName.erase]);
         editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+        return;
       }
+
+      if (deleteHoveredMonomer(editor)) {
+        return;
+      }
+
+      editor.events.selectTool.dispatch([ToolName.erase]);
     },
   },
   bondSingle: {

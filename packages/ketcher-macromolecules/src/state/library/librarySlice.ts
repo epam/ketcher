@@ -80,9 +80,9 @@ export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {
 }
 
 export function getPresetUniqueKey(preset: IRnaPreset) {
-  return `${preset.name}_${preset.base?.label || '.'}_${
-    preset.sugar?.label || '.'
-  }_${preset.phosphate?.label || '.'}`;
+  return `${preset.name}_${preset.base?.label ?? '.'}_${
+    preset.sugar?.label ?? '.'
+  }_${preset.phosphate?.label ?? '.'}`;
 }
 
 export const librarySlice: Slice = createSlice({
@@ -155,7 +155,7 @@ export const librarySlice: Slice = createSlice({
 
       const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
-      ) || []) as string[];
+      ) ?? []) as string[];
 
       if (state.favorites[key]) {
         delete state.favorites[key];

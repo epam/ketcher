@@ -646,7 +646,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   // After SGroup is deleted, resolve leaving groups on plain structure
   if (sG instanceof MonomerMicromolecule) {
     const isExpanded = sG.isExpanded();
-    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps || {};
+    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps ?? {};
     cachedAttachmentPoints?.forEach((attachmentPoint) => {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;

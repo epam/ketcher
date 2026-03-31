@@ -236,7 +236,7 @@ function fromStructureFlip(
     action.addOp(new AtomMove(atomId, difference));
   });
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms || []);
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
       return;

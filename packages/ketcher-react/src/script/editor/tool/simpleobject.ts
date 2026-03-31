@@ -69,7 +69,7 @@ class SimpleObjectTool implements Tool {
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
-            this.editor.selection() || {},
+            this.editor.selection() ?? {},
             diff,
           );
         } else {

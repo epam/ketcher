@@ -27,7 +27,7 @@ import { onAction } from '../../../state';
 type StateProps = Omit<LeftToolbarProps, 'className'>;
 const disableableButtons = [];
 const mapStateToProps = (state: any): StateProps => ({
-  status: state.actionState || {},
+  status: state.actionState ?? {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,

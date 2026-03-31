@@ -21,6 +21,7 @@ import { omit, without } from 'lodash/fp';
 import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
+import { adjustMassForCharge } from './chargeMassCorrection';
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -129,12 +130,25 @@ export function analyse() {
     };
 
     return serverCall(editor, server, 'calculate', serverSettings)
-      .then((values) =>
+      .then((values) => {
+        const struct = editor.struct();
+        const selection = editor.selection();
+        const correctedValues = { ...values };
+        const mass = values['monoisotopic-mass'];
+
+        if (mass !== undefined) {
+          correctedValues['monoisotopic-mass'] = adjustMassForCharge(
+            mass,
+            struct,
+            selection,
+          );
+        }
+
         dispatch({
           type: 'CHANGE_ANALYSE',
-          data: { values },
-        }),
-      )
+          data: { values: correctedValues },
+        });
+      })
       .catch((e) => {
         KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);

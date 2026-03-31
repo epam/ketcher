@@ -60,6 +60,7 @@ export type WizardNotificationId =
   | 'invalidRnaPresetStructure'
   | 'notUniquePresetCode'
   | 'invalidPresetCode'
+  | 'invalidPhosphatePositionAttachmentPoints'
   | 'phosphatePositionNotSelected';
 
 export type WizardNotificationTypeMap = Record<

@@ -62,6 +62,7 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { inferPhosphatePosition } from './PhosphatePositionInference';
+import { hasPhosphatePositionAttachmentPointConflict } from './RnaPresetAttachmentPointValidation';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
@@ -897,10 +898,6 @@ const MonomerCreationWizard = () => {
   const handlePhosphatePositionChange = useCallback(
     (value: '3' | '5' | undefined) => {
       setPhosphatePosition(value);
-      if (!value) {
-        return;
-      }
-
       rnaPresetWizardStateDispatch({
         type: 'SetErrors',
         errors: {
@@ -911,6 +908,10 @@ const MonomerCreationWizard = () => {
       rnaPresetWizardStateDispatch({
         type: 'RemoveNotification',
         id: 'phosphatePositionNotSelected',
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'RemoveNotification',
+        id: 'invalidPhosphatePositionAttachmentPoints',
       });
     },
     [],
@@ -1146,41 +1147,49 @@ const MonomerCreationWizard = () => {
       });
     }
 
-    const sugarPhosphateAttachmentPointName =
-      phosphatePosition === '5'
-        ? AttachmentPointName.R1
-        : AttachmentPointName.R2;
-    const phosphateSugarAttachmentPointName =
-      phosphatePosition === '5'
-        ? AttachmentPointName.R2
-        : AttachmentPointName.R1;
+    const sugarAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+      rnaPresetWizardState.sugar,
+    );
+    const phosphateAttachmentPoints = assignedAttachmentPointsByMonomer.get(
+      rnaPresetWizardState.phosphate,
+    );
+    const presetNotifications = new Map<
+      WizardNotificationId,
+      WizardNotification
+    >();
 
     if (
-      assignedAttachmentPointsByMonomer
-        .get(rnaPresetWizardState.sugar)
-        ?.get(sugarPhosphateAttachmentPointName) ||
-      assignedAttachmentPointsByMonomer
-        .get(rnaPresetWizardState.phosphate)
-        ?.get(phosphateSugarAttachmentPointName) ||
-      assignedAttachmentPointsByMonomer
-        .get(rnaPresetWizardState.sugar)
-        ?.get(AttachmentPointName.R3) ||
+      phosphatePosition &&
+      hasPhosphatePositionAttachmentPointConflict(
+        phosphatePosition,
+        sugarAttachmentPoints,
+        phosphateAttachmentPoints,
+      )
+    ) {
+      needSaveMonomers = false;
+      presetNotifications.set('invalidPhosphatePositionAttachmentPoints', {
+        type: 'error',
+        message: NotificationMessages.invalidPhosphatePositionAttachmentPoints,
+      });
+    }
+
+    if (
+      sugarAttachmentPoints?.get(AttachmentPointName.R3) ||
       assignedAttachmentPointsByMonomer
         .get(rnaPresetWizardState.base)
         ?.get(AttachmentPointName.R1)
     ) {
       needSaveMonomers = false;
+      presetNotifications.set('invalidRnaPresetStructure', {
+        type: 'error',
+        message: NotificationMessages.attachmentPointsNotUnique,
+      });
+    }
+
+    if (presetNotifications.size > 0) {
       rnaPresetWizardStateDispatch({
         type: 'SetNotifications',
-        notifications: new Map([
-          [
-            'invalidRnaPresetStructure',
-            {
-              type: 'error',
-              message: NotificationMessages.attachmentPointsNotUnique,
-            },
-          ],
-        ]),
+        notifications: presetNotifications,
         rnaComponentKey: 'preset',
         editor,
       });

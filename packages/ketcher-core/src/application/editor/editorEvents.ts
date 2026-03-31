@@ -215,9 +215,13 @@ const getEditorHistory = () => {
 };
 
 const deleteHoveredMonomer = (editor: CoreEditor) => {
-  const hoveredMonomer = [
-    ...editor.drawingEntitiesManager.monomers.values(),
-  ].find((monomer) => monomer.hovered);
+  let hoveredMonomer;
+  for (const monomer of editor.drawingEntitiesManager.monomers.values()) {
+    if (monomer.hovered) {
+      hoveredMonomer = monomer;
+      break;
+    }
+  }
 
   if (!hoveredMonomer) {
     return false;

@@ -51,7 +51,7 @@ function getNodeAtomCharges(node?: KetNode): number[] {
     ...(node.fragments?.flatMap((fragment) =>
       (fragment.atoms ?? []).map((atom) => atom.charge ?? 0),
     ) ?? []),
-    ...((node.atoms ?? []).map((atom) => atom.charge ?? 0) ?? []),
+    ...(node.atoms ?? []).map((atom) => atom.charge ?? 0),
   ];
 }
 
@@ -96,9 +96,10 @@ function adjustMassValueForCharge(
     return undefined;
   }
 
-  const decimalPlaces = massValue.includes('.')
-    ? massValue.split('.')[1].length
-    : undefined;
+  const decimalPart = massValue.split('.')[1];
+  const decimalPlaces = decimalPart?.length;
+  // Positive charge means missing electrons, so the electron mass must be
+  // subtracted from the neutral exact mass; negative charge adds electrons.
   const adjustedMass = parsedMass - totalCharge * ELECTRON_MASS_AMU;
 
   return decimalPlaces === undefined

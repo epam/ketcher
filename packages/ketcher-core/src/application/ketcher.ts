@@ -803,7 +803,10 @@ export class Ketcher {
       params,
     );
 
-    editor.updateMonomersLibrary(dataInKetFormat);
+    const helmAliasErrors = editor.updateMonomersLibrary(dataInKetFormat);
+    if (helmAliasErrors.length > 0) {
+      throw new Error(helmAliasErrors.join('\n'));
+    }
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
@@ -838,7 +841,10 @@ export class Ketcher {
     );
 
     editor.clearMonomersLibrary();
-    editor.updateMonomersLibrary(dataInKetFormat);
+    const helmAliasErrors = editor.updateMonomersLibrary(dataInKetFormat);
+    if (helmAliasErrors.length > 0) {
+      throw new Error(helmAliasErrors.join('\n'));
+    }
 
     if (params?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);

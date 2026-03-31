@@ -35,6 +35,7 @@ import {
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
+  IKetMonomerTemplate,
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
@@ -101,6 +102,10 @@ import {
   isAmbiguousMonomerLibraryItem,
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
+import {
+  getMonomerLibraryHelmAliasLoadFailedMessage,
+  isValidMonomerLibraryHelmAliasForUpdate,
+} from 'domain/helpers/monomerLibraryValidation';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
@@ -357,11 +362,13 @@ export class CoreEditor {
     persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
-  public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+  public updateMonomersLibrary(monomersDataRaw: string | JSON): string[] {
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
+
+    const helmAliasErrors: string[] = [];
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -400,6 +407,31 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      if (!isAmbiguousMonomerLibraryItem(newMonomer)) {
+        const helmTemplateRef =
+          getMonomerTemplateRefFromMonomerItem(newMonomer);
+        const helmTemplate = newMonomersLibraryChunkParsedJson[
+          helmTemplateRef
+        ] as IKetMonomerTemplate | undefined;
+
+        if (
+          helmTemplate?.type === KetTemplateType.MONOMER_TEMPLATE &&
+          !isValidMonomerLibraryHelmAliasForUpdate(helmTemplate.aliasHELM)
+        ) {
+          const monomerName =
+            newMonomer.props.MonomerName ??
+            helmTemplate.name ??
+            helmTemplate.id ??
+            'unknown';
+          const helmErrorMessage =
+            getMonomerLibraryHelmAliasLoadFailedMessage(monomerName);
+          console.error(helmErrorMessage);
+          KetcherLogger.error(helmErrorMessage);
+          helmAliasErrors.push(helmErrorMessage);
+          return;
+        }
+      }
+
       const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
@@ -527,6 +559,7 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
+    return helmAliasErrors;
   }
 
   public get monomersLibraryParsedJson() {

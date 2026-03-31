@@ -26,6 +26,7 @@ describe('CoreEditor', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
     let errorSpy: jest.SpyInstance;
+    let consoleErrorSpy: jest.SpyInstance;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
@@ -34,10 +35,12 @@ describe('CoreEditor', () => {
         theme: {},
       });
       errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
+      consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
     });
 
     afterEach(() => {
       errorSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
     });
 
     // Note: In the KET format, idtAliases is defined at the template level.
@@ -66,6 +69,7 @@ describe('CoreEditor', () => {
             Name: 'CHEM1',
             MonomerNaturalAnalogCode: 'X',
           },
+          aliasHELM: 'Chem1',
           idtAliases: {
             modifications: {
               internal: 'Test',
@@ -108,6 +112,7 @@ describe('CoreEditor', () => {
             Name: 'CHEM2',
             MonomerNaturalAnalogCode: 'X',
           },
+          aliasHELM: 'Chem2',
           idtAliases: {
             base: 'BaseAlias',
             modifications: {
@@ -151,6 +156,7 @@ describe('CoreEditor', () => {
             Name: 'CHEM3',
             MonomerNaturalAnalogCode: 'X',
           },
+          aliasHELM: 'Chem3',
         },
       };
 
@@ -163,6 +169,219 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
+    it('should reject monomer with empty aliasHELM and log required message', () => {
+      const monomerEmptyHelm = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-HELMEMPTY',
+            },
+          ],
+        },
+        'monomerTemplate-HELMEMPTY': {
+          type: 'monomerTemplate',
+          id: 'HELMEMPTY',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test empty HELM',
+          name: 'HELMEMPTY',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'HELMEMPTY',
+            MonomerClass: 'CHEM',
+            Name: 'HELMEMPTY',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: '',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerEmptyHelm));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Load of "HELMEMPTY" monomer has failed/),
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Load of "HELMEMPTY" monomer has failed/),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*), spaces prohibited.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should reject monomer with whitespace-only aliasHELM', () => {
+      const monomerWhitespaceHelm = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-HELMWS',
+            },
+          ],
+        },
+        'monomerTemplate-HELMWS': {
+          type: 'monomerTemplate',
+          id: 'HELMWS',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test whitespace HELM',
+          name: 'HELMWS',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'HELMWS',
+            MonomerClass: 'CHEM',
+            Name: 'HELMWS',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: '  \t  ',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWhitespaceHelm));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Load of "HELMWS" monomer has failed'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should reject monomer with disallowed characters in aliasHELM', () => {
+      const monomerInvalidHelm = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-HELMINV',
+            },
+          ],
+        },
+        'monomerTemplate-HELMINV': {
+          type: 'monomerTemplate',
+          id: 'HELMINV',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test invalid HELM',
+          name: 'HELMINV',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'HELMINV',
+            MonomerClass: 'CHEM',
+            Name: 'HELMINV',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: 'bad alias',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerInvalidHelm));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Load of "HELMINV" monomer has failed'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should accept monomer with valid aliasHELM', () => {
+      const monomerValidHelm = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-HELMOK',
+            },
+          ],
+        },
+        'monomerTemplate-HELMOK': {
+          type: 'monomerTemplate',
+          id: 'HELMOK',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test valid HELM',
+          name: 'HELMOK',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'HELMOK',
+            MonomerClass: 'CHEM',
+            Name: 'HELMOK',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: 'Ab-12_x*',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerValidHelm));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('Load of "HELMOK" monomer has failed'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
+    it('should skip monomer with invalid HELM and still load others in the same chunk', () => {
+      const chunk = {
+        root: {
+          templates: [
+            { $ref: 'monomerTemplate-BADHELM' },
+            { $ref: 'monomerTemplate-GOODHELM' },
+          ],
+        },
+        'monomerTemplate-BADHELM': {
+          type: 'monomerTemplate',
+          id: 'BADHELM',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Bad',
+          name: 'BADHELM',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'BADHELM',
+            MonomerClass: 'CHEM',
+            Name: 'BADHELM',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: 'x@y',
+        },
+        'monomerTemplate-GOODHELM': {
+          type: 'monomerTemplate',
+          id: 'GOODHELM',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Good',
+          name: 'GOODHELM',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'GOODHELM',
+            MonomerClass: 'CHEM',
+            Name: 'GOODHELM',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasHELM: 'G1',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(chunk));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Load of "BADHELM" monomer has failed'),
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Load of "BADHELM" monomer has failed'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.some(
+          (m) =>
+            !('isAmbiguous' in m && m.isAmbiguous) &&
+            m.props.MonomerName === 'GOODHELM',
+        ),
+      ).toBe(true);
     });
 
     it('should log HELM alias collision across monomers', () => {
@@ -248,6 +467,7 @@ describe('CoreEditor', () => {
             Name: 'CHEM4',
             MonomerNaturalAnalogCode: 'X',
           },
+          aliasHELM: 'Chem4',
           idtAliases: {
             base: 'IdtBase1',
           },
@@ -275,6 +495,7 @@ describe('CoreEditor', () => {
             Name: 'CHEM5',
             MonomerNaturalAnalogCode: 'X',
           },
+          aliasHELM: 'Chem5',
           idtAliases: {
             base: 'IdtBase1',
           },

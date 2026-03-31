@@ -27,6 +27,12 @@ type PropMappingValue = {
   type?: string;
 };
 
+enum SGroupPropType {
+  Connectivity = 'connectivity',
+  Class = 'class',
+  Subtype = 'subtype',
+}
+
 const propMapping: Record<string, PropMappingValue> = {
   name: { maxLength: 15 },
   fieldName: { maxLength: 30 },
@@ -38,7 +44,11 @@ const content = (type: string): JSX.Element[] =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
-      if (prop === 'connectivity' || prop === 'class' || prop === 'subtype') {
+      if (
+        prop === SGroupPropType.Connectivity ||
+        prop === SGroupPropType.Class ||
+        prop === SGroupPropType.Subtype
+      ) {
         return (
           <Field
             name={prop}

@@ -14,44 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form/form';
 import { StereoLabel, Struct } from 'ketcher-core';
 
 import { Dialog } from '../../../views/components';
-import { FC } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 import classes from './enhancedStereo.module.less';
 import { connect } from 'react-redux';
 import { range } from 'lodash';
+import inputClasses from '../../../component/form/Input/Input.module.less';
 
 interface EnhancedStereoResult {
   andNumber: number;
   orNumber: number;
-  type: StereoLabel;
-}
-
-interface EnhancedStereoFormState {
-  result: EnhancedStereoResult;
-  valid: boolean;
-  errors: string[];
+  type: string;
 }
 
 interface EnhancedStereoProps {
-  className: string;
   init: EnhancedStereoResult & { init?: true };
-  formState: EnhancedStereoFormState;
   struct: Struct;
 }
 
 interface EnhancedStereoCallProps {
   onCancel: () => void;
-  onOk: (res: any) => void;
+  onOk: (res: unknown) => void;
 }
 
 type Props = EnhancedStereoProps & EnhancedStereoCallProps;
 
 const EnhancedStereo: FC<Props> = (props) => {
-  const { struct, formState, init, ...rest } = props;
-  const { result, valid } = formState;
+  const { struct, init, ...rest } = props;
 
   const stereoLabels: Array<string> = findStereLabels(
     struct,
@@ -61,21 +52,30 @@ const EnhancedStereo: FC<Props> = (props) => {
   const maxAnd: number = maxOfAnds(stereoLabels);
   const maxOr: number = maxOfOrs(stereoLabels);
 
-  const enhancedStereoSchema = {
-    title: 'Enhanced Stereo',
-    type: 'object',
-    properties: {
-      type: {
-        type: 'string',
-      },
-      andNumber: {
-        type: 'integer',
-      },
-      orNumber: {
-        type: 'integer',
-      },
-    },
+  const [type, setType] = useState<string>(init?.type ?? StereoLabel.Abs);
+  const [andNumber, setAndNumber] = useState<number>(init?.andNumber ?? 1);
+  const [orNumber, setOrNumber] = useState<number>(init?.orNumber ?? 1);
+
+  const result = {
+    type,
+    andNumber,
+    orNumber,
   };
+  const valid = Boolean(type);
+
+  const onAndNumberChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setAndNumber(Number(event.target.value));
+  };
+
+  const onOrNumberChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setOrNumber(Number(event.target.value));
+  };
+
+  const isAbs = type === StereoLabel.Abs;
+  const isAnd = type === StereoLabel.And;
+  const isOr = type === StereoLabel.Or;
+  const isNewAnd = type === `${StereoLabel.And}${maxAnd + 1}`;
+  const isNewOr = type === `${StereoLabel.Or}${maxOr + 1}`;
 
   return (
     <Dialog
@@ -88,91 +88,108 @@ const EnhancedStereo: FC<Props> = (props) => {
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
     >
-      <Form schema={enhancedStereoSchema} init={init} {...formState}>
-        <fieldset>
-          {/* eslint-disable jsx-a11y/label-has-associated-control */}
-          <label>
-            {/* eslint-enable jsx-a11y/label-has-associated-control */}
-            <Field
-              name="type"
-              labelPos={false}
+      <fieldset key={type}>
+        <label className={inputClasses.fieldSetLabel}>
+          <input
+            type="radio"
+            name="enhanced-stereo-type"
+            value={StereoLabel.Abs}
+            checked={isAbs}
+            onChange={() => setType(StereoLabel.Abs)}
+            onClick={() => setType(StereoLabel.Abs)}
+            className={inputClasses.input}
+            data-testid="abs-radio"
+          />
+          <span className={inputClasses.radioButton} />
+          ABS
+        </label>
+        {maxAnd !== 0 && (
+          <label className={inputClasses.fieldSetLabel}>
+            <input
               type="radio"
-              value={StereoLabel.Abs}
-              checked={result.type === StereoLabel.Abs}
-              data-testid="abs-radio"
+              name="enhanced-stereo-type"
+              value={StereoLabel.And}
+              checked={isAnd}
+              onChange={() => setType(StereoLabel.And)}
+              onClick={() => setType(StereoLabel.And)}
+              className={inputClasses.input}
+              data-testid="add-to-and-group-radio"
             />
-            ABS
+            <span className={inputClasses.radioButton} />
+            Add to AND
+            <select
+              value={andNumber}
+              onChange={onAndNumberChange}
+              className={classes.labelGroupSelect}
+              data-testid="add-to-and-group"
+            >
+              {range(1, maxAnd + 1).map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+            Group
           </label>
-          {maxAnd !== 0 && (
-            <label>
-              {/* eslint-disable jsx-a11y/label-has-associated-control */}
-              <Field
-                name="type"
-                labelPos={false}
-                type="radio"
-                value={StereoLabel.And}
-                checked={result.type === StereoLabel.And}
-                data-testid="add-to-and-group-radio"
-              />
-              Add to AND
-              <Field
-                name="andNumber"
-                schema={range(1, maxAnd + 1)}
-                type="text"
-                className={classes.labelGroupSelect}
-                data-testid="add-to-and-group"
-              />
-              Group
-            </label>
-          )}
-          {maxOr !== 0 && (
-            <label>
-              {/* eslint-disable jsx-a11y/label-has-associated-control */}
-              <Field
-                name="type"
-                labelPos={false}
-                type="radio"
-                value={StereoLabel.Or}
-                checked={result.type === StereoLabel.Or}
-                data-testid="add-to-or-group-radio"
-              />
-              Add to OR
-              <Field
-                name="orNumber"
-                schema={range(1, maxOr + 1)}
-                type="text"
-                className={classes.labelGroupSelect}
-                data-testid="add-to-or-group"
-              />
-              Group
-            </label>
-          )}
-          <label>
-            {/* eslint-disable jsx-a11y/label-has-associated-control */}
-            <Field
-              name="type"
-              labelPos={false}
+        )}
+        {maxOr !== 0 && (
+          <label className={inputClasses.fieldSetLabel}>
+            <input
               type="radio"
-              value={`${StereoLabel.And}${maxAnd + 1}`}
-              checked={result.type === `${StereoLabel.And}${maxAnd + 1}`}
-              data-testid="create-new-and-group-radio"
+              name="enhanced-stereo-type"
+              value={StereoLabel.Or}
+              checked={isOr}
+              onChange={() => setType(StereoLabel.Or)}
+              onClick={() => setType(StereoLabel.Or)}
+              className={inputClasses.input}
+              data-testid="add-to-or-group-radio"
             />
-            Create new AND Group
+            <span className={inputClasses.radioButton} />
+            Add to OR
+            <select
+              value={orNumber}
+              onChange={onOrNumberChange}
+              className={classes.labelGroupSelect}
+              data-testid="add-to-or-group"
+            >
+              {range(1, maxOr + 1).map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+            Group
           </label>
-          <label>
-            {/* eslint-disable jsx-a11y/label-has-associated-control */}
-            <Field
-              name="type"
-              labelPos={false}
-              type="radio"
-              value={`${StereoLabel.Or}${maxOr + 1}`}
-              checked={result.type === `${StereoLabel.Or}${maxOr + 1}`}
-              data-testid="create-new-or-group-radio"
-            />
-            Create new OR Group
-          </label>
-        </fieldset>
-      </Form>
+        )}
+        <label className={inputClasses.fieldSetLabel}>
+          <input
+            type="radio"
+            name="enhanced-stereo-type"
+            value={`${StereoLabel.And}${maxAnd + 1}`}
+            checked={isNewAnd}
+            onChange={() => setType(`${StereoLabel.And}${maxAnd + 1}`)}
+            onClick={() => setType(`${StereoLabel.And}${maxAnd + 1}`)}
+            className={inputClasses.input}
+            data-testid="create-new-and-group-radio"
+          />
+          <span className={inputClasses.radioButton} />
+          Create new AND Group
+        </label>
+        <label className={inputClasses.fieldSetLabel}>
+          <input
+            type="radio"
+            name="enhanced-stereo-type"
+            value={`${StereoLabel.Or}${maxOr + 1}`}
+            checked={isNewOr}
+            onChange={() => setType(`${StereoLabel.Or}${maxOr + 1}`)}
+            onClick={() => setType(`${StereoLabel.Or}${maxOr + 1}`)}
+            className={inputClasses.input}
+            data-testid="create-new-or-group-radio"
+          />
+          <span className={inputClasses.radioButton} />
+          Create new OR Group
+        </label>
+      </fieldset>
     </Dialog>
   );
 };
@@ -200,6 +217,5 @@ function maxOfOrs(stereLabels): number {
 }
 
 export default connect((state: any) => ({
-  formState: state.modal.form || { result: {}, valid: false },
   struct: state.editor.struct(),
-}))(EnhancedStereo);
+}))(EnhancedStereo as any);

@@ -14,20 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { JSX } from 'react';
 import { Field } from '../../component/form/form/form';
 import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from '../../utils';
 import classes from './sgroup.module.less';
+import { BaseProps } from '../../views/modal/modal.types';
 
-const propMapping = {
+type PropMappingValue = {
+  maxLength?: number;
+  type?: string;
+};
+
+const propMapping: Record<string, PropMappingValue> = {
   name: { maxLength: 15 },
   fieldName: { maxLength: 30 },
   fieldValue: { type: 'textarea' },
   radiobuttons: { type: 'radio' },
 };
 
-const content = (type) =>
+const content = (type: string): JSX.Element[] =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
@@ -47,7 +54,11 @@ const content = (type) =>
       return <Field name={prop} key={`${type}-${prop}`} {...props} />;
     });
 
-function SGroupFieldset({ formState }) {
+interface SGroupFieldsetProps {
+  formState: BaseProps['formState'];
+}
+
+function SGroupFieldset({ formState }: SGroupFieldsetProps) {
   const { result } = formState;
 
   const type = result.type;

@@ -18,7 +18,7 @@
 import { Highlight } from 'domain/entities';
 import { ReStruct } from '../../render';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 
 type Data = {

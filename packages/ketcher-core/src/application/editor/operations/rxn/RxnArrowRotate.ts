@@ -2,7 +2,7 @@ import utils from 'application/editor/shared/utils';
 import { ReStruct } from 'application/render';
 import { Vec2 } from 'domain/entities';
 import { OperationType } from '../OperationType';
-import Base from '../base';
+import Base from '../BaseOperation';
 
 interface RxnArrowRotateData {
   id: number;

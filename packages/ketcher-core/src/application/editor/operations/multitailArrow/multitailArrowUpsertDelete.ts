@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/no-use-before-define */
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { MultitailArrow } from 'domain/entities/multitailArrow';
 import { OperationType } from 'application/editor';
 import { ReStruct, ReMultitailArrow } from 'application/render';

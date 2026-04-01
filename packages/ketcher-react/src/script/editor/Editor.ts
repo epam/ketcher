@@ -1520,7 +1520,6 @@ class Editor implements KetcherEditor {
       ket.root.templates.push(getKetRef(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
-    console.log(ket);
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {
       format: 'ket',
       shouldPersist: true,

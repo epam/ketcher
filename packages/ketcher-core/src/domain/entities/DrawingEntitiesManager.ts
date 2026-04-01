@@ -3679,8 +3679,9 @@ export class DrawingEntitiesManager {
               return;
             }
 
-            const isPhosphate = monomer instanceof Phosphate;
-            const antisenseMonomerItem = isPhosphate
+            const isModifiedPhosphate =
+              monomer instanceof Phosphate && monomer.isModification;
+            const antisenseMonomerItem = isModifiedPhosphate
               ? getRnaPartLibraryItem(
                   editor,
                   RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,

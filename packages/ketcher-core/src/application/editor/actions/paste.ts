@@ -167,7 +167,8 @@ export function fromPaste(
     }
     if (
       sg.isNotContractible(pstruct) &&
-      !(sg instanceof MonomerMicromolecule)
+      !(sg instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sg)
     ) {
       sg.setAttr('expanded', true);
     }

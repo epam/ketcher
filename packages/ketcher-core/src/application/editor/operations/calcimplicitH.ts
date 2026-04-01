@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 

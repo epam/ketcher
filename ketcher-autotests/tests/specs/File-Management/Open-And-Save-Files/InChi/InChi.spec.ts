@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  openPasteFromClipboard,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,

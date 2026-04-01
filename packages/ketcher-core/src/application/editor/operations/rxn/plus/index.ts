@@ -18,7 +18,7 @@
 import { ReRxnPlus, ReStruct } from '../../../../render';
 import { RxnPlus, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from '../../base';
+import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method

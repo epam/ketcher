@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-// todo: rename file in another PR
 import { ReStruct, StereLabelStyleType } from '../../render';
 
 import { OperationType } from './OperationType';
@@ -27,6 +26,7 @@ class BaseOperation {
   private _inverted: BaseOperation | undefined;
   type: OperationType;
   priority: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
   data: any;
 
   constructor(type: OperationType, priority = 0) {
@@ -132,6 +132,7 @@ class BaseOperation {
     restruct: ReStruct,
     mapName: keyof typeof ReStruct.maps,
     id: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches legacy invalidate depth flag
     level?: any,
   ) {
     if (mapName === 'atoms') {

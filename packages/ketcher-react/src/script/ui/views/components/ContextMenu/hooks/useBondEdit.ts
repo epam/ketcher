@@ -15,7 +15,7 @@ const useBondEdit = () => {
   const handler = useCallback(
     async ({ props }: Params) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-      const bondIds = props?.bondIds || [];
+      const bondIds = props?.bondIds ?? [];
       const molecule = editor.render.ctab;
       try {
         const bonds = mapBondIdsToBonds(bondIds, molecule);

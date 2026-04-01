@@ -77,6 +77,8 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  isValidHelmAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -203,6 +205,7 @@ export class CoreEditor {
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
@@ -400,6 +403,15 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      if (
+        newMonomer.props?.aliasHELM &&
+        !isValidHelmAlias(newMonomer.props.aliasHELM)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
       const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
@@ -653,8 +665,17 @@ export class CoreEditor {
 
       this.mode.onPaste(event);
     };
+    this.cutEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
+      this.mode.onCut(event);
+    };
     document.addEventListener('copy', this.copyEventHandler);
     document.addEventListener('paste', this.pasteEventHandler);
+    document.addEventListener('cut', this.cutEventHandler);
   }
 
   private setupHotKeysEvents() {
@@ -1784,6 +1805,7 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
+    document.removeEventListener('cut', this.cutEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);

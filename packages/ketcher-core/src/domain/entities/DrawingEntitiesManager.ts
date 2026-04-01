@@ -361,7 +361,9 @@ export class DrawingEntitiesManager {
   ) {
     const initialMonomer = this.monomers.get(monomer.id);
     if (!initialMonomer) return monomer;
-    initialMonomer.monomerItem = monomerItemNew;
+    initialMonomer.monomerItem = Object.isFrozen(monomerItemNew)
+      ? { ...monomerItemNew }
+      : monomerItemNew;
     initialMonomer.recalculateAttachmentPoints();
     this.monomers.set(monomer.id, initialMonomer);
     return initialMonomer;
@@ -1604,18 +1606,22 @@ export class DrawingEntitiesManager {
           previousMonomer.monomerItem,
           monomer.monomerItem,
         );
-        const attPointStart = connectionTemplate
-          ? connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+        let attPointStart;
+        let attPointEnd;
+        if (connectionTemplate) {
+          const isEndpoint1 =
+            connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+          attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
-            : connectionTemplate.endpoint2.attachmentPointId
-          : previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = connectionTemplate
-          ? connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            : connectionTemplate.endpoint2.attachmentPointId;
+          attPointEnd = isEndpoint1
             ? connectionTemplate.endpoint2.attachmentPointId
-            : connectionTemplate.endpoint1.attachmentPointId
-          : monomer.getValidSourcePoint(previousMonomer);
+            : connectionTemplate.endpoint1.attachmentPointId;
+        } else {
+          attPointStart = previousMonomer.getValidSourcePoint(monomer);
+          attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        }
 
         assert(attPointStart);
         assert(attPointEnd);
@@ -1723,18 +1729,22 @@ export class DrawingEntitiesManager {
           monomer.monomerItem,
         );
         // requirements are: use connectionTemplate if exist. If no then Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
-        const attPointStart = connectionTemplate
-          ? connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+        let attPointStart;
+        let attPointEnd;
+        if (connectionTemplate) {
+          const isEndpoint1 =
+            connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+          attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
-            : connectionTemplate.endpoint2.attachmentPointId
-          : previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = connectionTemplate
-          ? connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem)
+            : connectionTemplate.endpoint2.attachmentPointId;
+          attPointEnd = isEndpoint1
             ? connectionTemplate.endpoint2.attachmentPointId
-            : connectionTemplate.endpoint1.attachmentPointId
-          : monomer.getValidSourcePoint(previousMonomer);
+            : connectionTemplate.endpoint1.attachmentPointId;
+        } else {
+          attPointStart = previousMonomer.getValidSourcePoint(monomer);
+          attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        }
 
         assert(attPointStart);
         assert(attPointEnd);
@@ -1874,13 +1884,15 @@ export class DrawingEntitiesManager {
 
     const monomerXToIndexInMatrix = {};
 
-    const longestRow = sortedGroupedMonomers.reduce(
-      (longestRow, currentRow) =>
-        currentRow[1].length > longestRow[1].length ? currentRow : longestRow,
-      sortedGroupedMonomers[0],
-    );
+    const allXPositions = new Set<number>();
+    sortedGroupedMonomers.forEach(([, groupedByX]) => {
+      groupedByX.forEach(([x]) => {
+        allXPositions.add(x);
+      });
+    });
 
-    longestRow[1].forEach(([x], index) => {
+    const sortedXPositions = [...allXPositions].sort((a, b) => a - b);
+    sortedXPositions.forEach((x, index) => {
       monomerXToIndexInMatrix[x] = index;
     });
 

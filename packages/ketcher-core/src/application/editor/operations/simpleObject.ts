@@ -17,7 +17,7 @@
 
 import { SimpleObject, SimpleObjectMode, Vec2 } from 'domain/entities';
 
-import Base from './base';
+import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
 import { Scale } from 'domain/helpers';

@@ -116,9 +116,10 @@ const Open: FC<Props> = (props) => {
   }, [server]);
 
   const onFileLoad = (files) => {
-    // Restore fullscreen if it was active before file picker opened
     if ((window as any).isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {});
+      document.documentElement.requestFullscreen?.().catch(() => {
+        // Restore fullscreen if it was active before file picker opened
+      });
       (window as any).isKetcherFullscreenBeforeFilePicker = false;
     }
 

@@ -44,13 +44,18 @@ const FileDrop = ({
     disabled,
     onFileDialogOpen: () => {
       if (document.fullscreenElement) {
-        (window as any).isKetcherFullscreenBeforeFilePicker = true;
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
       }
     },
     onFileDialogCancel: () => {
-      if ((window as any).isKetcherFullscreenBeforeFilePicker) {
-        document.documentElement.requestFullscreen?.().catch(() => {});
-        (window as any).isKetcherFullscreenBeforeFilePicker = false;
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }
     },
     ...rest,

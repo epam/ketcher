@@ -171,6 +171,44 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
+    it('should accept monomer with missing aliasHELM', () => {
+      const monomerMissingHelm = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM3MISSINGHELM',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM3MISSINGHELM': {
+          type: 'monomerTemplate',
+          id: 'CHEM3MISSINGHELM',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem 3 Missing HELM',
+          name: 'CHEM3MISSINGHELM',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM3MISSINGHELM',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM3MISSINGHELM',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerMissingHelm));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('invalid HELM alias value'),
+      );
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('invalid HELM alias value'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
     it('should reject monomer with empty aliasHELM and log required message', () => {
       const monomerEmptyHelm = {
         root: {

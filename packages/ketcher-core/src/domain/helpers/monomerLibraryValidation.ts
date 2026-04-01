@@ -18,13 +18,18 @@
 const MONOMER_LIBRARY_HELM_ALIAS_PATTERN = /^[A-Za-z0-9_*-]+$/;
 
 /**
- * `updateMonomersLibrary` requires a non-empty HELM alias per monomer template.
- * Missing (`undefined`), empty/whitespace, invalid type, or disallowed characters fail.
+ * `updateMonomersLibrary` allows missing aliasHELM, but if provided it must:
+ * - be a string
+ * - be non-empty after trimming
+ * - contain only allowed characters
  */
 export function isValidMonomerLibraryHelmAliasForUpdate(
   aliasHELM: unknown,
 ): boolean {
-  if (aliasHELM === undefined || aliasHELM === null) {
+  if (aliasHELM === undefined) {
+    return true;
+  }
+  if (aliasHELM === null) {
     return false;
   }
   if (typeof aliasHELM !== 'string') {

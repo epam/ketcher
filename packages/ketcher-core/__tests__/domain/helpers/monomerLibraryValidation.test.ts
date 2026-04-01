@@ -5,8 +5,8 @@ import {
 
 describe('monomerLibraryValidation', () => {
   describe('isValidMonomerLibraryHelmAliasForUpdate', () => {
-    it('rejects undefined, null, non-string, empty, whitespace, invalid chars', () => {
-      expect(isValidMonomerLibraryHelmAliasForUpdate(undefined)).toBe(false);
+    it('accepts missing alias and rejects invalid provided values', () => {
+      expect(isValidMonomerLibraryHelmAliasForUpdate(undefined)).toBe(true);
       expect(isValidMonomerLibraryHelmAliasForUpdate(null)).toBe(false);
       expect(isValidMonomerLibraryHelmAliasForUpdate(1)).toBe(false);
       expect(isValidMonomerLibraryHelmAliasForUpdate('')).toBe(false);

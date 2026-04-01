@@ -5,7 +5,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  openPasteFromClipboard,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
@@ -19,6 +18,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 test.describe('', () => {
@@ -514,11 +514,15 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
      */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
-    await openPasteFromClipboard(page, '123.!@*');
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('123.!@*');
     await PasteFromClipboardDialog(page).cancel();
-    await openPasteFromClipboard(page, '123.!@*');
+
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('123.!@*');
     await page.keyboard.press('Escape');
-    // await press
   });
 
   test('Open and Save file - InChi string for Rgroup', async () => {

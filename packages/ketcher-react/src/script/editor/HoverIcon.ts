@@ -60,7 +60,7 @@ export class HoverIcon {
   }
 
   isOverLoader(event: MouseEvent) {
-    const target = <HTMLDivElement>event?.relatedTarget || event.target;
+    const target = <HTMLDivElement>event?.relatedTarget ?? event.target;
     return target?.classList?.contains('loading-spinner');
   }
 
@@ -116,7 +116,7 @@ export class HoverIcon {
   } {
     const render = this.editor.render;
     const fillColor = this.fill ?? '#000000';
-    const element = render.paper.text(0, 0, this.label || '');
+    const element = render.paper.text(0, 0, this.label ?? '');
     const options = getOptionsWithConvertedUnits(this.editor.options());
 
     element.attr('fill', fillColor);
@@ -126,7 +126,7 @@ export class HoverIcon {
     return {
       element,
       fill: fillColor,
-      label: this?.label || '',
+      label: this?.label ?? '',
     };
   }
 

@@ -208,6 +208,7 @@ export class CoreEditor {
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
@@ -686,8 +687,17 @@ export class CoreEditor {
 
       this.mode.onPaste(event);
     };
+    this.cutEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
+      this.mode.onCut(event);
+    };
     document.addEventListener('copy', this.copyEventHandler);
     document.addEventListener('paste', this.pasteEventHandler);
+    document.addEventListener('cut', this.cutEventHandler);
   }
 
   private setupHotKeysEvents() {
@@ -1817,6 +1827,7 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
+    document.removeEventListener('cut', this.cutEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);

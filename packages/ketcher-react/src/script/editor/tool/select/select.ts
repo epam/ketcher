@@ -508,7 +508,7 @@ class SelectTool implements Tool {
       const atoms = getSelectedAtoms(selection, molecule);
       const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
       updateSelectedAtoms({
-        atoms: selection?.atoms || [],
+        atoms: selection?.atoms ?? [],
         editor,
         changeAtomPromise,
       });
@@ -516,7 +516,7 @@ class SelectTool implements Tool {
       const bonds = getSelectedBonds(selection, molecule);
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
-        bonds: selection?.bonds || [],
+        bonds: selection?.bonds ?? [],
         changeBondPromise,
         editor,
       });

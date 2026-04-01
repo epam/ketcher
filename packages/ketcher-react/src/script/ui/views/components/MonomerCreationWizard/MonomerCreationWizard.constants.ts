@@ -1,4 +1,4 @@
-import { KetMonomerClass } from 'ketcher-core';
+import { HELM_ALIAS_FORMAT_ERROR_MESSAGE, KetMonomerClass } from 'ketcher-core';
 
 import {
   MonomerTypeSelectItem,
@@ -55,8 +55,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Minimal monomer structure is two atoms connected via a single bond.',
   impureStructure:
     'Monomer structure cannot contain S-groups, R-groups, special atoms, or any other query properties.',
-  invalidHELMAlias:
-    'The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  invalidHELMAlias: HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   notUniqueHELMAlias:
     'The HELM alias must be unique amongst peptide or RNA monomers.',
   invalidRnaPresetStructure:
@@ -64,6 +63,10 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   notUniquePresetCode: 'The preset code must be unique amongst other presets.',
   invalidPresetCode:
     'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+  invalidPhosphatePositionAttachmentPoints:
+    '3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.',
+  phosphatePositionNotSelected:
+    "You must chose the position of the phosphate (5' or 3').",
 };
 
 export const NotificationTypes: WizardNotificationTypeMap = {
@@ -87,6 +90,8 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   invalidRnaPresetStructure: 'error',
   notUniquePresetCode: 'error',
   invalidPresetCode: 'error',
+  invalidPhosphatePositionAttachmentPoints: 'error',
+  phosphatePositionNotSelected: 'error',
 };
 
 export const MonomerCreationExternalNotificationAction =

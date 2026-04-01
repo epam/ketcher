@@ -2,7 +2,7 @@ import { ReStruct } from 'application/render';
 import assert from 'assert';
 import { RGroupAttachmentPointAdd } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
-import BaseOperation from '../base';
+import BaseOperation from '../BaseOperation';
 
 type Data = { atomId: number; attachmentPointType; attachmentPointId: number };
 

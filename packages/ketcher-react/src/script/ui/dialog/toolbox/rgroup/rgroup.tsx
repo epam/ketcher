@@ -22,7 +22,37 @@ import classes from './rgroup.module.less';
 import { connect } from 'react-redux';
 import { rgroupSchema } from '../../../data/schema/struct-schema';
 
-function RGroup({ disabledIds, values, formState, type, ...props }) {
+interface RGroupResult {
+  values: number[];
+}
+
+interface RGroupFormState {
+  result: RGroupResult;
+  valid: boolean;
+  errors: Record<string, string>;
+}
+
+interface RGroupProps {
+  disabledIds: number[];
+  values: number[];
+  formState: RGroupFormState;
+  type: 'atom' | 'fragment';
+}
+
+interface RGroupCallProps {
+  onCancel: () => void;
+  onOk: (result: unknown) => void;
+}
+
+interface RGroupStoreState {
+  modal: {
+    form: RGroupFormState;
+  };
+}
+
+type Props = RGroupProps & RGroupCallProps;
+
+function RGroup({ disabledIds, values, formState, type, ...props }: Props) {
   return (
     <Dialog
       title="R-Group"
@@ -48,4 +78,6 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
   );
 }
 
-export default connect((store) => ({ formState: store.modal.form }))(RGroup);
+export default connect((state: RGroupStoreState) => ({
+  formState: state.modal.form,
+}))(RGroup);

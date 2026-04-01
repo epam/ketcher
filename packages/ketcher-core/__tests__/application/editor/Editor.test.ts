@@ -482,6 +482,73 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should skip monomer with invalid HELM alias and still load valid aliases with brackets and dots', () => {
+      const monomersWithMixedAliases = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-SUGAR3',
+            },
+            {
+              $ref: 'monomerTemplate-SUGAR4',
+            },
+          ],
+        },
+        'monomerTemplate-SUGAR3': {
+          type: 'monomerTemplate',
+          id: 'SUGAR3',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Invalid Alias Sugar',
+          name: 'SUGAR3',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR3',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR3',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: 'Invalid Alias',
+        },
+        'monomerTemplate-SUGAR4': {
+          type: 'monomerTemplate',
+          id: 'SUGAR4',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Valid Alias Sugar',
+          name: 'SUGAR4',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR4',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR4',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: '[Sugar].(1)',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Load of "SUGAR3" monomer has failed, monomer definition contains invalid HELM alias value.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'SUGAR3',
+        ),
+      ).toBeUndefined();
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'SUGAR4',
+        )?.props.aliasHELM,
+      ).toBe('[Sugar].(1)');
+    });
+
     it('should log IDT alias collision across monomers', () => {
       const monomerWithIdtAlias = {
         root: {
@@ -716,6 +783,299 @@ describe('CoreEditor', () => {
       expect(hideAutochainPreviewSpy).toHaveBeenCalledTimes(1);
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(clearSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cut operation (Ctrl+X)', () => {
+    let canvas: SVGSVGElement;
+    let editor: CoreEditor;
+
+    beforeEach(() => {
+      canvas = createPolymerEditorCanvas();
+      editor = new CoreEditor({
+        canvas,
+        theme: polymerEditorTheme,
+      });
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      canvas.remove();
+    });
+
+    it('should register cut event listener on document', () => {
+      const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+
+      const testCanvas = createPolymerEditorCanvas();
+      const testEditor = new CoreEditor({
+        canvas: testCanvas,
+        theme: {},
+      });
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith(
+        'cut',
+        expect.any(Function),
+      );
+
+      testEditor.destroy();
+      testCanvas.remove();
+      addEventListenerSpy.mockRestore();
+    });
+
+    it('should remove cut event listener on destroy', () => {
+      const removeEventListenerSpy = jest.spyOn(
+        document,
+        'removeEventListener',
+      );
+
+      const testCanvas = createPolymerEditorCanvas();
+      const testEditor = new CoreEditor({
+        canvas: testCanvas,
+        theme: {},
+      });
+
+      testEditor.destroy();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'cut',
+        expect.any(Function),
+      );
+
+      testCanvas.remove();
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('should cut selected monomer (copy to clipboard and dispatch delete event)', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      // Add a monomer
+      const modelChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(modelChanges);
+
+      // Select the monomer
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+
+      expect(editor.drawingEntitiesManager.selectedEntities.length).toBe(1);
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
+
+      // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
+      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
+      const readSpy = jest.fn().mockResolvedValue([]);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: writeTextSpy,
+          read: readSpy,
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      // Spy on deleteSelectedStructure event
+      const deleteEventSpy = jest.fn();
+      editor.events.deleteSelectedStructure.add(deleteEventSpy);
+
+      // Call onCut directly (simulates cut event)
+      editor.mode.onCut();
+
+      // Verify clipboard was written to (onCopy was called)
+      expect(writeTextSpy).toHaveBeenCalled();
+
+      // Verify delete event was dispatched
+      expect(deleteEventSpy).toHaveBeenCalled();
+
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+
+    it('should do nothing when cutting with no selection', () => {
+      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
+      const readSpy = jest.fn().mockResolvedValue([]);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: writeTextSpy,
+          read: readSpy,
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      expect(editor.drawingEntitiesManager.selectedEntities.length).toBe(0);
+
+      // Call onCut with no selection
+      editor.mode.onCut();
+
+      // Verify clipboard was not written to
+      expect(writeTextSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not interfere with input field cut operation', () => {
+      const input = document.createElement('input');
+      input.value = 'test text';
+      document.body.appendChild(input);
+
+      // Mock event with input as target
+      const cutEvent = {
+        target: input,
+        preventDefault: jest.fn(),
+      } as unknown as ClipboardEvent;
+
+      // Add a monomer and select it
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      const modelChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(modelChanges);
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
+
+      // Call onCut with event targeting input field
+      editor.mode.onCut(cutEvent);
+
+      // Monomer should NOT be deleted (because target is input)
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
+
+      input.remove();
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+
+    it('should call onCopy and dispatch delete event in correct order', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      // Add a monomer
+      const modelChanges = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(modelChanges);
+
+      // Select the monomer
+      const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+      editor.drawingEntitiesManager.selectDrawingEntity(monomer);
+
+      // Mock clipboard API
+      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
+      const readSpy = jest.fn().mockResolvedValue([]);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: writeTextSpy,
+          read: readSpy,
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      // Spy on methods to verify order
+      const onCopySpy = jest.spyOn(editor.mode, 'onCopy');
+      const deleteEventSpy = jest.fn();
+      editor.events.deleteSelectedStructure.add(deleteEventSpy);
+
+      // Perform cut
+      editor.mode.onCut();
+
+      // Verify onCopy was called first
+      expect(onCopySpy).toHaveBeenCalled();
+      // Verify delete event was dispatched after copy
+      expect(deleteEventSpy).toHaveBeenCalled();
+
+      onCopySpy.mockRestore();
+
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
+    });
+
+    it('should work with multiple selected monomers', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      const initialGetBBox = svgElementWithBBox.getBBox;
+      svgElementWithBBox.getBBox = () =>
+        ({ x: 0, y: 0, width: 0, height: 0 } as DOMRect);
+
+      // Add multiple monomers
+      const modelChanges1 = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(0, 0),
+      );
+      editor.renderersContainer.update(modelChanges1);
+
+      const modelChanges2 = editor.drawingEntitiesManager.addMonomer(
+        peptideMonomerItem,
+        new Vec2(5, 0),
+      );
+      editor.renderersContainer.update(modelChanges2);
+
+      // Select all monomers
+      const allMonomers = Array.from(
+        editor.drawingEntitiesManager.monomers,
+      ).map(([, monomer]) => monomer);
+      editor.drawingEntitiesManager.selectDrawingEntities(allMonomers);
+
+      expect(editor.drawingEntitiesManager.selectedEntities.length).toBe(2);
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(2);
+
+      // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
+      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
+      const readSpy = jest.fn().mockResolvedValue([]);
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: writeTextSpy,
+          read: readSpy,
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      // Spy on delete event
+      const deleteEventSpy = jest.fn();
+      editor.events.deleteSelectedStructure.add(deleteEventSpy);
+
+      // Call onCut
+      editor.mode.onCut();
+
+      // Verify clipboard was written to
+      expect(writeTextSpy).toHaveBeenCalled();
+
+      // Verify delete event was dispatched for all selected monomers
+      expect(deleteEventSpy).toHaveBeenCalled();
+
+      if (initialGetBBox) {
+        svgElementWithBBox.getBBox = initialGetBBox;
+      } else {
+        Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+      }
     });
   });
 });

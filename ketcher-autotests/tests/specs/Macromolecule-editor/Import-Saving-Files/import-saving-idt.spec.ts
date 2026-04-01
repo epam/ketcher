@@ -22,7 +22,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { closeOpenStructure, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,

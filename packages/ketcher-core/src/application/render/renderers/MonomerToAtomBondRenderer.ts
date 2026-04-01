@@ -12,9 +12,23 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | undefined;
 
+  private rerenderScheduled = false;
+
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);
     this.monomerToAtomBond.setRenderer(this);
+  }
+
+  private scheduleDeferredRerender() {
+    if (this.rerenderScheduled) return;
+    this.rerenderScheduled = true;
+    requestAnimationFrame(() => {
+      this.rerenderScheduled = false;
+      if (this.monomerToAtomBond.renderer === this) {
+        this.remove();
+        this.show();
+      }
+    });
   }
 
   private get scaledPosition() {
@@ -45,6 +59,17 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     const atomRootBoundingClientRect = atomRenderer.rootBoundingClientRect; // Use public getter
 
     if (atomRootBoundingClientRect) {
+      if (
+        atomRootBoundingClientRect.width === 0 &&
+        atomRootBoundingClientRect.height === 0
+      ) {
+        this.scheduleDeferredRerender();
+        return {
+          startPosition: startPositionInPixels,
+          endPosition: endPositionInPixels,
+        };
+      }
+
       // Convert DOMRect to Box2Abs relative to atom's center
       const atomVisualBBox = new Box2Abs(
         new Vec2(
@@ -67,6 +92,13 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Otherwise, use the overall bounding box of the atom's visual representation.
       if (atomRenderer.isLabelVisible && atomRenderer.labelBoundingBox) {
         const labelBBox = atomRenderer.labelBoundingBox;
+        if (labelBBox.width === 0 && labelBBox.height === 0) {
+          this.scheduleDeferredRerender();
+          return {
+            startPosition: startPositionInPixels,
+            endPosition: endPositionInPixels,
+          };
+        }
         combinedVisualBBox = new Box2Abs(
           new Vec2(labelBBox.x, labelBBox.y),
           new Vec2(

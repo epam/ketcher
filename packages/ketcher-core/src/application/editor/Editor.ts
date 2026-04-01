@@ -77,6 +77,8 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  isValidHelmAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -401,6 +403,15 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      if (
+        newMonomer.props?.aliasHELM &&
+        !isValidHelmAlias(newMonomer.props.aliasHELM)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
       const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;

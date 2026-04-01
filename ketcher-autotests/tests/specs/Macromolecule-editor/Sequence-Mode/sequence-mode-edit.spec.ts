@@ -726,7 +726,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take a screenshot
      */
     await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
-    await keyboardPressOnCanvas(page, 'Control+Alt+D');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
     await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

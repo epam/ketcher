@@ -3,6 +3,7 @@ import {
   addTextBoxToCanvas,
   TextEditorDialog,
 } from '@tests/pages/molecules/canvas/TextEditorDialog';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
 import { waitForPageInit } from '@utils/common';
 
@@ -13,7 +14,7 @@ test.describe('Text tools test cases', () => {
 
   test(' Button and tooltip: verification', async ({ page }) => {
     // Test case: EPMLSOPKET-2225
-    const button = page.getByTestId('text');
+    const button = LeftToolbar(page).addTextButton;
     await expect(button).toHaveAttribute('title', 'Add text (Alt+T)');
     await takeEditorScreenshot(page);
   });

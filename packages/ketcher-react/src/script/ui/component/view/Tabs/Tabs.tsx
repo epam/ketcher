@@ -42,7 +42,7 @@ class Tabs extends Component<TabsProps, TabsState> {
   constructor(props: TabsProps) {
     super(props);
     this.state = {
-      tabIndex: props.tabIndex || 0,
+      tabIndex: props.tabIndex ?? 0,
     };
     this.props.changeTab(this.state.tabIndex);
   }

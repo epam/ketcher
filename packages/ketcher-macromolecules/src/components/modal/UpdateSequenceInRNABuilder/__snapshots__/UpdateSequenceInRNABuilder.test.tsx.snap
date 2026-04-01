@@ -72,6 +72,7 @@ exports[`UpdateSequenceInRNABuilder modal component should render correctly 1`] 
           </h2>
           <div
             class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            data-testid="update-sequence-modal-body"
           >
             <div
               class="css-pp7hf1"

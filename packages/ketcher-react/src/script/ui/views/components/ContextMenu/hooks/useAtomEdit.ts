@@ -15,7 +15,7 @@ const useAtomEdit = () => {
     async ({ props }: Params) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
-      const atomIds = props?.atomIds || [];
+      const atomIds = props?.atomIds ?? [];
       const atoms = mapAtomIdsToAtoms(atomIds, molecule);
 
       const newAtom = editor.event.elementEdit.dispatch(atoms);

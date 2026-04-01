@@ -60,8 +60,9 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
       isOpen={isModalOpen}
       title="Update sequence"
       onClose={onCloseCallback}
+      data-testid="update-sequence-modal"
     >
-      <Modal.Content>
+      <Modal.Content data-testid="update-sequence-modal-body">
         <TextWrapper>
           You are going to modify {countOfNucleoelements} nucleotides. Are you
           sure?

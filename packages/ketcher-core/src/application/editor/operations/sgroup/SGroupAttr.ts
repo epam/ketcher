@@ -55,6 +55,9 @@ export class SGroupAttr extends BaseOperation {
       this.data.attr === 'expanded' &&
       sgroup instanceof MonomerMicromolecule
     ) {
+      if (Object.isFrozen(sgroup.monomer.monomerItem)) {
+        sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
+      }
       sgroup.monomer.monomerItem.expanded = this.data.value;
     }
 

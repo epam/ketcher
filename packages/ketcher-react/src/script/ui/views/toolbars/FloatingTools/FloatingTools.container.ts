@@ -15,7 +15,7 @@ const mapStateToProps = (state: any): FloatingToolsProps => {
   return {
     visible: getFloatingToolsVisible(state),
     rotateHandlePosition: getFloatingToolsRotateHandlePosition(state),
-    status: state.actionState || {},
+    status: state.actionState ?? {},
     indigoVerification: state.requestsStatuses.indigoVerification,
   };
 };

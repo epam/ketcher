@@ -252,7 +252,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   action.addOp(new AtomDelete(srcId));
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId);
   const bond = restruct.molecule.bonds.get(
-    dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid,
+    dstAtomNeighbors[0]?.bid ?? atomNeighbors[0]?.bid,
   );
 
   return action

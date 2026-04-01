@@ -15,15 +15,24 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import { SettingsManager, StructService } from 'ketcher-core';
+import { SettingsManager, Struct } from 'ketcher-core';
 import actions, { UiAction, UiActionAction } from '../../action';
 import Editor from '../../../editor/Editor';
-import { initOptionsState } from '../options';
 
 type ActionParams = {
-  editor: Editor;
-  server: StructService;
-  options: typeof initOptionsState;
+  editor: Editor & {
+    struct(): Struct;
+    struct(value: Struct | null): Struct;
+  };
+  server: unknown;
+  options: {
+    app: {
+      server?: unknown;
+      templates?: unknown;
+      functionalGroups?: unknown;
+    };
+    buttons?: Record<string, { hidden?: boolean }>;
+  };
 };
 
 type ExecuteParams = ActionParams & {
@@ -57,9 +66,9 @@ function execute(
   } else if (typeof action === 'function') {
     (
       action as (
-        editor: Editor,
-        server: StructService,
-        options: typeof initOptionsState,
+        editor: ActionParams['editor'],
+        server: ActionParams['server'],
+        options: ActionParams['options'],
       ) => void
     )(editor, server, options);
   } else {

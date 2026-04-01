@@ -149,6 +149,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       ref={dialogRef}
       open
       data-testid={'info-modal-window'}
+      tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >

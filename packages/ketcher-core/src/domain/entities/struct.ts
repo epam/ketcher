@@ -501,6 +501,10 @@ export class Struct {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : this.atoms.get(halfBond.begin)!.pp;
+    } else if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
+      startCoords =
+        sgroup1.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.begin)!.pp;
     } else {
       startCoords = this.atoms.get(halfBond.begin)!.pp;
     }
@@ -509,6 +513,10 @@ export class Struct {
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : this.atoms.get(halfBond.end)!.pp;
+    } else if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
+      endCoords =
+        sgroup2.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.end)!.pp;
     } else {
       endCoords = this.atoms.get(halfBond.end)!.pp;
     }

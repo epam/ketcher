@@ -17,7 +17,7 @@
 
 import { ReBond, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { Bond } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 

@@ -4,7 +4,6 @@ import {
   getAttachmentPointNumberFromLabel,
 } from 'ketcher-core';
 import { Editor } from '../../../../../editor';
-import assert from 'assert';
 import { Option } from '../../../../component/form/Select';
 
 export type AttachmentPointSelectData = {
@@ -47,14 +46,20 @@ export const useAttachmentPointSelectsData = (
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
   const atomPair = assignedAttachmentPoints.get(attachmentPointName);
-  assert(atomPair);
+  if (!atomPair) {
+    return null;
+  }
 
   const [attachmentAtomId, leavingAtomId] = atomPair;
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
-  assert(attachmentAtom);
+  if (!attachmentAtom) {
+    return null;
+  }
 
   const leavingAtom = editor.struct().atoms.get(leavingAtomId);
-  assert(leavingAtom);
+  if (!leavingAtom) {
+    return null;
+  }
 
   const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
     getAttachmentPointNumberFromLabel(name),

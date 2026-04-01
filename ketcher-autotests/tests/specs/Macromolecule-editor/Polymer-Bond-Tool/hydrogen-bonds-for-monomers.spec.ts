@@ -10,7 +10,7 @@ import {
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
@@ -814,7 +814,7 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
@@ -880,7 +880,7 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 

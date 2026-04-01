@@ -103,6 +103,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 let page: Page;
 
@@ -302,6 +303,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
 
     await LeftToolbar(page).sGroup();
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
 
     const wLocator = page.getByText('w', { exact: true });
     const wBox = await wLocator.boundingBox();

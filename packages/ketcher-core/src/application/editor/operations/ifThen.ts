@@ -15,7 +15,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 

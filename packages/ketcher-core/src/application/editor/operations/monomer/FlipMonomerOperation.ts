@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import BaseOperation from 'application/editor/operations/base';
+import BaseOperation from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
 import type { FlipDirection } from 'application/editor/shared/utils.types';

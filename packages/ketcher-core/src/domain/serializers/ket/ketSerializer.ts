@@ -221,7 +221,7 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
-    return JSON.stringify(result, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -361,12 +361,14 @@ export class KetSerializer implements Serializer<Struct> {
 
     return Object.entries(attachmentPointsDict).map(
       ([key, attachmentPoint]) => {
-        const normalizedLabel =
-          attachmentPoint.type === 'left'
-            ? AttachmentPointName.R1
-            : attachmentPoint.type === 'right'
-            ? AttachmentPointName.R2
-            : undefined;
+        let normalizedLabel: AttachmentPointName | undefined;
+        if (attachmentPoint.type === 'left') {
+          normalizedLabel = AttachmentPointName.R1;
+        } else if (attachmentPoint.type === 'right') {
+          normalizedLabel = AttachmentPointName.R2;
+        } else {
+          normalizedLabel = undefined;
+        }
 
         return {
           ...attachmentPoint,

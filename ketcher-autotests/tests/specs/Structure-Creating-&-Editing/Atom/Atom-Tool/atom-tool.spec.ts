@@ -13,8 +13,8 @@ import {
   waitForRender,
   selectPartOfMolecules,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
   dragTo,
@@ -232,7 +232,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await page.getByText('AH').click();
+    await getAtomLocator(page, { atomLabel: 'AH' }).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -269,11 +269,11 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 

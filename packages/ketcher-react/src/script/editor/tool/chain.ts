@@ -131,7 +131,7 @@ class ChainTool implements Tool {
 
     if (ci?.map === 'functionalGroups') {
       const functionalGroup = molecule.functionalGroups.get(ci.id);
-      if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+      if (!SGroup.isSaltOrSolvent(functionalGroup?.name ?? '')) {
         const sGroupId = ci.id;
         const sGroup = molecule.sgroups.get(sGroupId);
         const attachmentAtomId = sGroup?.getAttachmentAtomId();

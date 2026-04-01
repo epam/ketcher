@@ -7,7 +7,7 @@ import {
   ketcherProvider,
   KetMonomerClass,
 } from 'ketcher-core';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -36,6 +36,7 @@ interface IMonomerCreationWizardFieldsProps {
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
   showNaturalAnalogue?: boolean;
+  attachmentPointsExtra?: ReactNode;
 }
 
 interface ModificationTypeItem {
@@ -54,6 +55,7 @@ const MonomerCreationWizardFields = (
     assignedAttachmentPoints,
     onChangeModificationTypes,
     onFieldChange,
+    attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
@@ -195,6 +197,11 @@ const MonomerCreationWizardFields = (
       <div
         className={clsx(styles.attributesFields, selectStyles.selectContainer)}
       >
+        {attachmentPointsExtra && (
+          <div className={styles.attachmentPointsExtra}>
+            {attachmentPointsExtra}
+          </div>
+        )}
         <div className={styles.attachmentPointsHeader}>
           <p className={styles.attachmentPointsTitle}>Attachment points</p>
           <span
@@ -227,7 +234,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square
@@ -294,7 +301,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square

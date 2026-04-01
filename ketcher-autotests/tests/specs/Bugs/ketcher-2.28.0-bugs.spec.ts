@@ -128,7 +128,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
     );
   });
   await BottomToolbar(page).structureLibrary();
-  await StructureLibraryDialog(page).addFunctionalGroup(
+  await StructureLibraryDialog(page).selectFunctionalGroup(
     FunctionalGroupsTabItems.CF3,
   );
   await clickInTheMiddleOfTheScreen(page);

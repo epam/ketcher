@@ -18,7 +18,7 @@
 import { BaseMonomer, FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
 import { ReSGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
@@ -85,6 +85,9 @@ class SGroupCreate extends BaseOperation {
     if (expanded) {
       sgroup.data.expanded = expanded;
       if (sgroup instanceof MonomerMicromolecule) {
+        if (Object.isFrozen(sgroup.monomer.monomerItem)) {
+          sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
+        }
         sgroup.monomer.monomerItem.expanded = expanded;
       }
     }

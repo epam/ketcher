@@ -369,14 +369,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
 
-    const rotationHandle = page.getByTestId('rotation-handle');
-    await rotationHandle.hover();
-    await page.mouse.down();
-    await page.mouse.move(
-      COORDINATES_TO_PERFORM_ROTATION.x,
-      COORDINATES_TO_PERFORM_ROTATION.y,
-    );
-    await page.mouse.up();
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await takeEditorScreenshot(page);
   });
 

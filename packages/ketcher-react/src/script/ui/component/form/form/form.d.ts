@@ -26,6 +26,10 @@ export interface FieldProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   checked?: boolean;
+  multiple?: boolean;
+  testId?: string;
+  disabledIds?: unknown[];
+  classes?: Record<string, string | undefined>;
 }
 
 export interface FieldWithModalProps extends FieldProps {

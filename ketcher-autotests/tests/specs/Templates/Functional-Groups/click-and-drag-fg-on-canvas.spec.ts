@@ -33,7 +33,7 @@ test.describe('Click and drag FG on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await dragMouseAndMoveTo(page, 50);
@@ -47,13 +47,13 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on FG it should forms a bond between it
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
@@ -71,12 +71,12 @@ test.describe('Click and drag FG on canvas', () => {
       Bug: https://github.com/epam/ketcher/issues/2278
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
     await dragMouseAndMoveTo(page, 50);
@@ -100,7 +100,7 @@ test.describe('Click and drag FG on canvas', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CF3,
     );
     await dragMouseAndMoveTo(page, -50);
@@ -115,14 +115,14 @@ test.describe('Click and drag FG on canvas', () => {
       it should forms a bond
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
     await clickInTheMiddleOfTheScreen(page);
 
     await waitForRender(page, async () => {
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.CO2Et,
       );
       await dragMouseAndMoveTo(page, 50);
@@ -131,7 +131,7 @@ test.describe('Click and drag FG on canvas', () => {
 
     await waitForRender(page, async () => {
       await BottomToolbar(page).structureLibrary();
-      await StructureLibraryDialog(page).addFunctionalGroup(
+      await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.Ms,
       );
       await dragMouseAndMoveTo(page, -50);

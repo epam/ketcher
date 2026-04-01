@@ -29,6 +29,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -1483,7 +1484,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
     hideMonomerPreview: true,
   });
 
-  await page.getByTitle('Yes').click();
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

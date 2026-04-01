@@ -17,7 +17,7 @@
 
 import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { Fragment, StructProperty } from 'domain/entities';
 import { OperationType } from './OperationType';
 
@@ -45,7 +45,8 @@ class FragmentAdd extends BaseOperation {
       struct.frags.set(this.frid, frag);
     }
 
-    restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add restruct.notifyFragmentAdded
+    restruct.frags.set(this.frid, new ReFrag(frag));
+    restruct.markItem('frags', this.frid, 1); // notifyFragmentAdded
     restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag());
   }
 
@@ -98,7 +99,8 @@ class FragmentDelete extends BaseOperation {
 
     BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1);
     restruct.frags.delete(this.frid);
-    struct.frags.delete(this.frid); // TODO add restruct.notifyFragmentRemoved
+    restruct.markItemRemoved(); // notifyFragmentRemoved
+    struct.frags.delete(this.frid);
 
     const enhancedFalg = restruct.enhancedFlags.get(this.frid);
     if (!enhancedFalg) return;

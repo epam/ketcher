@@ -15,16 +15,15 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import { SettingsManager } from 'ketcher-core';
+import { SettingsManager, StructService } from 'ketcher-core';
 import actions, { UiAction, UiActionAction } from '../../action';
+import Editor from '../../../editor/Editor';
+import { initOptionsState } from '../options';
 
 type ActionParams = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  editor: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  server: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: any;
+  editor: Editor;
+  server: StructService;
+  options: typeof initOptionsState;
 };
 
 type ExecuteParams = ActionParams & {
@@ -56,12 +55,13 @@ function execute(
       return action;
     }
   } else if (typeof action === 'function') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (action as (editor: any, server: any, options: any) => void)(
-      editor,
-      server,
-      options,
-    );
+    (
+      action as (
+        editor: Editor,
+        server: StructService,
+        options: typeof initOptionsState,
+      ) => void
+    )(editor, server, options);
   } else {
     console.info('no action');
   }
@@ -144,8 +144,7 @@ export default function (
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((activeTool as any)?.tool === 'select') {
+      if ((activeTool as { tool?: string })?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
@@ -159,8 +158,7 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((activeTool as any)?.tool === 'select') {
+      if ((activeTool as { tool?: string })?.tool === 'select') {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(

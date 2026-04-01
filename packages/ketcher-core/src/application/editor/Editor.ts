@@ -582,7 +582,7 @@ export class CoreEditor {
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
       this.events.keyDown.dispatch(event);
-      if (!event.defaultPrevented) {
+      if (!event.cancelBubble) {
         this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });

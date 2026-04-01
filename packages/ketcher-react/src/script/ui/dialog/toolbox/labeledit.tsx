@@ -109,7 +109,12 @@ function LabelEdit(props: Readonly<LabelEditProps>) {
     >
       <Form
         schema={labelEditSchema}
-        customValid={{ label: (l: string) => deserialize(l) }}
+        customValid={{
+          label: (l: string) => {
+            const isValid = deserialize(l);
+            return isValid !== null;
+          },
+        }}
         init={init}
         {...formState}
       >

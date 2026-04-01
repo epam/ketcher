@@ -823,7 +823,7 @@ test(`16. Check add prohibited HELM symbols`, async () => {
       ErrorMessage.invalidHELMAlias,
     ).getNotificationMessage(),
   ).toEqual(
-    'The HELM alias must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    'The HELM alias must consist only of uppercase and lowercase letters, numbers, underscores (_), asterisks (*), square brackets ([]), parentheses (()), dots (.), and hyphens (-), spaces prohibited.',
   );
 
   await takeElementScreenshot(

@@ -116,6 +116,12 @@ const Open: FC<Props> = (props) => {
   }, [server]);
 
   const onFileLoad = (files) => {
+    // Restore fullscreen if it was active before file picker opened
+    if ((window as any).isKetcherFullscreenBeforeFilePicker) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+      (window as any).isKetcherFullscreenBeforeFilePicker = false;
+    }
+
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {

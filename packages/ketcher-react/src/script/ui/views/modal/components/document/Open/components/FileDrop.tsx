@@ -42,6 +42,17 @@ const FileDrop = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (window as any).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      if ((window as any).isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+        (window as any).isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
     ...rest,
   });
 
@@ -52,7 +63,7 @@ const FileDrop = ({
       disabled ? styles.isDisabled : null,
     ];
     return classes.join(' ');
-  }, [isDragActive]);
+  }, [isDragActive, disabled]);
 
   return (
     <div

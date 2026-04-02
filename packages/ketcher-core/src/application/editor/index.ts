@@ -30,6 +30,7 @@ export * from './shared/coordinates';
 export * from './shared/customEvents';
 export * from './editor.types';
 export * from './Editor';
+export * from './CoreEditorBase';
 export * from './shared/sort';
 export * from './EditorHistory';
 export * from './modes';

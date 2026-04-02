@@ -20,8 +20,7 @@ export const useLibraryItemDrag = (
     const dragBehavior = drag<HTMLElement, unknown>()
       .on('start', () => {
         // In sequence layout we do not allow DnD; cancel visual drag early
-        editor.isLibraryItemDragCancelled =
-          editor.mode.modeName === 'sequence-layout-mode';
+        editor.isLibraryItemDragCancelled = editor.mode.isSequenceLayoutMode;
         if (!editor.isLibraryItemDragCancelled) {
           document.body.style.cursor = 'grabbing';
         }

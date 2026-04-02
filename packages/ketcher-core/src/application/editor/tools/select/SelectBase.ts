@@ -15,11 +15,8 @@
  ***************************************************************************/
 
 import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import {
-  CoreEditor,
-  EditorHistory,
-  SelectRectangle,
-} from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
@@ -33,13 +30,13 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment, vectorUtils } from 'application/editor';
+import { MonomersAlignment } from 'application/editor/tools/types';
+import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
-import { EraserTool } from 'application/editor/tools/Erase';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type EmptySnapResult = {
@@ -76,6 +73,7 @@ function isGroupCenterSnapResult(
 }
 
 abstract class SelectBase implements BaseTool {
+  readonly isSelectTool = true;
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
@@ -95,7 +93,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
+    if (this.editor.mode.isSequenceLayoutMode) {
       shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
     } else {
       shouldStartMove = true;
@@ -298,7 +296,7 @@ abstract class SelectBase implements BaseTool {
 
     const editor = CoreEditor.provideEditorInstance();
     let angle: number;
-    if (editor.mode.modeName === 'snake-layout-mode') {
+    if (editor.mode.isSnakeLayoutMode) {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
       rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
       const step = Math.PI / 2;
@@ -363,7 +361,7 @@ abstract class SelectBase implements BaseTool {
         );
 
         if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          SelectBase.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -382,7 +380,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          SelectBase.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -706,7 +704,7 @@ abstract class SelectBase implements BaseTool {
       connectionLength: Infinity,
     };
 
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
+    if (this.editor.mode.isSequenceLayoutMode) {
       return emptyResult;
     }
     const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
@@ -747,7 +745,7 @@ abstract class SelectBase implements BaseTool {
           SelectBase.calculateAngleSnap(
             selectedMonomer.position.add(movementDelta),
             connectedMonomer.position,
-            this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
+            this.editor.mode.isSnakeLayoutMode ? 90 : 30,
             snapDistance,
           );
 
@@ -818,12 +816,11 @@ abstract class SelectBase implements BaseTool {
       const connectedMonomers = externalConnectionsToSelection.map(
         ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
       );
-      const groupCenterSnapResult =
-        SelectRectangle.calculateGroupCenterSnapPosition(
-          selectedMonomers,
-          connectedMonomers,
-          movementDelta,
-        );
+      const groupCenterSnapResult = SelectBase.calculateGroupCenterSnapPosition(
+        selectedMonomers,
+        connectedMonomers,
+        movementDelta,
+      );
       const firstGroupCenterSnapResult = groupCenterSnapResult[0];
 
       if (firstGroupCenterSnapResult) {
@@ -1071,7 +1068,9 @@ abstract class SelectBase implements BaseTool {
   destroy() {
     this.canvasResizeObserver?.disconnect();
 
-    if (!(this.editor.selectedTool instanceof EraserTool)) {
+    if (
+      !(this.editor.selectedTool && 'isEraserTool' in this.editor.selectedTool)
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();

@@ -16,22 +16,22 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
-  public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+  public execute(_renderersManager: RenderersManagerBase) {
+    const editor = CoreEditorBase.provideEditorInstance();
 
     editor.mode.initialize(false);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+  public invert(_renderersManager: RenderersManagerBase) {
+    const editor = CoreEditorBase.provideEditorInstance();
 
     editor.mode.initialize(false);
   }
@@ -49,7 +49,7 @@ export class RestoreSequenceCaretPositionOperation implements Operation {
     SequenceRenderer.setCaretPosition(this.nextPosition);
   }
 
-  public invert(_renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManagerBase) {
     SequenceRenderer.setCaretPosition(this.previousPosition);
   }
 }

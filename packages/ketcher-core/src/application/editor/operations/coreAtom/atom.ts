@@ -16,7 +16,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond as MicromoleculesBond } from 'domain/entities/bond';
@@ -111,11 +111,11 @@ export class AtomAddOperation implements Operation {
     this.deletedMoleculeStructItems = deleteAtomFromMoleculeStruct(this.atom);
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManager) {
+  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
     renderersManager.addAtom(this.atom);
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManager) {
+  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
     renderersManager.deleteAtom(this.atom);
   }
 }
@@ -148,11 +148,11 @@ export class AtomDeleteOperation implements Operation {
     }
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManager) {
+  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
     renderersManager.addAtom(this.atom);
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManager) {
+  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
     renderersManager.deleteAtom(this.atom);
   }
 }

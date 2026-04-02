@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 
@@ -29,12 +29,12 @@ export class RxnArrowAddOperation implements Operation {
     this.rxnArrow = this.addArrowChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.rxnArrow = this.addArrowChangeModel(this.rxnArrow);
     renderersManager.addRxnArrow(this.rxnArrow);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     if (this.rxnArrow) {
       this.deleteArrowChangeModel(this.rxnArrow);
       renderersManager.deleteRxnArrow(this.rxnArrow);
@@ -51,12 +51,12 @@ export class RxnArrowDeleteOperation implements Operation {
     public addArrowChangeModel: (arrow: RxnArrow) => RxnArrow,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.deleteArrowChangeModel(this.rxnArrow);
     renderersManager.deleteRxnArrow(this.rxnArrow);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.addArrowChangeModel(this.rxnArrow);
     renderersManager.addRxnArrow(this.rxnArrow);
   }

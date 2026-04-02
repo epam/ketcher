@@ -14,14 +14,14 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
   DEFAULT_LAYOUT_MODE,
-  FlexMode,
   HAS_CONTENT_LAYOUT_MODE,
   LayoutMode,
-  modesMap,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor/modes/';
+} from 'application/editor/modes/types';
+import { SequenceMode } from 'application/editor/modes/SequenceMode';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { FlexMode } from 'application/editor/modes/FlexMode';
 import { BaseMode } from 'application/editor/modes/internal';
+import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
@@ -41,7 +41,7 @@ import {
 } from 'application/formatters';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   NodeSelection,
@@ -49,7 +49,7 @@ import {
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
-import assert from 'assert';
+// import assert from 'assert';
 import {
   ChainsCollection,
   MonomerToAtomBond,
@@ -102,10 +102,7 @@ import {
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
-import {
-  resetEditorInstance,
-  setEditorInstance,
-} from 'application/editor/editorInstanceProvider';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -137,6 +134,7 @@ interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
+  renderersContainer: RenderersManagerBase;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
   monomersLibraryReplace?: string | JSON;
@@ -164,12 +162,12 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 
 let editor;
 
-export class CoreEditor {
+export class CoreEditor extends CoreEditorBase {
   public events: IEditorEvents;
   public ketcherId?: string;
 
   public _type: EditorType;
-  public renderersContainer: RenderersManager;
+  public renderersContainer: RenderersManagerBase;
   public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
@@ -217,10 +215,12 @@ export class CoreEditor {
     ketcherId,
     theme,
     canvas,
+    renderersContainer,
     monomersLibraryUpdate,
     monomersLibraryReplace,
     mode,
   }: ICoreEditorConstructorParams) {
+    super();
     const ketcher = ketcherProvider.getKetcher(ketcherId);
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
@@ -235,7 +235,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -253,7 +253,7 @@ export class CoreEditor {
         });
     }
     this.subscribeEvents();
-    this.renderersContainer = new RenderersManager({ theme });
+    this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.domEventSetup();
@@ -267,7 +267,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    setEditorInstance(this);
+    CoreEditorBase.setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -322,7 +322,7 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
   }
 
-  static provideEditorInstance(): CoreEditor {
+  static override provideEditorInstance(): CoreEditor {
     return editor;
   }
 
@@ -1467,8 +1467,7 @@ export class CoreEditor {
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
-    const ModeConstructor = modesMap[mode];
-    assert(ModeConstructor);
+    const ModeConstructor = getModeConstructor(mode);
     const history = new EditorHistory(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
@@ -1605,23 +1604,23 @@ export class CoreEditor {
   }
 
   public get isSequenceMode() {
-    return this?.mode instanceof SequenceMode;
+    return this.mode instanceof SequenceMode;
   }
 
   public get isSequenceEditMode() {
-    return this?.mode instanceof SequenceMode && this?.mode.isEditMode;
+    return this.mode instanceof SequenceMode && this.mode.isEditMode;
   }
 
   public get isSequenceEditInRNABuilderMode() {
     return (
-      this?.mode instanceof SequenceMode && this?.mode.isEditInRNABuilderMode
+      this.mode instanceof SequenceMode && this.mode.isEditInRNABuilderMode
     );
   }
 
   public get isSequenceAnyEditMode() {
     return (
-      this?.mode instanceof SequenceMode &&
-      (this?.mode.isEditMode || this?.mode.isEditInRNABuilderMode)
+      this.mode instanceof SequenceMode &&
+      (this.mode.isEditMode || this.mode.isEditInRNABuilderMode)
     );
   }
 
@@ -1902,14 +1901,14 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = RenderersManager.getRenderedStructuresBbox();
+    const structureBbox = RenderersManagerBase.getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 
   public scrollToTopLeftCorner() {
     const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+      RenderersManagerBase.getRenderedStructuresBbox();
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
@@ -1923,6 +1922,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
-    resetEditorInstance();
+    CoreEditorBase.resetEditorInstance();
   }
 }

@@ -1,7 +1,10 @@
 import { CoreEditor, EditorHistory } from 'application/editor';
 import { SelectRectangle } from 'application/editor/tools/select';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
-import { createPolymerEditorCanvas } from '../../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../../helpers/dom';
 
 class TestSelectRectangle extends SelectRectangle {
   public setMovementState(before: Vec2, after: Vec2) {
@@ -19,7 +22,11 @@ describe('SelectBase mouseup', () => {
 
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas });
+    editor = new CoreEditor({
+      theme: {},
+      canvas,
+      renderersContainer: createRenderersManager(),
+    });
     selectTool = new TestSelectRectangle(editor);
     history = new EditorHistory(editor);
   });

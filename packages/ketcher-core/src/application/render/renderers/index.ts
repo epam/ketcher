@@ -9,4 +9,6 @@ export { RNABaseRenderer } from './RNABaseRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
+export { RenderersManagerBase } from './RenderersManagerBase';
+export { RenderersManager } from './RenderersManager';
 export * from './sequence';

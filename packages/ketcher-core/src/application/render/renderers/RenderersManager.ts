@@ -1,12 +1,12 @@
-import { CoreEditor } from 'application/editor/Editor';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import { Chem } from 'domain/entities/Chem';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
@@ -38,8 +38,6 @@ import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
-import { BaseSequenceItemRenderer } from 'application/render';
-import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -48,7 +46,7 @@ type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
-export class RenderersManager {
+export class RenderersManager extends RenderersManagerBase {
   // FIXME: Specify the types.
   private readonly theme;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
@@ -66,6 +64,7 @@ export class RenderersManager {
   private needRecalculateMonomersEnumeration = false;
 
   constructor({ theme }) {
+    super();
     this.theme = theme;
   }
 
@@ -250,7 +249,7 @@ export class RenderersManager {
   }
 
   private recalculateMonomersEnumeration() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -319,7 +318,7 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
@@ -448,7 +447,7 @@ export class RenderersManager {
   }
 
   private renderAromaticCircles() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const viewModel = editor.viewModel;
     const canvas = ZoomTool.instance?.canvas;
 
@@ -580,54 +579,6 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
-  }
-
-  public static getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
-    let left;
-    let right;
-    let top;
-    let bottom;
-    const editor = CoreEditor.provideEditorInstance();
-
-    (
-      drawingEntities ||
-      [
-        ...editor.drawingEntitiesManager.monomers.values(),
-        ...editor.drawingEntitiesManager.atoms.values(),
-      ].filter(
-        (drawindEntity) =>
-          !(
-            drawindEntity instanceof Chem &&
-            drawindEntity.monomerItem.props.isMicromoleculeFragment &&
-            !isMonomerSgroupWithAttachmentPoints(drawindEntity)
-          ),
-      )
-    ).forEach((monomer) => {
-      if (
-        !(monomer.baseRenderer instanceof BaseSequenceItemRenderer) &&
-        !(monomer.baseRenderer instanceof BaseMonomerRenderer) &&
-        !(monomer.baseRenderer instanceof AtomRenderer)
-      ) {
-        return;
-      }
-
-      const monomerPosition = monomer.baseRenderer?.scaledPosition;
-
-      assert(monomerPosition);
-
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-    });
-    return {
-      left,
-      right,
-      top,
-      bottom,
-      width: right - left,
-      height: bottom - top,
-    };
   }
 
   public rerenderSideConnectionPolymerBonds() {

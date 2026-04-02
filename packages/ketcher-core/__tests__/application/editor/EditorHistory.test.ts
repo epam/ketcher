@@ -1,5 +1,8 @@
 import { CoreEditor, EditorHistory } from 'application/editor';
-import { createPolymerEditorCanvas } from '../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
 import { Command } from 'domain/entities/Command';
 
 describe('EditorHistory', () => {
@@ -8,7 +11,11 @@ describe('EditorHistory', () => {
   let history: EditorHistory;
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas });
+    editor = new CoreEditor({
+      theme: {},
+      canvas,
+      renderersContainer: createRenderersManager(),
+    });
     history = new EditorHistory(editor);
   });
 

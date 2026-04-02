@@ -16,7 +16,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
@@ -33,14 +33,14 @@ export class MonomerToAtomBondAddOperation implements Operation {
     this.monomerToAtomBond = this.addMonomerToAtomBondChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.monomerToAtomBond = this.addMonomerToAtomBondChangeModel(
       this.monomerToAtomBond,
     );
     renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     if (this.monomerToAtomBond) {
       this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
       renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
@@ -59,7 +59,7 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
     ) => MonomerToAtomBond,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
     renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
   }
@@ -68,7 +68,7 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
     this.addMonomerToAtomBondChangeModel(this.monomerToAtomBond);
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManager) {
+  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
     renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }
 }

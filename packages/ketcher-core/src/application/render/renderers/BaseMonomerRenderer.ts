@@ -1,5 +1,5 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectBase } from 'application/editor/internal';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -28,7 +28,7 @@ let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editorEvents: typeof editorEvents;
-  private readonly editor: CoreEditor;
+  private readonly editor: CoreEditorBase;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
@@ -69,7 +69,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor.provideEditorInstance();
+    this.editor = CoreEditorBase.provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -413,7 +413,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
+    if (this.editor.selectedTool?.isSelectTool) cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)

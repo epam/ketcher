@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 
@@ -29,12 +29,12 @@ export class MultitailArrowAddOperation implements Operation {
     this.multitailArrow = this.addArrowChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.multitailArrow = this.addArrowChangeModel(this.multitailArrow);
     renderersManager.addMultitailArrow(this.multitailArrow);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     if (this.multitailArrow) {
       this.deleteArrowChangeModel(this.multitailArrow);
       renderersManager.deleteMultitailArrow(this.multitailArrow);
@@ -51,12 +51,12 @@ export class MultitailArrowDeleteOperation implements Operation {
     public addArrowChangeModel: (arrow: MultitailArrow) => MultitailArrow,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.deleteArrowChangeModel(this.multitailArrow);
     renderersManager.deleteMultitailArrow(this.multitailArrow);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.addArrowChangeModel(this.multitailArrow);
     renderersManager.addMultitailArrow(this.multitailArrow);
   }

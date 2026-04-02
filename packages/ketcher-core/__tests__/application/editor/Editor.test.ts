@@ -1,6 +1,9 @@
 import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
-import { createPolymerEditorCanvas } from '../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -9,6 +12,7 @@ describe('CoreEditor', () => {
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: {},
+      renderersContainer: createRenderersManager(),
     });
     const onMousemove = jest.fn();
     jest
@@ -29,6 +33,7 @@ describe('CoreEditor', () => {
       editor = new CoreEditor({
         canvas,
         theme: {},
+        renderersContainer: createRenderersManager(),
       });
       errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
     });

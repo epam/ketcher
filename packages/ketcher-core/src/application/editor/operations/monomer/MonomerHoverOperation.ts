@@ -16,7 +16,7 @@
 
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 
 export class MonomerHoverOperation implements Operation {
   constructor(
@@ -24,7 +24,7 @@ export class MonomerHoverOperation implements Operation {
     private readonly needRedrawAttachmentPoints: boolean,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     renderersManager.hoverMonomer(
       this.peptide,
       this.needRedrawAttachmentPoints,

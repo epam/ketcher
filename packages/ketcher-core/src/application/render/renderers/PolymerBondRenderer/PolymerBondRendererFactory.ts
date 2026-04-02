@@ -49,5 +49,5 @@ export class PolymerBondRendererFactory {
 
 function checkIfIsSnakeMode(): boolean {
   const editor = CoreEditor.provideEditorInstance();
-  return editor?.mode.modeName === 'snake-layout-mode';
+  return editor?.mode.isSnakeLayoutMode;
 }

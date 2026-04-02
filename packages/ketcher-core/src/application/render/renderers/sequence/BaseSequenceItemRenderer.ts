@@ -5,7 +5,7 @@ import {
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -14,7 +14,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -119,23 +118,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return CoreEditorBase.provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return CoreEditorBase.provideEditorInstance()
+      .isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return CoreEditorBase.provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return CoreEditorBase.provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {

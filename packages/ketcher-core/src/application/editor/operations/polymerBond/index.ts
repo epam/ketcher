@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -33,12 +33,12 @@ export class PolymerBondAddOperation implements Operation {
     this.polymerBond = this.addPolymerBondChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.polymerBond = this.addPolymerBondChangeModel(this.polymerBond);
     renderersManager.addPolymerBond(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.deletePolymerBondChangeModel(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
   }
@@ -56,12 +56,12 @@ export class PolymerBondDeleteOperation implements Operation {
     this.deletePolymerBondChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.deletePolymerBondChangeModel();
     renderersManager.deletePolymerBond(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.polymerBond = this.finishPolymerBondCreationModelChange(
       this.polymerBond,
     );
@@ -72,7 +72,7 @@ export class PolymerBondDeleteOperation implements Operation {
 export class PolymerBondMoveOperation implements Operation {
   constructor(public polymerBond: PolymerBond) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     renderersManager.movePolymerBond(this.polymerBond);
   }
 
@@ -82,7 +82,7 @@ export class PolymerBondMoveOperation implements Operation {
 export class PolymerBondShowInfoOperation implements Operation {
   constructor(public polymerBond: PolymerBond) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
 
@@ -95,7 +95,7 @@ export class PolymerBondCancelCreationOperation implements Operation {
     private readonly secondMonomer?: BaseMonomer,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     renderersManager.cancelPolymerBondCreation(
       this.polymerBond,
       this.secondMonomer,
@@ -119,14 +119,14 @@ export class PolymerBondFinishCreationOperation implements Operation {
     this.polymerBond = this.finishPolymerBondCreationModelChange();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.polymerBond = this.finishPolymerBondCreationModelChange(
       this.polymerBond,
     );
     renderersManager.finishPolymerBondCreation(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.deletePolymerBondCreationModelChange(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
   }
@@ -162,12 +162,12 @@ export class ReconnectPolymerBondOperation implements Operation {
     private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.polymerBond = this.reconnectPolymerBondModelChange();
     renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.polymerBond = this.revertReconnectPolymerBondModelChange();
     renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
   }

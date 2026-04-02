@@ -5,7 +5,10 @@ import {
   peptideMonomerItem,
   polymerEditorTheme,
 } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomerRenderer } from 'application/render/renderers';
@@ -107,6 +110,7 @@ describe('Select Rectangle Tool', () => {
       new CoreEditor({
         theme: polymerEditorTheme,
         canvas: createPolymerEditorCanvas(),
+        renderersContainer: createRenderersManager(polymerEditorTheme),
         mode: new FlexMode(),
       }),
     );
@@ -122,6 +126,7 @@ describe('Select Rectangle Tool', () => {
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
       mode,
     });
     const onMove = jest.fn();

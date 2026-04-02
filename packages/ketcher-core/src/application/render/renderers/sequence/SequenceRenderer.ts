@@ -32,7 +32,7 @@ import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { Command } from 'domain/entities/Command';
@@ -173,7 +173,7 @@ export class SequenceRenderer {
     let hasAntisenseInRow = false;
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
-      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+      CoreEditorBase.provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
@@ -446,7 +446,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
@@ -886,7 +886,7 @@ export class SequenceRenderer {
   }
 
   public static startNewSequence(indexOfRowBefore?: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const oldNewSequenceChainIndex =
       SequenceRenderer.sequenceViewModel.chains.findIndex((chain) => {
         return chain.isNewSequenceChain;
@@ -977,7 +977,7 @@ export class SequenceRenderer {
   }
 
   public static shiftArrowSelectionInEditMode(event) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
 
@@ -1059,7 +1059,7 @@ export class SequenceRenderer {
   }
 
   private static getShiftArrowChanges(
-    editor: CoreEditor,
+    editor: CoreEditorBase,
     twoStrandedNode: ITwoStrandedChainItem,
   ) {
     const modelChanges = new Command();
@@ -1104,7 +1104,7 @@ export class SequenceRenderer {
 
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
         twoStrandedNode.senseNode instanceof EmptySequenceNode ||
@@ -1133,7 +1133,7 @@ export class SequenceRenderer {
   }
 
   public static get selections() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
     const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;

@@ -15,8 +15,7 @@ import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditor } from 'application/editor/Editor';
-import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
@@ -245,7 +244,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
@@ -263,7 +262,7 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode instanceof SnakeMode && polymerBond.isSideChainConnection))
+        (editor.mode.isSnakeLayoutMode && polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;

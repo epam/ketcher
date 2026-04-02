@@ -1,7 +1,7 @@
 import { LayoutMode } from 'application/editor/modes/types';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { Coordinates } from '../internal';
-import { provideEditorInstance } from '../editorInstanceProvider';
+import { CoreEditorBase } from '../CoreEditorBase';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
@@ -13,7 +13,7 @@ export class FlexMode extends BaseMode {
 
   initialize() {
     const command = super.initialize();
-    const editor = provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
 
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
@@ -26,7 +26,7 @@ export class FlexMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
 
     return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
   }
@@ -35,7 +35,7 @@ export class FlexMode extends BaseMode {
     mergedDrawingEntities: DrawingEntitiesManager,
   ) {
     const command = new Command();
-    const editor = provideEditorInstance();
+    const editor = CoreEditorBase.provideEditorInstance();
 
     editor.drawingEntitiesManager.recalculateAntisenseChains();
     command.merge(

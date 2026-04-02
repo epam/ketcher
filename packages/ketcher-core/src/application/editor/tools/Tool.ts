@@ -124,6 +124,8 @@ export interface Tool extends ToolEventHandler {
   isSelectionRunning?(): boolean;
 
   isNotActiveTool?: boolean;
+
+  readonly isSelectTool?: boolean;
 }
 
 export interface BaseTool extends Tool {

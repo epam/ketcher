@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 // todo: rename file in another PR
-import { ReStruct, StereLabelStyleType } from '../../render';
+import { StereLabelStyleType } from '../../render/restruct/generalEnumTypes';
+import ReStruct from '../../render/restruct/restruct';
 
 import { OperationType } from './OperationType';
 

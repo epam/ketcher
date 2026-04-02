@@ -34,7 +34,7 @@ class ClearTool implements BaseTool {
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
 
-    if (mode.modeName === 'sequence-layout-mode') {
+    if (mode.isSequenceLayoutMode) {
       modelChanges.addOperation(new ReinitializeModeOperation());
     }
 

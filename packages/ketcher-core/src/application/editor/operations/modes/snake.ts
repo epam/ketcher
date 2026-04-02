@@ -1,5 +1,5 @@
 import { Operation } from 'domain/entities/Operation';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 
 export class RecalculateCanvasMatrixOperation implements Operation {
   public priority = 1;
@@ -8,12 +8,12 @@ export class RecalculateCanvasMatrixOperation implements Operation {
     private readonly invertRecalculateCanvasMatrixModelChange: () => void,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute(renderersManager: RenderersManagerBase) {
     this.recalculateCanvasMatrixModelChange();
     renderersManager.rerenderSideConnectionPolymerBonds();
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManagerBase) {
     this.invertRecalculateCanvasMatrixModelChange();
     renderersManager.rerenderSideConnectionPolymerBonds();
   }

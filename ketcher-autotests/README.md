@@ -128,34 +128,34 @@ If no NPM installed (only docker) to build ketcher the same compiler as on CI pl
 Build Ketcher
 
 ```
-docker-compose build ketcher
-docker-compose run --rm --user $(id -u) ketcher bash /app/test_build.sh
+docker compose build ketcher
+docker compose run --rm --user $(id -u) ketcher bash /app/test_build.sh
 ```
 
 Prepare tests
 
 ```
 mkdir build
-docker-compose build autotests
-docker-compose run --rm --user $(id -u) autotests bash /app/test_prepare.sh
+docker compose build autotests
+docker compose run --rm --user $(id -u) autotests bash /app/test_prepare.sh
 ```
 
 Run tests
 
 ```
-docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh
+docker compose run --rm --user $(id -u) autotests bash /app/test_run.sh
 ```
 
 Run pattern
 
 ```
-docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction"
+docker compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction"
 ```
 
 Run update
 
 ```
-docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction" --update-snapshots
+docker compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction" --update-snapshots
 ```
 
 ### Known issues

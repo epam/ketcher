@@ -1,6 +1,6 @@
 import autoprefixer from 'autoprefixer';
 import babel from '@rollup/plugin-babel';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
@@ -28,9 +28,10 @@ const includePattern = 'src/**/*';
 
 const getTagName = () => {
   try {
-    return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' });
+    return execFileSync('git', ['describe', '--tags', '--abbrev=0'], {
+      encoding: 'utf8',
+    }).trim();
   } catch (error) {
-    console.error(error);
     return 'master';
   }
 };
@@ -50,6 +51,7 @@ export const valuesToReplace = {
 
 const config = {
   input: pkg.source,
+  external: ['ketcher-macromolecules'],
   output: [
     {
       dir: 'dist/cjs',
@@ -78,7 +80,11 @@ const config = {
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolve({
+      browser: true,
+      extensions,
+      preferBuiltins: false,
+    }),
     commonjs(),
     replace({
       include: includePattern,

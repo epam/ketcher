@@ -44,7 +44,11 @@ const config = {
       runOnce: true,
     }),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolve({
+      browser: true,
+      extensions,
+      preferBuiltins: false,
+    }),
     commonjs({ transformMixedEsModules: true }),
     replace(
       {

@@ -5,14 +5,26 @@ const {
   addWebpackPlugin,
   addWebpackResolve,
 } = require('customize-cra');
+const { execFileSync } = require('node:child_process');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const packageJson = require('../package.json');
 
-const gitRevisionPlugin = new GitRevisionPlugin();
-const applicationVersion = gitRevisionPlugin.version().split('-')[0];
+const getApplicationVersion = () => {
+  try {
+    return execFileSync('git', ['describe', '--always'], {
+      encoding: 'utf8',
+    })
+      .trim()
+      .split('-')[0];
+  } catch (error) {
+    return packageJson.version;
+  }
+};
+
+const applicationVersion = getApplicationVersion();
 
 const envVariables = {
   MODE: process.env.MODE || 'standalone',

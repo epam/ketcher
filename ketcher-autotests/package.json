@@ -15,34 +15,24 @@
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
-    "docker:build": "docker-compose build autotests && docker-compose run --rm autotests bash /app/test_prepare.sh",
-    "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium",
-    "docker:test-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup",
-    "docker:trace": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --trace on",
-    "docker:trace-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --trace on",
-    "docker:update": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium --update-snapshots",
-    "docker:update-popup": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium-popup --update-snapshots"
+    "docker:build": "docker compose build autotests && docker compose run --rm autotests bash /app/test_prepare.sh",
+    "docker:test": "docker compose run --rm autotests bash /app/test_run.sh --project=chromium",
+    "docker:test-popup": "docker compose run --rm autotests bash /app/test_run.sh --project=chromium-popup",
+    "docker:trace": "docker compose run --rm autotests bash /app/test_run.sh --project=chromium --trace on",
+    "docker:trace-popup": "docker compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --trace on",
+    "docker:update": "docker compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium --update-snapshots",
+    "docker:update-popup": "docker compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium-popup --update-snapshots"
   },
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.44.1",
     "eslint": "^8.44.0",
-    "lint-staged": "^16.4.0",
     "prettier": "2.8.4"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
     "ketcher-core": "*"
-  },
-  "lint-staged": {
-    "*.md": [
-      "prettier --write"
-    ],
-    "*.{js,ts}": [
-      "prettier --write",
-      "eslint ."
-    ]
   },
   "types": "./tests/typings.d.ts"
 }

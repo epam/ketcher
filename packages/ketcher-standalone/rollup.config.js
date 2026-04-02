@@ -21,6 +21,10 @@ const mode = {
 const extensions = ['.js', '.ts'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
+const separateIndigoRenderReplacement =
+  process.env.SEPARATE_INDIGO_RENDER === undefined
+    ? 'undefined'
+    : JSON.stringify(process.env.SEPARATE_INDIGO_RENDER);
 export const INDIGO_WORKER_IMPORTS = {
   WASM_LOADER: './indigoWorkerImports/useWasmLoader',
   OFF_MAIN_THREAD_PLUGIN: './indigoWorkerImports/useOffMainThreadPlugin',
@@ -59,10 +63,24 @@ const baseConfig = {
     main: 'src/index.ts',
     index: 'src/emptyIndex.js',
   },
+  onwarn(warning, warn) {
+    if (
+      warning.message?.includes('Generated an empty chunk') &&
+      warning.message.includes('index')
+    ) {
+      return;
+    }
+
+    warn(warning);
+  },
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     nodePolyfills(),
-    resolve({ extensions }),
+    resolve({
+      browser: true,
+      extensions,
+      preferBuiltins: false,
+    }),
     commonjs(),
     typescript(),
     babel({
@@ -76,7 +94,10 @@ const baseConfig = {
       comments: 'none',
     }),
     replace({
-      'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
+      preventAssignment: true,
+      values: {
+        'process.env.SEPARATE_INDIGO_RENDER': separateIndigoRenderReplacement,
+      },
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
@@ -144,7 +165,7 @@ const configWithWasmFetch = {
         },
       ],
     }),
-    OMT(),
+    OMT({ silenceESMWorkerWarning: true }),
   ],
 };
 
@@ -206,7 +227,7 @@ const configWithWasmWithoutRender = {
         },
       ],
     }),
-    OMT(),
+    OMT({ silenceESMWorkerWarning: true }),
   ],
 };
 

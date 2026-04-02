@@ -5,7 +5,7 @@
       "@babel/react",
       { "runtime": "automatic", "importSource": "@emotion/react" }
     ],
-    "@babel/typescript"
+    ["@babel/typescript", { "allowDeclareFields": true }]
   ],
   "plugins": ["@emotion", "@babel/plugin-transform-runtime"]
 }

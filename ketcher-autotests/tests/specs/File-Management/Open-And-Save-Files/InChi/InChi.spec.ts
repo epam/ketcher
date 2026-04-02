@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect, Page } from '@fixtures';
 import {
-  clickInTheMiddleOfTheCanvas,
+  clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -42,7 +42,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1963-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -59,7 +59,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1967-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -76,7 +76,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1968-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -93,7 +93,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1969-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -110,7 +110,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1970-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -127,7 +127,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1971-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -144,7 +144,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1974-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -161,7 +161,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1975-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -178,7 +178,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1976-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
   );

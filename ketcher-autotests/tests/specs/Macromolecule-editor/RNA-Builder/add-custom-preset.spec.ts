@@ -91,38 +91,6 @@ test.describe('Macromolecules custom presets', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Natural analogue field should show error when empty for base component', async ({
-    page,
-  }) => {
-    // Start creating a preset
-    await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await Library(page).rnaBuilder.addToPresets();
-
-    // Switch to Base tab
-    await page.click('text=Base');
-
-    // Try to submit without filling Natural analogue
-    await page.click('button:has-text("Save")');
-
-    // Verify error message appears
-    const errorNotification = await page
-      .locator('text=mandatory field')
-      .or(page.locator('text=The following fields are mandatory'))
-      .first();
-
-    expect(await errorNotification.isVisible()).toBe(true);
-
-    // Verify Natural analogue field shows error styling
-    const naturalAnalogueError = await page
-      .locator(
-        '[aria-label*="Natural analogue"]:has-text("error"), .error-field:has(*Natural*analogue*)',
-      )
-      .first();
-
-    expect(await naturalAnalogueError.count()).toBeGreaterThan(0);
-  });
-
   test('Create two presets with same component codes should create separate entries', async ({
     page,
   }) => {

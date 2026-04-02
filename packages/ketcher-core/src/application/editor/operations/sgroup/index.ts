@@ -18,7 +18,7 @@
 import { BaseMonomer, FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
 import { ReSGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 

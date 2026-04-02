@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
+import { ReactNode } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -46,7 +47,16 @@ jest.mock('../../../../../hooks', () => ({
 // Mock MonomerCreationWizardFields to avoid additional dependencies
 jest.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
-  default: () => <div data-testid="monomer-creation-wizard-fields" />,
+  default: ({
+    attachmentPointsExtra,
+  }: {
+    attachmentPointsExtra?: ReactNode;
+  }) => (
+    <div data-testid="monomer-creation-wizard-fields">
+      <div data-testid="attachment-points-section">Attachment points</div>
+      {attachmentPointsExtra}
+    </div>
+  ),
 }));
 
 // Create a mock store
@@ -87,6 +97,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
     name: '',
     errors: {
       name: undefined,
+      phosphatePosition: undefined,
     },
     notifications: new Map(),
     manuallyModifiedSymbols: {
@@ -137,12 +148,14 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   let mockEditor: ReturnType<typeof createMockEditor>;
   let mockStore: ReturnType<typeof createMockStore>;
   let mockDispatch: jest.Mock;
+  let mockOnPhosphatePositionChange: jest.Mock;
   let wizardState: RnaPresetWizardState;
 
   beforeEach(() => {
     mockEditor = createMockEditor();
     mockStore = createMockStore();
     mockDispatch = jest.fn();
+    mockOnPhosphatePositionChange = jest.fn();
     wizardState = createInitialWizardState();
     jest.clearAllMocks();
   });
@@ -159,6 +172,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -182,6 +197,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -212,6 +229,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -249,6 +268,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -305,6 +326,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -355,6 +378,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -394,6 +419,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -442,6 +469,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -463,6 +492,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
           wizardState={wizardState}
           editor={mockEditor}
           wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
         />
       </Provider>,
     );
@@ -481,5 +512,32 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     expect(
       screen.getByText('Select all atoms that form the phosphate.'),
     ).toBeInTheDocument();
+  });
+
+  it('should render phosphate position picker in phosphate tab and call selected value handler', () => {
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+
+    const fieldsSection = screen.getByTestId('monomer-creation-wizard-fields');
+
+    expect(screen.getByTestId('attachment-points-section')).toBeInTheDocument();
+    expect(
+      within(fieldsSection).getByTestId('phosphate-position-picker'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('phosphate-position-5-button'));
+
+    expect(mockOnPhosphatePositionChange).toHaveBeenCalledWith('5');
   });
 });

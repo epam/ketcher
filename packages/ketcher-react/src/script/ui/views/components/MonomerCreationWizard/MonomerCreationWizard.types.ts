@@ -59,7 +59,9 @@ export type WizardNotificationId =
   | 'invalidHELMAlias'
   | 'invalidRnaPresetStructure'
   | 'notUniquePresetCode'
-  | 'invalidPresetCode';
+  | 'invalidPresetCode'
+  | 'invalidPhosphatePositionAttachmentPoints'
+  | 'phosphatePositionNotSelected';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -90,6 +92,7 @@ export type RnaPresetWizardStatePresetFieldValue = {
   name: string;
   errors: {
     name?: boolean;
+    phosphatePosition?: boolean;
   };
   notifications: WizardNotifications;
   manuallyModifiedSymbols: {
@@ -162,6 +165,7 @@ export type RnaPresetWizardAction =
       type: 'SetErrors';
       errors: {
         name?: boolean;
+        phosphatePosition?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
     }

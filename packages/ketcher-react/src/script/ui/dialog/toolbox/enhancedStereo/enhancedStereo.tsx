@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form/form';
+import Form, { Field, FormState } from '../../../component/form/form/form';
+import React, { FC } from 'react';
 import { StereoLabel, Struct } from 'ketcher-core';
 
 import { Dialog } from '../../../views/components';
-import { FC } from 'react';
 import classes from './enhancedStereo.module.less';
 import { connect } from 'react-redux';
 import { range } from 'lodash';
@@ -29,11 +29,7 @@ interface EnhancedStereoResult {
   type: StereoLabel;
 }
 
-interface EnhancedStereoFormState {
-  result: EnhancedStereoResult;
-  valid: boolean;
-  errors: string[];
-}
+type EnhancedStereoFormState = FormState<EnhancedStereoResult>;
 
 interface EnhancedStereoProps {
   className: string;
@@ -44,7 +40,7 @@ interface EnhancedStereoProps {
 
 interface EnhancedStereoCallProps {
   onCancel: () => void;
-  onOk: (res: any) => void;
+  onOk: (res: unknown) => void;
 }
 
 type Props = EnhancedStereoProps & EnhancedStereoCallProps;
@@ -199,7 +195,15 @@ function maxOfOrs(stereLabels): number {
   return numbers.length === 0 ? 0 : Math.max(...numbers);
 }
 
-export default connect((state: any) => ({
+interface State {
+  modal: { form: EnhancedStereoFormState };
+  editor: { struct: () => Struct };
+}
+
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const EnhancedStereoAny = EnhancedStereo as any;
+export default connect((state: State) => ({
   formState: state.modal.form || { result: {}, valid: false },
   struct: state.editor.struct(),
-}))(EnhancedStereo);
+}))(EnhancedStereoAny) as React.ComponentType<EnhancedStereoCallProps>;

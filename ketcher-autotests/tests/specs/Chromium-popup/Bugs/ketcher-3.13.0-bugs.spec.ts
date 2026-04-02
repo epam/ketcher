@@ -41,8 +41,6 @@ import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbrev
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
-import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 
 let page: Page;
 
@@ -614,12 +612,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/9084
+     * Behaviour changed in task: https://github.com/epam/ketcher/issues/9129
      * Version: 3.13.0-rc.1
      * Description:
      * When creating a new Nucleotide in the monomer wizard and manually defining
-     * attachment points (AP), Ketcher loses the user-defined AP configuration.
-     * It should instead validate that Sugar.R2 and Phosphate.R1 are already defined
-     * and show an error (prevent invalid save).
+     * attachment points (AP). Ketcher saves it with R2(phosphate)-R1(sugar) connection.
      *
      * Scenario:
      * 1. Go to Molecules mode (clean canvas)
@@ -630,10 +627,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      *    - Sugar: R2 is already defined (user tries to define it again)
      *    - Phosphate: R1 is already defined (user tries to define it again)
      * 6. Try to submit
-     *
-     * Expected result:
-     * Wizard shows validation error and does NOT allow saving an invalid configuration
-     * (AP duplicates). No loss of user-defined AP configuration.
      */
 
     // Step 1–2: Load structure from file as a new project (Molecules mode)
@@ -685,17 +678,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();
 
-    // Verify that an error notification banner appears for duplicate attachment points
-    const errorBanner = NotificationMessageBanner(
-      page,
-      ErrorMessage.invalidRnaPresetStructure,
-    );
-    await expect(errorBanner.notificationMessageBanner).toBeVisible();
-
-    // Visual verification: screenshot of the error notification banner
-    await takeElementScreenshot(page, errorBanner.notificationMessageBanner);
-
-    // Close dialog to avoid affecting other tests
-    await dialog.discard();
+    await takeEditorScreenshot(page);
   });
 });

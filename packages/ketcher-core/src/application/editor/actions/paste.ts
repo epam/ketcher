@@ -167,7 +167,8 @@ export function fromPaste(
     }
     if (
       sg.isNotContractible(pstruct) &&
-      !(sg instanceof MonomerMicromolecule)
+      !(sg instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sg)
     ) {
       sg.setAttr('expanded', true);
     }
@@ -289,7 +290,7 @@ function getStructCenter(struct: Struct): Vec2 {
       xmax = Math.max(xmax, atom.pp.x);
       ymax = Math.max(ymax, atom.pp.y);
     });
-    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();

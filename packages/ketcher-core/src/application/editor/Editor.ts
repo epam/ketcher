@@ -84,7 +84,10 @@ import {
   keyNorm,
   SettingsManager,
 } from 'utilities';
-import monomersDataRaw from './data/monomers.ket';
+import {
+  getPreloadedDefaultMonomersLibrary,
+  preloadDefaultMonomersLibrary,
+} from './defaultMonomersLibrary';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
@@ -135,6 +138,7 @@ interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
+  defaultMonomersLibraryData?: string;
   mode?: BaseMode;
 }
 
@@ -209,11 +213,14 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private isDestroyed = false;
+  private defaultMonomersLibraryLoadId = 0;
 
   constructor({
     ketcherId,
     theme,
     canvas,
+    defaultMonomersLibraryData,
     mode,
   }: ICoreEditorConstructorParams) {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -231,8 +238,7 @@ export class CoreEditor {
     this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
-    this.setMonomersLibrary(monomersDataRaw);
-    this.events.updateMonomersLibrary.dispatch();
+    this.initializeDefaultMonomersLibrary(defaultMonomersLibraryData);
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -250,6 +256,33 @@ export class CoreEditor {
     editor = this;
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
+  }
+
+  private initializeDefaultMonomersLibrary(
+    defaultMonomersLibraryData?: string,
+  ) {
+    const resolvedDefaultMonomersLibraryData =
+      defaultMonomersLibraryData ?? getPreloadedDefaultMonomersLibrary();
+
+    if (resolvedDefaultMonomersLibraryData) {
+      this.setMonomersLibrary(resolvedDefaultMonomersLibraryData);
+      this.events.updateMonomersLibrary.dispatch();
+      return;
+    }
+
+    void this.loadDefaultMonomersLibrary();
+  }
+
+  private async loadDefaultMonomersLibrary() {
+    const loadId = ++this.defaultMonomersLibraryLoadId;
+    const defaultMonomersLibraryData = await preloadDefaultMonomersLibrary();
+
+    if (this.isDestroyed || loadId !== this.defaultMonomersLibraryLoadId) {
+      return;
+    }
+
+    this.setMonomersLibrary(defaultMonomersLibraryData);
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   private resetCanvasOffset() {
@@ -307,6 +340,7 @@ export class CoreEditor {
   }
 
   public clearMonomersLibrary() {
+    this.defaultMonomersLibraryLoadId += 1;
     this._monomersLibrary = [];
     this._monomersLibraryParsedJson = getEmptyMonomersLibraryJson();
   }
@@ -361,6 +395,7 @@ export class CoreEditor {
   }
 
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+    this.defaultMonomersLibraryLoadId += 1;
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
@@ -2067,6 +2102,7 @@ export class CoreEditor {
   }
 
   public destroy() {
+    this.isDestroyed = true;
     this.unsubscribeEvents();
     editor = undefined;
   }

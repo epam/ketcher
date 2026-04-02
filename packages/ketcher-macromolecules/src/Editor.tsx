@@ -34,6 +34,7 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  preloadDefaultMonomersLibrary,
   SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
@@ -207,20 +208,34 @@ function Editor({
   });
 
   useEffect(() => {
-    dispatch(
-      createEditor({
-        theme,
-        canvas: canvasRef.current,
-        monomersLibraryUpdate,
-        monomersLibraryReplace,
-        onInit,
-      }),
-    );
+    let isActive = true;
+
+    const initializeEditor = async () => {
+      const defaultMonomersLibraryData = await preloadDefaultMonomersLibrary();
+
+      if (!isActive) {
+        return;
+      }
+
+      dispatch(
+        createEditor({
+          theme,
+          canvas: canvasRef.current,
+          defaultMonomersLibraryData,
+          monomersLibraryUpdate,
+          monomersLibraryReplace,
+          onInit,
+        }),
+      );
+    };
+
+    void initializeEditor();
 
     return () => {
+      isActive = false;
       dispatch(destroyEditor(null));
     };
-  }, [dispatch]);
+  }, [dispatch, monomersLibraryReplace, monomersLibraryUpdate, onInit, theme]);
 
   useSetRnaPresets();
   useMacromoleculesHotkeys();

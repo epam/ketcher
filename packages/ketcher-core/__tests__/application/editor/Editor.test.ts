@@ -1,4 +1,8 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import {
+  CoreEditor,
+  preloadDefaultMonomersLibrary,
+  ToolName,
+} from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
@@ -7,12 +11,22 @@ import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
+  let defaultMonomersLibraryData: string;
+
+  beforeAll(async () => {
+    defaultMonomersLibraryData = await preloadDefaultMonomersLibrary();
+  });
+
+  const createEditor = (canvas: SVGSVGElement, theme = {}) =>
+    new CoreEditor({
+      canvas,
+      theme,
+      defaultMonomersLibraryData,
+    });
+
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
-    const editor: CoreEditor = new CoreEditor({
-      canvas,
-      theme: {},
-    });
+    const editor: CoreEditor = createEditor(canvas);
     const onMousemove = jest.fn();
     jest
       .spyOn(MonomerTool.prototype, 'mousemove')
@@ -29,10 +43,7 @@ describe('CoreEditor', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      editor = new CoreEditor({
-        canvas,
-        theme: {},
-      });
+      editor = createEditor(canvas);
       errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
     });
 
@@ -396,10 +407,7 @@ describe('CoreEditor', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      editor = new CoreEditor({
-        canvas,
-        theme: {},
-      });
+      editor = createEditor(canvas);
       editor.selectTool(ToolName.selectRectangle);
     });
 
@@ -435,10 +443,7 @@ describe('CoreEditor', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      editor = new CoreEditor({
-        canvas,
-        theme: polymerEditorTheme,
-      });
+      editor = createEditor(canvas, polymerEditorTheme);
     });
 
     afterEach(() => {
@@ -500,10 +505,7 @@ describe('CoreEditor', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      editor = new CoreEditor({
-        canvas,
-        theme: {},
-      });
+      editor = createEditor(canvas);
     });
 
     afterEach(() => {
@@ -533,10 +535,7 @@ describe('CoreEditor', () => {
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
-      editor = new CoreEditor({
-        canvas,
-        theme: polymerEditorTheme,
-      });
+      editor = createEditor(canvas, polymerEditorTheme);
     });
 
     afterEach(() => {
@@ -548,10 +547,7 @@ describe('CoreEditor', () => {
       const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
 
       const testCanvas = createPolymerEditorCanvas();
-      const testEditor = new CoreEditor({
-        canvas: testCanvas,
-        theme: {},
-      });
+      const testEditor = createEditor(testCanvas);
 
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         'cut',
@@ -570,10 +566,7 @@ describe('CoreEditor', () => {
       );
 
       const testCanvas = createPolymerEditorCanvas();
-      const testEditor = new CoreEditor({
-        canvas: testCanvas,
-        theme: {},
-      });
+      const testEditor = createEditor(testCanvas);
 
       testEditor.destroy();
 

@@ -125,6 +125,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
         ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
+        defaultMonomersLibraryData?: string;
         monomersLibraryUpdate?: string | JSON;
         monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
@@ -133,6 +134,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
+        defaultMonomersLibraryData: action.payload.defaultMonomersLibraryData,
       });
 
       editor.initializeMonomersLibraryFromKetcher(

@@ -39,6 +39,202 @@ const HTML_INPUTS = {
   closable: resolve(__dirname, 'closable.html'),
 };
 
+const normalizeModuleId = (id) => id.replaceAll('\\', '/');
+
+const includesPathSegment = (id, segment) => {
+  return normalizeModuleId(id).includes(segment);
+};
+
+const createModuleGroup = (name, test, priority, options = {}) => ({
+  maxSize: 800 * 1024,
+  minSize: 50 * 1024,
+  name,
+  priority,
+  test,
+  ...options,
+});
+
+const CODE_SPLITTING_GROUPS = [
+  createModuleGroup(
+    'vendor-react',
+    /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
+    100,
+  ),
+  createModuleGroup(
+    'vendor-mui',
+    /[\\/]node_modules[\\/](@mui|@emotion)[\\/]/,
+    95,
+  ),
+  createModuleGroup(
+    'vendor-lexical',
+    /[\\/]node_modules[\\/](@lexical|lexical)[\\/]/,
+    90,
+  ),
+  createModuleGroup('vendor-three', /[\\/]node_modules[\\/]three[\\/]/, 90),
+  createModuleGroup(
+    'vendor-polyfills',
+    /[\\/]node_modules[\\/](core-js|regenerator-runtime|react-app-polyfill|url-search-params-polyfill|whatwg-fetch)[\\/]/,
+    85,
+  ),
+  createModuleGroup(
+    'vendor-d3',
+    (id) =>
+      includesPathSegment(id, '/node_modules/d3/') ||
+      /[\\/]node_modules[\\/]d3-[^\\/]+[\\/]/.test(id),
+    80,
+  ),
+  createModuleGroup('vendor-lodash', /[\\/]node_modules[\\/]lodash[\\/]/, 80),
+  createModuleGroup('vendor-raphael', /[\\/]node_modules[\\/]raphael[\\/]/, 80),
+  createModuleGroup(
+    'vendor-indigo',
+    /[\\/]node_modules[\\/]indigo-ketcher[\\/]/,
+    80,
+    {
+      maxSize: 1_200 * 1024,
+    },
+  ),
+  createModuleGroup(
+    'ketcher-core-sequence',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/renderers/sequence/',
+      ),
+    72,
+  ),
+  createModuleGroup(
+    'ketcher-core-editor-data',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/editor/data/',
+      ),
+    71,
+    {
+      maxSize: 3_800 * 1024,
+      minSize: 1,
+    },
+  ),
+  createModuleGroup(
+    'ketcher-core-polymer-bonds',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/renderers/PolymerBondRenderer/',
+      ),
+    70,
+  ),
+  createModuleGroup(
+    'ketcher-core-restruct',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/restruct/',
+      ),
+    69,
+  ),
+  createModuleGroup(
+    'ketcher-core-transient',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/renderers/TransientView/',
+      ),
+    68,
+  ),
+  createModuleGroup(
+    'ketcher-core-view-model',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/view-model/',
+      ),
+    67,
+  ),
+  createModuleGroup(
+    'ketcher-core-ket-schema',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/domain/serializers/ket/',
+      ),
+    66,
+  ),
+  createModuleGroup(
+    'ketcher-core-renderers',
+    (id) =>
+      includesPathSegment(
+        id,
+        '/packages/ketcher-core/src/application/render/renderers/',
+      ),
+    65,
+  ),
+  createModuleGroup(
+    'ketcher-core-render',
+    (id) =>
+      includesPathSegment(id, '/packages/ketcher-core/src/application/render/'),
+    64,
+  ),
+  createModuleGroup(
+    'ketcher-core-domain',
+    (id) => includesPathSegment(id, '/packages/ketcher-core/src/domain/'),
+    63,
+  ),
+  createModuleGroup(
+    'ketcher-core-utilities',
+    (id) => includesPathSegment(id, '/packages/ketcher-core/src/utilities/'),
+    62,
+  ),
+  createModuleGroup(
+    'ketcher-core-application',
+    (id) => includesPathSegment(id, '/packages/ketcher-core/src/application/'),
+    61,
+  ),
+  createModuleGroup(
+    'ketcher-react-templates',
+    (id) => includesPathSegment(id, '/packages/ketcher-react/src/templates/'),
+    60,
+    {
+      maxSize: 400 * 1024,
+    },
+  ),
+  createModuleGroup(
+    'ketcher-react-core',
+    (id) =>
+      includesPathSegment(id, '/packages/ketcher-react/src/') &&
+      !includesPathSegment(id, '/packages/ketcher-react/src/components/') &&
+      !includesPathSegment(id, '/packages/ketcher-react/src/script/') &&
+      !includesPathSegment(id, '/packages/ketcher-react/src/templates/'),
+    59,
+    {
+      maxSize: 700 * 1024,
+    },
+  ),
+  createModuleGroup(
+    'ketcher-react-components',
+    (id) => includesPathSegment(id, '/packages/ketcher-react/src/components/'),
+    58,
+  ),
+  createModuleGroup(
+    'ketcher-react-script',
+    (id) => includesPathSegment(id, '/packages/ketcher-react/src/script/'),
+    60,
+  ),
+  createModuleGroup(
+    'ketcher-macromolecules',
+    (id) => includesPathSegment(id, '/packages/ketcher-macromolecules/src/'),
+    58,
+    {
+      maxSize: 700 * 1024,
+    },
+  ),
+  createModuleGroup(
+    'ketcher-standalone',
+    (id) => includesPathSegment(id, '/packages/ketcher-standalone/src/'),
+    56,
+  ),
+];
+
 const PACKAGE_TS_PATHS = Object.fromEntries(
   Object.entries(PACKAGE_TS_CONFIGS).map(([packageName, tsConfig]) => {
     const paths = Object.entries(tsConfig.compilerOptions.paths || {}).map(
@@ -202,6 +398,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     base: envVariables.PUBLIC_URL,
+    assetsInclude: ['**/*.ket'],
     server: {
       open: true,
     },
@@ -214,8 +411,18 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     build: {
-      rollupOptions: {
+      chunkSizeWarningLimit: 900,
+      rolldownOptions: {
         input: HTML_INPUTS,
+        output: {
+          codeSplitting: {
+            includeDependenciesRecursively: false,
+            maxSize: 900 * 1024,
+            minShareCount: 1,
+            minSize: 50 * 1024,
+            groups: CODE_SPLITTING_GROUPS,
+          },
+        },
       },
     },
     plugins: [
@@ -228,7 +435,7 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
       vitePluginRaw({
-        match: /\.sdf|\.ket/,
+        match: /\.sdf$/,
       }),
       replace({
         include: '**/ketcher-react/src/**',

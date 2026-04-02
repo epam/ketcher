@@ -28,7 +28,8 @@
   "devDependencies": {
     "@playwright/test": "^1.44.1",
     "eslint": "^8.44.0",
-    "prettier": "2.8.4"
+    "prettier": "2.8.4",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

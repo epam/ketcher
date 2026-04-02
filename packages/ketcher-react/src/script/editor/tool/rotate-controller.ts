@@ -137,7 +137,7 @@ class RotateController {
 
   private isPartOfFragmentSelected() {
     const allAtoms = this.render.ctab.molecule.atoms;
-    const selectedAtomIds = this.editor.selection()?.atoms || [];
+    const selectedAtomIds = this.editor.selection()?.atoms ?? [];
     const selectedFragmentIdSet = new Set();
 
     selectedAtomIds.forEach((atomId) => {
@@ -724,14 +724,14 @@ class RotateController {
         const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
           this.getProtractorBaseInfo(newRadius);
         this.drawRotateArc(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           rotateArcStart,
           textPos,
         );
         // NOTE: draw protractor behind arc
         this.drawProtractor(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           degree0Line,
           degree0TextPos,

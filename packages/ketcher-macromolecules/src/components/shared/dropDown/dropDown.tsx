@@ -115,6 +115,11 @@ export const DropDown = ({
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false);
 
+  const isFullscreen = !!document.fullscreenElement;
+  const portalContainer = isFullscreen
+    ? document.querySelector('#root')
+    : undefined;
+
   const renderLabelById = (value: unknown) => {
     const selectedOption = options.filter(
       (option) => option.id === (value as typeof currentSelection),
@@ -154,6 +159,7 @@ export const DropDown = ({
         fullWidth
         data-testid={testId ?? 'dropdown-select'}
         MenuProps={{
+          container: portalContainer,
           PaperProps: {
             style: { ...stylesForExpanded, ...customStylesForExpanded },
           },

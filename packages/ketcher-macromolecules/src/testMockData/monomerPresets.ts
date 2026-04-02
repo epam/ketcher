@@ -271,7 +271,7 @@ export const preset = {
   default: true,
 };
 
-const phosphate = {
+const phosphate: MonomerItemType = {
   props: {
     MonomerName: 'P',
     Name: 'Phosphate',
@@ -285,7 +285,7 @@ const phosphate = {
   label: 'P',
   struct: new Struct(),
 };
-const ribose = {
+const ribose: MonomerItemType = {
   props: {
     MonomerName: 'R',
     Name: 'Ribose',
@@ -299,7 +299,7 @@ const ribose = {
   label: 'R',
   struct: new Struct(),
 };
-const thymine = {
+const thymine: MonomerItemType = {
   props: {
     MonomerName: 'T',
     Name: 'Thymine',
@@ -313,7 +313,7 @@ const thymine = {
   label: 'T',
   struct: new Struct(),
 };
-const cytosine = {
+const cytosine: MonomerItemType = {
   props: {
     MonomerName: 'C',
     Name: 'Cytosine',
@@ -327,7 +327,7 @@ const cytosine = {
   label: '',
   struct: new Struct(),
 };
-const uracil = {
+const uracil: MonomerItemType = {
   props: {
     MonomerName: 'U',
     Name: 'Uracil',
@@ -341,7 +341,7 @@ const uracil = {
   label: '',
   struct: new Struct(),
 };
-const adenine = {
+const adenine: MonomerItemType = {
   props: {
     MonomerName: 'A',
     Name: 'Adenine',
@@ -355,7 +355,7 @@ const adenine = {
   label: '',
   struct: new Struct(),
 };
-const guanine = {
+const guanine: MonomerItemType = {
   props: {
     MonomerName: 'G',
     Name: 'Guanine',

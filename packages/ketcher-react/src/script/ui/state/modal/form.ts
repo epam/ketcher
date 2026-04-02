@@ -19,8 +19,29 @@ import { initSdata, nucleotideComponentReducer, sdataReducer } from './sdata';
 import { getDefaultOptions } from '../../data/schema/options-schema';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 import { SUPERATOM_CLASS } from 'ketcher-core';
+import { AnyAction } from 'redux';
 
-export const formsState = {
+type ModalFormErrors = Record<string, unknown>;
+
+type MoleculeErrors = Record<string, string>;
+
+interface ModalFormState<TResult = Record<string, unknown>> {
+  errors: ModalFormErrors;
+  valid?: boolean;
+  result?: TResult;
+  moleculeErrors?: MoleculeErrors;
+}
+
+type ModalFormsState = Record<string, ModalFormState>;
+
+interface UpdateFormAction<TData = Partial<ModalFormState>> extends AnyAction {
+  type: 'UPDATE_FORM';
+  data: TData;
+}
+
+type ModalReducerAction = UpdateFormAction | AnyAction;
+
+export const formsState: ModalFormsState = {
   // TODO: create from schema.{smth}.defaultValue
   // TODO: change validation method, no 'valid:true' props as default
   atomProps: {
@@ -123,40 +144,60 @@ export const formsState = {
   sgroup: initSdata(sdataCustomSchema),
 };
 
-export function updateFormState(data) {
+export function updateFormState<TData extends Partial<ModalFormState>>(
+  data: TData,
+): UpdateFormAction<TData> {
   return {
     type: 'UPDATE_FORM',
     data,
   };
 }
 
-export function checkErrors(errors) {
+export function checkErrors(errors: MoleculeErrors): UpdateFormAction {
   return {
     type: 'UPDATE_FORM',
     data: { moleculeErrors: errors },
   };
 }
 
-export function setDefaultSettings() {
+export function setDefaultSettings(): UpdateFormAction {
   return {
     type: 'UPDATE_FORM',
     data: {
-      result: getDefaultOptions(sdataCustomSchema),
+      result: getDefaultOptions(),
       valid: true,
       errors: {},
     },
   };
 }
 
-export function formReducer(state, action) {
-  const newType = action.data?.result?.type;
-  if (newType === 'DAT') return sdataReducer(state, action);
+export function formReducer(
+  state: ModalFormState = { errors: {} },
+  action: ModalReducerAction,
+): ModalFormState {
+  const actionData =
+    'data' in action ? (action.data as Partial<ModalFormState>) : {};
+  const formState = state;
+  const actionResult = actionData.result as Record<string, unknown>;
+  const newType = actionResult?.type;
+
+  if (newType === 'DAT') {
+    return sdataReducer(
+      formState as Parameters<typeof sdataReducer>[0],
+      action as Parameters<typeof sdataReducer>[1],
+    );
+  }
   if (
     newType === 'SUP' &&
-    state?.result?.type !== 'nucleotideComponent' &&
-    Object.values(SUPERATOM_CLASS).includes(action.data?.result?.class)
+    formState?.result?.type !== 'nucleotideComponent' &&
+    (Object.values(SUPERATOM_CLASS) as string[]).includes(
+      actionResult?.class as string,
+    )
   )
-    return nucleotideComponentReducer(state, action);
+    return nucleotideComponentReducer(
+      formState as Parameters<typeof nucleotideComponentReducer>[0],
+      action as Parameters<typeof nucleotideComponentReducer>[1],
+    );
 
-  return { ...state, ...action.data };
+  return { ...state, ...actionData };
 }

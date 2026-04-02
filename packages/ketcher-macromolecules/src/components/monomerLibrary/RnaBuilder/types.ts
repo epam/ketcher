@@ -32,10 +32,10 @@ export interface IRnaPreset {
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
-  connections?: IKetTemplateConnection[];
   default?: boolean;
   favorite?: boolean;
   readonly idtAliases?: IKetIdtAliases;
   readonly aliasAxoLabs?: string;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }

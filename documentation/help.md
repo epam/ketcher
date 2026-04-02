@@ -789,11 +789,15 @@ There are two differences between snake and flex modes:
 
 After a selection of a circular structure is made, in _Flex layout mode_, a new option in the context menu and on the top toolbar exists: _Arrange as a Ring_:
 
-<img src=images/Arrange-as-ring-3.10..png width = "500"/>
+<img src=images/Arrange-as-ring-3.10..png width = "400"/>
 
 When the option is chosen, the selected monomers get arranged in a regular n-agon where the monomers occupy the vertices:
 
-<img src=images/Arrange-as-ring-2-3.10..png width = "200"/>
+<img src=images/Arrange-as-ring-2-3.10..png width = "150"/>
+
+After the arrangement users are able to rotate, adjust, and move the structure:
+
+<img src=images/Rotate-Monomers-3.14..gif width = "500"/>
 
 #### Monomer Snapping
 

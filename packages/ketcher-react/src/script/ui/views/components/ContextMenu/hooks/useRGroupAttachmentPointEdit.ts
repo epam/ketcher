@@ -60,7 +60,7 @@ const useRGroupAttachmentPointEdit = () => {
   );
 
   const hidden = useCallback(({ props }: Params) => {
-    const atomLength = props?.atomIds?.length || 0;
+    const atomLength = props?.atomIds?.length ?? 0;
     return atomLength > 1;
   }, []);
 

@@ -46,7 +46,7 @@ test.describe('Open Ketcher', () => {
     Open the 'User Templates' folder'
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -92,7 +92,7 @@ test.describe('Open Ketcher', () => {
     Observe some large structure
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Tf,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -122,7 +122,7 @@ test.describe('Open Ketcher', () => {
     Click to add the selected template on the canvas.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Anthracene,
     );
@@ -232,7 +232,7 @@ test.describe('Open Ketcher', () => {
     await TemplateEditDialog(page).clickCanvas();
     await takeEditorScreenshot(page);
     await TemplateEditDialog(page).edit();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );

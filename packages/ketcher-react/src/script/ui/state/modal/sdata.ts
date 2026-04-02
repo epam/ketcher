@@ -115,13 +115,12 @@ const onContextChange = (
   state: SdataState,
   payload: Partial<SdataResult> & Record<string, unknown>,
 ): SdataStateWithResult => {
-  const context = String(payload.context || state.result.context);
-  const fieldValue = String(payload.fieldValue || '');
+  const context = String(payload.context ?? state.result.context);
+  const fieldValue = String(payload.fieldValue ?? '');
   const radiobuttons = String(
-    payload.radiobuttons || state.result.radiobuttons,
+    payload.radiobuttons ?? state.result.radiobuttons,
   );
-  const type =
-    (payload.type as SdataResult['type'] | undefined) ?? state.result.type;
+  const type = payload.type ?? state.result.type;
 
   const fieldName = getSdataDefaultValue(sdataCustomSchema, 'fieldName');
 
@@ -144,17 +143,16 @@ const onFieldNameChange = (
   state: SdataState,
   payload: Partial<SdataResult> & Record<string, unknown>,
 ): SdataStateWithResult => {
-  const fieldName = String(payload.fieldName || '');
+  const fieldName = String(payload.fieldName ?? '');
 
   const context = state.result.context;
   const sdataMap = sdataSchema as SchemaMap;
   const radiobuttons = String(
-    payload.radiobuttons || state.result.radiobuttons,
+    payload.radiobuttons ?? state.result.radiobuttons,
   );
-  const type =
-    (payload.type as SdataResult['type'] | undefined) ?? state.result.type;
+  const type = payload.type ?? state.result.type;
 
-  let fieldValue = String(payload.fieldValue || '');
+  let fieldValue = String(payload.fieldValue ?? '');
 
   if (sdataMap[context]?.[fieldName])
     fieldValue = getSdataDefaultValue(sdataSchema, context, fieldName);
@@ -200,7 +198,7 @@ export function sdataReducer(
   else if (actionFieldName !== state.result.fieldName)
     newstate = onFieldNameChange(state, action.data.result);
 
-  newstate = newstate || {
+  newstate = newstate ?? {
     ...state,
     result: { ...state.result, ...action.data.result },
   };

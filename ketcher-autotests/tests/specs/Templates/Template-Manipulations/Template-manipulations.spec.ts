@@ -527,7 +527,7 @@ test.describe('Template Manupulations', () => {
     */
     const X_DELTA_ONE = 100;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CONH2,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -620,7 +620,7 @@ test.describe('Open Ketcher', () => {
     */
     const xOffsetFromCenter = 40;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -672,7 +672,7 @@ test.describe('Open Ketcher', () => {
     */
     const xOffsetFromCenter = 40;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
@@ -703,7 +703,7 @@ test.describe('Open Ketcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );

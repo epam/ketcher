@@ -387,12 +387,14 @@ export class RotationView extends TransientView {
           const textRadius = radius + STYLE.DEGREE_TEXT_MARGIN + tickLength;
           const textX = center.x + textRadius * Math.cos(angle);
           const textY = center.y + textRadius * Math.sin(angle);
-          const textFill =
-            diff > 90
-              ? 'none'
-              : degree !== 0 && degree === currentDegrees
-              ? STYLE.ACTIVE_COLOR
-              : STYLE.INITIAL_COLOR;
+          let textFill: string;
+          if (diff > 90) {
+            textFill = 'none';
+          } else if (degree !== 0 && degree === currentDegrees) {
+            textFill = STYLE.ACTIVE_COLOR;
+          } else {
+            textFill = STYLE.INITIAL_COLOR;
+          }
 
           transientLayer
             .append('text')

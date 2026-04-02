@@ -47,7 +47,7 @@ test.describe('Hand tool', () => {
     // Test case: EPMLSOPKET-4243
     // Verify if hot keys changed to Active Hand Tool cursor
     await openFileAndAddToCanvas(page, 'KET/chain-with-atoms.ket');
-    await page.keyboard.press('Control+Alt+h');
+    await page.keyboard.press('ControlOrMeta+Alt+h');
     await mouseMovement(page, { x: 700, y: 300 });
     await takeEditorScreenshot(page);
   });

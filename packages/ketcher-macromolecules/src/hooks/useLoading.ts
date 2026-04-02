@@ -1,9 +1,4 @@
-import {
-  Ketcher,
-  KetcherAsyncEvents,
-  KetcherLogger,
-  ketcherProvider,
-} from 'ketcher-core';
+import { KetcherAsyncEvents, ketcherProvider } from 'ketcher-core';
 import { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from './stateHooks';
 import { selectKetcherId } from 'state/common';
@@ -11,18 +6,7 @@ import { selectKetcherId } from 'state/common';
 export function useLoading() {
   const ketcherId = useAppSelector(selectKetcherId);
   const [isLoading, setIsLoading] = useState(false);
-  let ketcher: Ketcher;
-
-  // TODO remove this try-catch and investigate why code execution comes here when ketcher instance is already removed
-  //  This can happen when open/close several times the editor in duo mode
-  try {
-    ketcher = ketcherProvider.getKetcher(ketcherId);
-  } catch (error) {
-    KetcherLogger.error(
-      `Failed to get ketcher instance with id ${ketcherId}`,
-      error,
-    );
-  }
+  const ketcher = ketcherId ? ketcherProvider.getKetcher(ketcherId) : undefined;
 
   const onLoadingStart = useCallback(() => setIsLoading(true), [setIsLoading]);
   const onLoadingFinish = useCallback(

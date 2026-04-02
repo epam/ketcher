@@ -36,6 +36,7 @@ export * from './showHydrogenLabels';
 export * from './rergroupAttachmentPoint';
 export * from './reImage';
 export * from './remultitailArrow';
+export * from './draftToLexical';
 export {
   ReObject,
   ReAtom,

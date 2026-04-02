@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/no-use-before-define */
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { MultitailArrow } from 'domain/entities/multitailArrow';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { ReStruct, ReMultitailArrow } from 'application/render';
@@ -14,7 +14,7 @@ interface MultitailArrowDeleteData {
 }
 
 export class MultitailArrowUpsert extends BaseOperation {
-  data: MultitailArrowUpsertData;
+  readonly data: MultitailArrowUpsertData;
   constructor(private readonly multitailArrow: MultitailArrow, id?: number) {
     super(OperationType.MULTITAIL_ARROW_UPSERT);
     this.data = { id };
@@ -41,7 +41,7 @@ export class MultitailArrowUpsert extends BaseOperation {
 
 export class MultitailArrowDelete extends BaseOperation {
   private multitailArrow?: MultitailArrow;
-  data: MultitailArrowDeleteData;
+  readonly data: MultitailArrowDeleteData;
   constructor(id: number) {
     super(OperationType.MULTITAIL_ARROW_DELETE);
     this.data = { id };

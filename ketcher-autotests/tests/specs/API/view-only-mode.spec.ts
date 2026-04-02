@@ -45,6 +45,7 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -252,9 +253,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The "Check Structure", "Calculated Values", and "3D Viewer" tools are enabled in view-only mode
     */
     await enableViewOnlyModeBySetOptions(page);
-    await expect(page.getByTitle('Check Structure (Alt+S)')).toBeEnabled();
-    await expect(page.getByTitle('Calculated Values (Alt+C)')).toBeEnabled();
-    await expect(page.getByTitle('3D Viewer')).toBeEnabled();
+    await expect(
+      IndigoFunctionsToolbar(page).checkStructureButton,
+    ).toBeEnabled();
+    await expect(
+      IndigoFunctionsToolbar(page).calculatedValuesButton,
+    ).toBeEnabled();
+    await expect(IndigoFunctionsToolbar(page).ThreeDViewerButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -474,7 +479,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       delay: 2000,
     });
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await LabelEditDialog(page).cancel();
     await enableViewOnlyModeBySetOptions(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
       force: true,
@@ -516,7 +521,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 

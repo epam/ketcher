@@ -12,7 +12,9 @@ export class DrawingEntityHoverOperation implements Operation {
     renderersManager.hoverDrawingEntity(this.drawingEntity);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: hover state is transient and has no undo state
+  }
 }
 
 export class DrawingEntitySelectOperation implements Operation {
@@ -31,7 +33,9 @@ export class DrawingEntitySelectOperation implements Operation {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: select state is transient and has no undo state
+  }
 }
 export class DrawingEntityMoveOperation implements Operation {
   private wasInverted = false;

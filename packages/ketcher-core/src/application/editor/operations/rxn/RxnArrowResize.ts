@@ -21,9 +21,9 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
 import { tfx } from 'utilities';
 import { OperationType } from '../OperationType';
-import Base from '../base';
+import Base from '../BaseOperation';
 
-export const ARROW_MAX_SNAPPING_ANGLE = Math.PI / 12; // 15°
+export const ARROW_MAX_SNAPPING_ANGLE = Math.PI / 36; // 5°
 
 interface RxnArrowResizeData {
   id: number;
@@ -33,8 +33,8 @@ interface RxnArrowResizeData {
   noinvalidate: boolean;
 }
 export class RxnArrowResize extends Base {
-  data: RxnArrowResizeData;
-  isSnappingEnabled: boolean;
+  readonly data: RxnArrowResizeData;
+  readonly isSnappingEnabled: boolean;
 
   constructor(
     id: number,

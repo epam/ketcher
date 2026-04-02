@@ -12,6 +12,7 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  normalizeError,
 } from 'utilities';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -138,6 +139,27 @@ export abstract class BaseMode {
     }
   }
 
+  onCut(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
+      return;
+    }
+
+    const editor = CoreEditorBase.provideEditorInstance();
+
+    // Check if there's anything selected to cut
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    this.onCopy(event);
+
+    editor.events.deleteSelectedStructure.dispatch();
+
+    if (event) {
+      event.preventDefault();
+    }
+  }
+
   async onPaste(event?: ClipboardEvent) {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
@@ -200,7 +222,8 @@ export abstract class BaseMode {
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
-    new EditorHistory(editor).update(modelChanges);
+    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.events.mouseLeaveSequenceItem.dispatch();
     await this.scrollForView();
   }
 
@@ -256,8 +279,7 @@ export abstract class BaseMode {
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
 
       this.unsupportedSymbolsError(errorMessage);
@@ -299,5 +321,7 @@ export abstract class BaseMode {
     );
   }
 
-  public destroy() {}
+  public destroy() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 }

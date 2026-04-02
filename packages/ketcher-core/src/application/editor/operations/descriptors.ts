@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 import { Vec2 } from 'domain/entities/vec2';
@@ -22,7 +22,7 @@ import { Vec2 } from 'domain/entities/vec2';
 // todo: separate classes: now here is circular dependency in `invert` method
 
 class AlignDescriptors extends BaseOperation {
-  history: any;
+  readonly history: any;
 
   constructor() {
     super(OperationType.ALIGN_DESCRIPTORS);
@@ -53,7 +53,7 @@ class AlignDescriptors extends BaseOperation {
 }
 
 class RestoreDescriptorsPosition extends BaseOperation {
-  history: any;
+  readonly history: any;
 
   constructor(history: any) {
     super(OperationType.RESTORE_DESCRIPTORS_POSITION);

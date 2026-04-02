@@ -16,16 +16,16 @@
 
 import { ReRGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { RGroup } from 'domain/entities/rgroup';
 
 export class RGroupFragment extends BaseOperation {
-  rgid_new: any;
-  rg_new: any;
+  readonly rgid_new: any;
+  readonly rg_new: any;
   rgid_old: any;
   rg_old: any;
-  frid: any;
+  readonly frid: any;
 
   constructor(rgroupId: any, fragmentId: any, rg?: any) {
     super(OperationType.R_GROUP_FRAGMENT);

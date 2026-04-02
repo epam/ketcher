@@ -40,8 +40,8 @@ describe('Zoom Tool', () => {
   it('should zoom in when scroll mouse wheel up and press CTRL', () => {
     jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
-    // eslint-disable-next-line no-new
-    new CoreEditor({
+    // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
+    const _editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),

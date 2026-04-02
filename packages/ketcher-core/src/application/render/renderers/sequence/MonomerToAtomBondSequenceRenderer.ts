@@ -78,9 +78,13 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
     } L ${this.scaledPosition.endPosition.x}, ${this.mainLineY.mainLineY2}`;
   }
 
-  public moveStart(): void {}
+  public moveStart(): void {
+    // intentional no-op
+  }
 
-  public moveEnd(): void {}
+  public moveEnd(): void {
+    // intentional no-op
+  }
 
   public get isSnake(): false {
     return false;

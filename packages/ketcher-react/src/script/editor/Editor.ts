@@ -39,6 +39,7 @@ import {
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
   IKetAttachmentPoint,
+  IKetTemplateConnection,
   IKetMonomerTemplate,
   IMAGE_KEY,
   isSingleRGroupAttachmentPoint,
@@ -46,6 +47,7 @@ import {
   ketcherProvider,
   KetSerializer,
   KetTemplateType,
+  KetConnectionType,
   MacromoleculesConverter,
   MonomerCreationState,
   monomerFactory,
@@ -1369,7 +1371,11 @@ class Editor implements KetcherEditor {
     };
   }
 
-  finishNewMonomersCreation(monomersData, rnaPresetName?: string) {
+  finishNewMonomersCreation(
+    monomersData,
+    rnaPresetName?: string,
+    phosphatePosition?: '3' | '5',
+  ) {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
 
@@ -1443,6 +1449,56 @@ class Editor implements KetcherEditor {
         .map((monomerData) => monomerData.monomerTemplate.id)
         .join('_');
       const templateRef = setMonomerGroupTemplatePrefix(templateId);
+      const sugarMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) =>
+          monomerTemplate.class === KetMonomerClass.Sugar,
+      )?.monomerTemplate;
+      const phosphateMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) =>
+          monomerTemplate.class === KetMonomerClass.Phosphate,
+      )?.monomerTemplate;
+      const baseMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) => monomerTemplate.class === KetMonomerClass.Base,
+      )?.monomerTemplate;
+      const rnaPresetConnections: IKetTemplateConnection[] = [];
+
+      if (sugarMonomerTemplate && phosphateMonomerTemplate) {
+        const sugarAttachmentPointId =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R1
+            : AttachmentPointName.R2;
+        const phosphateAttachmentPointId =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R2
+            : AttachmentPointName.R1;
+
+        rnaPresetConnections.push({
+          connectionType: KetConnectionType.SINGLE,
+          endpoint1: {
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
+            attachmentPointId: sugarAttachmentPointId,
+          },
+          endpoint2: {
+            templateId: setMonomerTemplatePrefix(phosphateMonomerTemplate.id),
+            attachmentPointId: phosphateAttachmentPointId,
+          },
+        });
+      }
+
+      if (sugarMonomerTemplate && baseMonomerTemplate) {
+        rnaPresetConnections.push({
+          connectionType: KetConnectionType.SINGLE,
+          endpoint1: {
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R3,
+          },
+          endpoint2: {
+            templateId: setMonomerTemplatePrefix(baseMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R1,
+          },
+        });
+      }
+
       const libraryItem = {
         root: {
           templates: [getKetRef(templateRef)],
@@ -1457,13 +1513,13 @@ class Editor implements KetcherEditor {
               return getKetRef(monomerData.monomerRef);
             }),
           ],
+          connections: rnaPresetConnections,
         },
       };
 
       ket.root.templates.push(getKetRef(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
-
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {
       format: 'ket',
       shouldPersist: true,
@@ -1491,6 +1547,15 @@ class Editor implements KetcherEditor {
     // rerendering the original structure to clean up any leftover atoms/bonds from the wizard
     const newAction = new Action();
     const structFromWizard = this.struct();
+
+    // Store positions only for atoms that were selected (wizard participants)
+    const originalAtomPositions = new Map<number, Vec2>();
+    this.selectedToOriginalAtomsIdMap.forEach((originalAtomId) => {
+      const atom = this.originalStruct.atoms.get(originalAtomId);
+      if (atom?.pp) {
+        originalAtomPositions.set(originalAtomId, new Vec2(atom.pp));
+      }
+    });
 
     this.struct(this.originalStruct, false);
 
@@ -1521,15 +1586,27 @@ class Editor implements KetcherEditor {
         true,
       );
 
+      // Restore original atom positions after merge
+      const struct = this.struct();
+
       const originalToSelectedAtomsIdMap = new Map<number, number>();
 
+      // Restore positions for selected atoms (now part of monomer)
       this.selectedToOriginalAtomsIdMap.forEach(
         (originalAtomId, selectedAtomId) => {
           originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+
+          // Restore position using the atomIdMap
+          const originalPosition = originalAtomPositions.get(originalAtomId);
+          const newAtomId = atomIdMap.get(selectedAtomId);
+          if (originalPosition && isNumber(newAtomId)) {
+            const atom = struct.atoms.get(newAtomId);
+            if (atom) {
+              atom.pp = new Vec2(originalPosition);
+            }
+          }
         },
       );
-
-      const struct = this.struct();
 
       externalBonds.forEach((bond) => {
         const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
@@ -2261,7 +2338,7 @@ class Editor implements KetcherEditor {
               },
             );
 
-            this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
+            this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
 
@@ -2451,10 +2528,11 @@ class Editor implements KetcherEditor {
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
+    let resolvedCi = ci;
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      ci = structObjects.reduce((res, key) => {
+      resolvedCi = structObjects.reduce((res, key) => {
         res[key] = Array.from(ReStruct[key].keys());
         return res;
       }, {});
@@ -2462,16 +2540,16 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab;
-      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
+      resolvedCi = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
     }
 
-    if (ci) {
+    if (resolvedCi) {
       const res: Selection = {};
 
-      Object.keys(ci).forEach((key) => {
-        if (ci[key].length > 0)
+      Object.keys(resolvedCi).forEach((key) => {
+        if (resolvedCi[key].length > 0)
           // TODO: deep merge
-          res[key] = ci[key].slice();
+          res[key] = resolvedCi[key].slice();
       });
 
       if (Object.keys(res).length !== 0) {
@@ -2948,43 +3026,40 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       updateLastCursorPosition(editor, event);
 
       if (
-        ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-        !isMouseMainButtonPressed(event)
+        !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||
+        isMouseMainButtonPressed(event)
       ) {
-        return true;
-      }
-
-      if (eventName === 'mousemove') {
-        const itemUnderCursor = editor.findItem(event, [
-          'atoms',
-          'bonds',
-          'sgroups',
-        ]);
-        if (!itemUnderCursor) {
-          editor.hover(null);
+        if (eventName === 'mousemove') {
+          const itemUnderCursor = editor.findItem(event, [
+            'atoms',
+            'bonds',
+            'sgroups',
+          ]);
+          if (!itemUnderCursor) {
+            editor.hover(null);
+          }
         }
-      }
 
-      if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
-        // to complete drag actions
-        if (!event.target || event.target.nodeName === 'DIV') {
+        const isScrollClick =
+          eventName !== 'mouseup' &&
+          eventName !== 'mouseleave' &&
+          (!event.target || event.target.nodeName === 'DIV');
+
+        if (isScrollClick) {
           // click on scroll
           editor.hover(null);
-          return true;
+        } else {
+          const isToolUsed = useToolIfNeeded(
+            editor,
+            toolEventHandler,
+            clientArea,
+            event,
+          );
+          if (!isToolUsed) {
+            resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
+          }
         }
       }
-
-      const isToolUsed = useToolIfNeeded(
-        editor,
-        toolEventHandler,
-        clientArea,
-        event,
-      );
-      if (isToolUsed) {
-        return true;
-      }
-
-      resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
 
       return true;
     }, -1);

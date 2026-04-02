@@ -20,7 +20,6 @@ import {
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -56,6 +55,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 declare global {
   interface Window {
@@ -65,22 +65,14 @@ declare global {
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async () => {
@@ -813,7 +805,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
   );
 
-  const dC2SGroup = page.getByText('dC_2').first();
+  const dC2SGroup = getAbbreviationLocator(page, { name: 'dC_2' }).first();
 
   await expandAbbreviation(page, dC2SGroup);
 

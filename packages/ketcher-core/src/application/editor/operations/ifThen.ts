@@ -15,17 +15,17 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 class UpdateIfThen extends BaseOperation {
-  rgid_new: any;
-  rgid_old: any;
-  ifThenHistory: any;
-  skipRgids: any[];
+  readonly rgid_new: any;
+  readonly rgid_old: any;
+  readonly ifThenHistory: any;
+  readonly skipRgids: any[];
 
   constructor(rgNew: any, rgOld: any, skipRgids: any = []) {
     super(OperationType.UPDATE_IF_THEN);
@@ -53,9 +53,9 @@ class UpdateIfThen extends BaseOperation {
 }
 
 class RestoreIfThen extends BaseOperation {
-  rgid_new: any;
-  rgid_old: any;
-  ifThenHistory: any;
+  readonly rgid_new: any;
+  readonly rgid_old: any;
+  readonly ifThenHistory: any;
 
   constructor(rgNew: any, rgOld: any, history: any) {
     super(OperationType.RESTORE_IF_THEN);

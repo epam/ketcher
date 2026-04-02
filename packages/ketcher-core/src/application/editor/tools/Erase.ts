@@ -24,7 +24,7 @@ class EraserTool implements BaseTool {
   private readonly history: EditorHistory;
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(editor);
+    this.history = EditorHistory.getInstance(editor);
     if (
       this.editor.drawingEntitiesManager.selectedEntities.length &&
       !(this.editor.mode instanceof SequenceMode)
@@ -92,7 +92,9 @@ class EraserTool implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  destroy() {}
+  destroy() {
+    // intentional no-op: this tool holds no resources that require cleanup
+  }
 }
 
 export { EraserTool };

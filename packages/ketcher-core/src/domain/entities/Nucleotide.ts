@@ -119,7 +119,7 @@ export class Nucleotide {
   }
 
   public get monomer() {
-    return this.sugar;
+    return this.firstMonomerInNode;
   }
 
   public get monomers(): BaseMonomer[] {
@@ -127,11 +127,11 @@ export class Nucleotide {
   }
 
   public get firstMonomerInNode() {
-    return this.sugar;
+    return this.isFiveEndPhosphate ? this.phosphate : this.sugar;
   }
 
   public get lastMonomerInNode() {
-    return this.phosphate;
+    return this.isFiveEndPhosphate ? this.sugar : this.phosphate;
   }
 
   public get renderer() {
@@ -143,6 +143,16 @@ export class Nucleotide {
       this.rnaBase.isModification ||
       this.sugar.isModification ||
       this.phosphate.isModification
+    );
+  }
+
+  public get isFiveEndPhosphate() {
+    return (
+      this.sugar.attachmentPointsToBonds.R1?.getAnotherEntity(this.sugar) ===
+        this.phosphate &&
+      this.phosphate.attachmentPointsToBonds.R2?.getAnotherEntity(
+        this.phosphate,
+      ) === this.sugar
     );
   }
 }

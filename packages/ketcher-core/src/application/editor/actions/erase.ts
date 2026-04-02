@@ -118,7 +118,7 @@ export function fromOneBondDeletion(restruct, id) {
 }
 
 export function fromFragmentDeletion(restruct, rawSelection) {
-  assert(!!rawSelection != null);
+  assert(rawSelection != null);
 
   let action = new Action();
   const atomsToRemove: Array<number> = [];

@@ -7,11 +7,21 @@ export class SelectFragment extends SelectBase {
     super(editor);
   }
 
-  protected createSelectionView() {}
+  // TODO: needs investigation — sibling classes SelectLasso and SelectRectangle
+  // have non-empty implementations. Determine if fragment selection intentionally
+  // has no visual selection indicator or if these were never implemented.
+  // See docs/empty-functions-audit.md — Needs Investigation List.
+  protected createSelectionView() {
+    // needs clarification
+  }
 
-  protected onSelectionMove() {}
+  protected onSelectionMove() {
+    // needs clarification
+  }
 
-  protected updateSelectionViewParams() {}
+  protected updateSelectionViewParams() {
+    // needs clarification
+  }
 
   protected mousedownEntity(
     renderer: BaseRenderer,

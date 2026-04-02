@@ -8,6 +8,7 @@ import {
 } from './styles';
 import { groupNameToRnaEditorItemLabel } from './utils';
 import GroupIcon from './GroupIcon';
+import { PropsWithChildren } from 'react';
 
 export const GroupBlockCompact = ({
   groupName,
@@ -16,7 +17,8 @@ export const GroupBlockCompact = ({
   selected,
   onClick,
   testid,
-}: IGroupBlockProps) => {
+  children,
+}: IGroupBlockProps & PropsWithChildren) => {
   const isEditMode = useAppSelector(selectIsEditMode);
 
   const empty = !monomerName;
@@ -28,11 +30,14 @@ export const GroupBlockCompact = ({
       isEditMode={isEditMode}
       data-testid={testid}
     >
-      <CompactGroupConnection />
-      <GroupIcon name={iconName} selected={selected} empty={empty} />
-      <CompactGroupText selected={selected} empty={empty}>
-        {monomerName ?? groupNameToRnaEditorItemLabel[groupName]}
-      </CompactGroupText>
+      <>
+        <CompactGroupConnection />
+        <GroupIcon name={iconName} selected={selected} empty={empty} />
+        <CompactGroupText selected={selected} empty={empty}>
+          {monomerName ?? groupNameToRnaEditorItemLabel[groupName]}
+        </CompactGroupText>
+        {children}
+      </>
     </CompactGroupBlockContainer>
   );
 };

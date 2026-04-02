@@ -20,7 +20,7 @@ import { Pile } from 'domain/entities/pile';
 import { Vec2 } from 'domain/entities/vec2';
 import { ReAtom, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method

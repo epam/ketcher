@@ -351,5 +351,7 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.removeSelection();
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

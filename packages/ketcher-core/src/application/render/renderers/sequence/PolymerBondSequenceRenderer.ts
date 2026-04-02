@@ -141,9 +141,13 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     return path;
   }
 
-  public moveStart(): void {}
+  public moveStart(): void {
+    // intentional no-op
+  }
 
-  public moveEnd(): void {}
+  public moveEnd(): void {
+    // intentional no-op
+  }
 
   public get isSnake(): false {
     return false;

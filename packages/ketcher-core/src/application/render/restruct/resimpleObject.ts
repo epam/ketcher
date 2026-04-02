@@ -158,7 +158,7 @@ class ReSimpleObject extends ReObject {
     return minDist;
   }
 
-  getReferencePoints(onlyOnObject = false): Array<Vec2> {
+  getReferencePoints(): Array<Vec2> {
     const refPoints: Array<Vec2> = [];
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse:
@@ -176,7 +176,45 @@ class ReSimpleObject extends ReObject {
           new Vec2(p0.x + 0.5 * w, p0.y + h),
           new Vec2(p0.x, p0.y + 0.5 * h),
         );
-        if (!onlyOnObject || this.item.mode === SimpleObjectMode.rectangle) {
+        refPoints.push(
+          p0,
+          new Vec2(p0.x, p0.y + h),
+          new Vec2(p0.x + w, p0.y + h),
+          new Vec2(p0.x + w, p0.y),
+        );
+        break;
+      }
+      case SimpleObjectMode.line: {
+        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        break;
+      }
+
+      default: {
+        throw new Error('Unsupported shape type');
+      }
+    }
+    return refPoints;
+  }
+
+  getReferencePointsOnObject(): Array<Vec2> {
+    const refPoints: Array<Vec2> = [];
+    switch (this.item.mode) {
+      case SimpleObjectMode.ellipse:
+      case SimpleObjectMode.rectangle: {
+        const p0: Vec2 = new Vec2(
+          Math.min(this.item.pos[0].x, this.item.pos[1].x),
+          Math.min(this.item.pos[0].y, this.item.pos[1].y),
+        );
+        const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
+        const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
+
+        refPoints.push(
+          new Vec2(p0.x + 0.5 * w, p0.y),
+          new Vec2(p0.x + w, p0.y + 0.5 * h),
+          new Vec2(p0.x + 0.5 * w, p0.y + h),
+          new Vec2(p0.x, p0.y + 0.5 * h),
+        );
+        if (this.item.mode === SimpleObjectMode.rectangle) {
           refPoints.push(
             p0,
             new Vec2(p0.x, p0.y + h),
@@ -198,12 +236,12 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
-  getFigureHoverPath(path: any, render: Render, isBorder = true) {
-    if (isBorder) {
-      return path.attr({ ...render.options.hoverStyle, fill: 'none' });
-    } else {
-      return path.attr(render.options.innerHoverStyle);
-    }
+  getBorderHoverPath(path: any, render: Render) {
+    return path.attr({ ...render.options.hoverStyle, fill: 'none' });
+  }
+
+  getFillHoverPath(path: any, render: Render) {
+    return path.attr(render.options.innerHoverStyle);
   }
 
   hoverPath(render: Render): Array<StyledPath> {
@@ -232,7 +270,7 @@ class ReSimpleObject extends ReObject {
           tfx(Math.abs(ry) + lineOffset),
         );
         paths.push({
-          path: this.getFigureHoverPath(outerBorderEllipse, render),
+          path: this.getBorderHoverPath(outerBorderEllipse, render),
           stylesApplied: true,
         });
 
@@ -243,7 +281,7 @@ class ReSimpleObject extends ReObject {
           tfx(Math.abs(ry)),
         );
         paths.push({
-          path: this.getFigureHoverPath(fillEllipse, render, false),
+          path: this.getFillHoverPath(fillEllipse, render),
           stylesApplied: true,
         });
         if (
@@ -257,7 +295,7 @@ class ReSimpleObject extends ReObject {
             tfx(Math.abs(ry) - lineOffset),
           );
           paths.push({
-            path: this.getFigureHoverPath(innerBorderEllipse, render),
+            path: this.getBorderHoverPath(innerBorderEllipse, render),
             stylesApplied: true,
           });
         }
@@ -277,7 +315,7 @@ class ReSimpleObject extends ReObject {
           tfx(bottomY + 2 * lineOffset),
         );
         paths.push({
-          path: this.getFigureHoverPath(outerBorderRect, render),
+          path: this.getBorderHoverPath(outerBorderRect, render),
           stylesApplied: true,
         });
         const fillRect = render.paper.rect(
@@ -287,7 +325,7 @@ class ReSimpleObject extends ReObject {
           tfx(bottomY),
         );
         paths.push({
-          path: this.getFigureHoverPath(fillRect, render, false),
+          path: this.getFillHoverPath(fillRect, render),
           stylesApplied: true,
         });
         if (rightX - 2 * lineOffset > 0 && bottomY - 2 * lineOffset > 0) {
@@ -298,7 +336,7 @@ class ReSimpleObject extends ReObject {
             tfx(bottomY - 2 * lineOffset),
           );
           paths.push({
-            path: this.getFigureHoverPath(innerRect, render),
+            path: this.getBorderHoverPath(innerRect, render),
             stylesApplied: true,
           });
         }

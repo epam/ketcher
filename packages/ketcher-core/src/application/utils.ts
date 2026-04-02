@@ -77,7 +77,7 @@ export function deleteAllEntitiesOnCanvas() {
   const editor = CoreEditor.provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
-  new EditorHistory(editor).update(modelChanges);
+  EditorHistory.getInstance(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
 }
 
@@ -106,6 +106,9 @@ export async function parseAndAddMacromoleculesOnCanvas(
       editor.drawingEntitiesManager,
     );
 
-  new EditorHistory(editor).update(modelChanges, mergeWithLatestHistoryCommand);
+  EditorHistory.getInstance(editor).update(
+    modelChanges,
+    mergeWithLatestHistoryCommand,
+  );
   editor.renderersContainer.update(modelChanges);
 }

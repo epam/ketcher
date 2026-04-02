@@ -81,6 +81,21 @@ export class RenderersManager extends RenderersManagerBase {
   public moveDrawingEntity(drawingEntity: DrawingEntity) {
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.moveSelection();
+
+    if (drawingEntity instanceof Atom) {
+      drawingEntity.bonds.forEach((bond) => {
+        if (!(bond instanceof Bond)) {
+          return;
+        }
+
+        bond.renderer?.move();
+
+        const connectedAtom =
+          bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom;
+        connectedAtom.renderer?.move();
+      });
+    }
+
     drawingEntity.baseRenderer.drawSelection();
   }
 
@@ -451,7 +466,7 @@ export class RenderersManager extends RenderersManagerBase {
     const viewModel = editor.viewModel;
     const canvas = ZoomTool.instance?.canvas;
 
-    if (!canvas || !canvas.selectAll) {
+    if (!canvas?.selectAll) {
       return;
     }
 

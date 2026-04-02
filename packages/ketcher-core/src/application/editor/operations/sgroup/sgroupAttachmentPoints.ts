@@ -1,4 +1,4 @@
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -10,7 +10,7 @@ type Data = {
 };
 
 export class SGroupAttachmentPointAdd extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(
@@ -53,7 +53,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
 }
 
 export class SGroupAttachmentPointRemove extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
     super(OperationType.S_GROUP_ATTACHMENT_POINT_REMOVE, 4);

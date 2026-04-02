@@ -1,4 +1,4 @@
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { ImageReferenceName } from 'domain/entities/image';
 import { Vec2 } from 'domain/entities/vec2';
 import { ReStruct } from 'application/render';

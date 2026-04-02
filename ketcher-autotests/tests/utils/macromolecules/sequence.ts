@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { moveMouseAway } from '@utils';
+import { moveMouseAway } from '../moveMouseAway';
 
 export async function selectSequenceRangeInEditMode(
   page: Page,

@@ -20,7 +20,7 @@ const useDelete = () => {
     async ({ props }: Params) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const restruct = editor.render.ctab;
-      const pointsToDelete = props?.rgroupAttachmentPoints || [];
+      const pointsToDelete = props?.rgroupAttachmentPoints ?? [];
 
       const action = pointsToDelete.reduce((previousAction, currentPoint) => {
         const currentAction = fromRGroupAttachmentPointDeletion(

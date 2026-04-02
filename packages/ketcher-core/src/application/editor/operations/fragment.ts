@@ -17,7 +17,7 @@
 
 import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { Fragment } from 'domain/entities/fragment';
 import { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
@@ -26,7 +26,7 @@ import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {
   frid: any;
-  properties?: Array<StructProperty>;
+  readonly properties?: Array<StructProperty>;
 
   constructor(fragmentId?: any, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
@@ -46,7 +46,8 @@ class FragmentAdd extends BaseOperation {
       struct.frags.set(this.frid, frag);
     }
 
-    restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add restruct.notifyFragmentAdded
+    restruct.frags.set(this.frid, new ReFrag(frag));
+    restruct.markItem('frags', this.frid, 1); // notifyFragmentAdded
     restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag());
   }
 
@@ -56,8 +57,8 @@ class FragmentAdd extends BaseOperation {
 }
 
 class FragmentSetProperties extends BaseOperation {
-  frid: any;
-  properties?: Array<StructProperty>;
+  readonly frid: any;
+  readonly properties?: Array<StructProperty>;
 
   constructor(fragmentId: any, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_SET_PROPERTIES);
@@ -84,7 +85,7 @@ class FragmentSetProperties extends BaseOperation {
 }
 
 class FragmentDelete extends BaseOperation {
-  frid: any;
+  readonly frid: any;
 
   constructor(fragmentId: any) {
     super(OperationType.FRAGMENT_DELETE, 100);
@@ -99,7 +100,8 @@ class FragmentDelete extends BaseOperation {
 
     BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1);
     restruct.frags.delete(this.frid);
-    struct.frags.delete(this.frid); // TODO add restruct.notifyFragmentRemoved
+    restruct.markItemRemoved(); // notifyFragmentRemoved
+    struct.frags.delete(this.frid);
 
     const enhancedFalg = restruct.enhancedFlags.get(this.frid);
     if (!enhancedFalg) return;

@@ -11,8 +11,8 @@ import {
   clickOnCanvas,
   undoByKeyboard,
   redoByKeyboard,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   dragTo,
 } from '@utils';
 import {
@@ -256,7 +256,7 @@ test.describe('Undo/Redo Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -759,7 +759,7 @@ test.describe('Undo/Redo Actions', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
       await undoByKeyboard(page);
     }
@@ -768,7 +768,7 @@ test.describe('Undo/Redo Actions', () => {
       await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 

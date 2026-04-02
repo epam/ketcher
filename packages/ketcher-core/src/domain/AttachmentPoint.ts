@@ -72,7 +72,7 @@ export class AttachmentPoint {
       new DOMRect(0, 0, 0, 0);
     this.attachmentPointName = constructorParams.attachmentPointName;
     this.centerOfMonomer =
-      constructorParams.monomer.renderer?.center || new Vec2(0, 0, 0);
+      constructorParams.monomer.renderer?.center ?? new Vec2(0, 0, 0);
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
     this.initialAngle = constructorParams.angle;

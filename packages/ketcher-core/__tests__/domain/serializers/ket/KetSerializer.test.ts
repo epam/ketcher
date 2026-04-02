@@ -47,8 +47,8 @@ const ket = new KetSerializer();
 
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
-  // eslint-disable-next-line no-new
-  new CoreEditor({
+  // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
+  const _editor = new CoreEditor({
     canvas,
     theme: {},
     renderersContainer: createRenderersManager(),
@@ -84,7 +84,7 @@ describe('deserialize (ToStruct)', () => {
   it('rxnToStruct', () => {
     const spy = jest.spyOn(rxnToStruct, 'rxnToStruct');
     ket.deserialize(rxnKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.rxnArrows).toBeDefined();
     expect(
       spy.mock.results[0].value.rxnArrows.get(0) instanceof RxnArrow,
@@ -102,7 +102,7 @@ describe('deserialize (ToStruct)', () => {
   it('simpleObjectToStruct', () => {
     const spy = jest.spyOn(simpleObjectToStruct, 'simpleObjectToStruct');
     ket.deserialize(simpleObjectKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.simpleObjects).toBeDefined();
     expect(spy.mock.results[0].value.simpleObjects.size).toEqual(1);
     expect(spy.mock.results[0].value.simpleObjects.get(0).mode).toEqual(
@@ -115,14 +115,14 @@ describe('deserialize (ToStruct)', () => {
   it('textToStruct', () => {
     const spy = jest.spyOn(textToStruct, 'textToStruct');
     ket.deserialize(textKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.texts).toBeDefined();
     expect(spy.mock.results[0].value.texts.get(0) instanceof Text).toBeTruthy();
   });
   it('moleculeToStruct', () => {
     const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct');
     ket.deserialize(moleculeKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     // atoms
     expect(spy.mock.results[0].value.atoms.get(0).label).toEqual('R#');
     expect(spy.mock.results[1].value.atoms.get(2).charge).toEqual(5);
@@ -164,7 +164,7 @@ describe('deserialize (ToStruct)', () => {
   it('rgroupToStruct', () => {
     const spy = jest.spyOn(rgroupToStruct, 'rgroupToStruct');
     ket.deserialize(moleculeRgroupKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value).toBeTruthy();
     expect(spy.mock.results[0].value.atoms.size).toEqual(4);
     expect(spy.mock.results[0].value.bonds.size).toEqual(3);
@@ -176,7 +176,7 @@ describe('deserialize (ToStruct)', () => {
   it('validation function', () => {
     const spy = jest.spyOn(validate, 'validate');
     ket.deserialize(preparedKet);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value).toBeTruthy();
     expect(() => ket.deserialize(errorKet)).toThrow(
       'Cannot deserialize input JSON.',
@@ -187,8 +187,8 @@ describe('deserialize (ToStruct)', () => {
 
 describe('serialize (ToKet)', () => {
   const canvas = createPolymerEditorCanvas();
-  // eslint-disable-next-line no-new
-  new CoreEditor({
+  // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
+  const _editor = new CoreEditor({
     canvas,
     theme: {},
     renderersContainer: createRenderersManager(),
@@ -232,7 +232,7 @@ describe('serialize (ToKet)', () => {
     const spy = jest.spyOn(moleculeToKet, 'moleculeToKet');
     ket.serialize(moleculeContentStruct);
     // atoms
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value.atoms[0].type).toEqual('rg-label');
     expect(spy.mock.results[1].value.atoms[2].charge).toEqual(5);
     expect(
@@ -270,7 +270,7 @@ describe('serialize (ToKet)', () => {
   it('rgroupToKet', () => {
     const spy = jest.spyOn(rgroupToKet, 'rgroupToKet');
     const result = JSON.parse(ket.serialize(contentRgroupStruct)).rg14;
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(result).toBeTruthy();
     expect(result.atoms.length).toEqual(4);
     expect(result.bonds.length).toEqual(3);
@@ -282,8 +282,8 @@ describe('serialize (ToKet)', () => {
     const result = JSON.parse(ket.serialize(prepareStruct));
     const plus = result.root.nodes.filter((item) => item.type === 'plus');
     const arrow = result.root.nodes.filter((item) => item.type === 'arrow');
-    expect(spyArrow).toBeCalled();
-    expect(spyPlus).toBeCalled();
+    expect(spyArrow).toHaveBeenCalled();
+    expect(spyPlus).toHaveBeenCalled();
     expect(plus.length).toEqual(1);
     expect(arrow.length).toEqual(1);
     expect(arrow[0].data.mode).toEqual('open-angle');
@@ -291,7 +291,7 @@ describe('serialize (ToKet)', () => {
   it('prepareStructForKet', () => {
     const spy = jest.spyOn(prepareStructForKet, 'prepareStructForKet');
     ket.serialize(prepareStruct);
-    expect(spy).toBeCalled();
+    expect(spy).toHaveBeenCalled();
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'molecule')
         .length,

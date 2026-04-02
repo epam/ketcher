@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -99,234 +100,459 @@
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"1234567890 1234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":21,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"abcde FGHIJKLMNOP\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":17,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"~!@#$%^&*()_-+=? \\\\/\\\"'`:;\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":24,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"WWWWWWWW WWW\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":12,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"123456789012345678901234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":0,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"1234567890 1234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":21,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"abcde FGHIJKLMNOP\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":17,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"~!@#$%^&*()_-+=? \\\\/\\\"'`:;...\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":27,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 26.94126438983362,
-                        "y": 2.9994504887340625,
-                        "z": 0
+                "boundingBox": {
+                    "x": 26.94126438983362,
+                    "y": 2.9994504887340625,
+                    "width": 5.436451339721678,
+                    "height": 2.960526180267334
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "1234567890 1234567890",
+                                "bold": true
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": 26.94126438983362,
-                            "y": 2.9994504887340625,
-                            "z": 0
-                        },
-                        {
-                            "x": 26.94126438983362,
-                            "y": 0.03892430846672834,
-                            "z": 0
-                        },
-                        {
-                            "x": 32.3777157295553,
-                            "y": 0.03892430846672834,
-                            "z": 0
-                        },
-                        {
-                            "x": 32.3777157295553,
-                            "y": 2.9994504887340625,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": "abcde FGHIJKLMNOP",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "~!@#$%^&*()_-+=? \\/\"'`:;",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "WWWWWWWW WWW",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "123456789012345678901234567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": ""
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "1234567890 1234567890",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "abcde FGHIJKLMNOP",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "~!@#$%^&*()_-+=? \\/\"'`:;...",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"ABCDE FGHIJKLMNOPQRSTUVWXYZ123\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"4567890 12345\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":13,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"67890abcdefghijklmnopqrstuvwxy\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":6,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"abcdefghijklmnopqrstuvwxyabcde\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"fghi\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":4,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":0,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDE FGHIJKLMNOPQRSTUVWXYZ123\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"4567890 12345\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":13,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"67890abcdefghijklmnopqrstuvwxy\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":6,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"abcdefghijklmnopqrstuvwxyabcde\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"fghi\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":4,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 16.972465009779242,
-                        "y": 5.159451593816408,
-                        "z": 0
+                "boundingBox": {
+                    "x": 16.972465009779242,
+                    "y": 5.159451593816408,
+                    "width": 6.550376892089844,
+                    "height": 4.934210300445557
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDE FGHIJKLMNOPQRSTUVWXYZ123",
+                                "bold": true
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": 16.972465009779242,
-                            "y": 5.159451593816408,
-                            "z": 0
-                        },
-                        {
-                            "x": 16.972465009779242,
-                            "y": 0.22524129337085164,
-                            "z": 0
-                        },
-                        {
-                            "x": 23.522841901869086,
-                            "y": 0.22524129337085164,
-                            "z": 0
-                        },
-                        {
-                            "x": 23.522841901869086,
-                            "y": 5.159451593816408,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": "4567890 12345",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "67890abcdefghijklmnopqrstuvwxy",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "abcdefghijklmnopqrstuvwxyabcde",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "fghi",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": ""
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDE FGHIJKLMNOPQRSTUVWXYZ123",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "4567890 12345",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "67890abcdefghijklmnopqrstuvwxy",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "567890",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "abcdefghijklmnopqrstuvwxyabcde",
+                                "italic": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "fghi",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"12345 789 abcd EFGH ~!@#$% &*-\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":0,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"12345 789 abcd EFGH ~!@#$% &*-\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 7.40237602471181,
-                        "y": 7.28702966776876,
-                        "z": 0
+                "boundingBox": {
+                    "x": 7.40237602471181,
+                    "y": 7.28702966776876,
+                    "width": 5.314355087280273,
+                    "height": 0.9868420600891117
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "12345 789 abcd EFGH ~!@#$% &*-",
+                                "bold": true
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": 7.40237602471181,
-                            "y": 7.28702966776876,
-                            "z": 0
-                        },
-                        {
-                            "x": 7.40237602471181,
-                            "y": 6.300187607679648,
-                            "z": 0
-                        },
-                        {
-                            "x": 12.716731111992083,
-                            "y": 6.300187607679648,
-                            "z": 0
-                        },
-                        {
-                            "x": 12.716731111992083,
-                            "y": 7.28702966776876,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": ""
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "12345 789 abcd EFGH ~!@#$% &*-",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"ABCDE FGHIJKLMNOPQRSTUVWXYZ123\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"4567890 12345\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":13,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"67890abcdefghijklmnopqrstuvwxy\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDEFG\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":7,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"HIJKLMNOPQRSTUVWXYZ1234 567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"~!@#$%^&*() _-+=?.,{}[]|\\\\/\\\"'`:\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\";<>abc \",\"inlineStyleRanges\":[{\"offset\":0,\"length\":7,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":0,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"defghi...\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":9,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 7.40237602471181,
-                        "y": -3.448128364870991,
-                        "z": 0
+                "boundingBox": {
+                    "x": 7.40237602471181,
+                    "y": -3.448128364870991,
+                    "width": 6.459968566894531,
+                    "height": 2.960526180267334
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDE FGHIJKLMNOPQRSTUVWXYZ123",
+                                "bold": true
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": 7.40237602471181,
-                            "y": -3.448128364870991,
-                            "z": 0
-                        },
-                        {
-                            "x": 7.40237602471181,
-                            "y": -6.408654545138325,
-                            "z": 0
-                        },
-                        {
-                            "x": 13.862344591606341,
-                            "y": -6.408654545138325,
-                            "z": 0
-                        },
-                        {
-                            "x": 13.862344591606341,
-                            "y": -3.448128364870991,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": "4567890 12345",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "67890abcdefghijklmnopqrstuvwxy",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDEFG",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "HIJKLMNOPQRSTUVWXYZ1234 567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "~!@#$%^&*() _-+=?.,{}[]|\\/\"'`:",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": ";<>abc ",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": ""
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "defghi...",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"123456789012345678901234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDefghijklmnopqrstuvwxyzabcd\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"EFGHIJKLMNOPQRSTUVWXYZabcdefgh\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"123456789012345678901234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"123456789012345678901234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDefghijklmnopqrstuvwxyzabcd\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"EFGHIJKLMNOPQRSTUVWXYZabcdefgh\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"123456789012345678901234567890\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"ABCDefghijklmnopqrstuvwxyza...\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": -5.395059116806929,
-                        "y": -6.96590517211888,
-                        "z": 0
+                "boundingBox": {
+                    "x": -5.395059116806929,
+                    "y": -6.96590517211888,
+                    "width": 6.3168174743652346,
+                    "height": 2.9605261802673333
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "123456789012345678901234567890",
+                                "bold": true
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": -5.395059116806929,
-                            "y": -6.96590517211888,
-                            "z": 0
-                        },
-                        {
-                            "x": -5.395059116806929,
-                            "y": -9.926431352386214,
-                            "z": 0
-                        },
-                        {
-                            "x": 0.9217583575583053,
-                            "y": -9.926431352386214,
-                            "z": 0
-                        },
-                        {
-                            "x": 0.9217583575583053,
-                            "y": -6.96590517211888,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDefghijklmnopqrstuvwxyzabcd",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "EFGHIJKLMNOPQRSTUVWXYZabcdefgh",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "123456789012345678901234567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "123456789012345678901234567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDefghijklmnopqrstuvwxyzabcd",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "EFGHIJKLMNOPQRSTUVWXYZabcdefgh",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "123456789012345678901234567890",
+                                "bold": true
+                            }
+                        ]
+                    },
+                    {
+                        "parts": [
+                            {
+                                "text": "ABCDefghijklmnopqrstuvwxyza...",
+                                "bold": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":0,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}},{\"text\":\"12345 789 abcd EFGH ~!@#$% &*-\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"ITALIC\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 16.016919238937646,
-                        "y": -20.423168261361187,
-                        "z": 0
+                "boundingBox": {
+                    "x": 16.016919238937646,
+                    "y": -20.423168261361187,
+                    "width": 5.237746810913087,
+                    "height": 0.6578947067260756
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": ""
+                            }
+                        ]
                     },
-                    "pos": [
-                        {
-                            "x": 16.016919238937646,
-                            "y": -20.423168261361187,
-                            "z": 0
-                        },
-                        {
-                            "x": 16.016919238937646,
-                            "y": -21.081062968087263,
-                            "z": 0
-                        },
-                        {
-                            "x": 21.254666049850734,
-                            "y": -21.081062968087263,
-                            "z": 0
-                        },
-                        {
-                            "x": 21.254666049850734,
-                            "y": -20.423168261361187,
-                            "z": 0
-                        }
-                    ]
-                }
+                    {
+                        "parts": [
+                            {
+                                "text": "12345 789 abcd EFGH ~!@#$% &*-",
+                                "italic": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "text",
-                "data": {
-                    "content": "{\"blocks\":[{\"text\":\"12345 789 abcd EFGH ~!@#$% &*-\",\"inlineStyleRanges\":[{\"offset\":0,\"length\":30,\"style\":\"BOLD\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
-                    "position": {
-                        "x": 4.7734764537680565,
-                        "y": -20.783169001851793,
-                        "z": 0
-                    },
-                    "pos": [
-                        {
-                            "x": 4.7734764537680565,
-                            "y": -20.783169001851793,
-                            "z": 0
-                        },
-                        {
-                            "x": 4.7734764537680565,
-                            "y": -21.11211635521483,
-                            "z": 0
-                        },
-                        {
-                            "x": 10.087831541048331,
-                            "y": -21.11211635521483,
-                            "z": 0
-                        },
-                        {
-                            "x": 10.087831541048331,
-                            "y": -20.783169001851793,
-                            "z": 0
-                        }
-                    ]
-                }
+                "boundingBox": {
+                    "x": 4.7734764537680565,
+                    "y": -20.783169001851793,
+                    "width": 5.3143550872802745,
+                    "height": 0.3289473533630378
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "12345 789 abcd EFGH ~!@#$% &*-",
+                                "bold": true
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 "type": "multi-tailed-arrow",

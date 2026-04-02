@@ -90,10 +90,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE || '',
-    indigoVersion: process.env.INDIGO_VERSION || '',
-    indigoMachine: process.env.INDIGO_MACHINE || '',
-    version: process.env.VERSION || '',
+    buildDate: process.env.BUILD_DATE ?? '',
+    indigoVersion: process.env.INDIGO_VERSION ?? '',
+    indigoMachine: process.env.INDIGO_MACHINE ?? '',
+    version: process.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };
@@ -140,6 +140,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
         monomersLibraryReplace: action.payload.monomersLibraryReplace,
       });
+
+      editor.initializeMonomersLibraryFromKetcher(
+        action.payload.monomersLibraryUpdate,
+        action.payload.monomersLibraryReplace,
+      );
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

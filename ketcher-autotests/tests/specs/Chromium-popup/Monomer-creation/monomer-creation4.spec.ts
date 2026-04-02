@@ -74,7 +74,7 @@ test(`1. Verify that right clicking on a potential LGA on canvas, shows an optio
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
 
@@ -115,7 +115,7 @@ test(`2. Check that potential LGA is every atom that has one and only one simple
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'C' });
   for (const targetAtom of await targetAtoms.all()) {
@@ -159,7 +159,7 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 260, page);
+  await dragMouseTo(page, 600, 260);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'C' });
   for (const targetAtom of await targetAtoms.all()) {
@@ -201,7 +201,7 @@ test(`4. Verify that both potential AAs and potential LGAs are marked on hover o
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(600, 260, page);
+  await dragMouseTo(page, 600, 260);
 
   const atoms = ['N', 'P', 'C', 'S'];
   for (const atom of atoms) {
@@ -243,7 +243,7 @@ test(`5. Check that after the option "Mark as leaving group" is clicked`, async 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 260, page);
+  await dragMouseTo(page, 500, 260);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'C', atomId: 1 });
   await ContextMenu(page, targetAtom).click(
@@ -279,7 +279,7 @@ test(`6. Check that right clicking on a potential AA on canvas, shows an option 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
 
@@ -316,7 +316,7 @@ test(`7. Check that right clicking on a non potential AA on canvas, not shows an
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
@@ -356,7 +356,7 @@ test(`8. Check that potential AA is every atom that is connected to a potential 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(500, 250, page);
+  await dragMouseTo(page, 500, 250);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   for (const targetAtom of await targetAtoms.all()) {
@@ -397,7 +397,7 @@ test(`9. Check that after the option "Mark as connection point" is clicked, an a
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 350, page);
+  await dragMouseTo(page, 550, 350);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   for (const targetAtom of await targetAtoms.all()) {
@@ -443,7 +443,7 @@ test(`10. Check that after the option ""Mark as connection point"" is clicked, a
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 350, page);
+  await dragMouseTo(page, 550, 350);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   await ContextMenu(page, targetAtoms.nth(0)).click(
@@ -493,7 +493,7 @@ test(`11. Check that if the potential AA is not attached to any potential LGAs, 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 250, page);
+  await dragMouseTo(page, 550, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -530,7 +530,7 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 250, page);
+  await dragMouseTo(page, 550, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -577,7 +577,7 @@ test(`13. Check that clicking on "Remove assignment", deleted that AP - the LGA 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 250, page);
+  await dragMouseTo(page, 550, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -621,7 +621,7 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(550, 250, page);
+  await dragMouseTo(page, 550, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -667,7 +667,7 @@ test(`15. Check that when editing the LGA, the user should see all possible LGAs
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -716,7 +716,7 @@ test(`16. Check that hovering over any element of the AP (AA, LGA, Rn) highlight
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -789,7 +789,7 @@ test(`18. Check that from the attributes panel, the user can delete an already s
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -834,7 +834,7 @@ test(`19. Verify that hovering an AP on the attributes panel highlights the corr
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'P' }).first();
   await ContextMenu(page, targetAtom).click(
@@ -954,7 +954,7 @@ test.skip(`24. Check that when clicking on Remove explicit hydrogens, hydrogens 
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
 
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -986,7 +986,7 @@ test(`25. Verify that Copy button copies the selected structure fragment and Pas
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
   await MoleculesTopToolbar(page).copy();
@@ -1020,7 +1020,7 @@ test(`26. Verify that Cut button removes selected structure and stores it in the
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
   await MoleculesTopToolbar(page).cut();
@@ -1053,7 +1053,7 @@ test(`27. Verify that Aromatize button converts selected rings into aromatic for
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).aromatize();
   await takeEditorScreenshot(page);
@@ -1087,7 +1087,7 @@ test(`28. Verify that Calculate CIP button assigns correct R/S configuration lab
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).calculateCIP();
   await takeEditorScreenshot(page);
@@ -1116,7 +1116,7 @@ test(`29. Verify that Check structure button performs validation and not shows e
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).checkStructure();
   await takeEditorScreenshot(page, {
@@ -1148,7 +1148,7 @@ test(`30. Verify that Calculated values button displays modal with molecular pro
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).calculatedValues();
   await takeEditorScreenshot(page);
@@ -1180,7 +1180,7 @@ test(`31. Verify that Add explicit hydrogens button adds hydrogens to all eligib
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
   await takeEditorScreenshot(page);
@@ -1212,7 +1212,7 @@ test(`32. Verify that multiple toolbar actions can be used consecutively without
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(450, 250, page);
+  await dragMouseTo(page, 450, 250);
   await takeEditorScreenshot(page);
   await IndigoFunctionsToolbar(page).aromatize();
   await takeEditorScreenshot(page);

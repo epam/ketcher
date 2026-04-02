@@ -128,7 +128,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInRectangle = referencePoints.find(
       (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1,
     );
@@ -307,7 +307,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
     );

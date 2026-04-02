@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacroFileType,
-  delay,
   StructureFormat,
   waitForSpinnerFinishedWork,
 } from '@utils';
@@ -127,7 +126,7 @@ export async function openImageAndAddToCanvas(
   const debugDelay = 0.15;
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await delay(debugDelay);
+  await page.waitForTimeout(debugDelay * 1000);
   await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
@@ -199,7 +198,7 @@ async function setupStructureFormatComboboxes(
   page: Page,
   structureFormat: StructureFormat,
 ) {
-  let structureType = MacroFileType.KetFormat;
+  let structureType;
   let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
   let peptideType: PeptideLetterCodeType = PeptideLetterCodeType.oneLetterCode;
 
@@ -332,18 +331,6 @@ export async function saveToFile(filename: string, data: string) {
     });
     return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
-}
-
-export async function openPasteFromClipboard(
-  page: Page,
-  fillStructure: string,
-) {
-  await CommonTopLeftToolbar(page).openFile();
-  await OpenStructureDialog(page).pasteFromClipboard();
-  await PasteFromClipboardDialog(page).fillTextArea(fillStructure);
-  // The 'Add to Canvas' button step is removed.
-  // If you need to use this function in another context and include the button press, you can do so separately.
-  // await waitForLoad(page);
 }
 
 export async function copyContentToClipboard(page: Page, content: string) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { MonomerCreationState } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';

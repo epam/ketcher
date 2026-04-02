@@ -1,20 +1,21 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasMacro,
   MonomerType,
-  ZoomInByKeyboard,
+  zoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
   takeElementScreenshot,
   getCoordinatesOfTheMiddleOfTheCanvas,
   dragMouseTo,
+  SymbolType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -30,8 +31,6 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -40,21 +39,12 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
 });
-
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {
@@ -590,7 +580,7 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     MacroFileType.HELM,
     'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await bondTwoMonomers(
@@ -639,7 +629,7 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     MacroFileType.HELM,
     'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await bondTwoMonomers(
@@ -960,17 +950,31 @@ test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', asyn
     `5'-ACGp-3'
 5'-UGCp-3'`,
   );
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 47 }),
-    {
-      padding: 195,
-    },
-  );
+  const baseGLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'G',
+    hydrogenConnectionNumber: 1,
+  });
+  await CommonLeftToolbar(page).handTool();
+  await baseGLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGLocator, {
+    padding: 195,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 47 }), {
+
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseGSymbolLocator, {
     padding: 55,
   });
 });
@@ -990,23 +994,30 @@ test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/U
     `5'-AUGCA-3'
 5'-UGC-3'`,
   );
+  const baseCLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'C',
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
   await CommonLeftToolbar(page).handTool();
-  await getMonomerLocator(page, { monomerId: 66 }).hover({
+  await baseCLocator.hover({
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 66 }),
-    {
-      padding: 255,
-    },
-  );
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseCLocator, {
+    padding: 255,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 65 }), {
+  const baseCSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'C',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseCSymbolLocator, {
     padding: 55,
   });
 });
@@ -1026,17 +1037,31 @@ test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG
     `5'-ACGp-3'
 5'-ACGp-3'`,
   );
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 50 }),
-    {
-      padding: 195,
-    },
-  );
+  const baseGLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'G',
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
+  await CommonLeftToolbar(page).handTool();
+  await baseGLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGLocator, {
+    padding: 240,
+  });
+
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 48 }), {
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseGSymbolLocator, {
     padding: 55,
   });
 });
@@ -1058,24 +1083,30 @@ test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/
 5'-ACGp-3'
 5'-UGC-3'`,
   );
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 108 }),
-    {
-      padding: 310,
-    },
-  );
+  const phosphatePLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+    monomerAlias: 'P',
+  }).nth(8);
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 300,
+  });
+
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
+  const phosphatePSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'P',
+    dataSymbolType: SymbolType.Phosphate,
+  });
+  await CommonLeftToolbar(page).areaSelectionTool();
   await CommonLeftToolbar(page).handTool();
-  await getSymbolLocator(page, { symbolId: 92 }).hover({
+  await phosphatePSymbolLocator.hover({
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 106 }), {
-    padding: 135,
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, phosphatePSymbolLocator, {
+    padding: 150,
   });
 });
 
@@ -1095,24 +1126,30 @@ test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', 
 5'-UGCp-3'
 5'-ACGp-3'`,
   );
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 78 }),
-    {
-      padding: 310,
-    },
-  );
+  const sugarRLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Sugar,
+    monomerAlias: 'R',
+  }).nth(4);
+  await takeElementScreenshot(page, sugarRLocator, {
+    padding: 210,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: false,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 0,
+  }).nth(1);
   await CommonLeftToolbar(page).handTool();
-  await getSymbolLocator(page, { symbolId: 76 }).hover({
+  await baseGSymbolLocator.hover({
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 76 }), {
-    padding: 130,
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGSymbolLocator, {
+    padding: 150,
   });
 });
 
@@ -1131,17 +1168,30 @@ test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/T
     `5'-AATm-3'
 5'-TmTm-3'`,
   );
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 35 }),
-    {
-      padding: 135,
-    },
-  );
+  const baseTLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'T',
+    hydrogenConnectionNumber: 1,
+  }).nth(0);
+  await CommonLeftToolbar(page).handTool();
+  await baseTLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseTLocator, {
+    padding: 135,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 34 }), {
+  const baseTSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'T',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
+  await takeElementScreenshot(page, baseTSymbolLocator, {
     padding: 55,
   });
 });
@@ -1161,23 +1211,29 @@ test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () =
     `5'-GAGp-3'
 5'-Cp-3'`,
   );
+  const phosphatePLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+    monomerAlias: 'P',
+  }).nth(3);
   await CommonLeftToolbar(page).handTool();
-  await getMonomerLocator(page, { monomerId: 27 }).hover({
+  await phosphatePLocator.hover({
     force: true,
   });
   const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await dragMouseTo(locators.x, locators.y, page);
-  await takeElementScreenshot(
-    page,
-    getMonomerLocator(page, { monomerId: 27 }),
-    {
-      padding: 195,
-    },
-  );
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 195,
+  });
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 32 }), {
+  const baseCSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'C',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseCSymbolLocator, {
     padding: 55,
   });
 });

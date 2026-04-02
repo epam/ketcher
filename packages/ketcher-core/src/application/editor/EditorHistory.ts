@@ -27,16 +27,27 @@ export class EditorHistory {
   historyPointer = 0;
   editor!: CoreEditorBase;
 
-  private static _instance;
+  private static _instance: object | null = null;
+
   constructor(editor: CoreEditorBase) {
-    if (EditorHistory._instance) {
-      return EditorHistory._instance;
-    }
     this.editor = editor;
     this.historyPointer = 0;
+  }
 
-    EditorHistory._instance = this;
-    return this;
+  static getInstance(editor: CoreEditorBase): EditorHistory {
+    const instance = EditorHistory._instance;
+    if (EditorHistory.isInstance(instance)) {
+      return instance;
+    }
+
+    const createdInstance = new EditorHistory(editor);
+    EditorHistory._instance = createdInstance;
+
+    return createdInstance;
+  }
+
+  private static isInstance(value: object | null): value is EditorHistory {
+    return value instanceof EditorHistory;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {

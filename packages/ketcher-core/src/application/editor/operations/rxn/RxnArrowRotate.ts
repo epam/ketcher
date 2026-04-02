@@ -2,7 +2,7 @@ import utils from 'application/editor/shared/utils';
 import { ReStruct } from 'application/render';
 import { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from '../OperationType';
-import Base from '../base';
+import Base from '../BaseOperation';
 
 interface RxnArrowRotateData {
   id: number;
@@ -12,7 +12,7 @@ interface RxnArrowRotateData {
 }
 
 export class RxnArrowRotate extends Base {
-  data: RxnArrowRotateData;
+  readonly data: RxnArrowRotateData;
 
   constructor(id: number, angle: number, center: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_ROTATE);

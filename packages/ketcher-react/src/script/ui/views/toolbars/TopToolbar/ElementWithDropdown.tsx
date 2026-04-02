@@ -103,7 +103,7 @@ const MenuItemWithDropdown = ({
 
   return (
     <ElementAndDropdown>
-      {topElement && topElement}
+      {topElement}
       {dropDownElements.filter((element) => !element.props.isHidden).length !==
         0 && (
         <DropDownButton

@@ -13,8 +13,8 @@ import {
   waitForRender,
   selectPartOfMolecules,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
   dragTo,
@@ -116,7 +116,7 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -218,7 +218,7 @@ test.describe('Atom Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -232,7 +232,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await page.getByText('AH').click();
+    await getAtomLocator(page, { atomLabel: 'AH' }).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -269,11 +269,11 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -463,7 +463,7 @@ test.describe('Atom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
@@ -499,6 +499,23 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Default colours of atom symbols', async () => {
+    /*
+    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
+    Description:
+    "H" and "C" are #000000, black.
+    "N" is #304FF7, blue.
+    "O" is #FF0D0D, red.
+    "S" is #C99A19, yellow.
+    "P" is #FF8000, brick red.
+    "F" is #78BC42, grass green.
+    "Cl" is #1FD01F, light green.
+    "Br" is #A62929, red-brown.
+    "I" is #940094, purple.
+    */
+    await takeRightToolbarScreenshot(page);
+  });
 
   test('Addition element buttons to right atom panel', async () => {
     /*
@@ -593,23 +610,6 @@ test.describe('Atom Tool', () => {
     }
   });
 
-  test('Default colours of atom symbols', async () => {
-    /*
-    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
-    Description:
-    "H" and "C" are #000000, black.
-    "N" is #304FF7, blue.
-    "O" is #FF0D0D, red.
-    "S" is #C99A19, yellow.
-    "P" is #FF8000, brick red.
-    "F" is #78BC42, grass green.
-    "Cl" is #1FD01F, light green.
-    "Br" is #A62929, red-brown.
-    "I" is #940094, purple.
-    */
-    await takeRightToolbarScreenshot(page);
-  });
-
   /*
     Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
@@ -673,7 +673,7 @@ test.describe('Atom Tool', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
         force: true,
       });
-      await dragMouseTo(640, 270, page);
+      await dragMouseTo(page, 640, 270);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
     });

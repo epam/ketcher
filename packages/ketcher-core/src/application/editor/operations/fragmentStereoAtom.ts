@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
-
-// todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
   frid: any;
   aid: any;
 };
 
-// todo : merge add and delete stereo atom
-class FragmentAddStereoAtom extends BaseOperation {
-  data: Data;
+class FragmentStereoAtom extends BaseOperation {
+  readonly data: Data;
+  private readonly add: boolean;
 
-  constructor(fragmentId: any, atomId: any) {
+  constructor(fragmentId: any, atomId: any, add: boolean) {
     super(
-      OperationType.FRAGMENT_ADD_STEREO_ATOM,
-      OperationPriority.FRAGMENT_ADD_STEREO_ATOM,
+      add
+        ? OperationType.FRAGMENT_ADD_STEREO_ATOM
+        : OperationType.FRAGMENT_DELETE_STEREO_ATOM,
+      add
+        ? OperationPriority.FRAGMENT_ADD_STEREO_ATOM
+        : OperationPriority.FRAGMENT_DELETE_STEREO_ATOM,
     );
     this.data = { frid: fragmentId, aid: atomId };
+    this.add = add;
   }
 
   execute(restruct: ReStruct) {
@@ -43,43 +45,26 @@ class FragmentAddStereoAtom extends BaseOperation {
 
     const frag = restruct.molecule.frags.get(frid);
     if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, true);
-
+      frag.updateStereoAtom(restruct.molecule, aid, frid, this.add);
       BaseOperation.invalidateEnhancedFlag(restruct, frid);
     }
   }
 
   invert() {
-    return new FragmentDeleteStereoAtom(this.data.frid, this.data.aid);
+    return new FragmentStereoAtom(this.data.frid, this.data.aid, !this.add);
   }
 }
 
-class FragmentDeleteStereoAtom extends BaseOperation {
-  data: Data;
-
+class FragmentAddStereoAtom extends FragmentStereoAtom {
   constructor(fragmentId: any, atomId: any) {
-    super(
-      OperationType.FRAGMENT_DELETE_STEREO_ATOM,
-      OperationPriority.FRAGMENT_DELETE_STEREO_ATOM,
-    );
-    this.data = { frid: fragmentId, aid: atomId };
-  }
-
-  execute(restruct: ReStruct) {
-    const { aid, frid } = this.data;
-
-    const frag = restruct.molecule.frags.get(frid);
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, false);
-
-      BaseOperation.invalidateEnhancedFlag(restruct, frid);
-    }
-  }
-
-  invert() {
-    const { aid, frid } = this.data;
-    return new FragmentAddStereoAtom(frid, aid);
+    super(fragmentId, atomId, true);
   }
 }
 
-export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };
+class FragmentDeleteStereoAtom extends FragmentStereoAtom {
+  constructor(fragmentId: any, atomId: any) {
+    super(fragmentId, atomId, false);
+  }
+}
+
+export { FragmentStereoAtom, FragmentAddStereoAtom, FragmentDeleteStereoAtom };

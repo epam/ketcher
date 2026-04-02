@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
@@ -10,10 +11,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
-  resetZoomLevelToDefault,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
@@ -59,20 +58,14 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 test.describe('Image files', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Verify that single image of SVG format can be saved to KET file and load', async () => {
@@ -340,6 +333,7 @@ test.describe('Image files', () => {
       MoleculesFileFormatType.KetFormat,
     );
     await takeEditorScreenshot(page);
+    await OpenStructureDialog(page).closeWindow();
   });
 
   const fileNames = [
@@ -486,7 +480,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
   });
 
@@ -500,7 +494,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(600, 400, page);
+    await dragMouseTo(page, 600, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -516,10 +510,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 100, page);
+    await dragMouseTo(page, 900, 100);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(800, 100, page);
+    await dragMouseTo(page, 800, 100);
     await takeEditorScreenshot(page);
   });
 
@@ -534,7 +528,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(600, 300, page);
+    await dragMouseTo(page, 600, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -563,7 +557,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -592,7 +586,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -620,7 +614,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -863,7 +857,7 @@ test.describe('Image files', () => {
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(100, 100);
-    await dragMouseTo(800, 800, page);
+    await dragMouseTo(page, 800, 800);
     await takeEditorScreenshot(page);
   });
 
@@ -964,6 +958,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
     });
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level', async () => {
@@ -998,7 +993,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1027,7 +1022,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1056,7 +1051,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1089,7 +1084,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1121,7 +1116,7 @@ test.describe('Image files', () => {
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1153,7 +1148,7 @@ test.describe('Image files', () => {
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
-    await dragMouseTo(500, 500, page);
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1386,7 +1381,7 @@ test.describe('Image files', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
       force: true,
     });
-    await dragMouseTo(400, 300, page);
+    await dragMouseTo(page, 400, 300);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).cleanUp();
@@ -2109,6 +2104,7 @@ test.describe('Image files', () => {
           page,
           SaveStructureDialog(page).saveStructureTextarea,
         );
+        await SaveStructureDialog(page).closeWindow();
       }
     });
   }
@@ -2483,10 +2479,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2502,10 +2498,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2521,10 +2517,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2540,10 +2536,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2559,10 +2555,10 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2578,10 +2574,10 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(900, 300, page);
+    await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(700, 300, page);
+    await dragMouseTo(page, 700, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2657,6 +2653,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements', async () => {
@@ -2688,6 +2685,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images are displayed on preview and can be saved to SVG files with correct positions and layers', async () => {
@@ -2711,6 +2709,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers', async () => {
@@ -2731,6 +2730,7 @@ test.describe('Image files', () => {
       page,
       SaveStructureDialog(page).saveStructureTextarea,
     );
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -2756,7 +2756,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2765,6 +2765,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
@@ -2796,7 +2797,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2805,6 +2806,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
@@ -2840,6 +2842,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after copying actions of images', async () => {
@@ -2870,6 +2873,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers after undo/redo actions of images', async () => {
@@ -2905,6 +2909,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled', async () => {
@@ -2925,6 +2930,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -2950,7 +2956,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2959,6 +2965,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
@@ -2990,7 +2997,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -2999,6 +3006,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3034,6 +3042,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
@@ -3064,6 +3073,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after undo/redo actions of images', async () => {
@@ -3099,6 +3109,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET color SVG images with elements saved to PNG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements', async () => {
@@ -3141,6 +3152,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images are displayed on preview and can be saved to SVG file with correct positions and layers', async () => {
@@ -3160,6 +3172,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers', async () => {
@@ -3176,6 +3189,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers', async () => {
@@ -3192,6 +3206,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -3212,7 +3227,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3221,6 +3236,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {
@@ -3241,7 +3257,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3250,6 +3266,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
@@ -3276,7 +3293,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3285,6 +3302,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
@@ -3311,7 +3329,7 @@ test.describe('Image files', () => {
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
-    await dragMouseTo(600, 500, page);
+    await dragMouseTo(page, 600, 500);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3320,6 +3338,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3349,6 +3368,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
@@ -3378,6 +3398,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
@@ -3403,6 +3424,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after copying actions of images', async () => {
@@ -3428,6 +3450,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images can be saved to PNG file after undo/redo actions', async () => {
@@ -3458,6 +3481,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that added by Tool PNG images can be saved to SVG file after undo/redo actions', async () => {
@@ -3488,6 +3512,7 @@ test.describe('Image files', () => {
     );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).closeWindow();
   });
 
   test('Verify that PNG images with elements from KET saved to PNG can be added by Tool as PNG image', async () => {

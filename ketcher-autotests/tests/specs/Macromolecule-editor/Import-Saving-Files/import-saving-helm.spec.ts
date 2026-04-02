@@ -1,42 +1,32 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
 } from '@utils';
-import { closeOpenStructure, pageReload } from '@utils/common/helpers';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { Library } from '@tests/pages/macromolecules/Library';
+import { pageReload } from '@utils/common/helpers';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
-async function configureInitialState(page: Page) {
-  await Library(page).switchToRNATab();
-}
-
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await configureInitialState(page);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IHELMString {
@@ -1341,7 +1331,7 @@ test.describe('Import incorrect HELM sequence: ', () => {
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
       await ErrorMessageDialog(page).close();
-      await closeOpenStructure(page);
+      await OpenStructureDialog(page).closeWindow();
 
       // Test should be skipped if related bug exists
       test.fixme(

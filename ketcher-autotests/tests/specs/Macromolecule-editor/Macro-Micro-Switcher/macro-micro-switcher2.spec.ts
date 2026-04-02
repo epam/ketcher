@@ -11,7 +11,6 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  // waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
@@ -20,7 +19,6 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   takePageScreenshot,
-  takeTopToolbarScreenshot,
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
@@ -764,7 +762,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await takeTopToolbarScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that changing the typing type to PEP switches the library tab to Peptide', async () => {
@@ -782,7 +780,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).peptides();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that changing the typing type to RNA switches the library tab to RNA', async () => {
@@ -802,7 +800,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
     await MacromoleculesTopToolbar(page).peptides();
     await MacromoleculesTopToolbar(page).rna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that changing the typing type to DNA switches the library tab to RNA', async () => {
@@ -820,7 +818,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).dna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that changing the typing type from RNA to DNA and viceversa does not affect the library tab', async () => {
@@ -839,9 +837,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).dna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
     await MacromoleculesTopToolbar(page).rna();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async () => {
@@ -865,12 +863,12 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId(`sequence-item`).first().waitFor({
       state: 'attached',
     });
-    await keyboardPressOnCanvas(page, 'Control+Alt+D');
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+P');
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+R');
-    await takePageScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
+    await takeMonomerLibraryScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
+    await takeMonomerLibraryScreenshot(page);
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Verify that switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step', async () => {
@@ -1176,25 +1174,25 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
       force: true,
     });
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
       force: true,
     });
-    await dragMouseTo(200, 300, page);
+    await dragMouseTo(page, 200, 300);
     await getArrowLocator(page, {
       arrowType: Arrows.BothEndsFilledTriangle,
     }).hover({ force: true });
-    await dragMouseTo(200, 350, page);
+    await dragMouseTo(page, 200, 350);
     await getArrowLocator(page, {
       arrowType: Arrows.UnbalancedOpenHalfAngle,
     }).hover({ force: true });
-    await dragMouseTo(200, 400, page);
+    await dragMouseTo(page, 200, 400);
     await getArrowLocator(page, {
       arrowType: Arrows.EllipticalArcFilledTriangle,
     }).hover({ force: true });
-    await dragMouseTo(200, 450, page);
+    await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
-    await dragMouseTo(200, 500, page);
+    await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1343,7 +1341,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
       force: true,
     });
-    await dragMouseTo(newX, y, page);
+    await dragMouseTo(page, newX, y);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

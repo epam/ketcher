@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import BaseOperation from 'application/editor/operations/base';
+import BaseOperation from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { ReStruct } from 'application/render';
 import type { FlipDirection } from 'application/editor/shared/utils.types';
@@ -30,7 +30,7 @@ export class FlipMonomerOperation extends BaseOperation {
   private previousValue: FlipDirection | null = null;
   private previousRotate: number | undefined;
 
-  constructor(public data: FlipMonomerData) {
+  constructor(public readonly data: FlipMonomerData) {
     super(OperationType.FLIP_MONOMER);
   }
 

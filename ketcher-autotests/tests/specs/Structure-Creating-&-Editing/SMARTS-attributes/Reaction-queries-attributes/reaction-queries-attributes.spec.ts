@@ -39,7 +39,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await CommonLeftToolbar(page).areaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
-  await dragMouseTo(x - shiftForHydrogen, y, page);
+  await dragMouseTo(page, x - shiftForHydrogen, y);
   await CommonLeftToolbar(page).areaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);

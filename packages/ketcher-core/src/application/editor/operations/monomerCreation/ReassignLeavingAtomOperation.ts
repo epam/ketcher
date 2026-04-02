@@ -1,4 +1,4 @@
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { MonomerCreationState, ReStruct } from 'application/render';
 import assert from 'assert';

@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, Locator, expect } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  resetZoomLevelToDefault,
-  waitForPageInit,
   MonomerType,
 } from '@utils';
 import {
@@ -17,8 +16,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 test.describe('Connection rules for RNAs: ', () => {
@@ -26,21 +23,14 @@ test.describe('Connection rules for RNAs: ', () => {
   test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.afterEach(async () => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   interface IMonomer {
@@ -524,7 +514,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
     await leftMonomerLocator.hover({ force: true });
 
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(page, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -539,7 +529,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(page, 600, 375);
     await moveMouseAway(page);
 
     return {

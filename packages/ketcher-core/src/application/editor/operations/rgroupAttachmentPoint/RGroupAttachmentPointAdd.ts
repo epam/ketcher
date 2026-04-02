@@ -6,7 +6,7 @@ import {
 } from 'domain/entities';
 import { RGroupAttachmentPointRemove } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
-import BaseOperation from '../base';
+import BaseOperation from '../BaseOperation';
 
 type Data = {
   atomId: number;
@@ -15,7 +15,7 @@ type Data = {
 };
 
 class RGroupAttachmentPointAdd extends BaseOperation {
-  data: Data;
+  readonly data: Data;
 
   constructor(data: Data) {
     super(

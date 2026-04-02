@@ -18,7 +18,7 @@
 import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
-import Base from '../base';
+import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReRxnArrow } from '../../../render';
 import { KetcherLogger } from 'utilities';

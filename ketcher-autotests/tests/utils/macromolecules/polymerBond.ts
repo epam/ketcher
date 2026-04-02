@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { MonomerType, moveMouseAway } from '..';
+import { moveMouseAway } from '../moveMouseAway';
+import { MonomerType } from '../types';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,

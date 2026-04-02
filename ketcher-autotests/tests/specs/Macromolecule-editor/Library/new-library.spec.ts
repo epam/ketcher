@@ -8,7 +8,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForRender } from '@utils/common/loaders';
+import { waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -34,8 +34,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/keyboard';
 import {
   FileType,
@@ -56,30 +56,22 @@ import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVa
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
   await MacromoleculesTopToolbar(page).rna();
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
   await Library(page).openRNASection(RNASection.Presets);
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('1. Verify that the header of the library changed to remove the "Library" title and move the "Hide" option to the ear instead of to the right of the title', async () => {
@@ -675,14 +667,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -718,14 +710,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

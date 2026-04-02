@@ -3,6 +3,19 @@ import { Bond } from 'domain/entities/bond';
 import type { Neighbor, Struct } from 'domain/entities/struct';
 import { StereoValidator } from 'domain/helpers';
 
+function resetStereoAtomIfNotCorrect(
+  stereoAtomsMap: Map<number, unknown>,
+  correctAtomIds: Array<number>,
+  atomId: number,
+) {
+  if (!correctAtomIds.includes(atomId)) {
+    stereoAtomsMap.set(atomId, {
+      stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+      stereoLabel: null,
+    });
+  }
+}
+
 export function getStereoAtomsMap(
   struct: Struct,
   bonds: Array<Bond>,
@@ -40,37 +53,16 @@ export function getStereoAtomsMap(
         }
         correctAtomIds.push(bond.begin);
       } else {
-        if (!correctAtomIds.includes(bond.begin)) {
-          stereoAtomsMap.set(bond.begin, {
-            stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-            stereoLabel: null,
-          });
-        }
-        if (!correctAtomIds.includes(bond.end)) {
-          stereoAtomsMap.set(bond.end, {
-            stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-            stereoLabel: null,
-          });
-        }
+        resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.begin);
+        resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.end);
       }
     }
   });
 
-  // in case the stereo band is flipped, changed or removed
-  // TODO the duplication of the code below should be fixed, mayby by function
+  // In case the stereo band is flipped, changed or removed, reset both endpoints.
   if (bond) {
-    if (!correctAtomIds.includes(bond.begin)) {
-      stereoAtomsMap.set(bond.begin, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null,
-      });
-    }
-    if (!correctAtomIds.includes(bond.end)) {
-      stereoAtomsMap.set(bond.end, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null,
-      });
-    }
+    resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.begin);
+    resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.end);
   }
 
   return stereoAtomsMap;

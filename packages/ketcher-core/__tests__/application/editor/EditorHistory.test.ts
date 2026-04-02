@@ -16,7 +16,7 @@ describe('EditorHistory', () => {
       canvas,
       renderersContainer: createRenderersManager(),
     });
-    history = new EditorHistory(editor);
+    history = EditorHistory.getInstance(editor);
   });
 
   afterEach(() => {
@@ -24,13 +24,13 @@ describe('EditorHistory', () => {
   });
 
   it('should be a singletone', () => {
-    const historyInstance2 = new EditorHistory(editor);
+    const historyInstance2 = EditorHistory.getInstance(editor);
     expect(history).toBe(historyInstance2);
   });
 
   it('should create another instance after destroy', () => {
     history.destroy();
-    const historyInstance2 = new EditorHistory(editor);
+    const historyInstance2 = EditorHistory.getInstance(editor);
     expect(history).not.toBe(historyInstance2);
   });
 

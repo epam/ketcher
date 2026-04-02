@@ -9,6 +9,7 @@ import {
   dragMouseTo,
   clickOnCanvas,
   deleteByKeyboard,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
@@ -46,7 +47,7 @@ test.describe('Hot keys', () => {
     await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
@@ -54,7 +55,7 @@ test.describe('Hot keys', () => {
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Verify move by ctrl when its a part of molecula as only atom', async ({
@@ -77,7 +78,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await takeEditorScreenshot(page);
   });
@@ -108,7 +109,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -135,7 +136,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -165,7 +166,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -175,16 +176,14 @@ test.describe('Hot keys', () => {
     page,
   }) => {
     /*
-      Test case: https://github.com/epam/ketcher/issues/4986
-      Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      Case:
-      1. Open a benzene ring with attachment points.
-      2. Select all structure.
-      3. Press Ctrl key and move structure.
-      Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      We have a bug: https://github.com/epam/ketcher/issues/6199 
-      After fixing this bug we need update screenshots.
-      */
+     * Test case: https://github.com/epam/ketcher/issues/4986
+     * Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     * Case:
+     * 1. Open a benzene ring with attachment points.
+     * 2. Select all structure.
+     * 3. Press Ctrl key and move structure.
+     * Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-ring-with-two-attachment-points.ket',
@@ -197,7 +196,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -233,7 +232,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(250, 250, page);
+    await dragMouseTo(page, 250, 250);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -261,7 +260,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(245, 245, page);
+    await dragMouseTo(page, 245, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -280,7 +279,7 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -289,7 +288,7 @@ test.describe('Hot keys', () => {
     );
     await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -308,7 +307,7 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -324,7 +323,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -343,7 +342,7 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -352,7 +351,7 @@ test.describe('Hot keys', () => {
     );
     await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -371,7 +370,7 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -387,7 +386,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -417,7 +416,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -447,7 +446,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -477,7 +476,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -508,7 +507,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await IndigoFunctionsToolbar(page).aromatize();
@@ -537,7 +536,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -567,7 +566,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -602,7 +601,7 @@ test.describe('Hot keys', () => {
       force: true,
     });
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(270, 245, page);
+    await dragMouseTo(page, 270, 245);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);

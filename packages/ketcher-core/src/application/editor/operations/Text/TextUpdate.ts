@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 
@@ -25,7 +25,7 @@ interface TextUpdateData {
 }
 
 export class TextUpdate extends BaseOperation {
-  data: TextUpdateData;
+  readonly data: TextUpdateData;
 
   constructor(id: number, content: string) {
     super(OperationType.TEXT_UPDATE);

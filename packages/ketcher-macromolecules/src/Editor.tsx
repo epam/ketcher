@@ -229,7 +229,7 @@ function Editor({
       );
     };
 
-    void initializeEditor();
+    initializeEditor().catch(() => undefined);
 
     return () => {
       isActive = false;

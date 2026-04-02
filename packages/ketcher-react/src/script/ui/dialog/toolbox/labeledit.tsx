@@ -60,8 +60,6 @@ export function serialize(lc: AtomLabelData): string {
 const LABEL_REGEX = /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i;
 const VALID_GENERIC_LABELS = new Set(['A', 'Q', 'X', 'M']);
 
-const isValidLabel = (value: string): boolean => deserialize(value) !== null;
-
 function parseCharge(chargeStr: string): number {
   let charge = Number.parseInt(chargeStr, 10);
   if (Number.isNaN(charge)) {

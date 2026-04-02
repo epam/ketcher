@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, FC } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Scale,
   Vec2,
@@ -30,16 +30,29 @@ import SGroupDataRender from './SGroupDataRender';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import {
-  AmbiguousMonomerPreview,
-  PreviewType,
-  StructRender,
-  calculateAmbiguousMonomerPreviewTop,
-} from 'components';
+import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;
+const AMBIGUOUS_MONOMER_PREVIEW_GAP = 10;
+
+function calculateAmbiguousPreviewHeight(monomersCount: number) {
+  const headingHeight = 16;
+  const monomersHeight = 35 * monomersCount;
+  return headingHeight + monomersHeight;
+}
+
+function getAmbiguousMonomerPreviewHeight(monomer: {
+  label?: string;
+  monomers?: unknown[];
+}) {
+  // "X" and "N" show fallback single line
+  const shouldHaveOneLine = monomer?.label === 'X' || monomer?.label === 'N';
+  const monomersCount = shouldHaveOneLine ? 1 : monomer?.monomers?.length ?? 1;
+  const monomersCountToUse = Math.min(5, monomersCount);
+  return calculateAmbiguousPreviewHeight(monomersCountToUse);
+}
 
 function getPanelPosition(
   clientX: number,
@@ -83,7 +96,17 @@ function getPanelPosition(
 
   return [new Vec2(x, y), new Vec2(width, height)];
 }
-interface InfoPanelProps {
+const mapStateToProps = (store: any) => ({
+  clientX: functionGroupInfoSelector(store)?.event?.clientX,
+  clientY: functionGroupInfoSelector(store)?.event?.clientY,
+  groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
+  sGroup: functionGroupInfoSelector(store)?.sGroup || null,
+  render: store.editor?.render?.ctab?.render,
+});
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+interface InfoPanelProps extends StateProps {
   clientX: number | undefined;
   clientY: number | undefined;
   render: Render;
@@ -92,7 +115,7 @@ interface InfoPanelProps {
   className?: string;
 }
 
-const InfoPanel: FC<InfoPanelProps> = (props) => {
+const InfoPanel = (props: InfoPanelProps) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
   const [molecule, setMolecule] = useState<Struct | null>(null);
   const [sGroupData, setSGroupData] = useState<string | null>(null);
@@ -138,6 +161,22 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   if (sGroup instanceof MonomerMicromolecule) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
+      const previewHeight = getAmbiguousMonomerPreviewHeight(
+        monomer.variantMonomerItem,
+      );
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      const panelPosition = CoordinateTransformation.modelToView(
+        position,
+        render,
+      );
+
+      const viewportHeight = render?.clientArea?.clientHeight ?? 0;
+      let top = panelPosition.y + AMBIGUOUS_MONOMER_PREVIEW_GAP;
+      if (viewportHeight) {
+        top = Math.min(top, viewportHeight - previewHeight);
+        top = Math.max(0, top);
+      }
+
       return (
         <AmbiguousMonomerPreview
           preview={{
@@ -146,14 +185,8 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           }}
           style={{
             position: 'absolute',
-            left: `${clientX - 50}px`,
-            top: calculateAmbiguousMonomerPreviewTop(
-              monomer.variantMonomerItem,
-            )({
-              left: clientX - 50,
-              top: clientY - 65,
-              bottom: clientY - 25,
-            }),
+            left: `${panelPosition.x}px`,
+            top: `${top}px`,
             transform: 'translate(-50%, 0)',
           }}
         />
@@ -194,9 +227,5 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
 };
 
 export default connect((store: any) => ({
-  clientX: functionGroupInfoSelector(store)?.event?.clientX,
-  clientY: functionGroupInfoSelector(store)?.event?.clientY,
-  groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
-  sGroup: functionGroupInfoSelector(store)?.sGroup || null,
-  render: store.editor?.render?.ctab?.render,
+  ...mapStateToProps(store),
 }))(InfoPanel);

@@ -17,7 +17,10 @@ import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
 import { preview } from './constants';
 import { PreviewStyle } from './AmbiguousMonomerPreview/types';
 import assert from 'assert';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'src/constants';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  KETCHER_ROOT_NODE_CSS_SELECTOR,
+} from 'src/constants';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,
@@ -31,30 +34,54 @@ function calculateTop(
   target: CalculatePreviewTopPayload,
   height: number,
 ): number {
-  const ketcherEditorRoot = document.querySelector(
-    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-  );
+  // In Molecules mode the macromolecules root may be missing, so fall back to
+  // the general Ketcher root.
+  const ketcherEditorRoot =
+    document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ??
+    document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR);
   const ketcherEditorRootBoundingClientRect =
     ketcherEditorRoot?.getBoundingClientRect();
+  const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
   const relativeTargetTop =
     target.top - (ketcherEditorRootBoundingClientRect?.top ?? 0);
   const relativeTargetBottom =
     target.bottom - (ketcherEditorRootBoundingClientRect?.top ?? 0);
 
+  // The top toolbar sits above the canvas wrapper. When the preview is rendered
+  // in the editor root, we must not position it into the toolbar area.
+  const relativeTopBoundary =
+    (canvasWrapperBoundingClientRect?.top ??
+      ketcherEditorRootBoundingClientRect?.top ??
+      0) - (ketcherEditorRootBoundingClientRect?.top ?? 0);
+  const relativeBottomBoundary =
+    (canvasWrapperBoundingClientRect?.bottom ??
+      (ketcherEditorRootBoundingClientRect?.top ?? 0) +
+        (ketcherEditorRootBoundingClientRect?.height ?? 0)) -
+    (ketcherEditorRootBoundingClientRect?.top ?? 0);
+
   const topPreviewPosition =
     relativeTargetTop - preview.gap - height - preview.topPadding;
   const bottomPreviewPosition = relativeTargetBottom + preview.gap;
 
-  if (relativeTargetTop > height + preview.gap + preview.topPadding) {
+  // Only allow "top" placement if it stays within the canvas (below toolbar).
+  if (
+    relativeTargetTop - relativeTopBoundary >
+      height + preview.gap + preview.topPadding &&
+    topPreviewPosition >= relativeTopBoundary
+  ) {
     return topPreviewPosition;
   }
 
-  const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
-  const exceedsBottomBoundary = target.top + height > editorRootHeight;
-  const isLowerHalf = target.top > editorRootHeight / 2;
+  const exceedsBottomBoundary =
+    bottomPreviewPosition + height + preview.topPadding >
+    relativeBottomBoundary;
+  const isLowerHalf =
+    relativeTargetTop > (relativeBottomBoundary - relativeTopBoundary) / 2;
 
   if (exceedsBottomBoundary && isLowerHalf) {
-    return topPreviewPosition;
+    return Math.max(topPreviewPosition, relativeTopBoundary);
   }
 
   return bottomPreviewPosition;

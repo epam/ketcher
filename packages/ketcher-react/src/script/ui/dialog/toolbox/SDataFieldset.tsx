@@ -19,13 +19,30 @@ import { getSelectOptionsFromSchema } from '../../utils';
 import Select from '../../component/form/Select';
 import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 
+interface SdataFormResult {
+  context: string;
+  fieldName: string;
+  fieldValue: string;
+  radiobuttons: boolean;
+}
+
+interface SDataFieldsetFormState {
+  errors: Record<string, unknown>;
+  valid: boolean;
+  result: SdataFormResult;
+}
+
+interface SDataFieldsetProps {
+  formState: SDataFieldsetFormState;
+}
+
 const content = (
-  schema,
-  context,
-  fieldName,
-  fieldValue,
-  checked,
-  isContextEmpty,
+  schema: typeof sdataCustomSchema,
+  context: string,
+  fieldName: string,
+  _fieldValue: string,
+  checked: boolean,
+  isContextEmpty: boolean,
 ) =>
   Object.keys(schema.properties)
     .filter(
@@ -64,7 +81,7 @@ const content = (
       }
     });
 
-function SDataFieldset({ formState }) {
+function SDataFieldset({ formState }: SDataFieldsetProps) {
   const { result } = formState;
   const formSchema = sdataCustomSchema;
   const validContextValues = formSchema.properties.context.enum;

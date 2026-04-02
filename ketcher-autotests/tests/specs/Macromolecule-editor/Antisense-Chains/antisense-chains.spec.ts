@@ -8,9 +8,9 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasMacro,
-  ZoomInByKeyboard,
+  zoomInByKeyboard,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
   pasteFromClipboardByKeyboard,
   dragMouseTo,
   copyToClipboardByKeyboard,
@@ -3024,7 +3024,7 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   );
 
   await createAntisenseStrandOption.click();
-  await ZoomOutByKeyboard(page, { repeat: 4 });
+  await zoomOutByKeyboard(page, { repeat: 4 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3118,7 +3118,7 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   );
 
   await createAntisenseStrandOption.click();
-  await ZoomOutByKeyboard(page, { repeat: 5 });
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3169,7 +3169,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   );
 
   await createAntisenseStrandOption.click();
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3223,7 +3223,7 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   );
 
   await createAntisenseStrandOption.click();
-  for (let i = 0; i < 6; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 6; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3633,7 +3633,7 @@ test(`18. Flipping checks`, async () => {
     MacroFileType.HELM,
     `RNA1{[dR](A,C,G,T)p.[dR](A,G,T)p.[dR](A,T)p}|RNA2{r(A,C,G,U)p.r(A,C,U)p.r(A,U)[Ssp]}|RNA3{[RSpabC](A,U)p}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0`,
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

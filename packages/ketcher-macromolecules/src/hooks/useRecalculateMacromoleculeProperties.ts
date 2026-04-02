@@ -1,7 +1,7 @@
 import { IndigoProvider } from 'ketcher-react';
 import {
-  Chain,
   ChainsCollection,
+  Chain,
   getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
@@ -41,6 +41,7 @@ export const useRecalculateMacromoleculeProperties = () => {
     const selectionDrawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
+    const hasNoSelection = !selectionDrawingEntitiesManager.hasDrawingEntities;
     const drawingEntitiesManagerToCalculateProperties =
       selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager
@@ -56,9 +57,16 @@ export const useRecalculateMacromoleculeProperties = () => {
         0,
       ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
 
+    const hasNoChainsButMultipleFragments =
+      chainsCollection.chains.length === 0 &&
+      [...drawingEntitiesManagerToCalculateProperties.monomers.values()].filter(
+        (monomer) => monomer.monomerItem.props.isMicromoleculeFragment,
+      ).length > 1;
+
     if (
       !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
-      !areAllMonomersConnectedByCovalentOrHydrogenBonds
+      !areAllMonomersConnectedByCovalentOrHydrogenBonds ||
+      (hasNoSelection && hasNoChainsButMultipleFragments)
     ) {
       dispatch(setMacromoleculesProperties(undefined));
 

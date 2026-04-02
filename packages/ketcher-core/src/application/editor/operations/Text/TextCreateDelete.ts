@@ -18,7 +18,7 @@
 import { ReStruct, ReText } from '../../../render';
 import { Text, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 
 interface TextCreateData {

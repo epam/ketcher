@@ -38,7 +38,7 @@ export async function selectPartOfBenzeneRing(page: Page) {
   const coordinatesToStartSelection = 90;
   const smallShift = 15;
 
-  const stereoBond = await getBondLocator(page, { bondId: 14, bondStereo: 1 });
+  const stereoBond = getBondLocator(page, { bondId: 14, bondStereo: 1 });
   const box = await stereoBond.boundingBox();
   if (!box) throw new Error('Bond bounding box not found');
   const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
@@ -124,6 +124,13 @@ export async function verticalFlipByKeyboard(page: Page) {
   });
 }
 
+export async function selectionDeleteByKeyboard(page: Page) {
+  await moveMouseAway(page);
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Delete');
+  });
+}
+
 export async function horizontalFlip(page: Page) {
   await waitForRender(page, async () => {
     await page.getByTestId('transform-flip-h').click();
@@ -133,6 +140,12 @@ export async function horizontalFlip(page: Page) {
 export async function verticalFlip(page: Page) {
   await waitForRender(page, async () => {
     await page.getByTestId('transform-flip-v').click();
+  });
+}
+
+export async function selectionDelete(page: Page) {
+  await waitForRender(page, async () => {
+    await page.getByTestId('delete').click();
   });
 }
 

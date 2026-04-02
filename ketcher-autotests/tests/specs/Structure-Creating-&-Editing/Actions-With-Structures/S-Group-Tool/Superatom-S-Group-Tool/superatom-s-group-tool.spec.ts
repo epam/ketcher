@@ -38,6 +38,8 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { selectionDelete } from '../../Rotation/utils';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -97,6 +99,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to edit the Superatom S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await LeftToolbar(page).sGroup();
     await clickOnCanvas(page, 570, 380, {
       from: 'pageTopLeft',
@@ -113,6 +116,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
@@ -127,6 +131,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
@@ -143,7 +148,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await selectionDelete(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -161,6 +166,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
@@ -177,6 +183,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
@@ -194,6 +201,7 @@ test.describe('Superatom S-Group tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 15 }).click({
       force: true,
@@ -210,6 +218,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to copy and paste structure with Superatom S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await copyAndPaste(page);
     await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
@@ -223,6 +232,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to cut and paste structure with Superatom S-group.
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -258,7 +268,10 @@ test.describe('Superatom S-Group tool', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
     );
     await takeEditorScreenshot(page);
-    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
     await takeEditorScreenshot(page);
     await removeAbbreviation(
       page,
@@ -281,7 +294,10 @@ test.describe('Superatom S-Group tool', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 3 }),
     );
     await takeEditorScreenshot(page);
-    await expandAbbreviation(page, page.getByText('Test@!#$%12345'));
+    await expandAbbreviation(
+      page,
+      getAbbreviationLocator(page, { name: 'Test@!#$%12345' }),
+    );
     await takeEditorScreenshot(page);
 
     await removeAbbreviation(

@@ -11,8 +11,8 @@ import {
   waitForRender,
   clickOnCanvas,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   Monomer,
   takeElementScreenshot,
   MacroFileType,
@@ -333,14 +333,14 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
-    await ZoomInByKeyboard(page);
+    await zoomInByKeyboard(page);
     await moveMouseAway(page);
     await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
     await moveMouseAway(page);
     await waitForRender(page);
     await takeEditorScreenshot(page, {

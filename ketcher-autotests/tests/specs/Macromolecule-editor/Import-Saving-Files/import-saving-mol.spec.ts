@@ -91,9 +91,10 @@ test.describe('Import-Saving .mol Files', () => {
       // error expected
       true,
     );
-    await expect(
-      page.getByText('Convert error! Error during file parsing.'),
-    ).toBeVisible();
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain('Convert error! Error during file parsing.');
+    await ErrorMessageDialog(page).close();
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Export monomers and chem', async () => {

@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, useEffect, useState, useCallback } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -28,6 +28,8 @@ interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
+  phosphatePosition: '3' | '5' | undefined;
+  onPhosphatePositionChange: (position: '3' | '5') => void;
 }
 
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
@@ -46,6 +48,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
+  const { phosphatePosition, onPhosphatePositionChange } = props;
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {
@@ -122,6 +125,10 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     },
     [editor, wizardStateDispatch],
   );
+
+  const handlePhosphatePositionChange = (position: '3' | '5') => {
+    onPhosphatePositionChange(position);
+  };
 
   const currentTabStructure = currentTabState?.structure;
 
@@ -257,7 +264,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
             index + 1 === selectedTab && (
-              <>
+              <Fragment key={rnaComponentKey}>
                 <div className={styles.createComponentWrapper}>
                   <div>{RNA_COMPONENT_HINTS[rnaComponentKey]}</div>
                   <button
@@ -273,9 +280,69 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   </button>
                 </div>
                 <MonomerCreationWizardFields
-                  key={rnaComponentKey}
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
+                  attachmentPointsExtra={
+                    rnaComponentKey === 'phosphate' ? (
+                      <AttributeField
+                        title="Position"
+                        required
+                        control={
+                          <div
+                            data-testid="phosphate-position-picker"
+                            className={clsx(
+                              styles.phosphatePositionPicker,
+                              wizardState.preset.errors.phosphatePosition &&
+                                styles.phosphatePositionPickerError,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              className={clsx(
+                                styles.phosphatePositionButton,
+                                phosphatePosition === '5' &&
+                                  styles.phosphatePositionButtonActive,
+                              )}
+                              data-testid="phosphate-position-5-button"
+                              aria-pressed={phosphatePosition === '5'}
+                              onClick={() => handlePhosphatePositionChange('5')}
+                            >
+                              <Icon
+                                name="preset-left-phosphate"
+                                className={styles.phosphatePositionIcon}
+                              />
+                              <span
+                                className={styles.phosphatePositionButtonLabel}
+                              >
+                                5&apos;-left
+                              </span>
+                            </button>
+                            <button
+                              type="button"
+                              className={clsx(
+                                styles.phosphatePositionButton,
+                                phosphatePosition === '3' &&
+                                  styles.phosphatePositionButtonActive,
+                              )}
+                              data-testid="phosphate-position-3-button"
+                              aria-pressed={phosphatePosition === '3'}
+                              onClick={() => handlePhosphatePositionChange('3')}
+                            >
+                              <Icon
+                                name="preset-right-phosphate"
+                                className={styles.phosphatePositionIcon}
+                              />
+                              <span
+                                className={styles.phosphatePositionButtonLabel}
+                              >
+                                3&apos;-right
+                              </span>
+                            </button>
+                          </div>
+                        }
+                      />
+                    ) : null
+                  }
                   onFieldChange={(
                     fieldId: StringWizardFormFieldId,
                     value: string,
@@ -284,7 +351,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   }}
                   wizardState={wizardState[rnaComponentKey]}
                 />
-              </>
+              </Fragment>
             )
           );
         })}

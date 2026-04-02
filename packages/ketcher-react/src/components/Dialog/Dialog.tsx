@@ -44,6 +44,7 @@ interface DialogProps {
   params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
+  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -73,6 +74,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
+    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,

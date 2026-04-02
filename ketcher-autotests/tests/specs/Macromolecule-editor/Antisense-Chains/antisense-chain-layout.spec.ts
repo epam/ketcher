@@ -9,7 +9,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasMacro,
   MonomerType,
-  ZoomInByKeyboard,
+  zoomInByKeyboard,
   resetZoomLevelToDefault,
   moveMouseAway,
   takeElementScreenshot,
@@ -580,7 +580,7 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     MacroFileType.HELM,
     'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await bondTwoMonomers(
@@ -629,7 +629,7 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     MacroFileType.HELM,
     'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await bondTwoMonomers(

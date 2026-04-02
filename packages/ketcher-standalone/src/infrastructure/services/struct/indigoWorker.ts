@@ -72,7 +72,7 @@ function handle(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   module.then((indigo: any) => {
     const indigoOptions = new indigo.MapStringString();
-    setOptions(indigoOptions, options || {});
+    setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;
     try {
       const payload = handler(indigo, indigoOptions);

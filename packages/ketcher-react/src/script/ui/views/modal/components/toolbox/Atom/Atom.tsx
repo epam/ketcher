@@ -145,7 +145,8 @@ const Atom: FC<Props> = (props: Props) => {
         pseudoAtomValid(value, atomType, isCustomQuery, disableQueryElements),
       atomList: (value: string) =>
         AtomListValid(value, atomType, isCustomQuery),
-      charge: (charge) => chargeValid(charge, isMultipleAtoms, isCustomQuery),
+      charge: (charge) =>
+        chargeValid(charge, isMultipleAtoms, isCustomQuery) ?? false,
       customQuery: (value: string) => customQueryValid(value, isCustomQuery),
     };
   }, [formState.result.atomType, isCustomQuery, isMultipleAtoms]);

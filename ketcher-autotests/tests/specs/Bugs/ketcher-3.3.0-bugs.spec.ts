@@ -832,7 +832,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
     );
     await clickInTheMiddleOfTheScreen(page);

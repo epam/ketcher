@@ -265,7 +265,7 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
         if (!msg.hasError) {
-          resolve(msg.payload || '');
+          resolve(msg.payload ?? '');
         } else {
           reject(new Error(msg.error));
         }
@@ -462,7 +462,7 @@ class IndigoService implements StructService {
         struct,
         format,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CleanCommandData> = {
@@ -704,7 +704,7 @@ class IndigoService implements StructService {
         struct,
         properties,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CalculateCommandData> = {

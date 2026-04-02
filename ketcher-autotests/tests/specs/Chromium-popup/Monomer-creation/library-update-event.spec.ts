@@ -27,14 +27,8 @@ import { Chem } from '@tests/pages/constants/monomers/Chem';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
-  // await page.evaluate(async () => {
-  //   await window.ketcher.editor.subscribe('libraryUpdate', console.log);
-  // });
 });
 test.afterAll(async ({ closePage }) => {
-  // await page.evaluate(async () => {
-  //   window.ketcher.editor.unsubscribe('libraryUpdate', console.log);
-  // });
   await closePage();
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});

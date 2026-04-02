@@ -24,6 +24,7 @@ import {
 import { Dialog } from '../../../../components';
 import Input from '../../../../../component/form/Input/Input';
 import OpenButton from '../../../../../component/view/openbutton';
+import { FileContent } from '../../../../../component/view/openButton.types';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import classes from './Recognize.module.less';
 import { connect } from 'react-redux';
@@ -42,7 +43,7 @@ function isImage(file: File | null): boolean {
 }
 
 interface FooterContentProps {
-  onImage: (file: File | null) => void;
+  onImage: (file: File | FileContent | null) => void;
   structStr: StructStringOrPromise;
   openHandler: () => void;
   copyHandler: () => void;
@@ -98,7 +99,7 @@ interface RecognizeDialogProps {
   onCancel: () => void;
   onRecognize: (file: File | null, version: string) => void;
   isFragment: (v: boolean) => void;
-  onImage: (file: File | null) => void;
+  onImage: (file: File | FileContent | null) => void;
   onChangeImago: (version: string) => void;
 }
 
@@ -270,7 +271,7 @@ const mapStateToProps = (state: RecognizeState) => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapDispatchToProps = (dispatch: any) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
-  onImage: (file: File | null) => dispatch(changeImage(file)),
+  onImage: (file: File | FileContent | null) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),
   onChangeImago: (ver: string) => dispatch(changeVersion(ver)),

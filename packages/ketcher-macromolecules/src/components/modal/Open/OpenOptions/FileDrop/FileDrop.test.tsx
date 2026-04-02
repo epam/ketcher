@@ -94,7 +94,7 @@ describe('FileDrop component', () => {
     userEvent.upload(input, mockFile);
 
     await waitFor(() => {
-      expect(mockProps.onDropAccepted).toBeCalled();
+      expect(mockProps.onDropAccepted).toHaveBeenCalled();
     });
   });
 

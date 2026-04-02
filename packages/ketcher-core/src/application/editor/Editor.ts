@@ -270,7 +270,7 @@ export class CoreEditor {
       return;
     }
 
-    void this.loadDefaultMonomersLibrary();
+    this.loadDefaultMonomersLibrary().catch(() => undefined);
   }
 
   private async loadDefaultMonomersLibrary() {

@@ -167,6 +167,9 @@ Alias for `getSmiles(true)`.
 
 ---
 
+- `structure: string`. Structure is a string in any supported format.
+- `options?: { position?: { x: number, y: number } }`. – (Optional) "position" - coordinates of top left corner of inserted structure in angstroms. Y coordinate value increases from bottom to top.
+- `options?: { rescale: boolean }`. – (Optional , by default, `true`) "rescale" - adjusts structure coordinates to fit the editor's viewport.
 ### getMolfile
 
 ```typescript

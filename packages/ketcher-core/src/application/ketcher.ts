@@ -64,6 +64,7 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
+  rescale?: boolean;
   needZoom?: boolean;
 };
 
@@ -504,23 +505,27 @@ export class Ketcher {
           this.structService,
           this,
         );
+        if (options?.rescale === false) {
+          this.editor.struct(struct, false);
+        } else {
+          struct.rescale();
+          
+          const { x, y } = options?.position ?? {};
 
-        struct.rescale();
-
-        const { x, y } = options?.position ?? {};
-
-        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
-        // It needs to rotate them by 180 degrees in y-axis.
-        this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
-
-        // Restore selection from initiallySelected flags in the loaded structure
-        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
-        // Clean up initiallySelected flags after restoring selection
-        this.editor.struct().disableInitiallySelected();
-
-        this.editor.zoomAccordingContent(struct);
-        if (x == null && y == null) {
-          this.editor.centerStruct();
+          // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+          // It needs to rotate them by 180 degrees in y-axis.
+          this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
+          
+          
+          // Restore selection from initiallySelected flags in the loaded structure
+          this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+          // Clean up initiallySelected flags after restoring selection
+          this.editor.struct().disableInitiallySelected();
+          
+          this.editor.zoomAccordingContent(struct);
+          if (x == null && y == null) {
+            this.editor?.centerStruct();
+          }
         }
       }
     }, this.eventBus);

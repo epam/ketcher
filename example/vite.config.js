@@ -1,8 +1,9 @@
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
-import { createLogger, defineConfig, loadEnv } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
+import { defineConfig, loadEnv } from 'vite';
 import vitePluginRaw from 'vite-plugin-raw';
 import svgr from 'vite-plugin-svgr';
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json';
@@ -10,13 +11,9 @@ import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macr
 import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.json';
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
-import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import { envVariables as exampleEnv } from './config/webpack.config';
 import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config';
+import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import commonjs from 'vite-plugin-commonjs';
-
-const dotEnv = loadEnv('development', '.', '');
-Object.assign(process.env, dotEnv, exampleEnv);
 
 const PACKAGE_DIRECTORIES = {
   'ketcher-core': resolve(__dirname, '../packages/ketcher-core'),
@@ -33,6 +30,13 @@ const PACKAGE_TS_CONFIGS = {
   'ketcher-macromolecules': polymerEditorTSConfig,
   'ketcher-react': ketcherReactTSConfig,
   'ketcher-standalone': ketcherStandaloneTSConfig,
+};
+
+const HTML_INPUTS = {
+  index: resolve(__dirname, 'index.html'),
+  popup: resolve(__dirname, 'popup.html'),
+  duo: resolve(__dirname, 'duo.html'),
+  closable: resolve(__dirname, 'closable.html'),
 };
 
 const PACKAGE_TS_PATHS = Object.fromEntries(
@@ -126,6 +130,43 @@ const getDefineValue = (value) => {
   return value === undefined ? 'undefined' : JSON.stringify(value);
 };
 
+const getApplicationVersion = () => {
+  try {
+    return execFileSync('git', ['describe', '--always'], {
+      cwd: __dirname,
+      encoding: 'utf8',
+    })
+      .trim()
+      .split('-')[0];
+  } catch (error) {
+    return JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8'))
+      .version;
+  }
+};
+
+const APPLICATION_VERSION = getApplicationVersion();
+
+const getPublicUrl = (command, dotEnv) => {
+  if (dotEnv.PUBLIC_URL) {
+    return dotEnv.PUBLIC_URL;
+  }
+
+  return command === 'build' ? './' : '/';
+};
+
+const getProcessEnv = (command, dotEnv) => {
+  return {
+    API_PATH: dotEnv.REACT_APP_API_PATH,
+    KETCHER_ENABLE_REDUX_LOGGER: 'false',
+    MODE: process.env.MODE || dotEnv.MODE || 'standalone',
+    NODE_ENV: command === 'build' ? 'production' : 'development',
+    PUBLIC_URL: getPublicUrl(command, dotEnv),
+    REACT_APP_API_PATH: dotEnv.REACT_APP_API_PATH,
+    SEPARATE_INDIGO_RENDER:
+      process.env.SEPARATE_INDIGO_RENDER || dotEnv.SEPARATE_INDIGO_RENDER,
+  };
+};
+
 const PROCESS_ENV_DEFINE_KEYS = [
   'API_PATH',
   'KETCHER_ENABLE_REDUX_LOGGER',
@@ -136,205 +177,147 @@ const PROCESS_ENV_DEFINE_KEYS = [
   'SEPARATE_INDIGO_RENDER',
 ];
 
-const processEnvDefines = Object.fromEntries(
-  PROCESS_ENV_DEFINE_KEYS.map((key) => [
-    `process.env.${key}`,
-    getDefineValue(process.env[key]),
-  ]),
-);
-
-const HtmlReplaceVitePlugin = () => {
+const HtmlReplaceVitePlugin = (publicUrl) => {
   return {
     name: 'ketcher-html-transform',
     transformIndexHtml(html) {
       return html
-        .replaceAll('%PUBLIC_URL%/', process.env.PUBLIC_URL)
-        .replaceAll(
-          '@@version',
-          JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
-            '-',
-          )[0] + ' (Vite)',
-        );
+        .replaceAll('%PUBLIC_URL%/', publicUrl)
+        .replaceAll('@@version', APPLICATION_VERSION);
     },
   };
 };
+export default defineConfig(({ command, mode }) => {
+  const dotEnv = loadEnv(mode, __dirname, '');
+  const envVariables = getProcessEnv(command, dotEnv);
 
-const normalizeHtmlTransformHook = (plugin) => {
-  if (!plugin || typeof plugin === 'function') {
-    return plugin;
-  }
+  Object.assign(process.env, dotEnv, envVariables);
 
-  if (Array.isArray(plugin)) {
-    return plugin.map(normalizeHtmlTransformHook);
-  }
+  const processEnvDefines = Object.fromEntries(
+    PROCESS_ENV_DEFINE_KEYS.map((key) => [
+      `process.env.${key}`,
+      getDefineValue(envVariables[key]),
+    ]),
+  );
 
-  const { transformIndexHtml } = plugin;
-
-  if (
-    transformIndexHtml &&
-    typeof transformIndexHtml !== 'function' &&
-    !transformIndexHtml.handler &&
-    transformIndexHtml.transform
-  ) {
-    const order =
-      transformIndexHtml.enforce === 'pre' ||
-      transformIndexHtml.enforce === 'post'
-        ? transformIndexHtml.enforce
-        : undefined;
-
-    return {
-      ...plugin,
-      transformIndexHtml: {
-        ...(order ? { order } : {}),
-        handler: transformIndexHtml.transform,
-      },
-    };
-  }
-
-  return plugin;
-};
-
-const logger = createLogger();
-const loggerWarn = logger.warn;
-logger.warn = (msg, options) => {
-  if (
-    // This warning occurs when entry html is not at the root path
-    msg
-      .toLowerCase()
-      .includes('files in the public directory are served at the root path.')
-  ) {
-    return;
-  }
-  loggerWarn(msg, options);
-};
-
-export default defineConfig({
-  server: {
-    open: true,
-  },
-  css: {
-    devSourcemap: true,
-    preprocessorOptions: {
-      less: {
-        paths: Object.values(PACKAGE_DIRECTORIES),
+  return {
+    base: envVariables.PUBLIC_URL,
+    server: {
+      open: true,
+    },
+    css: {
+      devSourcemap: true,
+      preprocessorOptions: {
+        less: {
+          paths: Object.values(PACKAGE_DIRECTORIES),
+        },
       },
     },
-  },
-  plugins: [
-    PackageScopedAliasesPlugin(),
-    react(),
-    svgr({
-      include: '**/*.svg',
-      svgrOptions: {
-        exportType: 'default',
+    build: {
+      rollupOptions: {
+        input: HTML_INPUTS,
       },
-    }),
-    vitePluginRaw({
-      match: /\.sdf|\.ket/,
-    }),
-    replace({
-      include: '**/ketcher-react/src/**',
-      preventAssignment: true,
-      values: ketcherReactValues,
-    }),
-    replace({
-      include: '**/ketcher-macromolecules/src/**',
-      preventAssignment: true,
-      values: polymerEditorValues,
-    }),
-    replace({
-      include: '**/example/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
-    replace({
-      include: '**/ketcher-core/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
-    normalizeHtmlTransformHook(
-      createHtmlPlugin({
-        entry: '/src/index.tsx',
-        template: 'public/index.html',
-        inject: {
-          tags: [
-            {
-              /**
-               * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
-               * Fix: global is not defined
-               */
-              injectTo: 'body',
-              tag: 'script',
-              children: 'var global = global || window',
-            },
-          ],
+    },
+    plugins: [
+      PackageScopedAliasesPlugin(),
+      react(),
+      svgr({
+        include: '**/*.svg',
+        svgrOptions: {
+          exportType: 'default',
         },
       }),
-    ),
-    HtmlReplaceVitePlugin(),
-    commonjs(),
-  ],
-  define: {
-    ...processEnvDefines,
-  },
-  resolve: {
-    alias: [
-      {
-        // HACK: to ignore dist/index.css, you can set any file as replacement
-        find: 'ketcher-react/dist/index.css',
-        replacement: resolve(
-          __dirname,
-          '../packages/ketcher-react/src/index.less',
-        ),
-      },
-      {
-        find: 'ketcher-react',
-        replacement: resolve(
-          __dirname,
-          '../packages/ketcher-react/src/index.tsx',
-        ),
-      },
-      {
-        find: 'ketcher-core',
-        replacement: resolve(
-          __dirname,
-          '../packages/ketcher-core/src/index.ts',
-        ),
-      },
-      {
-        find: 'ketcher-standalone',
-        replacement: resolve(
-          __dirname,
-          '../packages/ketcher-standalone/src/index.ts',
-        ),
-      },
-      {
-        find: 'ketcher-macromolecules',
-        replacement: resolve(
-          __dirname,
-          '../packages/ketcher-macromolecules/src/index.tsx',
-        ),
-      },
-
-      /** Web worker in ketcher-standalone */
-      {
-        find: 'web-worker:./../indigoWorker',
-        replacement: './../indigoWorker?worker',
-      },
-      {
-        find: '_indigo-ketcher-import-alias_',
-        replacement: 'indigo-ketcher',
-      },
-      {
-        find: '_indigo-worker-import-alias_',
-        replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
-      },
+      vitePluginRaw({
+        match: /\.sdf|\.ket/,
+      }),
+      replace({
+        include: '**/ketcher-react/src/**',
+        preventAssignment: true,
+        values: ketcherReactValues,
+      }),
+      replace({
+        include: '**/ketcher-macromolecules/src/**',
+        preventAssignment: true,
+        values: polymerEditorValues,
+      }),
+      replace({
+        include: '**/example/src/**',
+        preventAssignment: true,
+        values: {
+          require: 'await import',
+        },
+      }),
+      replace({
+        include: '**/ketcher-core/src/**',
+        preventAssignment: true,
+        values: {
+          require: 'await import',
+        },
+      }),
+      HtmlReplaceVitePlugin(envVariables.PUBLIC_URL),
+      commonjs(),
     ],
-  },
-  customLogger: logger,
-  tsconfig: './tsconfig.json',
+    define: {
+      ...processEnvDefines,
+    },
+    resolve: {
+      alias: [
+        {
+          // HACK: to ignore dist/index.css, you can set any file as replacement
+          find: 'ketcher-react/dist/index.css',
+          replacement: resolve(
+            __dirname,
+            '../packages/ketcher-react/src/index.less',
+          ),
+        },
+        {
+          find: 'ketcher-react',
+          replacement: resolve(
+            __dirname,
+            '../packages/ketcher-react/src/index.tsx',
+          ),
+        },
+        {
+          find: 'ketcher-core',
+          replacement: resolve(
+            __dirname,
+            '../packages/ketcher-core/src/index.ts',
+          ),
+        },
+        {
+          find: 'ketcher-standalone',
+          replacement: resolve(
+            __dirname,
+            '../packages/ketcher-standalone/src/index.ts',
+          ),
+        },
+        {
+          find: 'ketcher-macromolecules',
+          replacement: resolve(
+            __dirname,
+            '../packages/ketcher-macromolecules/src/index.tsx',
+          ),
+        },
+
+        /** Web worker in ketcher-standalone */
+        {
+          find: 'web-worker:./../indigoWorker',
+          replacement: './../indigoWorker?worker',
+        },
+        {
+          find: '_indigo-ketcher-import-alias_',
+          replacement: 'indigo-ketcher',
+        },
+        {
+          find: '_indigo-worker-import-alias_',
+          replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
+        },
+      ],
+    },
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: './src/setupTests.ts',
+    },
+  };
 });

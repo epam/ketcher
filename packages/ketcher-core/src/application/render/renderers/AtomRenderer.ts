@@ -194,9 +194,15 @@ export class AtomRenderer extends BaseRenderer {
       if (hoverElement) {
         this.hoverElement = hoverElement;
       }
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', '#CCFFDD');
+      }
       this.showHover();
     } else {
       this.hideHover();
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', '#57FF8F');
+      }
     }
   }
 

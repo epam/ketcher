@@ -16,7 +16,7 @@
 
 import Form, { Field } from '../../component/form/form/form';
 
-import { Dialog } from '../../views/components';
+import { Dialog } from 'components';
 import { Elements } from 'ketcher-core';
 import { capitalize } from 'lodash/fp';
 import { connect } from 'react-redux';
@@ -58,11 +58,13 @@ export function serialize(lc: AtomLabelData): string {
 }
 
 const LABEL_REGEX = /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i;
-const VALID_GENERIC_LABELS = ['A', 'Q', 'X', 'M'];
+const VALID_GENERIC_LABELS = new Set(['A', 'Q', 'X', 'M']);
+
+const isValidLabel = (value: string): boolean => deserialize(value) !== null;
 
 function parseCharge(chargeStr: string): number {
-  let charge = parseInt(chargeStr);
-  if (isNaN(charge)) {
+  let charge = Number.parseInt(chargeStr, 10);
+  if (Number.isNaN(charge)) {
     charge = 1;
   }
   if (chargeStr.endsWith('-')) {
@@ -78,11 +80,13 @@ export function deserialize(value: string): AtomLabelData | null {
   }
 
   const label = match[2] === '*' ? 'A' : capitalize(match[2]);
-  const isotope: number | null = match[1] ? parseInt(match[1]) : null;
+  const isotope: number | null = match[1]
+    ? Number.parseInt(match[1], 10)
+    : null;
   const radical = match[3] ? { ':': 1, '.': 2, '^^': 3 }[match[3]] ?? 0 : 0;
   const charge: number | null = match[4] ? parseCharge(match[4]) : null;
 
-  if (VALID_GENERIC_LABELS.includes(label) || Elements.get(label)) {
+  if (VALID_GENERIC_LABELS.has(label) || Elements.get(label)) {
     return { label, charge, isotope, radical };
   }
 
@@ -109,16 +113,16 @@ function LabelEdit(props: Readonly<LabelEditProps>) {
     >
       <Form
         schema={labelEditSchema}
-        customValid={{ label: (l: string) => !!deserialize(l) }}
+        customValid={{ label: isValidLabel }}
         init={init}
         {...formState}
       >
         <Field
           name="label"
           maxLength={20}
-          // @ts-expect-error FieldProps missing size and autoFocus (defined in FieldWithModalProps)
+          // @ts-expect-error FieldProps missing size and isFocused (passed through to Input)
           size="10"
-          autoFocus
+          isFocused
           className={styles.labelEditInputField}
         />
       </Form>

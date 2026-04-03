@@ -10,6 +10,8 @@ import { MonomerItemType } from 'domain/types';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 
 export abstract class CoreEditorBase {
+  private static editorInstance: CoreEditorBase | undefined;
+
   abstract events: IEditorEvents;
   abstract canvas: SVGSVGElement;
   abstract mode: BaseMode;
@@ -36,16 +38,14 @@ export abstract class CoreEditorBase {
   ): void;
 
   static provideEditorInstance(): CoreEditorBase {
-    return editorInstance as CoreEditorBase;
+    return CoreEditorBase.editorInstance as CoreEditorBase;
   }
 
   static setEditorInstance(editor: CoreEditorBase): void {
-    editorInstance = editor;
+    CoreEditorBase.editorInstance = editor;
   }
 
   static resetEditorInstance(): void {
-    editorInstance = undefined;
+    CoreEditorBase.editorInstance = undefined;
   }
 }
-
-let editorInstance: CoreEditorBase | undefined;

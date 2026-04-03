@@ -29,12 +29,14 @@ export abstract class RenderersManagerBase {
     monomer: BaseMonomer | AmbiguousMonomer,
     callback?: () => void,
   ): void;
+
   abstract deleteMonomer(monomer: BaseMonomer): void;
   abstract moveMonomer(monomer: BaseMonomer): void;
   abstract hoverMonomer(
     monomer: BaseMonomer,
     needRedrawAttachmentPoints: boolean,
   ): void;
+
   abstract hoverAttachmentPoint(
     monomer: BaseMonomer,
     attachmentPointName: AttachmentPointName,
@@ -45,11 +47,13 @@ export abstract class RenderersManagerBase {
     polymerBond: PolymerBond | HydrogenBond,
     redrawAttachmentPoints?: boolean,
   ): void;
+
   abstract deletePolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
     recalculateEnumeration?: boolean,
     redrawAttachmentPoints?: boolean,
   ): void;
+
   abstract movePolymerBond(polymerBond: PolymerBond): void;
   abstract showPolymerBondInformation(polymerBond: PolymerBond): void;
   abstract finishPolymerBondCreation(polymerBond: PolymerBond): void;
@@ -57,6 +61,7 @@ export abstract class RenderersManagerBase {
     polymerBond: PolymerBond,
     secondMonomer?: BaseMonomer,
   ): void;
+
   abstract rerenderSideConnectionPolymerBonds(): void;
 
   // Drawing entity operations

@@ -9,8 +9,6 @@ import { RenderersManagerBase } from 'application/render/renderers/RenderersMana
 import { MonomerItemType } from 'domain/types';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 
-let editorInstance: CoreEditorBase | undefined;
-
 export abstract class CoreEditorBase {
   abstract events: IEditorEvents;
   abstract canvas: SVGSVGElement;
@@ -49,3 +47,5 @@ export abstract class CoreEditorBase {
     editorInstance = undefined;
   }
 }
+
+let editorInstance: CoreEditorBase | undefined;

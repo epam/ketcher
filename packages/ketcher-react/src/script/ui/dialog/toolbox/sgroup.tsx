@@ -17,13 +17,38 @@
 import Form, { SelectOneOf } from '../../component/form/form/form';
 import { connect } from 'react-redux';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
-import { Dialog } from '../../views/components';
+import { Dialog, type DialogParams } from '../../views/components';
 import SDataFieldset from './SDataFieldset';
 import classes from './sgroup.module.less';
 import SGroupFieldset from './SGroupFieldset';
 import { useMemo } from 'react';
 
-function Sgroup({ formState, ...props }) {
+interface SgroupFormResult {
+  type: string;
+  context?: string;
+  fieldName?: string;
+  fieldValue?: string | string[];
+  radiobuttons?: string;
+  [key: string]: unknown;
+}
+
+interface SgroupFormState {
+  errors: Record<string, unknown>;
+  valid: boolean;
+  result: SgroupFormResult;
+}
+
+interface SgroupOwnProps extends DialogParams {
+  type?: string;
+  selectedSruCount?: number;
+  [key: string]: unknown;
+}
+
+interface SgroupProps extends SgroupOwnProps {
+  formState: SgroupFormState;
+}
+
+function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
   const { result, valid } = formState;
 
   const type = result.type;
@@ -65,20 +90,25 @@ function Sgroup({ formState, ...props }) {
       params={props}
     >
       <Form
-        serialize={serialize}
         schema={schemes[type]}
         init={props}
-        {...formState}
+        {...({ serialize, ...formState } as Record<string, unknown>)}
       >
         <SelectOneOf
-          title="Type"
           name="type"
           schema={availableSchemes}
           data-testid="s-group-type"
+          {...({ title: 'Type' } as Record<string, unknown>)}
         />
 
         {type === 'DAT' ? (
-          <SDataFieldset formState={formState} />
+          <SDataFieldset
+            formState={
+              formState as unknown as Parameters<
+                typeof SDataFieldset
+              >[0]['formState']
+            }
+          />
         ) : (
           <SGroupFieldset formState={formState} />
         )}
@@ -87,4 +117,6 @@ function Sgroup({ formState, ...props }) {
   );
 }
 
-export default connect((store) => ({ formState: store.modal.form }))(Sgroup);
+export default connect((store: { modal: { form: SgroupFormState } }) => ({
+  formState: store.modal.form,
+}))(Sgroup);

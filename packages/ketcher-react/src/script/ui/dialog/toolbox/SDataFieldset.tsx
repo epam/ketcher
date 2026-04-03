@@ -81,7 +81,7 @@ const content = (
       }
     });
 
-function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
+function SDataFieldset({ formState }: SDataFieldsetProps) {
   const { result } = formState;
   const formSchema = sdataCustomSchema;
   const validContextValues = formSchema.properties.context.enum;

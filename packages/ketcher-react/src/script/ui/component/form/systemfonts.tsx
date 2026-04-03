@@ -64,7 +64,7 @@ interface SystemFontsProps {
   onChange: (value: string) => void;
 }
 
-function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
+function SystemFonts({ value, onChange }: SystemFontsProps) {
   const [availableFonts, setAvailableFonts] = useState<Option[] | null>(null);
   const onChangeCallback = useCallback(
     (value: string) => {

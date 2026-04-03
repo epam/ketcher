@@ -838,8 +838,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectMonomersAndBonds(page, {
-      monomerIds: [68, 69, 82, 83, 73, 71, 72, 80, 79, 84],
-      bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108],
+      monomerIds: [68, 69, 82, 83, 73, 76, 71, 72, 80, 79, 81, 84],
+      bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108, 104, 109],
     });
     await ContextMenu(page, getMonomerLocator(page, { monomerId: 80 })).click(
       MonomerOption.ArrangeAsARing,

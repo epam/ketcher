@@ -24,7 +24,7 @@ import {
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
-import { KetMonomerClass } from 'ketcher-core';
+import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
@@ -35,6 +35,7 @@ const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'>[] = [
   'base',
   'phosphate',
 ];
+const PHOSPHATE_INDEX = 2;
 
 interface Props {
   className?: string;
@@ -61,6 +62,16 @@ const PresetPreview = ({ className }: Props) => {
   });
 
   const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
+  const phosphatePositionText =
+    preview.phosphatePosition === 'left'
+      ? "5'"
+      : preview.phosphatePosition === 'right'
+      ? "3'"
+      : undefined;
+  const getMonomerNameText = (monomer: MonomerItemType, index: number) =>
+    index === PHOSPHATE_INDEX && phosphatePositionText
+      ? `(${monomer.props.Name}, ${phosphatePositionText})`
+      : `(${monomer.props.Name})`;
 
   return (
     <PresetContainer
@@ -76,7 +87,9 @@ const PresetPreview = ({ className }: Props) => {
           <PresetMonomerRow key={monomer.props.id}>
             <PresetIcon name={isChemChain ? 'chem' : icons[index]} />
             <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-            <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+            <PresetMonomerName>
+              {getMonomerNameText(monomer, index)}
+            </PresetMonomerName>
           </PresetMonomerRow>
         ) : null,
       )}

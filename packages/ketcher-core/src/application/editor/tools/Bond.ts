@@ -33,9 +33,12 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
-import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import {
+  Coordinates,
+  MACROMOLECULES_BOND_TYPES,
+  ToolName,
+} from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';

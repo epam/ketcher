@@ -41,13 +41,14 @@ import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { Loop } from '../view-model/Loop';
+import { DeepPartial } from 'types';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
 export class RenderersManager {
-  private readonly theme: EditorTheme;
+  private readonly theme: DeepPartial<EditorTheme>;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -62,7 +63,7 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
-  constructor({ theme }: { theme: EditorTheme }) {
+  constructor({ theme }: { theme: DeepPartial<EditorTheme> }) {
     this.theme = theme;
   }
 

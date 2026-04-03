@@ -92,7 +92,9 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
       <Form
         schema={schemes[type]}
         init={props}
-        {...({ serialize, ...formState } as Record<string, unknown>)}
+        result={formState.result}
+        errors={formState.errors as Record<string, string>}
+        serialize={serialize as Record<string, string> | undefined}
       >
         <SelectOneOf
           name="type"
@@ -110,7 +112,12 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
             }
           />
         ) : (
-          <SGroupFieldset formState={formState} />
+          <SGroupFieldset
+            formState={{
+              ...formState,
+              errors: formState.errors as Record<string, string>,
+            }}
+          />
         )}
       </Form>
     </Dialog>

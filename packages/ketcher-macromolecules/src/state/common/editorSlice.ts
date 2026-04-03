@@ -137,8 +137,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
         renderersContainer: new RenderersManager({
           theme: action.payload.theme,
         }),
-        monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
-        monomersLibraryReplace: action.payload.monomersLibraryReplace,
       });
 
       editor.initializeMonomersLibraryFromKetcher(

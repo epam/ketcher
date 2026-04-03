@@ -228,6 +228,7 @@ class Editor implements KetcherEditor {
 
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
+  private _suppressHistory = false;
 
   constructor(ketcherId, clientArea, options, serverSettings, prevEditor?) {
     this.render = new Render(
@@ -351,7 +352,10 @@ class Editor implements KetcherEditor {
   ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
 
-    this.update(action, this.isMonomerCreationWizardActive);
+    this.update(
+      action,
+      this.isMonomerCreationWizardActive || this._suppressHistory,
+    );
 
     if (needToCenterStruct) {
       this.centerStruct();
@@ -1373,7 +1377,25 @@ class Editor implements KetcherEditor {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
 
+    // Snapshot the pre-creation struct for atomic undo before closeMonomerCreationWizard clears it
+    const preCreationStruct = this.originalStruct.clone(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    );
+
     this.closeMonomerCreationWizard();
+
+    // Suppress all intermediate history entries — we record a single atomic undo at the end
+    this._suppressHistory = true;
 
     const libraryItems = monomersData.map((monomerData) => {
       const {
@@ -1411,7 +1433,7 @@ class Editor implements KetcherEditor {
       this.render.ctab.molecule.clearFragments();
       this.render.ctab.molecule.markFragments();
 
-      this.update(action);
+      this.update(action, true);
 
       const { root: templateRoot, ...templateData } = monomerTemplate;
       const libraryItem = {
@@ -1506,115 +1528,116 @@ class Editor implements KetcherEditor {
     // this.struct(struct) uses setTimeout to defer some calculations,
     // so we need to wait until they are done before applying further changes
     setTimeout(() => {
-      newAction.mergeWith(
-        fromFragmentDeletion(this.render.ctab, this.originalSelection),
-      );
+      try {
+        newAction.mergeWith(
+          fromFragmentDeletion(this.render.ctab, this.originalSelection),
+        );
 
-      this.update(newAction);
+        this.update(newAction, true);
 
-      const atomIdMap = new Map<number, number>();
+        const atomIdMap = new Map<number, number>();
 
-      structFromWizard.mergeInto(
-        this.struct(),
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        atomIdMap,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        true,
-      );
+        structFromWizard.mergeInto(
+          this.struct(),
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          atomIdMap,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-      // Restore original atom positions after merge
-      const struct = this.struct();
+        // Restore original atom positions after merge
+        const struct = this.struct();
 
-      const originalToSelectedAtomsIdMap = new Map<number, number>();
+        const originalToSelectedAtomsIdMap = new Map<number, number>();
 
-      // Restore positions for selected atoms (now part of monomer)
-      this.selectedToOriginalAtomsIdMap.forEach(
-        (originalAtomId, selectedAtomId) => {
-          originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+        // Restore positions for selected atoms (now part of monomer)
+        this.selectedToOriginalAtomsIdMap.forEach(
+          (originalAtomId, selectedAtomId) => {
+            originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
 
-          // Restore position using the atomIdMap
-          const originalPosition = originalAtomPositions.get(originalAtomId);
-          const newAtomId = atomIdMap.get(selectedAtomId);
-          if (originalPosition && isNumber(newAtomId)) {
-            const atom = struct.atoms.get(newAtomId);
-            if (atom) {
-              atom.pp = new Vec2(originalPosition);
+            // Restore position using the atomIdMap
+            const originalPosition = originalAtomPositions.get(originalAtomId);
+            const newAtomId = atomIdMap.get(selectedAtomId);
+            if (originalPosition && isNumber(newAtomId)) {
+              const atom = struct.atoms.get(newAtomId);
+              if (atom) {
+                atom.pp = new Vec2(originalPosition);
+              }
+            }
+          },
+        );
+
+        externalBonds.forEach((bond) => {
+          const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
+          const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
+          const newBegin =
+            isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
+          const newEnd =
+            isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
+
+          if (
+            this.originalSelection.atoms?.includes(bond.begin) &&
+            !this.originalSelection.atoms?.includes(bond.end) &&
+            isNumber(beginIdInWizard) &&
+            isNumber(newBegin)
+          ) {
+            const newBond = bond.clone();
+
+            newBond.begin = newBegin;
+
+            struct.bonds.add(newBond);
+          }
+          if (
+            this.originalSelection.atoms?.includes(bond.end) &&
+            !this.originalSelection.atoms?.includes(bond.begin) &&
+            isNumber(endIdInWizard) &&
+            isNumber(newEnd)
+          ) {
+            const newBond = bond.clone();
+
+            newBond.end = newEnd;
+
+            struct.bonds.add(newBond);
+          }
+        });
+
+        // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
+        // between monomers created in wizard together
+        struct.bonds.forEach((bond) => {
+          const fromSgroup = struct.getGroupFromAtomId(bond.begin);
+          const toSgroup = struct.getGroupFromAtomId(bond.end);
+
+          if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
+            const fromAttachmentPoint = fromSgroup
+              .getAttachmentPoints()
+              .find((attachmentPoint) => attachmentPoint.atomId === bond.begin);
+            if (fromAttachmentPoint) {
+              bond.beginSuperatomAttachmentPointNumber =
+                fromAttachmentPoint.attachmentPointNumber;
             }
           }
-        },
-      );
 
-      externalBonds.forEach((bond) => {
-        const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
-        const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
-        const newBegin =
-          isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
-        const newEnd = isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
-
-        if (
-          this.originalSelection.atoms?.includes(bond.begin) &&
-          !this.originalSelection.atoms?.includes(bond.end) &&
-          isNumber(beginIdInWizard) &&
-          isNumber(newBegin)
-        ) {
-          const newBond = bond.clone();
-
-          newBond.begin = newBegin;
-
-          struct.bonds.add(newBond);
-        }
-        if (
-          this.originalSelection.atoms?.includes(bond.end) &&
-          !this.originalSelection.atoms?.includes(bond.begin) &&
-          isNumber(endIdInWizard) &&
-          isNumber(newEnd)
-        ) {
-          const newBond = bond.clone();
-
-          newBond.end = newEnd;
-
-          struct.bonds.add(newBond);
-        }
-      });
-
-      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
-      // between monomers created in wizard together
-      struct.bonds.forEach((bond) => {
-        const fromSgroup = struct.getGroupFromAtomId(bond.begin);
-        const toSgroup = struct.getGroupFromAtomId(bond.end);
-
-        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
-          const fromAttachmentPoint = fromSgroup
-            .getAttachmentPoints()
-            .find((attachmentPoint) => attachmentPoint.atomId === bond.begin);
-          if (fromAttachmentPoint) {
-            bond.beginSuperatomAttachmentPointNumber =
-              fromAttachmentPoint.attachmentPointNumber;
+          if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
+            const toAttachmentPoint = toSgroup
+              .getAttachmentPoints()
+              .find((attachmentPoint) => attachmentPoint.atomId === bond.end);
+            if (toAttachmentPoint) {
+              bond.endSuperatomAttachmentPointNumber =
+                toAttachmentPoint.attachmentPointNumber;
+            }
           }
-        }
+        });
 
-        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
-          const toAttachmentPoint = toSgroup
-            .getAttachmentPoints()
-            .find((attachmentPoint) => attachmentPoint.atomId === bond.end);
-          if (toAttachmentPoint) {
-            bond.endSuperatomAttachmentPointNumber =
-              toAttachmentPoint.attachmentPointNumber;
-          }
-        }
-      });
-
-      // fully recreate canvas
-      this.struct(
-        this.struct().clone(
+        // Fully recreate canvas with the final structure (still suppressing history)
+        const finalStruct = this.struct().clone(
           undefined,
           undefined,
           undefined,
@@ -1626,8 +1649,22 @@ class Editor implements KetcherEditor {
           undefined,
           undefined,
           true,
-        ),
-      );
+        );
+        this.struct(finalStruct);
+
+        // Record a single atomic undo entry: undo restores preCreationStruct, redo restores finalStruct.
+        // fromNewCanvas swaps canvas to preCreationStruct and returns inverse (loads finalStruct).
+        // Performing the inverse swaps back to finalStruct and returns the undo action (loads preCreationStruct).
+        this._suppressHistory = false;
+        const invertedAction = fromNewCanvas(
+          this.render.ctab,
+          preCreationStruct,
+        );
+        const undoAction = invertedAction.perform(this.render.ctab);
+        this.update(undoAction);
+      } finally {
+        this._suppressHistory = false;
+      }
     }, 0);
   }
 

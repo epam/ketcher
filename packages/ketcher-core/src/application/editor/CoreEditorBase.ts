@@ -10,6 +10,7 @@ import { MonomerItemType } from 'domain/types';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 
 export abstract class CoreEditorBase {
+  // eslint-disable-next-line no-use-before-define
   private static editorInstance: CoreEditorBase | undefined;
 
   abstract events: IEditorEvents;

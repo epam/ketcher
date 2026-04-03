@@ -31,6 +31,7 @@ const PreviewContainer = styled.div`
   position: absolute;
   background: ${({ theme }) => theme.ketcher.color.background.primary};
   z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
+  pointer-events: none;
 `;
 
 export const Preview = () => {
@@ -56,7 +57,7 @@ export const Preview = () => {
       const previewWidth = previewBoundingClientRect?.width || 0;
 
       const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
-        .node()
+        ?.node()
         ?.getBoundingClientRect();
       const canvasWrapperTop = canvasWrapperBoundingClientRect?.top || 0;
       const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
@@ -110,7 +111,7 @@ export const Preview = () => {
       setIsPreviewVisible(false);
       previewRef.current.setAttribute('style', '');
     }
-  }, [preview]);
+  }, [preview, isPreviewVisible, editor?.ketcherRootElementBoundingClientRect]);
 
   if (!preview) {
     return null;

@@ -17,7 +17,7 @@
 import { useAppSelector } from 'hooks';
 import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { debounce } from 'lodash';
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -49,8 +49,12 @@ import {
 import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
+  const HIDE_PREVIEW_DELAY = 250;
   const activePreset = useAppSelector(selectActivePreset);
   const editor = useAppSelector(selectEditor);
+  const hidePreviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
@@ -123,16 +127,29 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatchShowPreview],
   );
 
+  const clearHidePreviewTimeout = useCallback(() => {
+    if (hidePreviewTimeoutRef.current) {
+      clearTimeout(hidePreviewTimeoutRef.current);
+      hidePreviewTimeoutRef.current = null;
+    }
+  }, []);
+
   const handleItemMouseLeave = (): void => {
     debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
+    clearHidePreviewTimeout();
+    hidePreviewTimeoutRef.current = setTimeout(() => {
+      dispatch(showPreview(undefined));
+      hidePreviewTimeoutRef.current = null;
+    }, HIDE_PREVIEW_DELAY);
   };
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
     e: React.MouseEvent,
   ): void => {
-    handleItemMouseLeave();
+    debouncedShowPreview.cancel();
+    clearHidePreviewTimeout();
+    dispatch(showPreview(undefined));
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
@@ -174,6 +191,13 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
           };
     debouncedShowPreview(previewData);
   };
+
+  useEffect(() => {
+    return () => {
+      debouncedShowPreview.cancel();
+      clearHidePreviewTimeout();
+    };
+  }, [debouncedShowPreview, clearHidePreviewTimeout]);
   // endregion # Preview
 
   const handleContextMenu =

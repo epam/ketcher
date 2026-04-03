@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
@@ -43,9 +43,13 @@ const MonomerGroup = ({
   disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
+  const HIDE_PREVIEW_DELAY = 250;
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+  const hidePreviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     let monomerDisabled = false;
     if (isAmbiguousMonomerLibraryItem(monomer)) {
@@ -78,16 +82,29 @@ const MonomerGroup = ({
     [dispatchShowPreview],
   );
 
+  const clearHidePreviewTimeout = useCallback(() => {
+    if (hidePreviewTimeoutRef.current) {
+      clearTimeout(hidePreviewTimeoutRef.current);
+      hidePreviewTimeoutRef.current = null;
+    }
+  }, []);
+
   const handleItemMouseLeave = () => {
     debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
+    clearHidePreviewTimeout();
+    hidePreviewTimeoutRef.current = setTimeout(() => {
+      dispatch(showPreview(undefined));
+      hidePreviewTimeoutRef.current = null;
+    }, HIDE_PREVIEW_DELAY);
   };
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    handleItemMouseLeave();
+    debouncedShowPreview.cancel();
+    clearHidePreviewTimeout();
+    dispatch(showPreview(undefined));
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
@@ -119,6 +136,13 @@ const MonomerGroup = ({
 
     debouncedShowPreview(previewData);
   };
+
+  useEffect(() => {
+    return () => {
+      debouncedShowPreview.cancel();
+      clearHidePreviewTimeout();
+    };
+  }, [debouncedShowPreview, clearHidePreviewTimeout]);
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {

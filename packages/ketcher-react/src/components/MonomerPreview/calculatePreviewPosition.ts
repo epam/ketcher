@@ -16,7 +16,6 @@
 import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
 import { preview } from './constants';
 import { PreviewStyle } from './AmbiguousMonomerPreview/types';
-import assert from 'assert';
 import {
   KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   KETCHER_ROOT_NODE_CSS_SELECTOR,
@@ -28,7 +27,12 @@ export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
 export const calculateNucleoElementPreviewTop =
   createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
-type CalculatePreviewTopPayload = { left: number; top: number; bottom: number };
+type CalculatePreviewTopPayload = {
+  left: number;
+  top: number;
+  bottom: number;
+  right?: number;
+};
 
 function calculateTop(
   target: CalculatePreviewTopPayload,
@@ -42,24 +46,29 @@ function calculateTop(
   const ketcherEditorRootBoundingClientRect =
     ketcherEditorRoot?.getBoundingClientRect();
   const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
-    .node()
+    ?.node()
     ?.getBoundingClientRect();
-  const relativeTargetTop =
-    target.top - (ketcherEditorRootBoundingClientRect?.top ?? 0);
-  const relativeTargetBottom =
-    target.bottom - (ketcherEditorRootBoundingClientRect?.top ?? 0);
+  const editorRootTop = ketcherEditorRootBoundingClientRect?.top ?? 0;
+  const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
+  const relativeTargetTop = target.top - editorRootTop;
+  const relativeTargetBottom = target.bottom - editorRootTop;
+
+  const isTargetInsideCanvas =
+    !!canvasWrapperBoundingClientRect &&
+    target.left >= canvasWrapperBoundingClientRect.left &&
+    (target.right ?? target.left) <= canvasWrapperBoundingClientRect.right &&
+    target.top >= canvasWrapperBoundingClientRect.top &&
+    target.bottom <= canvasWrapperBoundingClientRect.bottom;
 
   // The top toolbar sits above the canvas wrapper. When the preview is rendered
   // in the editor root, we must not position it into the toolbar area.
-  const relativeTopBoundary =
-    (canvasWrapperBoundingClientRect?.top ??
-      ketcherEditorRootBoundingClientRect?.top ??
-      0) - (ketcherEditorRootBoundingClientRect?.top ?? 0);
-  const relativeBottomBoundary =
-    (canvasWrapperBoundingClientRect?.bottom ??
-      (ketcherEditorRootBoundingClientRect?.top ?? 0) +
-        (ketcherEditorRootBoundingClientRect?.height ?? 0)) -
-    (ketcherEditorRootBoundingClientRect?.top ?? 0);
+  // Apply this clamp only for targets inside canvas; library items use legacy root bounds.
+  const relativeTopBoundary = isTargetInsideCanvas
+    ? (canvasWrapperBoundingClientRect?.top ?? editorRootTop) - editorRootTop
+    : 0;
+  const relativeBottomBoundary = isTargetInsideCanvas
+    ? (canvasWrapperBoundingClientRect?.bottom ?? editorRootTop) - editorRootTop
+    : editorRootHeight;
 
   const topPreviewPosition =
     relativeTargetTop - preview.gap - height - preview.topPadding;
@@ -78,7 +87,8 @@ function calculateTop(
     bottomPreviewPosition + height + preview.topPadding >
     relativeBottomBoundary;
   const isLowerHalf =
-    relativeTargetTop > (relativeBottomBoundary - relativeTopBoundary) / 2;
+    relativeTargetTop - relativeTopBoundary >
+    (relativeBottomBoundary - relativeTopBoundary) / 2;
 
   if (exceedsBottomBoundary && isLowerHalf) {
     return Math.max(topPreviewPosition, relativeTopBoundary);
@@ -144,7 +154,9 @@ export const calculateBondPreviewPosition = (
 ): PreviewStyle => {
   const { firstMonomer, secondMonomer } = bond;
 
-  assert(secondMonomer);
+  if (!secondMonomer) {
+    return {};
+  }
 
   const firstMonomerCoordinates = firstMonomer.renderer?.rootBoundingClientRect;
   const secondMonomerCoordinates =
@@ -156,8 +168,9 @@ export const calculateBondPreviewPosition = (
   const canvasWrapperTop = canvasWrapperBoundingClientRect?.top ?? 0;
   const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
 
-  assert(firstMonomerCoordinates);
-  assert(secondMonomerCoordinates);
+  if (!firstMonomerCoordinates || !secondMonomerCoordinates) {
+    return {};
+  }
 
   const left = Math.min(
     bondCoordinates.left,

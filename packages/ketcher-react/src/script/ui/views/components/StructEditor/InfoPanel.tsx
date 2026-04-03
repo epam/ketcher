@@ -164,14 +164,29 @@ const InfoPanel = (props: InfoPanelProps) => {
       const previewHeight = getAmbiguousMonomerPreviewHeight(
         monomer.variantMonomerItem,
       );
-      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-      const panelPosition = CoordinateTransformation.modelToView(
-        position,
-        render,
-      );
+      let anchorX = clientX;
+      let anchorY = clientY;
+      try {
+        const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+        if (position) {
+          const panelPosition = CoordinateTransformation.modelToView(
+            position,
+            render,
+          );
+          if (
+            Number.isFinite(panelPosition.x) &&
+            Number.isFinite(panelPosition.y)
+          ) {
+            anchorX = panelPosition.x;
+            anchorY = panelPosition.y;
+          }
+        }
+      } catch {
+        // Fallback to mouse coordinates if contracted-position anchor is unavailable.
+      }
 
       const viewportHeight = render?.clientArea?.clientHeight ?? 0;
-      let top = panelPosition.y + AMBIGUOUS_MONOMER_PREVIEW_GAP;
+      let top = anchorY + AMBIGUOUS_MONOMER_PREVIEW_GAP;
       if (viewportHeight) {
         top = Math.min(top, viewportHeight - previewHeight);
         top = Math.max(0, top);
@@ -185,7 +200,7 @@ const InfoPanel = (props: InfoPanelProps) => {
           }}
           style={{
             position: 'absolute',
-            left: `${panelPosition.x}px`,
+            left: `${anchorX}px`,
             top: `${top}px`,
             transform: 'translate(-50%, 0)',
           }}
@@ -219,7 +234,7 @@ const InfoPanel = (props: InfoPanelProps) => {
       clientX={clientX}
       clientY={clientY}
       render={render}
-      sGroup={sGroup}
+      sGroup={sGroup as SGroup}
       sGroupData={sGroupData}
       className={className}
     />

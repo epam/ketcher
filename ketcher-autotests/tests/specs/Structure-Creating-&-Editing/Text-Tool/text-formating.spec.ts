@@ -30,7 +30,7 @@ test.describe('Text tools test cases', () => {
     await waitForPageInit(page);
   });
 
-  test(' Font size', async ({ page }) => {
+  test('Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
     // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
@@ -40,13 +40,14 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST' }).dblclick();
+    await TextEditorDialog(page).clickTextEditor();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).selectFontSize(10);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
-  test(' Applying styles - Bold', async ({ page }) => {
+  test('Applying styles - Bold', async ({ page }) => {
     // Test case: EPMLSOPKET-2256
     // Verify if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
@@ -57,7 +58,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Applying styles - Italic', async ({ page }) => {
+  test('Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
     // Verify if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
@@ -68,7 +69,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Applying styles - Subscript', async ({ page }) => {
+  test('Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
     // Verify if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
@@ -104,6 +105,7 @@ test.describe('Text tools test cases', () => {
     });
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST123' }).dblclick();
+    await TextEditorDialog(page).clickTextEditor();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setOptions({
       isSubscript: true,
@@ -139,6 +141,7 @@ test.describe('Text tools test cases', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST321' }).dblclick();
+    await TextEditorDialog(page).clickTextEditor();
     await selectAllStructuresOnCanvas(page);
     await TextEditorDialog(page).setOptions({
       isItalic: true,
@@ -146,7 +149,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Cut/Copy/Paste', async ({ page }) => {
+  test('Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
     // Verify if user is able to copy and paste the created text objects
     await addTextBoxToCanvas(page);
@@ -157,7 +160,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Checking if user is able to cut and paste the created text objects', async ({
+  test('Checking if user is able to cut and paste the created text objects', async ({
     page,
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
@@ -172,7 +175,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(' Selection of different types of text objects', async ({ page }) => {
+  test('Selection of different types of text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2274
     // Verify if its possible to select a text objects of any size by clicking on green frame
     await openFileAndAddToCanvas(page, 'KET/text-object.ket');

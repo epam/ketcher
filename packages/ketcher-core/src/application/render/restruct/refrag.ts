@@ -16,42 +16,55 @@
 
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
+import { Fragment } from 'domain/entities/fragment';
 
 import ReObject from './reobject';
+import ReStruct from './restruct';
+import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReFrag extends ReObject {
-  constructor(/* Struct.Fragment */ frag) {
+  public item: Fragment;
+
+  constructor(frag: Fragment) {
     super('frag');
     this.item = frag;
   }
 
-  static isSelectable() {
+  static isSelectable(): boolean {
     return false;
   }
 
-  fragGetAtoms(restruct, fid) {
+  fragGetAtoms(restruct: ReStruct, fid: number): number[] {
     return Array.from(restruct.atoms.keys()).filter(
-      (aid) => restruct.atoms.get(aid).a.fragment === fid,
+      (aid) => restruct.atoms.get(aid)?.a.fragment === fid,
     );
   }
 
-  fragGetBonds(restruct, fid) {
+  fragGetBonds(restruct: ReStruct, fid: number): number[] {
     return Array.from(restruct.bonds.keys()).filter((bid) => {
-      const bond = restruct.bonds.get(bid).b;
+      const bond = restruct.bonds.get(bid)?.b;
+      if (!bond) {
+        return false;
+      }
 
-      const firstFrag = restruct.atoms.get(bond.begin).a.fragment;
-      const secondFrag = restruct.atoms.get(bond.end).a.fragment;
+      const firstFrag = restruct.atoms.get(bond.begin)?.a.fragment;
+      const secondFrag = restruct.atoms.get(bond.end)?.a.fragment;
 
       return firstFrag === fid && secondFrag === fid;
     });
   }
 
-  calcBBox(restruct, fid, render) {
-    // TODO need to review parameter list
-    let ret;
+  calcBBox(
+    restruct: ReStruct,
+    fid: number,
+    render?: Render,
+  ): Box2Abs | undefined {
+    let ret: Box2Abs | undefined;
     restruct.atoms.forEach((atom) => {
-      if (atom.a.fragment !== fid) return;
+      if (atom.a.fragment !== fid) {
+        return;
+      }
 
       // TODO ReObject.calcBBox to be used instead
       let bba = atom.visel.boundingBox;
@@ -60,7 +73,9 @@ class ReFrag extends ReObject {
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         bba = bba.extend(ext, ext);
       } else {
-        if (!render) render = global._ui_editor.render; // eslint-disable-line
+        if (!render) {
+          render = (global as Record<string, unknown>)._ui_editor as Render; // eslint-disable-line
+        }
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
           .transform(Scale.canvasToModel, render.options);
@@ -71,8 +86,7 @@ class ReFrag extends ReObject {
     return ret;
   }
 
-  // TODO need to review parameter list
-  _draw(render, fid, attrs) {
+  _draw(render: Render, fid: number, attrs: Record<string, unknown>) {
     // eslint-disable-line no-underscore-dangle
     const bb = this.calcBBox(render.ctab, fid, render);
 
@@ -93,17 +107,15 @@ class ReFrag extends ReObject {
     // TODO abnormal situation, empty fragments must be destroyed by tools
   }
 
-  draw(_render) {
-    // eslint-disable-line no-unused-vars
+  draw(_render: Render): null {
     return null;
   }
 
-  drawHover(_render) {
-    // eslint-disable-line no-unused-vars
+  drawHover(_render: Render): void {
     // Do nothing. This method shouldn't actually be called.
   }
 
-  setHover(hover, render) {
+  setHover(hover: boolean, render: Render): void {
     let fid = render.ctab.frags.keyOf(this);
 
     if (!fid && fid !== 0) {
@@ -111,14 +123,16 @@ class ReFrag extends ReObject {
       return;
     }
 
-    fid = parseInt(fid, 10);
+    fid = parseInt(String(fid), 10);
 
     render.ctab.atoms.forEach((atom) => {
-      if (atom.a.fragment === fid) atom.setHover(hover, render);
+      if (atom.a.fragment === fid) {
+        atom.setHover(hover, render);
+      }
     });
 
     render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid) {
+      if (render.ctab.atoms.get(bond.b.begin)?.a.fragment === fid) {
         bond.setHover(hover, render);
       }
     });

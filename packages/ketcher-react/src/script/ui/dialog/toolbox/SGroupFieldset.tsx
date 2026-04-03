@@ -68,7 +68,7 @@ interface SGroupFieldsetProps {
   formState: BaseProps['formState'];
 }
 
-function SGroupFieldset({ formState }: SGroupFieldsetProps) {
+function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {
   const { result } = formState;
 
   const type = result.type;

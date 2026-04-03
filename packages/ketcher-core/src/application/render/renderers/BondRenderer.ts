@@ -253,6 +253,24 @@ export class BondRenderer extends BaseRenderer {
     this.hoverElement = undefined;
   }
 
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', '#CCFFDD');
+      }
+    } else {
+      this.removeHover();
+      this.hoverElement = undefined;
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', '#57ff8f');
+      }
+    }
+  }
+
   public drawSelection() {
     if (!this.rootElement) {
       return;

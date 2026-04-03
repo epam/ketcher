@@ -103,6 +103,7 @@ export const isAntisenseCreationDisabled = (
         !isSenseBase(selectedMonomer)) ||
       (rnaBaseForSugar &&
         (rnaBaseForSugar.hydrogenBonds.length > 0 ||
+          rnaBaseForSugar.covalentBonds.length > 1 ||
           !isSenseBase(rnaBaseForSugar)))
     );
   });

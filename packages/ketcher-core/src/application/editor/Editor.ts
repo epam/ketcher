@@ -207,6 +207,7 @@ export class CoreEditor {
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private contextMenuEventTarget: HTMLDivElement | SVGSVGElement | null = null;
   private readonly cleanupsForDomEvents: Array<() => void> = [];
 
   constructor({
@@ -611,25 +612,8 @@ export class CoreEditor {
   }
 
   private setupContextMenuEvents() {
+    this.contextMenuEventTarget = this.ketcherRootElement ?? this.canvas;
     this.contextMenuEventHandler = (event) => {
-      const eventTarget = event.target;
-      let contextMenuScope: HTMLDivElement | SVGSVGElement | null = null;
-
-      if (this.ketcherRootElement?.isConnected) {
-        contextMenuScope = this.ketcherRootElement;
-      } else if (this.canvas?.isConnected) {
-        contextMenuScope = this.canvas;
-      }
-
-      const isEventInsideEditor =
-        contextMenuScope &&
-        eventTarget instanceof Node &&
-        contextMenuScope.contains(eventTarget);
-
-      if (!isEventInsideEditor) {
-        return;
-      }
-
       event.preventDefault();
 
       if (this.libraryItemDragState) {
@@ -714,7 +698,10 @@ export class CoreEditor {
       return false;
     };
 
-    document.addEventListener('contextmenu', this.contextMenuEventHandler);
+    this.contextMenuEventTarget.addEventListener(
+      'contextmenu',
+      this.contextMenuEventHandler,
+    );
   }
 
   private onLayoutCircular() {
@@ -1673,7 +1660,10 @@ export class CoreEditor {
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
-    document.removeEventListener('contextmenu', this.contextMenuEventHandler);
+    this.contextMenuEventTarget?.removeEventListener(
+      'contextmenu',
+      this.contextMenuEventHandler,
+    );
     this.canvas.removeEventListener('mousedown', blurActiveElement);
     document.removeEventListener(
       'visibilitychange',

@@ -24,7 +24,7 @@ describe('CoreEditor', () => {
 
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
-    const editor: CoreEditor = new CoreEditor({
+    const editor = new CoreEditor({
       canvas,
       theme: {},
     });
@@ -61,11 +61,6 @@ describe('CoreEditor', () => {
 
   it('should prevent default context menu inside standalone editor canvas', () => {
     const canvas = createPolymerEditorCanvas();
-
-    new CoreEditor({
-      canvas,
-      theme: {},
-    });
 
     const insideEvent = new MouseEvent('contextmenu', {
       bubbles: true,

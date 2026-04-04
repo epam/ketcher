@@ -8,6 +8,7 @@ import Editor, { ClosestItemWithMap } from 'src/script/editor';
 import {
   CONTEXT_MENU_ID,
   ContextMenuProps,
+  ContextMenuTriggerType,
   GetIsItemInSelectionArgs,
 } from './contextMenu.types';
 import { Selection } from '../../../../editor/Editor';
@@ -38,6 +39,59 @@ export const getIsItemInSelection = ({
       );
   }
 };
+
+interface GetTriggerTypeArgs extends GetIsItemInSelectionArgs {
+  item: ClosestItemWithMap | null;
+}
+
+export const getTriggerType = ({
+  item,
+  selection,
+  selectedFunctionalGroups,
+  selectedSGroupsIds,
+}: GetTriggerTypeArgs): ContextMenuTriggerType => {
+  if (!selection) {
+    return ContextMenuTriggerType.ClosestItem;
+  }
+
+  if (
+    !getIsItemInSelection({
+      item,
+      selection,
+      selectedFunctionalGroups,
+      selectedSGroupsIds,
+    })
+  ) {
+    return ContextMenuTriggerType.ClosestItem;
+  }
+
+  if (
+    !selection.bonds &&
+    !selection.atoms &&
+    !selection.rgroupAttachmentPoints
+  ) {
+    return selection[MULTITAIL_ARROW_KEY]
+      ? ContextMenuTriggerType.ClosestItem
+      : ContextMenuTriggerType.None;
+  }
+
+  return ContextMenuTriggerType.Selection;
+};
+
+export const getShouldResetSelection = ({
+  item,
+  selection,
+  selectedFunctionalGroups,
+  selectedSGroupsIds,
+}: GetTriggerTypeArgs): boolean =>
+  !!selection &&
+  !!item &&
+  !getIsItemInSelection({
+    item,
+    selection,
+    selectedFunctionalGroups,
+    selectedSGroupsIds,
+  });
 
 export function getMenuPropsForClosestItem(
   editor: Editor,
@@ -225,4 +279,49 @@ export function getMenuPropsForSelection(
       rgroupAttachmentPoints,
     };
   }
+}
+
+interface GetShowPropsArgs extends GetTriggerTypeArgs {
+  editor: Editor;
+  ketcherId: string;
+}
+
+export function getShowProps({
+  editor,
+  item,
+  selection,
+  selectedFunctionalGroups,
+  selectedSGroupsIds,
+  ketcherId,
+}: GetShowPropsArgs): ContextMenuProps | null {
+  if (!item) {
+    return null;
+  }
+
+  const triggerType = getTriggerType({
+    item,
+    selection,
+    selectedFunctionalGroups,
+    selectedSGroupsIds,
+  });
+
+  switch (triggerType) {
+    case ContextMenuTriggerType.None: {
+      return null;
+    }
+
+    case ContextMenuTriggerType.ClosestItem: {
+      return getMenuPropsForClosestItem(editor, item, ketcherId);
+    }
+
+    case ContextMenuTriggerType.Selection: {
+      return getMenuPropsForSelection(
+        selection,
+        selectedFunctionalGroups,
+        ketcherId,
+      );
+    }
+  }
+
+  return null;
 }

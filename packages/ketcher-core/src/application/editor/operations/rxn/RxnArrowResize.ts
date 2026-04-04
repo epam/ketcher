@@ -18,7 +18,7 @@ import { ReStruct } from 'application/render';
 import assert from 'assert';
 import { RxnArrow, Vec2 } from 'domain/entities';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 

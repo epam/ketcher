@@ -31,7 +31,7 @@ import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 import BracketParams from '../bracket-params';
 import { RaphaelPaper } from 'raphael';
 import { RenderOptions } from '../render.types';

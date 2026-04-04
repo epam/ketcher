@@ -38,7 +38,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 import {
   RenderOptions,
   RenderOptionStyles,

@@ -2,7 +2,7 @@ import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 
 export class FilledTriangleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {

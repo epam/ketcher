@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import assert from 'assert';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 
 export interface Point {
   x?: number;

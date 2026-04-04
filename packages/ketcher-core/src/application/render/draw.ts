@@ -22,7 +22,7 @@ import Raphael from './raphael-ext';
 import svgPath from 'svgpath';
 import util from './util';
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 import { PathBuilder } from './pathBuilder';
 
 export const ARROW_HEAD_LENGHT = 0.25; // 10

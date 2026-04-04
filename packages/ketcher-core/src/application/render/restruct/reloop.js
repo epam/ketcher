@@ -19,7 +19,7 @@ import { Bond, Vec2 } from 'domain/entities';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 
 class ReLoop extends ReObject {
   constructor(loop) {

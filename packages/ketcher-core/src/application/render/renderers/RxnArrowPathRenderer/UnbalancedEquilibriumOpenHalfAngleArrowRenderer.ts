@@ -7,7 +7,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 
 export class UnbalancedEquilibriumOpenHalfAngleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {

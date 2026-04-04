@@ -22,7 +22,7 @@ import { provideEditorSettings } from 'application/editor';
 import { EllipticalArcFilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledTriangleArrowRenderer';
 import { EllipticalArcOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenAngleArrowRenderer';
 import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenHalfAngleArrowRenderer';
-import { KetcherLogger, tfx } from 'utilities';
+import { KetcherLogger, toFixed as tfx } from 'utilities';
 import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer';
 import svgPath from 'svgpath';
 

@@ -1,4 +1,4 @@
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 import { Vec2 } from 'domain/entities';
 
 interface Point2D {

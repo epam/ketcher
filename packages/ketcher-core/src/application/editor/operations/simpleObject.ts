@@ -21,7 +21,7 @@ import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed as tfx } from 'utilities';
 
 interface SimpleObjectAddData {
   id?: number;

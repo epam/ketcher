@@ -59,6 +59,24 @@ describe('CoreEditor', () => {
     expect(outsideEvent.defaultPrevented).toBe(false);
   });
 
+  it('should prevent default context menu inside standalone editor canvas', () => {
+    const canvas = createPolymerEditorCanvas();
+
+    new CoreEditor({
+      canvas,
+      theme: {},
+    });
+
+    const insideEvent = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    canvas.dispatchEvent(insideEvent);
+
+    expect(insideEvent.defaultPrevented).toBe(true);
+  });
+
   it('should not block context menu after macromolecules root is removed', () => {
     const { root } = createMacromoleculesEditor();
     const outsideElement = document.createElement('div');

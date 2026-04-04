@@ -500,7 +500,7 @@ describe('CoreEditor', () => {
       }
     });
 
-    it('should ignore context menu events outside ketcher root', () => {
+    it('should ignore context menu events outside Ketcher root', () => {
       const rightClickCanvasHandler = jest.fn();
       const hostElement = document.createElement('div');
 
@@ -520,7 +520,7 @@ describe('CoreEditor', () => {
       hostElement.remove();
     });
 
-    it('should ignore context menu events when ketcher root is removed', () => {
+    it('should ignore context menu events when Ketcher root is removed', () => {
       const rightClickCanvasHandler = jest.fn();
       const hostElement = document.createElement('div');
 

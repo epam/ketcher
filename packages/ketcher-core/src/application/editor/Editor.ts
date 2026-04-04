@@ -686,13 +686,13 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       const eventTarget = event.target;
-      const activeKetcherRootElement = this.ketcherRootElement?.isConnected
+      const connectedRoot = this.ketcherRootElement?.isConnected
         ? this.ketcherRootElement
         : null;
       const isEventInsideKetcher =
         eventTarget instanceof Node &&
-        (activeKetcherRootElement
-          ? activeKetcherRootElement.contains(eventTarget)
+        (connectedRoot
+          ? connectedRoot.contains(eventTarget)
           : this.canvas.isConnected && this.canvas.contains(eventTarget));
 
       if (!isEventInsideKetcher) {

@@ -1,9 +1,27 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
+  const createMacromoleculesEditor = () => {
+    const root = document.createElement('div');
+
+    root.className = EditorClassName;
+    document.body.appendChild(root);
+
+    const canvas = createPolymerEditorCanvas();
+
+    root.appendChild(canvas);
+
+    const editor: CoreEditor = new CoreEditor({
+      canvas,
+      theme: {},
+    });
+
+    return { canvas, editor, root };
+  };
+
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
@@ -17,6 +35,45 @@ describe('CoreEditor', () => {
     editor.selectTool(ToolName.monomer);
     canvas.dispatchEvent(new Event('mousemove', { bubbles: true }));
     expect(onMousemove).toHaveBeenCalled();
+  });
+
+  it('should prevent default context menu only inside macromolecules root', () => {
+    const { canvas } = createMacromoleculesEditor();
+    const outsideElement = document.createElement('div');
+
+    document.body.appendChild(outsideElement);
+
+    const insideEvent = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+    });
+    const outsideEvent = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    canvas.dispatchEvent(insideEvent);
+    outsideElement.dispatchEvent(outsideEvent);
+
+    expect(insideEvent.defaultPrevented).toBe(true);
+    expect(outsideEvent.defaultPrevented).toBe(false);
+  });
+
+  it('should not block context menu after macromolecules root is removed', () => {
+    const { root } = createMacromoleculesEditor();
+    const outsideElement = document.createElement('div');
+
+    document.body.appendChild(outsideElement);
+    root.remove();
+
+    const outsideEvent = new MouseEvent('contextmenu', {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    outsideElement.dispatchEvent(outsideEvent);
+
+    expect(outsideEvent.defaultPrevented).toBe(false);
   });
 
   describe('updateMonomersLibrary', () => {

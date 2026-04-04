@@ -18,9 +18,6 @@ import { MonomerMicromolecule, Pile, SGroup } from 'domain/entities';
 
 import utils from './utils';
 import v2000 from './v2000';
-import v3000 from './v3000';
-
-const loadRGroupFragments = true; // TODO: set to load the fragments
 
 /* Parse Mol */
 function parseMol(
@@ -53,7 +50,9 @@ function parseCTab(
     return v2000.parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
   }
   if (version === 'V3000') {
-    return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments);
+    throw new Error(
+      'Molfile V3000 parsing is handled by Indigo and is not supported by MolSerializer',
+    );
   } else {
     throw new Error('Molfile version unknown: ' + version);
   }
@@ -68,7 +67,9 @@ function parseRxn(
   /* reader */
   const split = ctabLines[0].trim().split(' ');
   if (split.length > 1 && split[1] === 'V3000') {
-    return v3000.parseRxn3000(ctabLines, shouldReactionRelayout);
+    throw new Error(
+      'Rxnfile V3000 parsing is handled by Indigo and is not supported by MolSerializer',
+    );
   }
 
   const struct = v2000.parseRxn2000(

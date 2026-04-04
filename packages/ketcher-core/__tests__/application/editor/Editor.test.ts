@@ -1,4 +1,4 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
@@ -432,9 +432,14 @@ describe('CoreEditor', () => {
   describe('context menu handling', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
+    let editorRoot: HTMLDivElement;
 
     beforeEach(() => {
+      editorRoot = document.createElement('div');
+      editorRoot.classList.add(EditorClassName);
+      document.body.appendChild(editorRoot);
       canvas = createPolymerEditorCanvas();
+      editorRoot.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
         theme: polymerEditorTheme,
@@ -443,7 +448,7 @@ describe('CoreEditor', () => {
 
     afterEach(() => {
       editor.destroy();
-      canvas.remove();
+      editorRoot.remove();
     });
 
     it('should select monomer on right click when it was not selected', () => {
@@ -469,18 +474,20 @@ describe('CoreEditor', () => {
       const monomerDomElement = document.createElement('div');
       (monomerDomElement as unknown as { __data__: unknown }).__data__ =
         monomer.renderer;
-      document.body.appendChild(monomerDomElement);
+      editorRoot.appendChild(monomerDomElement);
 
       expect(monomer.selected).toBeFalsy();
-      monomerDomElement.dispatchEvent(
-        new MouseEvent('contextmenu', {
-          bubbles: true,
-          clientX: 0,
-          clientY: 0,
-        }),
-      );
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+        clientX: 0,
+        clientY: 0,
+      });
+
+      monomerDomElement.dispatchEvent(event);
 
       expect(monomer.selected).toBeTruthy();
+      expect(event.defaultPrevented).toBeTruthy();
       expect(rightClickSelectedMonomersHandler).toHaveBeenCalledWith(
         expect.arrayContaining([expect.anything(), [monomer]]),
       );
@@ -491,6 +498,47 @@ describe('CoreEditor', () => {
       } else {
         Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
+    });
+
+    it('should ignore context menu events outside ketcher root', () => {
+      const rightClickCanvasHandler = jest.fn();
+      const hostElement = document.createElement('div');
+
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+      document.body.appendChild(hostElement);
+
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      hostElement.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBeFalsy();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+      hostElement.remove();
+    });
+
+    it('should ignore context menu events when ketcher root is removed', () => {
+      const rightClickCanvasHandler = jest.fn();
+      const hostElement = document.createElement('div');
+
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+      document.body.appendChild(hostElement);
+      editorRoot.remove();
+
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      hostElement.dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBeFalsy();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+      hostElement.remove();
     });
   });
 

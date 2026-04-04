@@ -321,7 +321,8 @@ export function getShowProps({
         ketcherId,
       );
     }
+    case ContextMenuTriggerType.AuxiliaryItem: {
+      return null;
+    }
   }
-
-  return null;
 }

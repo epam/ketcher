@@ -613,12 +613,14 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       const eventTarget = event.target;
-      const contextMenuScope =
-        this.ketcherRootElement?.isConnected && this.ketcherRootElement
-          ? this.ketcherRootElement
-          : this.canvas?.isConnected
-          ? this.canvas
-          : null;
+      let contextMenuScope: HTMLDivElement | SVGSVGElement | null = null;
+
+      if (this.ketcherRootElement?.isConnected) {
+        contextMenuScope = this.ketcherRootElement;
+      } else if (this.canvas?.isConnected) {
+        contextMenuScope = this.canvas;
+      }
+
       const isEventInsideEditor =
         contextMenuScope &&
         eventTarget instanceof Node &&

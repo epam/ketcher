@@ -103,7 +103,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
-    onSettingsOpen: () => dispatchAction('settings'),
+    onSettingsOpen: () => {
+      dispatchAction('settings');
+    },
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),

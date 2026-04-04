@@ -14,23 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants';
-export * from 'domain/entities';
-export * from 'domain/serializers';
-export * from 'domain/services';
-export * from 'domain/helpers';
-export * from 'domain/types';
-
-export * from 'infrastructure/services';
-
-export * from 'application/formatters';
-export * from 'application/render';
-export * from 'application/editor';
-export * from 'application/ketcher';
-export * from 'application/ketcher.types';
-export * from 'application/ketcherBuilder';
-export * from 'application/settings';
-export * from 'application/utils';
-export * from 'domain/helpers/monomers';
-
-export * from 'utilities';
+export { Settings } from './Settings';

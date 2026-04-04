@@ -41,7 +41,8 @@ export type ModalName =
   | 'delete'
   | 'updateSequenceInRNABuilder'
   | 'monomerConnection'
-  | 'confirmationDialog';
+  | 'confirmationDialog'
+  | 'settings';
 
 export const modalSlice = createSlice({
   name: 'modal',

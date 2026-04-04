@@ -32,7 +32,11 @@ import {
   initSaltsAndSolvents,
   initSaltsAndSolventsTemplates,
 } from '../state/saltsAndSolvents';
-import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
+import {
+  useAppContext,
+  useSubscriptionOnEvents,
+  useSettings,
+} from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
@@ -62,6 +66,10 @@ const App = (props: Props) => {
   const dispatch = useAppDispatch();
   const { checkServer } = props;
   const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
+
+  // Enable bidirectional sync between Redux and Core settings
+  // This ensures settings changes in macromolecules mode are reflected in small molecules mode
+  useSettings();
 
   useSubscriptionOnEvents();
   const { ketcherId, prevKetcherId } = useAppContext();

@@ -14,23 +14,39 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants';
-export * from 'domain/entities';
-export * from 'domain/serializers';
-export * from 'domain/services';
-export * from 'domain/helpers';
-export * from 'domain/types';
+import styled from '@emotion/styled';
 
-export * from 'infrastructure/services';
+export const AccordionHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 14px;
+  color: #333333;
+  font-weight: 400;
+`;
 
-export * from 'application/formatters';
-export * from 'application/render';
-export * from 'application/editor';
-export * from 'application/ketcher';
-export * from 'application/ketcher.types';
-export * from 'application/ketcherBuilder';
-export * from 'application/settings';
-export * from 'application/utils';
-export * from 'domain/helpers/monomers';
+export const GroupLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
 
-export * from 'utilities';
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  span {
+    height: 12px;
+  }
+`;
+
+export const ChangeIndicator = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #167782;
+  margin-left: auto;
+  margin-right: 8px;
+`;

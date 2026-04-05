@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ketcher Code Guardrails"
+  short_description: "TypeScript and React generation guardrails"
+  default_prompt: "Use $ketcher-code-generation-guardrails to generate or review Ketcher TypeScript and React code that follows the repository guardrails."

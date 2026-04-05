@@ -19,12 +19,11 @@ import { appUpdate } from '../options';
 import {
   SaltsAndSolventsProvider,
   FunctionalGroupsProvider,
-  SdfItem,
-  SdfSerializer,
   Struct,
 } from 'ketcher-core';
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf';
 import { MODES } from 'src/constants';
+import { deserializeSdf, SdfItem } from '../../utils/sdf';
 
 interface SaltsAndSolventsState {
   lib: [];
@@ -53,8 +52,7 @@ export function initSaltsAndSolventsTemplates() {
   return async (dispatch) => {
     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
     const functionalGroupsProvider = FunctionalGroupsProvider.getInstance();
-    const sdfSerializer = new SdfSerializer();
-    const templates = sdfSerializer.deserialize(templatesRawData);
+    const templates = await deserializeSdf(templatesRawData);
     const saltsAndSolvents = templates.reduce(
       (acc: Struct[], { struct, props }) => {
         struct.abbreviation = String(props.abbreviation);

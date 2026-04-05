@@ -16,16 +16,12 @@
 
 import { AnyAction } from 'redux';
 import { appUpdate } from '../options';
-import {
-  FunctionalGroupsProvider,
-  SdfItem,
-  SdfSerializer,
-  Struct,
-} from 'ketcher-core';
+import { FunctionalGroupsProvider, Struct } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';
 import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip';
 import { MODES } from 'src/constants';
+import { deserializeSdf, SdfItem } from '../../utils/sdf';
 
 interface FGState {
   lib: [];
@@ -75,8 +71,7 @@ export const highlightFG = memoizedDebounce(
 export function initFGTemplates() {
   return async (dispatch) => {
     const provider = FunctionalGroupsProvider.getInstance();
-    const sdfSerializer = new SdfSerializer();
-    const templates = sdfSerializer.deserialize(templatesRawData);
+    const templates = await deserializeSdf(templatesRawData);
     const functionalGroups = templates.reduce(
       (acc: Struct[], { struct }) => [...acc, struct],
       [],

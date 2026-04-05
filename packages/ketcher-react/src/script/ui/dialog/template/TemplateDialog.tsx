@@ -32,7 +32,6 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
 import { connect } from 'react-redux';
@@ -48,6 +47,7 @@ import Tab from '@mui/material/Tab';
 import useSaltsAndSolvents from './useSaltsAndSolvets';
 import { Icon } from 'components';
 import clsx from 'clsx';
+import { serializeSdfItems } from '../../utils/sdf';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -233,13 +233,12 @@ const TemplateDialog: FC<Props> = (props) => {
     onTabChange(value);
   };
 
-  const sdfSerializer = new SdfSerializer();
   const serializerMapper = {
     [TemplateTabs.TemplateLibrary]: templateLib,
     [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
     [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
   };
-  const data = sdfSerializer.serialize(serializerMapper[tab]);
+  const data = serializeSdfItems(serializerMapper[tab] || []);
 
   const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group);

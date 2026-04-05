@@ -27,7 +27,6 @@ import {
   KetMonomerClass,
   MonomerItemType,
   MonomerOrAmbiguousType,
-  SdfItem,
   AmbiguousMonomer,
   MonomerGroups,
   AmbiguousMonomerType,
@@ -91,7 +90,7 @@ export const librarySlice: Slice = createSlice({
   reducers: {
     loadMonomerLibrary: (
       state: RootState,
-      action: PayloadAction<SdfItem[]>,
+      action: PayloadAction<MonomerItemType[]>,
     ) => {
       const clonedMonomers = action.payload.map((monomer) => {
         return {

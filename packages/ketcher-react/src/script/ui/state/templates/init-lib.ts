@@ -14,18 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  KetcherLogger,
-  KetSerializer,
-  SdfItem,
-  SdfSerializer,
-  SettingsManager,
-} from 'ketcher-core';
+import { KetcherLogger, KetSerializer } from 'ketcher-core';
 
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
 import { AnyAction, Dispatch } from 'redux';
+import { deserializeSdf, SdfItem } from '../../utils/sdf';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
 let needReinitializeTemplateLibrary = false;
@@ -47,24 +42,20 @@ const deserializeSdfTemplates = (
   cacheEl: Element,
   _fileName: string,
 ): Promise<SdfItem[]> => {
-  const options = {
-    ignoreChiralFlag: SettingsManager.ignoreChiralFlag,
-  };
+  return deserializeSdf(templatesRawData).then((tmpls) => {
+    const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl);
 
-  const sdfSerializer = new SdfSerializer(options);
-  const tmpls = sdfSerializer.deserialize(templatesRawData);
-  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl);
+    return prefetch.then((cachedFiles) =>
+      tmpls.map((tmpl) => {
+        const pr = prefetchSplit(tmpl);
+        if (pr.file)
+          tmpl.props.prerender =
+            cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
 
-  return prefetch.then((cachedFiles) =>
-    tmpls.map((tmpl) => {
-      const pr = prefetchSplit(tmpl);
-      if (pr.file)
-        tmpl.props.prerender =
-          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
-
-      return tmpl;
-    }),
-  );
+        return tmpl;
+      }),
+    );
+  });
 };
 
 export default async function initTmplLib(
@@ -127,11 +118,11 @@ export function prefetchStatic(url: string): Promise<string> {
 
 function prefetchSplit(tmpl: SdfItem) {
   const pr = tmpl.props.prerender;
-  const res = pr && `${pr}`.split('#', 2);
+  const res = pr ? `${pr}`.split('#', 2) : [];
 
   return {
-    file: pr && res[0],
-    id: pr && res[1],
+    file: pr ? res[0] : undefined,
+    id: pr ? res[1] : undefined,
   };
 }
 

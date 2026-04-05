@@ -26,8 +26,6 @@ limitations under the License.
 
 - [`KetSerializer`](../classes/KetSerializer.md)
 - [`MolSerializer`](../classes/MolSerializer.md)
-- [`SdfSerializer`](../classes/SdfSerializer.md)
-- [`SmiSerializer`](../classes/SmiSerializer.md)
 
 ## Table of contents
 

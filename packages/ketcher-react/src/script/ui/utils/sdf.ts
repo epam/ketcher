@@ -19,10 +19,9 @@ import {
   MolSerializer,
   MolSerializerOptions,
   Struct,
-  ketcherProvider,
-  parseStruct,
 } from 'ketcher-core';
 import { IndigoProvider } from '../../providers';
+import { parseStruct } from '../state/shared';
 
 type SdfFieldValue = string | number;
 type SdfProps = Record<string, SdfFieldValue | undefined>;
@@ -73,7 +72,6 @@ function parseSdfProps(content: string): SdfProps {
 }
 
 export async function deserializeSdf(content: string): Promise<SdfItem[]> {
-  const ketcher = ketcherProvider.getKetcher();
   const structService = IndigoProvider.getIndigo();
   const chunks: string[] = [];
 
@@ -97,7 +95,6 @@ export async function deserializeSdf(content: string): Promise<SdfItem[]> {
         const struct = await parseStruct(
           chunk.substring(0, end + EndMarker.length),
           structService,
-          ketcher,
         );
 
         return {

@@ -10,10 +10,10 @@ const getAmbiguousMonomerName = (monomer: AmbiguousMonomer): string => {
 
   if (monomerClass === KetMonomerClass.Base) {
     const isDNA = options.some((option) =>
-      option.templateId.toLowerCase().includes(DNA_TEMPLATE_NAME_PART),
+      (option.templateId ?? '').toLowerCase().includes(DNA_TEMPLATE_NAME_PART),
     );
     const isRNA = options.some((option) =>
-      option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
+      (option.templateId ?? '').toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
     );
 
     if (isDNA) {

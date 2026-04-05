@@ -196,7 +196,10 @@ export const selectAxoLabsAliasesByPresetName = createSelector(
     const presets = defaultPresets ?? [];
     return presets.reduce(
       (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
-        if (preset.aliasAxoLabs && preset.name) {
+        if (
+          typeof preset.aliasAxoLabs === 'string' &&
+          typeof preset.name === 'string'
+        ) {
           aliases.set(
             preset.name.toLowerCase(),
             preset.aliasAxoLabs.toLowerCase(),
@@ -261,10 +264,10 @@ export const selectAmbiguousMonomersInCategory = (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
             libraryItem.options.every(
               (option) =>
-                !option.templateId
+                !(option.templateId ?? '')
                   .toLowerCase()
                   .includes(DNA_TEMPLATE_NAME_PART) &&
-                !option.templateId
+                !(option.templateId ?? '')
                   .toLowerCase()
                   .includes(RNA_TEMPLATE_NAME_PART),
             )
@@ -277,7 +280,9 @@ export const selectAmbiguousMonomersInCategory = (
           return (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
             libraryItem.options.find((option) =>
-              option.templateId.toLowerCase().includes(DNA_TEMPLATE_NAME_PART),
+              (option.templateId ?? '')
+                .toLowerCase()
+                .includes(DNA_TEMPLATE_NAME_PART),
             )
           );
         }),
@@ -288,7 +293,9 @@ export const selectAmbiguousMonomersInCategory = (
           return (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
             libraryItem.options.find((option) =>
-              option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
+              (option.templateId ?? '')
+                .toLowerCase()
+                .includes(RNA_TEMPLATE_NAME_PART),
             )
           );
         }),
@@ -362,25 +369,25 @@ export const selectFilteredMonomers = createSelector(
   (state: RootState) => state.library,
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
-    const normalizedSearchFilter = searchFilter.toLowerCase();
+    const normalizedSearchFilter = (searchFilter ?? '').toLowerCase();
 
     const checkMonomerMatch = (
       idtAliases: IKetIdtAliases | undefined,
       searchFilter: string,
-      name = '',
-      fullName = '',
+      name: string | null | undefined = '',
+      fullName: string | null | undefined = '',
       helmAlias: string | undefined = '',
       axoLabsAlias: string | undefined = '',
       modificationTypes: string[] | undefined = [],
     ) => {
-      const monomerName = name.toLowerCase();
-      const monomerNameFull = fullName.toLowerCase();
+      const monomerName = (name ?? '').toLowerCase();
+      const monomerNameFull = (fullName ?? '').toLowerCase();
 
       const idtBase = idtAliases?.base?.toLowerCase();
 
       const idtModifications = idtAliases?.modifications
         ? Object.values(idtAliases.modifications)
-            .map((mod) => mod.toLowerCase())
+            .map((mod) => (mod ?? '').toLowerCase())
             .join(' ')
         : '';
 
@@ -388,7 +395,9 @@ export const selectFilteredMonomers = createSelector(
       const axoLabsAliasLower = axoLabsAlias?.toLowerCase() ?? '';
       const modificationTypesLower =
         modificationTypes && modificationTypes.length > 0
-          ? modificationTypes.map((type) => type.toLowerCase()).join(' ')
+          ? modificationTypes
+              .map((type) => (type ?? '').toLowerCase())
+              .join(' ')
           : '';
 
       if (searchFilter === '/') {

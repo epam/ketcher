@@ -56,18 +56,19 @@ export const useOptions = (): AbbreviationOption[] => {
 
     const mappedTemplateOptions: AbbreviationOption[] = uniqTemplates.map(
       (template) => {
+        const templateName = template.struct.name ?? '';
+        const templateAbbreviation = template.struct.abbreviation ?? '';
         const label =
-          template.struct.abbreviation &&
-          template.struct.abbreviation !== template.struct.name
-            ? `${template.struct.abbreviation} (${template.struct.name})`
-            : template.struct.name;
+          templateAbbreviation && templateAbbreviation !== templateName
+            ? `${templateAbbreviation} (${templateName})`
+            : templateName;
         return {
           type: AbbreviationType.Template,
           template,
           label,
           loweredLabel: label.toLowerCase(),
-          loweredName: template.struct.name.toLowerCase(),
-          loweredAbbreviation: template.struct.abbreviation?.toLowerCase(),
+          loweredName: templateName.toLowerCase(),
+          loweredAbbreviation: templateAbbreviation.toLowerCase(),
         };
       },
     );

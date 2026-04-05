@@ -85,7 +85,10 @@ export const RnaElements = ({
 
       const monomerClass = isAmbiguousMonomerLibraryItem(monomer)
         ? monomer.monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
-        : monomer.props.MonomerClass.toLowerCase();
+        : monomer.props.MonomerClass?.toLowerCase();
+      if (!monomerClass) {
+        return;
+      }
       const currentPreset = {
         ...newPreset,
         [monomerClass]: monomer,

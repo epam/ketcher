@@ -161,7 +161,7 @@ export class KetSerializer implements Serializer<Struct> {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
     });
-    resultingStruct.name = ket.header?.moleculeName ?? null;
+    resultingStruct.name = ket.header?.moleculeName ?? '';
 
     return resultingStruct;
   }

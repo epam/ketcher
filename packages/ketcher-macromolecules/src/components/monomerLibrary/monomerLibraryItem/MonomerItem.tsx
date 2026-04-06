@@ -44,6 +44,7 @@ const MonomerItem = ({
   groupName,
   onMouseLeave,
   onMouseMove,
+  onStarClick,
   isSelected,
   disabled,
   onClick = EmptyFunction,
@@ -75,9 +76,10 @@ const MonomerItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
+      onStarClick?.();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item],
+    [dispatch, item, onStarClick],
   );
 
   const onAutochainIconClick = useCallback(

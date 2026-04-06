@@ -40,6 +40,7 @@ const RnaPresetItem = ({
   onContextMenu = EmptyFunction,
   onMouseLeave = EmptyFunction,
   onMouseMove = EmptyFunction,
+  onStarClick,
 }: IRNAPresetItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -52,9 +53,10 @@ const RnaPresetItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent): void => {
       event.stopPropagation();
+      onStarClick?.();
       dispatch(togglePresetFavorites(preset));
     },
-    [dispatch, preset],
+    [dispatch, onStarClick, preset],
   );
 
   const onAutochainIconClick = useCallback(

@@ -78,16 +78,16 @@ const MonomerGroup = ({
     [dispatchShowPreview],
   );
 
-  const handleItemMouseLeave = () => {
+  const closeLibraryPreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, [debouncedShowPreview, dispatch]);
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    handleItemMouseLeave();
+    closeLibraryPreview();
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
@@ -149,8 +149,9 @@ const MonomerGroup = ({
               item={monomer}
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
-              onMouseLeave={handleItemMouseLeave}
+              onMouseLeave={closeLibraryPreview}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
+              onStarClick={closeLibraryPreview}
               onClick={() => selectMonomer(monomer)}
             />
           );

@@ -3,6 +3,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { OpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/OpenAngleArrowRenderer';
 import { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
 import { FilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/FilledTriangleArrowRenderer';
@@ -320,8 +321,8 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.selectionElement = this.canvas
       ?.insert('path', ':first-child')
       .attr('d', selectionPathDAttr)
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
   }
 

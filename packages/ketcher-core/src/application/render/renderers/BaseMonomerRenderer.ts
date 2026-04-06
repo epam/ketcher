@@ -2,6 +2,7 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor, SelectBase } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -464,7 +465,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
   }

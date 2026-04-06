@@ -93,8 +93,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {templates.map((tmpl, i) => {
         return (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className={
               tmpl.struct !== selected?.struct
                 ? classes.td
@@ -107,6 +108,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            onKeyDown={createKeyDownHandler(() => onSelect(tmpl))}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -154,7 +156,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   <Icon name="edit" />
                 </button>
               )}
-          </button>
+          </div>
         );
       })}
     </div>

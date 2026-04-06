@@ -182,7 +182,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * Version 3.10.0
      */
     const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
-    const anyMonomer = getMonomerLocator(page, { monomerId: 90 }).first();
+    const anyMonomer = getMonomerLocator(page, { monomerId: 376 }).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: true,

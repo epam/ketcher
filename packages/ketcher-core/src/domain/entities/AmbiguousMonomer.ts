@@ -135,15 +135,38 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   }
 
   public getValidSourcePoint(_secondMonomer?: BaseMonomer) {
-    return MONOMER_CLASS_TO_CONSTRUCTOR[
-      this.monomerClass
-    ].prototype.getValidSourcePoint.call(this, _secondMonomer);
+    const proto = MONOMER_CLASS_TO_CONSTRUCTOR[this.monomerClass].prototype;
+    return proto.getValidSourcePoint.call(
+      this._createContextProxy(proto),
+      _secondMonomer,
+    );
   }
 
   public getValidTargetPoint(_firstMonomer: BaseMonomer) {
-    return MONOMER_CLASS_TO_CONSTRUCTOR[
-      this.monomerClass
-    ].prototype.getValidTargetPoint.call(this, _firstMonomer);
+    const proto = MONOMER_CLASS_TO_CONSTRUCTOR[this.monomerClass].prototype;
+    return proto.getValidTargetPoint.call(
+      this._createContextProxy(proto),
+      _firstMonomer,
+    );
+  }
+
+  private _createContextProxy(proto: Record<string, unknown>) {
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        if (
+          typeof prop === 'string' &&
+          !(prop in AmbiguousMonomer.prototype) &&
+          prop in proto
+        ) {
+          const value = proto[prop];
+          if (typeof value === 'function') {
+            return (...args: unknown[]) => value.call(receiver, ...args);
+          }
+          return value;
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+    });
   }
 
   public get SubChainConstructor() {

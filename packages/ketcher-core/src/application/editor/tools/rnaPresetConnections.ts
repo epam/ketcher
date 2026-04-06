@@ -14,7 +14,7 @@ import {
 
 const getMonomerTemplateId = (monomer: IRnaPreset['base']) => {
   const templateId =
-    monomer?.props?.id || (monomer as { id?: string } | undefined)?.id;
+    monomer?.props?.id ?? (monomer as { id?: string } | undefined)?.id;
 
   if (!templateId) {
     return undefined;

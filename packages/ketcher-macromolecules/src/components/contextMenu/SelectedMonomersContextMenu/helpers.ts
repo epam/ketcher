@@ -139,6 +139,7 @@ export const getModifyAminoAcidsMenuItems = (
   selectedMonomers: BaseMonomer[],
 ) => {
   const modificationsForSelection = new Set<string>();
+  const modificationTypesDisabledByAttachmentPoints = new Set<string>();
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
   const editor = CoreEditor.provideEditorInstance();
 
@@ -176,7 +177,7 @@ export const getModifyAminoAcidsMenuItems = (
     }
 
     modificationTypes.forEach((modificationType) => {
-      // Skip if all monomers already have this modification
+      // Check if all monomers in this group already have this modification
       if (
         monomersWithSameNaturalAnalogCode.every(
           (monomer) => monomer.label === monomerLibraryItem.label,
@@ -185,23 +186,30 @@ export const getModifyAminoAcidsMenuItems = (
         return;
       }
 
-      // Check if at least one monomer can be modified
-      const hasAtLeastOneModifiableMonomer =
+      // Check if at least one monomer in this group can be modified
+      const hasAtLeastOneEligibleMonomer =
         monomersWithSameNaturalAnalogCode.some(
           (monomer: BaseMonomer) =>
             monomer.label !== monomerLibraryItem.label &&
             canModifyAminoAcid(monomer, monomerLibraryItem),
         );
 
-      // Add modification if at least one monomer can be modified
-      if (hasAtLeastOneModifiableMonomer) {
-        modificationsForSelection.add(modificationType);
+      // If NO monomer is eligible, disable this modification
+      if (!hasAtLeastOneEligibleMonomer) {
+        modificationTypesDisabledByAttachmentPoints.add(modificationType);
+        return;
       }
+
+      modificationsForSelection.add(modificationType);
     });
   });
 
-  const menuItems = [...modificationsForSelection.values()].map(
-    (modificationType) => {
+  const menuItems = [...modificationsForSelection.values()]
+    .filter(
+      (modificationType) =>
+        !modificationTypesDisabledByAttachmentPoints.has(modificationType),
+    )
+    .map((modificationType) => {
       const aminoAcidsToModify = getAminoAcidsToModify(
         selectedMonomers,
         modificationType,
@@ -222,8 +230,7 @@ export const getModifyAminoAcidsMenuItems = (
           editor.transientDrawingView.update();
         },
       };
-    },
-  );
+    });
 
   menuItems.sort(compareByTitleWithNaturalFirst);
 

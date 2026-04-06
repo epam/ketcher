@@ -16,10 +16,8 @@
 import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
 import { preview } from './constants';
 import { PreviewStyle } from './AmbiguousMonomerPreview/types';
-import {
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-  KETCHER_ROOT_NODE_CSS_SELECTOR,
-} from 'src/constants';
+import assert from 'assert';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'src/constants';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,
@@ -27,71 +25,36 @@ export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
 export const calculateNucleoElementPreviewTop =
   createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
-type CalculatePreviewTopPayload = {
-  left: number;
-  top: number;
-  bottom: number;
-  right?: number;
-};
+type CalculatePreviewTopPayload = { left: number; top: number; bottom: number };
 
 function calculateTop(
   target: CalculatePreviewTopPayload,
   height: number,
 ): number {
-  // In Molecules mode the macromolecules root may be missing, so fall back to
-  // the general Ketcher root.
-  const ketcherEditorRoot =
-    document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ??
-    document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR);
+  const ketcherEditorRoot = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  );
   const ketcherEditorRootBoundingClientRect =
     ketcherEditorRoot?.getBoundingClientRect();
-  const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
-    ?.node()
-    ?.getBoundingClientRect();
-  const editorRootTop = ketcherEditorRootBoundingClientRect?.top ?? 0;
-  const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
-  const relativeTargetTop = target.top - editorRootTop;
-  const relativeTargetBottom = target.bottom - editorRootTop;
-
-  const isTargetInsideCanvas =
-    !!canvasWrapperBoundingClientRect &&
-    target.left >= canvasWrapperBoundingClientRect.left &&
-    (target.right ?? target.left) <= canvasWrapperBoundingClientRect.right &&
-    target.top >= canvasWrapperBoundingClientRect.top &&
-    target.bottom <= canvasWrapperBoundingClientRect.bottom;
-
-  // The top toolbar sits above the canvas wrapper. When the preview is rendered
-  // in the editor root, we must not position it into the toolbar area.
-  // Apply this clamp only for targets inside canvas; library items use legacy root bounds.
-  const relativeTopBoundary = isTargetInsideCanvas
-    ? (canvasWrapperBoundingClientRect?.top ?? editorRootTop) - editorRootTop
-    : 0;
-  const relativeBottomBoundary = isTargetInsideCanvas
-    ? (canvasWrapperBoundingClientRect?.bottom ?? editorRootTop) - editorRootTop
-    : editorRootHeight;
+  const relativeTargetTop =
+    target.top - (ketcherEditorRootBoundingClientRect?.top ?? 0);
+  const relativeTargetBottom =
+    target.bottom - (ketcherEditorRootBoundingClientRect?.top ?? 0);
 
   const topPreviewPosition =
     relativeTargetTop - preview.gap - height - preview.topPadding;
   const bottomPreviewPosition = relativeTargetBottom + preview.gap;
 
-  // Only allow "top" placement if it stays within the canvas (below toolbar).
-  if (
-    relativeTargetTop - relativeTopBoundary >
-      height + preview.gap + preview.topPadding &&
-    topPreviewPosition >= relativeTopBoundary
-  ) {
+  if (relativeTargetTop > height + preview.gap + preview.topPadding) {
     return topPreviewPosition;
   }
 
-  const exceedsBottomBoundary =
-    bottomPreviewPosition + height + preview.topPadding >
-    relativeBottomBoundary;
-  const isLowerHalf =
-    relativeTargetTop - relativeTopBoundary >
-    (relativeBottomBoundary - relativeTopBoundary) / 2;
+  const editorRootHeight = ketcherEditorRootBoundingClientRect?.height ?? 0;
+  const exceedsBottomBoundary = target.top + height > editorRootHeight;
+  const isLowerHalf = target.top > editorRootHeight / 2;
 
   if (exceedsBottomBoundary && isLowerHalf) {
-    return Math.max(topPreviewPosition, relativeTopBoundary);
+    return topPreviewPosition;
   }
 
   return bottomPreviewPosition;
@@ -154,9 +117,7 @@ export const calculateBondPreviewPosition = (
 ): PreviewStyle => {
   const { firstMonomer, secondMonomer } = bond;
 
-  if (!secondMonomer) {
-    return {};
-  }
+  assert(secondMonomer);
 
   const firstMonomerCoordinates = firstMonomer.renderer?.rootBoundingClientRect;
   const secondMonomerCoordinates =
@@ -168,9 +129,8 @@ export const calculateBondPreviewPosition = (
   const canvasWrapperTop = canvasWrapperBoundingClientRect?.top ?? 0;
   const canvasWrapperRight = canvasWrapperBoundingClientRect?.right ?? 0;
 
-  if (!firstMonomerCoordinates || !secondMonomerCoordinates) {
-    return {};
-  }
+  assert(firstMonomerCoordinates);
+  assert(secondMonomerCoordinates);
 
   const left = Math.min(
     bondCoordinates.left,

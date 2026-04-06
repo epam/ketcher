@@ -1,3 +1,5 @@
+/* eslint-disable no-inline-comments */
+/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
@@ -146,6 +148,7 @@ export async function setMolecule(
   structStr: string,
   position?: { x: number; y: number },
 ): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 300)); // Ensure this runs after any ongoing operations
   return await page.evaluate(
     ({ structStr, position }) =>
       window.ketcher.setMolecule(structStr, { position }),

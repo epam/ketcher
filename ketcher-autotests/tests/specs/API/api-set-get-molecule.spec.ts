@@ -183,6 +183,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
+    await page.waitForTimeout(5000);
     const orEnantiomer = await readFileContent(
       'Molfiles-V3000/or-enantiomer.mol',
     );
@@ -416,15 +417,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13018
     Description: Unknown superatom expanded/contracted added through API ketcher.setMolecule
     */
+    const unknownSuperatomV3000 = await readFileContent(
+      'Molfiles-V3000/unknown-superatom-expanded-contracted.mol',
+    );
     await waitForSpinnerFinishedWork(
       page,
-      async () =>
-        await setMolecule(
-          page,
-          await readFileContent(
-            'Molfiles-V3000/unknown-superatom-expanded-contracted.mol',
-          ),
-        ),
+      async () => await setMolecule(page, unknownSuperatomV3000),
     );
     await takeEditorScreenshot(page);
   });

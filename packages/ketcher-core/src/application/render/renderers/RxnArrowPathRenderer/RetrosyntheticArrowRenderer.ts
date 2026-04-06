@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class RetrosyntheticArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -20,22 +20,22 @@ export class RetrosyntheticArrowRenderer {
 
     // First arrow and arrowhead
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
+        `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
     );
 
     // Second arrow and arrowhead
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
+        `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
     );
 
     const transformedPath = svgPath(pathParts.join(''))

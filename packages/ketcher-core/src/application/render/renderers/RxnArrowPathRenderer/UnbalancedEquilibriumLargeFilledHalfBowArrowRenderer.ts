@@ -8,7 +8,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -26,27 +26,29 @@ export class UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer {
 
     // First arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
     );
 
     // Second (Unbalanced) arrow
     pathParts.push(
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+        `M${toFixed(start.x + unbalanceVal)},${toFixed(
+          start.y + arrowOffset,
+        )}` +
+        `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${tfx(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
-          start.y + arrowOffset
-        }Z`,
+        `L${toFixed(
+          start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal,
+        )},${start.y + arrowOffset}Z`,
     );
 
     const transformedPath = svgPath(pathParts.join(''))

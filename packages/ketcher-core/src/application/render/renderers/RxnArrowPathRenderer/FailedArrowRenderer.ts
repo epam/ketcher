@@ -7,7 +7,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class FailedArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -24,24 +24,38 @@ export class FailedArrowRenderer {
 
     // Arrow with arrowhead
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y)}` +
-        `L${tfx(endX)},${tfx(start.y)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-        `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-        `L${tfx(endX)},${tfx(start.y)}Z`,
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+        `L${toFixed(endX)},${toFixed(start.y)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
+          start.y + arrowHeadWidth,
+        )}` +
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+          start.y,
+        )}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
+          start.y - arrowHeadWidth,
+        )}` +
+        `L${toFixed(endX)},${toFixed(start.y)}Z`,
     );
 
     // Failed sign line 1
     pathParts.push(
-      `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y + failSignWidth)}` +
-        `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y - failSignWidth)}`,
+      `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
+        start.y + failSignWidth,
+      )}` +
+        `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
+          start.y - failSignWidth,
+        )}`,
     );
 
     // Failed sign line 2
     pathParts.push(
-      `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y - failSignWidth)}` +
-        `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y + failSignWidth)}`,
+      `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
+        start.y - failSignWidth,
+      )}` +
+        `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
+          start.y + failSignWidth,
+        )}`,
     );
 
     const transformedPath = svgPath(pathParts.join(''))

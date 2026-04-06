@@ -31,7 +31,7 @@ import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
 import { RaphaelPaper } from 'raphael';
 import { RenderOptions } from '../render.types';
@@ -265,14 +265,14 @@ class ReSGroup extends ReObject {
         sGroupItem.hovering = paper
           .path(
             'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-            tfx(a0.x),
-            tfx(a0.y),
-            tfx(a1.x),
-            tfx(a1.y),
-            tfx(b1.x),
-            tfx(b1.y),
-            tfx(b0.x),
-            tfx(b0.y),
+            toFixed(a0.x),
+            toFixed(a0.y),
+            toFixed(a1.x),
+            toFixed(a1.y),
+            toFixed(b1.x),
+            toFixed(b1.y),
+            toFixed(b0.x),
+            toFixed(b0.y),
           )
           .attr(options.hoverStyle);
         otherHovers.push(sGroupItem.hovering);

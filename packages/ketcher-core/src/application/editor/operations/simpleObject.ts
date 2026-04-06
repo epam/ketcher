@@ -21,7 +21,7 @@ import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
 import { Scale } from 'domain/helpers';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 interface SimpleObjectAddData {
   id?: number;
@@ -171,19 +171,19 @@ function handleRectangleChangeWithAnchor(item, anchor, current) {
   const previousPos0 = item.pos[0].get_xy0();
   const previousPos1 = item.pos[1].get_xy0();
 
-  if (tfx(anchor.x) === tfx(item.pos[1].x)) {
+  if (toFixed(anchor.x) === toFixed(item.pos[1].x)) {
     item.pos[1].x = anchor.x = current.x;
     current.x = previousPos1.x;
   }
-  if (tfx(anchor.y) === tfx(item.pos[1].y)) {
+  if (toFixed(anchor.y) === toFixed(item.pos[1].y)) {
     item.pos[1].y = anchor.y = current.y;
     current.y = previousPos1.y;
   }
-  if (tfx(anchor.x) === tfx(item.pos[0].x)) {
+  if (toFixed(anchor.x) === toFixed(item.pos[0].x)) {
     item.pos[0].x = anchor.x = current.x;
     current.x = previousPos0.x;
   }
-  if (tfx(anchor.y) === tfx(item.pos[0].y)) {
+  if (toFixed(anchor.y) === toFixed(item.pos[0].y)) {
     item.pos[0].y = anchor.y = current.y;
     current.y = previousPos0.y;
   }
@@ -231,8 +231,8 @@ export class SimpleObjectResize extends Base {
       const previousPos1 = item.pos[1].get_xy0();
 
       if (
-        tfx(anchor.x) === tfx(item.pos[1].x) &&
-        tfx(anchor.y) === tfx(item.pos[1].y)
+        toFixed(anchor.x) === toFixed(item.pos[1].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
         item.pos[1].x = anchor.x = current.x;
         current.x = previousPos1.x;
@@ -241,8 +241,8 @@ export class SimpleObjectResize extends Base {
       }
 
       if (
-        tfx(anchor.x) === tfx(item.pos[0].x) &&
-        tfx(anchor.y) === tfx(item.pos[0].y)
+        toFixed(anchor.x) === toFixed(item.pos[0].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {
         item.pos[0].x = anchor.x = current.x;
         current.x = previousPos0.x;

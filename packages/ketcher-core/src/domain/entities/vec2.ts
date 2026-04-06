@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import assert from 'assert';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export interface Point {
   x?: number;
@@ -258,7 +258,7 @@ export class Vec2 {
     const x = rotatedX + origin.x;
     const y = rotatedY + origin.y;
 
-    return new Vec2(Number(tfx(x)), Number(tfx(y)), this.z || 0);
+    return new Vec2(Number(toFixed(x)), Number(toFixed(y)), this.z || 0);
   }
 
   isInsidePolygon(points: Vec2[]) {

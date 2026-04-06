@@ -38,7 +38,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { toFixed as tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import {
   RenderOptions,
   RenderOptionStyles,
@@ -1865,10 +1865,10 @@ function showWarning(
   warning.path = render.paper
     .path(
       'M{0},{1}L{2},{3}',
-      tfx(ps.x + leftMargin),
-      tfx(y),
-      tfx(ps.x + rightMargin),
-      tfx(y),
+      toFixed(ps.x + leftMargin),
+      toFixed(y),
+      toFixed(ps.x + rightMargin),
+      toFixed(y),
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });

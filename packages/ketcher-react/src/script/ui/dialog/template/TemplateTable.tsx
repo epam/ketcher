@@ -27,7 +27,7 @@ export interface Template {
     bondid: number;
     group: string;
     prerender?: string;
-    abbreviation: string;
+    abbreviation?: string;
     name: string;
   };
 }
@@ -58,9 +58,13 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation;
+    return tmpl.props.abbreviation || '';
   }
-  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+  return (
+    tmpl.props.abbreviation ||
+    tmpl.struct.name ||
+    `${tmpl.props.group} template ${i + 1}`
+  );
 }
 
 function createKeyDownHandler(callback: () => void) {

@@ -1,4 +1,5 @@
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
 import {
   SubChainNode,
@@ -750,7 +751,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
@@ -827,7 +828,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (this.node.monomer.selected) {
       this.selectionRectangle?.attr(
         'fill',
-        this.isSequenceEditInRnaBuilderModeTurnedOn ? '#99D6DC' : '#57FF8F',
+        this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#99D6DC'
+          : SELECTION_COLOR,
       );
     } else {
       this.backgroundElement?.attr('fill', 'none');

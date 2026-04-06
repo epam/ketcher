@@ -5,6 +5,9 @@ export const UNRESOLVED_MONOMER_COLOR = '#585858';
 export const BAD_VALENCE_WARNING_COLOR = '#F00';
 export const BAD_VALENCE_LINE_OFFSET = 2;
 
+export const SELECTION_COLOR = '#57FF8F';
+export const SELECTION_HOVERED_COLOR = '#CCFFDD';
+
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {
     hover: '#peptide-hover',

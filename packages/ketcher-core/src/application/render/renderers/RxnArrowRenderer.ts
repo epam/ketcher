@@ -23,7 +23,7 @@ import { provideEditorSettings } from 'application/editor';
 import { EllipticalArcFilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledTriangleArrowRenderer';
 import { EllipticalArcOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenAngleArrowRenderer';
 import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenHalfAngleArrowRenderer';
-import { KetcherLogger, tfx } from 'utilities';
+import { KetcherLogger, toFixed } from 'utilities';
 import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer';
 import svgPath from 'svgpath';
 
@@ -229,11 +229,15 @@ export class RxnArrowRenderer extends BaseRenderer {
     const [wOffset, hOffset] = [5, normalizedHeight ?? 8];
 
     const path =
-      `M${tfx(start.x - wOffset)},${tfx(start.y)}` +
-      `L${tfx(start.x - wOffset)},${tfx(start.y - hOffset)}` +
-      `L${tfx(endX + wOffset)},${tfx(start.y - hOffset)}` +
-      `L${tfx(endX + wOffset)},${tfx(start.y + (!height ? hOffset : 0))}` +
-      `L${tfx(start.x - wOffset)},${tfx(start.y + (!height ? hOffset : 0))}Z`;
+      `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
+      `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
+      `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
+      `L${toFixed(endX + wOffset)},${toFixed(
+        start.y + (!height ? hOffset : 0),
+      )}` +
+      `L${toFixed(start.x - wOffset)},${toFixed(
+        start.y + (!height ? hOffset : 0),
+      )}Z`;
 
     return svgPath(path).rotate(angle, start.x, start.y).toString();
   }

@@ -7,7 +7,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class EquilibriumFilledHalfBowArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -21,24 +21,24 @@ export class EquilibriumFilledHalfBowArrowRenderer {
 
     // top arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
     );
 
     // bottom arrow
     pathParts.push(
-      `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x + arrowHeadLength)},${tfx(
+      `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x + arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${tfx(start.x + arrowHeadLength - arrowHeadAttr)},${
+        `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr)},${
           start.y + arrowOffset
         }Z`,
     );

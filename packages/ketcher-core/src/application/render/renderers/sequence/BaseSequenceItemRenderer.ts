@@ -721,6 +721,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (!this.rootElement) {
       return;
     }
+    if (this.node instanceof EmptySequenceNode) {
+      this.removeSelection();
+      return;
+    }
     if (this.node.monomer.selected && !this.isSingleEmptyNode) {
       this.appendSelection();
       this.raiseElement();

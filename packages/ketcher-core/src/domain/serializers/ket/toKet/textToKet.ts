@@ -94,7 +94,7 @@ function applyFontStyleOverrides(
   target: KETFontStyleOverrides,
   child: LexicalTextChild,
 ): void {
-  const format = child.format || 0;
+  const format = child.format ?? 0;
 
   if (format & IS_BOLD) target.bold = true;
   if (format & IS_ITALIC) target.italic = true;

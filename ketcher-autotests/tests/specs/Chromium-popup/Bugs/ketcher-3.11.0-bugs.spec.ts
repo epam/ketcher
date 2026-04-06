@@ -504,7 +504,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
-    await ContextMenu(page, getBondLocator(page, { bondId: 45 })).open();
+    await ContextMenu(page, getBondLocator(page, { bondId: 185 })).open();
     await expect(page.getByTestId(MacroBondOption.Delete)).toBeVisible();
   });
 
@@ -784,7 +784,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
-    const point = getSymbolLocator(page, { symbolId: 14 });
+    const point = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });
@@ -838,16 +838,18 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectMonomersAndBonds(page, {
-      monomerIds: [68, 69, 82, 83, 73, 71, 72, 80, 79, 84],
-      bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108],
+      monomerIds: [217, 222, 220, 218, 221, 232, 229, 231, 233, 228],
+      bondIds: [250, 251, 246, 249, 264, 260, 261, 257, 262, 263],
+      // monomerIds: [68, 69, 82, 83, 73, 71, 72, 80, 79, 84],
+      // bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108],
     });
-    await ContextMenu(page, getMonomerLocator(page, { monomerId: 80 })).click(
+    await ContextMenu(page, getMonomerLocator(page, { monomerId: 231 })).click(
       MonomerOption.ArrangeAsARing,
     );
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerId: 198 }),
+      getMonomerLocator(page, { monomerId: 347 }),
       {
         padding: 150,
       },
@@ -876,7 +878,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     );
-    const monomer = getMonomerLocator(page, { monomerId: 1 });
+    const monomer = getMonomerLocator(page, Peptide.X);
     await monomer.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, monomer, {
@@ -901,7 +903,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4FB]}|CHEM3{[A6OH]}$CHEM2,CHEM1,1:R2-1:R1|CHEM3,CHEM2,1:R2-1:R1$$$V2.0',
     );
-    const chainlocator = getSymbolLocator(page, { symbolId: 7 });
+    const chainlocator = getSymbolLocator(page, { symbolAlias: '@' });
     const locators = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).handTool();
     await chainlocator.hover({ force: true });
@@ -909,9 +911,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await chainlocator.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeElementScreenshot(page, chainlocator, {
-      padding: 120,
-    });
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 25 - 5NitInd unsplit nucleotide should be shown as X symbol instead of @ one', async ({
@@ -928,9 +928,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await Library(page).openRNASection(RNASection.Nucleotides);
     await Library(page).selectMonomer(Nucleotide._5NitInd);
-    await takeElementScreenshot(page, getSymbolLocator(page, { symbolId: 0 }), {
-      padding: 30,
-    });
+    await expect(getSymbolLocator(page, { symbolAlias: 'X' })).toBeVisible();
   });
 
   test('Case 26 - In case of multipal R1 or R2 groups second R1/R2 groups should be assigned to the smallest available Rn (n>2) if available', async () => {
@@ -1074,7 +1072,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerId: 6 }),
+      getMonomerLocator(page, { monomerAlias: `(Unknown2)` }),
       {
         padding: 100,
       },

@@ -150,6 +150,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('class', 'sequence-item')
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr('data-chain-id', this.chain.id)
       // .attr('data-symbol-count', this.chain.id)
       .attr(

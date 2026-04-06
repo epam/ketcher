@@ -101,7 +101,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * 3. Load from HELM: CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$$$$V2.0
      * 4. Select Single Bound tool
      * 5. Start to connect one monomer to another using center-to-center way
-     * 6.Expand windows "minimize button" shows "minimize window"
+     * 6. Expand windows "minimize button" shows "minimize window"
      *
      * Version 3.10.0
      */
@@ -113,8 +113,12 @@ test.describe('Ketcher-3.10 Bugs', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$$$$V2.0',
     );
-    const firstMonomer = getMonomerLocator(page, { monomerId: 2 });
-    const secondMonomer = getMonomerLocator(page, { monomerId: 3 });
+    const firstMonomer = getMonomerLocator(page, {
+      monomerAlias: `4aPEGMal`,
+    }).nth(0);
+    const secondMonomer = getMonomerLocator(page, {
+      monomerAlias: `4aPEGMal`,
+    }).nth(1);
     await bondTwoMonomers(page, firstMonomer, secondMonomer);
     await AttachmentPointsDialog(page).isVisible();
     await AttachmentPointsDialog(page).expandWindow();

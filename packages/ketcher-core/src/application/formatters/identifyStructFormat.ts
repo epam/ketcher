@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'utilities';
 import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
@@ -23,15 +24,13 @@ export function identifyStructFormat(
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const sanitizedString = stringifiedStruct.trim();
 
-  if (sanitizedString.startsWith('{') || sanitizedString.startsWith('[')) {
-    try {
-      if (JSON.parse(sanitizedString)) {
-        return SupportedFormat.ket;
-      }
-    } catch {
-      // Non-JSON formats are expected here; continue format detection quietly.
+  try {
+    if (JSON.parse(sanitizedString)) {
+      return SupportedFormat.ket;
     }
-  }
+  } catch (e) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
+  } // eslint-disable-line
 
   const isRXN = sanitizedString.includes('$RXN');
   const isSDF = sanitizedString.includes('\n$$$$');

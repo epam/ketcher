@@ -7,7 +7,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
@@ -187,7 +187,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 6: Move cursor back to center and click to clear selection
     await CommonLeftToolbar(page).areaSelectionTool();
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // Visual verification: take a focused screenshot around the double bond.
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 1 }), {
@@ -422,7 +422,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await ContextMenu(page, abbrev).click(MonomerOnMicroOption.ExpandMonomer);
 
     // Step 4.2: Remove abbreviation
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).sGroup();
     await EditAbbreviationDialog(page).removeAbbreviation();
 

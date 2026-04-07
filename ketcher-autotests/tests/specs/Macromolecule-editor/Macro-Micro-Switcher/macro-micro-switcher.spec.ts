@@ -9,7 +9,7 @@ import { Page, expect, test } from '@fixtures';
 import {
   MolFileFormat,
   SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   moveMouseAway,
@@ -374,7 +374,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
 
@@ -395,7 +395,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       await readFileContent('KET/one-functional-group-expanded.ket'),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
       padding: 150,
@@ -437,7 +437,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       ),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 10 }), {
       padding: 190,
@@ -525,7 +525,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
@@ -549,7 +549,7 @@ test.describe('Macro-Micro-Switcher', () => {
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Peptide.bAla);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -850,7 +850,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -894,7 +894,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );

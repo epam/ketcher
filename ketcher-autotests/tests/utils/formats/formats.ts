@@ -148,12 +148,37 @@ export async function setMolecule(
   structStr: string,
   position?: { x: number; y: number },
 ): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 300)); // Ensure this runs after any ongoing operations
-  return await page.evaluate(
-    ({ structStr, position }) =>
-      window.ketcher.setMolecule(structStr, { position }),
-    { structStr, position },
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForFunction(
+    () => window.ketcher && typeof window.ketcher.setMolecule === 'function',
   );
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await page.evaluate(
+        ({ structStr, position }) =>
+          window.ketcher.setMolecule(structStr, { position }),
+        { structStr, position },
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (
+        attempt === 0 &&
+        errorMessage.includes('Execution context was destroyed')
+      ) {
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForFunction(
+          () =>
+            window.ketcher && typeof window.ketcher.setMolecule === 'function',
+        );
+        continue;
+      }
+
+      throw error;
+    }
+  }
 }
 
 export async function updateMonomersLibrary(

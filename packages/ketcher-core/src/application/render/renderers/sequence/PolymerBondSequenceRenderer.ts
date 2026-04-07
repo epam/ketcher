@@ -3,6 +3,7 @@ import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { SubChainNode, Vec2 } from 'domain/entities';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
@@ -108,7 +109,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
       this.selectionElement?.remove();
       this.selectionElement = this.rootElement
         ?.insert('path', ':first-child')
-        .attr('stroke', '#57FF8F')
+        .attr('stroke', SELECTION_COLOR)
         .attr('stroke-width', '6')
         .attr('fill', 'none');
 

@@ -23,7 +23,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 interface MinDistanceWithReferencePoint {
   minDist: number;
@@ -259,13 +259,13 @@ class ReSimpleObject extends ReObject {
         const rad = Vec2.diff(point[1], point[0]);
         const rx = rad.x / 2;
         const ry = rad.y / 2;
-        const centerX = tfx(point[0].x + rx);
-        const centerY = tfx(point[0].y + ry);
+        const centerX = toFixed(point[0].x + rx);
+        const centerY = toFixed(point[0].y + ry);
         const outerBorderEllipse = render.paper.ellipse(
           centerX,
           centerY,
-          tfx(Math.abs(rx) + lineOffset),
-          tfx(Math.abs(ry) + lineOffset),
+          toFixed(Math.abs(rx) + lineOffset),
+          toFixed(Math.abs(ry) + lineOffset),
         );
         paths.push({
           path: this.getBorderHoverPath(outerBorderEllipse, render),
@@ -275,8 +275,8 @@ class ReSimpleObject extends ReObject {
         const fillEllipse = render.paper.ellipse(
           centerX,
           centerY,
-          tfx(Math.abs(rx)),
-          tfx(Math.abs(ry)),
+          toFixed(Math.abs(rx)),
+          toFixed(Math.abs(ry)),
         );
         paths.push({
           path: this.getFillHoverPath(fillEllipse, render),
@@ -289,8 +289,8 @@ class ReSimpleObject extends ReObject {
           const innerBorderEllipse = render.paper.ellipse(
             centerX,
             centerY,
-            tfx(Math.abs(rx) - lineOffset),
-            tfx(Math.abs(ry) - lineOffset),
+            toFixed(Math.abs(rx) - lineOffset),
+            toFixed(Math.abs(ry) - lineOffset),
           );
           paths.push({
             path: this.getBorderHoverPath(innerBorderEllipse, render),
@@ -307,20 +307,20 @@ class ReSimpleObject extends ReObject {
         const bottomY = Math.max(point[0].y, point[1].y) - topY;
 
         const outerBorderRect = render.paper.rect(
-          tfx(leftX - lineOffset),
-          tfx(topY - lineOffset),
-          tfx(rightX + 2 * lineOffset),
-          tfx(bottomY + 2 * lineOffset),
+          toFixed(leftX - lineOffset),
+          toFixed(topY - lineOffset),
+          toFixed(rightX + 2 * lineOffset),
+          toFixed(bottomY + 2 * lineOffset),
         );
         paths.push({
           path: this.getBorderHoverPath(outerBorderRect, render),
           stylesApplied: true,
         });
         const fillRect = render.paper.rect(
-          tfx(leftX),
-          tfx(topY),
-          tfx(rightX),
-          tfx(bottomY),
+          toFixed(leftX),
+          toFixed(topY),
+          toFixed(rightX),
+          toFixed(bottomY),
         );
         paths.push({
           path: this.getFillHoverPath(fillRect, render),
@@ -328,10 +328,10 @@ class ReSimpleObject extends ReObject {
         });
         if (rightX - 2 * lineOffset > 0 && bottomY - 2 * lineOffset > 0) {
           const innerRect = render.paper.rect(
-            tfx(leftX + lineOffset),
-            tfx(topY + lineOffset),
-            tfx(rightX - 2 * lineOffset),
-            tfx(bottomY - 2 * lineOffset),
+            toFixed(leftX + lineOffset),
+            toFixed(topY + lineOffset),
+            toFixed(rightX - 2 * lineOffset),
+            toFixed(bottomY - 2 * lineOffset),
           );
           paths.push({
             path: this.getBorderHoverPath(innerRect, render),

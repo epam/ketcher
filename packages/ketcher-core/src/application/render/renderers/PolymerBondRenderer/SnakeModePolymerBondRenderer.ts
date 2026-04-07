@@ -20,6 +20,10 @@ import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
 import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
+import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
   generateCornerFromBottomToRight,
@@ -890,7 +894,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('x1', this.scaledPosition.startPosition.x)
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
@@ -1047,7 +1051,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -1088,7 +1092,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', 'stroke');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

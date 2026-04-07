@@ -19,7 +19,7 @@ import assert from 'assert';
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 
@@ -76,8 +76,8 @@ export class RxnArrowResize extends Base {
          *
          * more details: ./RxnArrowResize.doc.png
          */
-        tfx(anchor.x) === tfx(item.pos[1].x) &&
-        tfx(anchor.y) === tfx(item.pos[1].y)
+        toFixed(anchor.x) === toFixed(item.pos[1].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
         if (this.isSnappingEnabled) {
           const currentArrowVector = current.sub(item.pos[0]);
@@ -101,8 +101,8 @@ export class RxnArrowResize extends Base {
          *
          * more details: ./RxnArrowResize.doc.png
          */
-        tfx(anchor.x) === tfx(item.pos[0].x) &&
-        tfx(anchor.y) === tfx(item.pos[0].y)
+        toFixed(anchor.x) === toFixed(item.pos[0].x) &&
+        toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {
         if (this.isSnappingEnabled) {
           const currentArrowVector = current.sub(item.pos[1]);
@@ -118,8 +118,8 @@ export class RxnArrowResize extends Base {
       }
 
       if (
-        tfx(anchor.x) === tfx(middlePoint?.x) &&
-        tfx(anchor.y) === tfx(middlePoint?.y)
+        toFixed(anchor.x) === toFixed(middlePoint?.x) &&
+        toFixed(anchor.y) === toFixed(middlePoint?.y)
       ) {
         const { angle } = reItem.getArrowParams(
           item.pos[0].x,

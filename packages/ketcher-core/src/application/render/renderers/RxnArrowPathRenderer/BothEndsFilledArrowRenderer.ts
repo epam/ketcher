@@ -2,7 +2,7 @@ import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Vec2 } from 'domain/entities/vec2';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class BothEndsFilledArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -11,15 +11,23 @@ export class BothEndsFilledArrowRenderer {
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
     const endX = start.x + arrowLength;
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `L${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-      `L${tfx(endX)},${tfx(start.y)}` +
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `L${tfx(start.x)},${tfx(start.y)}`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `L${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX)},${toFixed(start.y)}` +
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}` +
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `L${toFixed(start.x)},${toFixed(start.y)}`;
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)
       .toString();

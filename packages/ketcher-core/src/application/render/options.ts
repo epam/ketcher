@@ -18,6 +18,10 @@ import { Vec2 } from 'domain/entities/vec2';
 import utils from '../editor/shared/utils';
 import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
 import { RenderOptions } from './render.types';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
 function defaultOptions(renderOptions: RenderOptions): RenderOptions {
   const options = getOptionsWithConvertedUnits(renderOptions);
@@ -93,16 +97,16 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     },
     /* eslint-enable quote-props */
     selectionStyle: {
-      fill: '#57FF8F',
-      stroke: '#57FF8F',
+      fill: SELECTION_COLOR,
+      stroke: SELECTION_COLOR,
     },
     hoverStyle: {
       stroke: '#0097A8',
-      fill: '#CCFFDD',
+      fill: SELECTION_HOVERED_COLOR,
       'stroke-width': (0.6 * scaleFactorMicro) / 20,
     },
     innerHoverStyle: {
-      stroke: '#CCFFDD',
+      stroke: SELECTION_HOVERED_COLOR,
       fill: 'none',
       'stroke-width': (4.6 * scaleFactorMicro) / 20,
     },
@@ -115,7 +119,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       'stroke-width': '1px',
     },
     selectionStyleSimpleObject: {
-      stroke: '#57FF8F',
+      stroke: SELECTION_COLOR,
       'stroke-width': scaleFactorMicro / 4,
       'stroke-linecap': 'round',
     },

@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Vec2 } from 'domain/entities/vec2';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class EquilibriumFilledTriangleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -19,28 +19,28 @@ export class EquilibriumFilledTriangleArrowRenderer {
 
     // First arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth - arrowOffset,
         )}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}Z`,
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
     );
 
     // Second arrow
     pathParts.push(
-      `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x + arrowHeadLength)},${tfx(
+      `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x + arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
-        `L${tfx(start.x + arrowHeadLength)},${tfx(
+        `L${toFixed(start.x + arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth + arrowOffset,
         )}` +
-        `L${tfx(start.x)},${tfx(start.y + arrowOffset)}Z`,
+        `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}Z`,
     );
 
     const transformedPath = svgPath(pathParts.join(''))

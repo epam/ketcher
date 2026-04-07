@@ -2,7 +2,7 @@ import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Vec2 } from 'domain/entities/vec2';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class EllipticalArcFilledTriangleArrowRenderer {
   static preparePaths(
@@ -19,13 +19,13 @@ export class EllipticalArcFilledTriangleArrowRenderer {
     const triangleWidth = direction * arrowHeadWidth;
     const endX = start.x + arrowLength;
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
-        endX,
-      )},${tfx(start.y)}` +
-      `L${tfx(endX - triangleWidth)},${tfx(start.y - triangleLength)}` +
-      `l${tfx(triangleLength)},${tfx(0)}` +
-      `l${tfx(-triangleWidth)},${tfx(triangleLength)}`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `A${arrowLength / 2},${height},${0},${0},${
+        direction > 0 ? 1 : 0
+      },${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - triangleWidth)},${toFixed(start.y - triangleLength)}` +
+      `l${toFixed(triangleLength)},${toFixed(0)}` +
+      `l${toFixed(-triangleWidth)},${toFixed(triangleLength)}`;
 
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)

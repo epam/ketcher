@@ -1,4 +1,8 @@
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -316,7 +320,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         ?.insert('path', ':first-child')
         .attr('d', this.path)
         .attr('fill', 'none')
-        .attr('stroke', '#57FF8F')
+        .attr('stroke', SELECTION_COLOR)
         .attr('stroke-width', '5')
         .attr('class', 'dynamic-element');
     } else {
@@ -383,7 +387,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -397,7 +401,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

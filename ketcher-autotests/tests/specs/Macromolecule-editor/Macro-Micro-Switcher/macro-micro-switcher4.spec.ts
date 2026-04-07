@@ -536,6 +536,7 @@ test(`Verify that copying and pasting structures with all bond types in macromol
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await moveMouseToTheMiddleOfTheScreen(page);
   await pasteFromClipboardByKeyboard(page);
+  await moveMouseAway(page);
 
   await takeEditorScreenshot(page);
 });

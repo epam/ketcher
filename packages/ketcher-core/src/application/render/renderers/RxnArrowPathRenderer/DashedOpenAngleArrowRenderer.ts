@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Vec2 } from 'domain/entities/vec2';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class DashedOpenAngleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -20,18 +20,26 @@ export class DashedOpenAngleArrowRenderer {
     // Dashed arrow
     for (let i = 0; i < arrowLength / dashInterval; i++) {
       if (i % 2) {
-        pathParts.push(`L${tfx(start.x + i * dashInterval)},${tfx(start.y)}`);
+        pathParts.push(
+          `L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+        );
       } else {
-        pathParts.push(`M${tfx(start.x + i * dashInterval)},${tfx(start.y)}`);
+        pathParts.push(
+          `M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+        );
       }
     }
 
     // Arrowhead
     pathParts.push(
-      `M${tfx(endX)},${tfx(start.y)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-        `M${tfx(endX)},${tfx(start.y)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}`,
+      `M${toFixed(endX)},${toFixed(start.y)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
+          start.y + arrowHeadWidth,
+        )}` +
+        `M${toFixed(endX)},${toFixed(start.y)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
+          start.y - arrowHeadWidth,
+        )}`,
     );
 
     const transformedPath = svgPath(pathParts.join(''))

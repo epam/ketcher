@@ -13,6 +13,8 @@ import assert from 'assert';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 
 export class AtomRenderer extends BaseRenderer {
@@ -177,7 +179,7 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', '#CCFFDD')
+        .attr('fill', 'none')
         .attr('opacity', '0')
         .attr('class', 'dynamic-element')
     );
@@ -196,9 +198,15 @@ export class AtomRenderer extends BaseRenderer {
       if (hoverElement) {
         this.hoverElement = hoverElement;
       }
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
       this.showHover();
     } else {
       this.hideHover();
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
     }
   }
 
@@ -439,7 +447,7 @@ export class AtomRenderer extends BaseRenderer {
       const selectionContourElement = this.appendSelectionContour();
 
       this.selectionElement = selectionContourElement
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         // selectionContourElement is union type here. For some reason for union selection types
         // ts shows error that first call of attr can return string.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -447,7 +455,7 @@ export class AtomRenderer extends BaseRenderer {
         .attr('class', 'dynamic-element');
     }
 
-    this.cipLabelElement?.select('rect')?.attr('fill', '#57FF8F');
+    this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {

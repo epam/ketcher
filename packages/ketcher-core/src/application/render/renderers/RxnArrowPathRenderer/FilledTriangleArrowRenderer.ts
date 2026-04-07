@@ -2,7 +2,7 @@ import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Vec2 } from 'domain/entities/vec2';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class FilledTriangleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -12,11 +12,15 @@ export class FilledTriangleArrowRenderer {
     const endX = start.x + arrowLength;
 
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `L${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-      `L${tfx(endX)},${tfx(start.y)}Z`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `L${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX)},${toFixed(start.y)}Z`;
 
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)

@@ -17,6 +17,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 class ClearTool implements BaseTool {
   constructor(private readonly editor: CoreEditor) {
@@ -39,6 +40,10 @@ class ClearTool implements BaseTool {
     this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
+
+    if (!this.editor.drawingEntitiesManager.hasDrawingEntities) {
+      DrawingEntity.resetIdCounter();
+    }
   }
 
   destroy() {

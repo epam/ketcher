@@ -11,6 +11,7 @@ import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();
@@ -111,6 +112,10 @@ export function deleteAllEntitiesOnCanvas() {
 
   EditorHistory.getInstance(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
+
+  if (!editor.drawingEntitiesManager.hasDrawingEntities) {
+    DrawingEntity.resetIdCounter();
+  }
 }
 
 export async function parseAndAddMacromoleculesOnCanvas(

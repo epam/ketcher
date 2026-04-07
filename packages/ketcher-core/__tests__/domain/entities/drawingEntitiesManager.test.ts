@@ -1,5 +1,5 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { peptideMonomerItem } from '../../mock-data';
+import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import {
@@ -20,8 +20,14 @@ import {
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { ClearTool } from 'application/editor/tools/Clear';
 
 describe('Drawing Entities Manager', () => {
+  beforeEach(() => {
+    DrawingEntity.resetIdCounter();
+  });
+
   it('should create monomer', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const command = drawingEntitiesManager.addMonomer(
@@ -173,5 +179,49 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should reset monomer ids after clear canvas', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: polymerEditorTheme,
+    });
+
+    editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+
+    const clearTool = new ClearTool(editor);
+
+    const command = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(10, 10),
+    );
+    const newMonomer = (command.operations[0] as MonomerAddOperation).monomer;
+
+    expect(newMonomer.id).toBe(0);
+    clearTool.destroy();
+  });
+
+  it('should keep monomer ids unique when restoring monomers after clear', () => {
+    const restoredMonomer = new Peptide(peptideMonomerItem);
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+
+    DrawingEntity.resetIdCounter();
+    drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+      restoredMonomer,
+    );
+
+    const command = drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(10, 10),
+    );
+    const newMonomer = (command.operations[0] as MonomerAddOperation).monomer;
+
+    expect([...drawingEntitiesManager.monomers.keys()].sort()).toEqual([0, 1]);
+    expect(newMonomer.id).toBe(1);
   });
 });

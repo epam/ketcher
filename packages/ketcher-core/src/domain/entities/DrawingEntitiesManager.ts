@@ -329,6 +329,7 @@ export class DrawingEntitiesManager {
     _monomer?: BaseMonomer,
   ) {
     if (_monomer) {
+      DrawingEntity.syncIdCounter(_monomer.id);
       this.monomers.set(_monomer.id, _monomer);
       return _monomer;
     }
@@ -1065,6 +1066,7 @@ export class DrawingEntitiesManager {
     _polymerBond?: PolymerBond | HydrogenBond,
   ) {
     if (_polymerBond) {
+      DrawingEntity.syncIdCounter(_polymerBond.id);
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       return _polymerBond;
     }
@@ -1216,6 +1218,7 @@ export class DrawingEntitiesManager {
     _polymerBond?: PolymerBond,
   ) {
     if (_polymerBond) {
+      DrawingEntity.syncIdCounter(_polymerBond.id);
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
       secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
@@ -2891,6 +2894,7 @@ export class DrawingEntitiesManager {
     _monomer?: BaseMonomer,
   ) {
     if (_monomer) {
+      DrawingEntity.syncIdCounter(_monomer.id);
       this.monomers.set(_monomer.id, _monomer);
 
       return _monomer;
@@ -2931,6 +2935,7 @@ export class DrawingEntitiesManager {
     _atom?: Atom,
   ) {
     if (_atom) {
+      DrawingEntity.syncIdCounter(_atom.id);
       this.atoms.set(_atom.id, _atom);
 
       return _atom;
@@ -3030,6 +3035,7 @@ export class DrawingEntitiesManager {
     cip?: BondCIP | null,
   ) {
     if (_bond) {
+      DrawingEntity.syncIdCounter(_bond.id);
       this.bonds.set(_bond.id, _bond);
 
       return _bond;
@@ -3139,6 +3145,7 @@ export class DrawingEntitiesManager {
     _monomerToAtomBond?: MonomerToAtomBond,
   ) {
     if (_monomerToAtomBond) {
+      DrawingEntity.syncIdCounter(_monomerToAtomBond.id);
       this.monomerToAtomBonds.set(_monomerToAtomBond.id, _monomerToAtomBond);
       monomer.setBond(attachmentPoint, _monomerToAtomBond);
       atom.addBond(_monomerToAtomBond);
@@ -3822,6 +3829,7 @@ export class DrawingEntitiesManager {
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
+      DrawingEntity.syncIdCounter(_arrow.id);
       this.rxnArrows.set(_arrow.id, _arrow);
 
       return _arrow;
@@ -3885,6 +3893,7 @@ export class DrawingEntitiesManager {
     _arrow?: MultitailArrow,
   ) {
     if (_arrow) {
+      DrawingEntity.syncIdCounter(_arrow.id);
       this.multitailArrows.set(_arrow.id, _arrow);
 
       return _arrow;
@@ -3937,6 +3946,7 @@ export class DrawingEntitiesManager {
     _rxnPlus?: RxnPlus,
   ) {
     if (_rxnPlus) {
+      DrawingEntity.syncIdCounter(_rxnPlus.id);
       this.rxnPluses.set(_rxnPlus.id, _rxnPlus);
 
       return _rxnPlus;

@@ -2,12 +2,13 @@ import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
 import { Coordinates } from 'application/editor/shared/coordinates';
-let id = 0;
 
 export interface DrawingEntityConfig {
   generateId: boolean;
 }
 export abstract class DrawingEntity {
+  private static nextId = 0;
+
   public selected = false;
   public hovered = false;
   public id = 0;
@@ -21,9 +22,17 @@ export abstract class DrawingEntity {
   ) {
     this._position = _position || new Vec2(0, 0);
     if (this.config?.generateId === true) {
-      this.id = id;
-      id++;
+      this.id = DrawingEntity.nextId;
+      DrawingEntity.nextId++;
     }
+  }
+
+  public static resetIdCounter() {
+    DrawingEntity.nextId = 0;
+  }
+
+  public static syncIdCounter(entityId: number) {
+    DrawingEntity.nextId = Math.max(DrawingEntity.nextId, entityId + 1);
   }
 
   moveRelative(position: Vec2) {

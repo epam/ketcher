@@ -26,6 +26,10 @@ import {
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
 const BOND_WIDTH = 2;
 // Use same scale factor as Molecules mode (microModeScale = 40)
@@ -212,13 +216,13 @@ export class BondRenderer extends BaseRenderer {
       this.selectionElement = this.canvas
         ?.insert('path', ':first-child')
         .attr('d', pathShape)
-        .attr('fill', '#57ff8f')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#57ff8f');
+      ?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -251,6 +255,24 @@ export class BondRenderer extends BaseRenderer {
   public removeHover() {
     this.hoverElement?.remove();
     this.hoverElement = undefined;
+  }
+
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
+    } else {
+      this.removeHover();
+      this.hoverElement = undefined;
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
+    }
   }
 
   public drawSelection() {

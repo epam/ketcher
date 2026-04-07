@@ -26,6 +26,10 @@ import { check } from '../../../../../state/server';
 import { checkOpts } from '../../../../../state/options';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+
+type AppDispatch = ThunkDispatch<unknown, unknown, AnyAction>;
 
 interface MoleculeErrors {
   [key: string]: string;
@@ -312,7 +316,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: AppDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>

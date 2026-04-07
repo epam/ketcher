@@ -83,13 +83,15 @@ const Select = ({
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
-      renderValue={(selected: string) =>
-        (currentValue?.children ??
+      renderValue={(selected: string) => {
+        const display =
+          currentValue?.children ??
           currentValue?.label ??
           placeholder ??
           selected ??
-          '') as any
-      }
+          '';
+        return <>{display}</>;
+      }}
       displayEmpty
       multiple={multiple}
       disabled={disabled}

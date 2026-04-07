@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerMicromolecule, Pile, SGroup, Struct } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  MonomerMicromolecule,
+  Pile,
+  SGroup,
+  Struct,
+} from 'domain/entities';
 
 import { Mapping } from './mol.types';
 import utils from './utils';
@@ -24,6 +31,14 @@ import v3000 from './v3000';
 interface SGroupSavingError extends Error {
   id: number;
   'error-type': string;
+}
+
+function getAtom(mol: Struct, id: number): Atom {
+  const atom = mol.atoms.get(id);
+  if (!atom) {
+    throw new Error(`Atom ${id} not found`);
+  }
+  return atom;
 }
 
 const loadRGroupFragments = true; // TODO: set to load the fragments
@@ -92,8 +107,8 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
 function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
   const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin)!;
-    const a2 = mol.atoms.get(bond.end)!;
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
@@ -117,8 +132,8 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
 function prepareCopForSaving(sgroup: SGroup, mol: Struct): void {
   const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin)!;
-    const a2 = mol.atoms.get(bond.end)!;
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
@@ -142,8 +157,8 @@ function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
   // It seems that such code should be used for any sgroup by this this should be checked
   const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin)!;
-    const a2 = mol.atoms.get(bond.end)!;
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
@@ -293,7 +308,10 @@ function saveDatToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   const data = sgroup.data;
-  let pp = sgroup.pp!;
+  if (!sgroup.pp) {
+    throw new Error('SGroup pp is not set');
+  }
+  let pp = sgroup.pp;
   if (!data.absolute) pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
   let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
@@ -388,7 +406,7 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,
-    crossBonds as any,
+    crossBonds as unknown as { [key: number]: Array<Bond> },
     atomSet,
     bb,
     d,

@@ -23,14 +23,11 @@ import {
 
 import { Elements } from 'domain/constants';
 import common from './common';
+import { Mapping } from './mol.types';
 import utils from './utils';
 import { KetcherLogger } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
-
-type Mapping = {
-  [key in number]: number;
-};
 type NumberTuple = [number, number];
 
 interface ParseCTFileProps {

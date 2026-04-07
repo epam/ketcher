@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { MonomerMicromolecule, Pile, SGroup, Struct } from 'domain/entities';
-import { SGroupBracketParams } from 'domain/entities/sgroup';
 
+import { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 import v3000 from './v3000';
@@ -25,8 +25,6 @@ interface SGroupSavingError extends Error {
   id: number;
   'error-type': string;
 }
-
-type IdMap = Record<number, number>;
 
 const loadRGroupFragments = true; // TODO: set to load the fragments
 
@@ -176,9 +174,9 @@ const saveToMolfile: Record<
   (
     sgroup: SGroup,
     mol: Struct,
-    sgMap: IdMap,
-    atomMap: IdMap,
-    bondMap: IdMap,
+    sgMap: Mapping,
+    atomMap: Mapping,
+    bondMap: Mapping,
   ) => string
 > = {
   MUL: saveMulToMolfile,
@@ -192,9 +190,9 @@ const saveToMolfile: Record<
 function saveMulToMolfile(
   sgroup: SGroup,
   mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
-  bondMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -225,9 +223,9 @@ function saveMulToMolfile(
 function saveSruToMolfile(
   sgroup: SGroup,
   mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
-  bondMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -241,9 +239,9 @@ function saveSruToMolfile(
 function saveCopToMolfile(
   sgroup: SGroup,
   mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
-  bondMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -257,9 +255,9 @@ function saveCopToMolfile(
 function saveSupToMolfile(
   sgroup: SGroup,
   _mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
-  bondMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -289,8 +287,8 @@ function saveSupToMolfile(
 function saveDatToMolfile(
   sgroup: SGroup,
   mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -349,9 +347,9 @@ function saveDatToMolfile(
 function saveGenToMolfile(
   sgroup: SGroup,
   mol: Struct,
-  sgMap: IdMap,
-  atomMap: IdMap,
-  bondMap: IdMap,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
 ): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
@@ -366,7 +364,7 @@ function makeAtomBondLines(
   prefix: string,
   idstr: string,
   ids: number[] | undefined,
-  map: IdMap,
+  map: Mapping,
 ): string[] {
   if (!ids) return [];
   const lines: string[] = [];
@@ -388,7 +386,7 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   const bb = sg.bracketBox;
   const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
-  const brackets: SGroupBracketParams[] = SGroup.getBracketParameters(
+  const brackets = SGroup.getBracketParameters(
     mol,
     crossBonds as any,
     atomSet,

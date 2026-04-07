@@ -24,3 +24,7 @@ export interface MolSerializerOptions {
 }
 
 export type MolfileFormat = 'v2000' | 'v3000';
+
+export type Mapping = {
+  [key in number]: number;
+};

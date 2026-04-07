@@ -16,33 +16,41 @@
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
+import ReStruct from './restruct';
+import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
+import { SGroup } from 'domain/entities/sgroup';
 
 class ReDataSGroupData extends ReObject {
-  constructor(sgroup) {
+  public sgroup: SGroup;
+
+  constructor(sgroup: SGroup) {
     super('sgroupData');
     this.sgroup = sgroup;
   }
 
-  static isSelectable() {
+  static isSelectable(): boolean {
     return true;
   }
 
-  hoverPath(render) {
+  hoverPath(render: Render) {
     const box = this.sgroup.dataArea;
     const p0 = Scale.modelToCanvas(box.p0, render.options);
     const sz = Scale.modelToCanvas(box.p1, render.options).sub(p0);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
   }
 
-  drawHover(render) {
+  drawHover(render: Render) {
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
 
-  makeSelectionPlate(restruct, paper, styles) {
-    // TODO [MK] review parameters
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: unknown,
+    styles: { selectionStyle: Record<string, unknown> },
+  ) {
     return this.hoverPath(restruct.render).attr(styles.selectionStyle);
   }
 }

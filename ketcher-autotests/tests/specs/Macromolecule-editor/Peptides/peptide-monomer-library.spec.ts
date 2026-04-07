@@ -6,6 +6,7 @@ import { expect, test } from '@fixtures';
 import {
   clickOnCanvas,
   dragMouseTo,
+  moveMouseAway,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -89,7 +90,7 @@ test.describe('Peptide library testing', () => {
     ]);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
   });
 

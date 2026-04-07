@@ -1291,7 +1291,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -1426,18 +1426,21 @@ test.describe('RNA Library', () => {
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
     await moveMouseAway(page);
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
 
     await Library(page).hoverMonomer(Base._2imen2);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
     await moveMouseAway(page);
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
 
     await Library(page).hoverMonomer(Phosphate.P);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(true);
     await moveMouseAway(page);
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     expect(await MonomerPreviewTooltip(page).isVisible()).toBe(false);
   });
 

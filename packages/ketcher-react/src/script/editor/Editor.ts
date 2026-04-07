@@ -1390,8 +1390,14 @@ class Editor implements KetcherEditor {
 
     this.closeMonomerCreationWizard();
 
-    // All intermediate canvas operations pass ignoreHistory=true to update().
-    // A single canonical undo entry is recorded at the very end.
+    // Swap in a temporary history stack so all intermediate canvas operations
+    // record their entries there (to be discarded). This is the same pattern
+    // used by the wizard itself in openMonomerCreationWizard.
+    const savedHistoryStack = this.historyStack;
+    const savedHistoryPtr = this.historyPtr;
+    this.historyStack = [];
+    this.historyPtr = 0;
+
     const libraryItems = monomersData.map((monomerData) => {
       const {
         monomer,
@@ -1626,7 +1632,7 @@ class Editor implements KetcherEditor {
         }
       });
 
-      // Re-render with the fully assembled structure (ignoring history)
+      // Clone the fully assembled structure
       const finalStruct = this.struct().clone(
         undefined,
         undefined,
@@ -1640,17 +1646,21 @@ class Editor implements KetcherEditor {
         undefined,
         true,
       );
-      const loadFinalAction = fromNewCanvas(this.render.ctab, finalStruct);
-      this.update(loadFinalAction, true);
 
-      // Record a single atomic undo entry using fromNewCanvas double-swap:
-      // 1. Swap canvas → preCreationStruct (returns inverse that loads finalStruct)
-      // 2. Perform the inverse → canvas back to finalStruct (returns undo action)
-      // 3. Store the undo action in history (not suppressed).
-      //    Undo restores preCreationStruct; redo restores finalStruct.
-      const inverseAction = fromNewCanvas(this.render.ctab, preCreationStruct);
-      const undoAction = inverseAction.perform(this.render.ctab);
-      this.update(undoAction);
+      // Restore the global history stack (discarding temp entries).
+      this.historyStack = savedHistoryStack;
+      this.historyPtr = savedHistoryPtr;
+
+      // Load preCreationStruct onto canvas without recording history.
+      // This sets up the state so that the subsequent this.struct(finalStruct)
+      // creates ONE history entry where undo restores preCreationStruct.
+      const preLoadAction = fromNewCanvas(this.render.ctab, preCreationStruct);
+      this.update(preLoadAction, true);
+
+      // Load the final struct through the standard path — this creates
+      // a single canonical history entry. Undo restores preCreationStruct;
+      // redo restores finalStruct.
+      this.struct(finalStruct);
     }, 0);
   }
 

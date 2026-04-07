@@ -7,7 +7,7 @@ import {
   zoomWithMouseWheel,
   scrollDown,
   selectPartOfMolecules,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   moveMouseAway,
@@ -269,7 +269,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-dna-peptides-chains.ket');
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
